@@ -6,19 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
-        implements IGPPASTSimpleDeclSpecifier {
+        implements IGPPASTSimpleDeclSpecifier, IASTAmbiguityParent {
 
     private boolean longLong;
     private boolean restrict;
@@ -99,5 +102,13 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
 
 	public void setImaginary(boolean value) {
 		this.imaginary = value;
+	}
+	
+	public void replace(IASTNode child, IASTNode other) {
+        if (child == typeOfExpression) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            typeOfExpression= (IASTExpression) other;
+        }
 	}
 }

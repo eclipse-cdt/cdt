@@ -92,6 +92,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
@@ -577,36 +579,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression multiplicativeExpression()
-            throws BacktrackException, EndOfFileException {
-        IASTExpression firstExpression = castExpression();
-        for (;;) {
-            switch (LT(1)) {
-            case IToken.tSTAR:
-            case IToken.tDIV:
-            case IToken.tMOD:
-                IToken t = consume();
-                IASTExpression secondExpression = castExpression();
-                int operator = 0;
-                switch (t.getType()) {
-                case IToken.tSTAR:
-                    operator = IASTBinaryExpression.op_multiply;
-                    break;
-                case IToken.tDIV:
-                    operator = IASTBinaryExpression.op_divide;
-                    break;
-                case IToken.tMOD:
-                    operator = IASTBinaryExpression.op_modulo;
-                    break;
-                }
-                firstExpression = buildBinaryExpression(operator,
-                        firstExpression, secondExpression,
-                        calculateEndOffset(secondExpression));
-                break;
-            default:
-                return firstExpression;
-            }
-        }
+	protected IASTExpression pmExpression() throws BacktrackException, EndOfFileException {
+    	return castExpression();
     }
 
     @Override
@@ -630,19 +604,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tDECR:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);
         case IToken.t_sizeof:
-        	return parseSizeofExpression();
-
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
+        case IGCCToken.t_typeof:
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof);
+        case IGCCToken.t___alignof__:
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf);
         default:
-            if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
-                IASTExpression unary = unaryTypeofExpression();
-                if (unary != null)
-                    return unary;
-            }
-            if (LT(1) == IGCCToken.t___alignof__ && supportAlignOfUnaries) {
-                IASTExpression align = unaryAlignofExpression();
-                if (align != null)
-                    return align;
-            }
             return postfixExpression();
         }
     }
@@ -791,7 +761,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected IASTFunctionCallExpression createFunctionCallExpression() {
+    @Override
+	protected IASTFunctionCallExpression createFunctionCallExpression() {
         return new CASTFunctionCallExpression();
     }
 
@@ -816,7 +787,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTFieldReference();
     }
 
-    protected IASTExpression primaryExpression() throws EndOfFileException,
+    @Override
+	protected IASTExpression primaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken t = null;
         IASTLiteralExpression literalExpression = null;
@@ -1224,7 +1196,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             	if (encounteredRawType || encounteredTypename)
             		throwBacktrack(LA(1));
 
-            	typeofExpression = unaryTypeofExpression();
+            	final boolean wasInBinary= inBinaryExpression;
+            	try {
+            		inBinaryExpression= false;
+            		typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+            				IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof);
+            	} finally {
+            		inBinaryExpression= wasInBinary;
+            	}
             	encounteredTypename= true;
             	endOffset= calculateEndOffset(typeofExpression);
             	break;
@@ -2192,7 +2171,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected IASTProblem createProblem(int signal, int offset, int length) {
-        IASTProblem result = new CASTProblem(signal, EMPTY_STRING, true);
+        IASTProblem result = new CASTProblem(signal, CharArrayUtils.EMPTY, true);
         ((ASTNode) result).setOffsetAndLength(offset, length);
         return result;
     }
@@ -2308,6 +2287,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTAmbiguousExpression createAmbiguousExpression() {
         return new CASTAmbiguousExpression();
     }
+    
+	@Override
+	protected IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr) {
+		return new CASTAmbiguousBinaryVsCastExpression(binary, castExpr);
+	}
+
+	@Override
+	protected IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall) {
+		return new CASTAmbiguousCastVsFunctionCallExpression(castExpr, funcCall);
+	}
 
     protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
         IASTIfStatement result = null;

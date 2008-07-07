@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -124,6 +125,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
@@ -830,39 +833,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
-        IASTExpression firstExpression = pmExpression();
-        for (;;) {
-            switch (LT(1)) {
-            case IToken.tSTAR:
-            case IToken.tDIV:
-            case IToken.tMOD:
-                IToken t = consume();
-                IASTExpression secondExpression = pmExpression();
-                int operator = 0;
-                switch (t.getType()) {
-                case IToken.tSTAR:
-                    operator = IASTBinaryExpression.op_multiply;
-                    break;
-                case IToken.tDIV:
-                    operator = IASTBinaryExpression.op_divide;
-                    break;
-                case IToken.tMOD:
-                    operator = IASTBinaryExpression.op_modulo;
-                    break;
-                }
-                firstExpression = buildBinaryExpression(operator,
-                        firstExpression, secondExpression,
-                        calculateEndOffset(secondExpression));
-                break;
-            default:
-                return firstExpression;
-            }
-        }
-    }
-
-    protected IASTExpression pmExpression() throws EndOfFileException, BacktrackException {
-
+	protected IASTExpression pmExpression() throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = castExpression();
         for (;;) {
             switch (LT(1)) {
@@ -1103,23 +1074,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTExpression unaryExpression() throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_star);// IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_star);
         case IToken.tAMPER:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);// IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);
         case IToken.tPLUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus);// IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus);
         case IToken.tMINUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);// IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);
         case IToken.tNOT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_not);// IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_not);
         case IToken.tBITCOMPLEMENT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);// IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);
         case IToken.tINCR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);// IASTExpression.Kind.UNARY_INCREMENT);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);
         case IToken.tDECR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);// IASTExpression.Kind.UNARY_DECREMENT);
-        case IToken.t_sizeof:
-            return parseSizeofExpression();
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);
         case IToken.t_new:
             return newExpression();
         case IToken.t_delete:
@@ -1133,17 +1102,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 return postfixExpression();
             }
+        case IToken.t_sizeof:
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
+        case IGCCToken.t_typeof:
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof);
+        case IGCCToken.t___alignof__:
+        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf);
         default:
-            if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
-                IASTExpression unary = unaryTypeofExpression();
-                if (unary != null)
-                    return unary;
-            }
-            if (LT(1) == IGCCToken.t___alignof__ && supportAlignOfUnaries) {
-                IASTExpression align = unaryAlignofExpression();
-                if (align != null)
-                    return align;
-            }
             return postfixExpression();
         }
     }
@@ -1346,7 +1314,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTAmbiguousExpression();
     }
     
-    protected ICPPASTAmbiguousTemplateArgument createAmbiguousTemplateArgument() {
+	@Override
+	protected IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr) {
+		return new CPPASTAmbiguousBinaryVsCastExpression(binary, castExpr);
+	}
+
+	@Override
+	protected IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall) {
+		return new CPPASTAmbiguousCastVsFunctionCallExpression(castExpr, funcCall);
+	}
+
+	protected ICPPASTAmbiguousTemplateArgument createAmbiguousTemplateArgument() {
     	return new CPPASTAmbiguousTemplateArgument();
     }
 
@@ -1358,7 +1336,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTTypenameExpression();
     }
 
-    protected IASTFunctionCallExpression createFunctionCallExpression() {
+    @Override
+	protected IASTFunctionCallExpression createFunctionCallExpression() {
         return new CPPASTFunctionCallExpression();
     }
 
@@ -1388,7 +1367,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTSimpleTypeConstructorExpression();
     }
 
-    protected IASTExpression primaryExpression() throws EndOfFileException,
+    @Override
+	protected IASTExpression primaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken t = null;
         ICPPASTLiteralExpression literalExpression = null;
@@ -1523,22 +1503,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTExpression specialCastExpression(int kind) throws EndOfFileException, BacktrackException {
-        int startingOffset = LA(1).getOffset();
-        IToken op = consume();
+        final int offset = LA(1).getOffset();
+        final int optype= consume().getType();
         consume(IToken.tLT);
-        IASTTypeId typeID = typeId(DeclarationOptions.TYPEID);
-        if (typeID == null) { throw backtrack; } 
+        final IASTTypeId typeID = typeId(DeclarationOptions.TYPEID);
+        if (typeID == null) 
+        	throw backtrack; 
         consume(IToken.tGT);
         consume(IToken.tLPAREN);
-        IASTExpression lhs = expression();
-        int l = consume(IToken.tRPAREN).getEndOffset();
-        IASTCastExpression result = createCastExpression();
-        ((ASTNode) result).setOffsetAndLength(startingOffset, l - startingOffset);
-        result.setTypeId(typeID);
-        result.setOperand(lhs);
-
+        final IASTExpression operand= expression();
+        final int endOffset= consume(IToken.tRPAREN).getEndOffset();
         int operator;
-        switch(op.getType()) {
+        switch(optype) {
 	        case IToken.t_dynamic_cast:
 	        	operator = ICPPASTCastExpression.op_dynamic_cast;
 	        	break;
@@ -1555,9 +1531,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	        	operator = IASTCastExpression.op_cast;
 	    		break; 
         }
-
-        result.setOperator(operator);
-        return result;
+        return buildCastExpression(operator, typeID, operand, offset, endOffset);
     }
 
     /**
@@ -2825,7 +2799,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	if (encounteredRawType || encounteredTypename)
             		throwBacktrack(LA(1));
 
-            	typeofExpression = unaryTypeofExpression();
+            	final boolean wasInBinary= inBinaryExpression;
+            	try {
+            		inBinaryExpression= false;
+            		typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+            				IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof);
+            	} finally {
+            		inBinaryExpression= wasInBinary;
+            	}
+
             	encounteredTypename= true;
             	endOffset= calculateEndOffset(typeofExpression);
             	break;
@@ -4375,7 +4357,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected IASTProblem createProblem(int signal, int offset, int length) {
-        IASTProblem result = new CPPASTProblem(signal, EMPTY_STRING, true);
+        IASTProblem result = new CPPASTProblem(signal, CharArrayUtils.EMPTY, true);
         ((ASTNode) result).setOffsetAndLength(offset, length);
         ((ASTNode) result).setLength(length);
         return result;

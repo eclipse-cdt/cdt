@@ -63,9 +63,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
@@ -111,12 +108,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IToken currToken;
     protected int eofOffset;
     protected boolean onTopInTemplateArgs= false;
+    protected boolean inBinaryExpression= true;
 
     protected boolean isCancelled = false;
 	protected boolean parsePassed = true;
     protected int backtrackCount = 0;
     protected BacktrackException backtrack = new BacktrackException();
+    
     protected ASTCompletionNode completionNode;
+    protected IASTTypeId fTypeIdForCastAmbiguity;
 	
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -324,8 +324,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         createCompletionNode(exception.getFinalToken());
         throw exception;
     }
-
-    protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
 
     /**
      * Mark our place in the buffer so that we could return to it should we have
@@ -769,10 +767,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 operator = IASTBinaryExpression.op_greaterEqual;
                 break;
             case IGCCToken.tMAX:
-                operator = IGPPASTBinaryExpression.op_max;
+                operator = IASTBinaryExpression.op_max;
                 break;
             case IGCCToken.tMIN:
-                operator = IGPPASTBinaryExpression.op_min;
+                operator = IASTBinaryExpression.op_min;
                 break;
             default:
             	return result;
@@ -783,36 +781,68 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    protected abstract IASTExpression multiplicativeExpression()
-            throws BacktrackException, EndOfFileException;
-
     protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException;
 
 	protected IASTExpression castExpression() throws EndOfFileException, BacktrackException {
-        if (LT(1) == IToken.tLPAREN) {
-            final IToken mark = mark();
-            final int startingOffset = mark.getOffset();
-            consume();
-
-            if (!avoidCastExpressionByHeuristics()) {
-            	IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
-            	if (typeId != null && LT(1) == IToken.tRPAREN) {
-            		consume();
-            		try {
-            			IASTExpression castExpression = castExpression();
-            			return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
-            					typeId, castExpression, startingOffset,
-            					LT(1) == IToken.tEOC ? LA(1).getEndOffset() : calculateEndOffset(castExpression));
-            		} catch (BacktrackException b) {
-            		}
-            	}
-            }
-            backup(mark);
-        }
-        return unaryExpression();
+		if (LT(1) == IToken.tLPAREN) {
+			final IToken mark= mark();
+			final int startingOffset= mark.getOffset();
+			consume();
+			IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
+			if (typeId != null && LT(1) == IToken.tRPAREN) {
+				consume();
+				boolean unaryFailed= false;
+				if (inBinaryExpression) {
+    				switch (LT(1)){
+    				// ambiguity with unary operator
+    				case IToken.tPLUS: case IToken.tMINUS: 
+    				case IToken.tSTAR: case IToken.tAMPER:
+    					IToken markEnd= mark();
+    					backup(mark);
+    					try {
+    						IASTExpression unary= unaryExpression();
+    						fTypeIdForCastAmbiguity= typeId;
+    						return unary;
+    					} catch (BacktrackException bt) {
+    						backup(markEnd);
+    						unaryFailed= true;
+    					}
+    				} 
+				}
+				try {
+					boolean couldBeFunctionCall= LT(1) == IToken.tLPAREN;
+					IASTExpression rhs= castExpression();
+					IASTCastExpression result= buildCastExpression(IASTCastExpression.op_cast, typeId, rhs, startingOffset, calculateEndOffset(rhs));
+					if (!unaryFailed && couldBeFunctionCall && rhs instanceof IASTCastExpression == false) {
+						IToken markEnd= mark();
+						final IASTTypeId typeidForCastAmbiguity= fTypeIdForCastAmbiguity;
+						backup(mark);
+						try {
+							IASTExpression expr= primaryExpression();
+							IASTFunctionCallExpression fcall= createFunctionCallExpression();
+							fcall.setFunctionNameExpression(expr);
+							IASTAmbiguousExpression ambiguity= createAmbiguousCastVsFunctionCallExpression(result, fcall);
+							((ASTNode) ambiguity).setOffsetAndLength((ASTNode) result);
+							return ambiguity;
+						} catch (BacktrackException bt) {
+						} finally {
+							backup(markEnd);
+							fTypeIdForCastAmbiguity= typeidForCastAmbiguity;
+						}
+					}
+					return result;
+				} catch (BacktrackException b) {
+					if (unaryFailed)
+						throw b;
+				}
+			}
+			backup(mark);
+		}
+		return unaryExpression();
     }
 
     protected abstract IASTExpression unaryExpression() throws BacktrackException, EndOfFileException;
+    protected abstract IASTExpression primaryExpression() throws BacktrackException, EndOfFileException;
 
     protected abstract IASTExpression buildTypeIdExpression(int op,
             IASTTypeId typeId, int startingOffset, int endingOffset);
@@ -939,11 +969,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression andExpression() throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = equalityExpression();
         while (LT(1) == IToken.tAMPER) {
-            consume();
+            final int offset= consume().getOffset();
+            final IASTTypeId typeid= fTypeIdForCastAmbiguity; fTypeIdForCastAmbiguity= null;
             IASTExpression secondExpression = equalityExpression();
             firstExpression = buildBinaryExpression(
                     IASTBinaryExpression.op_binaryAnd, firstExpression,
                     secondExpression, calculateEndOffset(secondExpression));
+            if (typeid != null) {
+            	firstExpression = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) firstExpression, typeid, IASTUnaryExpression.op_amper, offset);
+            }
         }
         return firstExpression;
     }
@@ -982,6 +1016,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected abstract IASTBinaryExpression createBinaryExpression();
+    protected abstract IASTFunctionCallExpression createFunctionCallExpression();
 
     protected IASTExpression shiftExpression() throws BacktrackException,
             EndOfFileException {
@@ -1004,26 +1039,75 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    protected IASTExpression additiveExpression() throws BacktrackException,
-            EndOfFileException {
-        IASTExpression firstExpression = multiplicativeExpression();
+    protected IASTExpression additiveExpression() throws BacktrackException, EndOfFileException {
+        IASTExpression result= multiplicativeExpression();
         for (;;) {
+        	int operator;
+        	int unaryOperator;
             switch (LT(1)) {
             case IToken.tPLUS:
+            	operator= IASTBinaryExpression.op_plus;
+            	unaryOperator= IASTUnaryExpression.op_plus;
+            	break;
             case IToken.tMINUS:
-                IToken t = consume();
-                int operator = (t.getType() == IToken.tPLUS) ? IASTBinaryExpression.op_plus
-                        : IASTBinaryExpression.op_minus;
-                IASTExpression secondExpression = multiplicativeExpression();
-                firstExpression = buildBinaryExpression(operator,
-                        firstExpression, secondExpression,
-                        calculateEndOffset(secondExpression));
-                break;
+            	operator= IASTBinaryExpression.op_minus;
+            	unaryOperator= IASTUnaryExpression.op_minus;
+            	break;
             default:
-                return firstExpression;
+            	return result;
+            }
+            final int offset= consume().getOffset();
+            final IASTTypeId typeid= fTypeIdForCastAmbiguity; fTypeIdForCastAmbiguity= null;
+            IASTExpression secondExpression = multiplicativeExpression();
+            result = buildBinaryExpression(operator, result, secondExpression,
+            		calculateEndOffset(secondExpression));
+            if (typeid != null) {
+            	result = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) result, typeid, unaryOperator, offset);
             }
         }
     }
+    
+    protected IASTExpression multiplicativeExpression() throws BacktrackException, EndOfFileException {
+    	inBinaryExpression= true;
+    	fTypeIdForCastAmbiguity= null;
+        IASTExpression result= pmExpression();
+        for (;;) {
+        	int operator;
+            switch (LT(1)) {
+            case IToken.tSTAR:
+                operator = IASTBinaryExpression.op_multiply;
+                break;
+            case IToken.tDIV:
+                operator = IASTBinaryExpression.op_divide;
+                break;
+            case IToken.tMOD:
+                operator = IASTBinaryExpression.op_modulo;
+                break;
+            default:
+            	return result;
+            }
+            final int offset= consume().getOffset();
+            final IASTTypeId typeid= fTypeIdForCastAmbiguity; fTypeIdForCastAmbiguity= null;
+            IASTExpression secondExpression= pmExpression();
+            result= buildBinaryExpression(operator,	result, secondExpression, calculateEndOffset(secondExpression));
+            if (typeid != null) {
+            	result = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) result, typeid, IASTUnaryExpression.op_star, offset);
+            }
+        }
+    }
+    
+    protected abstract IASTExpression pmExpression() throws EndOfFileException, BacktrackException;
+
+
+	private IASTExpression createCastVsBinaryExpressionAmbiguity(IASTBinaryExpression expr, final IASTTypeId typeid, int unaryOperator, int unaryOpOffset) {
+		IASTUnaryExpression unary= createUnaryExpression();
+		unary.setOperator(unaryOperator);
+		((ASTNode) unary).setOffset(unaryOpOffset);
+		IASTCastExpression castExpr= buildCastExpression(IASTCastExpression.op_cast, typeid, unary, 0, 0);
+		IASTExpression result= createAmbiguousBinaryVsCastExpression(expr, castExpr);
+		((ASTNode) result).setOffsetAndLength((ASTNode) expr);
+		return result;
+	}
 
     protected IASTExpression conditionalExpression() throws BacktrackException,
             EndOfFileException {
@@ -1068,77 +1152,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected abstract IASTUnaryExpression createUnaryExpression();
-
-    protected IASTExpression unaryAlignofExpression()
-            throws EndOfFileException, BacktrackException {
-        int offset = consume().getOffset(); // t___alignof__
-        IASTTypeId d = null;
-        IASTExpression unaryExpression = null;
-
-        IToken m = mark();
-        int lastOffset = 0;
-        if (LT(1) == IToken.tLPAREN) {
-        	boolean needBack = false;
-            try {
-                consume();
-                d = typeId(DeclarationOptions.TYPEID);
-                if (d == null)
-                	needBack = true;
-                else
-                	lastOffset = consume(IToken.tRPAREN).getEndOffset();
-            } catch (BacktrackException bt) {
-            	needBack = true;
-            }
-            if (needBack) {
-            	backup(m);
-            	d = null;
-            	unaryExpression = unaryExpression();
-            	lastOffset = calculateEndOffset(unaryExpression);
-            }
-            
-        } else {
-            unaryExpression = unaryExpression();
-            lastOffset = calculateEndOffset(unaryExpression);
-        }
-        if (d != null & unaryExpression == null)
-            return buildTypeIdExpression(IGNUASTTypeIdExpression.op_alignof, d,
-                    offset, lastOffset);
-        else if (unaryExpression != null && d == null)
-            return buildUnaryExpression(IGNUASTUnaryExpression.op_alignOf,
-                    unaryExpression, offset, lastOffset);
-        return null;
-    }
-
-    protected IASTExpression unaryTypeofExpression() throws EndOfFileException,
-            BacktrackException {
-        int offset = consume().getOffset(); // t_typeof
-        IASTTypeId d = null;
-        IASTExpression expression = null;
-
-        int lastOffset = 0;
-        // prefer expressions over type-ids
-        if (LT(1) == IToken.tLPAREN && LT(2) != IToken.tLBRACE) {
-        	consume();
-            final IToken m = mark();
-        	try {
-        		expression= expression();
-        	}
-        	catch (BacktrackException e) {
-        		backup(m);
-            	d = typeId(DeclarationOptions.TYPEID);
-            	if (d == null) 
-            		throw e;
-        	}
-        	lastOffset = consume(IToken.tRPAREN).getEndOffset();
-        } else {
-            expression = unaryExpression();
-            lastOffset = calculateEndOffset(expression);
-        }
-        if (d != null)
-            return buildTypeIdExpression(IGNUASTTypeIdExpression.op_typeof, d, offset, lastOffset);
-        
-        return buildUnaryExpression(IGNUASTUnaryExpression.op_typeof, expression, offset, lastOffset);
-    }
 
     protected IASTStatement handleFunctionBody() throws BacktrackException, EndOfFileException {
     	declarationMark= null; 
@@ -1556,17 +1569,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTASMDeclaration createASMDirective();
 
 
-    protected IASTExpression buildTypeIdUnaryExpression(int op,
-            IASTTypeId typeId, IASTExpression subExpression,
-            int startingOffset, int lastOffset) {
+    protected IASTCastExpression buildCastExpression(int op, IASTTypeId typeId, IASTExpression operand,
+    		int offset, int endOffset) {
         IASTCastExpression result = createCastExpression();
         result.setOperator(op);
-        ((ASTNode) result).setOffsetAndLength(startingOffset, lastOffset - startingOffset);
+        ((ASTNode) result).setOffsetAndLength(offset, endOffset - offset);
         result.setTypeId(typeId);
-        if (subExpression != null) { // which it can be in a completion
-            result.setOperand(subExpression);
+        if (operand != null) { // which it can be in a completion
+            result.setOperand(operand);
         }
-        
         return result;
     }
 
@@ -1989,7 +2000,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
-    protected IASTExpression parseTypeidInParenthesisOrUnaryExpression(boolean exprIsLimitedToParenthesis, int offset, int typeExprKind, int unaryExprKind) throws BacktrackException, EndOfFileException {
+    protected IASTExpression parseTypeidInParenthesisOrUnaryExpression(boolean exprIsLimitedToParenthesis, 
+    		int offset, int typeExprKind, int unaryExprKind) throws BacktrackException, EndOfFileException {
     	IASTTypeId typeid;
     	IASTExpression expr= null;
         IToken typeidLA= null;
@@ -2044,11 +2056,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         try {
         	if (exprIsLimitedToParenthesis) {
         		consume(IToken.tLPAREN);
-        	}
-            expr= unaryExpression(); 
-            if (exprIsLimitedToParenthesis) {
-            	endOffset2= consumeOrEOC(IToken.tRPAREN).getEndOffset();
-            } else {
+        		expr= expression();
+        		endOffset2= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+        	} else {
+        		expr= unaryExpression(); 
             	endOffset2= calculateEndOffset(expr);
             }
         } catch (BacktrackException bte) { 
@@ -2078,19 +2089,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected abstract IASTAmbiguousExpression createAmbiguousExpression();
+    protected abstract IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr);
+    protected abstract IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall);
 
-    protected IASTExpression parseSizeofExpression() throws BacktrackException, EndOfFileException {
-        final int offset = consume().getOffset(); // t_sizeof
-        if (LT(1) != IToken.tLPAREN) {
-        	IASTExpression unary= unaryExpression();
-        	return buildUnaryExpression(IASTUnaryExpression.op_sizeof, unary, offset, calculateEndOffset(unary));
-        }
-        return parseTypeidInParenthesisOrUnaryExpression(false, offset, IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
-    }
-    
-    /**
-     * @throws BacktrackException
-     */
     protected IASTStatement forInitStatement(DeclarationOptions option) throws BacktrackException, EndOfFileException {
         if( LT(1) == IToken.tSEMI )
             return parseNullStatement();

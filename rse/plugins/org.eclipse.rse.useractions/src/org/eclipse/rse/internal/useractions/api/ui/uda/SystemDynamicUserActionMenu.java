@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Xuan Chen (IBM) - [222470] initial contribution.
+ * Kevin Doyle (IBM) - [239805] User Action/Compile menu's shouldn't be tied to IRemoteFile
  *********************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.uda;
 
@@ -27,7 +28,6 @@ import org.eclipse.rse.internal.useractions.files.uda.UDActionSubsystemUniversal
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 import org.eclipse.rse.internal.useractions.ui.uda.actions.SystemWorkWithUDAsAction;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
@@ -72,7 +72,7 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getSelectionService().getSelection();
 		Object firstSelection = ((IStructuredSelection) selection).getFirstElement();
-		if (firstSelection == null || (!(firstSelection instanceof IRemoteFile)))
+		if (firstSelection == null)
 		{
 			return new IContributionItem[0];
 		}

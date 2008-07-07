@@ -9,21 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *     Emanuel Graf IFS - Bugfix for #198257
  *******************************************************************************/
-
-/*
- * Created on May 18, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author aniefer
  *
  */
-public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implements IGCCASTSimpleDeclSpecifier {
+public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implements IGCCASTSimpleDeclSpecifier, IASTAmbiguityParent {
 
 	private IASTExpression typeOfExpression;
 
@@ -68,4 +66,12 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 
 		return true;
     }
+    
+	public void replace(IASTNode child, IASTNode other) {
+        if (child == typeOfExpression) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            typeOfExpression= (IASTExpression) other;
+        }
+	}
 }

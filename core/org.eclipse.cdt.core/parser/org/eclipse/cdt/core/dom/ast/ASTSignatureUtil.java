@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -37,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
@@ -925,29 +923,6 @@ public class ASTSignatureUtil {
 	public static String getBinaryOperatorString(IASTBinaryExpression be) {
 		int op = be.getOperator();
 		String opString = EMPTY_STRING;
-		
-		if (be instanceof ICPPASTBinaryExpression) {
-			switch(op) {
-				case ICPPASTBinaryExpression.op_pmarrow:
-					opString = String.valueOf(Keywords.cpARROW);
-					break;
-				case ICPPASTBinaryExpression.op_pmdot:
-					opString = String.valueOf(Keywords.cpDOT);
-					break;
-			}
-		} else if (be instanceof IGPPASTBinaryExpression) {
-			switch(op) {
-				case IGPPASTBinaryExpression.op_max:
-					opString = String.valueOf(Keywords.cpMAX);
-					break;
-				case IGPPASTBinaryExpression.op_min:
-					opString = String.valueOf(Keywords.cpMIN);
-					break;
-			}
-		}
-		
-		if (!opString.equals(EMPTY_STRING)) return opString;
-		
 		switch(op) {
 			case IASTBinaryExpression.op_multiply:
 				opString = String.valueOf(Keywords.cpSTAR);
@@ -1036,12 +1011,18 @@ public class ASTSignatureUtil {
 			case IASTBinaryExpression.op_notequals:
 				opString = String.valueOf(Keywords.cpNOTEQUAL);
 				break;
-            case IGPPASTBinaryExpression.op_max:
+            case IASTBinaryExpression.op_max:
                 opString = String.valueOf(Keywords.cpMAX);
                 break;
-            case IGPPASTBinaryExpression.op_min:
+            case IASTBinaryExpression.op_min:
                 opString = String.valueOf(Keywords.cpMIN);
                 break;
+			case IASTBinaryExpression.op_pmarrow:
+				opString = String.valueOf(Keywords.cpARROW);
+				break;
+			case IASTBinaryExpression.op_pmdot:
+				opString = String.valueOf(Keywords.cpDOT);
+				break;
 		}
 		
 		return opString;

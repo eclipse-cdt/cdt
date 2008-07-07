@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -45,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -5039,4 +5042,191 @@ public class AST2Tests extends AST2BaseTest {
     		assertEquals("foux= 1;", stmt.getRawSignature());
     	}
     }
+    
+    // typedef int t;
+    // int a,b;
+    // void test() {
+    
+    // b* (t)+a *b	 		// b,t,a,unary+,cast,*,b,*
+    // b*(a) + a*b			// b,a,*,a,b,*,+
+    // b* (t)-a *b 			// b,t,a,unary-,cast,*,b,*
+    // b*(a) - a*b			// b,a,*,a,b,*,-
+    // b* (t)*a *b 			// b,t,a,unary*,cast,*,b,*
+    // b*(a) * a * b		// b,a,*,a,*,b,*
+    // b == (t)&a < b 		// b,t,a,unary&,cast,b,<,==
+    // b < (t)&a == b 		// b,t,a,unary&,cast,<,b,==
+    // b==(a) & a<b			// b,a,==,a,b,<,&
+    // +(t)+1				// t,1,unary+,cast,unary+
+    // +(a)+1				// a,unary+,1,+
+    // sizeof +(t)+1       	// t,1,unary+,cast,unary+,sizeof
+    // sizeof +(a)+1       	// a,unary+,sizeof,1,+
+    // b* (t)(t)+a * b		// b,t,t,a,unary+,cast,cast,*,b,*
+    // b* (t)(a)+a * b		// b,t,a,cast,*,a,b,*,+
+    // (int)(t)+1 		    // int,t,1,unary+,cast,cast
+    // (int)(a)+1 		    // int,a,cast,1,+
+    // a*a*(t)+a*a*a		// a,a,*,t,a,unary+,cast,*,a,*,a,*
+    // (typeof a)(t)-a  	// typeof a,t,a,unary-,cast,cast
+    // (typeof a)(a)-a  	// typeof a,a,cast,a,-
+    public void testBinaryVsCastAmbiguities_Bug237057() throws Exception {
+    	StringBuffer[] input= getContents(2);
+    	String code= input[0].toString();
+    	String[] samples= input[1].toString().split("\n");
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		for (String s : samples) {
+				final String[] io= s.split("//");
+	    		final String exprStr = io[0].trim();
+	    		final IASTTranslationUnit tu= parse(code + exprStr + ";}", lang);
+	    		final IASTFunctionDefinition fdef= getDeclaration(tu, 2);
+	    		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+				assertEquals("expr: " + exprStr, io[1].trim(), polnishNotation(expr));
+	    		assertEquals(exprStr, expr.getRawSignature());
+	    		checkOffsets(exprStr, expr);
+			}
+    	}
+    }
+
+    // struct s {int b;};
+    // typedef int t;
+    // struct s* a;
+    // struct s* f(struct s*);
+    // void test() {
+    
+    // (t)(a)	 			// t,a,cast
+    // (f)(a)				// f,a,()
+    // (t)(t)(a)			// t,t,a,cast,cast
+    // (t)(f)(a)			// t,f,a,(),cast
+    // (f)(a)(a)			// f,a,(),a,()
+    // (t)(f)(a)++			// t,f,a,(),++,cast
+    // (t)(t)(a)++			// t,t,a,++,cast,cast
+    // (t)(f)(a)--			// t,f,a,(),--,cast
+    // (t)(t)(a)--			// t,t,a,--,cast,cast
+    // (t)(f)(a)[0]			// t,f,a,(),0,[],cast
+    // (t)(t)(a)[0]			// t,t,a,0,[],cast,cast
+    // (t)(f)(a)->b			// t,f,a,(),b,->,cast
+    // (t)(t)(a)->b			// t,t,a,b,->,cast,cast
+    // (t)(a)+1				// t,a,cast,1,+
+    // (f)(a)+1				// f,a,(),1,+
+    // (t)(t)+1				// t,t,1,unary+,cast,cast
+    public void testCastVsFunctionCallAmbiguities_Bug237057() throws Exception {
+    	StringBuffer[] input= getContents(2);
+    	String code= input[0].toString();
+    	String[] samples= input[1].toString().split("\n");
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		for (String s : samples) {
+				final String[] io= s.split("//");
+	    		final String exprStr = io[0].trim();
+	    		final IASTTranslationUnit tu= parse(code + exprStr + ";}", lang);
+	    		final IASTFunctionDefinition fdef= getDeclaration(tu, 4);
+	    		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+				assertEquals("expr: " + exprStr, io[1].trim(), polnishNotation(expr));
+	    		assertEquals(exprStr, expr.getRawSignature());
+	    		checkOffsets(exprStr, expr);
+			}
+    	}
+    }
+
+	private void checkOffsets(String exprStr, IASTExpression expr) {
+		if (expr instanceof IASTBinaryExpression) {
+			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
+			checkOffsets(exprStr, bexpr.getOperand1());
+			checkOffsets(exprStr, bexpr.getOperand2());
+			assertEquals("in expr: " + exprStr, offset(bexpr), offset(bexpr.getOperand1()));
+			assertTrue("in expr: " + exprStr, endOffset(bexpr.getOperand1()) < offset(bexpr.getOperand2()));
+			assertEquals("in expr: " + exprStr, endOffset(bexpr), endOffset(bexpr.getOperand2()));
+		} else if (expr instanceof IASTCastExpression) {
+			IASTCastExpression castExpr= (IASTCastExpression) expr;
+			checkOffsets(exprStr, castExpr.getOperand());
+			assertTrue("in expr: " + exprStr, offset(castExpr) < offset(castExpr.getTypeId()));
+			assertTrue("in expr: " + exprStr, endOffset(castExpr.getTypeId()) < offset(castExpr.getOperand()));
+			assertEquals("in expr: " + exprStr, endOffset(castExpr), endOffset(castExpr.getOperand()));
+		} else if (expr instanceof IASTUnaryExpression) {
+			IASTUnaryExpression unaryExpr= (IASTUnaryExpression) expr;
+			checkOffsets(exprStr, unaryExpr.getOperand());
+			switch (unaryExpr.getOperator()) {
+			case IASTUnaryExpression.op_bracketedPrimary:
+				assertTrue("in expr: " + exprStr, offset(unaryExpr) < offset(unaryExpr.getOperand()));
+				assertTrue("in expr: " + exprStr, endOffset(unaryExpr.getOperand()) < endOffset(unaryExpr));
+				break;
+			case IASTUnaryExpression.op_postFixDecr:
+			case IASTUnaryExpression.op_postFixIncr:
+				assertEquals("in expr: " + exprStr, offset(expr), offset(unaryExpr.getOperand()));
+				assertTrue("in expr: " + exprStr, endOffset(unaryExpr.getOperand()) < endOffset(expr));
+				break;
+			default:
+				assertTrue("in expr: " + exprStr, offset(unaryExpr) < offset(unaryExpr.getOperand()));
+				assertEquals("in expr: " + exprStr, endOffset(unaryExpr), endOffset(unaryExpr.getOperand()));
+				break;
+			}
+		} 
+	}
+
+	private int offset(IASTNode expr) {
+		return ((ASTNode) expr).getOffset();
+	}
+
+	private int endOffset(IASTNode expr) {
+		return ((ASTNode) expr).getOffset() + ((ASTNode) expr).getLength();
+	}
+
+	private String polnishNotation(IASTExpression expr) {
+		StringBuilder buf= new StringBuilder();
+		polnishNotation(expr, buf);
+		return buf.toString();
+	}
+
+	private void polnishNotation(IASTExpression expr, StringBuilder buf) {
+		if (expr instanceof IASTBinaryExpression) {
+			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
+			polnishNotation(bexpr.getOperand1(), buf);
+			buf.append(',');
+			polnishNotation(bexpr.getOperand2(), buf);
+			buf.append(',');
+			buf.append(ASTSignatureUtil.getBinaryOperatorString(bexpr));
+		} else if (expr instanceof IASTCastExpression) {
+			IASTCastExpression castExpr= (IASTCastExpression) expr;
+			buf.append(castExpr.getTypeId().getRawSignature());
+			buf.append(',');
+			polnishNotation(castExpr.getOperand(), buf);
+			buf.append(",cast");
+		} else if (expr instanceof IASTFunctionCallExpression) {
+			IASTFunctionCallExpression f= (IASTFunctionCallExpression) expr;
+			polnishNotation(f.getFunctionNameExpression(), buf);
+			buf.append(',');
+			polnishNotation(f.getParameterExpression(), buf);
+			buf.append(",()");
+		} else if (expr instanceof IASTArraySubscriptExpression) {
+			IASTArraySubscriptExpression f= (IASTArraySubscriptExpression) expr;
+			polnishNotation(f.getArrayExpression(), buf);
+			buf.append(',');
+			polnishNotation(f.getSubscriptExpression(), buf);
+			buf.append(",[]");
+		} else if (expr instanceof IASTFieldReference) {
+			IASTFieldReference f= (IASTFieldReference) expr;
+			polnishNotation(f.getFieldOwner(), buf);
+			buf.append(',');
+			buf.append(f.getFieldName().toString());
+			buf.append(',');
+			buf.append(f.isPointerDereference() ? "->" : ".");
+		} else if (expr instanceof IASTUnaryExpression) {
+			IASTUnaryExpression unaryExpr= (IASTUnaryExpression) expr;
+			polnishNotation(unaryExpr.getOperand(), buf);
+			switch (unaryExpr.getOperator()) {
+			case IASTUnaryExpression.op_amper:
+			case IASTUnaryExpression.op_plus:
+			case IASTUnaryExpression.op_minus:
+			case IASTUnaryExpression.op_star:
+				buf.append(",unary");
+				buf.append(ASTSignatureUtil.getUnaryOperatorString(unaryExpr));
+				break;
+			case IASTUnaryExpression.op_bracketedPrimary:
+				break;
+			default:
+				buf.append(',');
+				buf.append(ASTSignatureUtil.getUnaryOperatorString(unaryExpr));
+				break;
+			}
+		} else {
+			buf.append(expr.getRawSignature());
+		}
+	}
 }

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -43,8 +44,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -80,7 +86,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  *
  * @since 5.0
  */
-public abstract class AbstractCModelOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
+public abstract class AbstractCModelOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener, IAdaptable {
 
 	/**
 	 * A specialized tree viewer for outline content.
@@ -224,6 +230,77 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		fTogglePresentation.setEditor(editor);
 		
 		fOpenIncludeAction= new OpenIncludeAction(this);
+	}
+
+	/*
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class key) {
+		if (key == IShowInSource.class) {
+			return getShowInSource();
+		}
+		if (key == IShowInTargetList.class) {
+			return new IShowInTargetList() {
+				public String[] getShowInTargetIds() {
+					return new String[] { ProjectExplorer.VIEW_ID };
+				}
+			};
+		}
+		if (key == IShowInTarget.class) {
+			return getShowInTarget();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the <code>IShowInSource</code> for this view.
+	 *
+	 * @return the {@link IShowInSource}
+	 */
+	protected IShowInSource getShowInSource() {
+		return new IShowInSource() {
+			public ShowInContext getShowInContext() {
+				return new ShowInContext(
+					null,
+					getSite().getSelectionProvider().getSelection());
+			}
+		};
+	}
+
+	/**
+	 * Returns the <code>IShowInTarget</code> for this view.
+	 *
+	 * @return the {@link IShowInTarget}
+	 */
+	protected IShowInTarget getShowInTarget() {
+		return new IShowInTarget() {
+			public boolean show(ShowInContext context) {
+				ISelection sel= context.getSelection();
+				if (sel instanceof ITextSelection) {
+					ITextSelection tsel= (ITextSelection) sel;
+					int offset= tsel.getOffset();
+					ICElement element= null;
+					if (fEditor instanceof CEditor) {
+						element= ((CEditor)fEditor).getElementAt(offset, false);
+					} else if (fInput != null) {
+						try {
+							element= fInput.getElementAtOffset(offset);
+						} catch (CModelException exc) {
+							CUIPlugin.log(exc);
+						}
+					}
+					if (element != null) {
+						setSelection(new StructuredSelection(element));
+						return true;
+					}
+				} else if (sel instanceof IStructuredSelection) {
+					setSelection(sel);
+					return true;
+				}
+				return false;
+			}
+		};
 	}
 
 	public boolean isLinkingEnabled() {

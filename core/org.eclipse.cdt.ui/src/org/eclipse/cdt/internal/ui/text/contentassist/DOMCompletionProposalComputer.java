@@ -236,7 +236,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			String repString = repStringBuff.toString();
 			String descString = descStringBuff.toString();
 			
-			CCompletionProposal proposal = createProposal(repString, descString, image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context);
+			CCompletionProposal proposal = createProposal(repString, descString, prefix.length(), image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context);
 			if (!context.isContextInformationStyle()) {
 				proposal.setCursorPosition(repString.length() - 1);
 			}
@@ -249,7 +249,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			
 			proposals.add(proposal);
 		} else
-			proposals.add(createProposal(macroName, macroName, image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context));
+			proposals.add(createProposal(macroName, macroName, prefix.length(), image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context));
 	}
 
 	protected void handleBinding(IBinding binding,
@@ -400,7 +400,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         String repString = repStringBuff.toString();
 
         final int relevance = function instanceof ICPPMethod ? RelevanceConstants.METHOD_TYPE_RELEVANCE : RelevanceConstants.FUNCTION_TYPE_RELEVANCE;
-		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, baseRelevance + relevance, context);
+		CCompletionProposal proposal = createProposal(repString, dispString, idString, context.getCompletionNode().getLength(), image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
 			proposal.setCursorPosition(repString.length() - 1);
 		}
@@ -444,7 +444,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			: isField(variable) 
 				? RelevanceConstants.FIELD_TYPE_RELEVANCE
 				: RelevanceConstants.VARIABLE_TYPE_RELEVANCE;
-		CCompletionProposal proposal = createProposal(repString, dispString, idString, image, baseRelevance + relevance, context);
+		CCompletionProposal proposal = createProposal(repString, dispString, idString, context.getCompletionNode().getLength(), image, baseRelevance + relevance, context);
 		proposals.add(proposal);
 	}
 	
@@ -502,15 +502,19 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 	
 	private CCompletionProposal createProposal(String repString, String dispString, Image image, int relevance, CContentAssistInvocationContext context) {
-		return createProposal(repString, dispString, null, image, relevance, context);
+		return createProposal(repString, dispString, null, context.getCompletionNode().getLength(), image, relevance, context);
 	}
 	
-	private CCompletionProposal createProposal(String repString, String dispString, String idString, Image image, int relevance, CContentAssistInvocationContext context) {
+	private CCompletionProposal createProposal(String repString, String dispString, int prefixLength, Image image, int relevance, CContentAssistInvocationContext context) {
+		return createProposal(repString, dispString, null, prefixLength, image, relevance, context);
+	}
+
+	private CCompletionProposal createProposal(String repString, String dispString, String idString, int prefixLength, Image image, int relevance, CContentAssistInvocationContext context) {
 		int parseOffset = context.getParseOffset();
 		int invocationOffset = context.getInvocationOffset();
 		boolean doReplacement = !context.isContextInformationStyle();
 		
-		int repLength = doReplacement ? context.getCompletionNode().getLength() : 0;
+		int repLength = doReplacement ? prefixLength : 0;
 		int repOffset = doReplacement ? parseOffset - repLength : invocationOffset;
 		repString = doReplacement ? repString : ""; //$NON-NLS-1$
 		

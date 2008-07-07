@@ -13,6 +13,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [226364][api][breaking] RemoteBaseServerLauncherForm should not implement RemoteServerLauncherConstants.
+ * David McKnight   (IBM)        - [235577] [dstore][launcher] Number 0 is accepted as valid port number
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -302,8 +303,14 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		if (launchType == ServerLaunchType.REXEC_LITERAL)
 		{
 			String port = getREXECPort();
+			int portAsInt = Integer.parseInt(port);
+						    
 			msg = _rexecPortValidator.validate(port);
 
+			// for daemons we don't allow 0
+			if (msg == null && portAsInt == 0)
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
+			
 			if (msg == null)
 			{
 				String path = getServerInstallPath();
@@ -330,7 +337,14 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		else if (launchType == ServerLaunchType.DAEMON_LITERAL)
 		{
 			String port = getDaemonPort();
+			
+			int portAsInt = Integer.parseInt(port);		    
 			msg = _daemonPortValidator.validate(port);
+
+			// for daemons we don't allow 0
+			if (msg == null && portAsInt == 0)
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
+
 
 			if (msg == null)
 			{

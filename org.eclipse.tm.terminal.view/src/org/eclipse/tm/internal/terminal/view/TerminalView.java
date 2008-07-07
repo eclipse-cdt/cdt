@@ -19,6 +19,7 @@
  * Michael Scharf (Wind River) - [217999] Duplicate context menu entries in Terminal
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
+ * Michael Scharf (Wind River) - [172483] switch between connections
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -35,8 +37,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -45,9 +49,11 @@ import org.eclipse.tm.internal.terminal.actions.TerminalAction;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionConnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionDisconnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionNewTerminal;
+import org.eclipse.tm.internal.terminal.actions.TerminalActionPin;
+import org.eclipse.tm.internal.terminal.actions.TerminalActionRemove;
+import org.eclipse.tm.internal.terminal.actions.TerminalActionSelectionDropDown;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSettings;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionToggleCommandInputField;
-import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
@@ -61,6 +67,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionFactory;
+import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionListener;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -69,14 +77,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
+public class TerminalView extends ViewPart implements ITerminalView, ITerminalViewConnectionListener {
     private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
 
     private static final String STORE_SETTING_SUMMARY = "SettingSummary"; //$NON-NLS-1$
-
-    private static final String STORE_HAS_COMMAND_INPUT_FIELD = "HasCommandInputField"; //$NON-NLS-1$
-
-	private static final String STORE_COMMAND_INPUT_FIELD_HISTORY = "CommandInputFieldHistory"; //$NON-NLS-1$
+    
+    private static final String STORE_PINNED = "Pinned"; //$NON-NLS-1$
 
 	private static final String STORE_TITLE = "Title"; //$NON-NLS-1$
 
@@ -84,6 +90,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected ITerminalViewControl fCtlTerminal;
 
+	// TODO (scharf): this decorator is only there to deal wit the common
+	// actions. Find a better solution.
+	TerminalViewControlDecorator fCtlDecorator=new TerminalViewControlDecorator();
+	
 	protected TerminalAction fActionTerminalNewTerminal;
 
 	protected TerminalAction fActionTerminalConnect;
@@ -108,12 +118,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected TerminalPropertyChangeHandler fPropertyChangeHandler;
 
+	protected Action fActionTerminalDropDown;
+	protected Action fActionTerminalPin;
+	protected Action fActionTerminalRemove;
+
 	protected boolean fMenuAboutToShow;
 
 	private SettingsStore fStore;
 
-	private CommandInputFieldWithHistory fCommandInputField;
-
+	private final ITerminalViewConnectionManager fMultiConnectionManager=new TerminalViewConnectionManager();
 	/**
 	 * Listens to changes in the preferences
 	 */
@@ -126,11 +139,66 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			}
 		}
 	};
+
+	private PageBook fPageBook;
+
+	private boolean fPinned=true;
+
+	/**
+	 * This listener updates both, the view and the 
+	 * ITerminalViewConnection.
+	 *
+	 */
+	class TerminalListener implements ITerminalListener {
+		volatile ITerminalViewConnection fConnection;
+		void setConnection(ITerminalViewConnection connection) {
+			fConnection=connection;
+		}
+		public void setState(final TerminalState state) {
+			runInDisplayThread(new Runnable() {
+				public void run() {
+					fConnection.setState(state);
+					// if the active connection changes, update the view
+					if(fConnection==fMultiConnectionManager.getActiveConnection()) {
+						updateStatus();
+					}
+				}
+			});
+		}
+		public void setTerminalTitle(final String title) {
+			runInDisplayThread(new Runnable() {
+				public void run() {
+					fConnection.setTerminalTitle(title);
+					// if the active connection changes, update the view
+					if(fConnection==fMultiConnectionManager.getActiveConnection()) {
+						updateSummary();
+					}
+				}
+			});
+		}
+		/**
+		 * @param runnable run in display thread
+		 */
+		private void runInDisplayThread(Runnable runnable) {
+			if(Display.findDisplay(Thread.currentThread())!=null)
+				runnable.run();
+			else if(PlatformUI.isWorkbenchRunning())
+				PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
+			// else should not happen and we ignore it...
+		}
+		
+	}
+	
 	public TerminalView() {
 		Logger
 				.log("==============================================================="); //$NON-NLS-1$
+		fMultiConnectionManager.addListener(this);
 	}
 
+	/**
+	 * @param title
+	 * @return a unique part name
+	 */
 	String findUniqueTitle(String title) {
 		IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 		String id=	getViewSite().getId();
@@ -165,58 +233,47 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 //		if(!limitOutput)
 //			bufferLineLimit=-1;
 		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
-		fCtlTerminal.setBufferLineLimit(bufferLineLimit);
-		fCtlTerminal.setInvertedColors(preferences.getBoolean(TerminalPreferencePage.PREF_INVERT_COLORS));
+		boolean invert=preferences.getBoolean(TerminalPreferencePage.PREF_INVERT_COLORS);
+		// update the preferences for all controls
+		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
+		for (int i = 0; i < conn.length; i++) {
+			conn[i].getCtlTerminal().setBufferLineLimit(bufferLineLimit);
+			conn[i].getCtlTerminal().setInvertedColors(invert);
+		}
 	}
-	// TerminalTarget interface
-	public void setState(final TerminalState state) {
-		Runnable runnable=new Runnable() {
-			public void run() {
-				updateStatus();
-				onTerminalStatus();
-			}
-		};
-		runInDisplayThread(runnable);
-	}
-
-	/**
-	 * @param runnable run in display thread
-	 */
-	private void runInDisplayThread(Runnable runnable) {
-		if(Display.findDisplay(Thread.currentThread())!=null)
-			runnable.run();
-		else if(PlatformUI.isWorkbenchRunning())
-			PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
-		// else should not happen and we ignore it...
-	}
-
-
 	/**
 	 * Display a new Terminal view.  This method is called when the user clicks the New
 	 * Terminal button in any Terminal view's toolbar.
 	 */
 	public void onTerminalNewTerminal() {
 		Logger.log("creating new Terminal instance."); //$NON-NLS-1$
+		if(isPinned()) {
+			try {
+				// The second argument to showView() is a unique String identifying the
+				// secondary view instance.  If it ever matches a previously used secondary
+				// view identifier, then this call will not create a new Terminal view,
+				// which is undesirable.  Therefore, we append the active time in
+				// milliseconds to the secondary view identifier to ensure it is always
+				// unique.  This code runs only when the user clicks the New Terminal
+				// button, so there is no risk that this code will run twice in a single
+				// millisecond.
 
-		try {
-			// The second argument to showView() is a unique String identifying the
-			// secondary view instance.  If it ever matches a previously used secondary
-			// view identifier, then this call will not create a new Terminal view,
-			// which is undesirable.  Therefore, we append the current time in
-			// milliseconds to the secondary view identifier to ensure it is always
-			// unique.  This code runs only when the user clicks the New Terminal
-			// button, so there is no risk that this code will run twice in a single
-			// millisecond.
-
-			getSite().getPage().showView(
-					"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
-					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
-					IWorkbenchPage.VIEW_ACTIVATE);
-		} catch (PartInitException ex) {
-			Logger.logException(ex);
+				getSite().getPage().showView(
+						"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
+						"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
+						IWorkbenchPage.VIEW_ACTIVATE);
+			} catch (PartInitException ex) {
+				Logger.logException(ex);
+			}
+		} else {
+			setupControls();
+			if(newConnection()==null) {
+				fMultiConnectionManager.removeActive();
+			}
 		}
 	}
 
+	
 	public void onTerminalConnect() {
 		//if (isConnected())
 		if (fCtlTerminal.getState()!=TerminalState.CLOSED)
@@ -230,6 +287,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		updateTerminalConnect();
 		updateTerminalDisconnect();
 		updateTerminalSettings();
+		fActionToggleCommandInputField.setChecked(hasCommandInputField());
+		updateSummary();
 	}
 
 	public void updateTerminalConnect() {
@@ -254,20 +313,27 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public void onTerminalSettings() {
+		newConnection();
+	}
+
+	private ITerminalConnector newConnection() {
 		ITerminalConnector c=showSettingsDialog();
 		if(c!=null) {
 			setConnector(c);
-
 			onTerminalConnect();
 		}
+		return c;
 	}
 
 	private ITerminalConnector showSettingsDialog() {
 		// When the settings dialog is opened, load the Terminal settings from the
 		// persistent settings.
 
-		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),fCtlTerminal.getConnectors(),fCtlTerminal.getTerminalConnector());
-		dlgTerminalSettings.setTerminalTitle(getPartName());
+		ITerminalConnector[] connectors = fCtlTerminal.getConnectors();
+		if(fCtlTerminal.getState()!=TerminalState.CLOSED)
+			connectors=new ITerminalConnector[0];
+		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),connectors,fCtlTerminal.getTerminalConnector());
+		dlgTerminalSettings.setTerminalTitle(getActiveConnection().getPartName());
 		Logger.log("opening Settings dialog."); //$NON-NLS-1$
 
 		if (dlgTerminalSettings.open() == Window.CANCEL) {
@@ -280,7 +346,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		// When the settings dialog is closed, we persist the Terminal settings.
 
 		saveSettings(dlgTerminalSettings.getConnector());
-		setPartName(dlgTerminalSettings.getTerminalTitle());
+		setViewTitle(dlgTerminalSettings.getTerminalTitle());
 		return dlgTerminalSettings.getConnector();
 	}
 
@@ -289,87 +355,30 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public void updateTerminalSettings() {
-		//boolean bEnabled = ((!isConnecting()) && (!fCtlTerminal.isConnected()));
-		boolean bEnabled = (fCtlTerminal.getState()==TerminalState.CLOSED);
-
-		fActionTerminalSettings.setEnabled(bEnabled);
+//		fActionTerminalSettings.setEnabled((fCtlTerminal.getState()==TerminalState.CLOSED));
 	}
-
-	public void setTerminalTitle(final String strTitle) {
-		runInDisplayThread(new Runnable() {
-
-			public void run() {
-				runSetTitle(strTitle);
-			}});
+	private void setViewTitle(String title) {
+		setPartName(title);
+		getActiveConnection().setPartName(title);
 	}
-
-	private void runSetTitle(String strTitle) {
-		if (fCtlTerminal.isDisposed())
-			return;
-
-		if (strTitle != null) {
-			// When parameter 'data' is not null, it is a String containing text to
-			// display in the view's content description line.  This is used by class
-			// TerminalText when it processes an ANSI OSC escape sequence that commands
-			// the terminal to display text in its title bar.
-		} else if(fCtlTerminal.getTerminalConnector()==null){
-			strTitle=ViewMessages.NO_CONNECTION_SELECTED;
-		} else {
-			// When parameter 'data' is null, we construct a descriptive string to
-			// display in the content description line.
-			String strConnected = getStateDisplayName(fCtlTerminal.getState());
-			String summary = getSettingsSummary();
-			//TODO Title should use an NLS String and com.ibm.icu.MessageFormat
-			//In order to make the logic of assembling, and the separators, better adapt to foreign languages
-			if(summary.length()>0)
-				summary=summary+" - ";  //$NON-NLS-1$
-			String name=fCtlTerminal.getTerminalConnector().getName();
-			if(name.length()>0) {
-				name+=": "; //$NON-NLS-1$
-			}
-			strTitle = name + "("+ summary + strConnected + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		setContentDescription(strTitle);
+	private void setViewSummary(String summary) {
+		setContentDescription(summary);
 		getViewSite().getActionBars().getStatusLineManager().setMessage(
-				strTitle);
-		setTitleToolTip(getPartName()+": "+strTitle); //$NON-NLS-1$
+				summary);
+		setTitleToolTip(getPartName()+": "+summary); //$NON-NLS-1$
+		
 	}
-	/**
-	 * @return the setting summary. If there is no connection, or the connection
-	 * has not been initialized, use the last stored state.
-	 */
-	private String getSettingsSummary() {
-		// TODO: use another mechanism than "?" for the magic non initialized state
-		// see TerminalConnectorProxy.getSettingsSummary
-		String summary="?"; //$NON-NLS-1$
-		if(fCtlTerminal.getTerminalConnector()!=null)
-			summary=fCtlTerminal.getSettingsSummary();
-		if("?".equals(summary)) { //$NON-NLS-1$
-			summary=fStore.get(STORE_SETTING_SUMMARY, ""); //$NON-NLS-1$
-		}
-		return summary;
-	}
-	public void onTerminalStatus() {
-		setTerminalTitle(null);
-	}
-
-	private String getStateDisplayName(TerminalState state) {
-		if(state==TerminalState.CONNECTED) {
-			return ViewMessages.STATE_CONNECTED;
-		} else if(state==TerminalState.CONNECTING) {
-			return ViewMessages.STATE_CONNECTING;
-		} else if(state==TerminalState.OPENED) {
-			return ViewMessages.STATE_OPENED;
-		} else if(state==TerminalState.CLOSED) {
-			return ViewMessages.STATE_CLOSED;
-		} else {
-			throw new IllegalStateException(state.toString());
-		}
+	public void updateSummary() {
+		setViewSummary(getActiveConnection().getFullSummary());
 	}
 
 	public void onTerminalFontChanged() {
-		fCtlTerminal.setFont(JFaceResources.getFont(FONT_DEFINITION));
+		// set the font for all 
+		Font font=JFaceResources.getFont(FONT_DEFINITION);
+		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
+		for (int i = 0; i < conn.length; i++) {
+			conn[i].getCtlTerminal().setFont(font);
+		}
 	}
 
 	// ViewPart interface
@@ -378,25 +387,54 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		// Bind plugin.xml key bindings to this plugin.  Overrides global Control-W key
 		// sequence.
 
-		setPartName(findUniqueTitle(ViewMessages.PROP_TITLE));
-		setupControls(wndParent);
+		fPageBook=new PageBook(wndParent,SWT.NONE);
+		ISettingsStore s=new SettingStorePrefixDecorator(fStore,"connectionManager"); //$NON-NLS-1$
+		fMultiConnectionManager.loadState(s,new ITerminalViewConnectionFactory() {
+			public ITerminalViewConnection create() {
+				return makeViewConnection();
+			}
+		});
+		// if there is no connection loaded, create at least one
+		// needed to read old states from the old terminal
+		if(fMultiConnectionManager.size()==0) {
+			ITerminalViewConnection conn = makeViewConnection();
+			fMultiConnectionManager.addConnection(conn);
+			fMultiConnectionManager.setActiveConnection(conn);
+			fPageBook.showPage(fCtlTerminal.getRootControl());
+		}
+		setTerminalControl(fMultiConnectionManager.getActiveConnection().getCtlTerminal());
+		setViewTitle(findUniqueTitle(ViewMessages.PROP_TITLE));
 		setupActions();
 		setupLocalToolBars();
-		setupContextMenus();
+		// setup all context menus
+		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
+		for (int i = 0; i < conn.length; i++) {
+			setupContextMenus(conn[i].getCtlTerminal().getControl());
+		}
 		setupListeners(wndParent);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(wndParent, TerminalViewPlugin.HELPPREFIX + "terminal_page"); //$NON-NLS-1$
 
-		onTerminalStatus();
+		legacyLoadState();
+		legacySetTitle();
+
+		refresh();
 		onTerminalFontChanged();
+
 	}
+
 	public void dispose() {
 		Logger.log("entered."); //$NON-NLS-1$
 
 		TerminalViewPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
-		fCtlTerminal.disposeTerminal();
+		
+		// dispose all connections
+		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
+		for (int i = 0; i < conn.length; i++) {
+			conn[i].getCtlTerminal().disposeTerminal();
+		}
 		super.dispose();
 	}
 	/**
@@ -409,24 +447,31 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	/**
 	 * This method creates the top-level control for the Terminal view.
 	 */
-	protected void setupControls(Composite wndParent) {
-		ITerminalConnector[] connectors = makeConnectors();
-		fCtlTerminal = TerminalViewControlFactory.makeControl(this, wndParent, connectors);
+	protected void setupControls() {
+		ITerminalViewConnection conn = makeViewConnection();
+		fMultiConnectionManager.addConnection(conn);
+		fMultiConnectionManager.setActiveConnection(conn);
+		setupContextMenus(fCtlTerminal.getControl());
+	}
 
+	private ITerminalViewConnection makeViewConnection() {
+		ITerminalConnector[] connectors = makeConnectors();
+		TerminalListener listener=new TerminalListener();
+		ITerminalViewControl ctrl = TerminalViewControlFactory.makeControl(listener, fPageBook, connectors);
+		setTerminalControl(ctrl);
+		ITerminalViewConnection conn = new TerminalViewConnection(fCtlTerminal);
+		listener.setConnection(conn);
+		conn.setPartName(getPartName());
 		String connectionType=fStore.get(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(connectors[i]));
 			if(connectors[i].getId().equals(connectionType))
-				fCtlTerminal.setConnector(connectors[i]);
+				ctrl.setConnector(connectors[i]);
 		}
-		setCommandInputField("true".equals(fStore.get(STORE_HAS_COMMAND_INPUT_FIELD))); //$NON-NLS-1$
 		updatePreferences();
 		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
-
-		// restore the title of this view
-		String title=fStore.get(STORE_TITLE);
-		if(title!=null && title.length()>0)
-			setPartName(title);
+		
+		return conn;
 	}
 
 	/**
@@ -450,15 +495,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fStore=new SettingsStore(memento);
+		// have we stored the pinned status?
+		if(fStore.get(STORE_PINNED)!=null)
+			setPinned("true".equals(fStore.get(STORE_PINNED))); //$NON-NLS-1$
 	}
-
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		if(fCommandInputField!=null)
-			fStore.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
-		fStore.put(STORE_HAS_COMMAND_INPUT_FIELD,hasCommandInputField()?"true":"false");   //$NON-NLS-1$//$NON-NLS-2$
-		fStore.put(STORE_SETTING_SUMMARY, getSettingsSummary());
+		fStore.put(STORE_PINNED, isPinned()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
 		fStore.put(STORE_TITLE,getPartName());
+		fMultiConnectionManager.saveState(new SettingStorePrefixDecorator(fStore,"connectionManager")); //$NON-NLS-1$
 		fStore.saveState(memento);
 	}
 	private ISettingsStore getStore(ITerminalConnector connector) {
@@ -466,36 +511,42 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	protected void setupActions() {
+		fActionTerminalDropDown = new TerminalActionSelectionDropDown(fMultiConnectionManager);
+		fActionTerminalPin=new TerminalActionPin(this);
+		fActionTerminalPin.setChecked(isPinned());
+		fActionTerminalRemove=new TerminalActionRemove(fMultiConnectionManager);
 		fActionTerminalNewTerminal = new TerminalActionNewTerminal(this);
 //		fActionTerminalScrollLock = new TerminalActionScrollLock(this);
 		fActionTerminalConnect = new TerminalActionConnect(this);
 		fActionTerminalDisconnect = new TerminalActionDisconnect(this);
 		fActionTerminalSettings = new TerminalActionSettings(this);
-		fActionEditCopy = new TerminalActionCopy(fCtlTerminal);
-		fActionEditCut = new TerminalActionCut(fCtlTerminal);
-		fActionEditPaste = new TerminalActionPaste(fCtlTerminal);
-		fActionEditClearAll = new TerminalActionClearAll(fCtlTerminal);
-		fActionEditSelectAll = new TerminalActionSelectAll(fCtlTerminal);
+		fActionEditCopy = new TerminalActionCopy(fCtlDecorator);
+		fActionEditCut = new TerminalActionCut(fCtlDecorator);
+		fActionEditPaste = new TerminalActionPaste(fCtlDecorator);
+		fActionEditClearAll = new TerminalActionClearAll(fCtlDecorator);
+		fActionEditSelectAll = new TerminalActionSelectAll(fCtlDecorator);
 		fActionToggleCommandInputField = new TerminalActionToggleCommandInputField(this);
 	}
 	protected void setupLocalToolBars() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 
-		toolBarMgr.add(fActionTerminalNewTerminal);
 //		toolBarMgr.add(fActionTerminalScrollLock);
 		toolBarMgr.add(fActionTerminalConnect);
 		toolBarMgr.add(fActionTerminalDisconnect);
 		toolBarMgr.add(fActionTerminalSettings);
 		toolBarMgr.add(fActionToggleCommandInputField);
+		toolBarMgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
+		toolBarMgr.add(fActionTerminalPin);
+		toolBarMgr.add(fActionTerminalDropDown);
+		toolBarMgr.add(fActionTerminalNewTerminal);
+		toolBarMgr.add(fActionTerminalRemove);
 	}
 
-	protected void setupContextMenus() {
-		Control ctlText;
+	protected void setupContextMenus(Control ctlText) {
 		MenuManager menuMgr;
 		Menu menu;
 		TerminalContextMenuHandler contextMenuHandler;
 
-		ctlText = fCtlTerminal.getControl();
 		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menu = menuMgr.createContextMenu(ctlText);
 		loadContextMenus(menuMgr);
@@ -554,20 +605,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public boolean hasCommandInputField() {
-		return fCommandInputField!=null;
+		return getActiveConnection().hasCommandInputField();
 	}
+
 	public void setCommandInputField(boolean on) {
-		// save the old history
-		if(fCommandInputField!=null) {
-			fStore.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
-			fCommandInputField=null;
-		}
-		if(on) {
-			// TODO make history size configurable
-			fCommandInputField=new CommandInputFieldWithHistory(100);
-			fCommandInputField.setHistory(fStore.get(STORE_COMMAND_INPUT_FIELD_HISTORY));
-		}
-		fCtlTerminal.setCommandInputField(fCommandInputField);
+		getActiveConnection().setCommandInputField(on);
 	}
 
 	public boolean isScrollLock() {
@@ -577,4 +619,71 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	public void setScrollLock(boolean on) {
 		fCtlTerminal.setScrollLock(on);
 	}
+
+	private ITerminalViewConnection getActiveConnection() {
+		return fMultiConnectionManager.getActiveConnection();
+	}
+	/**
+	 * @param ctrl this control becomes the currently used one
+	 */
+	private void setTerminalControl(ITerminalViewControl ctrl) {
+		fCtlTerminal=ctrl;
+		fCtlDecorator.setViewContoler(ctrl);
+	}
+	public void connectionsChanged() {
+		if(getActiveConnection()!=null) {
+			// update the active {@link ITerminalViewControl}
+			ITerminalViewControl ctrl = getActiveConnection().getCtlTerminal();
+			if(fCtlTerminal!=ctrl) {
+				setTerminalControl(ctrl);
+				refresh();
+			}
+		}	
+	}
+
+	/**
+	 * Show the active {@link ITerminalViewControl} in the view
+	 */
+	private void refresh() {
+		fPageBook.showPage(fCtlTerminal.getRootControl());
+		updateStatus();
+		setPartName(getActiveConnection().getPartName());
+	}
+
+	public void setPinned(boolean pinned) {
+		fPinned=pinned;
+	}
+	public boolean isPinned() {
+		return fPinned;
+	}
+
+	/**
+	 * TODO REMOVE This code (added 2008-06-11)
+	 * Legacy code to real the old state. Once the state of the
+	 * terminal has been saved this method is not needed anymore.
+	 * Remove this code with eclipse 3.5.
+	 */
+	private void legacyLoadState() {
+		// TODO legacy: load the old title....
+		String summary=fStore.get(STORE_SETTING_SUMMARY);
+		if(summary!=null) {
+			getActiveConnection().setSummary(summary);
+			fStore.put(STORE_SETTING_SUMMARY,null);
+		}
+	}
+	/**
+	 * TODO REMOVE This code (added 2008-06-11)
+	 * Legacy code to real the old state. Once the state of the
+	 * terminal has been saved this method is not needed anymore.
+	 * Remove this code with eclipse 3.5.
+	 */
+	private void legacySetTitle() {
+		// restore the title of this view
+		String title=fStore.get(STORE_TITLE);
+		if(title!=null && title.length()>0) {
+			setViewTitle(title);
+			fStore.put(STORE_TITLE, null);
+		}
+	}
+
 }

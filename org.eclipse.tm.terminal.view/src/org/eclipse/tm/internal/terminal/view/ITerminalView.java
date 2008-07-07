@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [227537] moved actions from terminal.view to terminal plugin
+ * Michael Scharf (Wind River) - [172483] switch between connections
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -26,4 +27,6 @@ public interface ITerminalView {
 	public void setCommandInputField(boolean on);
 	public boolean isScrollLock();
 	public void setScrollLock(boolean b);
+	public void setPinned(boolean pin);
+	public boolean isPinned();
 }

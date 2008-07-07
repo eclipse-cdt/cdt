@@ -20,6 +20,7 @@ package org.eclipse.tm.internal.terminal.actions;
 import org.eclipse.osgi.util.NLS;
 
 public class ActionMessages extends NLS {
+
 	static {
 		NLS.initializeMessages(ActionMessages.class.getName(), ActionMessages.class);
 	}
@@ -30,6 +31,11 @@ public class ActionMessages extends NLS {
     public static String  SETTINGS_ELLIPSE;
     public static String  SCROLL_LOCK_0;
     public static String  SCROLL_LOCK_1;
+	public static String  REMOVE;
+	public static String  PIN;
+
+    public static String ConsoleDropDownAction_0;
+    public static String ConsoleDropDownAction_1;
 
     public static String  SETTINGS;
 

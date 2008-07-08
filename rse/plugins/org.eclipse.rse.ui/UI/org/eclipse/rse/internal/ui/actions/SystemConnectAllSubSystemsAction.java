@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
+ * David McKnight   (IBM)        - [237970]  Subsystem.connect( ) fails for substituting host name when isOffline( ) is true
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -130,6 +131,7 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 	public boolean checkObjectType(Object obj) 
 	{
 	    if ((obj instanceof IHost) &&
+	    		!((IHost)obj).isOffline() &&
 	            !sr.areAllSubSystemsConnected((IHost)obj))
 	    {
 	        return true;

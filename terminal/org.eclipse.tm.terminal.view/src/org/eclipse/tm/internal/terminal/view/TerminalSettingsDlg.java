@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
+ * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -61,6 +62,7 @@ class TerminalSettingsDlg extends Dialog {
 	private PageBook fPageBook;
 	private IDialogSettings fDialogSettings;
 	private String fTerminalTitle;
+	private String fTitle=ViewMessages.TERMINALSETTINGS;
 
 	public TerminalSettingsDlg(Shell shell, ITerminalConnector[] connectors, ITerminalConnector connector) {
 		super(shell);
@@ -72,6 +74,9 @@ class TerminalSettingsDlg extends Dialog {
 			if(fConnectors[i]==connector)
 				fSelectedConnector=i;
 		}
+	}
+	public void setTitle(String title) {
+		fTitle=title;
 	}
 	/**
 	 * @param connectors
@@ -162,7 +167,7 @@ class TerminalSettingsDlg extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
-		newShell.setText(ViewMessages.TERMINALSETTINGS);
+		newShell.setText(fTitle);
 	}
 	protected Control createDialogArea(Composite parent) {
 		Composite ctlComposite = (Composite) super.createDialogArea(parent);

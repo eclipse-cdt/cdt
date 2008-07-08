@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -27,6 +28,8 @@ public class ViewMessages extends NLS {
     public static String SETTINGS;
 
     public static String TERMINALSETTINGS;
+    public static String NEW_TERMINAL_CONNECTION;
+    public static String NEW_TERMINAL_VIEW;
     public static String CONNECTIONTYPE;
 	public static String VIEW_TITLE;
 	public static String VIEW_SETTINGS;

@@ -20,6 +20,7 @@
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  * Michael Scharf (Wind River) - [172483] switch between connections
+ * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -49,7 +50,6 @@ import org.eclipse.tm.internal.terminal.actions.TerminalAction;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionConnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionDisconnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionNewTerminal;
-import org.eclipse.tm.internal.terminal.actions.TerminalActionPin;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionRemove;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSelectionDropDown;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSettings;
@@ -82,8 +82,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
     private static final String STORE_SETTING_SUMMARY = "SettingSummary"; //$NON-NLS-1$
     
-    private static final String STORE_PINNED = "Pinned"; //$NON-NLS-1$
-
 	private static final String STORE_TITLE = "Title"; //$NON-NLS-1$
 
 	public static final String  FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
@@ -119,7 +117,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	protected TerminalPropertyChangeHandler fPropertyChangeHandler;
 
 	protected Action fActionTerminalDropDown;
-	protected Action fActionTerminalPin;
 	protected Action fActionTerminalRemove;
 
 	protected boolean fMenuAboutToShow;
@@ -141,8 +138,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	};
 
 	private PageBook fPageBook;
-
-	private boolean fPinned=true;
 
 	/**
 	 * This listener updates both, the view and the 
@@ -247,29 +242,29 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 */
 	public void onTerminalNewTerminal() {
 		Logger.log("creating new Terminal instance."); //$NON-NLS-1$
-		if(isPinned()) {
-			try {
-				// The second argument to showView() is a unique String identifying the
-				// secondary view instance.  If it ever matches a previously used secondary
-				// view identifier, then this call will not create a new Terminal view,
-				// which is undesirable.  Therefore, we append the active time in
-				// milliseconds to the secondary view identifier to ensure it is always
-				// unique.  This code runs only when the user clicks the New Terminal
-				// button, so there is no risk that this code will run twice in a single
-				// millisecond.
+		setupControls();
+		if(newConnection()==null) {
+			fMultiConnectionManager.removeActive();
+		}
+	}
 
-				getSite().getPage().showView(
-						"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
-						"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
-						IWorkbenchPage.VIEW_ACTIVATE);
-			} catch (PartInitException ex) {
-				Logger.logException(ex);
-			}
-		} else {
-			setupControls();
-			if(newConnection()==null) {
-				fMultiConnectionManager.removeActive();
-			}
+	public void onTerminalNewView() {
+		try {
+			// The second argument to showView() is a unique String identifying the
+			// secondary view instance.  If it ever matches a previously used secondary
+			// view identifier, then this call will not create a new Terminal view,
+			// which is undesirable.  Therefore, we append the active time in
+			// milliseconds to the secondary view identifier to ensure it is always
+			// unique.  This code runs only when the user clicks the New Terminal
+			// button, so there is no risk that this code will run twice in a single
+			// millisecond.
+
+			getSite().getPage().showView(
+					"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
+					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
+					IWorkbenchPage.VIEW_ACTIVATE);
+		} catch (PartInitException ex) {
+			Logger.logException(ex);
 		}
 	}
 
@@ -495,13 +490,9 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fStore=new SettingsStore(memento);
-		// have we stored the pinned status?
-		if(fStore.get(STORE_PINNED)!=null)
-			setPinned("true".equals(fStore.get(STORE_PINNED))); //$NON-NLS-1$
 	}
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		fStore.put(STORE_PINNED, isPinned()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
 		fStore.put(STORE_TITLE,getPartName());
 		fMultiConnectionManager.saveState(new SettingStorePrefixDecorator(fStore,"connectionManager")); //$NON-NLS-1$
 		fStore.saveState(memento);
@@ -512,8 +503,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 	protected void setupActions() {
 		fActionTerminalDropDown = new TerminalActionSelectionDropDown(fMultiConnectionManager);
-		fActionTerminalPin=new TerminalActionPin(this);
-		fActionTerminalPin.setChecked(isPinned());
 		fActionTerminalRemove=new TerminalActionRemove(fMultiConnectionManager);
 		fActionTerminalNewTerminal = new TerminalActionNewTerminal(this);
 //		fActionTerminalScrollLock = new TerminalActionScrollLock(this);
@@ -536,7 +525,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		toolBarMgr.add(fActionTerminalSettings);
 		toolBarMgr.add(fActionToggleCommandInputField);
 		toolBarMgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
-		toolBarMgr.add(fActionTerminalPin);
 		toolBarMgr.add(fActionTerminalDropDown);
 		toolBarMgr.add(fActionTerminalNewTerminal);
 		toolBarMgr.add(fActionTerminalRemove);
@@ -649,14 +637,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		updateStatus();
 		setPartName(getActiveConnection().getPartName());
 	}
-
-	public void setPinned(boolean pinned) {
-		fPinned=pinned;
-	}
-	public boolean isPinned() {
-		return fPinned;
-	}
-
 	/**
 	 * TODO REMOVE This code (added 2008-06-11)
 	 * Legacy code to real the old state. Once the state of the

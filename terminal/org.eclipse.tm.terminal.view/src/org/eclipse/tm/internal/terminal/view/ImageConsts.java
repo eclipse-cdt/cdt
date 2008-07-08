@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Michael Scharf (Wind River) - [172483] added some more icons
+ * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -33,20 +34,17 @@ public interface ImageConsts
     public static final String  IMAGE_CLCL_DISCONNECT          = "ImageClclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SETTINGS            = "ImageClclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_CLCL_SCROLL_LOCK         = "ImageClclScrollLock"; //$NON-NLS-1$
-    public static final String  IMAGE_CLCL_PIN         	       = "ImageClclPin"; //$NON-NLS-1$
 
     public static final String  IMAGE_DLCL_CONNECT             = "ImageDlclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_DISCONNECT          = "ImageDlclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SETTINGS            = "ImageDlclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_SCROLL_LOCK         = "ImageDlclScrollLock"; //$NON-NLS-1$
-    public static final String  IMAGE_DLCL_PIN         	       = "ImageDlclPin"; //$NON-NLS-1$
     public static final String  IMAGE_DLCL_REMOVE         	   = "ImageDlclRemove"; //$NON-NLS-1$
 
     public static final String  IMAGE_ELCL_CONNECT             = "ImageElclConnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_DISCONNECT          = "ImageElclDisconnect"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SETTINGS            = "ImageElclSettings"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_SCROLL_LOCK         = "ImageElclScrollLock"; //$NON-NLS-1$
-    public static final String  IMAGE_ELCL_PIN         	       = "ImageElclPin"; //$NON-NLS-1$
     public static final String  IMAGE_ELCL_REMOVE         	   = "ImageElclRemove"; //$NON-NLS-1$
 	public static final String  IMAGE_CLCL_COMMAND_INPUT_FIELD        = "ImageClclCommandInputField";//$NON-NLS-1$
 	public static final String  IMAGE_ELCL_COMMAND_INPUT_FIELD        = "ImageDlclCommandInputField";//$NON-NLS-1$

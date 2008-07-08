@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -79,9 +82,12 @@ class PDOMCPPMethodTemplateSpecialization extends
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		IBinding spec = getSpecializedBinding();
-		if (spec instanceof ICPPMethod) {
-			((ICPPMethod)spec).getClassOwner();
+		IScope scope= getScope();
+		if (scope instanceof ICPPTemplateScope) {
+			scope= scope.getParent();
+		}
+		if( scope instanceof ICPPClassScope ){
+			return ((ICPPClassScope)scope).getClassType();
 		}
 		return null;
 	}

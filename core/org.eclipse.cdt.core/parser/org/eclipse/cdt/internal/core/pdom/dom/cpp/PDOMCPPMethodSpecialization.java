@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -101,9 +103,10 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
-		if( f != null )
-			return f.getClassOwner();
+		IScope scope= getScope();
+		if (scope instanceof ICPPClassScope) {
+			return ((ICPPClassScope) scope).getClassType();
+		}
 		return null;
 	}
 

@@ -303,7 +303,16 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		if (launchType == ServerLaunchType.REXEC_LITERAL)
 		{
 			String port = getREXECPort();
-			int portAsInt = Integer.parseInt(port);
+			
+			int portAsInt = 0;
+			if (port != null && port.length() > 0){
+				try {
+					portAsInt = Integer.parseInt(port);
+				}
+				catch (Exception e){
+					portAsInt = 0;
+				}
+			}
 						    
 			msg = _rexecPortValidator.validate(port);
 
@@ -337,8 +346,17 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		else if (launchType == ServerLaunchType.DAEMON_LITERAL)
 		{
 			String port = getDaemonPort();
+				
+			int portAsInt = 0;
+			if (port != null && port.length() > 0){
+				try {
+					portAsInt = Integer.parseInt(port);
+				}
+				catch (Exception e){
+					portAsInt = 0;
+				}
+			}
 			
-			int portAsInt = Integer.parseInt(port);		    
 			msg = _daemonPortValidator.validate(port);
 
 			// for daemons we don't allow 0

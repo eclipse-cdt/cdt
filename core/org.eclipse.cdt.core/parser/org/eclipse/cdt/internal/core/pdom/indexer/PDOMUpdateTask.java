@@ -87,7 +87,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 			}
 		}
 		ITranslationUnit[] tus= set.toArray(new ITranslationUnit[set.size()]);
-		IPDOMIndexerTask delegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
+		IPDOMIndexerTask delegate= fIndexer.createTask(NO_TUS, tus, NO_TUS);
 		if (delegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask task = (PDOMIndexerTask) delegate;
 			task.setUpdateFlags(fUpdateOptions);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class DeltaAnalyzer {
-	private List<ITranslationUnit> fAdded= new ArrayList<ITranslationUnit>();
+	private List<ITranslationUnit> fForce= new ArrayList<ITranslationUnit>();
 	private List<ITranslationUnit> fChanged= new ArrayList<ITranslationUnit>();
 	private List<ITranslationUnit> fRemoved= new ArrayList<ITranslationUnit>();
 	
@@ -56,7 +55,7 @@ public class DeltaAnalyzer {
 					}
 					break;
 				case ICElementDelta.ADDED:
-					fAdded.add(tu);
+					fChanged.add(tu);
 					break;
 				case ICElementDelta.REMOVED:
 					fRemoved.add(tu);
@@ -67,7 +66,7 @@ public class DeltaAnalyzer {
 		case ICElement.C_CCONTAINER:
 			ICContainer folder= (ICContainer) element;
 			if (delta.getKind() == ICElementDelta.ADDED) {
-				collectSources(folder, fAdded);
+				collectSources(folder, fChanged);
 			}
 			break;
 		}
@@ -77,8 +76,8 @@ public class DeltaAnalyzer {
 		container.accept(new TranslationUnitCollector(sources, sources, new NullProgressMonitor()));
 	}
 
-	public ITranslationUnit[] getAddedTUs() {
-		return fAdded.toArray(new ITranslationUnit[fAdded.size()]);
+	public ITranslationUnit[] getForcedTUs() {
+		return fForce.toArray(new ITranslationUnit[fForce.size()]);
 	}
 
 	public ITranslationUnit[] getChangedTUs() {
@@ -89,8 +88,8 @@ public class DeltaAnalyzer {
 		return fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
 	}
 
-	public List<ITranslationUnit> getAddedList() {
-		return fAdded;
+	public List<ITranslationUnit> getForcedList() {
+		return fForce;
 	}
 
 	public List<ITranslationUnit> getChangedList() {

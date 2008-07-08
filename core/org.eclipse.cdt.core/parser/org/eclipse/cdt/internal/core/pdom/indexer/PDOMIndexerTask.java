@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Sergey Prigogin (Google)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.text.NumberFormat;
@@ -20,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -54,9 +54,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	private AbstractPDOMIndexer fIndexer;
 	private boolean fWriteInfoToLog;
 	
-	protected PDOMIndexerTask(ITranslationUnit[] addFiles, ITranslationUnit[] updateFiles, ITranslationUnit[] removeFiles, 
+	protected PDOMIndexerTask(ITranslationUnit[] forceFiles, ITranslationUnit[] updateFiles, ITranslationUnit[] removeFiles, 
 			AbstractPDOMIndexer indexer, boolean isFastIndexer) {
-		super(concat(addFiles, updateFiles), removeFiles, new ProjectIndexerInputAdapter(indexer.getProject()), isFastIndexer);
+		super(concat(forceFiles, updateFiles), removeFiles, new ProjectIndexerInputAdapter(indexer.getProject()), isFastIndexer);
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
 		setShowInclusionProblems(checkDebugOption(TRACE_INCLUSION_PROBLEMS, TRUE));
@@ -86,6 +86,8 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			setIndexFilesWithoutBuildConfiguration(false);
 			setIndexHeadersWithoutContext(false);
 		}
+		setUpdateFlags(IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+		setForceFirstFiles(forceFiles.length);
 	}
 	
 	private static ITranslationUnit[] concat(ITranslationUnit[] added, ITranslationUnit[] changed) {

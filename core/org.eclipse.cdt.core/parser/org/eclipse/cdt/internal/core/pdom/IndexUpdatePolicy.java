@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashSet;
@@ -30,8 +29,8 @@ public class IndexUpdatePolicy {
 	private final ICProject fCProject;
 	private int fKind;
 	
-	private HashSet<ITranslationUnit> fAdded= new HashSet<ITranslationUnit>();
-	private HashSet<ITranslationUnit> fChanged= new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fForce= new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fTimestamp= new HashSet<ITranslationUnit>();
 	private HashSet<ITranslationUnit> fRemoved= new HashSet<ITranslationUnit>();
 	private IPDOMIndexer fIndexer;
 	private boolean fReindexRequested;
@@ -56,25 +55,13 @@ public class IndexUpdatePolicy {
 	}
 
 	public void clearTUs() {
-		fAdded.clear();
-		fChanged.clear();
+		fForce.clear();
+		fTimestamp.clear();
 		fRemoved.clear();
 	}
 
 	public boolean hasTUs() {
-		return !(fAdded.isEmpty() && fChanged.isEmpty() && fRemoved.isEmpty());
-	}
-
-	private ITranslationUnit[] getAdded() {
-		return fAdded.toArray(new ITranslationUnit[fAdded.size()]);
-	}
-
-	private ITranslationUnit[] getChanged() {
-		return fChanged.toArray(new ITranslationUnit[fChanged.size()]);
-	}
-
-	private ITranslationUnit[] getRemoved() {
-		return fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
+		return !(fForce.isEmpty() && fTimestamp.isEmpty() && fRemoved.isEmpty());
 	}
 
 	public void setIndexer(IPDOMIndexer indexer) {
@@ -85,7 +72,7 @@ public class IndexUpdatePolicy {
 		return fIndexer;
 	}
 
-	public IPDOMIndexerTask handleDelta(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
+	public IPDOMIndexerTask handleDelta(ITranslationUnit[] force, ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		if (isNullIndexer()) {
 			return null;
 		}
@@ -95,28 +82,27 @@ public class IndexUpdatePolicy {
 			return null;
 		case IndexUpdatePolicy.POST_CHANGE:
 			if (fIndexer != null) {
-				return fIndexer.createTask(added, changed, removed);
+				return fIndexer.createTask(force, changed, removed);
 			}
 			break;
 		}
 		
 		for (int i = 0; i < removed.length; i++) {
 			ITranslationUnit tu = removed[i];
-			fAdded.remove(tu);
-			fChanged.remove(tu);
+			fForce.remove(tu);
+			fTimestamp.remove(tu);
 			fRemoved.add(tu);
 		}
-		for (int i = 0; i < added.length; i++) {
-			ITranslationUnit tu = added[i];
-			if (!fChanged.contains(tu)) {
-				fAdded.add(tu);
-			}
+		for (int i = 0; i < force.length; i++) {
+			ITranslationUnit tu = force[i];
+			fForce.add(tu);
+			fTimestamp.remove(tu);
 			fRemoved.remove(tu);
 		}
 		for (int i = 0; i < changed.length; i++) {
 			ITranslationUnit tu = changed[i];
-			if (!fAdded.contains(tu)) {
-				fChanged.add(tu);
+			if (!fForce.contains(tu)) {
+				fTimestamp.add(tu);
 			}
 			fRemoved.remove(tu);
 		}
@@ -127,11 +113,15 @@ public class IndexUpdatePolicy {
 		IPDOMIndexerTask task= null;
 		if (fIndexer != null && hasTUs()) {
 			if (fKind != IndexUpdatePolicy.MANUAL && !isNullIndexer()) {
-				task= fIndexer.createTask(getAdded(), getChanged(), getRemoved());
+				task= fIndexer.createTask(toarray(fForce), toarray(fTimestamp), toarray(fRemoved));
 			}
 			clearTUs();
 		}
 		return task;
+	}
+
+	private ITranslationUnit[] toarray(HashSet<ITranslationUnit> set) {
+		return set.toArray(new ITranslationUnit[set.size()]);
 	}
 
 	private boolean isNullIndexer() {

@@ -102,6 +102,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private List<Object> fFilesToRemove = new ArrayList<Object>();
 	private List<String> fFilesUpFront= new ArrayList<String>();
 	private int fASTOptions;
+	private int fForceNumberFiles= 0;
 	
 	protected IWritableIndex fIndex;
 	private ITodoTaskUpdater fTodoTaskUpdater;
@@ -127,6 +128,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	public final void setParseUpFront(String[] astFilePaths) {
 		fFilesUpFront.addAll(Arrays.asList(astFilePaths));
+	}
+	public final void setForceFirstFiles(int number) {
+		fForceNumberFiles= number;
 	}
 
 	protected abstract IWritableIndex createIndex();
@@ -248,15 +252,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private void extractFiles(Map<Integer, List<Object>> files, List<IIndexFragmentFile> iFilesToRemove, IProgressMonitor monitor) throws CoreException {
-		final boolean force= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
+		final boolean forceAll= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
 		final boolean checkConfig= (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
 
 		int count= 0;
+		int forceFirst= fForceNumberFiles;
 		for (final Object tu : fFilesToUpdate) {
 			if (monitor.isCanceled())
 				return;
 
+			final boolean force= forceAll || --forceFirst >= 0;
 			final IIndexFileLocation ifl= fResolver.resolveFile(tu);
 			if (ifl == null) 
 				continue;

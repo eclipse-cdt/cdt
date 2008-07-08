@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashMap;
@@ -39,9 +38,9 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	private static final int UPDATE_LR_CHANGED_FILES_COUNT = 5;
 
 	private PDOMManager fManager;
-	private LinkedHashMap fLRUs= new LinkedHashMap(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
+	private LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs= new LinkedHashMap<ITranslationUnit,ITranslationUnit>(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
 		@Override
-		protected boolean removeEldestEntry(Map.Entry eldest) {
+		protected boolean removeEldestEntry(Map.Entry<ITranslationUnit, ITranslationUnit> eldest) {
 			return size() > UPDATE_LR_CHANGED_FILES_COUNT;
 		}
 	};
@@ -56,21 +55,21 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 			return;
 		
 		// Walk the delta collecting tu's per project
-		HashMap changeMap= new HashMap();
+		HashMap<ICProject, DeltaAnalyzer> changeMap= new HashMap<ICProject, DeltaAnalyzer>();
 		processDelta(event.getDelta(), changeMap);
 		
 		// bug 171834 update last recently changed sources
 		addLastRecentlyUsed(changeMap);
 				
-		for (Iterator it = changeMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
+		for (Iterator<?> it = changeMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) it.next();
 			ICProject cproject = (ICProject) entry.getKey();
 			DeltaAnalyzer analyzer= (DeltaAnalyzer) entry.getValue();
-			fManager.changeProject(cproject, analyzer.getAddedTUs(), analyzer.getChangedTUs(), analyzer.getRemovedTUs());
+			fManager.changeProject(cproject, analyzer.getForcedTUs(), analyzer.getChangedTUs(), analyzer.getRemovedTUs());
 		}
 	}
 	
-	private void processDelta(ICElementDelta delta, HashMap changeMap) {
+	private void processDelta(ICElementDelta delta, HashMap<ICProject, DeltaAnalyzer> changeMap) {
 		int type = delta.getElement().getElementType();
 		switch (type) {
 		case ICElement.C_MODEL:
@@ -99,7 +98,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		}
 	}
 
-	private void processProjectDelta(ICProject project, ICElementDelta delta, HashMap changeMap) {
+	private void processProjectDelta(ICProject project, ICElementDelta delta, HashMap<ICProject, DeltaAnalyzer> changeMap) {
 		IPDOMIndexer indexer = fManager.getIndexer(project);
 		if (indexer != null && indexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
 			return;
@@ -114,23 +113,15 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		changeMap.put(project, deltaAnalyzer);
 	}
 
-	private void addLastRecentlyUsed(HashMap changeMap) {
+	private void addLastRecentlyUsed(HashMap<ICProject, DeltaAnalyzer> changeMap) {
 		boolean addLRUs= false;
 		int count= 0;
 		ITranslationUnit[] newLRUs= new ITranslationUnit[UPDATE_LR_CHANGED_FILES_COUNT];
 		
-		for (Iterator iterator = changeMap.values().iterator(); iterator.hasNext();) {
-			DeltaAnalyzer analyzer = (DeltaAnalyzer) iterator.next();
-			List l= analyzer.getAddedList();
-			for (Iterator it = l.iterator(); it.hasNext();) {
-				ITranslationUnit tu= (ITranslationUnit) it.next();
-				newLRUs[count++ % UPDATE_LR_CHANGED_FILES_COUNT]= tu;
-				if (!addLRUs && tu.isHeaderUnit()) {
-					addLRUs= true;
-				}
-			}
-			l= analyzer.getChangedList();
-			for (Iterator it = l.iterator(); it.hasNext();) {
+		for (Iterator<DeltaAnalyzer> iterator = changeMap.values().iterator(); iterator.hasNext();) {
+			DeltaAnalyzer analyzer = iterator.next();
+			List<?> l= analyzer.getChangedList();
+			for (Iterator<?> it = l.iterator(); it.hasNext();) {
 				ITranslationUnit tu= (ITranslationUnit) it.next();
 				newLRUs[count++ % UPDATE_LR_CHANGED_FILES_COUNT]= tu;
 				if (!addLRUs && tu.isHeaderUnit()) {
@@ -141,16 +132,16 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		
 		if (count > 0) {
 			if (addLRUs) {
-				for (Iterator it = fLRUs.keySet().iterator(); it.hasNext();) {
-					final ITranslationUnit tu = (ITranslationUnit) it.next();
+				for (Iterator<ITranslationUnit> it = fLRUs.keySet().iterator(); it.hasNext();) {
+					final ITranslationUnit tu = it.next();
 					if (tu.getResource().exists()) {
 						final ICProject cproject= tu.getCProject();
-						DeltaAnalyzer analyzer= (DeltaAnalyzer) changeMap.get(cproject);
+						DeltaAnalyzer analyzer= changeMap.get(cproject);
 						if (analyzer == null) {
 							analyzer= new DeltaAnalyzer();
 							changeMap.put(cproject, analyzer);
 						}
-						analyzer.getChangedList().add(tu);
+						analyzer.getForcedList().add(tu);
 					}
 				}
 			}

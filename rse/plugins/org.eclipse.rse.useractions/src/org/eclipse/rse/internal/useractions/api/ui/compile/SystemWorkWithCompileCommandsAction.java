@@ -12,6 +12,7 @@
  *                                API to the user actions plugin
  * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
  * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
+ * Kevin Doyle (IBM)   - [239908] Need to set the connection in compile manager for Work with Compile Commands Action
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.compile;
 
@@ -164,6 +165,10 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 					 currProfiles = compileManager.getAllCompileProfiles();
 				 }
 
+				 if (subsystem != null) {
+					 compileManager.setSystemConnection(subsystem.getHost());
+				 }
+				 
 				caseSensitive = subsystemFactory.isCaseSensitive();
 
 				SystemWorkWithCompileCommandsDialog dlg = new SystemWorkWithCompileCommandsDialog(shell, compileManager, currProfile);

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 20078 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 /**
- * 
+ *
  */
 package org.eclipse.tm.internal.terminal.view;
 
@@ -22,7 +22,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * This class represents one connection. The connection might be
- * closed or open. 
+ * closed or open.
  *
  */
 class TerminalViewConnection implements ITerminalViewConnection {
@@ -38,7 +38,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 	private String fHistory;
 	private CommandInputFieldWithHistory fCommandInputField;
 	private String fPartName;
-	
+
 	public TerminalViewConnection(ITerminalViewControl ctl) {
 		fCtlTerminal = ctl;
 	}
@@ -80,7 +80,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 			if(connectors[i].getId().equals(connectionType))
 				fCtlTerminal.setConnector(connectors[i]);
 		}
-		
+
 		if("true".equals(store.get(STORE_HAS_COMMAND_INPUT_FIELD))) //$NON-NLS-1$
 			setCommandInputField(true);
 	}
@@ -121,7 +121,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 
 	public void setState(TerminalState state) {
 		// update the title....
-		fTitle=null;		
+		fTitle=null;
 	}
 
 	public void setTerminalTitle(String title) {
@@ -189,7 +189,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 
 	public void setPartName(String name) {
 		fPartName=name;
-		
+
 	}
 
 }

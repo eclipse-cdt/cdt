@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Michael Scharf (Wind River) - initial API and implementation
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ * Michael Scharf (Wind River) - [172483] Adapted from org.eclipse.ui.console/ShowConsoleAction
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.actions;
 
@@ -23,10 +24,10 @@ public class ShowTerminalConnectionAction extends Action {
 	private final ITerminalViewConnectionManager fConnectionManager;
 
 	/**
-	 * Constructs an action to display the given console.
+	 * Constructs an action to display the given terminal.
 	 * 
-	 * @param manager the console view in which the given console is contained
-	 * @param connection the console
+	 * @param manager the terminal multi-view in which the given terminal connection is contained
+	 * @param connection the terminal view connection
 	 */
 	public ShowTerminalConnectionAction(ITerminalViewConnectionManager manager, ITerminalViewConnection connection) {
 		super(quoteName(buildName(manager,connection)), AS_RADIO_BUTTON);

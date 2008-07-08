@@ -5229,4 +5229,14 @@ public class AST2Tests extends AST2BaseTest {
 			buf.append(expr.getRawSignature());
 		}
 	}
+	
+	//	typedef struct {
+	//		int x;
+	//	} spinlock_t;
+	//	spinlock_t _lock = (spinlock_t) {  }; 
+	public void testCompoundInitializer_bug145387() throws Exception  {
+		// valid in C99, not in C++.
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
+	}
+	
 }

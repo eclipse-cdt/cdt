@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
@@ -87,7 +88,6 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
     	 * <p/>
     	 * 
     	 * @param sessionId Session that this context belongs to.
-    	 * @param name process name
     	 * @param id process identifier.
     	 */
     	protected GdbProcessDMC(String sessionId, String id) {
@@ -235,7 +235,8 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		// We must first check for GdbProcessDMC because it is also a GdbThreadDMC
 		if (dmc instanceof GdbProcessDMC) {
-			rm.setData(new GdbThreadDMData("", ((GdbProcessDMC)dmc).getId())); //$NON-NLS-1$
+			rm.setData(new GdbThreadDMData(fCommandControl.getExecutablePath().lastSegment(), 
+					                       ((GdbProcessDMC)dmc).getId()));
 			rm.done();
 		} else if (dmc instanceof GdbThreadDMC) {
 			rm.setData(new GdbThreadDMData("", ((GdbThreadDMC)dmc).getId())); //$NON-NLS-1$
@@ -246,7 +247,7 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 		}
 	}
 	
-	public void attachDebuggerToProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
+    public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IContainerDMContext> rm) {
 		if (procCtx instanceof GdbProcessDMC) {
 			int pid;
 			try {
@@ -259,7 +260,14 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 			
 			fCommandControl.queueCommand(
 					new CLIAttach(procCtx, pid),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(null);
+							rm.done();
+						}
+					});
+
 	    } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
             rm.done();
@@ -299,20 +307,20 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
-
-	public void getProcessesBeingDebugged(DataRequestMonitor<IProcessDMContext[]> rm) {
+    
+	public void getProcessesBeingDebugged(IContainerDMContext containerDmc, DataRequestMonitor<IContainerDMContext[]> rm) {
 		// use -list-thread-groups
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
-	public void getRunningProcesses(DataRequestMonitor<IProcessDMContext[]> rm) {
+    public void getRunningProcesses(IContainerDMContext containerDmc, DataRequestMonitor<IProcessDMContext[]> rm) {
 		// use -list-thread-groups for local session
 
 		// monitor list processes is only for remote session
 		fCommandControl.queueCommand(
-				new CLIMonitorListProcesses(fCommandControl.getControlDMContext()), 
+				new CLIMonitorListProcesses(containerDmc), 
 				new DataRequestMonitor<CLIMonitorListProcessesInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {

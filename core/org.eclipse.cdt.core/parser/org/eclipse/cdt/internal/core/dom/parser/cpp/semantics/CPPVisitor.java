@@ -1707,8 +1707,7 @@ public class CPPVisitor {
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof ICPPConstructor) {
 				try {
-					ICPPClassScope scope = (ICPPClassScope) binding.getScope();
-					type = scope.getClassType();
+					type= ((ICPPConstructor) binding).getClassOwner();
 					type = new CPPPointerType(type);
 				} catch (DOMException e) {
 					type = e.getProblem();

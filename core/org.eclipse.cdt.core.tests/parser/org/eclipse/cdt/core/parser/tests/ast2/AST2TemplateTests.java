@@ -3093,4 +3093,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPTemplateTypeParameter tp= (ICPPTemplateTypeParameter) spec.getTemplateParameters()[0];
 		assertNull(tp.getDefault());
 	}
+	
+	//	class X {
+	//		template <typename S> X(S s);
+	//	};
+	//
+	//	void test(X a);
+	//	void bla(int g) {
+	//		test(new X(g));
+	//	} 
+	public void testBug239586_ClassCast() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+
 }

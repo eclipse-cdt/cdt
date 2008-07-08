@@ -80,7 +80,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					try {
 						dwarfSections.put(element, section.loadSectionData());
 					} catch (OutOfMemoryError e) {
-						CCorePlugin.log(e);
+						// Don't log this error, handle it silently without any UI.
 					}
 				}
 			}

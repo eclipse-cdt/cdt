@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David McKnight  (IBM)  - [224671] [api] org.eclipse.rse.core API leaks non-API types
+ * David McKnight  (IBM)  - [240037] [dstore][launcher] NumberFormatException printed to stdout when invalid rexec port is given in new connection wizard
  *******************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -157,7 +158,12 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				daemonPortProperty.setEnabled(daemon);
 				daemonPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_DAEMON_PORT_LABEL);
 				
-				_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
+				try {
+					_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
+				}
+				catch (Exception e){
+					_daemonPort = DAEMON_PORT_EDEFAULT;
+				}
 				
 				IProperty autoDetectProperty = set.getProperty(KEY_AUTODETECT_SSL);
 				if (autoDetectProperty != null)
@@ -174,7 +180,12 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				rexecPortProperty.setEnabled(usingRexec);
 				rexecPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_PORT_LABEL);
 				
-				_rexecPort  = Integer.parseInt(rexecPortProperty.getValue());
+				try {
+					_rexecPort  = Integer.parseInt(rexecPortProperty.getValue());
+				}
+				catch (Exception e){
+					_rexecPort = REXEC_PORT_EDEFAULT;
+				}
 				
 				IProperty serverPathProperty = set.getProperty(KEY_SERVER_PATH);
 				serverPathProperty.setEnabled(usingRexec);

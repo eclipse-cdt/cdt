@@ -9,24 +9,26 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [227537] moved actions from terminal.view to terminal plugin
  * Michael Scharf (Wind River) - [172483] switch between connections
+ * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
 public interface ITerminalView {
 
 	/**
-	 * Display a new Terminal view.  This method is called when the user clicks the New
-	 * Terminal button in any Terminal view's toolbar.
+	 * Create a new terminal connection within the view.
 	 */
-	public void onTerminalNewTerminal();
-	public void onTerminalConnect();
-	public void onTerminalDisconnect();
-	public void onTerminalSettings();
-	public void onTerminalFontChanged();
-	public boolean hasCommandInputField();
-	public void setCommandInputField(boolean on);
-	public boolean isScrollLock();
-	public void setScrollLock(boolean b);
-	public void setPinned(boolean pin);
-	public boolean isPinned();
+	void onTerminalNewTerminal();
+	/**
+	 * Create a new Terminal view. 
+	 */
+	void onTerminalNewView();
+	void onTerminalConnect();
+	void onTerminalDisconnect();
+	void onTerminalSettings();
+	void onTerminalFontChanged();
+	boolean hasCommandInputField();
+	void setCommandInputField(boolean on);
+	boolean isScrollLock();
+	void setScrollLock(boolean b);
 }

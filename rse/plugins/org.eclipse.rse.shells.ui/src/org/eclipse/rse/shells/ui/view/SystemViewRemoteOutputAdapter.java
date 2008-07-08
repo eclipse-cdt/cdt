@@ -974,7 +974,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 				if (output.getType().equals("file")){ //$NON-NLS-1$
 					IRemoteFile file = outputToFile(output);
 					if (file != null){
-						ISystemViewElementAdapter fadapter = (ISystemViewElementAdapter)((IAdaptable)file).getAdapter(ISystemViewElementAdapter.class);					
+						ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);					
 						return fadapter.doDrag(file, sameSystemType, monitor);
 					}			
 				}

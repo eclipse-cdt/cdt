@@ -27,6 +27,7 @@
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * David McKnight   (IBM)        - [228933] file icons shown in shell view should check editor registry for proper icon
  * David McKnight   (IBM)        - [233349] Could not drag and drop file from Shell view to local folder.
+ * David McKnight   (IBM)        - [233475] Cannot drag and drop file/folder within the shell output
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -573,6 +574,18 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		else if (element instanceof IRemoteOutput)
 		{
 			IRemoteOutput output = (IRemoteOutput) element;
+			String type = output.getType();
+			
+			
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+					type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
+				// bug 233475, fall back to the file subsystem
+				IRemoteFile file = outputToFile(output);
+				if (file != null){
+					return file.getParentRemoteFileSubSystem();
+				}
+			}
+			
 			Object parent = output.getParent();
 			if (parent instanceof IRemoteCommandShell)
 			{
@@ -595,8 +608,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			return cmd.getId();
 		}
 		else if (element instanceof IRemoteOutput)
-		{
+		{						
 			IRemoteOutput out = (IRemoteOutput) element;
+			
+			String type = out.getType();
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+					type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
+				return out.getAbsolutePath();
+			}
+			
 			String str = getAbsoluteParentName(element);
 			return str + ":" + out.getIndex(); //$NON-NLS-1$
 		}
@@ -924,6 +944,16 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		}
 		*/
 
+		if (element instanceof IRemoteOutput){
+			IRemoteOutput output = (IRemoteOutput) element;
+
+			if (output.getType().equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
+				IRemoteFile file = outputToFile(output);
+				ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);
+				return fadapter.canDrop(file);			
+			}
+		}
+		
 		return false;
 	}
 
@@ -971,7 +1001,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			// treat file output objects as IRemoteFiles
 			if (element instanceof IRemoteOutput){
 				IRemoteOutput output = (IRemoteOutput)element;
-				if (output.getType().equals("file")){ //$NON-NLS-1$
+				String type = output.getType();
+				if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+						type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
 					IRemoteFile file = outputToFile(output);
 					if (file != null){
 						ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);					
@@ -996,7 +1028,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		if (target instanceof IRemoteOutput)
 		{
 			IRemoteOutput targetOutput = (IRemoteOutput) target;
-			if (targetOutput.getType().equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
+			String type = targetOutput.getType();
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT) || type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 			{
 				if (src instanceof IRemoteFile)
 				{

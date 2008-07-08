@@ -221,7 +221,10 @@ public class SemanticUtil {
 	static IType getUltimateTypeViaTypedefs(IType type) {
 		try {
 			while(type instanceof ITypedef) {
-				type= ((ITypedef)type).getType();
+				IType t= ((ITypedef)type).getType();
+				if (t == null) 
+					return type;
+				type= t;
 			}
 		} catch(DOMException e) {
 			type= e.getProblem();

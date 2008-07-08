@@ -16,6 +16,7 @@
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
+ * Martin Oberhuber (Wind River) - [205674][ssh] Terminal remains "connecting" when authentication is cancelled
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -132,12 +133,7 @@ class SshConnection extends Thread {
 			}
 			// when reading is done, we set the state to closed
 			fControl.setState(TerminalState.CLOSED);
-		} catch (JSchException e) {
-			if(e.toString().indexOf("Auth cancel")<0) {  //$NON-NLS-1$
-				//no error if user pressed cancel
-				connectFailed(e.getMessage(),e.getMessage());
-			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} finally {
 

@@ -68,15 +68,17 @@ public class Conversions {
 		Cost cost;
 		
 		allowUDC &= !isImpliedObject;
+		target= getUltimateTypeViaTypedefs(target);
+		source= getUltimateTypeViaTypedefs(source);
 		
 		if (target instanceof ICPPReferenceType) {
 			// [13.3.3.3.1] Reference binding 
-			IType cv1T1= ((ICPPReferenceType)target).getType();
+			IType cv1T1= getUltimateTypeViaTypedefs(((ICPPReferenceType)target).getType());
 			cost= new Cost(source, cv1T1);
 			cost.targetHadReference= true;
 			
 			boolean lvalue= sourceExp == null || !CPPVisitor.isRValue(sourceExp);			
-			IType T2= source instanceof IQualifierType ? ((IQualifierType)source).getType() : source;
+			IType T2= source instanceof IQualifierType ? getUltimateTypeViaTypedefs(((IQualifierType)source).getType()) : source;
 
 			if (lvalue && isReferenceCompatible(cv1T1, source)) {
 				/* Direct reference binding */

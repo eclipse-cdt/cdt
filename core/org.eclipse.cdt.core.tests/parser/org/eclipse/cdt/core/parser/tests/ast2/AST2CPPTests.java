@@ -5921,4 +5921,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testTypeid_Bug209578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
+	
+
+	//	typedef char* t1;
+	//	typedef char t2[8];
+	//	void test(char * x) {}
+	//	int main(void) {  
+	//		char x[12];
+	//		t1 y;
+	//		t2 z;
+	//		test(x);
+	//		test(y);
+	//		test(z);
+	//	}
+	public void testArrayToPtrConversionForTypedefs_Bug239931() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+	
 }

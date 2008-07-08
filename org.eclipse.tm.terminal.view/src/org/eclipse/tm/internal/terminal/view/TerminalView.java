@@ -70,6 +70,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionFactory;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionListener;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -243,7 +244,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	public void onTerminalNewTerminal() {
 		Logger.log("creating new Terminal instance."); //$NON-NLS-1$
 		setupControls();
-		if(newConnection()==null) {
+		if(newConnection(ViewMessages.NEW_TERMINAL_CONNECTION)==null) {
 			fMultiConnectionManager.removeActive();
 		}
 	}
@@ -258,11 +259,17 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			// unique.  This code runs only when the user clicks the New Terminal
 			// button, so there is no risk that this code will run twice in a single
 			// millisecond.
-
-			getSite().getPage().showView(
+			IViewPart newTerminalView = getSite().getPage().showView(
 					"org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
 					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
 					IWorkbenchPage.VIEW_ACTIVATE);
+			if(newTerminalView instanceof ITerminalView) {
+				ITerminalConnector c = ((TerminalView)newTerminalView).newConnection(ViewMessages.NEW_TERMINAL_VIEW);
+				// if there is no connector selected, hide the new view
+				if(c==null) {
+					getSite().getPage().hideView(newTerminalView);
+				}
+			}
 		} catch (PartInitException ex) {
 			Logger.logException(ex);
 		}
@@ -274,7 +281,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		if (fCtlTerminal.getState()!=TerminalState.CLOSED)
 			return;
 		if(fCtlTerminal.getTerminalConnector()==null)
-			setConnector(showSettingsDialog());
+			setConnector(showSettingsDialog(ViewMessages.TERMINALSETTINGS));
 		fCtlTerminal.connectTerminal();
 	}
 
@@ -308,11 +315,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	}
 
 	public void onTerminalSettings() {
-		newConnection();
+		newConnection(null);
 	}
 
-	private ITerminalConnector newConnection() {
-		ITerminalConnector c=showSettingsDialog();
+	private ITerminalConnector newConnection(String title) {
+		ITerminalConnector c=showSettingsDialog(title);
 		if(c!=null) {
 			setConnector(c);
 			onTerminalConnect();
@@ -320,7 +327,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		return c;
 	}
 
-	private ITerminalConnector showSettingsDialog() {
+	private ITerminalConnector showSettingsDialog(String title) {
 		// When the settings dialog is opened, load the Terminal settings from the
 		// persistent settings.
 
@@ -329,6 +336,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			connectors=new ITerminalConnector[0];
 		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),connectors,fCtlTerminal.getTerminalConnector());
 		dlgTerminalSettings.setTerminalTitle(getActiveConnection().getPartName());
+		if(title!=null)
+			dlgTerminalSettings.setTitle(title);
 		Logger.log("opening Settings dialog."); //$NON-NLS-1$
 
 		if (dlgTerminalSettings.open() == Window.CANCEL) {

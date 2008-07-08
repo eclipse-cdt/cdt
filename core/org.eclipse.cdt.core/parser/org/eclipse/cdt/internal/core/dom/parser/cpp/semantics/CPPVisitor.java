@@ -194,6 +194,8 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 public class CPPVisitor {
 	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
 	public static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
+	public static final String STD = "std"; //$NON-NLS-1$
+	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	
 	/**
 	 * @param name
@@ -1947,17 +1949,12 @@ public class CPPVisitor {
 	        }
 			return getExpressionType(((IASTBinaryExpression) expression).getOperand1());
 	    } else if (expression instanceof IASTUnaryExpression) {
-			int op = ((IASTUnaryExpression)expression).getOperator();
-			if (op == IASTUnaryExpression.op_sizeof) {
-				IScope scope = getContainingScope(expression);
-				try {
-					IBinding[] bs = scope.find(SIZE_T);
-					if (bs.length > 0 && bs[0] instanceof IType) {
-						return (IType) bs[0];
-					}
-				} catch (DOMException e) {
-				}
-				return new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+	    	final int op= ((IASTUnaryExpression)expression).getOperator();
+			switch (op) {
+			case IASTUnaryExpression.op_sizeof:
+				return get_SIZE_T(expression);
+			case IASTUnaryExpression.op_typeid:
+				return get_type_info(expression);
 			}
 			
 			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand());
@@ -2031,17 +2028,12 @@ public class CPPVisitor {
 			return getExpressionType(exps[exps.length - 1]);
 		} else if (expression instanceof ICPPASTTypeIdExpression) {
 		    ICPPASTTypeIdExpression typeidExp = (ICPPASTTypeIdExpression) expression;
-			if (typeidExp.getOperator() == IASTTypeIdExpression.op_sizeof) {
-				IScope scope = getContainingScope(typeidExp);
-				try {
-					IBinding[] bs = scope.find(SIZE_T);
-					if (bs.length > 0 && bs[0] instanceof IType) {
-						return (IType) bs[0];
-					}
-				} catch (DOMException e) {
-				}
-				return new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
-			}
+		    switch (typeidExp.getOperator()) {
+		    	case IASTTypeIdExpression.op_sizeof:
+		    		return get_SIZE_T(typeidExp);
+		    	case IASTTypeIdExpression.op_typeid:
+		    		return get_type_info(expression);
+		    }
 		    return createType(typeidExp.getTypeId());
 		} else if (expression instanceof IASTArraySubscriptExpression) {
 			IType t = getExpressionType(((IASTArraySubscriptExpression) expression).getArrayExpression());
@@ -2093,6 +2085,36 @@ public class CPPVisitor {
 			return createType(newExp.getTypeId());
 		}
 	    return null;
+	}
+
+	private static IType get_type_info(IASTExpression expression) {
+		try {
+			IBinding[] std= expression.getTranslationUnit().getScope().find(STD);
+			for (IBinding binding : std) {
+				if (binding instanceof ICPPNamespace) {
+					IBinding[] typeInfo= ((ICPPNamespace) binding).getNamespaceScope().find(TYPE_INFO);
+					for (IBinding t : typeInfo) {
+						if (t instanceof ICPPClassType) {
+							return (ICPPClassType) t;
+						}
+					}
+				}
+			}
+		} catch (DOMException e) {
+		}
+		return new CPPBasicType(IBasicType.t_int, 0);
+	}
+
+	private static IType get_SIZE_T(IASTNode sizeofExpr) {
+		IScope scope = getContainingScope(sizeofExpr);
+		try {
+			IBinding[] bs = scope.find(SIZE_T);
+			if (bs.length > 0 && bs[0] instanceof IType) {
+				return (IType) bs[0];
+			}
+		} catch (DOMException e) {
+		}
+		return new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
 	}
 	
 	private static IType classifyTypeOfFloatLiteral(final IASTLiteralExpression expr) {

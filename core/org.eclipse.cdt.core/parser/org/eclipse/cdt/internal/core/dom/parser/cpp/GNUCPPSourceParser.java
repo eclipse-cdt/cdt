@@ -1186,8 +1186,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         case IToken.t_typeid:
             int so = consume().getOffset();
-            return parseTypeidInParenthesisOrUnaryExpression(true, so, ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid);
-
+            firstExpression= parseTypeidInParenthesisOrUnaryExpression(true, so, ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid);
+            break;
+            
         default:
             firstExpression = primaryExpression();
         	break;

@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight     (IBM)      - [238314] Default user ID on host properties page not disabled
  *******************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -1265,7 +1266,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		// ---------------		
 		// default user id
 		// ---------------
-		String parentUserId = RSEPreferencesManager.getUserId(systemType.getId());
+		String parentUserId = RSEPreferencesManager.getDefaultUserId(systemType);
 		if (textUserId != null) {
 			textUserId.setInheritedText(parentUserId);
 			boolean allowEditingOfInherited = ((parentUserId == null) || (parentUserId.length() == 0));

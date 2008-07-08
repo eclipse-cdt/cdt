@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
  * David McKnight   (IBM)        - [228933] file icons shown in shell view should check editor registry for proper icon
+ * David McKnight   (IBM)        - [233349] Could not drag and drop file from Shell view to local folder.
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -57,6 +58,7 @@ import org.eclipse.rse.internal.shells.ui.view.ShellServiceSubSystemConfiguratio
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.services.shells.ParsedOutput;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -965,6 +967,19 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		}
 		else
 		{
+			// for defect 233349
+			// treat file output objects as IRemoteFiles
+			if (element instanceof IRemoteOutput){
+				IRemoteOutput output = (IRemoteOutput)element;
+				if (output.getType().equals("file")){ //$NON-NLS-1$
+					IRemoteFile file = outputToFile(output);
+					if (file != null){
+						ISystemViewElementAdapter fadapter = (ISystemViewElementAdapter)((IAdaptable)file).getAdapter(ISystemViewElementAdapter.class);					
+						return fadapter.doDrag(file, sameSystemType, monitor);
+					}			
+				}
+			}
+			
 			return getText(element);
 		}
 	}

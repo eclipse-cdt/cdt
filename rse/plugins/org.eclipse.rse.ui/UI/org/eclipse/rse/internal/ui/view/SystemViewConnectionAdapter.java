@@ -33,6 +33,7 @@
  * David Dykstal (IBM) - [197036] minor refactoring caused by SystemRegistry fix for this bug
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
+ * David McKnight (IBM)          - [226324] Default user ID from preferences not inherited
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -467,7 +468,7 @@ public class SystemViewConnectionAdapter
 	{
 		String localUserId = conn.getLocalDefaultUserId();
 		data.setLocalValue(localUserId);
-		String parentUserId = RSEPreferencesManager.getUserId(conn.getSystemType().getId());
+		String parentUserId = RSEPreferencesManager.getDefaultUserId(conn.getSystemType());
 		data.setInheritedValue(parentUserId);
 		data.setIsLocal((localUserId!=null)&&(localUserId.length()>0));
 	    //data.printDetails();

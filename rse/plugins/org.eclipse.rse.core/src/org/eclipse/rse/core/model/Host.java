@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Kevin Doyle (IBM) - [203365] Profile should not be saved as a result of file transfer
  * David Dykstal (IBM) - [225911] Exception received after deleting a profile containing a connection
+ * David McKnight (IBM)          - [226324] Default user ID from preferences not inherited
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -275,7 +276,7 @@ public class Host extends RSEModelObject implements IHost {
 	public String getDefaultUserId() {
 		String uid = getLocalDefaultUserId();
 		if ((uid == null) || (uid.length() == 0)) {
-			uid = RSEPreferencesManager.getUserId(getSystemType().getId()); // resolve from preferences	
+			uid = RSEPreferencesManager.getDefaultUserId(getSystemType()); // resolve from preferences	
 			if ((uid != null) && ucId) uid = uid.toUpperCase();
 		}
 		return uid;

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Kevin Doyle		(IBM)		 - [240069] Need to fix the markers FIXME in SystemCompileMultipleSelectAction
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
@@ -19,7 +20,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
+import org.eclipse.rse.internal.useractions.api.files.compile.ISystemCompileManagerAdapter;
+import org.eclipse.rse.internal.useractions.files.compile.UniversalCompileManager;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -41,7 +46,8 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 		allowOnMultipleSelection(true);
 		setAccelerator(SWT.CTRL | SWT.SHIFT | 'c');
 	}
-
+	
+	
 	/**
 	 * The default implementation runs the last used compile command for each selected resource.
 	 * @see org.eclipse.jface.action.IAction#run()
@@ -52,10 +58,9 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 			boolean ok = true;
 			while (ok && (element != null)) {
 				ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(element);
-				/* FIXME - compile actions not coupled with subsystem API anymore
-				 ISubSystem ss = rmtAdapter.getSubSystem(element);
-				 ss.getParentSubSystemFactory().getCompileManager().setSystemConnection(ss.getHost());
-				 */
+
+				ISubSystem subsystem = rmtAdapter.getSubSystem(element);
+
 				String srcType = null;
 				srcType = rmtAdapter.getRemoteSourceType(element);
 				if (srcType == null) {
@@ -63,12 +68,29 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 				} else if (srcType.equals("")) { //$NON-NLS-1$
 					srcType = "blank"; //$NON-NLS-1$
 				}
-				/* FIXME - compile actions not coupled with subsystem API anymore
-				 ISubSystem subsystem = rmtAdapter.getSubSystem(element);
+				
+				SystemCompileManager compileManager = null;
+			
+				 if (element instanceof IAdaptable) {
+					 ISystemCompileManagerAdapter	adapter = (ISystemCompileManagerAdapter)((IAdaptable)element).getAdapter(ISystemCompileManagerAdapter.class);
+					 if (null != adapter)
+					 {
+						 compileManager = adapter.getSystemCompileManager(subsystem.getSubSystemConfiguration());
+					 }
+				 }
+
+				if (null == compileManager)
+				{
+					 compileManager = new UniversalCompileManager();
+					 compileManager.setSubSystemFactory(subsystem.getSubSystemConfiguration());
+				}
+				
 				 ISystemProfile profile = subsystem.getSystemProfile();
 				 
 				 // get the compile profile
-				 SystemCompileProfile compileProfile = subsystem.getParentSubSystemFactory().getCompileManager().getCompileProfile(profile);
+				 SystemCompileProfile compileProfile = compileManager.getCompileProfile(profile);
+				 
+				 compileManager.setSystemConnection(subsystem.getHost());
 				 
 				 // add any contributions from compile extension points
 				 // compileProfile.addContributions(element);
@@ -83,8 +105,8 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 				 SystemCompilableSource compilableSrc = compType.getParentProfile().getCompilableSourceObject(getShell(), element, compileCmd, false, viewer);
 				 
 				 ok = compilableSrc.runCompileCommand();
-				 */
-				if (ok) {
+
+				 if (ok) {
 					element = getNextSelection();
 				}
 			}

@@ -5911,4 +5911,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("foo();/**/", 3);
 	}
+	
+	//  namespace std {class type_info{public: const char* name() const;};}
+	//	int main() {
+	//		int s;
+	//		typeid(int).name();
+	//		typeid(s).name();
+	//	}
+	public void testTypeid_Bug209578() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
 }

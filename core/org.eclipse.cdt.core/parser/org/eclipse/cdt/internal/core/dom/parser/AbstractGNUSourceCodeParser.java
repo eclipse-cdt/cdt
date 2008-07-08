@@ -2038,7 +2038,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             			IASTExpression expr2= expression();
             			endOffset1= consumeOrEOC(IToken.tRPAREN).getEndOffset();
             			
-            			expr= buildTypeIdExpression(IASTTypeIdExpression.op_typeid, typeid, typeidOffset, calculateEndOffset(typeid));
+            			expr= buildTypeIdExpression(IASTTypeIdExpression.op_typeof, typeid, typeidOffset, calculateEndOffset(typeid));
 
             	        IASTExpressionList expressionList = createExpressionList();
             	        ((ASTNode) expressionList).setOffsetAndLength(typeidOffset, calculateEndOffset(expr2)-typeidOffset);

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
@@ -18,15 +19,43 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
-
+	
 	public static final String CATCH = "org.eclipse.cdt.debug.gdb.catch";
 	public static final String THROW = "org.eclipse.cdt.debug.gdb.throw";
 	public static final String SIGNAL_CATCH = "org.eclipse.cdt.debug.gdb.signal";
 	public static final String STOP_ON_FORK = "org.eclipse.cdt.debug.gdb.catch_fork";
 	public static final String STOP_ON_VFORK = "org.eclipse.cdt.debug.gdb.catch_vfork";
 	public static final String STOP_ON_EXEC = "org.eclipse.cdt.debug.gdb.catch_exec";
+	public static final String CATCH_EXIT = "org.eclipse.cdt.debug.gdb.catch_exit";
+	public static final String CATCH_START = "org.eclipse.cdt.debug.gdb.catch_start";
+	public static final String CATCH_STOP = "org.eclipse.cdt.debug.gdb.catch_stop";
+	public static final String CATCH_THREAD_START = "org.eclipse.cdt.debug.gdb.catch_thread_start";
+	public static final String CATCH_THREAD_EXIT = "org.eclipse.cdt.debug.gdb.catch_thread_exit";
+	public static final String CATCH_THREAD_JOIN = "org.eclipse.cdt.debug.gdb.catch_thread_join";
+	public static final String CATCH_LOAD = "org.eclipse.cdt.debug.gdb.catch_load";
+	public static final String CATCH_UNLOAD = "org.eclipse.cdt.debug.gdb.catch_unload";
+
 	private String eventType;
 	private String arg;
+	private static final HashMap<String, String> idToKeyword = new HashMap<String, String>();
+	static {
+		// these Ids are also referenced in mi.ui plugin as contribution
+		// to event breakpoints selector
+		idToKeyword.put(CATCH, "catch");
+		idToKeyword.put(THROW, "throw");
+		idToKeyword.put(SIGNAL_CATCH, "signal");
+		idToKeyword.put(STOP_ON_EXEC, "exec");
+		idToKeyword.put(STOP_ON_FORK, "fork");
+		idToKeyword.put(STOP_ON_VFORK, "vfork");
+		idToKeyword.put(CATCH_EXIT, "exit");
+		idToKeyword.put(CATCH_START, "start");
+		idToKeyword.put(CATCH_STOP, "stop");
+		idToKeyword.put(CATCH_THREAD_START, "thread_start");
+		idToKeyword.put(CATCH_THREAD_EXIT, "thread_exit");
+		idToKeyword.put(CATCH_THREAD_JOIN, "thread_join");
+		idToKeyword.put(CATCH_LOAD, "load");
+		idToKeyword.put(CATCH_UNLOAD, "unload");
+	}
 
 	public EventBreakpoint(Target target, String event, String arg, ICDICondition cond, boolean enabled) {
 		super(target, ICBreakpointType.REGULAR, cond, enabled);
@@ -44,12 +73,9 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 
 
 	public String getGdbEvent() {
-		if (getEventType().equals(CATCH)) return "catch";
-		if (getEventType().equals(THROW)) return "throw";
-		if (getEventType().equals(SIGNAL_CATCH)) return "signal";
-		if (getEventType().equals(STOP_ON_EXEC)) return "exec";
-		if (getEventType().equals(STOP_ON_FORK)) return "fork";
-		if (getEventType().equals(STOP_ON_VFORK)) return "vfork";
+		String etype = getEventType();
+		String key= idToKeyword.get(etype);
+		if (key!=null) return key;
 		return "unknown";
 	}
 
@@ -78,18 +104,23 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	 */
 	public static String getEventTypeFromMI(MIBreakpoint miBreakpoint) {
 		if (miBreakpoint.getWhat().equals("exception catch")) {
-			return 
-			 EventBreakpoint.CATCH;
+			return  EventBreakpoint.CATCH;
 		} else if (miBreakpoint.getWhat().equals("exception throw")) {
 			return  EventBreakpoint.THROW;
 		} else if (miBreakpoint.getType().equals("catch signal")) {
+			// catch signal does not work in gdb 
 			return  EventBreakpoint.SIGNAL_CATCH;
-		} else if (miBreakpoint.getType().equals("catch fork")) {
-			return  EventBreakpoint.STOP_ON_FORK;
-		} else if (miBreakpoint.getType().equals("catch vfork")) {
-			return  EventBreakpoint.STOP_ON_VFORK;
-		} else if (miBreakpoint.getType().equals("catch exec")) {
-			return  EventBreakpoint.STOP_ON_EXEC;
+		} 
+		String miType = miBreakpoint.getType();
+		String prefix = "catch "; 
+		if (miType.startsWith(prefix)) {
+			String key = miType.substring(prefix.length());
+			for (String id : idToKeyword.keySet()) {
+				String etype = idToKeyword.get(id);
+				if (key.equals(etype)) {
+					return id;
+				}
+			}
 		}
 		return null; // not known/supported
 	}

@@ -1510,27 +1510,33 @@ public class CPPVisitor {
 	        pt = createType(pDeclSpec);
 	        pt = createType(pt, pDtor);
 
+	        // bug 239975
+	        IType noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+	        
 	        //8.3.5-3 
 	        //Any cv-qualifier modifying a parameter type is deleted.
 	        //so only create the base type from the declspec and not the qualifiers
 	        try {
-	        	if (pt instanceof IQualifierType) {
-	        		pt= ((IQualifierType) pt).getType();
+	        	if (noTypedef instanceof IQualifierType) {
+	        		pt= ((IQualifierType) noTypedef).getType();
+	        		noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
 	        	}
-	        	if (pt instanceof CPPPointerType) {
-	        		pt= ((CPPPointerType) pt).stripQualifiers();
+	        	if (noTypedef instanceof CPPPointerType) {
+	        		pt= ((CPPPointerType) noTypedef).stripQualifiers();
+	        		noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
 	        	}
 	        	//any parameter of type array of T is adjusted to be pointer to T
-	        	if (pt instanceof IArrayType) {
-	        		IArrayType at = (IArrayType) pt;
+	        	if (noTypedef instanceof IArrayType) {
+	        		IArrayType at = (IArrayType) noTypedef;
                     pt = new CPPPointerType(at.getType());
+                    noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
 	        	}
             } catch (DOMException e) {
                 pt = e.getProblem();
             }
 
 	        //any parameter to type function returning T is adjusted to be pointer to function
-	        if (pt instanceof IFunctionType) {
+	        if (noTypedef instanceof IFunctionType) {
 	            pt = new CPPPointerType(pt);
 	        }
 	        

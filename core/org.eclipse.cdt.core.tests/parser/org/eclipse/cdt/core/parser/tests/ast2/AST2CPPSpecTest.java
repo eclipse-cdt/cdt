@@ -3943,7 +3943,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int f (int) {  } // definition of f(int)
 	// int f (cInt) {  } // error: redefinition of f(int)
 	public void test12_8s3e() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"f"};
+		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
 	// void f (int i, int j);

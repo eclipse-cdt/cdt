@@ -529,6 +529,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     }
     
     public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+    	if (context instanceof IContainerDMContext) {
+    		rm.setData(false);
+    		rm.done();
+    	}
         canResume(context, rm);
     }
     

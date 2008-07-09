@@ -240,71 +240,54 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
-			MIVar[] vars = info.getMIVars();
-			List childrenList = new ArrayList(vars.length);
+			final MIVar[] vars = info.getMIVars();
+			final List childrenList = new ArrayList(vars.length);
+			final ICDIType t = getType();
+			final boolean cpp = isCPPLanguage();
 			for (int i = 0; i < vars.length; i++) {
 				String fn = getQualifiedName();
 				String childName = vars[i].getExp();
-				ICDIType childType = null;
 				boolean childFake = false;
-				ICDIType t = getType();
-				if (t instanceof ICDIArrayType) {
+				if (cpp && isAccessQualifier(childName)) {
+					// since access qualifier is keyword this only possible when gdb returns this as fake fields
+					// so it is pretty safe without to do without any other type checks
+					childFake = true;
+					// fn remains unchanged otherwise it would be like x->public
+				} else if (t instanceof ICDIArrayType) {
 					// For Array gdb varobj only return the index, override here.
 					int index = castingIndex + i;
 					fn = "(" + fn + ")[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (t instanceof ICDIPointerType) {
-					ICDIType subType = ((ICDIPointerType)t).getComponentType();
-					if (subType instanceof ICDIStructType || t instanceof IncompleteType) {
-						if (isCPPLanguage()) {
-							if (!isFake() || (isFake() && !isAccessQualifier(fName))) {
-								childFake = true;
-								childType = t;
-							} else {
-								fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						} else { // If not C++ language
-							fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+					ICDIType subType = ((ICDIPointerType) t).getComponentType();
+					if (subType instanceof ICDIStructType || subType instanceof IncompleteType) {
+						fn = "(" + fn + ")->" + childName; //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (t instanceof ICDIReferenceType) {
-					ICDIType subType = ((ICDIReferenceType)t).getComponentType();
-					if (subType instanceof ICDIStructType || t instanceof IncompleteType) {
-						if (isCPPLanguage()) {
-							if (!isFake() || (isFake() && !isAccessQualifier(fName))) {
-								childFake = true;
-								childType = t;
-							} else {
-								fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						} else { // If not C++ language
-							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+					ICDIType subType = ((ICDIReferenceType) t).getComponentType();
+					if (subType instanceof ICDIStructType || subType instanceof IncompleteType) {
+						fn = "(" + fn + ")." + childName; //$NON-NLS-1$ //$NON-NLS-2$
+					} else if (subType instanceof ICDIPointerType) {
+						fn = "(" + fn + ")->" + childName; //$NON-NLS-1$ //$NON-NLS-2$
+					} else if (subType instanceof ICDIArrayType) {
+						int index = castingIndex + i;
+						fn = "(" + fn + ")[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						// set this to look pretty
+						childName = getName() + "[" + index + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						fn = "(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (t instanceof ICDIStructType || t instanceof IncompleteType) {
-					if (isCPPLanguage()) {
-						if (!isFake() || (isFake() && !isAccessQualifier(fName))) {
-							childFake = true;
-							childType = t;
-						} else {
-							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					} else { // If not C++ language
-						fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
-					}
+					fn = "(" + fn + ")." + childName; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
 						childName, fn, getPosition(), getStackDepth(), vars[i]);
-				if (childType != null) {
+				if (childFake) {
+					v.setIsFake(childFake);
 					// Hack to reset the typename to a known value
-					v.fType = childType;
-				}
-				v.setIsFake(childFake);
-				if (childFake && isAccessQualifier(childName)) {
+					v.fType = t;
 					// don't add these, add their kids
 					ICDIVariable[] grandchildren = v.getChildren();
 					for (int j = 0; j < grandchildren.length; ++j)
@@ -321,6 +304,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	}
 
 	boolean isAccessQualifier(String foo) {
+		if (foo==null) return false;
 	    return foo.equals("private") || foo.equals("public") || foo.equals("protected");  //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$ 
     }
 

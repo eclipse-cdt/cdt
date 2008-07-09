@@ -94,7 +94,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 				IFunctionType ft= (IFunctionType) type;
 				assertEquals("int (int)", ASTTypeUtil.getType(ft));
 			} else {
-				assertNull("expected null, got "+type, type);
+				assertTrue("expected ITypedef, got "+type, type == null || type instanceof ITypedef);
 			}
 		}
 		

@@ -1771,7 +1771,9 @@ public class CPPVisitor {
 						ICPPClassScope cScope = (ICPPClassScope) s;
 						IType type = cScope.getClassType();
 						if (type instanceof ICPPClassTemplate) {
-						    type = (IType) CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
+					    	IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
+					    	if (within instanceof ICPPClassType)
+					    		type = (ICPPClassType)within;
 						}
 						if (dtor.isConst() || dtor.isVolatile())
 							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile());

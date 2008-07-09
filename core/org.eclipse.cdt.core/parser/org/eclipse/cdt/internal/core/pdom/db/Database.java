@@ -170,8 +170,18 @@ public class Database {
 
 	public void transferTo(FileChannel target) throws IOException {
 		assert fLocked;
-		final FileChannel from= fFile.getChannel();
-		from.transferTo(0, from.size(), target);
+        final FileChannel from= fFile.getChannel();
+        long nRead = 0;
+        long position = 0;
+        long size = from.size();
+        while (position < size) {
+        	nRead = from.transferTo(position, 4096*16, target);
+        	if (nRead == 0) {
+        		break;		// should not happen
+        	} else {
+        		position+= nRead;
+        	}
+        }
 	}
 	
 	public int getVersion() throws CoreException {

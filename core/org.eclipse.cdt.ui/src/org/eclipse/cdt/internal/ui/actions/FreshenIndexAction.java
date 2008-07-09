@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,16 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.index.IIndexManager;
+
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 
 public class FreshenIndexAction extends AbstractUpdateIndexAction {
 
 	@Override
 	protected int getUpdateOptions() {
-		return IIndexManager.UPDATE_ALL;
+		return IIndexManager.UPDATE_ALL | PDOMManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT;
 	}
 }

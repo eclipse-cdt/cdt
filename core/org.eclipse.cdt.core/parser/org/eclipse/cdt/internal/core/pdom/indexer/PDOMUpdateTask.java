@@ -18,11 +18,18 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
@@ -75,15 +82,41 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
+	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		HashSet<ITranslationUnit> set= new HashSet<ITranslationUnit>();
 		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, monitor);
+		boolean haveProject= false;
 		if (fFilesAndFolders == null) {
 			project.accept(collector);
 		}
 		else {
 			for (ICElement elem : fFilesAndFolders) {
+				if (elem.getElementType() == ICElement.C_PROJECT) {
+					haveProject= true;
+				}
 				elem.accept(collector);
+			}
+		}
+		if (haveProject && (fUpdateOptions & PDOMManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT) != 0) {
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project);
+			index.acquireReadLock();
+			try {
+				IIndexFile[] files= index.getAllFiles();
+				for (IIndexFile indexFile : files) {
+					IIndexFileLocation floc= indexFile.getLocation();
+					if (floc.getFullPath() == null) {
+						IPath path= IndexLocationFactory.getPath(floc);
+						if (path != null) {
+							ITranslationUnit tu= CoreModel.getDefault().createTranslationUnitFrom(project, path);
+							if (tu != null) {
+								set.add(tu);
+							}
+						}
+					}
+				}
+				
+			} finally {
+				index.releaseReadLock();
 			}
 		}
 		ITranslationUnit[] tus= set.toArray(new ITranslationUnit[set.size()]);

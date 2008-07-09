@@ -89,6 +89,7 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 		getTree().setHeaderVisible(true);
 		getTree().setLinesVisible(true);
 		executablesView.getSite().setSelectionProvider(this);
+		getTree().setData(".uid", "ExecutablesViewerTree"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		createColumns();
 

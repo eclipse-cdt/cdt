@@ -145,6 +145,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
+	public static final int UPDATE_EXTERNAL_FILES_FOR_PROJECT = 0x10000;	// must not collide with IIndexManager.UPDATE...
+
 	private static final String SETTINGS_FOLDER_NAME = ".settings"; //$NON-NLS-1$
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
 

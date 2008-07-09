@@ -14,7 +14,7 @@ synchronization so they will not end up in the repository.
 
 <project name="extract" default="main">
 	
-	<property name="zip-file" value="results/source201.zip"/>
+	<property name="zip-file" value="results/source30_GMa.zip"/>
 	
 	<target name="main">
 		<delete file="#{zip-file}"/>
@@ -25,7 +25,6 @@ synchronization so they will not end up in the repository.
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.local-feature"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.sdk-feature"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.ssh-feature"/></antcall>
-		<antcall target="process-element"><param name="element" value="org.eclipse.rse.telnet-feature"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.apache.commons.net"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.apache.oro"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.dstore.core"/></antcall>
@@ -35,7 +34,6 @@ synchronization so they will not end up in the repository.
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.dstore"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.local"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.ssh"/></antcall>
-		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.telnet"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.core"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.doc.isv"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.doc.user"/></antcall>
@@ -51,7 +49,6 @@ synchronization so they will not end up in the repository.
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.files.ftp"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.local"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.ssh"/></antcall>
-		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.telnet"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.shells.ui"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.core"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.dstore"/></antcall>
@@ -66,7 +63,8 @@ synchronization so they will not end up in the repository.
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.dstore"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.local"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.ssh"/></antcall>
-		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.telnet"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.useractions"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.useractions-feature"/></antcall>
 		<antcall target="process-element"><param name="element" value="org.eclipse.rse.ui"/></antcall>
     </target>
 	

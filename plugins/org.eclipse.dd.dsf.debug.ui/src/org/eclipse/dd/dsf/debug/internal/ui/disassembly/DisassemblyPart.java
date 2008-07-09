@@ -191,7 +191,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
  * DisassemblyPart
  */
 @SuppressWarnings("restriction")
-public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener {
+public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, SessionEndedListener {
 
 	private final static boolean DEBUG = DsfDebugUIPlugin.getDefault().isDebugging();
 
@@ -794,6 +794,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else {
 			updateDebugContext();
 		}
+		DsfSession.addSessionEndedListener(this);
 	}
 
 	/*
@@ -828,12 +829,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			ctxService.deactivateContext(fContextActivation);
 		}
 		fViewer = null;
-		fDebugSessionId = null;
-		fTargetContext= null;
-		if (fServicesTracker != null) {
-			fServicesTracker.dispose();
-			fServicesTracker= null;
-		}
+		setDebugContext(null);
+		DsfSession.removeSessionEndedListener(this);
+
 		fAnnotationAccess = null;
 		fAnnotationPreferences = null;
 		fAnnotationRulerColumn = null;
@@ -2323,12 +2321,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					}
 				}
 				if (fTargetContext != null) {
+			        if (fDebugSessionId != null) {
+						if (getSession() != null) {
+							getSession().removeServiceEventListener(this);
+						}
+			        }
 					fDebugSessionId= sessionId;
 					if (fServicesTracker != null) {
 						fServicesTracker.dispose();
 					}
 			        fServicesTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), sessionId);
-					if (fViewer != null) {
+			        if (fViewer != null) {
 						debugContextChanged();
 					}
 				}
@@ -2351,6 +2354,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 			fDebugSessionId= null;
 			fTargetContext= null;
+			if (fServicesTracker != null) {
+				fServicesTracker.dispose();
+				fServicesTracker= null;
+			}
 			if (fViewer != null) {
 				debugContextChanged();
 			}
@@ -2365,17 +2372,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fDebugSessionId != null) {
 			final DsfSession session= getSession();
 			session.addServiceEventListener(this, null);
-			DsfSession.addSessionEndedListener(new SessionEndedListener() {
-				public void sessionEnded(DsfSession endedSsession) {
-					if (session == endedSsession) {
-						DsfSession.removeSessionEndedListener(this);
-						asyncExec(new Runnable() {
-							public void run() {
-								setDebugContext(null);
-							}});
-					}
-				}});
-			
 			updatePC(PC_UNKNOWN);
 
         	if (fGotoAddressPending != PC_UNKNOWN) {
@@ -2397,6 +2393,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		updateStateDependentActions();
 		firePropertyChange(PROP_CONNECTED);
 		firePropertyChange(PROP_SUSPENDED);
+	}
+
+	/*
+	 * @see org.eclipse.dd.dsf.service.DsfSession.SessionEndedListener#sessionEnded(org.eclipse.dd.dsf.service.DsfSession)
+	 */
+	public void sessionEnded(DsfSession endedSsession) {
+		if (endedSsession.getId().equals(fDebugSessionId)) {
+			asyncExec(new Runnable() {
+				public void run() {
+					setDebugContext(null);
+				}});
+		}
 	}
 
 	@DsfServiceEventHandler

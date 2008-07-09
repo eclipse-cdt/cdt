@@ -13,6 +13,7 @@
  * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page
  * Martin Oberhuber (Wind River) - [234038] Force refresh IRemoteFile after changing permissions
  * David McKnight   (IBM)        - [234038] [files][refresh] Changing file permissions does not update property sheet or refresh tree
+ * David McKnight   (IBM)        - [234045] [ftp] Errors while changing file permissions are not displayed to the user
  *********************************************************************************/
 package org.eclipse.rse.internal.files.ui.propertypages;
 
@@ -27,10 +28,12 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.SWT;
@@ -270,70 +273,64 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		}
 
 		if ((capabilities & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0){
+			_permissions = file.getPermissions();
+			if (_permissions == null || _permissions instanceof PendingHostFilePermissions){
+				Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_PERMISSIONS)
+				{
+					public IStatus run(IProgressMonitor monitor){
+						try
+						{
+							_permissions = pService.getFilePermissions(rFile.getHostFile(), monitor);
 
-			try
-			{
-				_permissions = file.getPermissions();
-				if (_permissions == null || _permissions instanceof PendingHostFilePermissions){
-					Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_PERMISSIONS)
-					{
-						public IStatus run(IProgressMonitor monitor){
-							try
+							// notify change
+							Display.getDefault().asyncExec(new Runnable()
 							{
-								_permissions = pService.getFilePermissions(rFile.getHostFile(), monitor);
-
-								// notify change
-								Display.getDefault().asyncExec(new Runnable()
+								public void run()
 								{
-									public void run()
-									{
-										_userRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_READ));
-										_userWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_WRITE));
-										_userExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_EXECUTE));
-										_groupRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_READ));
-										_groupWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_WRITE));
-										_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
-										_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
-										_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
-										_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
+									_userRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_READ));
+									_userWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_WRITE));
+									_userExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_EXECUTE));
+									_groupRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_READ));
+									_groupWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_WRITE));
+									_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
+									_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
+									_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
+									_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
 
-										_owner = _permissions.getUserOwner();
-										_group = _permissions.getGroupOwner();
+									_owner = _permissions.getUserOwner();
+									_group = _permissions.getGroupOwner();
 
-										_userEntry.setText(_owner);
-										_groupEntry.setText(_group);
+									_userEntry.setText(_owner);
+									_groupEntry.setText(_group);
 
-									}
-								});
-							}
-							catch (Exception e)
-							{
-							}
-							return Status.OK_STATUS;
+								}
+							});
 						}
-					};
-					deferredFetch.schedule();
-				}
-				else {
-					_userRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_READ));
-					_userWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_WRITE));
-					_userExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_EXECUTE));
-					_groupRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_READ));
-					_groupWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_WRITE));
-					_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
-					_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
-					_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
-					_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
-
-					_owner = _permissions.getUserOwner();
-					_group = _permissions.getGroupOwner();
-
-					_userEntry.setText(_owner);
-					_groupEntry.setText(_group);
-				}
+						catch (SystemMessageException e)
+						{
+							setMessage(e.getSystemMessage());
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				deferredFetch.schedule();
 			}
-			catch (Exception e){
+			else {
+				_userRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_READ));
+				_userWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_WRITE));
+				_userExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_USER_EXECUTE));
+				_groupRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_READ));
+				_groupWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_WRITE));
+				_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
+				_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
+				_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
+				_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));
 
+				_owner = _permissions.getUserOwner();
+				_group = _permissions.getGroupOwner();
+
+				_userEntry.setText(_owner);
+				_groupEntry.setText(_group);
 			}
 		}
 		else {
@@ -415,8 +412,12 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 						_permissions = newPermissions;
 					}
 				}
-				catch (Exception e){
-
+				catch (SystemMessageException e){
+					setMessage(e.getSystemMessage());
+				}
+				catch (CloneNotSupportedException e){
+					// unexpected, not showing but logging
+					SystemBasePlugin.logError(e.getMessage());
 				}
 			}
 		}
@@ -458,7 +459,9 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 				{
 					file = file.getParentRemoteFileSubSystem().getRemoteFileObject(file.getAbsolutePath(), new NullProgressMonitor());
 				}
-				catch (Exception e){
+				catch (SystemMessageException e){
+					// unexpected, logging but not showing user
+					SystemBasePlugin.logMessage(e.getSystemMessage());
 				}
 				setElement((IAdaptable)file);
 

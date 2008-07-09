@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Fran Litterio (Wind River) - initial API and implementation
  * Ted Williams (Wind River) - refactored into org.eclipse namespace
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
@@ -26,12 +26,12 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * called from both class and instance methods. To use this class, write code
  * like this:
  * <p>
- * 
+ *
  * <pre>
  * Logger.log(&quot;something has happened&quot;);
  * Logger.log(&quot;counter is &quot; + counter);
  * </pre>
- * 
+ *
  * @author Fran Litterio <francis.litterio@windriver.com>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -72,10 +72,10 @@ public final class Logger {
 			}
 		}
 	}
-	
+
 	/**
 	 * Encodes a String such that non-printable control characters are
-	 * converted into user-readable escape sequences for logging. 
+	 * converted into user-readable escape sequences for logging.
 	 * @param message String to encode
 	 * @return encoded String
 	 */
@@ -86,38 +86,38 @@ public final class Logger {
 			char c=message.charAt(i);
 			switch(c) {
 				case '\\':
-				case '\'': 
+				case '\'':
 					buf.append('\\'); buf.append(c); encoded=true;
 					break;
 				case '\r':
-					buf.append('\\'); buf.append('r'); encoded=true; 
+					buf.append('\\'); buf.append('r'); encoded=true;
 					break;
 				case '\n':
-					buf.append('\\'); buf.append('n'); encoded=true; 
+					buf.append('\\'); buf.append('n'); encoded=true;
 					break;
 				case '\t':
-					buf.append('\\'); buf.append('t'); encoded=true; 
+					buf.append('\\'); buf.append('t'); encoded=true;
 					break;
 				case '\f':
-					buf.append('\\'); buf.append('f'); encoded=true; 
+					buf.append('\\'); buf.append('f'); encoded=true;
 					break;
 				case '\b':
-					buf.append('\\'); buf.append('b'); encoded=true; 
+					buf.append('\\'); buf.append('b'); encoded=true;
 					break;
 				default:
 					if (c <= '\u000f') {
-						buf.append('\\'); buf.append('x'); buf.append('0'); 
-						buf.append(Integer.toHexString(c)); 
+						buf.append('\\'); buf.append('x'); buf.append('0');
+						buf.append(Integer.toHexString(c));
 						encoded=true;
 					} else if (c>=' ' && c<'\u007f') {
 						buf.append(c);
 					} else if (c <= '\u00ff') {
-							buf.append('\\'); buf.append('x'); 
-							buf.append(Integer.toHexString(c)); 
+							buf.append('\\'); buf.append('x');
+							buf.append(Integer.toHexString(c));
 							encoded=true;
 					} else {
 						buf.append('\\'); buf.append('u');
-						if (c<='\u0fff') { 
+						if (c<='\u0fff') {
 							buf.append('0');
 						}
 						buf.append(Integer.toHexString(c));
@@ -130,7 +130,7 @@ public final class Logger {
 		}
 		return message;
 	}
-	
+
 	/**
 	 * Checks if logging is enabled.
 	 * @return true if logging is enabled.
@@ -142,7 +142,7 @@ public final class Logger {
 	/**
 	 * Logs the specified message. Do not append a newline to parameter
 	 * <i>message</i>. This method does that for you.
-	 * 
+	 *
      * @param message           A String containing the message to log.
 	 */
 	public static final void log(String message) {
@@ -168,11 +168,14 @@ public final class Logger {
 	 */
 	public static final void logException(Exception ex) {
 		// log in eclipse error log
-		if(TerminalPlugin.getDefault()!=null)
+		if (TerminalPlugin.getDefault() != null) {
 			TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+		} else {
+			ex.printStackTrace();
+		}
+		// Additional Tracing for debug purposes:
 		// Read my own stack to get the class name, method name, and line number
-		// of
-		// where this method was called.
+		// of where this method was called
 		if(logStream!=null) {
 			StackTraceElement caller = new Throwable().getStackTrace()[1];
 			int lineNumber = caller.getLineNumber();
@@ -190,8 +193,6 @@ public final class Logger {
 					+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					"Caught exception: " + ex); //$NON-NLS-1$
 			ex.printStackTrace(tmpStream);
-		} else {
-			ex.printStackTrace();
 		}
 	}
 }

@@ -169,7 +169,10 @@ public class SemanticUtil {
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef ) {
-					type= ((ITypedef)type).getType();
+					IType tt= ((ITypedef)type).getType();
+					if (tt == null)
+						return type;
+					type= tt;
 				} else if( type instanceof IQualifierType ) {
 					type= ((IQualifierType)type).getType();
 				} else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
@@ -200,7 +203,10 @@ public class SemanticUtil {
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef ) {
-					type = ((ITypedef)type).getType();
+					IType tt= ((ITypedef)type).getType();
+					if (tt == null)
+						return type;
+					type= tt;
 				} else if( type instanceof IQualifierType ) {
 					type = ((IQualifierType)type).getType();
 				} else if( type instanceof ICPPReferenceType ) {

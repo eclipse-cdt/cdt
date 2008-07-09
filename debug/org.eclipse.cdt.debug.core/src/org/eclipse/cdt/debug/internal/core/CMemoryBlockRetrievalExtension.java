@@ -265,12 +265,25 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 						ICType type = ((ICValue)value).getType();
 						if ( type != null ) {
 							// get the address for the expression, allow all types
-							address = frame.evaluateExpressionToString(exp.getExpressionString());
-							if ( address != null ) {
-								// ???
-								BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
-								return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
+							String rawExpr = exp.getExpressionString();
+							String voidExpr = "(void *)(" + rawExpr + ")";
+							String attempts[] = { rawExpr, voidExpr };
+							for (int i = 0; i < attempts.length; i++) {
+								String expr = attempts[i];
+								address = frame.evaluateExpressionToString(expr);
+								if (address != null) {
+									try {
+										BigInteger a = (address.startsWith("0x")) ? new BigInteger(address.substring(2), 16) : new BigInteger(address); //$NON-NLS-1$
+										return new CMemoryBlockExtension((CDebugTarget) target, expression, a);
+									} catch (NumberFormatException e) {
+										// not pointer? lets cast it to void*
+										if (i == 0)
+											continue;
+										throw e;
+									}
+								}
 							}
+	
 						}
 						else {
 							msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.1" ), (Object[])new String[] { expression } ); //$NON-NLS-1$

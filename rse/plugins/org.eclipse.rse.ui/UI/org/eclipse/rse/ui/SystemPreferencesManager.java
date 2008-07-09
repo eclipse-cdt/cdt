@@ -15,6 +15,7 @@
  *                       the org.eclipse.rse.core package of the UI plugin.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David McKnight   (IBM)        - [237300] Problem with setDefaultHistory for SystemHistoryCombo.
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -410,7 +411,16 @@ public class SystemPreferencesManager {
 	 */
 	public static String[] getWidgetHistory(String key) {
 		Preferences store = RSEUIPlugin.getDefault().getPluginPreferences();
-		return parseStrings(store.getString(key));
+		String result = store.getString(key);
+		
+		// bug 237300  
+		// don't parse strings if we have ""
+		if (result == null || result.length() == 0){
+			return null;
+		}
+		else {
+			return parseStrings(result);
+		}
 	}
 
 	/**

@@ -5938,4 +5938,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
 	
+	
+	//	typedef char t[12];
+	//	void test1(char *);
+	//	void test2(char []);
+	//	void test3(t);
+	//	void xx() {
+	//	   char* x= 0;
+	//	   test1(x);
+	//	   test2(x); // problem binding here
+	//	   test3(x); // problem binding here
+	//	}
+	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+
 }

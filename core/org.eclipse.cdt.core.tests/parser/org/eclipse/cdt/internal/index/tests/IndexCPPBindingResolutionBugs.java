@@ -847,4 +847,21 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
     	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
     }
+    
+	//	typedef char t[12];
+	//	void test1(char *);
+	//	void test2(char []);
+	//	void test3(t);
+    
+	//	void xx() {
+	//	   char* x= 0;
+	//	   test1(x);
+	//	   test2(x); // problem binding here
+	//	   test3(x); // problem binding here
+	//	}
+	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
+    	getBindingFromASTName("test1(x)", 5, ICPPFunction.class);
+    	getBindingFromASTName("test2(x)", 5, ICPPFunction.class);
+    	getBindingFromASTName("test3(x)", 5, ICPPFunction.class);
+	}
 }

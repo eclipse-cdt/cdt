@@ -1927,40 +1927,35 @@ public class CPPSemantics {
 	}
 	
 	static private IType[] getTargetParameterTypes(IFunction fn) throws DOMException{
-	    IParameter[] params = fn.getParameters();
-
-	    boolean useImplicit = (fn instanceof ICPPMethod && !(fn instanceof ICPPConstructor));
-	    IType[] result = new IType[useImplicit ? params.length + 1 : params.length];
+	    final ICPPFunctionType ftype = (ICPPFunctionType) fn.getType();
+	    if (ftype == null)
+	    	return IType.EMPTY_TYPE_ARRAY;
 	    
-	    if (useImplicit) {
-		    ICPPFunctionType ftype = (ICPPFunctionType) ((ICPPFunction)fn).getType();
-		    if (ftype != null) {
-				IScope scope = fn.getScope();
-				if (scope instanceof ICPPTemplateScope)
-					scope = scope.getParent();
-				ICPPClassType cls = null;
-				if (scope instanceof ICPPClassScope) {
-					cls = ((ICPPClassScope)scope).getClassType();
-				} else {
-					cls = new CPPClassType.CPPClassTypeProblem(ASTInternal.getPhysicalNodeOfScope(scope), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray());
-				}
-				if (cls instanceof ICPPClassTemplate) {
-					IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) cls);
-					if (within instanceof ICPPClassType)
-						cls = (ICPPClassType)within;
-				}
-				IType implicitType = cls;
-				if (ftype.isConst() || ftype.isVolatile()) {
-					implicitType = new CPPQualifierType(implicitType, ftype.isConst(), ftype.isVolatile());
-				}
-				implicitType = new CPPReferenceType(implicitType);
-	
-				result[0] = implicitType;
-		    }
+		final IType[] ptypes= ftype.getParameterTypes();
+	    if (fn instanceof ICPPMethod == false || fn instanceof ICPPConstructor)
+	    	return ptypes;
+	    	
+	    final IType[] result = new IType[ptypes.length + 1];
+	    System.arraycopy(ptypes, 0, result, 1, ptypes.length);
+	    IScope scope = fn.getScope();
+	    if (scope instanceof ICPPTemplateScope)
+	    	scope = scope.getParent();
+	    ICPPClassType cls = null;
+	    if (scope instanceof ICPPClassScope) {
+	    	cls = ((ICPPClassScope)scope).getClassType();
+	    } else {
+	    	cls = new CPPClassType.CPPClassTypeProblem(ASTInternal.getPhysicalNodeOfScope(scope), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray());
 	    }
-	    for (IParameter param : params)
-			result = (IType[]) ArrayUtil.append(IType.class, result, param.getType());
-		
+	    if (cls instanceof ICPPClassTemplate) {
+	    	IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) cls);
+	    	if (within instanceof ICPPClassType)
+	    		cls = (ICPPClassType)within;
+	    }
+	    IType implicitType = cls;
+	    if (ftype.isConst() || ftype.isVolatile()) {
+	    	implicitType = new CPPQualifierType(implicitType, ftype.isConst(), ftype.isVolatile());
+	    }
+	    result[0]= new CPPReferenceType(implicitType);
 	    return result;
 	}
 	

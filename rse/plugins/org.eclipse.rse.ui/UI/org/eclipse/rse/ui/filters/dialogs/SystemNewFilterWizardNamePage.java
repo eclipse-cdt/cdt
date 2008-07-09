@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [160403] filters should be connection private by default
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [226948] [api][regression] SystemNewFilterWizard.createNamePage() is no longer available
+ * David McKnight   (IBM)        - [238158] Can create duplicate filters
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -359,9 +360,13 @@ public class SystemNewFilterWizardNamePage
 			else if (poolWrapperCombo != null)
 			  controlInError = poolCombo;
 		}
-		if ((errorMessage == null) && (nameValidator != null))
+		if ((errorMessage == null) && (nameValidators != null))
 		{
-	        errorMessage = nameValidator.validate(nameText.getText().trim());
+			int i = 0;
+			while (errorMessage == null && i < nameValidators.length){
+				errorMessage = nameValidators[i].validate(nameText.getText().trim());
+				i++;
+			}
 			controlInError = nameText;
 		}
 
@@ -381,8 +386,13 @@ public class SystemNewFilterWizardNamePage
 	protected SystemMessage validateNameInput()
 	{
 	    errorMessage= null;
-		if (nameValidator != null)
-	      errorMessage = nameValidator.validate(nameText.getText().trim());
+		if (nameValidators != null){
+			int i = 0;
+			while (errorMessage == null && i < nameValidators.length){
+				errorMessage = nameValidators[i].validate(nameText.getText().trim());
+				i++;
+			}
+		}
 		if ((errorMessage == null) && (filterPoolSelectionValidator != null))
 			errorMessage = filterPoolSelectionValidator.validate(getParentSystemFilterPool());
 		setPageComplete();

@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  * Michael Scharf (Wind River) - [172483] switch between connections
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
+ * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -64,7 +65,9 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.LayeredSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.PreferenceSettingStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionFactory;
@@ -79,7 +82,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalViewConnectionListener {
-    private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
+    private static final String PREF_CONNECTORS = "Connectors."; //$NON-NLS-1$
+
+	private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
 
     private static final String STORE_SETTING_SUMMARY = "SettingSummary"; //$NON-NLS-1$
     
@@ -334,7 +339,13 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		ITerminalConnector[] connectors = fCtlTerminal.getConnectors();
 		if(fCtlTerminal.getState()!=TerminalState.CLOSED)
 			connectors=new ITerminalConnector[0];
-		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),connectors,fCtlTerminal.getTerminalConnector());
+		// load the state from the settings
+		// first load from fStore and then from the preferences.
+		ITerminalConnector c = loadSettings(new LayeredSettingsStore(fStore,getPreferenceSettingsStore()), connectors);
+		// if we have no connector show the one from the settings 
+		if(fCtlTerminal.getTerminalConnector()!=null)
+			c=fCtlTerminal.getTerminalConnector();
+		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),connectors,c);
 		dlgTerminalSettings.setTerminalTitle(getActiveConnection().getPartName());
 		if(title!=null)
 			dlgTerminalSettings.setTitle(title);
@@ -348,8 +359,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		Logger.log("Settings dialog OK'ed."); //$NON-NLS-1$
 
 		// When the settings dialog is closed, we persist the Terminal settings.
+		saveSettings(fStore,dlgTerminalSettings.getConnector());
+		// we also save it in the preferences. This will keep the last change
+		// made to this connector as default...
+		saveSettings(getPreferenceSettingsStore(), dlgTerminalSettings.getConnector());
 
-		saveSettings(dlgTerminalSettings.getConnector());
 		setViewTitle(dlgTerminalSettings.getTerminalTitle());
 		return dlgTerminalSettings.getConnector();
 	}
@@ -466,16 +480,30 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		ITerminalViewConnection conn = new TerminalViewConnection(fCtlTerminal);
 		listener.setConnection(conn);
 		conn.setPartName(getPartName());
-		String connectionType=fStore.get(STORE_CONNECTION_TYPE);
-		for (int i = 0; i < connectors.length; i++) {
-			connectors[i].load(getStore(connectors[i]));
-			if(connectors[i].getId().equals(connectionType))
-				ctrl.setConnector(connectors[i]);
-		}
+		// load from settings
+		ITerminalConnector connector = loadSettings(fStore,connectors);
+		// set the connector....
+		ctrl.setConnector(connector);
 		updatePreferences();
 		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
 		
 		return conn;
+	}
+
+	/**
+	 * @param store contains the data
+	 * @param connectors loads the data from store
+	 * @return null or the currently selected connector
+	 */
+	private ITerminalConnector loadSettings(ISettingsStore store, ITerminalConnector[] connectors) {
+		ITerminalConnector connector=null;
+		String connectionType=store.get(STORE_CONNECTION_TYPE);
+		for (int i = 0; i < connectors.length; i++) {
+			connectors[i].load(getStore(store,connectors[i]));
+			if(connectors[i].getId().equals(connectionType))
+				connector=connectors[i];
+		}
+		return connector;
 	}
 
 	/**
@@ -486,16 +514,27 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		return connectors;
 	}
 
-	private void saveSettings(ITerminalConnector connector) {
-		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
-		for (int i = 0; i < connectors.length; i++) {
-			connectors[i].save(getStore(connectors[i]));
-		}
-		if(connector!=null) {
-			fStore.put(STORE_CONNECTION_TYPE,connector.getId());
-		}
+	/**
+	 * The preference setting store is used to save the settings that are
+	 * shared between all views. 
+	 * @return the settings store for the connection based on the preferences.
+	 * 
+	 */
+	private PreferenceSettingStore getPreferenceSettingsStore() {
+		return new PreferenceSettingStore(TerminalViewPlugin.getDefault().getPluginPreferences(),PREF_CONNECTORS);
 	}
-
+	/**
+	 * @param store the settings will be saved in this store
+	 * @param connector the connector that will be saved. Can be null.
+	 */
+	private void saveSettings(ISettingsStore store, ITerminalConnector connector) {
+		if(connector!=null) {
+			connector.save(getStore(store, connector));
+			// the last saved connector becomes the default
+			store.put(STORE_CONNECTION_TYPE,connector.getId());
+		}
+		
+	}
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fStore=new SettingsStore(memento);
@@ -506,8 +545,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		fMultiConnectionManager.saveState(new SettingStorePrefixDecorator(fStore,"connectionManager")); //$NON-NLS-1$
 		fStore.saveState(memento);
 	}
-	private ISettingsStore getStore(ITerminalConnector connector) {
-		return new SettingStorePrefixDecorator(fStore,connector.getId()+"."); //$NON-NLS-1$
+	private ISettingsStore getStore(ISettingsStore store, ITerminalConnector connector) {
+		return new SettingStorePrefixDecorator(store,connector.getId()+"."); //$NON-NLS-1$
 	}
 
 	protected void setupActions() {

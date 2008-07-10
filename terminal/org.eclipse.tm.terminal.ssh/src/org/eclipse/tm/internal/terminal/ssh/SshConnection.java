@@ -121,6 +121,7 @@ class SshConnection extends Thread {
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
 			channel.setPtyType("ansi"); //$NON-NLS-1$
 			channel.connect();
+			setChannel(channel);
 			fConn.setInputStream(channel.getInputStream());
 			fConn.setOutputStream(channel.getOutputStream());
 			fConn.setChannel(channel);

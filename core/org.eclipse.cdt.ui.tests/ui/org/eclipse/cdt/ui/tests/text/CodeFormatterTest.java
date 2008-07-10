@@ -746,4 +746,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//bool test(bool x)
+	//{
+	//   return x or x and not (not x);
+	//}
+
+	//bool test(bool x) {
+	//	return x or x and not (not x);
+	//}
+	public void testSpaceBeforeAndAfterAlternativeLogicalOperator_Bug239461() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_BINARY_OPERATOR, CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
 }

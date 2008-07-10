@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight (IBM) - [240414] NPE in SystemHistoryCombo
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -164,7 +164,8 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements  
 		mdnMI = createMenuItem(SystemResources.ACTION_HISTORY_MOVEDOWN_LABEL, SystemResources.ACTION_HISTORY_MOVEDOWN_TOOLTIP);        
 				
 		historyList.setMenu(popupMenu);
-		historyList.setItems(historyInput);
+		if (historyInput != null)
+			historyList.setItems(historyInput);
 		
 		clearButton.setEnabled((historyInput!=null) && (historyInput.length>0));
 		rmvButton.setEnabled(false);		

@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
+ * David McKnight (IBM) - [240414] NPE in SystemHistoryCombo
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -109,7 +110,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	    this.maxComboEntries = maxComboEntries;
 	    createHistoryButton();
 	    String[] history = getHistory();
-	    if (history.length > 0)
+	    if (history != null && history.length > 0)
 	    	setItems(history);
         addOurButtonSelectionListener();
 	}
@@ -288,7 +289,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
     {
     	this.historyKey = key;
 	    String[] history = getHistory();
-	    if (history.length > 0)
+	    if (history != null && history.length > 0)
 	       setItems(history);
 	    else
 	       historyCombo.removeAll();

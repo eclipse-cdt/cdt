@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Second page of the New Filter wizard that prompts for the name of the filter.
- * 
+ *
  * @since 3.0 moved from internal to API
  */
 public class SystemNewFilterWizardNamePage
@@ -362,10 +362,9 @@ public class SystemNewFilterWizardNamePage
 		}
 		if ((errorMessage == null) && (nameValidators != null))
 		{
-			int i = 0;
-			while (errorMessage == null && i < nameValidators.length){
-				errorMessage = nameValidators[i].validate(nameText.getText().trim());
-				i++;
+			String nameToValidate = nameText.getText().trim();
+			for (int i = 0; errorMessage == null && i < nameValidators.length; i++) {
+				errorMessage = nameValidators[i].validate(nameToValidate);
 			}
 			controlInError = nameText;
 		}
@@ -387,10 +386,9 @@ public class SystemNewFilterWizardNamePage
 	{
 	    errorMessage= null;
 		if (nameValidators != null){
-			int i = 0;
-			while (errorMessage == null && i < nameValidators.length){
-				errorMessage = nameValidators[i].validate(nameText.getText().trim());
-				i++;
+			String nameToValidate = nameText.getText().trim();
+			for (int i = 0; errorMessage == null && i < nameValidators.length; i++) {
+				errorMessage = nameValidators[i].validate(nameToValidate);
 			}
 		}
 		if ((errorMessage == null) && (filterPoolSelectionValidator != null))

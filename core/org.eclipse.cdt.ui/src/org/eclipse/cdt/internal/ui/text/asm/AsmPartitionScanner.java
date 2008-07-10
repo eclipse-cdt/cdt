@@ -49,7 +49,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	/**
 	 * Characters not applicable for line start comments.
 	 */
-	private static final String NON_LINE_COMMENT_CHARS = "\t #/_$.%()'\""; //$NON-NLS-1$
+	private static final String NON_LINE_COMMENT_CHARS = "\t #/_$.%()'\"{}"; //$NON-NLS-1$
 	/**
 	 * Characters known to be used as line end comments.
 	 */

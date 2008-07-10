@@ -59,6 +59,7 @@
  * David Dykstal (IBM)           - [233530] Backing out previous change for this bug
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  * David McKnight   (IBM)        - [236874] NPE upon selecting an item that is not associated with subsystem
+ * David McKnight   (IBM)        - [238363] Performance improvement for refresh in system view.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -100,6 +101,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
@@ -6381,9 +6383,9 @@ public class SystemView extends SafeTreeViewer
 		}		
 	}
 	
-	/** commented out - this is workaround for performance problem
+	// bug 238363 - this is workaround for performance problem
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-		//System.out.println("handleLableProviderChanged");
-	}*/
+		
+	}
 	
 }

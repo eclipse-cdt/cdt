@@ -532,6 +532,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
     	if (context instanceof IContainerDMContext) {
     		rm.setData(false);
     		rm.done();
+    		return;
     	}
         canResume(context, rm);
     }

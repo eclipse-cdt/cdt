@@ -2017,8 +2017,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		case IASTUnaryExpression.op_alignOf:
 		default:
 			int operatorToken= peekNextToken();
+			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
 			scribe.printNextToken(operatorToken, preferences.insert_space_before_unary_operator);
-			if (preferences.insert_space_after_unary_operator) {
+			if (forceSpace || preferences.insert_space_after_unary_operator) {
 				scribe.space();
 			} else if (operatorToken == Token.tIDENTIFIER && peekNextToken() != Token.tLPAREN) {
 				scribe.space();
@@ -2047,7 +2048,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     			scribe.alignFragment(expressionAlignment, 0);
 
     			// operator
-    			switch (node.getOperator()) {
+    			final int nextToken= peekNextToken();
+    			// in case of C++ alternative operators, like 'and', 'not', etc. a space
+    			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
+
+				switch (node.getOperator()) {
     			case IASTBinaryExpression.op_assign:
     			case IASTBinaryExpression.op_binaryAndAssign:
     			case IASTBinaryExpression.op_binaryOrAssign:
@@ -2059,14 +2064,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     			case IASTBinaryExpression.op_plusAssign:
     			case IASTBinaryExpression.op_shiftLeftAssign:
     			case IASTBinaryExpression.op_shiftRightAssign:
-    				scribe.printNextToken(peekNextToken(), preferences.insert_space_before_assignment_operator);
-    				if (preferences.insert_space_after_assignment_operator) {
+    				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_assignment_operator);
+    				if (forceSpace || preferences.insert_space_after_assignment_operator) {
     					scribe.space();
     				}
     				break;
     			default:
-    				scribe.printNextToken(peekNextToken(), preferences.insert_space_before_binary_operator);
-    				if (preferences.insert_space_after_binary_operator) {
+    				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_binary_operator);
+    				if (forceSpace || preferences.insert_space_after_binary_operator) {
     					scribe.space();
     				}
     			}
@@ -3091,6 +3096,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 		}
 		return false;
+	}
+
+	private char peekNextChar() {
+		if (peekNextToken() != Token.tBADCHAR) {
+			char[] text= localScanner.getCurrentTokenSource();
+			if (text.length > 0) {
+				return text[0];
+			}
+		}
+		return 0;
 	}
 
 	private int peekNextToken() {

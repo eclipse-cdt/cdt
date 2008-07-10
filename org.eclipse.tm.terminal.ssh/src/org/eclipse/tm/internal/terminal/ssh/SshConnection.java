@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [205674][ssh] Terminal remains "connecting" when authentication is cancelled
+ * Michael Scharf (Wind River) - 240420: [terminal][ssh]Channel is not closed when the connection is closed with the close button
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 

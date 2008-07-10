@@ -206,7 +206,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	public DocumentAdapter(IOpenable owner, IPath location) {
 		fOwner= owner;
 		fLocation= location;
-		fLocationKind= LocationKind.LOCATION;
+		fLocationKind= LocationKind.NORMALIZE;
 		
 		initialize();
 	}

@@ -439,6 +439,13 @@ public class EditorUtility {
 		IFile secondBestMatch= null;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= root.findFilesForLocation(location);
+		if (files.length == 0) {
+			// workaround http://bugs.eclipse.org/233939
+			IFile file= root.getFileForLocation(location);
+			if (file != null) {
+				files= new IFile[] { file };
+			}
+		}
 		for (IFile file : files) {
 			if (file.isAccessible()) {
 				if (project != null && file.getProject().equals(project)) {

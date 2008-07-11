@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * Anna Dushistova  (MontaVista) - [234490][remotecdt] Launching with disconnected target fails
+ * Anna Dushistova  (MontaVista) - [235298][remotecdt] Further improve progress reporting and cancellation of Remote CDT Launch
  *******************************************************************************/
 
 
@@ -49,6 +50,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.shells.HostShellProcessAdapter;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -94,6 +96,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				ICDISession dsession = null;
 				try {
 					// Download the binary to the remote before debugging.
+					monitor.setTaskName("Downloading"); //$NON-NLS-1$
 					remoteFileDownload(config, launch, exePath.toString(), remoteExePath, new SubProgressMonitor(monitor, 80));
 
 					// Automatically start up the gdbserver.  In the future this should be expanded to launch
@@ -106,6 +109,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 												+ spaceEscapify(remoteExePath);
 					if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
 						command_arguments += " " + arguments; //$NON-NLS-1$
+					monitor.setTaskName("Launching"); //$NON-NLS-1$
 					remoteShellProcess = remoteShellExec(config, gdbserver_command,
 														 command_arguments, new SubProgressMonitor(monitor, 5));
 					DebugPlugin.newProcess(launch, remoteShellProcess, Messages.RemoteRunLaunchDelegate_RemoteShell);
@@ -165,8 +169,10 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			Process remoteProcess = null;
 			try {
 				// Download the binary to the remote before debugging.
+				monitor.setTaskName("Downloading"); //$NON-NLS-1$
 				remoteFileDownload(config, launch, exePath.toString(),remoteExePath, new SubProgressMonitor(monitor,80));
 				// Use a remote shell to launch the binary.
+				monitor.setTaskName("Launching"); //$NON-NLS-1$
 				remoteProcess = remoteShellExec(config, remoteExePath, arguments, new SubProgressMonitor(monitor,20));
 				DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
 			} catch (CoreException e) {
@@ -266,6 +272,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			Process p = remoteShellExec(config, "chmod", "+x " + spaceEscapify(remotePath.toString()), new SubProgressMonitor(monitor, 5)); //$NON-NLS-1$ //$NON-NLS-2$
 			Thread.sleep(500);
 			p.destroy();
+		} catch (SystemOperationCancelledException e) {
+			cancel(e.getLocalizedMessage(), IStatus.CANCEL);
 		} catch (Exception e) {
 			abort(Messages.RemoteRunLaunchDelegate_6, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR );
 		} finally {
@@ -289,13 +297,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		String remote_command = real_remote_command + CMD_DELIMITER + EXIT_CMD;
 
 		
-		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE, monitor);
+		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE, new SubProgressMonitor(monitor,7));
 
 		// This is necessary because runCommand does not actually run the command right now.
 		String env[] = new String[0];
 		Process p = null;
 		try {
-			IHostShell hostShell = shellService.launchShell("", env, new NullProgressMonitor()); //$NON-NLS-1$
+			IHostShell hostShell = shellService.launchShell("", env, new SubProgressMonitor(monitor,3)); //$NON-NLS-1$
 			hostShell.writeToShell(remote_command);
 			p = new HostShellProcessAdapter(hostShell);
 		} catch (Exception e) {

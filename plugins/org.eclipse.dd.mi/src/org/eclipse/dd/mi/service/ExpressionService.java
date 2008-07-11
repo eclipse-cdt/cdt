@@ -31,8 +31,8 @@ import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
-import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
@@ -138,27 +138,11 @@ public class ExpressionService extends AbstractDsfService implements IExpression
          * @param relExpr
          *            The relative expression if this expression was created as a child
          * @param execCtx
-         *            The parent thread context for this ExpressionDMC. 
+         *            The parent execution context for this ExpressionDMC.
+         *            It could be a thread, a process, a processor, etc 
          */
-        public MIExpressionDMC(String sessionId, String expression, String relExpr, IMIExecutionDMContext execCtx) {
+        public MIExpressionDMC(String sessionId, String expression, String relExpr, IExecutionDMContext execCtx) {
             this(sessionId, expression, relExpr, (IDMContext)execCtx);
-        }
-
-        /**
-         * ExpressionDMC Constructor for expression to be evaluated in context of 
-         * a memory space.
-         * 
-         * @param sessionId
-         *            The session ID in which this context is created.
-         * @param expression
-         *            The expression to be described by this ExpressionDMC
-         * @param relExpr
-         *            The relative expression if this expression was created as a child
-         * @param memoryCtx
-         *            The parent memory space context for this ExpressionDMC. 
-         */
-        public MIExpressionDMC(String sessionId, String expression, String relExpr, IMemoryDMContext memoryCtx) {
-            this(sessionId, expression, relExpr, (IDMContext)memoryCtx);
         }
 
         private MIExpressionDMC(String sessionId, String expr, String relExpr, IDMContext parent) {
@@ -494,20 +478,18 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 	 * Create an expression context.
 	 */
 	public IExpressionDMContext createExpression(IDMContext ctx, String expression, String relExpr) {
-	    IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
+		// First, try to find a frame context to which this expression will apply
+		IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
 	    if (frameDmc != null) {
 	        return new MIExpressionDMC(getSession().getId(), expression, relExpr, frameDmc);
 	    } 
 	    
-	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
+	    // If there is not frame, we look for the first execution context.
+	    // It could be a thread, a process, a core, etc
+	    IExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
 	    if (execCtx != null) {
             return new MIExpressionDMC(getSession().getId(), expression, relExpr, execCtx);
-        } 
-	    
-        IMemoryDMContext memoryCtx = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
-        if (memoryCtx != null) {
-            return new MIExpressionDMC(getSession().getId(), expression, relExpr, memoryCtx);
-        } 
+        }
         
         // Don't care about the relative expression at this point
         return new InvalidContextExpressionDMC(getSession().getId(), expression, ctx);

@@ -47,11 +47,6 @@ class SshConnection extends Thread {
 	private static int fgNo;
 	private final ITerminalControl fControl;
 	private final SshConnector fConn;
-	/**
-	 * if true, the terminal has been disconnected. Used to tack
-	 * disconnects that happen while the the terminal is still connecting.
-	 */
-	private boolean fDisconnected;
 	private Session fSession;
 	protected SshConnection(SshConnector conn,ITerminalControl control) {
 		super("SshConnection-"+fgNo++); //$NON-NLS-1$
@@ -113,6 +108,9 @@ class SshConnection extends Thread {
 
             Session session = createSession(user, password, host, port,
             		ui, new NullProgressMonitor());
+			synchronized (this) {
+				fSession = session;
+			}
 
             //java.util.Hashtable config=new java.util.Hashtable();
             //config.put("StrictHostKeyChecking", "no");
@@ -122,55 +120,56 @@ class SshConnection extends Thread {
                 session.setServerAliveInterval(nKeepalive); //default is 5 minutes
             }
 			session.connect(nTimeout);   // making connection with timeout.
-			setSession(session);
 
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
 			channel.setPtyType("ansi"); //$NON-NLS-1$
 			channel.connect();
-			fConn.setInputStream(channel.getInputStream());
-			fConn.setOutputStream(channel.getOutputStream());
-			fConn.setChannel(channel);
-			fControl.setState(TerminalState.CONNECTED);
-			
+
 			// maybe the terminal was disconnected while we were connecting
-			// if that happened, lets disconnect....
-			if(isDisconnected()) {
-				session.disconnect();
-				return;
+			if (isSessionConnected() && channel.isConnected()) {
+				fConn.setInputStream(channel.getInputStream());
+				fConn.setOutputStream(channel.getOutputStream());
+				fConn.setChannel(channel);
+				fControl.setState(TerminalState.CONNECTED);
+				try {
+					// read data until the connection gets terminated
+					readDataForever(fConn.getInputStream());
+				} catch (InterruptedIOException e) {
+					// we got interrupted: we are done...
+				}
 			}
-			try {
-				// read data until the connection gets terminated
-				readDataForever(fConn.getInputStream());
-			} catch (InterruptedIOException e) {
-				// we got interrupted: we are done...
-			}
-			// when reading is done, we set the state to closed
-			fControl.setState(TerminalState.CLOSED);
 		} catch (Exception e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} finally {
 			// make sure the terminal is disconnected when the thread ends
-			disconnect();
+			try {
+				disconnect();
+			} finally {
+				// when reading is done, we set the state to closed
+				fControl.setState(TerminalState.CLOSED);
+			}
 		}
 	}
-	synchronized void setSession(Session session) {
-		fSession = session;
+
+	private synchronized boolean isSessionConnected() {
+		return fSession != null && fSession.isConnected();
 	}
-	synchronized boolean isDisconnected() {
-		return fDisconnected;
-	}
+
 	/**
 	 * disconnect the ssh session
 	 */
 	void disconnect() {
 		interrupt();
 		synchronized (this) {
-			fDisconnected=true;
 			if(fSession!=null) {
-				fSession.disconnect();
+				try {
+					fSession.disconnect();
+				} catch (Exception e) {
+					// Ignore NPE due to bug in JSch if disconnecting
+					// while not yet authenticated
+				}
 				fSession=null;
 			}
-				
 		}
 	}
 	/**
@@ -218,10 +217,14 @@ class SshConnection extends Thread {
 				public void run() {
 					// [168197] Replace JFace MessagDialog by SWT MessageBox
 					//retval[0] = MessageDialog.openQuestion(null, SshMessages.WARNING, str);
-					MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-					mb.setText(SshMessages.WARNING);
-					mb.setMessage(str);
-					retval[0] = (mb.open() == SWT.YES);
+					if (isSessionConnected()) {
+						MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						mb.setText(SshMessages.WARNING);
+						mb.setMessage(str);
+						retval[0] = (mb.open() == SWT.YES);
+					} else {
+						retval[0] = false;
+					}
 				}
 			});
 			return retval[0];
@@ -230,10 +233,14 @@ class SshConnection extends Thread {
 			final String[] retval = new String[1];
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					UserValidationDialog uvd = new UserValidationDialog(null, fConnectionId, fUser, message);
-					uvd.setUsernameMutable(false);
-					if (uvd.open() == Window.OK) {
-						retval[0] = uvd.getPassword();
+					if (isSessionConnected()) {
+						UserValidationDialog uvd = new UserValidationDialog(null, fConnectionId, fUser, message);
+						uvd.setUsernameMutable(false);
+						if (uvd.open() == Window.OK) {
+							retval[0] = uvd.getPassword();
+						} else {
+							retval[0] = null;
+						}
 					} else {
 						retval[0] = null;
 					}
@@ -261,10 +268,12 @@ class SshConnection extends Thread {
 				public void run() {
 					// [168197] Replace JFace MessagDialog by SWT MessageBox
 					// MessageDialog.openInformation(null, SshMessages.INFO, message);
-					MessageBox mb = new MessageBox(null, SWT.ICON_INFORMATION | SWT.OK);
-					mb.setText(SshMessages.INFO);
-					mb.setMessage(message);
-					mb.open();
+					if (isSessionConnected()) {
+						MessageBox mb = new MessageBox(null, SWT.ICON_INFORMATION | SWT.OK);
+						mb.setText(SshMessages.INFO);
+						mb.setMessage(message);
+						mb.open();
+					}
 				}
 			});
 		}
@@ -275,7 +284,7 @@ class SshConnection extends Thread {
 		    if (prompt.length == 0) {
 		        // No need to prompt, just return an empty String array
 		        return new String[0];
-    }
+		    }
 			try{
 			    if (fAttemptCount == 0 && fPassword != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
 			        // Return the provided password the first time but always prompt on subsequent tries
@@ -285,10 +294,13 @@ class SshConnection extends Thread {
 			    final String[][] finResult = new String[1][];
 			    getStandardDisplay().syncExec(new Runnable() {
 			    	public void run() {
-			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null,
-			    			fConnectionId, destination, name, instruction, prompt, echo);
-			    		dialog.open();
-			    		finResult[0]=dialog.getResult();
+			    		if (isSessionConnected()) {
+							KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, fConnectionId, destination, name, instruction, prompt, echo);
+							dialog.open();
+							finResult[0] = dialog.getResult();
+						} else {
+							finResult[0] = null; // indicate cancel to JSch
+						}
 		    		}
 			    });
 			    String[] result=finResult[0];
@@ -304,24 +316,11 @@ class SshConnection extends Thread {
 				return null;
 			}
 		}
-        /**
-         * Callback to indicate that a connection is about to be attempted
-         */
-        public void aboutToConnect() {
-            fAttemptCount = 0;
-        }
-        /**
-         * Callback to indicate that a connection was made
-         */
-        public void connectionMade() {
-            fAttemptCount = 0;
-        }
     }
 
     private void connectFailed(String terminalText, String msg) {
 		Logger.log(terminalText);
 		fControl.displayTextInTerminal(terminalText);
-		fControl.setState(TerminalState.CLOSED);
 		fControl.setMsg(msg);
 	}
 }

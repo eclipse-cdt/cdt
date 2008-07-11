@@ -375,6 +375,9 @@ public class ProjectTargets {
 						option = getString(node, TARGET_ARGUMENTS);
 						if (option != null) {
 							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, option);
+						} else if (!target.isDefaultBuildCmd()) {
+							// Clear build-arguments set in target constructor to project defaults
+							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
 						}
 						option = getString(node, BAD_TARGET);
 						if (option != null) {

@@ -81,6 +81,30 @@ public class MakeTargetDialog extends Dialog {
 	private boolean initializing = true;
 
 	/**
+	 * A Listener class to verify correctness of input and display an error message
+	 */
+	private class UpdateStatusLineListener implements Listener {
+
+		private void setStatusLine() {
+			fStatusLine.setErrorMessage(null);
+
+			if (targetNameText.getText().trim().equals("")) { //$NON-NLS-1$
+				fStatusLine.setErrorMessage(
+					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
+			} else if (commandText.isEnabled() && commandText.getText().trim().equals("")) { //$NON-NLS-1$
+				fStatusLine.setErrorMessage(
+					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
+			}
+		}
+
+		public void handleEvent(Event e) {
+			setStatusLine();
+			updateButtons();
+		}
+		
+	}
+
+	/**
 	 * @param parentShell
 	 */
 	public MakeTargetDialog(Shell parentShell, IMakeTarget target) throws CoreException {
@@ -91,7 +115,7 @@ public class MakeTargetDialog extends Dialog {
 		buildCommand = target.getBuildCommand();
 		buildArguments = target.getBuildArguments();
 		targetName = target.getName();
-		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, "all"); //$NON-NLS-1$
+		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, ""); //$NON-NLS-1$
 		targetBuildID = target.getTargetBuilderID();
 		runAllBuilders = target.runAllBuilders();
 	}
@@ -116,6 +140,8 @@ public class MakeTargetDialog extends Dialog {
 		buildCommand = buildInfo.getBuildCommand();
 		buildArguments = buildInfo.getBuildArguments();
 		targetString = buildInfo.getIncrementalBuildTarget();
+
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	protected void configureShell(Shell newShell) {
@@ -168,26 +194,8 @@ public class MakeTargetDialog extends Dialog {
 		targetNameText = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
 		((GridData) (targetNameText.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetNameText.getLayoutData())).grabExcessHorizontalSpace = true;
-		targetNameText.addListener(SWT.Modify, new Listener() {
 
-			public void handleEvent(Event e) {
-				String newName = targetNameText.getText().trim();
-				if (newName.equals("")) { //$NON-NLS-1$
-					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
-				} else
-					try {
-						if (fTarget != null && fTarget.getName().equals(newName)
-								|| fTargetManager.findTarget(fContainer, newName) == null) {
-							fStatusLine.setErrorMessage(null);
-						} else {
-							fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.targetWithNameExists")); //$NON-NLS-1$
-						}
-					} catch (CoreException ex) {
-						fStatusLine.setErrorMessage(ex.getLocalizedMessage());
-					}
-				updateButtons();
-			}
-		});
+		targetNameText.addListener(SWT.Modify, new UpdateStatusLineListener());
 	}
 
 	protected void createSettingControls(Composite parent) {
@@ -254,17 +262,9 @@ public class MakeTargetDialog extends Dialog {
 		commandText = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
 		((GridData) (commandText.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (commandText.getLayoutData())).grabExcessHorizontalSpace = true;
-		commandText.addListener(SWT.Modify, new Listener() {
 
-			public void handleEvent(Event e) {
-				if (commandText.getText().equals("")) { //$NON-NLS-1$
-					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
-				} else {
-					fStatusLine.setErrorMessage(null);
-				}
-				updateButtons();
-			}
-		});
+		commandText.addListener(SWT.Modify, new UpdateStatusLineListener());
+
 		if (isDefaultCommand) {
 			commandText.setEnabled(false);
 		} else {

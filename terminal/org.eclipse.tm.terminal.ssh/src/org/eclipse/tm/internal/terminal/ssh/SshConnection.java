@@ -37,7 +37,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
-import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -48,7 +47,12 @@ class SshConnection extends Thread {
 	private static int fgNo;
 	private final ITerminalControl fControl;
 	private final SshConnector fConn;
-	private Channel fChannel;
+	/**
+	 * if true, the terminal has been disconnected. Used to tack
+	 * disconnects that happen while the the terminal is still connecting.
+	 */
+	private boolean fDisconnected;
+	private Session fSession;
 	protected SshConnection(SshConnector conn,ITerminalControl control) {
 		super("SshConnection-"+fgNo++); //$NON-NLS-1$
 		fControl = control;
@@ -118,15 +122,22 @@ class SshConnection extends Thread {
                 session.setServerAliveInterval(nKeepalive); //default is 5 minutes
             }
 			session.connect(nTimeout);   // making connection with timeout.
+			setSession(session);
 
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
 			channel.setPtyType("ansi"); //$NON-NLS-1$
 			channel.connect();
-			setChannel(channel);
 			fConn.setInputStream(channel.getInputStream());
 			fConn.setOutputStream(channel.getOutputStream());
 			fConn.setChannel(channel);
 			fControl.setState(TerminalState.CONNECTED);
+			
+			// maybe the terminal was disconnected while we were connecting
+			// if that happened, lets disconnect....
+			if(isDisconnected()) {
+				session.disconnect();
+				return;
+			}
 			try {
 				// read data until the connection gets terminated
 				readDataForever(fConn.getInputStream());
@@ -138,11 +149,15 @@ class SshConnection extends Thread {
 		} catch (Exception e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} finally {
-
+			// make sure the terminal is disconnected when the thread ends
+			disconnect();
 		}
 	}
-	synchronized void setChannel(Channel channel) {
-		fChannel = channel;
+	synchronized void setSession(Session session) {
+		fSession = session;
+	}
+	synchronized boolean isDisconnected() {
+		return fDisconnected;
 	}
 	/**
 	 * disconnect the ssh session
@@ -150,10 +165,12 @@ class SshConnection extends Thread {
 	void disconnect() {
 		interrupt();
 		synchronized (this) {
-			if(fChannel!=null) {
-				fChannel.disconnect();
-				fChannel=null;
+			fDisconnected=true;
+			if(fSession!=null) {
+				fSession.disconnect();
+				fSession=null;
 			}
+				
 		}
 	}
 	/**

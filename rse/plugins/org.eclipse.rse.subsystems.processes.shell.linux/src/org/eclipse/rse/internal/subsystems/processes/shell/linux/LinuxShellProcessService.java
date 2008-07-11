@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+ * Anna Dushistova  (MontaVista) - [239159] The shell process subsystem not working without the shells subsystem present for the systemType
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
@@ -34,7 +36,6 @@ import org.eclipse.rse.services.processes.AbstractProcessService;
 import org.eclipse.rse.services.shells.HostShellProcessAdapter;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
  * class to fetch remote linux target's process info
@@ -106,7 +107,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
             final IProgressMonitor monitor) throws SystemMessageException {
         // this is to workaround RSE bug 147531
         if (filter.getUsername().equals("${user.id}") && host != null) { //$NON-NLS-1$
-        	IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(host);
+        	ISubSystem ss = Activator.getSuitableSubSystem(host);
         	if (ss!=null) {
                 // change filter username so the filter will filter out the right
                 // process for my processes

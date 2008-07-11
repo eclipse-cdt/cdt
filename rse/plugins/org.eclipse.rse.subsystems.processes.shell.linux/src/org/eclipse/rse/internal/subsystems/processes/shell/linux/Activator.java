@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 MontaVista Software, Inc. and others.
+ * Copyright (c) 2006, 2008 MontaVista Software, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo       (MontaVista) - initial API and implementation
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere 
+ * Anna Dushistova  (MontaVista) - [239159] The shell process subsystem not working without the shells subsystem present for the systemType
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -22,9 +23,9 @@ import org.osgi.framework.BundleContext;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystem;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -159,9 +160,9 @@ public class Activator extends AbstractUIPlugin {
      * @return shell service object, or <code>null</code> if not found.
      */
     public static IShellService getShellService(IHost host) {
-    	IShellServiceSubSystem ss = getShellServiceSubSystem(host);
+    	ISubSystem ss = getSuitableSubSystem(host);
     	if (ss!=null) {
-    		return ss.getShellService();
+    		return (IShellService)ss.getSubSystemConfiguration().getService(host).getAdapter(IShellService.class);
     	}
         return null;
     }
@@ -172,14 +173,19 @@ public class Activator extends AbstractUIPlugin {
      * @param host the connection 
      * @return shell service subsystem, or <code>null</code> if not found.
      */
-    public static IShellServiceSubSystem getShellServiceSubSystem(IHost host) {
+    public static ISubSystem getSuitableSubSystem(IHost host) {
         if (host == null)
             return null;
         ISubSystem[] subSystems = host.getSubSystems();
+        IShellService ssvc = null;
         for (int i = 0; subSystems != null && i < subSystems.length; i++) {
-            if (subSystems[i] instanceof IShellServiceSubSystem) {
-                return (IShellServiceSubSystem)subSystems[i];
-            }
+        	IService svc = subSystems[i].getSubSystemConfiguration().getService(host);
+        	if (svc!=null) {
+        		ssvc = (IShellService)svc.getAdapter(IShellService.class);
+        		if (ssvc != null) {
+        		    return subSystems[i];	
+        		}	
+        	}
         }
         return null;
     }

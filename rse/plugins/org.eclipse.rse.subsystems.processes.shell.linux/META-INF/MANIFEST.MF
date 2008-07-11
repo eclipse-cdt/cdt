@@ -1,4 +1,4 @@
-Manifest-Version: 1.0
+Manifest-Version: 1.1.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.processes.shell.linux;singleton:=true
@@ -10,8 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.rse.subsystems.processes.core;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.rse.subsystems.shells.core;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.rse.subsystems.processes.core;bundle-version="[3.0.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName

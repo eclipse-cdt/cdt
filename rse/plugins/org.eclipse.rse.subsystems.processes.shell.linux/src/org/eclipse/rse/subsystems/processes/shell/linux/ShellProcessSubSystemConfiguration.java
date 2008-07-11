@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Yu-Fen Kuo (MontaVista) - adapted from RSE ProcessServiceSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+ * Anna Dushistova  (MontaVista) - [239159] The shell process subsystem not working without the shells subsystem present for the systemType
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.shell.linux;
@@ -30,7 +31,6 @@ import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystemConfiguration;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
  * This class is used by org.eclipse.rse.core.subsystemConfigurations extension
@@ -58,7 +58,7 @@ public class ShellProcessSubSystemConfiguration extends
 
     public IConnectorService getConnectorService(IHost host) 
     {
-    	IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(host);
+    	ISubSystem ss = Activator.getSuitableSubSystem(host);
     	if (ss!=null) 
     	{
     		return ss.getConnectorService();

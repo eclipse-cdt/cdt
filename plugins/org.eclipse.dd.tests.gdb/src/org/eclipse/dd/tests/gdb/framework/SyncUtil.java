@@ -71,6 +71,8 @@ public class SyncUtil {
 		fRunControl = tracker.getService(MIRunControl.class);
 		fStack = tracker.getService(MIStack.class);
 		fExpressions = tracker.getService(IExpressions.class);
+		
+		tracker.dispose();
 	}
 
 	public static MIStoppedEvent SyncStep(final StepType stepType, int numSteps) throws Throwable {

@@ -85,6 +85,7 @@ public class MIRegistersTest extends BaseTestCase {
 
 	@After
 	public void tearDown() {
+		fServicesTracker.dispose();
 		fRegService = null;
 	}
 

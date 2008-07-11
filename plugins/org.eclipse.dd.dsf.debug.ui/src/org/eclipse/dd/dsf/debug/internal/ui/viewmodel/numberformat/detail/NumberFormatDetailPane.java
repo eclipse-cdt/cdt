@@ -549,6 +549,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                             }
                         }
                     }
+                    tracker.dispose();
                     
                     /*
                      *  We need to wait until all the values are in. This causes the work

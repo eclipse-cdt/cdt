@@ -490,6 +490,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
              */
             DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), fDmc.getSessionId());
             IModules service = tracker.getService(IModules.class);
+            tracker.dispose();
             if (service == null) {
                 rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();

@@ -199,6 +199,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this);
         fBreakpointService = null;
         fRunControl = null;
+        fServicesTracker.dispose();
         fServicesTracker = null;
 
         clearEventCounters();

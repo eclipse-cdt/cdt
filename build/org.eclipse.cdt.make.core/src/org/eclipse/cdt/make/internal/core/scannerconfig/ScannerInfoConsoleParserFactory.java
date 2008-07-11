@@ -15,15 +15,13 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.MakeBuilder;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.resources.IProject;

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight        (IBM)    - [238158] Can create duplicate filters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -21,7 +21,9 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
@@ -53,9 +55,14 @@ public class SystemNewFileFilterFromFolderAction extends SystemNewFileFilterActi
 	public void run()
 	{
 		IRemoteFileSubSystem fileSubsystem = _selected.getParentRemoteFileSubSystem();
-		//ISubSystemConfiguration config = fileSubsystem.getSubSystemConfiguration();
-		ISystemFilterPool filterPool = fileSubsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager().getFirstDefaultSystemFilterPool();
-		setParentFilterPool(filterPool);
+
+		ISystemFilterPool defaultFilterPool = ((SubSystem)fileSubsystem).getConnectionPrivateFilterPool(true);
+		if (defaultFilterPool == null){
+			ISystemFilterPoolManager mgr = fileSubsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
+			defaultFilterPool = mgr.getFirstDefaultSystemFilterPool();
+		}
+		
+		setParentFilterPool(defaultFilterPool);
 		setAllowFilterPoolSelection(fileSubsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools());			
 		super.run();
 	}

@@ -20,6 +20,7 @@
  * David Dykstal    (IBM)        - [217556] remove service subsystem types
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
+ * David McKnight        (IBM)    - [238158] Can create duplicate filters
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -433,7 +434,12 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				// if not showing filter pools, we have to add a "new filter" action here...
 				if (!showFilterPools)
 				{
-					IAction[] newFilterActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, config, null);
+					ISystemFilterPool defaultPool = null;
+					if (selectedSubSystem != null){
+						defaultPool = ((SubSystem)selectedSubSystem).getConnectionPrivateFilterPool(true);
+					}
+					
+					IAction[] newFilterActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, config, defaultPool);
 					if ((newFilterActions != null) && (newFilterActions.length > 0))
 					{
 						// pre-scan for legacy
@@ -585,8 +591,18 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 					ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 					for (int idx = 0; idx < activeProfiles.length; idx++)
 					{
-						ISystemFilterPool defaultPool = getDefaultSystemFilterPool(config, activeProfiles[idx]);
+						//ISystemFilterPool defaultPool = getDefaultSystemFilterPool(config, activeProfiles[idx]);
 
+						// bug 238158 - now the default pool will be the connection private one
+						ISystemFilterPool defaultPool = null;
+						if (selectedSubSystem != null){
+							defaultPool = ((SubSystem)selectedSubSystem).getConnectionPrivateFilterPool(true);
+						}
+						else {
+							defaultPool = getDefaultSystemFilterPool(config, activeProfiles[idx]);
+						}
+
+							
 						if (defaultPool != null)
 						{
 							poolWrapperInfo.addWrapper(activeProfiles[idx].getName(), defaultPool, (activeProfiles[idx] == activeProfile)); // display name, pool to wrap, whether to preselect

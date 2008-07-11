@@ -12,13 +12,25 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * David McKnight        (IBM)    - [238158] Can create duplicate filters
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import java.util.Iterator;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.files.ui.widgets.SystemFileFilterStringEditPane;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
@@ -35,6 +47,7 @@ public class SystemNewFileFilterAction
        extends SystemNewFilterAction
 {
 	//private RemoteFileSubSystemConfiguration inputSubsystemConfiguration;
+	private SubSystem _selectedSubSystem;
 		
 	/**
 	 * Constructor 
@@ -78,5 +91,43 @@ public class SystemNewFileFilterAction
 	  	wizard.setWizardImage(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID));
 		wizard.setPage1Description(SystemFileResources.RESID_NEWFILEFILTER_PAGE1_DESCRIPTION);
 		wizard.setFilterStringEditPane(new SystemFileFilterStringEditPane(wizard.getShell()));		
+	}
+	
+	public void run()
+	{
+		if (_selectedSubSystem != null){
+			setAllowFilterPoolSelection(_selectedSubSystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools());			
+		}
+		else {
+			// disallow filter pool select (because this is from a filter pool)
+			setAllowFilterPoolSelection((ISystemFilterPool[])null);
+			setAllowFilterPoolSelection((ISystemFilterPoolWrapperInformation)null);
+			
+			callbackConfigurator = null;
+			callbackConfiguratorCalled = false;
+		}
+		super.run();
+	}
+	
+	/**
+	 * Called when the selection changes in the systems view.  This determines
+	 * the input object for the command and whether to enable or disable
+	 * the action.
+	 * 
+	 * @param selection the current seleciton
+	 * @return whether to enable or disable the action
+	 */
+	public boolean updateSelection(IStructuredSelection selection)
+	{
+		_selectedSubSystem = null;
+		Iterator e = selection.iterator();
+		Object selected = e.next();
+
+		if (selected != null && selected instanceof SubSystem)
+		{
+			_selectedSubSystem = (SubSystem) selected;
+		}
+
+		return super.updateSelection(selection);
 	}
 }

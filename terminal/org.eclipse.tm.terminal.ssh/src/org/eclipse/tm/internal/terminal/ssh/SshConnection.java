@@ -48,6 +48,7 @@ class SshConnection extends Thread {
 	private final ITerminalControl fControl;
 	private final SshConnector fConn;
 	private Session fSession;
+	private boolean fDisconnectHasBeenCalled;
 	protected SshConnection(SshConnector conn,ITerminalControl control) {
 		super("SshConnection-"+fgNo++); //$NON-NLS-1$
 		fControl = control;
@@ -120,7 +121,9 @@ class SshConnection extends Thread {
                 session.setServerAliveInterval(nKeepalive); //default is 5 minutes
             }
 			session.connect(nTimeout);   // making connection with timeout.
-
+			// if we got disconnected, do not continue
+			if(!isSessionConnected())
+				return;
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
 			channel.setPtyType("ansi"); //$NON-NLS-1$
 			channel.connect();
@@ -152,7 +155,7 @@ class SshConnection extends Thread {
 	}
 
 	private synchronized boolean isSessionConnected() {
-		return fSession != null && fSession.isConnected();
+		return fDisconnectHasBeenCalled || (fSession != null && fSession.isConnected());
 	}
 
 	/**
@@ -161,6 +164,7 @@ class SshConnection extends Thread {
 	void disconnect() {
 		interrupt();
 		synchronized (this) {
+			fDisconnectHasBeenCalled=true;
 			if(fSession!=null) {
 				try {
 					fSession.disconnect();

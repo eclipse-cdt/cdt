@@ -996,6 +996,24 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	public void _testAddressOfOverloadedMethod() throws DOMException { fail("aftodo"); }
 
+	// struct C {
+	//	 int m1(int a);
+	//	 int m2(int a) const;
+	// }; 
+	//
+	// C* func(int (C::*m)(int) const);
+	// C* func(int (C::*m)(int));
+
+	// void ref() {
+	//	 func(&C::m1);
+	//	 func(&C::m2);
+	// }
+    public void _testAddressOfConstMethod_233889() throws Exception {
+		IBinding fn1= getBindingFromASTName("func(&C::m1", 4, ICPPFunction.class);
+		IBinding fn2= getBindingFromASTName("func(&C::m2", 4, ICPPFunction.class);
+		assertNotSame(fn1, fn2);
+    }
+
 	// // the header
 	// void f_int(int);
 	// void f_const_int(const int);

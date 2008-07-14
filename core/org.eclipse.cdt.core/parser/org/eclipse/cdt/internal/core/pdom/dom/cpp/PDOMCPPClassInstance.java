@@ -297,9 +297,9 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return original;
 	}
 
-	
-	//ICPPClassScope unimplemented
-	public ICPPMethod[] getImplicitMethods() { fail(); return null; }
+	public ICPPMethod[] getImplicitMethods() {
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
 
 	public IIndexBinding getScopeBinding() {
 		return this;

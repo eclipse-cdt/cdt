@@ -120,6 +120,12 @@ class SshConnection extends Thread {
             if (nKeepalive > 0) {
                 session.setServerAliveInterval(nKeepalive); //default is 5 minutes
             }
+            // dont try to connect if disconnect has been requested already
+			synchronized (this) {
+				if (fDisconnectHasBeenCalled)
+					return;
+			}
+
 			session.connect(nTimeout);   // making connection with timeout.
 			// if we got disconnected, do not continue
 			if(!isSessionConnected())
@@ -155,7 +161,7 @@ class SshConnection extends Thread {
 	}
 
 	private synchronized boolean isSessionConnected() {
-		return fDisconnectHasBeenCalled || (fSession != null && fSession.isConnected());
+		return !fDisconnectHasBeenCalled && fSession != null && fSession.isConnected();
 	}
 
 	/**

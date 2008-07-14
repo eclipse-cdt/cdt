@@ -14,6 +14,7 @@
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Kevin Doyle		(IBM)	 - [222825] NPE when changing profile on Work with User Actions Dialog
  * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
+ * Kevin Doyle (IBM)   - [240725] Add Null Pointer checking when there are no default user actions
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -1120,6 +1121,8 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 	 */
 	protected Vector createExistingDomainElementWrappers(Vector v, ISystemProfile profile) {
 		IPropertySet xdoc = getDocument(profile);
+		if (xdoc == null)
+			return v;
 		// get the "domain" children of the root, in the pre-determined order of domains
 		IPropertySet[] subList = xdoc.getPropertySets();
 		if ((subList == null) || (subList.length == 0)) return v;
@@ -1168,6 +1171,8 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 	 *  of the given untranslated name ("Type" attribute). If not found, optionally create it.
 	 */
 	protected IPropertySet findOrCreateDomainElement(IPropertySet xdoc, int domain, boolean create) {
+		if (xdoc == null)
+			return null;
 		
 		IPropertySet[] domainSets = xdoc.getPropertySets();
 		String domainName = getActionSubSystem().mapDomainName(domain); // unxlated name. Eg "Type" parm
@@ -1184,7 +1189,6 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 			}
 
 		}
-		
 		/*
 		NodeList subList = xdoc.getDocumentElement().getChildNodes();
 		String domainName = getActionSubSystem().mapDomainName(domain); // unxlated name. Eg "Type" parm

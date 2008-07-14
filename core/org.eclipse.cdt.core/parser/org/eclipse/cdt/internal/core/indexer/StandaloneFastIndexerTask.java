@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
  * @since 4.0
  */
 public class StandaloneFastIndexerTask extends StandaloneIndexerTask {
-	public StandaloneFastIndexerTask(StandaloneFastIndexer indexer, List added,	List changed, List removed) {
+	public StandaloneFastIndexerTask(StandaloneFastIndexer indexer, List<String> added,	List<String> changed, List<String> removed) {
 		super(indexer, added, changed, removed, true);
 	}
 

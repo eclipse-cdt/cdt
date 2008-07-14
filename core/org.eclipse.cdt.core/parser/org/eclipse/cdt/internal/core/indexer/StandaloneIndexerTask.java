@@ -43,7 +43,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	
 	protected StandaloneIndexer fIndexer;
 
-	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection added, Collection changed, Collection removed, boolean isFast) {
+	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added, Collection<String> changed, Collection<String> removed, boolean isFast) {
 		super(concat(added, changed), removed.toArray(), new StandaloneIndexerInputAdapter(indexer), isFast);
 		fIndexer= indexer;
 		setShowActivity(fIndexer.getShowActivity());

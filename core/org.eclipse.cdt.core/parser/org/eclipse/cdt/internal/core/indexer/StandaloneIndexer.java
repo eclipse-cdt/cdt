@@ -16,14 +16,21 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -72,7 +79,9 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Empty list.
 	 */
-	protected static final List NO_TUS = new ArrayList();
+	protected static final List<String> NO_TUS = Collections.emptyList();
+	
+	
 	/**
 	 * The IWritableIndex that stores all bindings and names.
 	 */
@@ -87,12 +96,21 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Collection of valid file extensions for C/C++ source.
 	 */
-	protected Set fValidSourceUnitNames;
+	protected Set<String> fValidSourceUnitNames;
 	
 	/**
 	 * The IScannerInfo that provides include paths and defined symbols.
+	 * Either a single scanner info or a IStandaloneScannerInfoProvider must
+	 * be provided, but not both. If a single IScannerInfo object is provided
+	 * it will always be used. Otherwise the provider will be used.
 	 */
 	protected IScannerInfo fScanner;
+	
+	/**
+	 * Creates IScannerInfo objects from file paths, allows there
+	 * to be separate scanner infos for specific files and folders.
+	 */
+	protected IStandaloneScannerInfoProvider fScannerInfoProvider;
 	
 	/**
 	 * The ILanguageMapper that determines the ILanguage for a file.
@@ -146,6 +164,33 @@ public abstract class StandaloneIndexer {
 		}
 	};
 	
+	public StandaloneIndexer(IWritableIndex index, boolean indexAllFiles,  
+			                 ILanguageMapper mapper, IParserLogService log, IScannerInfo scanner) {
+		fIndex = index;
+		fIndexAllFiles = indexAllFiles;
+		fMapper = mapper;
+		fLog = log;	
+		fScanner = scanner;
+		fScannerInfoProvider = null;
+	}
+	
+	
+	public StandaloneIndexer(IWritableIndex index, boolean indexAllFiles,  
+            ILanguageMapper mapper, IParserLogService log, IStandaloneScannerInfoProvider scannerProvider) {
+		fIndex = index;
+		fIndexAllFiles = indexAllFiles;
+		fMapper = mapper;
+		fLog = log;	
+		fScanner = null;
+		fScannerInfoProvider = scannerProvider;
+	}
+	
+
+	public void setScannerInfoProvider(IStandaloneScannerInfoProvider provider) {
+		fScannerInfoProvider = provider;
+		fScanner = null;
+	}
+	
 	/**
 	 * Returns the index.
 	 * @return the IWritable index the indexer is writing to
@@ -165,14 +210,14 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Returns the collection of valid file extensions for C/C++ source.
 	 */
-	public Set getValidSourceUnitNames() {
+	public Set<String> getValidSourceUnitNames() {
 		return fValidSourceUnitNames;
 	}
 	
 	/**
 	 * Sets the collection of valid file extensions for C/C++ source.
 	 */
-	public void setValidSourceUnitNames(Set validSourceUnitNames) {
+	public void setValidSourceUnitNames(Set<String> validSourceUnitNames) {
 		fValidSourceUnitNames = validSourceUnitNames;
 	}
 	
@@ -182,6 +227,21 @@ public abstract class StandaloneIndexer {
 	public IScannerInfo getScannerInfo() {
 		return fScanner;
 	}
+	
+	
+	/**
+	 * Returns the IScannerInfo for the given path.
+	 * If the current instance was created with an IScannerInfo instead of
+	 * an IScannerInfoProvider then the path will be ignored and
+	 * that IScannerInfo will always be returned.
+	 */
+	public IScannerInfo getScannerInfo(String path) {
+		if(fScanner != null)
+			return fScanner;
+		
+		return fScannerInfoProvider.getScannerInformation(path);
+	}
+	
 	
 	/**
 	 * Returns the ILanguageMapper that determines the ILanguage for a file.

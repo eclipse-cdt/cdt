@@ -124,21 +124,6 @@ class ClassTypeMixin {
 		return bindings; 
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
-		ObjectSet<ICPPMethod> set = new ObjectSet<ICPPMethod>(4);
-		set.addAll(getDeclaredMethods());
-		ICPPClassScope scope = (ICPPClassScope) host.getCompositeScope();
-		set.addAll( scope.getImplicitMethods() );
-		ICPPBase [] bases = getBases();
-		for (ICPPBase base : bases) {
-			IBinding b = base.getBaseClass();
-			if( b instanceof ICPPClassType )
-				set.addAll( ((ICPPClassType)b).getMethods() );
-		}
-		return set.keyArray(ICPPMethod.class);
-	}
-
-
 	public ICPPField[] getDeclaredFields() throws DOMException {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();

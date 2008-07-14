@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -184,10 +186,13 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
 	public IField[] getFields() throws DOMException { fail(); return null; }
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
 	@Override
 	public Object clone() {fail();return null;}
+
+	public ICPPMethod[] getMethods() throws DOMException { 
+		return CPPClassType.getMethods(this);
+	}
 
 	public ICPPClassType getClassType() {
 		return this;

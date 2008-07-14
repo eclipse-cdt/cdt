@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -224,15 +225,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
-		try {
-			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true);
-			acceptInHierarchy(this, new HashSet<IPDOMMemberOwner>(), methods);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPMethod[0];
-		}
+	public ICPPMethod[] getMethods() throws DOMException { 
+		return CPPClassType.getMethods(this);
 	}
 
 	public ICPPMethod[] getImplicitMethods() {

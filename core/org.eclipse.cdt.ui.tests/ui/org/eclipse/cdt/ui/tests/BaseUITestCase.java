@@ -67,6 +67,7 @@ public class BaseUITestCase extends BaseTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -74,6 +75,7 @@ public class BaseUITestCase extends BaseTestCase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		runEventQueue(0);
 		super.tearDown();
@@ -249,13 +251,13 @@ public class BaseUITestCase extends BaseTestCase {
 		hs.executeCommand(commandID, null);
 	}
 
-	private Control[] findControls(Control w, Class clazz) {
-		ArrayList result= new ArrayList();
+	private Control[] findControls(Control w, Class<?> clazz) {
+		ArrayList<Control> result= new ArrayList<Control>();
 		findControls(w, clazz, result);
-		return (Control[]) result.toArray(new Control[result.size()]);
+		return result.toArray(new Control[result.size()]);
 	}
 	
-	private void findControls(Control w, Class clazz, List result) {	
+	private void findControls(Control w, Class<?> clazz, List<Control> result) {	
 		if (clazz.isInstance(w)) {
 			result.add(w);
 		}
@@ -271,7 +273,9 @@ public class BaseUITestCase extends BaseTestCase {
 	final protected TreeItem checkTreeNode(IViewPart part, int i0, String label) {
 		Tree tree= null;
 		TreeItem root= null;
+		StringBuilder cands= new StringBuilder();
 		for (int i=0; i<400; i++) {
+			cands.setLength(0);
 			Control[] trees= findControls(part.getSite().getShell(), Tree.class);
 			for (int j = 0; j < trees.length; j++) {
 				try {
@@ -280,6 +284,10 @@ public class BaseUITestCase extends BaseTestCase {
 					if (label.equals(root.getText())) {
 						return root;
 					}
+					if (j > 0) {
+						cands.append('|');
+					}
+					cands.append(root.getText());
 				} 
 				catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
@@ -292,7 +300,7 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 		assertNotNull("No tree in viewpart", tree);
 		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
-		assertEquals(label, root.getText());
+		assertEquals(label, cands.toString());
 		return root;
 	}
 

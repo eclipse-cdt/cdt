@@ -77,7 +77,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType {
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		return null;
+		return CPPClassType.getMethods(this);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {

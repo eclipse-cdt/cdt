@@ -29,7 +29,6 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		createMacro("__complex__", "_Complex"), //$NON-NLS-1$ //$NON-NLS-2$
 		createMacro("__extension__", ""), //$NON-NLS-1$ //$NON-NLS-2$
 		createMacro("__imag__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__null", "(void *)0"), //$NON-NLS-1$ //$NON-NLS-2$
 		createMacro("__real__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
 		createMacro("__stdcall", ""), //$NON-NLS-1$ //$NON-NLS-2$
 

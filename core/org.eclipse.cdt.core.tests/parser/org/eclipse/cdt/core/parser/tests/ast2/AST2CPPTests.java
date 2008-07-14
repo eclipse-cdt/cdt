@@ -4872,18 +4872,17 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 	
 	public void testBug99262() throws Exception {
-		parse("void foo() {void *f; f=__null;}", ParserLanguage.CPP, true, true ); //$NON-NLS-1$
+		parse("void foo() {void *f; f=__null;}", ParserLanguage.CPP, true, true); //$NON-NLS-1$
 	}
 	
-	// int foo2(void *) {
-	// return 0;
+	// void f1(int*) {
 	// }
-	// int foo3() {
-	// return foo2(__null);
+	// void f2() {
+	//   f1(__null);
 	// }
-	public void testBug99262B() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true ); 
-		assertTrue(((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName().resolveBinding() instanceof IFunction);
+	public void testBug240567() throws Exception {    	  
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("f1(__null", 2, ICPPFunction.class);
 	}
 	
 	public void testBug100408() throws Exception {

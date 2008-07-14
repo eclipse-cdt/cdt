@@ -9,6 +9,7 @@
  *    IBM - Initial API and implementation
  *    Ed Swartz (Nokia)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
@@ -25,9 +26,10 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static CharArrayIntMap sAdditionalKeywords;
 	static {
 		final IMacro[] macros = GNUScannerExtensionConfiguration.getAdditionalGNUMacros();
-		sAdditionalMacros= new IMacro[macros.length+1];
+		sAdditionalMacros= new IMacro[macros.length + 2];
 		System.arraycopy(macros, 0, sAdditionalMacros, 0, macros.length);
-		sAdditionalMacros[macros.length]= createMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
+		sAdditionalMacros[macros.length]= createMacro("__null", "(void*)0");  //$NON-NLS-1$ //$NON-NLS-2$
+		sAdditionalMacros[macros.length + 1]= createMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
 		
 		sAdditionalKeywords= new CharArrayIntMap(10, -1);
 		GNUScannerExtensionConfiguration.addAdditionalGNUKeywords(sAdditionalKeywords);
@@ -41,7 +43,6 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
         return false;
     }
     
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalMacros()
      */
@@ -57,5 +58,4 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	public CharArrayIntMap getAdditionalKeywords() {
     	return sAdditionalKeywords;
     }
-
 }

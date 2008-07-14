@@ -10,6 +10,7 @@
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
+ * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -51,6 +52,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				}
 
 			}
+			_subSystems.clear();
 		}
 
 		if (_connections != null)
@@ -61,10 +63,9 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 					getConnectionManager().removeConnection(host.getSystemProfileName(), host.getName());
 				}
 			}
+			_connections.clear();
 		}
 
-		_subSystems.clear();
-		_connections.clear();
 		_subSystems = null;
 		_connections = null;
 
@@ -83,8 +84,12 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			//String[] connTypes = { "local", "ssh", "ftpWindows", "ftp", "linux", "windows" };
 			String[] connTypes = { "ssh", "ftp", "linux" };
 			for (int i = 0; i < connTypes.length; i++) {
-				addSystem(getHost(connTypes[i] + "Connection.properties"));
+				setTargetName(connTypes[i]);
+				if (!isTestDisabled()) {
+					addSystem(getHost(connTypes[i] + "Connection.properties"));
+				}
 			}
+			setTargetName(null);
 
 			_samplePaths = new ArrayList();
 			_samplePaths.add("/usr");

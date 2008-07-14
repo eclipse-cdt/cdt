@@ -36,12 +36,13 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 	 */
 	public FileServiceArchiveTestDStoreWindows(String name) {
 		super(name);
+		setTargetName("windows");
 	}
 
 	public static junit.framework.Test suite() {
-		
+
 		TestSuite suite = new TestSuite("FileServiceArchiveTestDStoreWindows");
-		
+
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToArchiveFile")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelOne")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelTwo")); //$NON-NLS-1$
@@ -64,17 +65,17 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveVirtualFileLevelTwo")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFile")); //$NON-NLS-1$
 		//suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFileBigZip")); //$NON-NLS-1$
-		
+
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testSuperTransferLocalToRemote"));
-		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStore.class, "testSuperTransferDStoreToLocal")); 
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStore.class, "testSuperTransferDStoreToLocal"));
 		return suite;
 	}
-	
+
 	protected void setupFileSubSystem() {
-		
+
 		IHost dstoreHost = getWindowsHost();
 		assertTrue(dstoreHost != null);
-		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
+		ISystemRegistry sr = SystemStartHere.getSystemRegistry();
 		ISubSystem[] ss = sr.getServiceSubSystems(dstoreHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof IFileServiceSubSystem) {
@@ -82,24 +83,24 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 				fs = fss.getFileService();
 			}
 		}
-		
+
 		IHost localHost = getLocalSystemConnection();
-		sr = SystemStartHere.getSystemRegistry(); 
+		sr = SystemStartHere.getSystemRegistry();
 		ss = sr.getServiceSubSystems(localHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof IFileServiceSubSystem) {
 				localFss = (IFileServiceSubSystem)ss[i];
 			}
 		}
-		
-		try 
+
+		try
 		{
 			IConnectorService connectionService = fss.getConnectorService();
-			
+
 			//If you want to connect to a running server, uncomment the following statements
 			/*
 			IServerLauncherProperties properties = connectionService.getRemoteServerLauncherProperties();
-			
+
 			if (properties instanceof IRemoteServerLauncher)
 			{
 				IRemoteServerLauncher sl = (IRemoteServerLauncher)properties;
@@ -111,12 +112,12 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 
 			connectionService.acquireCredentials(false);
 			connectionService.connect(mon);
-			 
+
 		} catch(Exception e) {
 			assertTrue("Exception creating temp dir " + e.getStackTrace().toString(), false); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void tearDown() throws Exception {
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.ALERT_SSL, fPreference_ALERT_SSL);

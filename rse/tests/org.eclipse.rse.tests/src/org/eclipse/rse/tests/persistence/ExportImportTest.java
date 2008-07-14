@@ -1,13 +1,14 @@
 /*********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [232126] add test for filter type persistence
+ * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
  *********************************************************************************/
 
 package org.eclipse.rse.tests.persistence;
@@ -35,10 +36,10 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.tests.core.RSECoreTestCase;
 
 /**
- * 
+ *
  */
 public class ExportImportTest extends RSECoreTestCase {
-	
+
 	ISystemProfile sourceProfile = null;
 	ISystemRegistry registry = null;
 	IRSEPersistenceManager manager = null;
@@ -47,7 +48,7 @@ public class ExportImportTest extends RSECoreTestCase {
 	public ExportImportTest(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
@@ -82,7 +83,7 @@ public class ExportImportTest extends RSECoreTestCase {
 		ISystemFilter sharedFilter = sharedFilterPool.createSystemFilter("sharedFilter", filterStrings);
 		sharedFilter.setType("sharedFilterType");
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
@@ -95,6 +96,8 @@ public class ExportImportTest extends RSECoreTestCase {
 	 */
 	public void testFilterPool1() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			// find the provider
 			IRSEPersistenceProvider persistenceProvider = manager.getPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
@@ -105,7 +108,7 @@ public class ExportImportTest extends RSECoreTestCase {
 			RSEEnvelope envelope = new RSEEnvelope();
 			envelope.add(fp);
 			IProgressMonitor monitor = new NullProgressMonitor();
-			ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			envelope.put(out, persistenceProvider, monitor);
 			// create an empty profile
 			ISystemProfile targetProfile = registry.createSystemProfile("profileFilterPool1", true);
@@ -143,6 +146,8 @@ public class ExportImportTest extends RSECoreTestCase {
 	 */
 	public void testHost1() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			// find the provider
 			IRSEPersistenceProvider persistenceProvider = manager.getPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
@@ -153,7 +158,7 @@ public class ExportImportTest extends RSECoreTestCase {
 			RSEEnvelope envelope = new RSEEnvelope();
 			envelope.add(host1);
 			IProgressMonitor monitor = new NullProgressMonitor();
-			ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			envelope.put(out, persistenceProvider, monitor);
 			// import from the newly created stream
 			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
@@ -189,6 +194,8 @@ public class ExportImportTest extends RSECoreTestCase {
 
 	public void testPropertySet() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 	}
 
 }

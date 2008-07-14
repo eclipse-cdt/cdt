@@ -18,16 +18,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSEInitListener;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.tests.RSETestsPlugin;
 
 /**
  * Should be run on a clean workspace.
  */
 public class InitializationTest extends TestCase {
-	
+
 	public InitializationTest(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
@@ -39,16 +40,17 @@ public class InitializationTest extends TestCase {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testInitialization() {
 		//-test-author-:DavidDykstal
+		if (!RSETestsPlugin.isTestCaseEnabled("InitializationTest.testInitialization"))return; //$NON-NLS-1$
 		try {
 			IStatus status = null;
 			status = RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
@@ -78,5 +80,5 @@ public class InitializationTest extends TestCase {
 		assertFalse("listener saw phase INIT_MODEL", listener.sawPhase(RSECorePlugin.INIT_MODEL)); // shouldn't see this since it occurs before the listener is added
 		assertTrue("listener missed phase INIT_ALL", listener.sawPhase(RSECorePlugin.INIT_ALL));
 	}
-		
+
 }

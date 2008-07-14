@@ -1,7 +1,7 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
@@ -28,11 +28,11 @@ import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
  * Each testcase method should leave the host pool as it was prior to running the method.
  */
 public class HostMoveTest extends RSEBaseConnectionTestCase {
-	
+
 	static final int NUMBER_OF_HOSTS = 6; // number of hosts
 	private IHost hostArray[] = null;
 	private ISystemRegistry registry = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
@@ -41,7 +41,7 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		registry = RSECorePlugin.getTheSystemRegistry();
 		createHosts();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
@@ -49,9 +49,11 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		deleteHosts();
 		super.tearDown();
 	}
-	
+
 	public void testMoveOneUp() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost host = hostArray[NUMBER_OF_HOSTS - 1];
 		IHost[] hosts = new IHost[] {host};
@@ -62,9 +64,11 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		registry.moveHosts("TestProfile", hosts, 1);
 		assertEquals(NUMBER_OF_HOSTS - 1, registry.getHostPosition(host));
 	}
-	
+
 	public void testMoveManyUp() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[NUMBER_OF_HOSTS - 1], hostArray[NUMBER_OF_HOSTS - 2]};
 		registry.moveHosts("TestProfile", hosts, -2);
@@ -80,6 +84,8 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 
 	public void testMoveFirstUp() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost host = hostArray[0];
 		assertEquals(0, registry.getHostPosition(host));
@@ -90,6 +96,8 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 
 	public void testMoveOneDown() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost host = hostArray[1]; // second in the list
 		assertEquals(1, registry.getHostPosition(host));
@@ -99,9 +107,11 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		registry.moveHosts("TestProfile", hosts, -1);
 		assertEquals(1, registry.getHostPosition(host));
 	}
-	
+
 	public void testMoveManyDown() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {hostArray[0], hostArray[2], hostArray[4]};
 		assertEquals(0, registry.getHostPosition(hostArray[0]));
@@ -119,8 +129,10 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 
 	public void testMoveLastDown() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
-		IHost host = hostArray[NUMBER_OF_HOSTS - 1]; 
+		IHost host = hostArray[NUMBER_OF_HOSTS - 1];
 		assertEquals(NUMBER_OF_HOSTS - 1, registry.getHostPosition(host));
 		IHost[] hosts = new IHost[] {host};
 		registry.moveHosts("TestProfile", hosts, 1); // should not actually move
@@ -129,16 +141,18 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 
 	public void testNoHost() throws Exception {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		checkPrecondition();
 		IHost[] hosts = new IHost[] {};
 		registry.moveHosts("TestProfile", hosts, -1); // should not fail
 	}
-	
+
 	/**
 	 * Create the test hosts.
 	 */
 	private void createHosts() throws Exception {
-		
+
 		hostArray = new IHost[NUMBER_OF_HOSTS];
 
 		/* Common host properties */
@@ -149,28 +163,28 @@ public class HostMoveTest extends RSEBaseConnectionTestCase {
 		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, "userid"); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, "password"); //$NON-NLS-1$
 		IRSEConnectionProperties props = getConnectionManager().loadConnectionProperties(properties, false);
-		
+
 		for (int i = 0; i < hostArray.length; i++) {
 			String hostName = getHostName(i);
-			properties.setProperty(IRSEConnectionProperties.ATTR_NAME, hostName); //$NON-NLS-1$
+			properties.setProperty(IRSEConnectionProperties.ATTR_NAME, hostName);
 			hostArray[i] = getConnectionManager().findOrCreateConnection(props);
 			assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), hostArray[i]); //$NON-NLS-1$
 		}
 
 	}
-	
+
 	private void deleteHosts() {
 		for (int i = 1; i < hostArray.length; i++) {
 			registry.deleteHost(hostArray[i]);
 		}
 	}
-	
+
 	private void checkPrecondition() {
 		for (int i = 0; i < hostArray.length; i++) {
 			assertEquals("Precondition check failed", i, registry.getHostPosition(hostArray[i]));
 		}
 	}
-	
+
 	private String getHostName(int i) {
 		String hostName = "TestHost" + Integer.toString(i);
 		return hostName;

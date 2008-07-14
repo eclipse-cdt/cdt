@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html 
- * 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: Kevin Doyle.
- *  
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
@@ -46,50 +46,53 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 
 	private IRemoteFileSubSystem getRemoteFileSubSystem(IHost host) {
 		IRemoteFileSubSystem fss = null;
-		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
+		ISystemRegistry sr = SystemStartHere.getSystemRegistry();
 		ISubSystem[] ss = sr.getServiceSubSystems(host, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof FileServiceSubSystem) {
 				fss = (IRemoteFileSubSystem)ss[i];
 				return fss;
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	public void testCreateFileFTP() throws Exception {
 		//-test-author-:KevinDoyle
-		
-		host = getFTPHost();		
+		host = getFTPHost();
+		if (isTestDisabled())
+			return;
 		createFileAndAssertProperties();
 	}
-		
+
 	public void testCreateFileLinux() throws Exception {
 		//-test-author-:KevinDoyle
-
-		// Lookup and create the connection now if necessary
 		host = getLinuxHost();
+		if (isTestDisabled())
+			return;
 		createFileAndAssertProperties();
 	}
-		
+
 	public void testCreateFileSSH() throws Exception {
 		//-test-author-:KevinDoyle
-		
-		host = getSSHHost();		
+		host = getSSHHost();
+		if (isTestDisabled())
+			return;
 		createFileAndAssertProperties();
 	}
-	
+
 	public void testCreateFileWindows() throws Exception {
 		//-test-author-:KevinDoyle
-		
-		host = getWindowsHost();		
+		host = getWindowsHost();
+		if (isTestDisabled())
+			return;
 		createFileAndAssertProperties();
 	}
-	
+
 	public void createFileAndAssertProperties() throws Exception {
 		String SYSTEM_TYPE = host.getSystemType().getLabel();
 		FileServiceSubSystem inputFss = (FileServiceSubSystem) getRemoteFileSubSystem(host);
-		
+
 		// Need to create a temporary directory for the new file to be created in.
 		// this is to ensure we don't overwrite any previous files.
 		inputFss.connect(new NullProgressMonitor(), false);
@@ -98,7 +101,7 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 		String homeFolderName = homeDirectory.getAbsolutePath();
 		String testFolderName = FileServiceHelper.getRandomLocation(inputFss, homeFolderName, baseFolderName, new NullProgressMonitor());
 		tempDirectory = createFileOrFolder(inputFss, homeFolderName, testFolderName, true);
-		
+
 		tempDirPath = tempDirectory.getAbsolutePath();
 		IHostFile hostfile = inputFss.getFileService().createFile(tempDirPath, fileName, new NullProgressMonitor());
 		assertTrue(SYSTEM_TYPE + ": hostfile doesn't exist.", hostfile.exists());
@@ -110,11 +113,11 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 		assertEquals(SYSTEM_TYPE + ": file size's do not match.", 0, hostfile.getSize());
 		long modDate = hostfile.getModifiedDate();
 		assertTrue(SYSTEM_TYPE + ": modification date is not greater than 0.", modDate > 0);
-		
+
 		// perform cleanup, so EFS uses the right file service next time
 		cleanup();
 	}
-	
+
 	public void cleanup() throws Exception {
 		if (host != null) {
 			if (tempDirectory != null) {
@@ -127,10 +130,10 @@ public class CreateFileTestCase extends FileServiceBaseTest {
 			host = null;
 		}
 	}
-	
+
 	public void tearDown() throws Exception {
 		cleanup();
 		super.tearDown();
 	}
 }
- 
+

@@ -63,11 +63,14 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	 */
 	public FileServiceBaseTest(String name) {
 		super(name);
+		setTargetName("local");
 	}
 
 	public void setUp() throws Exception {
 		super.setUp();
 		setupFileSubSystem();
+		if (isTestDisabled())
+			return;
 		//Create a temparory directory in My Home
 		try
 		{
@@ -85,11 +88,13 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void tearDown() throws Exception {
-		try {
-			fss.delete(tempDir, mon);
-		} catch(SystemMessageException msg) {
-			//ensure that super.tearDown() can run
-			System.err.println("Exception on tearDown: "+msg.getLocalizedMessage()); //$NON-NLS-1$
+		if (fss != null) {
+			try {
+				fss.delete(tempDir, mon);
+			} catch (SystemMessageException msg) {
+				// ensure that super.tearDown() can run
+				System.err.println("Exception on tearDown: " + msg.getLocalizedMessage()); //$NON-NLS-1$
+			}
 		}
 		super.tearDown();
 	}
@@ -397,6 +402,8 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	protected void setupFileSubSystem()
 	{
 		IHost localHost = getLocalSystemConnection();
+		if (isTestDisabled())
+			return;
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {

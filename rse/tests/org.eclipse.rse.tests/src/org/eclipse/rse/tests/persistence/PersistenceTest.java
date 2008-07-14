@@ -35,32 +35,34 @@ import org.eclipse.rse.ui.SystemPreferencesManager;
 
 /**
  * Tests for {@link SystemPreferencesManager}.
- * Since these are persistence tests they will play with the creation and deletion of 
+ * Since these are persistence tests they will play with the creation and deletion of
  * profiles, hosts, filters, and other model objects. You should run this only in a
  * clean workspace.
  */
 public class PersistenceTest extends RSECoreTestCase {
-	
+
 	public PersistenceTest(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testPersistenceManagerStartup() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		IRSEPersistenceManager m = RSECorePlugin.getThePersistenceManager();
 		for (int i = 0; i < 5; i++) {
 			if (m.isRestoreComplete()) break;
@@ -72,15 +74,17 @@ public class PersistenceTest extends RSECoreTestCase {
 		}
 		assertTrue("Restore not complete", m.isRestoreComplete());
 	}
-	
+
 	public void testProfilePersistence() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		/*
 		 * Set up this particular test.
 		 */
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		int n = registry.getSystemProfileManager().getSystemProfiles().length;
-	
+
 		/*
 		 * Create a new profile in this profile manager. This will be the second
 		 * profile created. Creating a profile causes a commit.
@@ -94,15 +98,15 @@ public class PersistenceTest extends RSECoreTestCase {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 //		reload(); // reload not yet working
-		
+
 		/*
 		 * There should be one more profile
 		 */
 		ISystemProfile[] profiles = registry.getSystemProfileManager().getSystemProfiles();
 		assertEquals(n, profiles.length);
-		
+
 		/*
 		 * One should be default private profile
 		 */
@@ -112,7 +116,7 @@ public class PersistenceTest extends RSECoreTestCase {
 			found = p.isDefaultPrivate();
 		}
 		assertTrue("Default private profile not found", found);
-		
+
 		/*
 		 * One should be the test profile
 		 */
@@ -122,7 +126,7 @@ public class PersistenceTest extends RSECoreTestCase {
 			found = p.getName().equals("bogus");
 		}
 		assertTrue("bogus profile not found", found);
-		
+
 		/*
 		 * Get the test profile and check its properties.
 		 */
@@ -133,7 +137,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		IPropertySet[] pSets = bogus.getPropertySets();
 		assertNotNull(pSets);
 		assertEquals(0, pSets.length);
-		
+
 		/*
 		 * Add a property set to the profile.
 		 */
@@ -141,20 +145,20 @@ public class PersistenceTest extends RSECoreTestCase {
 		bogusProperties.addProperty("bp1", "1");
 		bogusProperties.addProperty("bp2", "2");
 		bogus.addPropertySet(bogusProperties);
-		
+
 		// nested property set
 		IPropertySet bogusNestedProperties = new PropertySet("bogus_nested_properties");
 		bogusNestedProperties.addProperty("bnpa", "a");
 		bogusNestedProperties.addProperty("bnpb", "b");
 		bogusProperties.addPropertySet(bogusNestedProperties);
-		
+
 		bogus.commit();
-		
+
 		/*
 		 * Refresh the profile manager.
 		 */
 //		reload(); // reload not yet working
-		
+
 		/*
 		 * Check to see if everything is still OK and that the properties are restored.
 		 */
@@ -169,29 +173,31 @@ public class PersistenceTest extends RSECoreTestCase {
 		assertNotNull(bogusProperties);
 		assertEquals("1", bogusProperties.getProperty("bp1").getValue());
 		assertEquals("2", bogusProperties.getProperty("bp2").getValue());
-		
+
 		bogusNestedProperties = bogusProperties.getPropertySet("bogus_nested_properties");
 		assertNotNull(bogusNestedProperties);
 		assertEquals("a", bogusNestedProperties.getProperty("bnpa").getValue());
-		assertEquals("b", bogusNestedProperties.getProperty("bnpb").getValue());		
-		
+		assertEquals("b", bogusNestedProperties.getProperty("bnpb").getValue());
+
 		try {
 			registry.deleteSystemProfile(bogus);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 //		reload(); // reload not yet working
-		
+
 	}
 
 	public void testHostPersistence() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		/*
 		 * Set up this particular test.
 		 */
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		
+
 		/*
 		 * Create a new profile in this profile manager. This will be the third
 		 * profile created. Creating a profile causes a commit.
@@ -203,7 +209,7 @@ public class PersistenceTest extends RSECoreTestCase {
 		}
 		ISystemProfile profile = registry.getSystemProfile("bogus");
 		assertNotNull(profile);
-		
+
 		try {
 			IRSESystemType linuxType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LINUX_ID);
 			registry.createHost("bogus", linuxType, "myhost", "myhost.mynet.mycompany.net", null);
@@ -218,9 +224,9 @@ public class PersistenceTest extends RSECoreTestCase {
 		props.addProperty("bp2", "2");
 		host.addPropertySet(props);
 		host.commit();
-		
+
 //		reload(); // reload not yet working
-		
+
 		/*
 		 * Get the test profile and check its properties.
 		 */
@@ -232,12 +238,12 @@ public class PersistenceTest extends RSECoreTestCase {
 		assertNotNull(props);
 		assertEquals("1", props.getProperty("bp1").getValue());
 		assertEquals("2", props.getProperty("bp2").getValue());
-		
+
 	}
 
 	private void reload() {
 		/*
-		 * Set up this particular test. The persistence manager acts as the family for all 
+		 * Set up this particular test. The persistence manager acts as the family for all
 		 * Jobs that are created for reading and writing the persistent form of the model.
 		 */
 		IRSEPersistenceManager persistenceManager = RSECorePlugin.getThePersistenceManager();
@@ -253,12 +259,12 @@ public class PersistenceTest extends RSECoreTestCase {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		/*
 		 * restore the profile manager
 		 */
 		RSEUIPlugin.getDefault().restart();
 
 	}
-	
+
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
  *******************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -74,6 +75,11 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	public RSEFileStoreTest(String name, String propertiesFileName) {
 		super(name);
 		fPropertiesFileName = propertiesFileName;
+		if (propertiesFileName != null) {
+			int idx = propertiesFileName.indexOf("Connection.properties");
+			String targetName = propertiesFileName.substring(0, idx);
+			setTargetName(targetName);
+		}
 	}
 
 	public static Test suite() {
@@ -178,6 +184,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testRecursiveGetParent() {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		IFileStore store = fTestStore;
 		String homePath = store.toURI().getPath();
 		assertTrue("exists: " + store, store.fetchInfo().exists());
@@ -193,6 +201,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testAppendOutputStream() throws Exception {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		IFileStore f = createFile("foo");
 		fOS = f.openOutputStream(EFS.APPEND, getDefaultProgressMonitor());
 		fOS.write("bar".getBytes());
@@ -211,6 +221,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testPutInfo() throws Exception {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		IFileInfo testInfo = fTestStore.fetchInfo();
 		assertTrue("1.1", testInfo.exists());
 		assertTrue("1.2", testInfo.isDirectory());
@@ -250,6 +262,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testDeleteSpecialCases() throws Exception {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		String testFileName = "noPerm.txt"; //$NON-NLS-1$
 		boolean exceptionThrown = false;
 
@@ -350,6 +364,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testModifyNonExisting() throws Exception {
 		// -test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		IFileStore store = fTestStore.getChild("nonExisting.txt");
 		IFileInfo info;
 		boolean exceptionThrown = false;
@@ -435,6 +451,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 	public void testModifyReadOnly() throws Exception {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		IFileStore store = createFile("readOnly.txt");
 		IFileInfo info = store.fetchInfo();
 		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
@@ -494,6 +512,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	public void testMakeDeleteTree() throws Exception {
 		// -test-author-:MartinOberhuber
 		// Create folder
+		if (isTestDisabled())
+			return;
 		IFileStore treeStore = fTestStore.getChild("treeTest");
 		treeStore.mkdir(EFS.SHALLOW, getDefaultProgressMonitor());
 
@@ -597,6 +617,8 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	}
 
 	public void test255files() throws Exception {
+		if (isTestDisabled())
+			return;
 		IFileStore f = fTestStore.getChild("f");
 		f.mkdir(EFS.SHALLOW, getDefaultProgressMonitor());
 		for (int i = 0; i < 255; i++) {

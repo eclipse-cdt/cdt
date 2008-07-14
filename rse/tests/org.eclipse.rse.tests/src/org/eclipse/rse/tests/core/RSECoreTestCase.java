@@ -1,15 +1,16 @@
 /********************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - fix build against 3.2.1, fix javadoc errors
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
+ * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
  ********************************************************************************/
 package org.eclipse.rse.tests.core;
 
@@ -66,10 +67,17 @@ import org.osgi.framework.Bundle;
 public class RSECoreTestCase extends TestCase {
 	// Test properties storage.
 	private final Properties properties = new Properties();
-	
+
 	// Internal. Used to remember view zoom state changes.
 	private final String PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED = "rseSystemsViewZoomStateChanged"; //$NON-NLS-1$
-	
+
+	// Target name, if set.
+	private String targetName = null;
+
+	// Client name, if set.
+	private static final String defaultClientName = (System.getProperty("os.name") + '.' + System.getProperty("os.arch")).replace(' ', '_');
+	private String clientName = defaultClientName;
+
 	/**
 	 * Constructor.
 	 */
@@ -79,7 +87,7 @@ public class RSECoreTestCase extends TestCase {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name The test name.
 	 */
 	public RSECoreTestCase(String name) {
@@ -90,8 +98,30 @@ public class RSECoreTestCase extends TestCase {
 		initializeProperties();
 	}
 
+	/**
+	 * Set the name of the target platform against which this test runs. Must be
+	 * done from Constructor. Used to filter tests in {@link #isTestDisabled()}.
+	 *
+	 * @param targetName target platform name.
+	 */
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
+	/**
+	 * Set the name of the client platform on which this test runs. Usually not
+	 * necessary, since the default is computed automatically. If set, this must
+	 * be done from the Constructor. Used to filter tests in
+	 * {@link #isTestDisabled()}.
+	 *
+	 * @param clientName client platform name.
+	 */
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+
 	// ***** Test properties management and support methods *****
-	
+
 	/**
 	 * Initialize the core test properties. Override to modify core
 	 * test properties or to add additional ones.
@@ -103,20 +133,20 @@ public class RSECoreTestCase extends TestCase {
 		setProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false);
 		setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
 	}
-	
+
 	/**
 	 * Enables or disables the specified property.
-	 * 
+	 *
 	 * @param key The key of the property to enable or disable. Must be not <code>null</code>!
 	 * @param enable Specify <code>true</code> to enable the property, <code>false</code> to disable the property.
 	 */
 	protected final void setProperty(String key, boolean enable) {
 		setProperty(key, enable ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 	}
-	
+
 	/**
 	 * Test if the specified property is equal to the specified value.
-	 * 
+	 *
 	 * @param key The key of the property to test. Must be not <code>null</code>!
 	 * @param value The value to compare the property with.
 	 * @return <code>true</code> if the property is equal to the specified value, <code>false</code> otherwise.
@@ -125,11 +155,11 @@ public class RSECoreTestCase extends TestCase {
 		assert key != null;
 		return (value ? Boolean.TRUE : Boolean.FALSE).equals(Boolean.valueOf(properties.getProperty(key, "false"))); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Sets the specified string value for the specified property. If the specified
 	 * value is <code>null</code>, the specified property will be removed.
-	 * 
+	 *
 	 * @param key The key of the property to set. Must be not <code>null</code>!
 	 * @param value The string value to set or <code>null</code>.
 	 */
@@ -143,15 +173,15 @@ public class RSECoreTestCase extends TestCase {
 			}
 		}
 	}
-	
+
 	/**
 	 * Test if the specified property is equal to the specified value. If the specified
 	 * value is <code>null</code>, this method returns <code>true</code> if the specified
 	 * property key does not exist. The comparisation is case insensitive.
-	 * 
+	 *
 	 * @param key The key of the property to test. Must be not <code>null</code>!
 	 * @param value The value to compare the property with or <code>null</code>
-	 * @return <code>true</code> if the property is equal to the specified value 
+	 * @return <code>true</code> if the property is equal to the specified value
 	 *         or the specified value is <code>null</code> and the property does not exist,
 	 *         <code>false</code> otherwise.
 	 */
@@ -165,7 +195,7 @@ public class RSECoreTestCase extends TestCase {
 
 	/**
 	 * Returns the configured string value of the specified property.
-	 * 
+	 *
 	 * @param key The property key. Must be not <code>null</code>.
 	 * @return The property value or <code>null</code> if the specified property does not exist.
 	 */
@@ -173,17 +203,92 @@ public class RSECoreTestCase extends TestCase {
 		assert key != null;
 		return properties.getProperty(key, null);
 	}
-	
+
+	/**
+	 * Return the fully qualified name of the unit test currently running. Used
+	 * for pattern matching against enablement rules. Qualification is
+	 * "OS_Name"."OS_Arch"."Testclass"."methodname"."connectiontype" where the
+	 * connectiontype may be empty if not specified.
+	 *
+	 * @return the fully qualified name of the unit test currently running.
+	 */
+	protected String getTestNameForCheck() {
+		String testName = getName();
+		String testClass = getClass().getName();
+		String testPackage = getClass().getPackage().getName();
+		String testClassSimpleName = testClass.substring(testPackage.length() + 1);
+		String checkName = testClassSimpleName + '.' + testName;
+		if (targetName != null) {
+			checkName = checkName + '.' + targetName;
+		}
+		if (clientName != null) {
+			checkName = clientName + '.' + checkName;
+		}
+		return checkName;
+	}
+
+	/**
+	 * Check whether this test is currently disabled. Uses Introspection and
+	 * JUnit Test Name to check against user-specified Properties file. Note
+	 * that by default, all tests are enabled.
+	 *
+	 * @return true if this test should run, false otherwise.
+	 */
+	protected boolean isTestDisabled() {
+		String testName = getName();
+		String testClass = getClass().getName();
+		String testPackage = getClass().getPackage().getName();
+		String testClassSimpleName = testClass.substring(testPackage.length() + 1);
+		String checkName = testClassSimpleName + '.' + testName;
+		String checkString = checkName;
+		if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+			System.out.println("--> disabled due to rule: " + checkString);
+			return true;
+		}
+		if (targetName != null) {
+			checkString = "*." + targetName;
+			if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+				System.out.println("--> disabled due to rule: " + checkString);
+				return true;
+			}
+			checkString = checkName + '.' + targetName;
+			if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+				System.out.println("--> disabled due to rule: " + checkString);
+				return true;
+			}
+			if (clientName != null) {
+				checkString = getTestNameForCheck();
+				if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+					System.out.println("--> disabled due to rule: " + checkString);
+					return true;
+				}
+			}
+		}
+		if (clientName != null) {
+			checkString = clientName + ".*";
+			if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+				System.out.println("--> disabled due to rule: " + checkString);
+				return true;
+			}
+			checkString = clientName + '.' + checkName;
+			if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+				System.out.println("--> disabled due to rule: " + checkString);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// ***** Test case life cycle management and support methods *****
 
 	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(RSETestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
-	
+
 	private final class RSEBackgroundTestExecutionJob extends Job {
 		private final TestResult result;
-		
+
 		/**
 		 * Constructor.
-		 * 
+		 *
 		 * @param result The test result object the test is reporting failures to. Must be not <code>null</code>.
 		 */
 		public RSEBackgroundTestExecutionJob(TestResult result) {
@@ -191,11 +296,11 @@ public class RSECoreTestCase extends TestCase {
 			setUser(false);
 			setPriority(Job.INTERACTIVE);
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
-			
+
 			assert result != null;
 			this.result = result;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
@@ -206,29 +311,29 @@ public class RSECoreTestCase extends TestCase {
 			result.addListener(TEST_LISTENER);
 			invokeTestCaseRunImpl(result);
 			result.removeListener(TEST_LISTENER);
-			
+
 			monitor.done();
-			
+
 			setProperty(BACKGROUND_TEST_EXECUTION_FINISHED, Boolean.TRUE);
 
 			// The job never fails. The test result is the real result.
 			return Status.OK_STATUS;
-		} 
+		}
 	}
-	
+
 	private final static class RSEBackgroundTestExecutionJobWaiter implements IInterruptCondition {
 		private final Job job;
-		
+
 		/**
 		 * Constructor.
-		 * 
+		 *
 		 * @param job The job to wait for the execution to finish. Must be not <code>null</code>.
 		 */
 		public RSEBackgroundTestExecutionJobWaiter(Job job) {
 			assert job != null;
 			this.job = job;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition#isTrue()
 		 */
@@ -236,23 +341,23 @@ public class RSECoreTestCase extends TestCase {
 			// Interrupt the wait method if the job signaled that it has finished.
 			return ((Boolean)job.getProperty(BACKGROUND_TEST_EXECUTION_FINISHED)).booleanValue();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition#dispose()
 		 */
 		public void dispose() { /* nothing to dispose here */ }
 	}
-	
+
 	/**
 	 * Internal accessor method to call the original <code>junit.
 	 * framework.TestCase.run(TestResult) implementation.
-	 * 
+	 *
 	 * @param result The test result object the test is reporting failures to. Must be not <code>null</code>.
 	 */
 	final void invokeTestCaseRunImpl(TestResult result) {
 		super.run(result);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#run(junit.framework.TestResult)
 	 */
@@ -271,7 +376,7 @@ public class RSECoreTestCase extends TestCase {
 			job.setProperty(BACKGROUND_TEST_EXECUTION_FINISHED, Boolean.FALSE);
 			// schedule the job to run immediatelly
 			job.schedule();
-			
+
 			// wait till the job finished executing
 			RSEWaitAndDispatchUtil.waitAndDispatch(0, new RSEBackgroundTestExecutionJobWaiter(job));
 		}
@@ -322,7 +427,7 @@ public class RSECoreTestCase extends TestCase {
 
 	/**
 	 * Print the start date and time of the specified test to stdout.
-	 * 
+	 *
 	 * @param name The name of the starting test. Must be not <code>null</code>!
 	 * @return The start time of the test in milliseconds.
 	 */
@@ -334,10 +439,10 @@ public class RSECoreTestCase extends TestCase {
 		}
 		return startTime;
 	}
-	
+
 	/**
 	 * Print the end date and time as well as the delay of the specified test to stdout.
-	 * 
+	 *
 	 * @param name The name of the finished test. Must be not <code>null</code>!
 	 * @param startTime The start time of the test in milliseconds.
 	 */
@@ -349,7 +454,7 @@ public class RSECoreTestCase extends TestCase {
 			System.out.println("=== " + name + " finished at: " + DATE_FORMAT.format(new Date(endTime)) + " (duration: " + duration + " ms)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
-	
+
 	/**
 	 * Wait until the SystemProfileManager has finished loading all "autoload" profiles,
 	 * and the RSEUIPlugin InitRSEJob has finished filling it with the default connections.
@@ -387,14 +492,14 @@ public class RSECoreTestCase extends TestCase {
 		waitForRSEWorkspaceInit();
 		switchMaximizeSystemsView();
 	}
-	
+
 	/**
 	 * Flush the event queue in order to ensure that no left-over events influence later test cases.
 	 * <p>
 	 * Unhandled exceptions in the event loop event are caught as follows:
 	 * In case multiple events from the event loop throw exceptions these are printed
 	 * to stdout. The first exception found in the event loop is thrown to the caller.
-	 * 
+	 *
 	 * @throws Exception in case an unhandled event loop exception was found.
 	 */
 	protected void flushEventQueue() throws Exception {
@@ -448,8 +553,8 @@ public class RSECoreTestCase extends TestCase {
 		flushEventQueue();
 		super.tearDown();
 	}
-	
-	// ***** View and perspective management and support methods *****	
+
+	// ***** View and perspective management and support methods *****
 
 	/**
 	 * Bring the RSE SystemsView to front, and toggle its "maximized" state based on what
@@ -461,14 +566,14 @@ public class RSECoreTestCase extends TestCase {
 	protected void switchMaximizeSystemsView() {
 		final String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
 		assertNotNull("Invalid null-value for test case perspective id!", perspectiveId); //$NON-NLS-1$
-		
+
 		// all view management must happen in the UI thread!
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// in case the test case is launched within a new workspace, the eclipse intro
 				// view is hiding everything else. Find the intro page and hide it.
 				hideView("org.eclipse.ui.internal.introview", perspectiveId); //$NON-NLS-1$
-				
+
 				// toggle the Remote Systems View zoom state.
 				setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
 				IViewPart part = showView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
@@ -487,17 +592,17 @@ public class RSECoreTestCase extends TestCase {
 				}
 			}
 		});
-		
+
 		// Give the UI a chance to repaint if the view zoom state changed
 		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) {
 			System.err.println("Waiting for UI to repaint"); //$NON-NLS-1$
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		}
 	}
-	
+
 	/**
 	 * Restore the RSE SystemsView to its previous state, in case the view state
-	 * has been changed by {@link #switchMaximizeSystemsView()}. 
+	 * has been changed by {@link #switchMaximizeSystemsView()}.
 	 */
 	protected void restoreMaximizeSystemsView() {
 		// restore the original view zoom state
@@ -522,10 +627,10 @@ public class RSECoreTestCase extends TestCase {
 			});
 		}
 	}
-	
+
 	/**
 	 * Finds the view reference for the view identified by the specified id.
-	 * 
+	 *
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id within the view should be searched. Must be not <code>null</code>.
 	 * @return The view reference instance to the view or <code>null</code> if not available.
@@ -533,32 +638,32 @@ public class RSECoreTestCase extends TestCase {
 	public final IViewReference findView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
-		
+
 		// First of all, we have to lookup the currently active workbench
-		// of the currently active workbench window. 
+		// of the currently active workbench window.
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		assertNotNull("Failed to query current workbench instance!", workbench); //$NON-NLS-1$
 		// and the corresponding currently active workbench window.
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		assertNotNull("Failed to query currently active workbench window!", window); //$NON-NLS-1$
-		
+
 		// Now we have to switch to the specified perspecitve
 		try {
 			workbench.showPerspective(perspectiveId, window);
 		} catch (WorkbenchException e) {
 			SystemBasePlugin.logError("Failed to switch to requested perspective (id = " + perspectiveId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		// From the active workbench window, we need the active workbench page
 		IWorkbenchPage page = window.getActivePage();
 		assertNotNull("Failed to query currently active workbench page!", page); //$NON-NLS-1$
-		
+
 		return page.findViewReference(viewId);
 	}
 
 	/**
 	 * Shows and activate the view identified by the specified id.
-	 * 
+	 *
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id within the view should be activated. Must be not <code>null</code>.
 	 * @return The view part instance to the view or <code>null</code> if it cannot be shown.
@@ -566,46 +671,46 @@ public class RSECoreTestCase extends TestCase {
 	public final IViewPart showView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
-		
+
 		// First of all, we have to lookup the currently active workbench
-		// of the currently active workbench window. 
+		// of the currently active workbench window.
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		assertNotNull("Failed to query current workbench instance!", workbench); //$NON-NLS-1$
 		// and the corresponding currently active workbench window.
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		assertNotNull("Failed to query currently active workbench window!", window); //$NON-NLS-1$
-		
+
 		// Now we have to switch to the specified perspecitve
 		try {
 			workbench.showPerspective(perspectiveId, window);
 		} catch (WorkbenchException e) {
 			SystemBasePlugin.logError("Failed to switch to requested perspective (id = " + perspectiveId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		// From the active workbench window, we need the active workbench page
 		IWorkbenchPage page = window.getActivePage();
 		assertNotNull("Failed to query currently active workbench page!", page); //$NON-NLS-1$
-		
+
 		IViewPart part = null;
 		try {
 			part = page.showView(viewId);
 		} catch (PartInitException e) {
 			SystemBasePlugin.logError("Failed to show view (id = " + viewId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		return part;
 	}
 
 	/**
 	 * Hides the view identified by the specified id.
-	 * 
+	 *
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id the view should be hidden from. Must be not <code>null</code>.
 	 */
 	public final void hideView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return;
-		
+
 		IViewReference viewReference = findView(viewId, perspectiveId);
 		if (viewReference != null) {
 			// at this point we can safely asume that we can access the active page directly
@@ -616,7 +721,7 @@ public class RSECoreTestCase extends TestCase {
 	}
 
 	// ***** Test data management and support methods *****
-	
+
 	/**
 	 * Returns the absolute test data location path calculated out of the known
 	 * test data location root (<i>org.eclipse.rse.tests plugin location + sub
@@ -630,16 +735,16 @@ public class RSECoreTestCase extends TestCase {
 	 * </ul><br>
 	 * If the calculated test data location does not pass these conditions, the
 	 * method will return <code>null</code>.
-	 * 
+	 *
 	 * @param relativePath A path relative to the test data location root path. Must be not <code>null</code!
 	 * @param appendHostOS <code>True</code> if to append the current execution host operating system string, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return The root path to the test data location or <code>null</code> if the test data location does cannot be read or is not a directory.
 	 */
 	protected final IPath getTestDataLocation(String relativePath, boolean appendHostOS) {
 		assert relativePath != null;
 		IPath root = null;
-		
+
 		if (relativePath != null) {
 			Bundle bundle = RSETestsPlugin.getDefault().getBundle();
 			if (bundle != null) {
@@ -660,14 +765,14 @@ public class RSECoreTestCase extends TestCase {
 				}
 			}
 		}
-		
+
 		return root;
 	}
 
 	// ***** Test failures log collector management and support methods *****
-	
+
 	final TestListener TEST_LISTENER = new RSETestFailureListener();
-	
+
 	/**
 	 * Listens to the test executions and collect the test log files
 	 * through the known list of test log collector delegates in a test
@@ -681,7 +786,7 @@ public class RSECoreTestCase extends TestCase {
 		public void startTest(Test test) {
 			// nothing to do on start test
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see junit.framework.TestListener#addError(junit.framework.Test, java.lang.Throwable)
 		 */
@@ -695,7 +800,7 @@ public class RSECoreTestCase extends TestCase {
 				                            error
 				                           );
 				RSETestsPlugin.getDefault().getLog().log(status);
-				
+
 				// Collect the log files if at least one test log collector is known
 				collectTestLogs(test);
 			}
@@ -714,7 +819,7 @@ public class RSECoreTestCase extends TestCase {
 				                            failure
 				                           );
 				RSETestsPlugin.getDefault().getLog().log(status);
-				
+
 				// Collect the log files if at least one test log collector is known
 				collectTestLogs(test);
 			}
@@ -727,10 +832,10 @@ public class RSECoreTestCase extends TestCase {
 			// nothing to do on end test
 		}
 	}
-	
+
 	/**
 	 * Collect the test logs for the failed test.
-	 * 
+	 *
 	 * @param test The failed test. Must be not <code>null</code>.
 	 */
 	protected final synchronized void collectTestLogs(Test test) {
@@ -754,11 +859,11 @@ public class RSECoreTestCase extends TestCase {
 						if (archivePath.toFile().createNewFile()) {
 							stream = new ZipOutputStream(new FileOutputStream(archivePath.toFile()));
 							stream.setLevel(9);
-							
+
 							// cache the names of the entries added to the ZIP stream.
 							// They needs to be unique!
 							Set nameCache = new HashSet();
-							
+
 							// call each test log collector delegate for the absolute file names
 							// and add each of the returned files to the ZIP archive.
 							for (int i = 0; i < delegates.length; i++) {
@@ -783,7 +888,7 @@ public class RSECoreTestCase extends TestCase {
 													unifier = location.removeLastSegments(1);
 													entryName = unifier.lastSegment() + "_" + entryName; //$NON-NLS-1$
 												}
-												
+
 												// if the name is still not unique, append a count to it
 												long count = 0;
 												// force to make a copy of the current name
@@ -795,11 +900,11 @@ public class RSECoreTestCase extends TestCase {
 											} else {
 												nameCache.add(entryName);
 											}
-											
+
 											ZipEntry zipEntry = new ZipEntry(entryName);
 											zipEntry.setTime(file.lastModified());
 											stream.putNextEntry(zipEntry);
-											
+
 											// Read the file bytewise and write it bytewise to the ZIP
 											BufferedInputStream fileStream = null;
 											try {
@@ -820,13 +925,13 @@ public class RSECoreTestCase extends TestCase {
 										}
 									}
 								}
-								
+
 								// If done with the current test log collector delegate, signal the delegate to dispose himself.
 								// This gives the delegate the chance to remove any possibly created temporary file.
 								delegate.dispose();
 							}
 						}
-					} catch(IOException e) { 
+					} catch(IOException e) {
 						 /* ignored on purpose */
 					} finally {
 						// always close the stream if open

@@ -23,36 +23,38 @@ import org.eclipse.rse.ui.SystemPreferencesManager;
 
 /**
  * Tests for {@link SystemPreferencesManager}.
- * Since these are persistence tests they will play with the creation and deletion of 
+ * Since these are persistence tests they will play with the creation and deletion of
  * profiles, hosts, filters, and other model objects. You should run this only in a
  * clean workspace.
  */
 public class ProfileTest extends RSECoreTestCase {
-	
+
 	ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 	ISystemProfileManager manager = registry.getSystemProfileManager();
 	ISystemProfile defaultProfile = manager.getDefaultPrivateSystemProfile();
-	
+
 	public ProfileTest(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testDefaultProfileMarking() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		assertNotNull("default profile is null", defaultProfile);
 		assertTrue("default profile is not active - 1", defaultProfile.isActive());
 		assertTrue("default profile is not marked as default", defaultProfile.isDefaultPrivate());
@@ -60,6 +62,8 @@ public class ProfileTest extends RSECoreTestCase {
 
 	public void testDefaultProfileActivation() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		registry.setSystemProfileActive(defaultProfile, true);
 		assertTrue("default profile is not active - 2", defaultProfile.isActive());
 		registry.setSystemProfileActive(defaultProfile, false); // this should be ignored
@@ -68,6 +72,8 @@ public class ProfileTest extends RSECoreTestCase {
 
 	public void testDefaultProfileRename() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			ISystemProfile profile = registry.getSystemProfile("bogus");
 			assertNull(profile);
@@ -89,6 +95,8 @@ public class ProfileTest extends RSECoreTestCase {
 
 	public void testProfileActivation() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			ISystemProfile profile = registry.getSystemProfile("bogus");
 			assertNull(profile);
@@ -107,6 +115,8 @@ public class ProfileTest extends RSECoreTestCase {
 
 	public void testDefaultProfileDeletion() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			registry.deleteSystemProfile(defaultProfile); // this should be ignored
 			List profiles = Arrays.asList(manager.getSystemProfiles());
@@ -116,9 +126,11 @@ public class ProfileTest extends RSECoreTestCase {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void testProfileDeletion() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		try {
 			ISystemProfile profile = registry.getSystemProfile("bogus");
 			assertNull(profile);

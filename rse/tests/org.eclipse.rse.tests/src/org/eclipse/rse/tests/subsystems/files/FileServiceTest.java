@@ -30,7 +30,6 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
 public class FileServiceTest extends RSEBaseConnectionTestCase {
@@ -64,6 +63,11 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	public FileServiceTest(String name, String propertiesFileName) {
 		super(name);
 		fPropertiesFileName = propertiesFileName;
+		if (propertiesFileName != null) {
+			int idx = propertiesFileName.indexOf("Connection.properties");
+			String targetName = propertiesFileName.substring(0, idx);
+			setTargetName(targetName);
+		}
 	}
 
 	public static Test suite() {
@@ -128,6 +132,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 
 	public void testGetRootProperties() throws Exception {
 		//-test-author-:MartinOberhuber
+		if (isTestDisabled()) return;
 		IHostFile[] roots = fs.getRoots(new NullProgressMonitor());
 		assertNotNull(roots);
 		assertTrue(roots.length > 0);
@@ -138,6 +143,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			String rootName = roots[i].getName();
 			assertNotNull(rootName);
 			System.out.println(rootName);
+			// DStore: NPE, bug 240710
 			IHostFile newHf = fs.getFile(null, rootName, new NullProgressMonitor());
 			assertTrue(newHf.isRoot());
 			assertTrue(newHf.exists());
@@ -151,7 +157,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 
 	public void testCaseSensitive() {
 		//-test-author-:MartinOberhuber
-		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCaseSensitive")) return; //$NON-NLS-1$
+		if (isTestDisabled()) return;
 
 		if (isWindows()) {
 			assertFalse(fs.isCaseSensitive());
@@ -166,7 +172,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 
 	public void testCreateFile() throws SystemMessageException {
 		//-test-author-:MartinOberhuber
-		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
+		if (isTestDisabled()) return;
 
 		String testName = getTestFileName();
 		IHostFile hf = fs.createFile(tempDirPath, testName, mon); //dstore-linux: bug 235492
@@ -187,7 +193,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 
 	public void testCreateCaseSensitive() throws SystemMessageException {
 		//-test-author-:MartinOberhuber
-		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateCaseSensitive")) return; //$NON-NLS-1$
+		if (isTestDisabled()) return;
 
 		String testName = getTestFileName();
 		String testName2 = testName.toUpperCase();

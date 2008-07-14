@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
+import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -21,11 +22,11 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MITargetAttach extends MICommand<MIInfo> {
 
-	public MITargetAttach(IDMContext ctx, String threadGroupId) {
-		super(ctx, "-target-attach", new String[] {threadGroupId}); //$NON-NLS-1$
+	public MITargetAttach(IMIExecutionGroupDMContext ctx) {
+		super(ctx, "-target-attach", new String[] {ctx.getGroupId()}); //$NON-NLS-1$
 	}
 	
-	public MITargetAttach(IDMContext ctx, int pid) {
-		super(ctx, "-target-attach" , new String[] {"--pid " + pid}); //$NON-NLS-1$//$NON-NLS-2$
+	public MITargetAttach(IMIProcessDMContext ctx) {
+		super(ctx, "-target-attach", new String[] {"--pid " + ctx.getProcId()}); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

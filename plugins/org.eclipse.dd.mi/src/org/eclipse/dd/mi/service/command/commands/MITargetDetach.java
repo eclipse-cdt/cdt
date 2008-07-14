@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
+import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -21,11 +22,11 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MITargetDetach extends MICommand<MIInfo> {
 
-	public MITargetDetach(IDMContext ctx, String threadGroupId) {
-		super(ctx, "-target-detach", new String[] {threadGroupId}); //$NON-NLS-1$
+	public MITargetDetach(IMIExecutionGroupDMContext ctx) {
+		super(ctx, "-target-detach", new String[] {ctx.getGroupId()}); //$NON-NLS-1$
 	}
 	
-	public MITargetDetach(IDMContext ctx, int pid) {
-		super(ctx, "-target-detach" , new String[] {"--pid " + pid}); //$NON-NLS-1$//$NON-NLS-2$
+	public MITargetDetach(IMIProcessDMContext ctx) {
+		super(ctx, "-target-detach", new String[] {"--pid " + ctx.getProcId()}); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

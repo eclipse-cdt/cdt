@@ -138,8 +138,13 @@ public class CModule extends CDebugElement implements ICModule {
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#areSymbolsLoaded()
 	 */
 	public boolean areSymbolsLoaded() {
-		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).hasDebug() : 
-			( ( fCDIObject instanceof ICDISharedLibrary ) ? ((ICDISharedLibrary)fCDIObject).areSymbolsLoaded() : false );
+		if (fCDIObject instanceof ICDISharedLibrary)
+			return ((ICDISharedLibrary)fCDIObject).areSymbolsLoaded();
+		
+		if (fCElement instanceof IBinary)
+			return ((IBinary)fCElement).hasDebug();
+		
+		return false;
 	}
 
 	/* (non-Javadoc)

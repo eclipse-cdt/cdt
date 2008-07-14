@@ -213,4 +213,33 @@ public class FaultToleranceTests extends AST2BaseTest {
     		}
     	}
     }
+
+    // enum _T { I J, K }; // missing comma
+    // int i;
+    public void testEnumProblem() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTSimpleDeclaration e= getDeclaration(tu, 0);
+    		IASTProblemDeclaration p= getDeclaration(tu, 1);
+    		assertEquals("J, K };", p.getRawSignature());
+    		IASTSimpleDeclaration s= getDeclaration(tu, 2);
+    		assertEquals("int i;", s.getRawSignature());
+    	}
+    }
+
+    // class A {
+    //    enum _T { I J, K }; // missing comma
+    //    int i;
+    // };
+    public void testEnumError_Bug72685() throws Exception {
+    	final String comment= getAboveComment();
+    	IASTTranslationUnit tu= parse(comment, ParserLanguage.CPP, false, false);
+    	IASTCompositeTypeSpecifier ct= getCompositeType(tu, 0);
+    	IASTSimpleDeclaration e= getDeclaration(ct, 0);
+    	IASTProblemDeclaration p= getDeclaration(ct, 1);
+    	assertEquals("J, K };", p.getRawSignature());
+    	IASTSimpleDeclaration s= getDeclaration(ct, 2);
+    	assertEquals("int i;", s.getRawSignature());
+    }
 }

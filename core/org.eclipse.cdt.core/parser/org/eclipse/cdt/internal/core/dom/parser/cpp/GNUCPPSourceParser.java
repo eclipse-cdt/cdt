@@ -2284,6 +2284,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	declSpec= (ICPPASTDeclSpecifier) e.declSpec;
         	dtor= e.declarator;
             backup(e.currToken);
+        } catch (BacktrackException e) {
+        	IASTNode node= e.getNodeBeforeProblem();
+        	if (node instanceof ICPPASTDeclSpecifier && validWithoutDtor(declOption, (ICPPASTDeclSpecifier) node)) {
+                IASTSimpleDeclaration d= createSimpleDeclaration();
+                d.setDeclSpecifier((IASTDeclSpecifier) node);
+                setRange(d, node);
+        		throwBacktrack(e.getProblem(), d);
+        	}
+        	throw e;
         }
         
         IASTDeclarator[] declarators= {dtor};
@@ -2570,6 +2579,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ITokenDuple identifier= null;
         ICPPASTDeclSpecifier result= null;
         IASTExpression typeofExpression= null;
+        IASTProblem problem= null;
 
         boolean isTypename = false;
         boolean encounteredRawType= false;
@@ -2779,7 +2789,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 try {
                     result= (ICPPASTDeclSpecifier) enumSpecifier();
                 } catch (BacktrackException bt) {
-                    result= elaboratedTypeSpecifier();
+                	if (bt.getNodeBeforeProblem() instanceof ICPPASTDeclSpecifier) {
+                		result= (ICPPASTDeclSpecifier) bt.getNodeBeforeProblem();
+                		problem= bt.getProblem();
+                		break declSpecifiers;
+                	} else {
+                		result= elaboratedTypeSpecifier();
+                	}
                 }
                 endOffset= calculateEndOffset(result);
                 encounteredTypename= true;
@@ -2843,6 +2859,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	}
             }
             ((ASTNode) result).setOffsetAndLength(offset, endOffset - offset);
+            if (problem != null) {
+            	throwBacktrack(problem, result);
+            }
             return result;
         }
 

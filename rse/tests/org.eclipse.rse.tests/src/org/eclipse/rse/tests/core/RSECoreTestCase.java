@@ -245,6 +245,16 @@ public class RSECoreTestCase extends TestCase {
 			System.out.println("--> disabled due to rule: " + checkString);
 			return true;
 		}
+		checkString = testClassSimpleName + ".*";
+		if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+			System.out.println("--> disabled due to rule: " + checkString);
+			return true;
+		}
+		checkString = "*." + testName;
+		if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {
+			System.out.println("--> disabled due to rule: " + checkString);
+			return true;
+		}
 		if (targetName != null) {
 			checkString = "*." + targetName;
 			if (!RSETestsPlugin.isTestCaseEnabled(checkString)) {

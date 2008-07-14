@@ -1,7 +1,7 @@
 /********************************************************************************
  * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
@@ -22,29 +22,31 @@ import org.eclipse.rse.tests.core.RSECoreTestCase;
  * Test various aspects of mnemonic generation and assignment.
  */
 public class PasswordsTest extends RSECoreTestCase {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testAddRemove() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		IRSESystemType defaultSystemType = PasswordPersistenceManager.DEFAULT_SYSTEM_TYPE;
 		String hostAddress = "somesystem.mycompany.com";
 		boolean deny = RSEPreferencesManager.getDenyPasswordSave(systemType, hostAddress);
 		assertFalse("the initial value of this preference should be false", deny);
-		
+
 		String password = "password";
 		String userId = "me";
 		SystemSignonInformation info = new SystemSignonInformation(hostAddress, userId, password, systemType);
@@ -88,14 +90,16 @@ public class PasswordsTest extends RSECoreTestCase {
 		returnedInfo = ppm.find(systemType, hostAddress, userId, false);
 		assertNull("signon info was found but should not be", returnedInfo);
 	}
-	
+
 	public void testSaveDenial() {
 		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		String hostAddress = "somesystem.mycompany.com";
 		boolean deny = RSEPreferencesManager.getDenyPasswordSave(systemType, hostAddress);
 		assertFalse("the initial value of this preference should be false", deny);
-		
+
 		String password = "password";
 		String userId = "me";
 		SystemSignonInformation info = new SystemSignonInformation(hostAddress, userId, password, systemType);
@@ -129,5 +133,5 @@ public class PasswordsTest extends RSECoreTestCase {
 		returnedInfo = ppm.find(systemType, hostAddress, userId, false);
 		assertNull("signon info was found but should not be", returnedInfo);
 	}
-	
+
 }

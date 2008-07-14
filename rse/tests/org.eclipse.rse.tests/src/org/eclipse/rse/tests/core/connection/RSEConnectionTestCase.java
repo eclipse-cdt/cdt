@@ -22,7 +22,6 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
@@ -40,6 +39,8 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 */
 	public void testConnectionCaseInSensitive() throws Exception {
 		// -test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		ISystemProfile prof = RSECorePlugin.getTheSystemProfileManager().getDefaultPrivateSystemProfile();
 		ISystemProfile testprof = RSECorePlugin.getTheSystemProfileManager().cloneSystemProfile(prof, "testConnectionCaseInSensitive");
@@ -60,7 +61,8 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 */
 	public void testConnectionCreation() {
 		//-test-author-:DavidDykstal
-		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnectionCreation")) return; //$NON-NLS-1$
+		if (isTestDisabled())
+			return;
 
 		Properties properties = new Properties();
 		properties.setProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME, "TestProfile"); //$NON-NLS-1$
@@ -105,7 +107,8 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 */
 	public void testConnectionRemoval() {
 		//-test-author-:DavidDykstal
-		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnectionRemoval")) return; //$NON-NLS-1$
+		if (isTestDisabled())
+			return;
 
 		String profileName = "TestProfile"; //$NON-NLS-1$
 
@@ -123,12 +126,13 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 */
 	public void testConnect() {
 		//-test-author-:DavidDykstal
-		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testConnect")) return; //$NON-NLS-1$
+		IHost connection = getLocalSystemConnection();
+		if (isTestDisabled())
+			return;
 
 		Exception exception = null;
 		String cause = null;
 
-		IHost connection = getLocalSystemConnection();
 		ISubSystem subsystem = null;
 		try {
 			subsystem = getConnectionManager().getFileSubSystem(connection, "local.files"); //$NON-NLS-1$
@@ -173,12 +177,13 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 */
 	public void testResolveFilterString() {
 		//-test-author-:DavidDykstal
-		if (!RSETestsPlugin.isTestCaseEnabled("RSEConnectionTestCase.testResolveFilterString")) return; //$NON-NLS-1$
+		IHost connection = getLocalSystemConnection();
+		if (isTestDisabled())
+			return;
 
 		Exception exception = null;
 		String cause = null;
 
-		IHost connection = getLocalSystemConnection();
 		ISubSystem subsystem = null;
 		try {
 			subsystem = getConnectionManager().getFileSubSystem(connection, "local.files"); //$NON-NLS-1$

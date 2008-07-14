@@ -77,6 +77,9 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 	 * @return The local system type connection or <code>null</code> if the lookup fails.
 	 */
 	protected IHost getLocalSystemConnection() {
+		setTargetName("local");
+		if (isTestDisabled())
+			return null;
 		assertNotNull("Local system connection properties are not available!", localSystemConnectionProperties); //$NON-NLS-1$
 
 		Exception exception = null;
@@ -97,21 +100,33 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 
 	protected IHost getSSHHost()
 	{
+		setTargetName("ssh");
+		if (isTestDisabled())
+			return null;
 		return getHost("sshConnection.properties");
 	}
 
 	protected IHost getFTPHost()
 	{
+		setTargetName("ftp");
+		if (isTestDisabled())
+			return null;
 		return getHost("ftpConnection.properties");
 	}
 
 	protected IHost getLinuxHost()
 	{
+		setTargetName("linux");
+		if (isTestDisabled())
+			return null;
 		return getHost("linuxConnection.properties");
 	}
 
 	protected IHost getWindowsHost()
 	{
+		setTargetName("windows");
+		if (isTestDisabled())
+			return null;
 		return getHost("windowsConnection.properties");
 	}
 

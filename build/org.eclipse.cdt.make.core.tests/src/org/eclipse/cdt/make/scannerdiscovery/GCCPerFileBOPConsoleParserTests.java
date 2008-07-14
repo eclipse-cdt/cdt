@@ -95,4 +95,23 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 			tempDir.delete();
 		}
 	}
+	
+	public void testPwdInFilePath_Bug237958() throws Exception {
+		IFile file1= fCProject.getProject().getFile("Bug237958_1.c");
+		IFile file2= fCProject.getProject().getFile("Bug237958_2.c");
+		fOutputParser.processLine("gcc -g -DTEST1 -c `pwd`/Bug237958_1.c"); 
+		fOutputParser.processLine("gcc -DTEST2=12 -g -ggdb -Wall -c \"`pwd`/./Bug237958_2.c\""); 
+
+		List cmds = fCollector.getCollectedScannerInfo(file1, ScannerInfoTypes.COMPILER_COMMAND);
+		CCommandDSC cdsc= (CCommandDSC) cmds.get(0);
+		List symbols= cdsc.getSymbols();
+		assertEquals(1, symbols.size());
+		assertEquals("TEST1", symbols.get(0).toString());
+		
+		cmds = fCollector.getCollectedScannerInfo(file2, ScannerInfoTypes.COMPILER_COMMAND);
+		cdsc= (CCommandDSC) cmds.get(0);
+		symbols= cdsc.getSymbols();
+		assertEquals(1, symbols.size());
+		assertEquals("TEST2=12", symbols.get(0).toString());
+	}
 }

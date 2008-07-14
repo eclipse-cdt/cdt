@@ -98,7 +98,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 				switch (fState) {
 				case SINGLE_LINE_COMMENT:
 				case CHARACTER:
-				//case STRING:				
+				case STRING:
 					// assert(fTokenLength > 0);
 					// if last char was a backslash then we have an escaped line
 					if (fLast != BACKSLASH) {
@@ -164,7 +164,6 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 					preFix(CCODE, STRING, NONE, 1);
 					fTokenOffset += fTokenLength;
 					fTokenLength= fPrefixLength;
-					consume();
 					break;
 
 				default:

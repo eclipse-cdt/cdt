@@ -162,11 +162,14 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
 	public IField[] getFields() throws DOMException { fail(); return null; }
 	public IBinding[] getFriends() throws DOMException { fail(); return null; }
-	public ICPPMethod[] getMethods() throws DOMException { fail(); return null; }
 	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
 	@Override
 	public Object clone() {fail();return null;}
-	
+
+	public ICPPMethod[] getMethods() throws DOMException {
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
+
 	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
 		IType[] arguments = getArguments();
 		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);

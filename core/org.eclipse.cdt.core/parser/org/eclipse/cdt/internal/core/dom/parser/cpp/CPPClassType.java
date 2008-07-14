@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -61,6 +62,21 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
+	
+	public static ICPPMethod[] getMethods(ICPPClassType ct) throws DOMException {
+		ObjectSet<ICPPMethod> set = new ObjectSet<ICPPMethod>(4);
+		set.addAll(ct.getDeclaredMethods());
+		ICPPClassScope scope = (ICPPClassScope) ct.getCompositeScope();
+		set.addAll( scope.getImplicitMethods() );
+		ICPPBase [] bases = ct.getBases();
+		for (ICPPBase base : bases) {
+			IBinding b = base.getBaseClass();
+			if( b instanceof ICPPClassType )
+				set.addAll( ((ICPPClassType)b).getMethods() );
+		}
+		return set.keyArray(ICPPMethod.class);
+	}
+	
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
 		public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
 			super( node, id, arg );
@@ -399,7 +415,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		return mixin.getMethods();
+		return getMethods(this);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {

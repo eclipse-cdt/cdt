@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -43,6 +42,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		return suite(CallHierarchyBugs.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		restoreAllParts();
@@ -248,5 +248,35 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(item, 0, "Base::vmethod()");
 		checkTreeNode(item, 1, "Derived::vmethod()");
 		checkTreeNode(item, 2, null);
+	}
+	
+	//	template <class T> class CSome {
+	//		public:
+	//			T Foo (const T& x) { return 2*x; }
+	//	};
+	//	template <> class CSome <int> {
+	//		public:
+	//			int Foo (const int& x) { return 3*x; }
+	//	};
+	//	void test() {
+	//		CSome <int> X;
+	//		X.Foo(3);
+	//	}
+	public void testMethodInstance_Bug240599() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "CSome.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+
+		// open editor, check outline
+		CEditor editor= openEditor(file);
+		int idx = content.indexOf("Foo(3)");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, true);
+		Tree chTree= checkTreeNode(ch, 0, "CSome::Foo(const int &)").getParent();
+		TreeItem item= checkTreeNode(chTree, 0, 0, "test()");
+		checkTreeNode(chTree, 0, 1, null);
 	}
 }

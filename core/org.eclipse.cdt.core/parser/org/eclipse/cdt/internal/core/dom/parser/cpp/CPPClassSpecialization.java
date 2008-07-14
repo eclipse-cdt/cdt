@@ -143,8 +143,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
 	public ICPPMethod[] getMethods() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+		return CPPClassType.getMethods(this);
 	}
 
 	/* (non-Javadoc)

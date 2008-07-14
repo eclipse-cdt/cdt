@@ -222,7 +222,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		return mixin.getMethods();
+		return CPPClassType.getMethods(this);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {

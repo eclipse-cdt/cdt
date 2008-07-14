@@ -12,8 +12,7 @@ package org.eclipse.dd.mi.service.command.commands;
 
 import java.util.ArrayList;
 
-import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
@@ -45,13 +44,12 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
  *
  */
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
-
 	
-	public MIListThreadGroups(IDMContext ctx) {
+	public MIListThreadGroups(IContainerDMContext ctx) {
 		this(ctx, false);
 	}
 
-	public MIListThreadGroups(IDMContext ctx, boolean listAll) {
+	public MIListThreadGroups(IContainerDMContext ctx, boolean listAll) {
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
         
 		final ArrayList<String> arguments = new ArrayList<String>();
@@ -59,12 +57,11 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 			arguments.add("--available"); //$NON-NLS-1$
 		}
 
-		// If the context is a child of thread-group, use the thread-group name
+		// If the context is a thread-group, use the thread-group name
 		// to list its children; if it is not, then we don't use any name to get
 		// the list of all thread-groups
-		IMIExecutionGroupDMContext threadGroup = DMContexts.getAncestorOfType(ctx, IMIExecutionGroupDMContext.class);
-		if (threadGroup != null) {
-			arguments.add(threadGroup.getGroupId());
+		if (ctx instanceof IMIExecutionGroupDMContext) {
+			arguments.add(((IMIExecutionGroupDMContext)ctx).getGroupId());
 		}
 
 		if (!arguments.isEmpty()) {

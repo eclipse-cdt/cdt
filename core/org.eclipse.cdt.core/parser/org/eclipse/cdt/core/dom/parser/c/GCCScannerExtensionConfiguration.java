@@ -9,6 +9,7 @@
  *    IBM - Initial API and implementation
  *    Ed Swartz (Nokia)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
@@ -28,6 +29,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	}
 
 	public GCCScannerExtensionConfiguration() {
+		addMacro("__null", "(void *)0");  //$NON-NLS-1$//$NON-NLS-2$
 		addMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 

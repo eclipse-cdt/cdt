@@ -9,6 +9,7 @@
  *    IBM - Initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -32,7 +33,6 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addMacro("__complex__", "_Complex");
 		addMacro("__extension__", ""); 
 		addMacro("__imag__", "(int)"); 
-		addMacro("__null", "(void *)0");
 		addMacro("__real__", "(int)");
 		addMacro("__stdcall", "");
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,8 +177,8 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 	 * @return array of commands
 	 */
 	protected String[][] tokenize(String line, boolean escapeInsideDoubleQuotes) {
-		ArrayList commands= new ArrayList();
-		ArrayList tokens= new ArrayList();
+		ArrayList<String[]> commands= new ArrayList<String[]>();
+		ArrayList<String> tokens= new ArrayList<String>();
 		StringBuffer token= new StringBuffer();
 		
 		final char[] input= line.toCharArray();
@@ -197,7 +197,6 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 						if (c=='`') {
 							token.append(c);	// preserve back-quotes
 						}
-						endToken(token, tokens);
 						currentQuote= 0;
 					}
 				}
@@ -274,17 +273,17 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 			}
 		}
 		endCommand(token, tokens, commands);
-		return (String[][]) commands.toArray(new String[commands.size()][]);
+		return commands.toArray(new String[commands.size()][]);
 	}
 	
-	private void endCommand(StringBuffer token, ArrayList tokens, ArrayList commands) {
+	private void endCommand(StringBuffer token, ArrayList<String> tokens, ArrayList<String[]> commands) {
 		endToken(token, tokens);
 		if (!tokens.isEmpty()) {
 			commands.add(tokens.toArray(new String[tokens.size()]));
 			tokens.clear();
 		}
 	}
-	private void endToken(StringBuffer token, ArrayList tokens) {
+	private void endToken(StringBuffer token, ArrayList<String> tokens) {
 		if (token.length() > 0) {
 			tokens.add(token.toString());
 			token.setLength(0);

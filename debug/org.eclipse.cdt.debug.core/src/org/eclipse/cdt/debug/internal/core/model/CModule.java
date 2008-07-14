@@ -213,16 +213,13 @@ public class CModule extends CDebugElement implements ICModule {
 		if ( path == null || path.isEmpty() ) {
 			requestFailed( CoreModelMessages.getString( "CModule.2" ), null ); //$NON-NLS-1$
 		}
-		String message = CoreModelMessages.getString( "CModule.4" ); //$NON-NLS-1$
-		if ( fCDIObject instanceof ICDISharedLibrary && path.equals( getSymbolsFileName() )) {
+		else if ( fCDIObject instanceof ICDISharedLibrary && path.equals( getSymbolsFileName() )) {
 			try {
 				((ICDISharedLibrary)fCDIObject).loadSymbols();
-				return;
 			}
 			catch( CDIException e ) {
-				message = e.getMessage();
+				targetRequestFailed( e.getMessage(), null );
 			}
 		}
-		targetRequestFailed( message, null );
 	}
 }

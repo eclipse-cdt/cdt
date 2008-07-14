@@ -249,6 +249,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         ASTNode node = (ASTNode) n;
         return node.getOffset() + node.getLength();
     }
+
+    protected void setRange(IASTNode n, IASTNode from) {
+    	((ASTNode) n).setOffsetAndLength((ASTNode) from);
+    }
+
+    protected void setRange(IASTNode n, int offset, int endOffset) {
+    	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+    }
     
     protected void adjustLength(IASTNode n, IASTNode endNode) {
         final int endOffset= calculateEndOffset(endNode);
@@ -517,7 +525,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTProblemDeclaration skipProblemDeclaration(int offset) {
 		failParse();
 		declarationMark= null;
-    	int endOffset = skipToSemiOrClosingBrace(offset);
+    	int endOffset = skipToSemiOrClosingBrace(offset, false);
 		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, offset, endOffset-offset);
 		return createProblemDeclaration(problem);
     }
@@ -525,12 +533,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTProblemStatement skipProblemStatement(int offset) {
 		failParse();
 		declarationMark= null;
-    	int endOffset = skipToSemiOrClosingBrace(offset);
+    	int endOffset = skipToSemiOrClosingBrace(offset, false);
 		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, offset, endOffset-offset);
 		return createProblemStatement(problem);
     }
 
-	private int skipToSemiOrClosingBrace(int offset) {
+    private IASTProblem skipProblemEnumerator(int offset) {
+    	failParse();
+    	final int endOffset= skipToSemiOrClosingBrace(offset, true);
+    	return createProblem(IProblem.SYNTAX_ERROR, offset, endOffset-offset);
+    }
+    
+	private int skipToSemiOrClosingBrace(int offset, boolean eatBrace) {
 		failParse();
 		declarationMark= null;
     	int depth= 0;
@@ -553,8 +567,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 					break;
 				case IToken.tRBRACE:
 					if (--depth <= 0) {
-						if (depth == 0 || offset == endOffset) {
+						if (depth == 0 || offset == endOffset || eatBrace) {
 							endOffset= consume().getEndOffset(); // consume closing brace
+						}
+						if (LTcatchEOF(1) == IToken.tSEMI) {
+							endOffset= consume().getEndOffset();
 						}
 						break loop;
 					}
@@ -1252,88 +1269,80 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException request a backtrack
      */
     protected IASTEnumerationSpecifier enumSpecifier() throws BacktrackException, EndOfFileException {
-        IToken mark = mark();
-        IASTName name = null;
-        int startOffset = consume().getOffset(); // t_enum
+        final IToken mark= mark();
+        final int offset= consume().getOffset();
+
+        IASTName name;
         if (LT(1) == IToken.tIDENTIFIER) {
-            name = createName(identifier());
-        } else
-            name = createName();
-        if (LT(1) == IToken.tLBRACE) {
-
-            IASTEnumerationSpecifier result = createEnumerationSpecifier();
-            ((ASTNode) result).setOffset(startOffset);
-            result.setName(name);
-
-            consume(); // IToken.tLBRACE
-            enumLoop: while (true) {
-                
-                switch (LT(1)) {
-                case IToken.tRBRACE:
-                case IToken.tEOC:
-                    break enumLoop;
-                }
-
-                IASTName enumeratorName = null;
-
-                int lastOffset = 0;
-                if (LT(1) == IToken.tIDENTIFIER) {
-                    enumeratorName = createName(identifier());
-                    lastOffset = calculateEndOffset(enumeratorName);
-                } else {
-                    IToken la = LA(1);
-                    throwBacktrack(la.getOffset(), la.getLength());
-                    return null; // line is never reached, hint for the parser
-                }
-                IASTExpression initialValue = null;
-                if (LT(1) == IToken.tASSIGN) {
-                    consume();
-                    initialValue = constantExpression();
-                    lastOffset = calculateEndOffset(initialValue);
-                }
-                IASTEnumerationSpecifier.IASTEnumerator enumerator = null;
-                if (LT(1) == IToken.tRBRACE) {
-                    enumerator = createEnumerator();
-                    enumerator.setName(enumeratorName);
-                    ((ASTNode) enumerator).setOffsetAndLength(
-                            ((ASTNode) enumeratorName).getOffset(), lastOffset
-                                    - ((ASTNode) enumeratorName).getOffset());
-                    if (initialValue != null) {
-                        enumerator.setValue(initialValue);
-                    }
-                    result.addEnumerator(enumerator);
-
-                    break;
-                }
-                
-                switch (LT(1)) {
-                case IToken.tCOMMA:
-                case IToken.tEOC:
-                    consume();
-                    break;
-                default:
-                    throwBacktrack(mark.getOffset(), mark.getLength());
-                }
-                
-                enumerator = createEnumerator();
-                enumerator.setName(enumeratorName);
-                ((ASTNode) enumerator).setOffsetAndLength(
-                        ((ASTNode) enumeratorName).getOffset(), lastOffset
-                                - ((ASTNode) enumeratorName).getOffset());
-                if (initialValue != null) {
-                    enumerator.setValue(initialValue);
-                }
-                result.addEnumerator(enumerator);
-            }
-            
-            int lastOffset = consume().getEndOffset();
-            ((ASTNode) result).setLength(lastOffset - startOffset);
-            return result;
+            name= createName(identifier());
+        } else {
+            name= createName();
         }
-        // enumSpecifierAbort
-        backup(mark);
-        throwBacktrack(mark.getOffset(), mark.getLength());
-        return null;
+        
+        if (LT(1) != IToken.tLBRACE) {
+        	backup(mark);
+        	throwBacktrack(mark);
+        }
+
+        final IASTEnumerationSpecifier result= createEnumerationSpecifier();
+        result.setName(name);
+
+        boolean needComma= false;
+        int endOffset= consume().getEndOffset(); // IToken.tLBRACE
+        int problemOffset= endOffset;
+        try {
+        	loop: while (true) {
+        		switch (LTcatchEOF(1)) {
+        		case 0: // eof
+        			endOffset= eofOffset;
+        			break loop;
+        		case IToken.tRBRACE:
+        			endOffset= consume().getEndOffset();
+        			break loop;
+        		case IToken.tEOC:
+        			break loop;
+        		case IToken.tCOMMA:
+        			if (!needComma) {
+        				problemOffset= LA(1).getOffset();
+        				throw backtrack;
+        			}
+        			endOffset= consume().getEndOffset();
+        			needComma= false;
+        			continue loop;
+        		case IToken.tIDENTIFIER:
+        		case IToken.tCOMPLETION:
+        			problemOffset= LA(1).getOffset();
+        			if (needComma)
+        				throw backtrack;
+        			
+        			final IASTEnumerator enumerator= createEnumerator();
+        			final IASTName etorName= createName(identifier());
+        			enumerator.setName(etorName);
+        			endOffset= calculateEndOffset(etorName);
+        			setRange(enumerator, problemOffset, endOffset);
+        			result.addEnumerator(enumerator);
+        			if (LTcatchEOF(1) == IToken.tASSIGN) {
+        				problemOffset= consume().getOffset();
+        				final IASTExpression value= constantExpression();
+        				enumerator.setValue(value);
+        				adjustLength(enumerator, value);
+        				endOffset= calculateEndOffset(value);
+        			} 
+        			needComma= true;
+        			continue loop;
+        		default:
+        			problemOffset= LA(1).getOffset();
+                	throw backtrack;
+        		}
+        	}
+        } catch (EndOfFileException eof) {
+        	throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, problemOffset, eofOffset-problemOffset), result);
+        } catch (BacktrackException bt) {
+        	IASTProblem problem= skipProblemEnumerator(problemOffset);
+        	throwBacktrack(problem, result);
+        }
+        setRange(result, offset, endOffset);
+        return result;
     }
 
     protected abstract IASTStatement statement() throws EndOfFileException, BacktrackException;

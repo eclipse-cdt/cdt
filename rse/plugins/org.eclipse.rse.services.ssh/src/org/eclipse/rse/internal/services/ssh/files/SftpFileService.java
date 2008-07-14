@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [233651] Make ssh delete throw proper exceptions
  * Martin Oberhuber (Wind River) - [235477][ssh] SftpFileService.createFolder() fails for file named "a?*"
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * David McKnight   (IBM)        - [235472] [ssh] RSE doesn't show correct properties of the file system root ("/")
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -89,7 +90,6 @@ import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
-
 public class SftpFileService extends AbstractFileService implements ISshService, IFilePermissionsService
 {
 
@@ -489,7 +489,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		}
 		if (node==null) {
 			boolean isRoot = (remoteParent == null || remoteParent.length() == 0);
-			node = new SftpHostFile(remoteParent, fileName, false, isRoot, false, 0, 0);
+			node = new SftpHostFile(isRoot ? null : remoteParent, fileName, false, isRoot, false, 0, 0);
 			node.setExists(false);
 		}
 		return node;
@@ -622,7 +622,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			}
 		}
 
-		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), isRoot, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
+		SftpHostFile node = new SftpHostFile(isRoot ? null : parentPath, fileName, attrsTarget.isDir(), isRoot, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (linkTarget!=null) {
 			node.setLinkTarget(linkTarget);
 		}
@@ -862,7 +862,15 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	}
 
 	public IHostFile[] getRoots(IProgressMonitor monitor) {
-		IHostFile root = new SftpHostFile(null, "/", true, true, false, 0, 0); //$NON-NLS-1$
+		IHostFile root = null;
+		try {
+				root = getFile(null, "/", monitor);
+		}
+		catch (SystemMessageException e){
+		}
+		if (root == null){
+			root = new SftpHostFile(null, "/", true, true, false, 0, 0); //$NON-NLS-1$
+		}
 		return new IHostFile[] { root };
 	}
 

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Adapted from FTPHostFile.
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * Martin Oberhuber (Wind River) - [235472] [ssh] RSE doesn't show correct properties of the file system root ("/")
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -51,6 +52,14 @@ public class SftpHostFile implements IHostFile, IHostFilePermissionsContainer {
 		fParentPath = parentPath;
 		fName = name;
 		if (name == null || name.length() == 0) {
+			throw new IllegalArgumentException();
+		} else if (parentPath == null || isRoot) {
+			//Root files must be consistent
+			if (parentPath !=null || !isRoot /* || !isDirectory */) {
+				throw new IllegalArgumentException();
+			}
+		} else if (name.indexOf('/')>=0) {
+			//Non-root files must not have a relative path as name, or it would break parent/child relationships
 			throw new IllegalArgumentException();
 		}
 		fIsDirectory = isDirectory;

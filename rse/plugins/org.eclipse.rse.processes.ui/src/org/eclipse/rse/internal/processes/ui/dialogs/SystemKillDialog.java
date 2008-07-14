@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others 
+ * Radoslav Gerganov (ProSyst)   - [240646] Default signal type appears twice in SystemKillDialog's combo if the remote system doesn't support signal types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;
@@ -214,7 +215,10 @@ public class SystemKillDialog extends SystemPromptDialog
 					}
 				}
 			);
-        cmbSignal.setItems(getSignalTypes());
+        String[] signalTypes = getSignalTypes();
+        if (signalTypes != null) {
+        	cmbSignal.setItems(signalTypes);
+        }
         cmbSignal.add(SystemProcessesResources.RESID_KILL_SIGNAL_TYPE_DEFAULT, 0);
         cmbSignal.setText(cmbSignal.getItem(0));
         signalType = cmbSignal.getText();
@@ -225,16 +229,17 @@ public class SystemKillDialog extends SystemPromptDialog
 	
 	/**
 	 * @return all the possible signal types that can be sent to the selected processes
-	 * on that system
+	 * on that system or <code>null</code> if the remote system doesn't support any
+	 * signal types
 	 */
 	private String[] getSignalTypes()
 	{
 		Object selObj = getInputObject();
+		String[] types = null;
 		if (selObj instanceof IStructuredSelection)
 		{
 			IStructuredSelection selection = (IStructuredSelection) selObj;
 			IRemoteProcess process = (IRemoteProcess) selection.getFirstElement();
-			String[] types = null;
 			try
 			{
 				types = process.getParentRemoteProcessSubSystem().getSignalTypes();
@@ -242,12 +247,10 @@ public class SystemKillDialog extends SystemPromptDialog
 			catch (SystemMessageException e)
 			{
 				SystemBasePlugin.logMessage(e.getSystemMessage(), e);
-				return new String[] { SystemProcessesResources.RESID_KILL_SIGNAL_TYPE_DEFAULT };
+				return null;
 			}
-			if (types == null) types = new String[] { SystemProcessesResources.RESID_KILL_SIGNAL_TYPE_DEFAULT };
-			return types;
 		}
-		else return new String[] { SystemProcessesResources.RESID_KILL_SIGNAL_TYPE_DEFAULT };
+		return types;
 	}
 	
     private TableViewer createTableViewer(Composite parent, int nbrColumns) 

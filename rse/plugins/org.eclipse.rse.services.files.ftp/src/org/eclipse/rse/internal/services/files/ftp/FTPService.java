@@ -78,6 +78,7 @@
  * Martin Oberhuber (Wind River) - [234045] FTP Permission Error Handling
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * Martin Oberhuber (Wind River) - [240738][ftp] Incorrect behavior on getFile for non-existing folder
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -620,39 +621,47 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 				if(!_ftpClient.changeWorkingDirectory(remoteParent))
 				{
-						throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
+					String reply = _ftpClient.getReplyString();
+					if (reply != null && reply.startsWith("550")) { //$NON-NLS-1$
+						// No such file or directory
+						throw new SystemElementNotFoundException(remoteParent, "chdir"); //$NON-NLS-1$
+					} else {
+						throw new RemoteFileIOException(new Exception(reply));
 					}
+				}
 
 				if(!listFiles(monitor))
 				{
-						throw new SystemOperationCancelledException();
-					}
+					throw new SystemOperationCancelledException();
+				}
 
-					synchronized (_fCachePreviousFiles) {
-						cacheFiles(remoteParent);
+				synchronized (_fCachePreviousFiles) {
+					cacheFiles(remoteParent);
 
-						//Bug 198645: try exact match first
-						Object o = _fCachePreviousFiles.get(fileName);
+					// Bug 198645: try exact match first
+					Object o = _fCachePreviousFiles.get(fileName);
 					if (o!=null) return (FTPHostFile)o;
 
-						//try case insensitive match (usually never executed)
-						if (!isCaseSensitive()) {
-							for (int i = 0; i < _ftpFiles.length; i++) {
-								String tempName = _ftpFiles[i].getName();
-								if (tempName.equalsIgnoreCase(fileName)) {
-									file = (FTPHostFile) _fCachePreviousFiles.get(tempName);
-									break;
-								}
+					// try case insensitive match (usually never executed)
+					if (!isCaseSensitive()) {
+						for (int i = 0; i < _ftpFiles.length; i++) {
+							String tempName = _ftpFiles[i].getName();
+							if (tempName.equalsIgnoreCase(fileName)) {
+								file = (FTPHostFile) _fCachePreviousFiles.get(tempName);
+								break;
 							}
 						}
 					}
+				}
 
 				// if not found, create new object with non-existing flag
 				if(file == null)
 				{
 					file = new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
 				}
-
+			} catch (SystemElementNotFoundException senfe) {
+				// Return non-existing file
+				file = new FTPHostFile(remoteParent, fileName, false, false, 0, 0, false);
 			} catch (Exception e) {
 				throw new RemoteFileIOException(e);
 			} finally {
@@ -1372,7 +1381,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	public void setIsCaseSensitive(boolean b) {
 		_caseSensitive = b;
 	}
-	
+
 	public boolean isCaseSensitive()
 	{
 		return _caseSensitive;

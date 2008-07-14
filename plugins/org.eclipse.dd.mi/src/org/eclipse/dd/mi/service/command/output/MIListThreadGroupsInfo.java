@@ -28,13 +28,13 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		
 		public ThreadGroupInfo(String name, String pidStr) {
 			try {
-				pid = Integer.parseInt(pidStr);
+				this.pid = Integer.parseInt(pidStr);
 			} catch (NumberFormatException e) {
 			}
 			this.name = name;
 		}
 		
-		public ThreadGroupInfo(int pid, String name) {
+		public ThreadGroupInfo(String name, int pid) {
 			this.pid = pid;
 			this.name = name;
 		}

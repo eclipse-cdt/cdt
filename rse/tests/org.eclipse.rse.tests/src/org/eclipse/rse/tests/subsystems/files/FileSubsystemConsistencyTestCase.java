@@ -11,6 +11,7 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
+ * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -468,6 +469,32 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				e.printStackTrace();
 			}
 
+		}
+	}
+
+	public void testGetRemoteFileRelativePath() throws Exception {
+		// for bug 240704
+		// -test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
+		setupConnections();
+		for (int i = 0; i < _subSystems.size(); i++) {
+			IRemoteFileSubSystem ss = (IRemoteFileSubSystem) _subSystems.get(i);
+			ss.checkIsConnected(getDefaultProgressMonitor());
+			IRemoteFile homeDir = ss.getRemoteFileObject(".", getDefaultProgressMonitor());
+			assertTrue(homeDir.exists());
+			assertTrue(homeDir.isDirectory());
+			String sep = homeDir.getSeparator();
+			String relativePath = "rsetest" + System.currentTimeMillis() + sep + "foo" + sep + "bar";
+			try {
+				IRemoteFile subDir = ss.getRemoteFileObject(homeDir, relativePath, getDefaultProgressMonitor());
+				assertTrue(subDir.isDescendantOf(homeDir));
+				assertEquals("bar", subDir.getName());
+				assertFalse(subDir.exists());
+				assertFalse(subDir.isDirectory());
+			} catch (IllegalArgumentException e) {
+				// Expected here: IllegalArgumentException is OK
+			}
 		}
 	}
 

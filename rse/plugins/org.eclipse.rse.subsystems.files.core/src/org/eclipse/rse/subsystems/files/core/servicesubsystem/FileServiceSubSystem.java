@@ -41,6 +41,7 @@
  * Martin Oberhuber (Wind River) - [234038] Mark IRemoteFile stale when changing permissions
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
+ * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -54,6 +55,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
@@ -73,6 +75,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
@@ -174,6 +177,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 	 */
 	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException
 	{
+		// Consistency would be totally messed up if folderOrFileName were a relative path
+		// Because IHostFiles would be incorrectly generated, getParent() would return wrong results etc
+		assert folderOrFileName.indexOf(getSeparator())<0;
 		// for bug 207095, implicit connect if the connection is not connected
 		checkIsConnected(monitor);
 
@@ -182,6 +188,17 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		if (file != null && !file.isStale())
 		{
 			return file;
+		}
+		// Fallback in case of incorrect API usage
+		// TODO remove this in next release for Performance,
+		// since it is just for bad clients using the API incorrectly
+		if (folderOrFileName.indexOf(getSeparator()) >= 0) {
+			try {
+				throw new IllegalArgumentException("getRemoteFileObject: folderOrFileName must not be a relative path"); //$NON-NLS-1$
+			} catch (IllegalArgumentException e) {
+				Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Illegal API use: " + e.getLocalizedMessage(), e)); //$NON-NLS-1$
+			}
+			return getRemoteFileObject(fullPath, monitor);
 		}
 
 		IHostFile node = getFile(parent.getAbsolutePath(), folderOrFileName, monitor);
@@ -420,16 +437,16 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 
 		List hostFiles = new ArrayList(10);
-		
+
 		// query children via the service
 		getFileService().listMultiple(parentPaths, fileNameFilters, fileTypes, hostFiles, monitor);
 		RemoteFileContext context = getDefaultContext();
 
-		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);	
+		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);
 
 		// convert the IHostFiles into AbstractRemoteFiles
 		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
-		
+
 		// cache the results corresponding to each parent under each parent
 		for (int i = 0; i < parents.length; i++)
 		{
@@ -449,14 +466,14 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 					underParent.add(child);
 				}
 			}
-			
+
 			// update the parent with it's latest properties
 			// null is passed for the second argument because we currently don't get the parent in our results query
-			updateRemoteFile(parent, null, monitor);	
-			
+			updateRemoteFile(parent, null, monitor);
+
 			if (underParent.size() > 0)
 			{
-				Object[] qresults = underParent.toArray();				
+				Object[] qresults = underParent.toArray();
 				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, qresults);
 			}
 		}
@@ -483,11 +500,11 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		getFileService().listMultiple(parentPaths, fileNameFilters, fileType, hostFiles, monitor);
 		RemoteFileContext context = getDefaultContext();
 
-		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);			
-		
+		IHostFile[] results = (IHostFile[])hostFiles.toArray(new IHostFile[hostFiles.size()]);
+
 		// convert the IHostFiles into AbstractRemoteFiles
 		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
-		
+
 		// cache the results corresponding to each parent under each parent
 		for (int i = 0; i < parents.length; i++)
 		{
@@ -510,11 +527,11 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 			// update the parent with it's latest properties
 			// null is passed for the second argument because we currently don't get the parent in our results query
-			updateRemoteFile(parent, null, monitor);	
-			
+			updateRemoteFile(parent, null, monitor);
+
 			if (underParent.size() > 0)
 			{
-				Object[] qresults = underParent.toArray();			
+				Object[] qresults = underParent.toArray();
 				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, qresults);
 			}
 		}
@@ -544,14 +561,14 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 					IStatus.INFO, msgTxt);
 			throw new SystemMessageException(msg);
 		}
-				
+
 		// query children of the parent
-		IHostFile[] results = internalList(parentPath, fileNameFilter, fileType, monitor);		
-		
+		IHostFile[] results = internalList(parentPath, fileNameFilter, fileType, monitor);
+
 		// update the parent with it's latest properties
 		// null is passed for the second argument because we currently don't get the parent in our results query
 		updateRemoteFile(parent, null, monitor);
-				
+
 		// convert the IHostFiles to AbstractRemoteFile[]
 		AbstractRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
 		if (parent != null)
@@ -559,19 +576,19 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		return farr;
 	}
 
-	
-	
+
+
 	private void updateRemoteFile(IRemoteFile parent, IHostFile newHostParent, IProgressMonitor monitor) throws SystemMessageException
-	{		
+	{
 		// now newHostParent file passed in so we'll assume it wasn't returned and explicitly get it
-		if (newHostParent == null){			
+		if (newHostParent == null){
 			String parentParentPath = parent.getParentPath();
 			if (parentParentPath == null){
 				parentParentPath = ""; //$NON-NLS-1$
 			}
 			newHostParent = getFileService().getFile(parentParentPath, parent.getName(), monitor);
 		}
-		
+
 		if (newHostParent != null){
 			IHostFile oldHostParent = parent.getHostFile();
 			if (!newHostParent.equals(oldHostParent)){
@@ -581,7 +598,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		}
 	}
 
-	
+
 	public IRemoteFile[] listRoots(IRemoteFileContext context, IProgressMonitor monitor) throws InterruptedException
 	{
 		IHostFile[] roots = null;
@@ -907,7 +924,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException
 	{
-		return createFolder(folderToCreate, monitor);
+			return createFolder(folderToCreate, monitor);
 	}
 
 	/**

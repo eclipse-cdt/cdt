@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [205674][ssh] Terminal remains "connecting" when authentication is cancelled
  * Michael Scharf (Wind River) - 240420: [terminal][ssh]Channel is not closed when the connection is closed with the close button
+ * Martin Oberhuber (Wind River) - [206919] Improve SSH Terminal Error Reporting
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -90,13 +92,16 @@ class SshConnection extends Thread {
 	//----------------------------------------------------------------------
 
 	public void run() {
+		boolean connectSucceeded = false;
+		String host = ""; //$NON-NLS-1$
+		int port = 22;
 		try {
 			int nTimeout = fConn.getSshSettings().getTimeout() * 1000;
 			int nKeepalive = fConn.getSshSettings().getKeepalive() * 1000;
-			String host = fConn.getSshSettings().getHost();
+			host = fConn.getSshSettings().getHost();
 			String user = fConn.getSshSettings().getUser();
 			String password = fConn.getSshSettings().getPassword();
-			int port = fConn.getSshSettings().getPort();
+			port = fConn.getSshSettings().getPort();
 
 			////Giving a connectionId could be the index into a local
 			////Store where passwords are stored
@@ -136,6 +141,7 @@ class SshConnection extends Thread {
 
 			// maybe the terminal was disconnected while we were connecting
 			if (isSessionConnected() && channel.isConnected()) {
+				connectSucceeded = true;
 				fConn.setInputStream(channel.getInputStream());
 				fConn.setOutputStream(channel.getOutputStream());
 				fConn.setChannel(channel);
@@ -148,7 +154,27 @@ class SshConnection extends Thread {
 				}
 			}
 		} catch (Exception e) {
-			connectFailed(e.getMessage(),e.getMessage());
+			Throwable cause = e;
+			while (cause.getCause() != null) {
+				cause = cause.getCause();
+			}
+			String origMsg = cause.getMessage();
+			String msg = SshMessages.getMessageFor(cause);
+			if ((cause instanceof JSchException) && origMsg != null && origMsg.startsWith("Auth")) { //$NON-NLS-1$
+				if (origMsg.indexOf("cancel") >= 0) { //$NON-NLS-1$
+					msg = SshMessages.SSH_AUTH_CANCEL;
+				} else if (origMsg.indexOf("fail") >= 0) { //$NON-NLS-1$
+					msg = SshMessages.SSH_AUTH_FAIL;
+				}
+			}
+			if (!connectSucceeded) {
+				String hostPort = host;
+				if (port != 22) {
+					hostPort = hostPort + ':' + port;
+				}
+				msg = NLS.bind(SshMessages.ERROR_CONNECTING, hostPort, msg);
+			}
+			connectFailed(msg, msg);
 		} finally {
 			// make sure the terminal is disconnected when the thread ends
 			try {
@@ -331,6 +357,7 @@ class SshConnection extends Thread {
     private void connectFailed(String terminalText, String msg) {
 		Logger.log(terminalText);
 		fControl.displayTextInTerminal(terminalText);
-		fControl.setMsg(msg);
+		// fControl.setMsg(msg);
 	}
+
 }

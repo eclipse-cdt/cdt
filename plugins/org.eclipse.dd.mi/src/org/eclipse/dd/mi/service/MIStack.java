@@ -641,8 +641,9 @@ public class MIStack extends AbstractDsfService
     
     @DsfServiceEventHandler 
     public void eventDispatched(IMIDMEvent e) {
-    	if (e.getMIEvent() instanceof MIStoppedEvent) {
-    		fCachedStoppedEvent = (MIStoppedEvent)e.getMIEvent();
+        Object miEvent = e.getMIEvent();
+    	if (miEvent instanceof MIStoppedEvent) {
+    		fCachedStoppedEvent = (MIStoppedEvent)miEvent;
     	}
     }
 

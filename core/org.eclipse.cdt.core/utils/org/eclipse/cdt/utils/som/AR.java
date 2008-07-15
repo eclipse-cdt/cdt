@@ -245,7 +245,7 @@ public class AR {
 		if (memberHeaders != null)
 			return;
 
-		Vector v = new Vector();
+		Vector<ARHeader> v = new Vector<ARHeader>();
 		try {
 			//
 			// Check for EOF condition
@@ -269,7 +269,7 @@ public class AR {
 			}
 		} catch (IOException e) {
 		}
-		memberHeaders = (ARHeader[]) v.toArray(new ARHeader[v.size()]);
+		memberHeaders = v.toArray(new ARHeader[v.size()]);
 	}
 	
 	public String[] extractFiles(String outdir) throws IOException {
@@ -277,7 +277,7 @@ public class AR {
 	}
 
 	private String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector names_used = new Vector();
+		Vector<String> names_used = new Vector<String>();
 		String object_name;
 		int count;
 
@@ -301,7 +301,7 @@ public class AR {
 			rfile.close();
 		}
 
-		return (String[]) names_used.toArray(new String[0]);
+		return names_used.toArray(new String[0]);
 	}
 
 	private boolean stringInStrings(String str, String[] set) {

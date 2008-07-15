@@ -394,7 +394,7 @@ public class Elf {
 		return str.toString();
 	}
 
-	public class Symbol implements Comparable {
+	public class Symbol implements Comparable<Object> {
 
 		/* Symbol bindings */
 		public final static int STB_LOCAL = 0;
@@ -477,7 +477,7 @@ public class Elf {
 	 * Long it is ok, but not if we do Long vs Symbol.
 	 */
 
-	class SymbolComparator implements Comparator {
+	class SymbolComparator implements Comparator<Object> {
 
 		IAddress val1, val2;
 		public int compare(Object o1, Object o2) {
@@ -630,7 +630,7 @@ public class Elf {
 		if (section.sh_type != Section.SHT_DYNAMIC) {
 			return new Dynamic[0];
 		}
-		ArrayList dynList = new ArrayList();
+		ArrayList<Dynamic> dynList = new ArrayList<Dynamic>();
 		efile.seek(section.sh_offset);
 		int off = 0;
 		// We must assume the section is a table ignoring the sh_entsize as it
@@ -659,7 +659,7 @@ public class Elf {
 			if (dynEnt.d_tag != Dynamic.DT_NULL)
 				dynList.add(dynEnt);
 		}
-		return (Dynamic[])dynList.toArray(new Dynamic[0]);
+		return dynList.toArray(new Dynamic[0]);
 	}
 
 	private void commonSetup(String file, long offset) throws IOException {
@@ -974,12 +974,12 @@ public class Elf {
 	public Section[] getSections(int type) throws IOException {
 		if (sections == null)
 			getSections();
-		ArrayList slist = new ArrayList();
+		ArrayList<Section> slist = new ArrayList<Section>();
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].sh_type == type)
 				slist.add(sections[i]);
 		}
-		return (Section[])slist.toArray(new Section[0]);
+		return slist.toArray(new Section[0]);
 	}
 
 	public Section[] getSections() throws IOException {
@@ -1050,7 +1050,7 @@ public class Elf {
 		if (section.sh_entsize != 0) {
 			numSyms = (int)section.sh_size / (int)section.sh_entsize;
 		}
-		ArrayList symList = new ArrayList(numSyms);
+		ArrayList<Symbol> symList = new ArrayList<Symbol>(numSyms);
 		long offset = section.sh_offset;
 		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
 			efile.seek(offset);
@@ -1088,7 +1088,7 @@ public class Elf {
 				continue;
 			symList.add(symbol);
 		}
-		Symbol[] results = (Symbol[])symList.toArray(new Symbol[0]);
+		Symbol[] results = symList.toArray(new Symbol[0]);
 		Arrays.sort(results);
 		return results;
 	}

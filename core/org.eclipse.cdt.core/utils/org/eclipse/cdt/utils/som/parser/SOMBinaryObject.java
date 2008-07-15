@@ -29,6 +29,7 @@ import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.som.AR;
 import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.cdt.utils.som.AR.ARHeader;
@@ -182,18 +183,18 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(SOM som) throws IOException {
-		ArrayList list = new ArrayList();
+		ArrayList<Symbol> list = new ArrayList<Symbol>();
 
 		SOM.Symbol[] peSyms = som.getSymbols();
 		byte[] table = som.getStringTable();
 		addSymbols(peSyms, table, list);
 
-		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
+		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
 	}
 
-	protected void addSymbols(SOM.Symbol[] peSyms, byte[] table, List list) {
+	protected void addSymbols(SOM.Symbol[] peSyms, byte[] table, List<Symbol> list) {
 		CPPFilt cppfilt = getCPPFilt();
 		Addr2line addr2line = getAddr2line(false);
 		for (int i = 0; i < peSyms.length; i++) {
@@ -313,6 +314,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {

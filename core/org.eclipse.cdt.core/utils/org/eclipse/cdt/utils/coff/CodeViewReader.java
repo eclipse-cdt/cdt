@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2006, 2008 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,19 +19,19 @@ import org.eclipse.cdt.core.ISymbolReader;
 
 public class CodeViewReader implements ISymbolReader {
 
-	RandomAccessFile file;
-	int cvData;
-	boolean isLe;
-	List fileList;
-	String[] files = null;
-	boolean parsed = false;
+	private RandomAccessFile file;
+	private int cvData;
+	private boolean isLe;
+	private List<String> fileList;
+	private String[] files = null;
+	private boolean parsed = false;
 	
 	public CodeViewReader(RandomAccessFile accessFile, int dataOffset, boolean littleEndian) {
 		file = accessFile;
 		cvData = dataOffset;
 		isLe = littleEndian;
 		
-		fileList = new ArrayList();
+		fileList = new ArrayList<String>();
 	}
 
 	public String[] getSourceFiles() {
@@ -45,7 +45,7 @@ public class CodeViewReader implements ISymbolReader {
 
 			files = new String[fileList.size()];
 			for (int i = 0; i < fileList.size(); i++) {
-				files[i] = (String)fileList.get(i);
+				files[i] = fileList.get(i);
 			}
 		}
 

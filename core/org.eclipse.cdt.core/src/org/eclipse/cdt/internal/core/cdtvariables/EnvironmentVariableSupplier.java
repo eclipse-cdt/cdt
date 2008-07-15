@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,8 +45,8 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 			if(delimiter != null && !"".equals(delimiter)){	//$NON-NLS-1$
 				fType = VALUE_TEXT_LIST;
 				if(value != null){
-					List list = EnvVarOperationProcessor.convertToList(value,delimiter);
-					fStringListValue = (String[])list.toArray(new String[list.size()]);
+					List<String> list = EnvVarOperationProcessor.convertToList(value,delimiter);
+					fStringListValue = list.toArray(new String[list.size()]);
 				} else {
 					fStringListValue = null;
 				}

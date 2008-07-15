@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import java.util.Vector;
 
 public class EnvironmentReader {
 	private static Properties envVars = null;
-	private static Vector rawVars = null;
+	private static Vector<String> rawVars = null;
 
 	public static Properties getEnvVars() {
 
@@ -32,7 +32,7 @@ public class EnvironmentReader {
 		String OS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		Process p = null;
 		envVars = new Properties();
-		rawVars = new Vector(32);
+		rawVars = new Vector<String>(32);
 		String command = "env"; //$NON-NLS-1$
 		InputStream in = null;
 		boolean check_ready = false;
@@ -123,6 +123,6 @@ public class EnvironmentReader {
 
 	public static String[] getRawEnvVars() {
 		getEnvVars();
-		return (String[]) rawVars.toArray(new String[0]);
+		return rawVars.toArray(new String[0]);
 	}
 }

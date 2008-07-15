@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 /**
- * This substitutor resolves all macro references 
+ * This substituter resolves all macro references 
  * 
  * @see org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor
  * @since 3.0
@@ -27,7 +27,7 @@ public class CoreVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor
 	
 	public CoreVariableSubstitutor(IVariableContextInfo contextInfo,
 			String inexistentMacroValue, String listDelimiter,
-			Map delimiterMap, String incorrectlyReferencedMacroValue) {
+			Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue) {
 		super(contextInfo, inexistentMacroValue, listDelimiter, delimiterMap,
 				incorrectlyReferencedMacroValue);
 		// TODO Auto-generated constructor stub

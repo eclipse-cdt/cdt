@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core;
 
 import java.util.Iterator;
@@ -27,7 +26,7 @@ class PositionTrackerChain implements IDocumentListener {
     private static final int MAX_DEPTH = 100; // 100 saves
     private static final long MAX_AGE = 24 * 60 * 60 * 1000; // one day
     
-    private LinkedList fTrackers= new LinkedList();
+    private LinkedList<PositionTracker> fTrackers= new LinkedList<PositionTracker>();
     private PositionTracker fActiveTracker;
     private IDocument fDocument;
 
@@ -43,7 +42,7 @@ class PositionTrackerChain implements IDocumentListener {
                 fActiveTracker= null;
             }
             else {
-                fActiveTracker= (PositionTracker) fTrackers.getLast();
+                fActiveTracker= fTrackers.getLast();
                 fActiveTracker.revive();
             }
         }
@@ -67,8 +66,8 @@ class PositionTrackerChain implements IDocumentListener {
             fTrackers.removeFirst();
         }
         long minTimeStamp= fActiveTracker.getTimeStamp() - MAX_AGE;
-        for (Iterator iter = fTrackers.iterator(); iter.hasNext();) {
-            PositionTracker tracker= (PositionTracker) iter.next();
+        for (Iterator<PositionTracker> iter = fTrackers.iterator(); iter.hasNext();) {
+            PositionTracker tracker= iter.next();
             if (tracker.getRetiredTimeStamp() >= minTimeStamp) {
                 break;
             }
@@ -100,8 +99,8 @@ class PositionTrackerChain implements IDocumentListener {
      */
     public PositionTracker findTrackerAtOrAfter(long timestamp) {
         PositionTracker candidate= null;
-        for (ListIterator iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
-            PositionTracker tracker = (PositionTracker) iter.previous();
+        for (ListIterator<PositionTracker> iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
+            PositionTracker tracker = iter.previous();
             long trackerTimestamp= tracker.getTimeStamp();
             if (trackerTimestamp >= timestamp) {
                 candidate= tracker;
@@ -119,8 +118,8 @@ class PositionTrackerChain implements IDocumentListener {
      * @return the tracker at the timestamp, <code>null</code> if none created at the given time.
      */
     public PositionTracker findTrackerAt(long timestamp) {
-        for (ListIterator iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
-            PositionTracker tracker = (PositionTracker) iter.previous();
+        for (ListIterator<PositionTracker> iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
+            PositionTracker tracker = iter.previous();
             long trackerTimestamp= tracker.getTimeStamp();
             if (trackerTimestamp == timestamp) {
                 return tracker;
@@ -178,8 +177,7 @@ class PositionTrackerChain implements IDocumentListener {
 
     public int getMemorySize() {
         int size= MEMORY_SIZE;
-        for (Iterator iter = fTrackers.iterator(); iter.hasNext();) {
-            PositionTracker tracker = (PositionTracker) iter.next();
+        for (PositionTracker tracker : fTrackers) {
             size+= LINKED_LIST_ENTRY_SIZE;
             size+= tracker.getMemorySize();
         }
@@ -189,7 +187,7 @@ class PositionTrackerChain implements IDocumentListener {
     public int removeOldest() {
         int memdiff= 0;
         if (fTrackers.size() > 1) {
-            PositionTracker tracker= (PositionTracker) fTrackers.removeFirst();
+            PositionTracker tracker= fTrackers.removeFirst();
             memdiff= tracker.getMemorySize() + LINKED_LIST_ENTRY_SIZE;
             tracker.clear();
         }
@@ -198,7 +196,7 @@ class PositionTrackerChain implements IDocumentListener {
 
     public long getOldestRetirement() {
         if (fTrackers.size() > 1) {
-            PositionTracker tracker= (PositionTracker) fTrackers.getFirst();
+            PositionTracker tracker= fTrackers.getFirst();
             return tracker.getRetiredTimeStamp();
         }
         return Long.MAX_VALUE;

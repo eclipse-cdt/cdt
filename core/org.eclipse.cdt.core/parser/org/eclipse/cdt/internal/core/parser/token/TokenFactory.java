@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 
@@ -56,15 +57,15 @@ public class TokenFactory {
         public int getStartOffset() {
             return fToken.getOffset();
         }
-        public List[] getTemplateIdArgLists() {
+        public List<IASTNode>[] getTemplateIdArgLists() {
             return null;
         }
         public IToken getToken(int index) {
             if( index == 0 ) return fToken;
             return null;
         }        
-        public Iterator iterator() {
-            return new Iterator() {
+        public Iterator<IToken> iterator() {
+            return new Iterator<IToken>() {
                 private boolean hasNext = true;
                 public void remove() {
                     throw new UnsupportedOperationException();
@@ -72,7 +73,7 @@ public class TokenFactory {
                 public boolean hasNext() {
                     return hasNext;
                 }
-                public Object next() {
+                public IToken next() {
                     hasNext = false;
                     return fToken;
                 }
@@ -102,7 +103,7 @@ public class TokenFactory {
 		return new BasicTokenDuple( first, last );
 	}
 
-	public static ITokenDuple createTokenDuple(IToken first, IToken last, List templateArgLists) {
+	public static ITokenDuple createTokenDuple(IToken first, IToken last, List<List<IASTNode>> templateArgLists) {
 		if (templateArgLists == null || templateArgLists.isEmpty()) {
 			return createTokenDuple(first, last);
 		}
@@ -112,8 +113,8 @@ public class TokenFactory {
 	public static ITokenDuple createTokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
 		if( secondDuple == null ) return firstDuple;
 		if( firstDuple == null ) return secondDuple;
-		List [] f1 = firstDuple.getTemplateIdArgLists();
-		List [] f2 = secondDuple.getTemplateIdArgLists();
+		List<IASTNode>[] f1 = firstDuple.getTemplateIdArgLists();
+		List<IASTNode>[] f2 = secondDuple.getTemplateIdArgLists();
 		if( f1 == null && f2 == null )
 			return new BasicTokenDuple( firstDuple, secondDuple );
 		return new TemplateTokenDuple( firstDuple, secondDuple );

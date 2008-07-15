@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class CdtVarPathEntryVariableManager implements
 	private UserDefinedVariableSupplier fUserVarSupplier = UserDefinedVariableSupplier.getInstance();
 	private VarSubstitutor fSubstitutor = new VarSubstitutor();
 	private VarSupplier fVarSupplier = new VarSupplier();
-	private Set fListeners;
+	private Set<IPathEntryVariableChangeListener> fListeners;
 
 	private class VarSubstitutor extends SupplierBasedCdtVariableSubstitutor {
 		public VarSubstitutor() {
@@ -91,12 +91,12 @@ public class CdtVarPathEntryVariableManager implements
 
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
 			ICdtVariable vars[] = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
-			List list = new ArrayList();
+			List<ICdtVariable> list = new ArrayList<ICdtVariable>();
 			for (ICdtVariable var : vars) {
 				if(getVariablePath(var) != null)
 					list.add(var);
 			}
-			return (ICdtVariable[])list.toArray(new ICdtVariable[list.size()]);
+			return list.toArray(new ICdtVariable[list.size()]);
 		}
 		
 	}
@@ -104,7 +104,7 @@ public class CdtVarPathEntryVariableManager implements
 	
 	
 	public CdtVarPathEntryVariableManager(){
-		fListeners = Collections.synchronizedSet(new HashSet());
+		fListeners = Collections.synchronizedSet(new HashSet<IPathEntryVariableChangeListener>());
 		fUserVarSupplier.addListener(this);
 	}
 
@@ -151,12 +151,12 @@ public class CdtVarPathEntryVariableManager implements
 
 	public String[] getVariableNames() {
 		ICdtVariable[] vars = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		for(int i = 0; i > vars.length; i++){
 			if(getVariablePath(vars[i]) != null)
 				list.add(vars[i].getName());
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public boolean isDefined(String name) {

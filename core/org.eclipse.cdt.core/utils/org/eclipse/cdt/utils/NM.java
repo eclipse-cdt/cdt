@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,10 +46,10 @@ public class NM {
 	private static Pattern undef_pattern = null;
 	private static Pattern normal_pattern = null;
 
-	private List undef_symbols;
-	private List text_symbols;
-	private List bss_symbols;
-	private List data_symbols;
+	private List<String> undef_symbols;
+	private List<AddressNamePair> text_symbols;
+	private List<AddressNamePair> bss_symbols;
+	private List<AddressNamePair> data_symbols;
 
 	private void parseOutput(InputStream stream) throws IOException {
 
@@ -135,29 +135,29 @@ public class NM {
 			System.arraycopy(params, 0, args, 1, params.length);
 		}
 
-		undef_symbols = new ArrayList();
-		text_symbols = new ArrayList();
-		data_symbols = new ArrayList();
-		bss_symbols = new ArrayList();
+		undef_symbols = new ArrayList<String>();
+		text_symbols = new ArrayList<AddressNamePair>();
+		data_symbols = new ArrayList<AddressNamePair>();
+		bss_symbols = new ArrayList<AddressNamePair>();
 		Process process = ProcessFactory.getFactory().exec(args);
 		parseOutput(process.getInputStream());
 		process.destroy();
 	}
 
 	public String[] getUndefSymbols() {
-		return (String[]) undef_symbols.toArray(new String[0]);
+		return undef_symbols.toArray(new String[0]);
 	}
 
 	public AddressNamePair[] getTextSymbols() {
-		return (AddressNamePair[]) text_symbols.toArray(new AddressNamePair[0]);
+		return text_symbols.toArray(new AddressNamePair[0]);
 	}
 
 	public AddressNamePair[] getDataSymbols() {
-		return (AddressNamePair[]) data_symbols.toArray(new AddressNamePair[0]);
+		return data_symbols.toArray(new AddressNamePair[0]);
 	}
 	
 	public AddressNamePair[] getBSSSymbols() {
-		return (AddressNamePair[]) bss_symbols.toArray(new AddressNamePair[0]);
+		return bss_symbols.toArray(new AddressNamePair[0]);
 	}
 
 }

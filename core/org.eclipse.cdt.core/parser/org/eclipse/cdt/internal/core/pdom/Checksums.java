@@ -42,7 +42,7 @@ public class Checksums {
 	 * @throws NoSuchAlgorithmException 
 	 * @since 4.0
 	 */
-	public static MessageDigest getAlgorithm(Map<String, Object> persistedMap) throws NoSuchAlgorithmException {
+	public static MessageDigest getAlgorithm(Map<?, ?> persistedMap) throws NoSuchAlgorithmException {
 		Object obj= persistedMap.get(KEY_ALGORITHM);
 		String alg= obj instanceof String ? (String) obj : DEFAULT_ALGORITHM;
 		return MessageDigest.getInstance(alg); 
@@ -80,7 +80,7 @@ public class Checksums {
 	 * Retrieves a checksum for a file from the persisted map. May return <code>null</code>.
 	 * @since 4.0
 	 */
-	public static byte[] getChecksum(Map<String, Object> persistedMap, IFile file) {
+	public static byte[] getChecksum(Map<?, ?> persistedMap, IFile file) {
 		IPath prjRel= file.getProjectRelativePath();
 		Object checksum= persistedMap.get(prjRel.toString());
 		if (checksum instanceof byte[])

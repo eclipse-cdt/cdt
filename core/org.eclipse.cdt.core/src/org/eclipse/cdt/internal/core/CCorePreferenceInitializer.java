@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,10 +34,10 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-        HashSet optionNames = CModelManager.OptionNames;
+        HashSet<String> optionNames = CModelManager.OptionNames;
     
 		// Formatter settings
-		Map defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
+		Map<String, String> defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
 
 		// Compiler settings
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 
@@ -52,10 +51,9 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Store default values to default preferences
 	 	IEclipsePreferences defaultPreferences = ((IScopeContext) new DefaultScope()).getNode(CCorePlugin.PLUGIN_ID);
-		for (Iterator iter = defaultOptionsMap.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String optionName = (String) entry.getKey();
-			defaultPreferences.put(optionName, (String)entry.getValue());
+		for (Map.Entry<String,String> entry : defaultOptionsMap.entrySet()) {
+			String optionName = entry.getKey();
+			defaultPreferences.put(optionName, entry.getValue());
 			optionNames.add(optionName);
 		}
 

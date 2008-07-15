@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
@@ -167,7 +168,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 *      int, java.util.List)
 	 */
 	@Override
-	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
+	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
 		for (int i = 0; i < array.length; i++) {
 			String name = array[i].toString();
 			if (symbolLoadingCPPFilt != null) {
@@ -206,6 +207,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {

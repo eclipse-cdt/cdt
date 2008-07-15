@@ -647,13 +647,13 @@ public class XCoff32 {
 			getRandomAccessFile();
 			rfile.seek(offset);
 			int numSymbols = getFileHeader().f_nsyms;
-			ArrayList symList = new ArrayList(numSymbols);
+			ArrayList<Symbol> symList = new ArrayList<Symbol>(numSymbols);
 			for (int i = 0; i < numSymbols; ++i) {
 				Symbol v = new Symbol(rfile);
 				symList.add(v);
 				i += v.n_numaux; // account for auxiliary entries
 			}
-			symbols = (Symbol[]) symList.toArray(new Symbol[symList.size()]);
+			symbols = symList.toArray(new Symbol[symList.size()]);
 		}
 		return symbols;
 	}

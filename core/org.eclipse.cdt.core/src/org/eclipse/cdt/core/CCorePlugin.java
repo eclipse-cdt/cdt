@@ -11,7 +11,6 @@
  *     Andrew Ferguson (Symbian)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core;
 
 import java.io.IOException;
@@ -176,10 +175,14 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static final String SPACE = "space"; //$NON-NLS-1$
 
-    public CDTLogWriter cdtLog = null;
-
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
+
+
+	/**
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+    public CDTLogWriter cdtLog = null;
 
 	private CProjectDescriptionManager fNewCProjectDescriptionManager;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,29 +59,29 @@ import org.w3c.dom.Element;
 public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private static CConfigBasedDescriptorManager fInstance;
 	public static final String NULL_OWNER_ID = ""; //$NON-NLS-1$
-	private Map fOwnerConfigMap = null;
+	private Map<String, COwnerConfiguration> fOwnerConfigMap = null;
 	private ICProjectDescriptionListener fDescriptionListener;
 	
 	private static final QualifiedName DESCRIPTOR_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "CDescriptor"); //$NON-NLS-1$
 
-	private List fListeners = Collections.synchronizedList(new Vector());
+	private List<ICDescriptorListener> fListeners = Collections.synchronizedList(new Vector<ICDescriptorListener>());
 //	private ThreadLocal fApplyingDescriptorMap = new ThreadLocal();
-	private ThreadLocal fThreadInfo = new ThreadLocal();
+	private ThreadLocal<ThreadInfo> fThreadInfo = new ThreadLocal<ThreadInfo>();
 
 	private class ThreadInfo {
-		Map fApplyingDescriptorMap;
-		Map fOperatingDescriptorMap;
+		Map<IProject, CConfigBasedDescriptor> fApplyingDescriptorMap;
+		Map<IProject, CConfigBasedDescriptor> fOperatingDescriptorMap;
 		
-		public Map getApplyingDescriptorMap(boolean create){
+		public Map<IProject, CConfigBasedDescriptor> getApplyingDescriptorMap(boolean create){
 			if(fApplyingDescriptorMap == null && create){
-				fApplyingDescriptorMap = new HashMap(1);
+				fApplyingDescriptorMap = new HashMap<IProject, CConfigBasedDescriptor>(1);
 			}
 			return fApplyingDescriptorMap;
 		}
 
-		public Map getOperatingDescriptorMap(boolean create){
+		public Map<IProject, CConfigBasedDescriptor> getOperatingDescriptorMap(boolean create){
 			if(fOperatingDescriptorMap == null && create){
-				fOperatingDescriptorMap = new HashMap(1);
+				fOperatingDescriptorMap = new HashMap<IProject, CConfigBasedDescriptor>(1);
 			}
 			return fOperatingDescriptorMap;
 		}
@@ -386,7 +386,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		if (fOwnerConfigMap == null) {
 			initializeOwnerConfiguration();
 		}
-		COwnerConfiguration config = (COwnerConfiguration)fOwnerConfigMap.get(id);
+		COwnerConfiguration config = fOwnerConfigMap.get(id);
 		if (config == null) { // no install owner, lets create place holder config for it.
 			config = new COwnerConfiguration(id, CCorePlugin.getResourceString("CDescriptorManager.owner_not_Installed")); //$NON-NLS-1$
 			fOwnerConfigMap.put(id, config);
@@ -397,7 +397,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private void initializeOwnerConfiguration() {
         IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CProject"); //$NON-NLS-1$
 		IExtension extension[] = extpoint.getExtensions();
-		fOwnerConfigMap = new HashMap(extension.length);
+		fOwnerConfigMap = new HashMap<String, COwnerConfiguration>(extension.length);
 		for (int i = 0; i < extension.length; i++) {
 			IConfigurationElement element[] = extension[i].getConfigurationElements();
 			for (int j = 0; j < element.length; j++) {
@@ -552,7 +552,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	protected void notifyListeners(final CDescriptorEvent event) {
 		final ICDescriptorListener[] listeners;
 		synchronized (fListeners) {
-			listeners = (ICDescriptorListener[])fListeners.toArray(new ICDescriptorListener[fListeners.size()]);
+			listeners = fListeners.toArray(new ICDescriptorListener[fListeners.size()]);
 		}
 		for (int i = 0; i < listeners.length; i++) {
 			final int index = i;
@@ -572,13 +572,13 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 	
 	public boolean reconsile(CConfigBasedDescriptor descriptor, ICProjectDescription des){
-		Map map = descriptor.getStorageDataElMap();
+		Map<String, Element> map = descriptor.getStorageDataElMap();
 		boolean reconsiled = false;
 		if(map.size() != 0){
-			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				String id = (String)entry.getKey();
-				Element el = (Element)entry.getValue();
+			for(Iterator<Map.Entry<String, Element>> iter = map.entrySet().iterator(); iter.hasNext();){
+				Map.Entry<String, Element> entry = iter.next();
+				String id = entry.getKey();
+				Element el = entry.getValue();
 				if(reconsile(id, el.getParentNode() != null ? el : null, des))
 					reconsiled = true;
 			}
@@ -629,9 +629,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 	
 	private CConfigBasedDescriptor getApplyingDescriptor(IProject project){
-		Map map = getApplyingDescriptorMap(false);
+		Map<IProject, CConfigBasedDescriptor> map = getApplyingDescriptorMap(false);
 		if(map != null){
-			return (CConfigBasedDescriptor)map.get(project);
+			return map.get(project);
 		}
 		return null;
 	}
@@ -640,20 +640,20 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		if(dr == null)
 			clearApplyingDescriptor(project);
 		else {
-			Map map = getApplyingDescriptorMap(true);
+			Map<IProject, CConfigBasedDescriptor> map = getApplyingDescriptorMap(true);
 			map.put(project, dr);
 		}
 	}
 
 	private CConfigBasedDescriptor clearApplyingDescriptor(IProject project){
-		Map map = getApplyingDescriptorMap(false);
+		Map<IProject, CConfigBasedDescriptor> map = getApplyingDescriptorMap(false);
 		if(map != null){
-			return (CConfigBasedDescriptor)map.remove(project);
+			return map.remove(project);
 		}
 		return null;
 	}
 
-	private Map getApplyingDescriptorMap(boolean create){
+	private Map<IProject, CConfigBasedDescriptor> getApplyingDescriptorMap(boolean create){
 		ThreadInfo info = getThreadInfo(create);
 		if(info == null)
 			return null;
@@ -668,9 +668,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 	
 	private CConfigBasedDescriptor getOperatingDescriptor(IProject project){
-		Map map = getOperatingDescriptorMap(false);
+		Map<IProject, CConfigBasedDescriptor> map = getOperatingDescriptorMap(false);
 		if(map != null){
-			return (CConfigBasedDescriptor)map.get(project);
+			return map.get(project);
 		}
 		return null;
 	}
@@ -679,20 +679,20 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		if(dr == null)
 			clearOperatingDescriptor(project);
 		else {
-			Map map = getOperatingDescriptorMap(true);
+			Map<IProject, CConfigBasedDescriptor> map = getOperatingDescriptorMap(true);
 			map.put(project, dr);
 		}
 	}
 
 	private CConfigBasedDescriptor clearOperatingDescriptor(IProject project){
-		Map map = getOperatingDescriptorMap(false);
+		Map<IProject, CConfigBasedDescriptor> map = getOperatingDescriptorMap(false);
 		if(map != null){
-			return (CConfigBasedDescriptor)map.remove(project);
+			return map.remove(project);
 		}
 		return null;
 	}
 	
-	private Map getOperatingDescriptorMap(boolean create){
+	private Map<IProject, CConfigBasedDescriptor> getOperatingDescriptorMap(boolean create){
 		ThreadInfo info = getThreadInfo(create);
 		if(info == null)
 			return null;
@@ -701,7 +701,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 
 	private ThreadInfo getThreadInfo(boolean create){
-		ThreadInfo info = (ThreadInfo)fThreadInfo.get();
+		ThreadInfo info = fThreadInfo.get();
 		if(info == null && create){
 			info = new ThreadInfo();
 			fThreadInfo.set(info);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 
 public class EnvironmentCollector {
-	private Map fEnfironmentMap = new HashMap();
+	private Map<String, IEnvironmentVariable> fEnfironmentMap = new HashMap<String, IEnvironmentVariable>();
 	
 	public IEnvironmentVariable addVariable(IEnvironmentVariable var){
 		if(var == null)
@@ -27,7 +27,7 @@ public class EnvironmentCollector {
 		name = EnvVarOperationProcessor.normalizeName(name);
 		
 		if(name != null){
-			IEnvironmentVariable old = (IEnvironmentVariable)fEnfironmentMap.get(name);
+			IEnvironmentVariable old = fEnfironmentMap.get(name);
 			if(old != null){
 				var = EnvVarOperationProcessor.performOperation(old, var);
 			}
@@ -48,11 +48,11 @@ public class EnvironmentCollector {
 	public IEnvironmentVariable getVariable(String name){
 		name = EnvVarOperationProcessor.normalizeName(name);
 		if(name != null)
-			return (IEnvironmentVariable)fEnfironmentMap.get(name);
+			return fEnfironmentMap.get(name);
 		return null;
 	}
 	
 	public IEnvironmentVariable[] getVariables(){
-		return (IEnvironmentVariable[])fEnfironmentMap.values().toArray(new IEnvironmentVariable[fEnfironmentMap.size()]);
+		return fEnfironmentMap.values().toArray(new IEnvironmentVariable[fEnfironmentMap.size()]);
 	}
 }

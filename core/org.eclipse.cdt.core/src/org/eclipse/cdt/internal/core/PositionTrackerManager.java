@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core;
 
 import java.util.HashMap;
@@ -41,10 +40,10 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 
     private int fMemoryCounter= 0;
     private int fInstalled= 0;
-    private HashMap fPositionTrackerMap;
+    private HashMap<IPath, PositionTrackerChain> fPositionTrackerMap;
     
     private PositionTrackerManager() {
-        fPositionTrackerMap= new HashMap();
+        fPositionTrackerMap= new HashMap<IPath, PositionTrackerChain>();
     }
 
     public synchronized void install() {
@@ -112,7 +111,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     }
     
     private synchronized PositionTrackerChain getChain(ITextFileBuffer buffer) {
-        return (PositionTrackerChain) fPositionTrackerMap.get(buffer.getLocation());
+        return fPositionTrackerMap.get(buffer.getLocation());
     }
 
     private synchronized void resetToLastCheckpoint(ITextFileBuffer buffer) {
@@ -130,22 +129,21 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     
     private synchronized void runCleanup() {
         fMemoryCounter= 0;
-        for (Iterator iter = fPositionTrackerMap.values().iterator(); iter.hasNext();) {
-            PositionTrackerChain chain= (PositionTrackerChain) iter.next();
+        for (PositionTrackerChain chain : fPositionTrackerMap.values()) {
             fMemoryCounter+= HASHMAP_ENTRY_SIZE;
             fMemoryCounter+= chain.getMemorySize();
         }
         if (fMemoryCounter > MAX_MEMORY_AFTER_CLEANUP) {
-            SortedMap map= new TreeMap();
-            for (Iterator iter = fPositionTrackerMap.values().iterator(); iter.hasNext();) {
-                PositionTrackerChain chain = (PositionTrackerChain) iter.next();
+            SortedMap<Long, List<PositionTrackerChain>> map= new TreeMap<Long, List<PositionTrackerChain>>();
+            for (Iterator<PositionTrackerChain> iter = fPositionTrackerMap.values().iterator(); iter.hasNext();) {
+                PositionTrackerChain chain = iter.next();
                 addChain(map, chain);
             }
             while (!map.isEmpty()) {
-                Long key= (Long) map.firstKey();
-                List list= (List) map.remove(key);
-                for (Iterator iter = list.iterator(); iter.hasNext();) {
-                    PositionTrackerChain chain = (PositionTrackerChain) iter.next();
+                Long key= map.firstKey();
+                List<PositionTrackerChain> list= map.remove(key);
+                for (Iterator<PositionTrackerChain> iter = list.iterator(); iter.hasNext();) {
+                    PositionTrackerChain chain = iter.next();
                     fMemoryCounter+= chain.removeOldest();
                     addChain(map, chain);
                 }
@@ -156,13 +154,13 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         }        
     }
 
-    private synchronized void addChain(SortedMap map, PositionTrackerChain chain) {
+    private synchronized void addChain(SortedMap<Long, List<PositionTrackerChain>> map, PositionTrackerChain chain) {
         long or= chain.getOldestRetirement();
         if (or != Long.MAX_VALUE) {
             Long lor= new Long(or);
-            List list= (List) map.get(lor);
+            List<PositionTrackerChain> list= map.get(lor);
             if (list == null) {
-                list= new LinkedList();
+                list= new LinkedList<PositionTrackerChain>();
                 map.put(lor, list);
             }
             list.add(chain);
@@ -173,7 +171,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
      * {@inheritDoc}
      */
     public synchronized IPositionConverter findPositionConverter(IFile file, long timestamp) {
-        PositionTrackerChain chain= (PositionTrackerChain) fPositionTrackerMap.get(file.getFullPath());
+        PositionTrackerChain chain= fPositionTrackerMap.get(file.getFullPath());
         if (chain != null) {
             return chain.findTrackerAt(timestamp);
         }
@@ -184,7 +182,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
      * {@inheritDoc}
      */
     public synchronized IPositionConverter findPositionConverter(IPath externalLocation, long timestamp) {
-        PositionTrackerChain chain= (PositionTrackerChain) fPositionTrackerMap.get(externalLocation);
+        PositionTrackerChain chain= fPositionTrackerMap.get(externalLocation);
         if (chain != null) {
             return chain.findTrackerAt(timestamp);
         }

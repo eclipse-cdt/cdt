@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -146,7 +145,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 
 	private void doImportIndex(File importFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		ZipFile zip= new ZipFile(importFile);
-		Map checksums= null;
+		Map<?, ?> checksums= null;
 		try {
 			importIndex(zip, monitor);
 			checksums= getChecksums(zip);
@@ -172,7 +171,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		CCoreInternals.getPDOMManager().importProjectPDOM(fProject, stream);
 	}
 
-	private Map getChecksums(ZipFile zip) {
+	private Map<?, ?> getChecksums(ZipFile zip) {
 		ZipEntry indexEntry= zip.getEntry(CHECKSUMS_NAME);
 		if (indexEntry != null) {
 			try {
@@ -180,7 +179,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				try {
 					Object obj= input.readObject();
 					if (obj instanceof Map) {
-						return (Map) obj;
+						return (Map<?,?>) obj;
 					}
 				}
 				finally {
@@ -194,7 +193,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		return Collections.EMPTY_MAP;
 	}
 
-	private void checkIndex(Map checksums, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	private void checkIndex(Map<?, ?> checksums, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		IPDOM obj= CCoreInternals.getPDOMManager().getPDOM(fProject);
 		if (!(obj instanceof WritablePDOM)) {
 			return;
@@ -203,7 +202,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		WritablePDOM pdom= (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
-			List filesToCheck= new ArrayList();		
+			List<FileAndChecksum> filesToCheck= new ArrayList<FileAndChecksum>();		
 			if (!pdom.isSupportedVersion()) {
 				throw new CoreException(CCorePlugin.createStatus(					
 						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, fProject.getElementName())));
@@ -264,7 +263,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	}
 
 	private void deleteFiles(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
-			List updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
+			List<FileAndChecksum> updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
 		pdom.acquireWriteLock(giveupReadlocks);
 		try {
 			for (int i = 0; i < filesToDelete.length; i++) {
@@ -274,10 +273,10 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					pdom.clearFile(ifile, null);
 				}
 			}
-			for (Iterator i = updateTimestamps.iterator(); i.hasNext();) {
+			for (Iterator<FileAndChecksum> i = updateTimestamps.iterator(); i.hasNext();) {
 				checkMonitor(monitor);
 				
-				FileAndChecksum fc = (FileAndChecksum) i.next();
+				FileAndChecksum fc = i.next();
 				IIndexFragmentFile file= fc.fIFile;
 				if (file != null) {
 					IResource r= fc.fFile.getResource();
@@ -293,12 +292,12 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private void removeOutdatedFiles(Map checksums, List filesToCheck, IProgressMonitor monitor) throws NoSuchAlgorithmException {
+	private void removeOutdatedFiles(Map<?, ?> checksums, List<FileAndChecksum> filesToCheck, IProgressMonitor monitor) throws NoSuchAlgorithmException {
         MessageDigest md= Checksums.getAlgorithm(checksums); 
-		for (Iterator i = filesToCheck.iterator(); i.hasNext();) {
+		for (Iterator<FileAndChecksum> i = filesToCheck.iterator(); i.hasNext();) {
 			checkMonitor(monitor);
 			
-			FileAndChecksum cs= (FileAndChecksum) i.next();
+			FileAndChecksum cs= i.next();
 			ITranslationUnit tu= cs.fFile;
 			if (tu != null) {
 				IPath location= tu.getLocation();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 
-	ArrayList children;
+	ArrayList<IBinaryObject> children;
 	
 	public PEBinaryArchive(PEParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
 		new AR(path.toOSString()).dispose(); // check file type
-		children = new ArrayList(5);
+		children = new ArrayList<IBinaryObject>(5);
 	}
 
 	/**
@@ -53,14 +53,14 @@ public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 			}
 			children.trimToSize();
 		}
-		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
+		return children.toArray(new IBinaryObject[0]);
 	}
 
 	/**
 	 * @param headers
 	 * @param children2
 	 */
-	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
+	protected void addArchiveMembers(ARHeader[] headers, ArrayList<IBinaryObject> children2) {
 		for (int i = 0; i < headers.length; i++) {
 			IBinaryObject bin = new PEBinaryObject(getBinaryParser(), getPath(), headers[i]);
 			children.add(bin);

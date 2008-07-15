@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * @author vhirsl
  */
 public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
-	private ArrayList children;
+	private ArrayList<IBinaryObject> children;
 
 	/**
 	 * @param parser
@@ -37,7 +37,7 @@ public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
 	public XCOFFBinaryArchive(IBinaryParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
 		new AR(path.toOSString()).dispose(); // check file type
-		children = new ArrayList(5);
+		children = new ArrayList<IBinaryObject>(5);
 	}
 
 
@@ -63,6 +63,6 @@ public class XCOFFBinaryArchive extends BinaryFile implements IBinaryArchive {
 			}
 			children.trimToSize();
 		}
-		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
+		return children.toArray(new IBinaryObject[0]);
 	}
 }

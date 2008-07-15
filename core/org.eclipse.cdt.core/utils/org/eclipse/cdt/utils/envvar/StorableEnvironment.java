@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,16 +33,16 @@ public class StorableEnvironment /*implements Cloneable*/{
 	private static final String ATTRIBUTE_APPEND = "append";  //$NON-NLS-1$
 	private static final String ATTRIBUTE_APPEND_CONTRIBUTED = "appendContributed";  //$NON-NLS-1$
 	private static final boolean DEFAULT_APPEND = true;
-	private HashMap fVariables;
+	private HashMap<String, IEnvironmentVariable> fVariables;
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
 	private boolean fAppend = DEFAULT_APPEND;
 	private boolean fAppendContributedEnv = DEFAULT_APPEND;
 	
-	private Map getMap(){
+	private Map<String, IEnvironmentVariable> getMap(){
 		if(fVariables == null)
-			fVariables = new HashMap();
+			fVariables = new HashMap<String, IEnvironmentVariable>();
 		return fVariables;
 	}
 
@@ -56,8 +56,11 @@ public class StorableEnvironment /*implements Cloneable*/{
 	}
 
 	public StorableEnvironment(StorableEnvironment env, boolean isReadOnly) {
-		if(env.fVariables != null)
-			fVariables = (HashMap)env.fVariables.clone();
+		if(env.fVariables != null) {
+			@SuppressWarnings("unchecked")
+			final HashMap<String, IEnvironmentVariable> clone = (HashMap<String, IEnvironmentVariable>)env.fVariables.clone();
+			fVariables = clone;
+		}
 		fAppend = env.fAppend;
 		fAppendContributedEnv = env.fAppendContributedEnv;
 		fIsReadOnly = isReadOnly;
@@ -94,7 +97,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 		element.setAttribute(ATTRIBUTE_APPEND, Boolean.valueOf(fAppend).toString());
 		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, Boolean.valueOf(fAppendContributedEnv).toString());
 		if(fVariables != null){
-			Iterator iter = fVariables.values().iterator();
+			Iterator<IEnvironmentVariable> iter = fVariables.values().iterator();
 			while(iter.hasNext()){
 				StorableEnvVar var = (StorableEnvVar)iter.next();
 				ICStorageElement varEl = element.createChild(StorableEnvVar.VARIABLE_ELEMENT_NAME);
@@ -214,7 +217,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 		if(!provider.isVariableCaseSensitive())
 			name = name.toUpperCase();
 		
-		return (IEnvironmentVariable)getMap().get(name);
+		return getMap().get(name);
 	}
 	
 	public void setVariales(IEnvironmentVariable vars[]){
@@ -224,9 +227,9 @@ public class StorableEnvironment /*implements Cloneable*/{
 			deleteAll();
 		else{
 			if (getMap().size() != 0) {
-				Iterator iter = getMap().values().iterator();
+				Iterator<IEnvironmentVariable> iter = getMap().values().iterator();
 				while(iter.hasNext()){
-					IEnvironmentVariable v = (IEnvironmentVariable)iter.next();
+					IEnvironmentVariable v = iter.next();
 					int i;
 					for(i = 0 ; i < vars.length; i++){
 						if(v.getName().equals(vars[i].getName()))
@@ -251,9 +254,9 @@ public class StorableEnvironment /*implements Cloneable*/{
 	}
 	
 	public IEnvironmentVariable[] getVariables(){
-		Collection vars = getMap().values();
+		Collection<IEnvironmentVariable> vars = getMap().values();
 		
-		return (IEnvironmentVariable[])vars.toArray(new IEnvironmentVariable[vars.size()]);
+		return vars.toArray(new IEnvironmentVariable[vars.size()]);
 	}
 	
 	public IEnvironmentVariable deleteVariable(String name){
@@ -265,7 +268,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 		if(!provider.isVariableCaseSensitive())
 			name = name.toUpperCase();
 
-		IEnvironmentVariable var = (IEnvironmentVariable)getMap().remove(name);
+		IEnvironmentVariable var = getMap().remove(name);
 		if(var != null){
 			fIsDirty = true;
 			fIsChanged = true;
@@ -277,7 +280,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 	public boolean deleteAll(){
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		Map map = getMap();
+		Map<String, IEnvironmentVariable> map = getMap();
 		if(map.size() > 0){
 			fIsDirty = true;
 			fIsChanged = true;

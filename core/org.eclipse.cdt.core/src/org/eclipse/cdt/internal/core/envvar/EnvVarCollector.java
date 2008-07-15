@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  *
  */
 public class EnvVarCollector {
-	private Map fMap = null;
+	private Map<String, EnvVarDescriptor> fMap = null;
 	public EnvVarCollector(){
 		
 	}
@@ -57,11 +57,11 @@ public class EnvVarCollector {
 			
 			if(fMap == null){
 				noCheck = true;
-				fMap = new HashMap();
+				fMap = new HashMap<String, EnvVarDescriptor>();
 			}
 			
 			EnvVarDescriptor des = null;
-			if(noCheck || (des = (EnvVarDescriptor)fMap.get(name)) == null){
+			if(noCheck || (des = fMap.get(name)) == null){
 				des = new EnvVarDescriptor(var,info,num, supplier);
 				fMap.put(name,des);
 			}
@@ -82,16 +82,16 @@ public class EnvVarCollector {
 	public EnvVarDescriptor[] toArray(boolean includeRemoved){
 		if(fMap == null)
 			return new EnvVarDescriptor[0];
-		Collection values = fMap.values();
-		List list = new ArrayList();
-		Iterator iter = values.iterator();
+		Collection<EnvVarDescriptor> values = fMap.values();
+		List<EnvVarDescriptor> list = new ArrayList<EnvVarDescriptor>();
+		Iterator<EnvVarDescriptor> iter = values.iterator();
 		while(iter.hasNext()){
-			EnvVarDescriptor des = (EnvVarDescriptor)iter.next();
+			EnvVarDescriptor des = iter.next();
 			if(des != null && 
 					(includeRemoved || des.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE))
 				list.add(des);
 		}
-		return (EnvVarDescriptor[])list.toArray(new EnvVarDescriptor[list.size()]);
+		return list.toArray(new EnvVarDescriptor[list.size()]);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class EnvVarCollector {
 		if(!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
 			name = name.toUpperCase();
 
-		return (EnvVarDescriptor)fMap.get(name);
+		return fMap.get(name);
 	}
 	
 	/**

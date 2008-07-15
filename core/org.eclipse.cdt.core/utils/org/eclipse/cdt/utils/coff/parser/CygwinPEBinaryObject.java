@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,10 @@ import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.cdt.utils.NM;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
-import org.eclipse.cdt.utils.coff.Coff.Symbol;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -179,7 +179,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		symbolLoadingCygPath = getCygPath();
 
 		
-		ArrayList list = new ArrayList();
+		ArrayList<Symbol> list = new ArrayList<Symbol>();
 		super.loadSymbols(pe, list);
 
 		// Add any global symbols
@@ -198,7 +198,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 //		for (int i = 0; i < pairs.length; ++i) {
 //			addSymbol(pairs[i], list, ISymbol.FUNCTION);
 //		}
-		symbols = (ISymbol[]) list.toArray(NO_SYMBOLS);
+		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
 
@@ -216,7 +216,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		}
 	}
 
-	private void addSymbol(NM.AddressNamePair p, List list, int type) {
+	private void addSymbol(NM.AddressNamePair p, List<Symbol> list, int type) {
 		String name = p.name;		
 		if (name != null && name.length() > 0 && CConventions.isValidIdentifier(name)) {
 			IAddress addr = new Addr32(p.address);
@@ -266,8 +266,8 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 *      byte[], java.util.List)
 	 */
 	@Override
-	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List list) {
-		for (Symbol peSym : peSyms) {
+	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List<Symbol> list) {
+		for (Coff.Symbol peSym : peSyms) {
 			if (peSym.isFunction() || peSym.isPointer() || peSym.isArray()) {
 				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {

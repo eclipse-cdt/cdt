@@ -107,9 +107,9 @@ public class LRCPPTests extends AST2CPPTests {
     }
     
     @Override
-    public void testBug99262B() throws Exception { // gcc
+    public void testBug240567() throws Exception { // gcc
     	try {
-    		super.testBug99262B();
+    		super.testBug240567();
     		fail();
     	} catch(AssertionFailedError _) {
     	} 

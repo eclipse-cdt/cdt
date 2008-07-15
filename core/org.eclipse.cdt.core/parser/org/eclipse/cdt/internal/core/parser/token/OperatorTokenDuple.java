@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.token;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -80,7 +81,7 @@ public class OperatorTokenDuple implements ITokenDuple {
 		return token.getLastToken();
 	}
 
-	public List[] getTemplateIdArgLists() {
+	public List<IASTNode>[] getTemplateIdArgLists() {
 		return token.getTemplateIdArgLists();
 	}
 
@@ -96,7 +97,7 @@ public class OperatorTokenDuple implements ITokenDuple {
 		return token.getSegmentCount();
 	}
 
-	public Iterator iterator() {
+	public Iterator<IToken> iterator() {
 		return token.iterator();
 	}
 

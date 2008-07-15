@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class SupplierBasedCdtVariableManager {
 		if(contextInfo == null)
 			return new ICdtVariable[0];
 		
-		Map map = new HashMap();
+		Map<String, ICdtVariable> map = new HashMap<String, ICdtVariable>();
 		IVariableContextInfo infos[] = includeParentContexts ? 
 				getAllVariableContextInfos(contextInfo) :
 					new IVariableContextInfo[]{contextInfo};
@@ -63,8 +63,8 @@ public class SupplierBasedCdtVariableManager {
 			}
 		}
 		
-		Collection values = map.values();
-		return (ICdtVariable[])values.toArray(new ICdtVariable[values.size()]);
+		Collection<ICdtVariable> values = map.values();
+		return values.toArray(new ICdtVariable[values.size()]);
 	}
 
 	/*
@@ -75,14 +75,14 @@ public class SupplierBasedCdtVariableManager {
 		if(contextInfo == null)
 			return null;
 			
-		List list = new ArrayList();
+		List<IVariableContextInfo> list = new ArrayList<IVariableContextInfo>();
 	
 		list.add(contextInfo);
 			
 		while((contextInfo = contextInfo.getNext()) != null)
 			list.add(contextInfo);
 		
-		return (IVariableContextInfo[])list.toArray(new IVariableContextInfo[list.size()]);
+		return list.toArray(new IVariableContextInfo[list.size()]);
 	}
 	
 	/*

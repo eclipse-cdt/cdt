@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
@@ -144,7 +143,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	}
 
 	private void createChecksums(ICProject cproject, PDOM pdom, File target, IProgressMonitor monitor) throws CoreException {
-		HashSet fullPaths= new HashSet();
+		HashSet<String> fullPaths= new HashSet<String>();
 		try {
 			pdom.acquireReadLock();
 		} catch (InterruptedException e) {
@@ -165,15 +164,15 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		int i=0;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= new IFile[fullPaths.size()];
-		for (Iterator iterator = fullPaths.iterator(); iterator.hasNext();) {
-			String fullPath= (String) iterator.next();
+		for (Iterator<String> iterator = fullPaths.iterator(); iterator.hasNext();) {
+			String fullPath= iterator.next();
 			files[i++]= root.getFile(new Path(fullPath));
  		}
-		Map map= Checksums.createChecksumMap(files, fMessageDigest, monitor);
+		Map<String, Object> map= Checksums.createChecksumMap(files, fMessageDigest, monitor);
 		writeChecksums(map, target);
 	}
 
-	private void writeChecksums(Map map, File target) throws CoreException {
+	private void writeChecksums(Map<?, ?> map, File target) throws CoreException {
 		ObjectOutputStream out= null;
 		try {
 			out= new ObjectOutputStream(new FileOutputStream(target));

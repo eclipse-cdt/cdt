@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 				return null;
 
 			IEnvironmentVariable variables[] = new IEnvironmentVariable[values.size()];
-			Enumeration en = values.propertyNames();
+			Enumeration<?> en = values.propertyNames();
 			for( int i = 0; i < variables.length ; i++){
 				String name = (String)en.nextElement();
 				String value = values.getProperty(name);

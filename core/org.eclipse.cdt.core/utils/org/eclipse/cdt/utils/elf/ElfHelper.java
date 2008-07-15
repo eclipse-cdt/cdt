@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eclipse.cdt.utils.elf;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+
+import org.eclipse.cdt.utils.elf.Elf.Dynamic;
+import org.eclipse.cdt.utils.elf.Elf.Symbol;
 
 /**
  * <code>ElfHelper</code> is a wrapper class for the <code>Elf</code> class
@@ -124,7 +127,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getExternalFunctions() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 		loadSections();
@@ -142,12 +145,12 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Symbol[] getExternalObjects() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 		loadSections();
@@ -165,12 +168,12 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Symbol[] getUndefined() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 
@@ -179,12 +182,12 @@ public class ElfHelper {
 				v.add(dynsyms[i]);
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Symbol[] getLocalFunctions() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 		loadSections();
@@ -202,12 +205,12 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Symbol[] getLocalObjects() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 		loadSections();
@@ -225,12 +228,12 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Symbol[] getCommonObjects() throws IOException {
-		Vector v = new Vector();
+		Vector<Symbol> v = new Vector<Symbol>();
 
 		loadSymbols();
 		loadSections();
@@ -244,12 +247,12 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
+		Elf.Symbol[] ret = v.toArray(new Elf.Symbol[v.size()]);
 		return ret;
 	}
 
 	public Elf.Dynamic[] getNeeded() throws IOException {
-		Vector v = new Vector();
+		Vector<Dynamic> v = new Vector<Dynamic>();
 
 		loadDynamics();
 
@@ -257,7 +260,7 @@ public class ElfHelper {
 			if (dynamics[i].d_tag == Elf.Dynamic.DT_NEEDED)
 				v.add(dynamics[i]);
 		}
-		return (Elf.Dynamic[])v.toArray(new Elf.Dynamic[v.size()]);
+		return v.toArray(new Elf.Dynamic[v.size()]);
 	}
 
 	public String getSoname() throws IOException {

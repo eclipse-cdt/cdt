@@ -474,12 +474,12 @@ public class SOM {
 			getRandomAccessFile();
 			rfile.seek(offset);
 			int numSymbols = getFileHeader().symbol_total;
-			ArrayList symList = new ArrayList(numSymbols);
+			ArrayList<Symbol> symList = new ArrayList<Symbol>(numSymbols);
 			for (int i = 0; i < numSymbols; ++i) {
 				Symbol v = new Symbol(rfile);
 				symList.add(v);
 			}
-			symbols = (Symbol[]) symList.toArray(new Symbol[symList.size()]);
+			symbols = symList.toArray(new Symbol[symList.size()]);
 		}
 		return symbols;
 	}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.token;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 
@@ -22,21 +23,28 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
  */
 public class TemplateTokenDuple extends BasicTokenDuple {
 
-	protected final List [] argLists;
+	protected final List<IASTNode>[] argLists;
 
 	/**
 	 * @param first
 	 * @param last
 	 * @param templateArgLists
 	 */
-	public TemplateTokenDuple(IToken first, IToken last, List templateArgLists) {
+	public TemplateTokenDuple(IToken first, IToken last, List<List<IASTNode>> templateArgLists) {
 		super(first, last);
-		argLists = (List[]) templateArgLists.toArray( new List [templateArgLists.size()] );
+		argLists = toArray(templateArgLists);
 		numSegments = calculateSegmentCount();
 	}
-	
-	
-	
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T>[] toArray(List<List<T>> templateArgLists) {
+		return templateArgLists.toArray( new List[templateArgLists.size()] );
+	}
+	@SuppressWarnings("unchecked")
+	private <T> List<T>[] newArrayOfLists(int size) {
+		return new List[size];
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentCount()
 	 */
@@ -63,9 +71,9 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			last = token;
 		}
 		
-		List [] args = getTemplateIdArgLists();
+		List<IASTNode>[] args = getTemplateIdArgLists();
 		if( args != null && args[ args.length - 1 ] != null ){
-			List newArgs = new ArrayList( 1 );
+			List<List<IASTNode>> newArgs = new ArrayList<List<IASTNode>>( 1 );
 			newArgs.add( args[ args.length - 1 ] );
 			return TokenFactory.createTokenDuple( first, last, newArgs );
 		} 
@@ -76,12 +84,12 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	public TemplateTokenDuple( ITokenDuple first, ITokenDuple last )
 	{
 		super( first, last );
-		List [] a1 = first.getTemplateIdArgLists();
-		List [] a2 = last.getTemplateIdArgLists();
+		List<IASTNode>[] a1 = first.getTemplateIdArgLists();
+		List<IASTNode>[] a2 = last.getTemplateIdArgLists();
 		
 		int l1 = ( a1 != null ) ? a1.length : first.getSegmentCount();
 		int l2 = ( a2 != null ) ? a2.length : first.getSegmentCount();
-		argLists = new List[ l1 + l2 ];
+		argLists = newArrayOfLists(l1 + l2);
 		if( a1 != null )
 			System.arraycopy( a1, 0, argLists, 0, l1 );
 		if( a2 != null )
@@ -89,18 +97,19 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 		numSegments = calculateSegmentCount();
 	}
 
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getTemplateIdArgLists()
 	 */
 	@Override
-	public List[] getTemplateIdArgLists() {
+	public List<IASTNode>[] getTemplateIdArgLists() {
 		return argLists;
 	}
 	
 	@Override
 	public ITokenDuple[] getSegments()
 	{
-		List r = new ArrayList();
+		List<ITokenDuple> r = new ArrayList<ITokenDuple>();
 		IToken token = null;
 		IToken prev = null;
 		IToken last = getLastToken();
@@ -114,10 +123,10 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			if( token.getType() == IToken.tLT )
 				token = TokenFactory.consumeTemplateIdArguments( token, last );
 			if( token.getType() == IToken.tCOLONCOLON  ){
-			    List newArgs = null;
+			    List<List<IASTNode>> newArgs = null;
 			    if( argLists[count] != null )
 			    {
-			        newArgs = new ArrayList( 1 );
+			        newArgs = new ArrayList<List<IASTNode>>(1);
 			        newArgs.add( argLists[count]);
 			    }
 			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev != null ? prev : startOfSegment, newArgs );
@@ -127,16 +136,16 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 				continue;
 			}
 		}
-	    List newArgs = null;
+		List<List<IASTNode>> newArgs = null;
 	    //pointer to members could have a A::B<int>::
 	    if( count < argLists.length && argLists[count] != null )
 	    {
-	        newArgs = new ArrayList( 1 );
-	        newArgs.add( argLists[count]);
+	        newArgs = new ArrayList<List<IASTNode>>(1);
+	        newArgs.add(argLists[count]);
 	    }
 		ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, last, newArgs);
 		r.add( d );
-		return (ITokenDuple[]) r.toArray( new ITokenDuple[ r.size() ]);
+		return r.toArray( new ITokenDuple[ r.size() ]);
 
 	}
 

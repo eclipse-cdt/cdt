@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -565,7 +565,7 @@ public class Coff {
 	}
 
 	public static String[] getStringTable(byte[] bytes) {
-		List aList = new ArrayList();
+		List<String> aList = new ArrayList<String>();
 		int offset = 0;
 		for (int i = 0; i < bytes.length; i++) {
 			if (bytes[i] == 0) {
@@ -573,7 +573,7 @@ public class Coff {
 				offset = i + 1;
 			}
 		}
-		return (String[])aList.toArray(new String[0]);
+		return aList.toArray(new String[0]);
 	}
 
 	public Coff(String filename) throws IOException {

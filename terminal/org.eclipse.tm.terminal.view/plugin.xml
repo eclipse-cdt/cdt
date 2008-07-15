@@ -83,6 +83,7 @@
 	<!-- ============================================ -->
 	<extension point="org.eclipse.help.contexts">
   		<contexts file="HelpContexts.xml"/>
+  		<contexts file="TerminalContexts.xml" plugin="org.eclipse.tm.terminal"/> 
 	</extension>
 	<extension point="org.eclipse.help.toc">
 		<toc file="toc.xml"/>

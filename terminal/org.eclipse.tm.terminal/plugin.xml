@@ -21,4 +21,7 @@
             id="org.eclipse.tm.terminal.TerminalContext"
             />
    </extension>
+	<extension point="org.eclipse.help.contexts">
+  		<contexts file="HelpContexts.xml"/>
+	</extension>
 </plugin>

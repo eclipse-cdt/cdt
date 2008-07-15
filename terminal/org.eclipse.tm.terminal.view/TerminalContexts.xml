@@ -11,16 +11,9 @@ Contributors:
 Martin Oberhuber (Wind River) - initial API and implementation  
 -->
 <contexts>
-  <context id="terminal_page">
-    <description>The Terminal View supports direct connections to remote systems via serial or network connections.
-    </description>
+  <context id="terminal_view">
     <topic label="Terminal View" href="doc/html/01_terminalview.html" />
     <topic label="Terminal Emulation" href="doc/html/04_terminal_emulation.html" />
-  </context>
-  <context id="terminal_settings">
-    <description>The Terminal Settings Dialog provides the controls for making terminal connections.
-    </description>
-    <topic label="Terminal Settings Dialog" href="doc/html/03_terminal_settings.html#terminal_settings"/>
     <topic label="Terminal View Quick Reference" href="doc/html/02_terminal_page.html#terminal_page"/>
   </context>
 </contexts>

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ * Kevin Doyle		(IBM)	 - [240725] Add Null Pointer checking when there are no default user actions
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -395,7 +396,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 		IPropertySet[] subList = null;
 		if (parentElement != null)
 			subList = parentElement.getPropertySets();
-		else
+		else if (xdoc != null)
 			subList = xdoc.getPropertySets();
 		if (subList != null) {
 			for (int idx = 0; idx < subList.length; idx++) {
@@ -430,7 +431,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 		IPropertySet[] subList = null;
 		if (parentElement != null)
 			subList = parentElement.getPropertySets();
-		else
+		else if (xdoc != null)
 			subList = xdoc.getPropertySets();
 		if (subList != null) {
 			for (int idx = 0; idx < subList.length; idx++) {

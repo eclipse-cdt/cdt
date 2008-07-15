@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.core.model;
 public interface ICGlobalVariable extends ICVariable {
 
 	/**
-	 * Returns the descriptor of this variable.
+	 * Returns the descriptor of this variable. Will be null if a child of a global.
 	 * 
 	 * @return the descriptor of this variable
 	 */

@@ -318,6 +318,9 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 		}
 	}
 
+	/**
+	 * Will be null for a child of a global (array member, struct field, etc)
+	 */
 	private IGlobalVariableDescriptor fDescriptor;
 
 	/**

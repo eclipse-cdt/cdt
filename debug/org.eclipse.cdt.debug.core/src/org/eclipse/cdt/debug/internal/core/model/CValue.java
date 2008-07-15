@@ -18,8 +18,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
@@ -66,7 +64,7 @@ public class CValue extends AbstractCValue {
 	/**
 	 * List of child variables.
 	 */
-	private List fVariables = Collections.EMPTY_LIST;
+	private List<AbstractCVariable> fVariables = new ArrayList<AbstractCVariable>();
 
 	private CType fType;
 
@@ -125,20 +123,26 @@ public class CValue extends AbstractCValue {
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		List list = getVariables0();
-		return (IVariable[])list.toArray( new IVariable[list.size()] );
+		List<AbstractCVariable> list = getVariables0();
+		return list.toArray( new IVariable[list.size()] );
 	}
 
-	protected synchronized List getVariables0() throws DebugException {
+	protected synchronized List<AbstractCVariable> getVariables0() throws DebugException {
 		if ( !isAllocated() || !hasVariables() )
-			return Collections.EMPTY_LIST;
+			return new ArrayList<AbstractCVariable>();
 		if ( fVariables.size() == 0 ) {
 			try {
-				List vars = getCDIVariables();
-				fVariables = new ArrayList( vars.size() );
-				Iterator it = vars.iterator();
-				while( it.hasNext() ) {
-					fVariables.add( CVariableFactory.createLocalVariable( this, (ICDIVariable)it.next() ) );
+				List<ICDIVariable> vars = getCDIVariables();
+				for (ICDIVariable var : vars) {
+					if (getParentVariable() instanceof CGlobalVariable) {
+						fVariables.add(CVariableFactory.createGlobalVariable( 
+								this, 
+								null, 
+								var));
+					}
+					else {
+						fVariables.add(CVariableFactory.createLocalVariable(this, var));
+					}
 				}
 				resetStatus();
 			}
@@ -168,7 +172,7 @@ public class CValue extends AbstractCValue {
 		return fCDIValue;
 	}
 
-	protected List getCDIVariables() throws DebugException {
+	protected List<ICDIVariable> getCDIVariables() throws DebugException {
 		ICDIVariable[] vars = null;
 		try {
 			ICDIValue value = getUnderlyingValue();
@@ -198,9 +202,8 @@ public class CValue extends AbstractCValue {
 				fValueString = null;
 		}
 		
-		Iterator it = fVariables.iterator();
-		while( it.hasNext() ) {
-			((AbstractCVariable)it.next()).setChanged( changed );
+		for (AbstractCVariable var : fVariables) {
+			var.setChanged( changed );
 		}
 	}
 
@@ -208,9 +211,8 @@ public class CValue extends AbstractCValue {
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
 	 */
 	public void dispose() {
-		Iterator it = fVariables.iterator();
-		while( it.hasNext() ) {
-			((AbstractCVariable)it.next()).dispose();
+		for (AbstractCVariable var : fVariables) {
+			var.dispose();
 		}
 	}
 
@@ -621,9 +623,8 @@ public class CValue extends AbstractCValue {
 	protected void reset() {
 		resetStatus();
 		fValueString = null;
-		Iterator it = fVariables.iterator();
-		while( it.hasNext() ) {
-			((AbstractCVariable)it.next()).resetValue();
+		for (AbstractCVariable var : fVariables) {
+			var.resetValue();
 		}
 	}
 
@@ -654,9 +655,8 @@ public class CValue extends AbstractCValue {
 	protected void preserve() {
 		setChanged( false );
 		resetStatus();
-		Iterator it = fVariables.iterator();
-		while( it.hasNext() ) {
-			((AbstractCVariable)it.next()).preserve();
+		for (AbstractCVariable var : fVariables) {
+			var.preserve();
 		}
 	}
 

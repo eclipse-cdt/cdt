@@ -46,7 +46,7 @@ public class CVariableFactory {
 			}
 
 			public String toString() {
-				return MessageFormat.format( "{0}::{1}", new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
+				return MessageFormat.format( "{0}::{1}", (Object[])new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
 			}
 
 		    public boolean equals( Object obj ) {
@@ -71,6 +71,9 @@ public class CVariableFactory {
 		return createGlobalVariableDescriptor( symbol.getName(), symbol.getFilename() );
 	}
 	
+	/**
+	 * @param descriptor can be null if creating a child for a global
+	 */
 	public static CGlobalVariable createGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableDescriptor cdiVariableObject ) {
 		return new CGlobalVariable( parent, descriptor, cdiVariableObject );
 	}

@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -61,7 +62,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 
 	private IGlobalVariableDescriptor[] fInitialDescriptors = new IGlobalVariableDescriptor[0];
 
-	private ArrayList fGlobals;
+	private List<ICGlobalVariable> fGlobals;
 
 	/** 
 	 * Constructor for CGlobalVariableManager. 
@@ -89,16 +90,16 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 				DebugPlugin.log( e );
 			}
 		}
-		return (ICGlobalVariable[])fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );
+		return fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#addGlobals(IGlobalVariableDescriptor[])
 	 */
 	public void addGlobals( IGlobalVariableDescriptor[] descriptors ) throws DebugException {
-		fGlobals = new ArrayList( 10 );
+		fGlobals = new ArrayList<ICGlobalVariable>( 10 );
 		MultiStatus ms = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), 0, "", null ); //$NON-NLS-1$
-		ArrayList globals = new ArrayList( descriptors.length );
+		List<ICGlobalVariable> globals = new ArrayList<ICGlobalVariable>( descriptors.length );
 		for ( int i = 0; i < descriptors.length; ++i ) {
 			try {
 				globals.add( getDebugTarget().createGlobalVariable( descriptors[i] ) );
@@ -142,7 +143,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 
 		ICGlobalVariable[] globals = new ICGlobalVariable[0];
 		synchronized( fGlobals ) {
-			globals = (ICGlobalVariable[])fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );
+			globals = fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );
 			fGlobals.clear();
 		}
 		for ( int i = 0; i < globals.length; ++i ) {
@@ -154,9 +155,8 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 
 	public void dispose() {
 		if ( fGlobals != null ) {
-			Iterator it = fGlobals.iterator();
-			while( it.hasNext() ) {
-				((CVariable)it.next()).dispose();
+			for (ICGlobalVariable global : fGlobals) {
+				((CVariable)global).dispose();
 			}
 			fGlobals.clear();
 			fGlobals = null;
@@ -170,12 +170,15 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			Element node = document.createElement( GLOBAL_VARIABLE_LIST );
 			document.appendChild( node );
 			ICGlobalVariable[] globals = getGlobals();
-			for ( int i = 0; i < globals.length; ++i ) {
-				IGlobalVariableDescriptor descriptor = globals[i].getDescriptor();
-				Element child = document.createElement( GLOBAL_VARIABLE );
-				child.setAttribute( ATTR_GLOBAL_VARIABLE_NAME, descriptor.getName() );
-				child.setAttribute( ATTR_GLOBAL_VARIABLE_PATH, descriptor.getPath().toOSString() );
-				node.appendChild( child );
+			for (ICGlobalVariable global : globals) {
+				IGlobalVariableDescriptor descriptor = global.getDescriptor();
+				// children of globals don't have a descriptor, though getGlobals() shouldn't return only top level globals
+				if (descriptor != null) {
+					Element child = document.createElement( GLOBAL_VARIABLE );
+					child.setAttribute( ATTR_GLOBAL_VARIABLE_NAME, descriptor.getName() );
+					child.setAttribute( ATTR_GLOBAL_VARIABLE_PATH, descriptor.getPath().toOSString() );
+					node.appendChild( child );
+				}
 			}
 			return CDebugUtils.serializeDocument( document );
 		}
@@ -200,7 +203,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			InputSource source = new InputSource( reader );
 			root = parser.parse( source ).getDocumentElement();
 			if ( root.getNodeName().equalsIgnoreCase( GLOBAL_VARIABLE_LIST ) ) {
-				List descriptors = new ArrayList();
+				List<IGlobalVariableDescriptor> descriptors = new ArrayList<IGlobalVariableDescriptor>();
 				NodeList list = root.getChildNodes();
 				int length = list.getLength();
 				for( int i = 0; i < length; ++i ) {
@@ -218,7 +221,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 						}
 					}
 				}
-				fInitialDescriptors = (IGlobalVariableDescriptor[])descriptors.toArray( new IGlobalVariableDescriptor[descriptors.size()] );
+				fInitialDescriptors = descriptors.toArray( new IGlobalVariableDescriptor[descriptors.size()] );
 				return;
 			}
 		}
@@ -276,11 +279,13 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	public IGlobalVariableDescriptor[] getDescriptors() {
 		if ( fGlobals == null )
 			return getInitialDescriptors();
-		IGlobalVariableDescriptor[] result = new IGlobalVariableDescriptor[fGlobals.size()];
-		Iterator it = fGlobals.iterator();
-		for ( int i = 0; it.hasNext(); ++i ) {
-			result[i] = ((ICGlobalVariable)it.next()).getDescriptor();
+		List<IGlobalVariableDescriptor> descrs = new ArrayList<IGlobalVariableDescriptor>();
+		for (ICGlobalVariable global : fGlobals) {
+			IGlobalVariableDescriptor descr = global.getDescriptor();
+			if (descr != null) {	// children of globals don't have a descriptor, though 'fGlobals' should contain only top level globals
+				descrs.add(descr);
+			}
 		}
-		return result;
+		return descrs.toArray(new IGlobalVariableDescriptor[descrs.size()]);
 	}
 }

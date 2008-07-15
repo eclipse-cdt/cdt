@@ -324,6 +324,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			b2.setSelection(!ce.appendEnvironment(cfgd));
 			 _vars = ce.getVariables(cfgd);
 		} else {
+			if (vars == null)
+				vars = fUserSupplier.getWorkspaceEnvironmentCopy();
 			b1.setSelection(vars.appendContributedEnvironment());
 			b2.setSelection(!vars.appendContributedEnvironment());
 			_vars = vars.getVariables() ;

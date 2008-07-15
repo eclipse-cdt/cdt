@@ -747,6 +747,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				}
 
 				// Ignore all other keyboard input when not connected.
+				// Allow other key handlers (such as Ctrl+F1) do their work
+				event.doit = true;
 				return;
 			}
 

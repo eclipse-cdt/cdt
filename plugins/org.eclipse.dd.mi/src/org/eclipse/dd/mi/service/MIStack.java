@@ -44,7 +44,6 @@ import org.eclipse.dd.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.dd.mi.service.command.commands.MIStackListFrames;
 import org.eclipse.dd.mi.service.command.commands.MIStackListLocals;
 import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
-import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIArg;
 import org.eclipse.dd.mi.service.command.output.MIFrame;
@@ -642,9 +641,8 @@ public class MIStack extends AbstractDsfService
     
     @DsfServiceEventHandler 
     public void eventDispatched(IMIDMEvent e) {
-    	MIEvent<?> miEvent = e.getMIEvent();
-    	if (miEvent instanceof MIStoppedEvent) {
-    		fCachedStoppedEvent = (MIStoppedEvent)miEvent;
+    	if (e.getMIEvent() instanceof MIStoppedEvent) {
+    		fCachedStoppedEvent = (MIStoppedEvent)e.getMIEvent();
     	}
     }
 

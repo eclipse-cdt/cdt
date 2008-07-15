@@ -182,7 +182,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 					int diff = depth - getLastStackDepth();
 					int offset = ( diff > 0 ) ? frames.length - diff : 0;
 					int length = ( diff > 0 ) ? diff : -diff;
-					if ( !compareStackFrames( frames, fStackFrames, offset, length ) ) {
+					if (offset < 0 || !compareStackFrames( frames, fStackFrames, offset, length ) ) {
 						// replace all frames
 						disposeStackFrames( 0, fStackFrames.size() );
 						addStackFrames( frames, 0, frames.length, false );						

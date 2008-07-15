@@ -110,7 +110,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 */
 	public void run( IAction action ) {
 		final IStructuredSelection selection = getSelection();
-		if ( selection != null && selection.size() != 1 )
+		if ( selection == null || selection.size() != 1 )
 			return;
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
@@ -285,8 +285,8 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 				dlg.setTitle(ActionMessages.getString("AddGlobalsActionDelegate.title"));
 				dlg.setInitialSelections( gvm.getDescriptors() );
 				if ( dlg.open() == Window.OK ) {
-					List list = Arrays.asList( dlg.getResult() );
-					IGlobalVariableDescriptor[] selections = (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );
+					List<Object> list = Arrays.asList( dlg.getResult() );
+					IGlobalVariableDescriptor[] selections = list.toArray( new IGlobalVariableDescriptor[list.size()] );
 					gvm.addGlobals( selections );
 				}
 			}

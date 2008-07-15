@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalSettingsDlg 
+ * Michael Scharf (Wind River) - extracted from TerminalSettingsDlg
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -91,11 +92,11 @@ public class SerialSettingsPage implements ISettingsPage {
 				nIndex = combo.indexOf(value);
 			} else {
 				return;
-			}			
+			}
 		}
 
 		combo.select(nIndex);
-		
+
 	}
 	private String getComboValue(Combo combo) {
 		int nIndex = combo.getSelectionIndex();
@@ -106,9 +107,17 @@ public class SerialSettingsPage implements ISettingsPage {
 		}
 
 		return combo.getItem(nIndex);
-		
+
 	}
 	public boolean validateSettings() {
+		try {
+			int p = Integer.parseInt(fTimeout.getText().trim());
+			if (p < 0) {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
 	public void createControl(Composite parent) {

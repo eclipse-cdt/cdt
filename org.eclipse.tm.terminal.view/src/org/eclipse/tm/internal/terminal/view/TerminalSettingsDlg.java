@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168186] Add Terminal User Docs
  * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
+ * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -148,8 +149,14 @@ class TerminalSettingsDlg extends Dialog {
 	}
 
 	protected void okPressed() {
-		if (!validateSettings())
+		if (!validateSettings()) {
+			String strTitle = ViewMessages.TERMINALSETTINGS;
+			MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+			mb.setText(strTitle);
+			mb.setMessage(ViewMessages.INVALID_SETTINGS);
+			mb.open();
 			return;
+		}
 		if(fSelectedConnector>=0) {
 			getPage(fSelectedConnector).saveSettings();
 		}

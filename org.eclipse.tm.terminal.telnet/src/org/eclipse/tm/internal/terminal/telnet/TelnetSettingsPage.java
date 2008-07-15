@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalSettingsDlg 
+ * Michael Scharf (Wind River) - extracted from TerminalSettingsDlg
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -55,13 +56,13 @@ public class TelnetSettingsPage implements ISettingsPage {
 		if(strHost==null)
 			strHost=""; //$NON-NLS-1$
 		fHostText.setText(strHost);
-		
+
 	}
 	private void setTimeout(String timeout) {
 		if(timeout==null || timeout.length()==0)
 			timeout="5"; //$NON-NLS-1$
 		fTimeout.setText(timeout);
-		
+
 	}
 	private void setNetworkPort(String strNetworkPort) {
 		if (strNetworkPort!=null) {
@@ -88,8 +89,24 @@ public class TelnetSettingsPage implements ISettingsPage {
 	}
 
 	public boolean validateSettings() {
+		if (fHostText.getText().trim().length() == 0) {
+			return false;
+		}
+		try {
+			int p = Integer.parseInt(getNetworkPort().trim());
+			if (p <= 0 || p > 65535) {
+				return false;
+			}
+			p = Integer.parseInt(fTimeout.getText().trim());
+			if (p < 0) {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
+
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);

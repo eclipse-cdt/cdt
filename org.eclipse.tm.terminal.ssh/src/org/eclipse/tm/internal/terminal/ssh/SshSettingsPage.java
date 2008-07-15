@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
+ * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -57,6 +58,28 @@ public class SshSettingsPage implements ISettingsPage {
 		return value;
 	}
 	public boolean validateSettings() {
+		if (fHostText.getText().trim().length() == 0) {
+			return false;
+		}
+		if (fUser.getText().trim().length() == 0) {
+			return false;
+		}
+		try {
+			int p = Integer.parseInt(fPort.getText().trim());
+			if (p <= 0 || p > 65535) {
+				return false;
+			}
+			p = Integer.parseInt(fTimeout.getText().trim());
+			if (p < 0) {
+				return false;
+			}
+			p = Integer.parseInt(fKeepalive.getText().trim());
+			if (p < 0) {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
 	public void createControl(Composite parent) {
@@ -84,7 +107,7 @@ public class SshSettingsPage implements ISettingsPage {
 
 		// Add control
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		Text text= new Text(composite, SWT.BORDER | textOptions); 
+		Text text= new Text(composite, SWT.BORDER | textOptions);
 		text.setLayoutData(gridData);
 		return text;
 	}

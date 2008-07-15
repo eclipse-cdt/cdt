@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
+ * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -33,6 +34,7 @@ public class ViewMessages extends NLS {
     public static String CONNECTIONTYPE;
 	public static String VIEW_TITLE;
 	public static String VIEW_SETTINGS;
+	public static String INVALID_SETTINGS;
 
     public static String INVERT_COLORS;
     public static String BUFFERLINES;

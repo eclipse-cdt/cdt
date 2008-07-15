@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 
 /**
  * This interface provides access to the OS's process 
@@ -52,7 +51,6 @@ public interface IProcesses extends IDMService {
         String getName();
         String getId();
         boolean isDebuggerAttached();
-        IDMContext getDebuggingContext();
     }
     
     /**
@@ -68,21 +66,30 @@ public interface IProcesses extends IDMService {
     public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm);
     
     /**
+     * Retrieves the debugging context that characterizes the specified thread
+     * or process context.  
+     * 
+     * @param dmc The thread or process dmc for which we want the debugging context
+     * @param rm The request monitor that will contain the debugging context.
+     *           null if no such context exists
+     */
+    public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm);
+    
+    /**
      * Retrieves the current list of processes running on target.
-     * @param containerDmc The processor or core for which to list all processes
+     * @param dmc The processor or core for which to list all processes
      * @param rm Request completion monitor, to be filled in with array of process contexts.
      */
-    void getRunningProcesses(IContainerDMContext containerDmc, DataRequestMonitor<IProcessDMContext[]> rm);
+    void getRunningProcesses(IDMContext dmc, DataRequestMonitor<IProcessDMContext[]> rm);
     
     /**
      * Attaches debugger to the given process.     
-     * When attaching to a process, a container context can now be used to characterize the process.
-     * IContainerDMContext has IProcessDMContext as a parent.  This method can optionally choose
-     * to return the IContainerDMContext inside the DataRequestMonitor.  This can be useful for
-     * backends that do not have the ability to obtain the different IContainerDMContexts through 
-     * {@link getProcessesBeingDebugged}
+     * When attaching to a process, a debugging context can now be used to characterize the process.
+     * This method can optionally choose to return this IDMContext inside the DataRequestMonitor.  
+     * This can be useful for backends that do not have the ability to obtain the different 
+     * debugging IDMContexts through {@link #getProcessesBeingDebugged(IDMContext, DataRequestMonitor)
      */    
-    void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IContainerDMContext> rm);
+    void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm);
 
     /**
      * Detaches debugger from the given process.
@@ -106,12 +113,12 @@ public interface IProcesses extends IDMService {
     /**
      * Retrieves the list of processes which are currently under
      * debugger control.
-     * @param containerDmc The processor or core for which to list processes being debugged
-     * @param rm Request completion monitor which contains all container contexts representing
-     *           the processes being debugged.  Note that each of these containers also has
+     * @param dmc The processor or core for which to list processes being debugged
+     * @param rm Request completion monitor which contains all debugging contexts representing
+     *           the processes being debugged.  Note that each of these contexts should also have
      *           IProcessDMContext as a parent.
      */
-    void getProcessesBeingDebugged(IContainerDMContext containerDmc, DataRequestMonitor<IContainerDMContext[]> rm);
+    void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm);
     
     /**
      * Checks whether the given process or thread can be terminated.

@@ -37,8 +37,8 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
@@ -445,7 +445,7 @@ public class FinalLaunchSequence extends Sequence {
 
         				fProcService.attachDebuggerToProcess(
         						procDmc, 
-								new DataRequestMonitor<IContainerDMContext>(getExecutor(), requestMonitor));
+								new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         			} else {
         				promptForProcessID(fLaunch.getLaunchConfiguration(),
         						           new DataRequestMonitor<Integer>(getExecutor(), requestMonitor) {
@@ -456,7 +456,7 @@ public class FinalLaunchSequence extends Sequence {
 
                 				fProcService.attachDebuggerToProcess(
                 						procDmc, 
-        								new DataRequestMonitor<IContainerDMContext>(getExecutor(), requestMonitor));
+        								new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         					}
         				});
         			}

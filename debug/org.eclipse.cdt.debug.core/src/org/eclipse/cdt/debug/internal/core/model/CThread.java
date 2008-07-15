@@ -231,6 +231,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @return <code>true</code> if all frames are same
 	 */
 	private boolean compareStackFrames( ICDIStackFrame[] newFrames, List oldFrames, int offset, int length ) {
+		if (offset<0) return false;
 		int index = offset;
 		Iterator it = oldFrames.iterator();
 		while( it.hasNext() && index < newFrames.length ) {

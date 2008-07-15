@@ -6,7 +6,6 @@
 <toc label="Reference">
 	<topic label="API Reference" href="reference/api/overview-summary.html">
 		<topic label="org.eclipse.cdt.core.model" href="reference/api/org/eclipse/cdt/core/model/package-summary.html"/>
-		<topic label="org.eclipse.cdt.core.search" href="reference/api/org/eclipse/cdt/core/search/package-summary.html"/>
        	<topic label="org.eclipse.cdt.core.dom.ast" href="reference/api/org/eclipse/cdt/core/dom/ast/package-summary.html"/>
        	<topic label="org.eclipse.cdt.core.dom.ast.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
        	<topic label="org.eclipse.cdt.core.dom.ast.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>

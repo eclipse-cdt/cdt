@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David McKnight   (IBM)        - [232148] Invalid thread access exception from SystemViewFilterReferenceAdapter.internalGetChildren()
  * David McKnight    (IBM)  - [233494] Show in Table Action should be removed from promptable filters
+ * David McKnight   (IBM)        - [238507] Promptable Filters refreshed after modifying filter strings
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -313,7 +314,7 @@ public class SystemViewFilterReferenceAdapter
 		final ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(referencedFilter);
 
 		// PROMPTING FILTER?...
-		if (promptable)
+		if (promptable && !ssf.supportsCommands())
 		{
 			final Object[] pchildren = new SystemMessageObject[1];
 			final Object pelement = element;

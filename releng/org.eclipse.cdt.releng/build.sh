@@ -15,7 +15,7 @@ cd `dirname $0`
 mkdir -p tools
 cd tools
 cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
-	checkout org.eclipse.releng.basebuilder
+	checkout -r r322_v20070104 org.eclipse.releng.basebuilder
 cd ..
 
 java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \

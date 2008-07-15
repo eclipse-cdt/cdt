@@ -63,17 +63,6 @@
       </fontDefinition>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.tm.terminal.category1"
-            id="org.eclipse.tm.terminal.command1"
-            name="%terminal.view.insertion.name"/>
-      <category
-            description="%terminal.view.insertion.description"
-            id="org.eclipse.tm.terminal.category1"
-            name="%terminal.view.insertion.category.name"/>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.tm.internal.terminal.view.TerminalPreferenceInitializer"/>
    </extension>

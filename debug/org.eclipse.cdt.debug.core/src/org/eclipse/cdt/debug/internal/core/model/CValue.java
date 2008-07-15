@@ -138,7 +138,15 @@ public class CValue extends AbstractCValue {
 				fVariables = new ArrayList( vars.size() );
 				Iterator it = vars.iterator();
 				while( it.hasNext() ) {
-					fVariables.add( CVariableFactory.createLocalVariable( this, (ICDIVariable)it.next() ) );
+					if (getParentVariable() instanceof CGlobalVariable) {
+						fVariables.add(CVariableFactory.createGlobalVariable( 
+								this, 
+								null, 
+								(ICDIVariable)it.next()));
+					}
+					else {
+						fVariables.add( CVariableFactory.createLocalVariable( this, (ICDIVariable)it.next() ) );
+					}
 				}
 				resetStatus();
 			}

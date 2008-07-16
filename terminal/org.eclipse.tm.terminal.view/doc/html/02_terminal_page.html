@@ -29,7 +29,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
   </tr>
   <tr align="left" valign="top">
     <td><p><img src="../../icons/clcl16/newterminal.gif" border="0" hspace="0" vspace="0"/></p></td>
-    <td><p>Open another instance of the <b>Terminal</b> view.</p></td>
+    <td><p>Open another Terminal connection in the current view, or in a new <b>Terminal</b> view instance.</p></td>
   </tr>
   <tr align="left" valign="top">
     <td><p><img src="../../icons/clcl16/connect_co.gif" border="0" hspace="0" vspace="0"/></p></td>
@@ -42,12 +42,22 @@ Martin Oberhuber (Wind River) - initial API and implementation
   <tr align="left" valign="top">
     <td><p><img src="../../icons/clcl16/properties_tsk.gif" border="0" hspace="0" vspace="0"/></p></td>
     <td><p>Open the <a href="03_terminal_settings.html"><b>Terminal Settings</b></a> dialog.
-    Only available when disconnected.</p></td>
+    While connected, only the connection's title can be changed.</p></td>
   </tr>
   <tr align="left" valign="top">
     <td><p><img src="../../icons/clcl16/command_input_field.gif" border="0" hspace="0" vspace="0"/></p></td>
     <td><p>Toggle the <a href="04_terminal_emulation.html"><b>Command Input</b></a> field,
     for editing complex command lines on dumb terminals.</p></td>
+  </tr>
+  <tr align="left" valign="top">
+    <td><p><img src="../../icons/cview16/terminal_view.gif" border="0" hspace="0" vspace="0"/></p></td>
+    <td><p>Select a Terminal connection to show in this view instance.
+    Only available when multiple connections have been defined in this view.</p></td>
+  </tr>
+  <tr align="left" valign="top">
+    <td><p><img src="../../icons/dlcl16/rem_co.gif" border="0" hspace="0" vspace="0"/></p></td>
+    <td><p>Remove the currently selected Terminal Connection from this view.
+    Only available when multiple connections have been defined in this view.</p></td>
   </tr>
 </table>
 </div>
@@ -55,7 +65,8 @@ Martin Oberhuber (Wind River) - initial API and implementation
 </p>
 
 <table class="steptable"><tr><td>
-  Each instance of the <b>Terminal</b> view can be connected to a different remote endpoint
+  Each instance of the <b>Terminal</b> view can hold multiple connections, each of which can in 
+  turn be connected to a different remote endpoint
   (either serial or network). Of course, the number of serial connections is limited by the
   number of serial ports.
 </td></tr></table>

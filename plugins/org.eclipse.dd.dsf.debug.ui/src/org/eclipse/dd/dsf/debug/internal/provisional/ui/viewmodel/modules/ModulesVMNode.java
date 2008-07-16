@@ -66,6 +66,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         
         if (modulesService == null || symDmc == null) {
             handleFailedUpdate(update);
+            return;
         }
         
         modulesService.getModules(

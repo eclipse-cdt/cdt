@@ -311,11 +311,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         if ( ! weAreExtractingFormattedData ) {
                             update.done();
                         } else {
+                        	boolean found = false;
                             for (int idx = 0; idx < localColumns.length; idx++) {
                                 if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+                                	found = true;
                                 	updateFormattedExpressionValue(update, idx, dmc, getData());
+                                	break;
                                 }
-                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+                            }
+                            if (!found) {
+                            	update.done();
                             }
                         }
                     }
@@ -608,6 +613,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
             // DataRequestMonitor.handleCompleted() above.
 
             expressionService.getSubExpressions(expressionDMC, rm);
+        } else {
+            handleFailedUpdate(update);
         }
     }
     

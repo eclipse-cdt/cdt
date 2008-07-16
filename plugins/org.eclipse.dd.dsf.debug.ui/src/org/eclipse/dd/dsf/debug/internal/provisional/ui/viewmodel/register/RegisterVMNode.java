@@ -430,10 +430,16 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     if ( ! weAreExtractingFormattedData ) {
                         update.done();
                     } else {
+                    	boolean found = false;
                         for (int idx = 0; idx < localColumns.length; idx++) {
                             if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+                            	found = true;
                                 updateFormattedRegisterValue(update, idx, dmc);
+                                break;
                             }
+                        }
+                        if (!found) {
+                        	update.done();
                         }
                     }
                 }

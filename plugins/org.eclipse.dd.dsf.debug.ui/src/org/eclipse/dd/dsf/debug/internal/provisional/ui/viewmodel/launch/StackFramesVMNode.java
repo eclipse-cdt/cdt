@@ -268,7 +268,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 				update.setLabel("<...more frames...>", 0); //$NON-NLS-1$
         		update.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME), 0);
         		update.done();
-        		return;
+        		continue;
         	}
 
             final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
@@ -474,6 +474,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 || IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) 
             {
                 buildDeltaForStackFrameLimitPreferenceChangedEvent(parent, rm);                
+            } else {
+            	rm.done();
             }
         } else {
             rm.done();

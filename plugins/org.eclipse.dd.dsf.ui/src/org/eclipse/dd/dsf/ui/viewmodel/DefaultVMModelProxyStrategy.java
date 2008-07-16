@@ -34,7 +34,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
 
@@ -208,13 +211,32 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * Handle viewer double click.
      * 
 	 * @param e  the event
+	 * 
+	 * @since 1.1
 	 */
 	protected void handleDoubleClick(final DoubleClickEvent e) {
-        getVMProvider().getExecutor().execute( new DsfRunnable() {
-            public void run() {
-				getVMProvider().handleEvent(e);
-            }
-        });
+		final AbstractVMProvider vmProvider= getVMProvider();
+		if (!vmProvider.isDisposed()) {
+	        ISelection selection = e.getSelection();
+			if (!selection.isEmpty() && selection instanceof ITreeSelection) {
+	            final TreePath path = ((ITreeSelection)selection).getPaths()[0];
+	    	    final Object input = e.getViewer().getInput();
+	    	    
+	            vmProvider.getExecutor().execute( new DsfRunnable() {
+	                public void run() {
+	                    Object rootElement = getRootElement();
+	                    boolean eventContainsRootElement = rootElement.equals(input);
+	                    for (int i = 0; !eventContainsRootElement && i < path.getSegmentCount(); i++) {
+	                        eventContainsRootElement = rootElement.equals(path.getSegment(i));
+	                    }
+
+	                    if (eventContainsRootElement) {
+	                        vmProvider.handleEvent(e);
+	                    }
+	                }
+	            });
+	        }
+		}
 	}
 
 	/**

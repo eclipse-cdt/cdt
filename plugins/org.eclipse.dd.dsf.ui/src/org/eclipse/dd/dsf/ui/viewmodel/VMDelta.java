@@ -200,6 +200,8 @@ public class VMDelta extends ModelDelta {
 	 * 
 	 * @param element child element
 	 * @return corresponding delta node, or <code>null</code>
+	 * 
+	 * @since 1.1
 	 */
 	@Override
 	public VMDelta getChildDelta(Object element) {

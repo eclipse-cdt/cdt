@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
@@ -62,7 +63,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
 {
     /**
-     * Contains the set of adapters that are created for eacy launch instance.
+     * Contains the set of adapters that are created for each launch instance.
      */
     @Immutable
     private static class LaunchAdapterSet {
@@ -84,6 +85,8 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         final IDebugModelProvider fDebugModelProvider;
         final PDALaunch fLaunch;
 
+		final SteppingController fSteppingController;
+
 		private IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
 
         LaunchAdapterSet(PDALaunch launch) {
@@ -91,11 +94,15 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             fLaunch = launch;
             DsfSession session = launch.getSession();
             
+            // register stepping controller
+            fSteppingController = new SteppingController(session);
+            session.registerModelAdapter(SteppingController.class, fSteppingController);
+
             // Initialize VM
-            fViewModelAdapter = new PDAVMAdapter(session);
+            fViewModelAdapter = new PDAVMAdapter(session, fSteppingController);
 
             // Initialize source lookup
-            fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
+            fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator(), fSteppingController);
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
 
             // Default selection policy
@@ -128,7 +135,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             // and debug model ID will be associated with all DMContexts from this
             // session.
             session.registerModelAdapter(ILaunch.class, fLaunch);
-        }
+}
         
         void dispose() {
             DsfSession session = fLaunch.getSession();
@@ -138,6 +145,9 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             session.unregisterModelAdapter(ISourceDisplay.class);
             if (fSourceDisplayAdapter != null) fSourceDisplayAdapter.dispose();
             
+            session.unregisterModelAdapter(SteppingController.class);
+            fSteppingController.dispose();
+
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
 
             session.unregisterModelAdapter(IStepIntoHandler.class);

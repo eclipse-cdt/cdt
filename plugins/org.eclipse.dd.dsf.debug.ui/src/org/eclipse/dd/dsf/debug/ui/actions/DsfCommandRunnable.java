@@ -15,8 +15,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
@@ -33,8 +35,34 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     public IRunControl getRunControl() {
         return fTracker.getService(IRunControl.class);
     }
-    public StepQueueManager getStepQueueMgr() {
+    /**
+     * @deprecated Use {@link #getStepQueueManager()} instead.
+     */
+    @Deprecated
+	public StepQueueManager getStepQueueMgr() {
         return fTracker.getService(StepQueueManager.class);
+    }
+
+    /**
+	 * @since 1.1
+	 */
+	public IStepQueueManager getStepQueueManager() {
+		// for backwards compatibility
+		IStepQueueManager mgr= getStepQueueMgr();
+		if (mgr != null) {
+			return mgr;
+		}
+		return getSteppingController();
+    }
+
+    /**
+	 * @since 1.1
+	 */
+    public SteppingController getSteppingController() {
+    	if (fContext != null) {
+    		return (SteppingController) fContext.getAdapter(SteppingController.class);
+    	}
+    	return null;
     }
 
     public DsfCommandRunnable(DsfServicesTracker servicesTracker, Object element, IDebugCommandRequest request) {
@@ -56,7 +84,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
         }
         if (getContext() == null) {
             fRequest.setStatus(makeError("Selected object does not support run control.", null));             //$NON-NLS-1$
-        } else if (getRunControl() == null || getStepQueueMgr() == null) {
+        } else if (getRunControl() == null || getStepQueueManager() == null) {
             fRequest.setStatus(makeError("Run Control not available", null)); //$NON-NLS-1$
         } else {
             doExecute();

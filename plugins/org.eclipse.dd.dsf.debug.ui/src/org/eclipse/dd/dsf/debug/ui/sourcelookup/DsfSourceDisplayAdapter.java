@@ -33,10 +33,14 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.ISteppingControlParticipant;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
@@ -86,7 +90,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * dispatch thread to synchronize access to the state data of the running jobs.
  */
 @ThreadSafe
-public class DsfSourceDisplayAdapter implements ISourceDisplay 
+public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControlParticipant
 {
     /**
 	 * A job to perform source lookup on the given DMC.
@@ -412,8 +416,16 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
     private DisplayJob fPendingDisplayJob;
     private ClearingJob fRunningClearingJob;
     private List<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();
-    
+	private SteppingController fController;
+ 
     public DsfSourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
+    	this(session, sourceLocator, null);
+    }
+
+    /**
+	 * @since 1.1
+	 */
+    public DsfSourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator, SteppingController controller) {
         fSession = session;
         fExecutor = session.getExecutor();
         fServicesTracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), session.getId());
@@ -424,9 +436,18 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
         fIPManager = new InstructionPointerManager();
         
         fSession.addServiceEventListener(this, null);
+
+        fController = controller;
+		if (fController != null) {
+			fController.addSteppingControlParticipant(this);
+		}
     }
     
     public void dispose() {
+		if (fController != null) {
+			fController.removeSteppingControlParticipant(this);
+			fController = null;
+		}
         fSession.removeServiceEventListener(this);
         fServicesTracker.dispose();
         fSourceLookup.removeParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant});
@@ -470,7 +491,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
     private void startLookupJob(final IDMContext dmc, final IWorkbenchPage page) {
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
-            fRunningLookupJob.cancel();
+            if (fRunningLookupJob.cancel()) {
+            	doneSourceLookup(fRunningLookupJob.getDmc());
+            }
         }
         
         fRunningLookupJob = new LookupJob(dmc, page);
@@ -500,8 +523,22 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
             fRunningDisplayJob = nextDisplayJob;
             fRunningDisplayJob.schedule();        
         }
+        doneSourceLookup(lookupResult.getDmc());
     }
 
+	private void doneSourceLookup(IDMContext context) {
+		if (fController != null) {
+			// indicate completion of step
+        	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
+        	if (dmc != null) {
+        	    fController.getExecutor().execute(new DsfRunnable() {
+        	        public void run() {
+                        fController.doneStepping(dmc, DsfSourceDisplayAdapter.this);
+        	        };
+        	    });
+        	}
+        }
+	}
     
     private void serviceDisplayAndClearingJobs() {
         if (!fPendingExecDmcsToClear.isEmpty()) {
@@ -558,15 +595,17 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay
     }
 
     @DsfServiceEventHandler
+    public void eventDispatched(SteppingTimedOutEvent e) {
+        startAnnotationClearingJob(e.getDMContext());        
+    }
+    
+    @DsfServiceEventHandler
     public void eventDispatched(StepQueueManager.ISteppingTimedOutEvent e) {
         startAnnotationClearingJob(e.getDMContext());        
-    }    
+    }
     
     @DsfServiceEventHandler
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-        if (e.getReason() == StateChangeReason.STEP) {
-            startAnnotationClearingJob(e.getDMContext());
-        }
         fPrevModelContext = null;
     }
 }

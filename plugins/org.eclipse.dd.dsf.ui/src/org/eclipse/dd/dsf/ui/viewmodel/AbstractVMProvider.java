@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -60,7 +61,7 @@ import org.eclipse.swt.widgets.Display;
  * @see IVMNode
  */
 @SuppressWarnings("restriction")
-abstract public class AbstractVMProvider implements IVMProvider
+abstract public class AbstractVMProvider implements IVMProvider, IVMEventListener
 {
     
     /** Reference to the VM adapter that owns this provider */
@@ -204,8 +205,20 @@ abstract public class AbstractVMProvider implements IVMProvider
      * Processes the given event in the given provider, sending model 
      * deltas if necessary.
      */
-    public void handleEvent(final Object event) {
-        for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
+	public void handleEvent(final Object event) {
+    	handleEvent(event, null);
+    }
+	
+    /**
+     * {@inheritDoc}
+	 * @since 1.1
+	 */
+    public void handleEvent(final Object event, RequestMonitor rm) {
+    	CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+        final List<IVMModelProxy> activeModelProxies= new ArrayList<IVMModelProxy>(getActiveModelProxies());
+    	crm.setDoneCount(activeModelProxies.size());
+
+    	for (final IVMModelProxy proxyStrategy : activeModelProxies) {
             if (proxyStrategy.isDeltaEvent(event)) {
                 if (!fEventQueues.containsKey(proxyStrategy)) {
                     fEventQueues.put(proxyStrategy, new ModelProxyEventQueue());
@@ -222,13 +235,16 @@ abstract public class AbstractVMProvider implements IVMProvider
                             }
                         }
                     }
+                    crm.done();
                     queue.fEventQueue.add(event);
                 } else {
-                    doHandleEvent(queue, proxyStrategy, event); 
+                    doHandleEvent(queue, proxyStrategy, event, crm);
                 }
+            } else {
+            	crm.done();
             }
         }
-        
+
         // Clean up model proxies that were removed.
         List<IVMModelProxy> activeProxies = getActiveModelProxies();
         for (Iterator<IVMModelProxy> itr = fEventQueues.keySet().iterator(); itr.hasNext();) {
@@ -237,8 +253,8 @@ abstract public class AbstractVMProvider implements IVMProvider
             }
         }
     }
-     
-    private void doHandleEvent(final ModelProxyEventQueue queue, final IVMModelProxy proxyStrategy, final Object event) {
+
+    private void doHandleEvent(final ModelProxyEventQueue queue, final IVMModelProxy proxyStrategy, final Object event, final RequestMonitor rm) {
         queue.fProcessingEvent = true;
         handleEvent(
             proxyStrategy, event, 
@@ -247,8 +263,10 @@ abstract public class AbstractVMProvider implements IVMProvider
                 protected void handleCompleted() {
                     queue.fProcessingEvent = false;
                     if (!queue.fEventQueue.isEmpty()) {
-                        doHandleEvent(queue, proxyStrategy, queue.fEventQueue.remove(0));
-                    }                                    
+                        doHandleEvent(queue, proxyStrategy, queue.fEventQueue.remove(0), rm);
+                    } else {
+                    	rm.done();
+                    }
                 }
             });
     }

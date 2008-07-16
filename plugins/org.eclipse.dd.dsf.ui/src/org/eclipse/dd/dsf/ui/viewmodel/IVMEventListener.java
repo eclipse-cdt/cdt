@@ -8,20 +8,26 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;
+package org.eclipse.dd.dsf.ui.viewmodel;
 
-import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import java.util.concurrent.Executor;
+
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 
 /**
- * Event to increase the stack frame limit for an execution context.
+ * A listener participating in event notifications sent out from VM adapter.
  * 
  * @since 1.1
  */
-public class ExpandStackEvent extends AbstractDMEvent<IExecutionDMContext> {
-    
-    public ExpandStackEvent(IExecutionDMContext execCtx) {
-        super(execCtx);
-    }
+public interface IVMEventListener {
 
+    /**
+     * Returns the executor that needs to be used to access this event listener. 
+     */
+    public Executor getExecutor();
+    
+	/**
+	 * Process the given event and indicate completion with request monitor.
+	 */
+	public abstract void handleEvent(final Object event, RequestMonitor rm);
 }

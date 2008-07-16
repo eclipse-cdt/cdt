@@ -54,7 +54,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 
 /**
- * 
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 public class AbstractLaunchVMProvider extends AbstractDMVMProvider 
@@ -81,20 +81,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         
         fPreferencesListener = new IPropertyChangeListener() {
 			public void propertyChange(final PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
-						|| IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) {
-					if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
-			        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
-					} else {
-			        	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
-					}
-					getExecutor().execute(new DsfRunnable() {
-					    public void run() {
-					        handleEvent(event);
-					    }
-					});
-				}
+				handlePropertyChanged(store, event);
 			}};
         store.addPropertyChangeListener(fPreferencesListener);
     }
@@ -128,30 +115,33 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     }
 
     @Override
-    public void handleEvent(Object event) {
+    public void handleEvent(Object event, final RequestMonitor rm) {
         if (event instanceof DoubleClickEvent && !isDisposed()) {
             final ISelection selection= ((DoubleClickEvent) event).getSelection();
             if (selection instanceof IStructuredSelection) {
                 Object element= ((IStructuredSelection) selection).getFirstElement();
                 if (element instanceof IncompleteStackVMContext) {
                     IncompleteStackVMContext incStackVmc = ((IncompleteStackVMContext) element); 
-                    IVMNode node = ((IncompleteStackVMContext) element).getVMNode();
-                    if (incStackVmc.getVMNode() instanceof StackFramesVMNode) {
+                    IVMNode node = incStackVmc.getVMNode();
+                    if (node instanceof StackFramesVMNode && node.getVMProvider() == this) {
                         IExecutionDMContext exeCtx= incStackVmc.getExecutionDMContext();
 						((StackFramesVMNode) node).incrementStackFrameLimit(exeCtx);
 						// replace double click event with expand stack event
 						final ExpandStackEvent expandStackEvent = new ExpandStackEvent(exeCtx);
 						getExecutor().execute(new DsfRunnable() {
 						    public void run() {
-						        handleEvent(expandStackEvent);
+						        handleEvent(expandStackEvent, null);
 						    }
 						});
                     }
                 }
             }
+            if (rm != null) {
+            	rm.done();
+            }
             return;
         }
-    	super.handleEvent(event);
+    	super.handleEvent(event, rm);
     }
 
     @Override
@@ -177,7 +167,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
 	                                if (future != null && !isDisposed()) {
 	                                    fRefreshStackFramesFutures.remove(exeContext);
-	                                    handleEvent(new FullStackRefreshEvent(exeContext));
+	                                    handleEvent(new FullStackRefreshEvent(exeContext), null);
 	                                }
 	                            }});
 	                    }
@@ -275,5 +265,22 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         
         return false;
     }
+
+	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
+				|| IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) {
+			if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
+		    	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
+			} else {
+		    	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
+			}
+			getExecutor().execute(new DsfRunnable() {
+			    public void run() {
+			        handleEvent(event);
+			    }
+			});
+		}
+	}
 
 }

@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
@@ -37,6 +38,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 /**
  * Abstract implementation of a container view model node.
  * Clients need to implement {@link #updateLabelInSessionThread(ILabelUpdate[])}.
+ * 
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 public abstract class AbstractContainerVMNode extends AbstractDMVMNode implements IElementLabelProvider {
@@ -87,6 +90,11 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
             if (dmc instanceof IContainerDMContext) {
                 return IModelDelta.CONTENT;
             }
+	    } else if (e instanceof SteppingTimedOutEvent) {
+	        if (dmc instanceof IContainerDMContext) 
+	        {
+	            return IModelDelta.CONTENT;
+	        }
 	    } else if (e instanceof ISteppingTimedOutEvent) {
 	        if (dmc instanceof IContainerDMContext) 
 	        {
@@ -128,6 +136,15 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 		    // container refresh the whole container.
 		    if (dmc instanceof IContainerDMContext) {
 		        parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
+		    }
+		} else if (e instanceof SteppingTimedOutEvent) {
+		    // Stepping time-out indicates that a step operation is taking 
+		    // a long time, and the view needs to be refreshed to show 
+		    // the user that the program is running.
+		    // If the step was issued for the whole container refresh
+		    // the whole container.
+		    if (dmc instanceof IContainerDMContext) {
+	            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
 		    }
 		} else if (e instanceof ISteppingTimedOutEvent) {
 		    // Stepping time-out indicates that a step operation is taking 

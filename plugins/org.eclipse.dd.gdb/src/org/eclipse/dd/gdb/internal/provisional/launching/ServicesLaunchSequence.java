@@ -24,7 +24,6 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.IStack;
-import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
@@ -53,10 +52,6 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(fSession, IProcesses.class).initialize(requestMonitor);
-        }},
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            new StepQueueManager(fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {

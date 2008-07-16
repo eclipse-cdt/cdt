@@ -20,7 +20,11 @@ class MessagesForPreferences extends NLS {
 
 	public static String DsfDebugPreferencePage_description;
 	public static String DsfDebugPreferencePage_limitStackFrames_label;
+
+	public static String DsfDebugPreferencePage_minStepInterval_label;
 	public static String DsfDebugPreferencePage_performanceGroup_label;
+
+	public static String DsfDebugPreferencePage_syncStepping_label;
 
 	static {
 		// initialize resource bundle

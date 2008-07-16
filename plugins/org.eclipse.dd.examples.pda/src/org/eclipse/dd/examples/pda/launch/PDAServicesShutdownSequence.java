@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.BreakpointsMediator;
-import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.examples.pda.PDAPlugin;
@@ -84,12 +83,6 @@ public class PDAServicesShutdownSequence extends Sequence {
             @Override
             public void execute(RequestMonitor requestMonitor) {
                 shutdownService(PDABreakpoints.class, requestMonitor);
-            }
-        },
-        new Step() {
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                shutdownService(StepQueueManager.class, requestMonitor);
             }
         },
         new Step() {

@@ -49,7 +49,7 @@ public class DsfStepOverCommand implements IStepOverHandler {
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             final StepType stepType= getStepType();
             @Override public void doExecute() {
-				getStepQueueMgr().canEnqueueStep(
+            	getStepQueueManager().canEnqueueStep(
                     getContext(), stepType,
                     new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
                         @Override
@@ -71,7 +71,7 @@ public class DsfStepOverCommand implements IStepOverHandler {
         final StepType stepType= getStepType();
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             @Override public void doExecute() {
-                getStepQueueMgr().enqueueStep(getContext(), stepType);
+            	getStepQueueManager().enqueueStep(getContext(), stepType);
             }
         });
         return true;

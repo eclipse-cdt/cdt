@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel.datamodel;
 
-import java.util.concurrent.RejectedExecutionException;
-
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
@@ -44,14 +42,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider
 {
     private final DsfSession fSession;
-
-    /**
-     * It is theoretically possible for a VMProvider to be disposed before it 
-     * has a chance to register itself as event listener.  This flag is used
-     * to avoid removing itself as listener in such situation.
-     */
-    private boolean fRegisteredAsEventListener = false;
-
     /**
      * Constructs the view model provider for given DSF session.  The 
      * constructor is thread-safe to allow VM provider to be constructed
@@ -61,64 +51,16 @@ abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider
     public AbstractDMVMProvider(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {
         super(adapter, presentationContext);
         fSession = session;
-        // Add ourselves as listener for DM events events.
-        try {
-            session.getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (DsfSession.isSessionActive(getSession().getId())) {
-                        getSession().addServiceEventListener(AbstractDMVMProvider.this, null);
-                        fRegisteredAsEventListener = true;
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session shut down, not much we can do but wait to be disposed.
-        } 
     }    
-
-    /** Called to dispose the provider. */ 
-    @Override
-    public void dispose() {
-        try {
-            getSession().getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (DsfSession.isSessionActive(getSession().getId()) && fRegisteredAsEventListener ) {
-                        fSession.removeServiceEventListener(AbstractDMVMProvider.this);
-                    }
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Session shut down.
-        } 
-        super.dispose();
-    }
 
     public DsfSession getSession() { return fSession; }
 
     /**
-     * Handle "data model changed" event by generating a delta object for each 
-     * view and passing it to the corresponding view model provider.  The view
-     * model provider is then responsible for filling-in and sending the delta
-     * to the viewer.
-     * @param e
+     * @deprecated Kept for API compatibility reasons. 
+     * Events are now received and dispatched by the VM adapter.
      */
-    @DsfServiceEventHandler
+    @Deprecated
+	@DsfServiceEventHandler
     public void eventDispatched(final IDMEvent<?> event) {
-        // We're in session's executor thread (session in which the event originated). 
-        // Re-dispach to the view model provider executor thread and then call the 
-        // model proxy strategy to handle the event.
-        if (isDisposed()) return;
-
-        try {
-            getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (isDisposed()) return;
-                    handleEvent(event);
-                }
-            });
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
     }
 }

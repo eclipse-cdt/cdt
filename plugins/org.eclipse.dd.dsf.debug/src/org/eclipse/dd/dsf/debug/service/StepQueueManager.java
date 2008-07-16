@@ -41,11 +41,14 @@ import org.osgi.framework.BundleContext;
  * is used, other service implementations, such as stack and expressions, can 
  * use it to avoid requesting data from debugger back end if another step is 
  * about to be executed. 
+ * 
+ * @deprecated The functionality has been integrated in the UI layer.
  */
-public class StepQueueManager extends AbstractDsfService
+@Deprecated
+public class StepQueueManager extends AbstractDsfService implements IStepQueueManager
 {
     /**
-     * Amount of time in miliseconds, that it takes the ISteppingTimedOutEvent 
+     * Amount of time in milliseconds, that it takes the ISteppingTimedOutEvent 
      * event to be issued after a step is started. 
      * @see ISteppingTimedOutEvent  
      */
@@ -113,9 +116,9 @@ public class StepQueueManager extends AbstractDsfService
         return DsfDebugPlugin.getBundleContext();
     }
 
-    /**
-     * Checks whether a step command can be queued up for given context.
-     */
+    /*
+	 * @see org.eclipse.dd.dsf.debug.service.IStepQueueManager#canEnqueueStep(org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.dd.dsf.debug.service.IRunControl.StepType, org.eclipse.dd.dsf.concurrent.DataRequestMonitor)
+	 */
     public void canEnqueueStep(IExecutionDMContext execCtx, StepType stepType, DataRequestMonitor<Boolean> rm) {
         if (doCanEnqueueStep(execCtx, stepType)) {
             rm.setData(true);
@@ -139,11 +142,9 @@ public class StepQueueManager extends AbstractDsfService
         return stepQueue.size();
     }
 
-    /**
-     * Adds a step command to the execution queue for given context.
-     * @param execCtx Execution context that should perform the step. 
-     * @param stepType Type of step to execute.
-     */
+    /*
+	 * @see org.eclipse.dd.dsf.debug.service.IStepQueueManager#enqueueStep(org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.dd.dsf.debug.service.IRunControl.StepType)
+	 */
     public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
         fRunControl.canStep(
             execCtx, stepType, new DataRequestMonitor<Boolean>(getExecutor(), null) {

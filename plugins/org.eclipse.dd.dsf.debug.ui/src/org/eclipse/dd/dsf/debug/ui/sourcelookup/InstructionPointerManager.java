@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.Position;
@@ -37,7 +38,17 @@ import org.eclipse.ui.texteditor.ITextEditor;
 @ThreadSafe
 class InstructionPointerManager {
 
+	/**
+	 * Current instruction pointer annotation type.
+	 */
+	private static final String ID_CURRENT_IP= "org.eclipse.dd.debug.currentIP"; //$NON-NLS-1$
+	
     /**
+	 * Secondary instruction pointer annotation type.
+	 */
+	private static final String ID_SECONDARY_IP= "org.eclipse.dd.debug.secondaryIP"; //$NON-NLS-1$
+
+	/**
      * Editor annotation object for instruction pointers.
      */
     static class IPAnnotation extends Annotation {
@@ -61,7 +72,7 @@ class InstructionPointerManager {
             fFrame = frame;
             fImage = image;
         }
-            
+        
         /**
          * Returns this annotation's image.
          * 
@@ -170,15 +181,19 @@ class InstructionPointerManager {
         String text;
         Image image;
         if (isTopFrame) {
-            id = "org.eclipse.dd.debug.currentIP"; //$NON-NLS-1$
+            id = ID_CURRENT_IP;
             text = "Debug Current Instruction Pointer"; //$NON-NLS-1$
             image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
         } else {
-            id = "org.eclipse.dd.debug.secondaryIP"; //$NON-NLS-1$
+            id = ID_SECONDARY_IP;
             text = "Debug Call Stack"; //$NON-NLS-1$
             image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
         }
 
+        if (isTopFrame) {
+        	// remove other top-frame IP annotation(s) for this execution-context
+        	removeAnnotations(DMContexts.getAncestorOfType(frame.getParents()[0], IExecutionDMContext.class));
+        }
         Annotation annotation = new IPAnnotation(frame, id, text, image); 
         
 		// Add the annotation at the position to the editor's annotation model.
@@ -202,10 +217,28 @@ class InstructionPointerManager {
                     removeAnnotation(wrapper.getTextEditor(), wrapper.getAnnotation());
                     wrapperItr.remove();
                 }
-            }            
+            }
         }
 	}
-	
+
+	/**
+	 * Remove all top-frame annotations associated with the specified debug target that this class
+	 * is tracking.
+	 */
+	public void removeTopFrameAnnotations(IRunControl.IExecutionDMContext execDmc) {
+		// Retrieve the mapping of threads to context lists
+        synchronized(fAnnotationWrappers) {
+            for (Iterator<AnnotationWrapper> wrapperItr = fAnnotationWrappers.iterator(); wrapperItr.hasNext();) {
+                AnnotationWrapper wrapper = wrapperItr.next();
+                if (DMContexts.isAncestorOf(wrapper.getFrameDMC(), execDmc) 
+                		&& ID_CURRENT_IP.equals(wrapper.getAnnotation().getType())) {
+                    removeAnnotation(wrapper.getTextEditor(), wrapper.getAnnotation());
+                    wrapperItr.remove();
+                }
+            }
+        }
+	}
+
     /** Removes all annotations tracked by this manager */
     public void removeAllAnnotations() {
         synchronized(fAnnotationWrappers) {

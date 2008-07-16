@@ -22,10 +22,11 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack2;
-import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -33,6 +34,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.dd.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -65,6 +67,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
     
 	/**
 	 * View model context representing the end of an incomplete stack.
+	 * 
+	 * @since 1.1
 	 */
 	public class IncompleteStackVMContext extends AbstractVMContext {
 		private final int fLevel;
@@ -320,13 +324,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
         if (idx != 0) return;
         
         final IExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
+        if (execDmc == null) {
+        	return;
+        }
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-        StepQueueManager stepQueueMgrService = getServicesTracker().getService(StepQueueManager.class); 
-        if (execDmc == null || runControlService == null || stepQueueMgrService == null) return;
+        SteppingController stepQueueMgr = (SteppingController) execDmc.getAdapter(SteppingController.class); 
+        if (runControlService == null || stepQueueMgr == null) return;
         
         String imageKey = null;
         if (runControlService.isSuspended(execDmc) || 
-            (runControlService.isStepping(execDmc) && !stepQueueMgrService.isSteppingTimedOut(execDmc)))
+            (runControlService.isStepping(execDmc) && !stepQueueMgr.isSteppingTimedOut(execDmc)))
         {
             imageKey = IDebugUIConstants.IMG_OBJS_STACKFRAME;
         } else {
@@ -409,7 +416,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
         } else if (e instanceof FullStackRefreshEvent) {
         	return IModelDelta.CONTENT | IModelDelta.EXPAND;
-        } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
+        } else if (e instanceof SteppingTimedOutEvent) {
+            return IModelDelta.CONTENT;
+        } else if (e instanceof ISteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
@@ -461,8 +470,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
             clearStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
             buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
-        } else if (e instanceof StepQueueManager.ISteppingTimedOutEvent) {
-            buildDeltaForSteppingTimedOutEvent((StepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
+        } else if (e instanceof SteppingTimedOutEvent) {
+            buildDeltaForSteppingTimedOutEvent((SteppingTimedOutEvent)e, parent, nodeOffset, rm);
+        } else if (e instanceof ISteppingTimedOutEvent) {
+            buildDeltaForSteppingTimedOutEvent((ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof ModelProxyInstalledEvent) {
             buildDeltaForModelProxyInstalledEvent(parent, nodeOffset, rm);
         } else if (e instanceof ExpandStackEvent) {
@@ -549,7 +560,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
         rm.done();
 	}
 	
-    private void buildDeltaForSteppingTimedOutEvent(final StepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+        // Repaint the stack frame images to have the running symbol.
+        //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        rm.done();
+    }
+    
+    private void buildDeltaForSteppingTimedOutEvent(final ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();
@@ -662,6 +679,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	 * Get the current active stack frame limit. If no limit is applicable {@link Integer.MAX_VALUE} is returned.
 	 * 
 	 * @return the current stack frame limit
+	 * 
+	 * @since 1.1
 	 */
 	public int getStackFrameLimit(IExecutionDMContext execCtx) {
 		if (fTemporaryLimits.containsKey(execCtx)) {
@@ -691,6 +710,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	/**
 	 * Increment the stack frame limit by the default increment.
 	 * This implementation doubles the current limit.
+	 * 
+	 * @since 1.1
 	 */
 	public void incrementStackFrameLimit(IExecutionDMContext execCtx) {
 		final int stackFrameLimit= getStackFrameLimit(execCtx);

@@ -14,8 +14,10 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * A string field editor with an enablement check box.
@@ -47,20 +49,19 @@ public class StringWithBooleanFieldEditor extends StringFieldEditor {
 		super.doFillIntoGrid(parent, numColumns);
 	}
 
-	@Override
-	public int getNumberOfControls() {
-		return super.getNumberOfControls() + 1;
-	}
-
-    @Override
-	protected void adjustForNumColumns(int numColumns) {
-    	// the checkbox uses one column
-    	super.adjustForNumColumns(numColumns - 1);
-    }
-
 	private Button getCheckboxControl(Composite parent) {
 		if (fCheckbox == null) {
-			fCheckbox= new Button(parent, SWT.CHECK);
+			Composite inner= new Composite(parent, SWT.NULL);
+			final GridLayout layout= new GridLayout(2, false);
+			layout.marginWidth = 0;
+			inner.setLayout(layout);
+			fCheckbox= new Button(inner, SWT.CHECK);
+			fCheckbox.setFont(parent.getFont());
+			fCheckbox.setText(getLabelText());
+			// create and hide label from base class
+			Label label = getLabelControl(inner);
+			label.setText(""); //$NON-NLS-1$
+			label.setVisible(false);
 			fCheckbox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -70,9 +71,20 @@ public class StringWithBooleanFieldEditor extends StringFieldEditor {
 				}
 			});
 		} else {
-			checkParent(fCheckbox, parent);
+			checkParent(fCheckbox.getParent(), parent);
 		}
 		return fCheckbox;
+	}
+
+	@Override
+	public Label getLabelControl(Composite parent) {
+		final Label label= getLabelControl();
+		if (label == null) {
+			return super.getLabelControl(parent);
+		} else {
+			checkParent(label.getParent(), parent);
+		}
+		return label;
 	}
 
 	protected void valueChanged(boolean oldValue, boolean newValue) {

@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.debug.internal.ui.preferences;
 
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -33,7 +34,7 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 	 * Mandatory default constructor (executable extension).
 	 */
 	public DsfDebugPreferencePage() {
-		super(GRID);
+		super(FLAT);
 		IPreferenceStore store= DsfDebugUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
 		setDescription(MessagesForPreferences.DsfDebugPreferencePage_description); 
@@ -53,26 +54,54 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 
 	@Override
 	protected void createFieldEditors() {
-		Group performanceGroup= new Group(getFieldEditorParent(), SWT.NONE);
+		final Composite parent= getFieldEditorParent();
+		final GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		parent.setLayout(layout);
+		
+		Group performanceGroup= new Group(parent, SWT.NONE);
 		performanceGroup.setText(MessagesForPreferences.DsfDebugPreferencePage_performanceGroup_label);
-		performanceGroup.setLayout(new GridLayout());
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalIndent= 5;
-		performanceGroup.setLayoutData(gd);
-		
-		Composite innerParent= new Composite(performanceGroup, SWT.NONE);
-		innerParent.setLayout(new GridLayout());
-		innerParent.setLayoutData(gd);
-		
+		GridLayout groupLayout= new GridLayout(3, false);
+		performanceGroup.setLayout(groupLayout);
+		performanceGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// stack frame limit
 		IntegerFieldEditor limitEditor= new IntegerWithBooleanFieldEditor(
 				IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE, 
 				IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, 
 				MessagesForPreferences.DsfDebugPreferencePage_limitStackFrames_label, 
-				innerParent);
+				performanceGroup);
 
 		limitEditor.setValidRange(1, Integer.MAX_VALUE);
-		limitEditor.fillIntoGrid(innerParent, 3);
+		limitEditor.fillIntoGrid(performanceGroup, 3);
 		addField(limitEditor);
+
+		// sync stepping speed
+		BooleanFieldEditor syncSteppingEditor= new BooleanFieldEditor(
+				IDsfDebugUIConstants.PREF_SYNCHRONIZED_STEPPING_ENABLE,
+				MessagesForPreferences.DsfDebugPreferencePage_syncStepping_label,
+				performanceGroup);
+
+		syncSteppingEditor.fillIntoGrid(performanceGroup, 3);
+		addField(syncSteppingEditor);
+
+		// minimum step interval
+		IntegerFieldEditor minIntervalEditor= new IntegerFieldEditor(
+				IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL,
+				MessagesForPreferences.DsfDebugPreferencePage_minStepInterval_label,
+				performanceGroup);
+
+		minIntervalEditor.setValidRange(0, 10000);
+		minIntervalEditor.fillIntoGrid(performanceGroup, 3);
+		addField(minIntervalEditor);
+
+		// need to set layout again
+		performanceGroup.setLayout(groupLayout);
+}
+
+	@Override
+	protected void adjustGridLayout() {
+		// do nothing
 	}
 
 }

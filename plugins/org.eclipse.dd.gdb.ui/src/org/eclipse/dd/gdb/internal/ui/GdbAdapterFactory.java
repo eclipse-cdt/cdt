@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
@@ -79,15 +80,20 @@ public class GdbAdapterFactory
         final DsfSuspendTrigger fSuspendTrigger;
 		final DsfSteppingModeTarget fSteppingModeTarget;
 		final IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
+		final SteppingController fSteppingController;
 
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
             DsfSession session = launch.getSession();
             
-            fViewModelAdapter = new GdbViewModelAdapter(session);
+            // register stepping controller
+            fSteppingController = new SteppingController(session);
+            session.registerModelAdapter(SteppingController.class, fSteppingController);
+
+            fViewModelAdapter = new GdbViewModelAdapter(session, fSteppingController);
 
             if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
-                fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator());
+                fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator(), fSteppingController);
             } else {
                 fSourceDisplayAdapter = null;
             }
@@ -137,7 +143,10 @@ public class GdbAdapterFactory
 
             session.unregisterModelAdapter(ISourceDisplay.class);
             if (fSourceDisplayAdapter != null) fSourceDisplayAdapter.dispose();
-            
+
+            session.unregisterModelAdapter(SteppingController.class);
+            fSteppingController.dispose();
+
             session.unregisterModelAdapter(ISteppingModeTarget.class);
             session.unregisterModelAdapter(IStepIntoHandler.class);
             session.unregisterModelAdapter(IStepOverHandler.class);
@@ -147,7 +156,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IRestart.class);
             session.unregisterModelAdapter(ITerminateHandler.class);
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
-
+            
             fStepIntoCommand.dispose();
             fStepOverCommand.dispose();
             fStepReturnCommand.dispose();

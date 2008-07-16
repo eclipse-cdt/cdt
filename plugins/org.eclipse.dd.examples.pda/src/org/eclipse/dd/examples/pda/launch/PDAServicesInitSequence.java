@@ -13,7 +13,6 @@ package org.eclipse.dd.examples.pda.launch;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.BreakpointsMediator;
-import org.eclipse.dd.dsf.debug.service.StepQueueManager;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.examples.pda.service.PDABreakpointAttributeTranslator;
 import org.eclipse.dd.examples.pda.service.PDABreakpoints;
@@ -52,13 +51,6 @@ public class PDAServicesInitSequence extends Sequence {
                 // Start the run control service.
                 fRunControl = new PDARunControl(fSession);
                 fRunControl.initialize(requestMonitor);
-            }
-        },
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Start the service to manage step actions.
-                new StepQueueManager(fSession).initialize(requestMonitor);
             }
         },
         new Step() { 

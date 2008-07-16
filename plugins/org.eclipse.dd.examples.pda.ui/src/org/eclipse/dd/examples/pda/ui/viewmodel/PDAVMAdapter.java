@@ -11,11 +11,12 @@
 package org.eclipse.dd.examples.pda.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.AbstractDebugVMAdapter;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMProvider;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.examples.pda.ui.viewmodel.launch.PDALaunchVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -24,10 +25,10 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 @ThreadSafe
 @SuppressWarnings("restriction")
-public class PDAVMAdapter extends AbstractDMVMAdapter
+public class PDAVMAdapter extends AbstractDebugVMAdapter
 {
-    public PDAVMAdapter(DsfSession session) {
-        super(session);
+    public PDAVMAdapter(DsfSession session, SteppingController controller) {
+        super(session, controller);
         getSession().registerModelAdapter(IColumnPresentationFactory.class, this);
     }    
 

@@ -12,6 +12,9 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @since 1.1
+ */
 public class LaunchVMUpdateMessages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchVMUpdateMessages";//$NON-NLS-1$

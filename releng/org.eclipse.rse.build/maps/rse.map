@@ -64,4 +64,4 @@ plugin@org.eclipse.rse.terminals.ui=v20080710,:pserver:anonymous:none@dev.eclips
 plugin@org.eclipse.rse.tests=v20080714,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests
 plugin@org.eclipse.rse.tests.framework=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework
 plugin@org.eclipse.rse.ui=v20080710a,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
-plugin@org.eclipse.rse.useractions=v20080714,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions
+plugin@org.eclipse.rse.useractions=v20080715,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions

@@ -220,21 +220,6 @@ public final class SteppingController implements IStepQueueManager
      */
     public void removeSteppingControlParticipant(final ISteppingControlParticipant participant) {
     	fParticipants.remove(participant);
-    	// remove participant from steps in progress
-    	if (fSynchronizedStepping) {
-    		getExecutor().execute(new DsfRunnable() {
-				public void run() {
-					for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
-						List<ISteppingControlParticipant> participants= fStepInProgress.get(disabledCtx);
-						if (participants != null) {
-							participants.remove(participant);
-							if (participants.isEmpty()) {
-								fStepInProgress.remove(disabledCtx);
-							}
-						}
-					}
-				}});
-    	}
     }
 
     /**

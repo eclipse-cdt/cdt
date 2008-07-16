@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  * Michael Scharf (Wind River) - [237398] Terminal get Invalid Thread Access when the title is set
+ * Martin Oberhuber (Wind River) - [240745] Pressing Ctrl+F1 in the Terminal should bring up context help
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -803,6 +804,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					break;
 
 				case 0x100000a: // F1 key.
+					if ( (event.stateMask & SWT.CTRL)!=0 ) {
+						//Allow Ctrl+F1 to act locally as well as on the remote, because it is
+						//typically non-intrusive
+						event.doit=true;
+					}
 					sendString("\u001b[M"); //$NON-NLS-1$
 					break;
 

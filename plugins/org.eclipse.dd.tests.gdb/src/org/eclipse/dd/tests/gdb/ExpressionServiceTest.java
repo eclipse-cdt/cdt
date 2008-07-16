@@ -1161,7 +1161,7 @@ public class ExpressionServiceTest extends BaseTestCase {
      * 
      * @return void
      */
-    // @Test
+    @Test
     public void testGlobalVariables() throws Throwable {
 
         // Step to a stack level of 2 to be able to test differen stack frames
@@ -1257,6 +1257,31 @@ public class ExpressionServiceTest extends BaseTestCase {
     	tests = new HashMap<String, String[]>();
     	tests.put("a", new String[] { "0x3", "03", "11", "3", "3" });
     	executeExpressionSubTests(tests, frameDmc);
+    }
+
+    /**
+     * This test makes sure that if a request for expression values are made with
+     * a thread selected, the top-most stack frame is used for evaluation
+     */
+    @Test
+    public void testThreadContext() throws Throwable {
+
+        // Step to a stack level of 2 to be able to test differen stack frames
+         SyncUtil.SyncRunToLocation("locals2");
+         MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_OVER);
+
+        // Create a map of expressions to expected values.
+        Map<String, String[]> tests = new HashMap<String, String[]>();
+
+        // First make sure we have a different value on the other stack frame and that we select
+        // a frame that is not the top frame
+        tests.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345" });
+        executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 1));
+        
+        // Now check that we get the same values as the top stack when selecting the thread only
+        tests = new HashMap<String, String[]>();
+        tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789" });
+        executeExpressionSubTests(tests, stoppedEvent.getDMContext());
     }
 
     /**

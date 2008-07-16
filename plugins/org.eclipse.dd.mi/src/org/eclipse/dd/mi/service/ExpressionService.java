@@ -501,7 +501,16 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 	    
 	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
 	    if (execCtx != null) {
-            return new MIExpressionDMC(getSession().getId(), expression, relExpr, execCtx);
+	    	// If we have a thread context but not a frame context, we give the user
+	    	// the expression as per the top-most frame of the specified thread.
+	    	// To do this, we create our own frame context.
+	    	MIStack stackService = getServicesTracker().getService(MIStack.class);
+	    	if (stackService != null) {
+	    		frameDmc = stackService.createFrameDMContext(execCtx, 0);
+	            return new MIExpressionDMC(getSession().getId(), expression, relExpr, frameDmc);
+	    	}
+
+            return new InvalidContextExpressionDMC(getSession().getId(), expression, execCtx);
         } 
 	    
         IMemoryDMContext memoryCtx = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);

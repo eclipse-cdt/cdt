@@ -18,6 +18,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
  * View Model extension to the platform IModelProxy interface.  This extension
  * allows the IVMProvider implementation to delegate the model proxy implementation
  * into a separate object. 
+ * <br/> 
+ * Note: The IVMModelProxy.init() may be called twice when installed, as a 
+ * workaround for bug 241024. 
  */
 @SuppressWarnings("restriction")
 public interface IVMModelProxy extends IModelProxy {

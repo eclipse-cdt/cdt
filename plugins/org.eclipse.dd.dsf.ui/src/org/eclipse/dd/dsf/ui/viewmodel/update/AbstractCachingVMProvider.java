@@ -601,11 +601,23 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             IVMModelProxy next = itr.next();
             if (next != null && next.getRootElement().equals(element)) {
                 proxy = next;
+                break;
             }
         }
         if (proxy == null) {
             proxy = createModelProxyStrategy(element);
             getActiveModelProxies().add(proxy);
+        } else if (proxy.isDisposed()) {
+            // DSF is capable of re-using old proxies which were previously 
+            // disposed.  However, the viewer which installs a proxy using
+            // a background job to install the proxy calls 
+            // IModelProxy.isDisposed(), to check whether the proxy was disposed
+            // before it could be installed.  We need to clear the disposed flag
+            // of the re-used proxy here, otherwise the proxy will never get used.
+            // Calling init here will cause the init() method to be called twice
+            // so the IVMModelProxy needs to be prepared for that.
+            // See bug 241024.
+            proxy.init(context);
         }
         return proxy;
     }

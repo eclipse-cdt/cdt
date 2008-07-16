@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.indexer;
 
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
-import org.eclipse.cdt.core.parser.IParserLogService;
 
 /**
  * @author crecoskie

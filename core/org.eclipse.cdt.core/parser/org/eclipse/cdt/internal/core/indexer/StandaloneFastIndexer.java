@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-public class StandaloneFastIndexer extends StandaloneIndexer{	
+public class StandaloneFastIndexer extends StandaloneIndexer {	
 	
 	/**
 	 * Construct a fast standalone indexer.
@@ -53,15 +53,44 @@ public class StandaloneFastIndexer extends StandaloneIndexer{
 	 */
 	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log) throws CoreException {
-		WritablePDOM pdom = new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings);
-		fIndex = new WritableCIndex(
-				pdom,
-				new IIndexFragment[0]);		
-		fIndexAllFiles = false;
-		fScanner = scanner;
-		fMapper = mapper;
-		fLog = log;	
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+				false, mapper, log, scanner);
+	
 	}
+	
+	/**
+	 * Construct a fast standalone indexer.
+	 * @param writableIndexFile - the file where the PDOM index is stored
+	 * @param converter - a converter used to convert between String locations and IIndexLocations
+	 * @param linkageFactoryMappings - all of the available IPDOMLinkageFactories the index can use during indexing
+	 * @param scannerProvider - provides include paths and defined symbols
+	 * @param mapper - a mapper used to determine ICLanguage for a particular file
+	 * @param log - logger
+	 * @throws CoreException
+	 */
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
+			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+				false, mapper, log, scannerProvider);
+	
+	}
+	
+	/**
+	 * Construct a fast standalone indexer.
+	 * @param writableIndexFile - the file where the PDOM index is stored
+	 * @param converter - a converter used to convert between String locations and IIndexLocations
+	 * @param linkageFactoryMappings - all of the available IPDOMLinkageFactories the index can use during indexing
+	 * @param mapper - a mapper used to determine ICLanguage for a particular file
+	 * @param log - logger
+	 * @throws CoreException
+	 */
+	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
+			ILanguageMapper mapper, IParserLogService log) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+				false, mapper, log, (IStandaloneScannerInfoProvider)null);
+	
+	}
+	
 	
 	/**
 	 * Create a delegate standalone indexing task
@@ -70,5 +99,6 @@ public class StandaloneFastIndexer extends StandaloneIndexer{
 	protected StandaloneIndexerTask createTask(List<String> added, List<String> changed, List<String> removed) {
 		return new StandaloneFastIndexerTask(this, added, changed, removed);
 	}
+
 
 }

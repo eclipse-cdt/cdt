@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -55,18 +56,32 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 *                    		  by the source code being parsed.
 	 * @throws CoreException
 	 */
-	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map linkageFactoryMappings,
+	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
-		WritablePDOM pdom = new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings);
-		fIndex = new WritableCIndex(
-				pdom,
-				new IIndexFragment[0]);		
-		fIndexAllFiles = false;
-		fScanner = scanner;
-		fMapper = mapper;
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+				false, mapper, log, scanner);
 		fCodeReaderFactory = codeReaderFactory;
-		fLog = log;
 	}
+	
+	/**
+	 * Create a full indexer.
+	 * @param writableIndexFile - the file where the PDOM index is stored
+	 * @param converter - a converter used to convert between String locations and IIndexLocations
+	 * @param linkageFactoryMappings - all of the available IPDOMLinkageFactories the index can use during indexing
+	 * @param scannerProvider - provides include paths and defined symbols
+	 * @param mapper - a mapper used to determine ICLanguage for a particular file
+	 * @param log - logger
+	 * @param codeReaderFactory - factory that provides CodeReaders for files included
+	 *                    		  by the source code being parsed.
+	 * @throws CoreException
+	 */
+	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
+			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+				false, mapper, log, scannerProvider);
+		fCodeReaderFactory = codeReaderFactory;
+	}
+	
 	
 	/**
 	 * Returns the factory that provides CodeReaders for files included
@@ -80,7 +95,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * Creates a delegate standalone indexing task
 	 */
 	@Override
-	protected StandaloneIndexerTask createTask(List added, List changed, List removed) {
+	protected StandaloneIndexerTask createTask(List<String> added, List<String> changed, List<String> removed) {
 		return new StandaloneFullIndexerTask(this, added, changed, removed);
 	}
 

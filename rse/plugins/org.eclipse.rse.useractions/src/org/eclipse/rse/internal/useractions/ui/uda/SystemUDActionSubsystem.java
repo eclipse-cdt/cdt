@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Kevin Doyle		(IBM)		 - [241015] Add getActionSubstVarList(SystemUDActionElement)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -157,6 +158,15 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 */
 	public abstract SystemCmdSubstVarList getActionSubstVarList(int actionDomainType);
 
+	 /**
+	  * Return the list of substitution variables for the given UDA action.
+	  */
+	public SystemCmdSubstVarList getActionSubstVarList(SystemUDActionElement action)
+	{
+		int actionDomainType = action.getDomain();
+		return getActionSubstVarList(actionDomainType);
+	}
+	
 	/**
 	 * Retrieve current subsystem
 	 */
@@ -526,7 +536,7 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 	 */
 	protected String doCommandSubstitutions(SystemUDActionElement action, String cmd, Object selectedObject) {
 		this.currentAction = action;
-		SystemCmdSubstVarList supportedVariables = getActionSubstVarList(action.getDomain());
+		SystemCmdSubstVarList supportedVariables = getActionSubstVarList(action);
 		return supportedVariables.doSubstitutions(cmd, selectedObject, this);
 	} // end method
 

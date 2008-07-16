@@ -47,6 +47,7 @@
  * Radoslav Gerganov (ProSyst)   - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  * David McKnight   (IBM)        - [236039][dstore][efs] DStoreInputStream can report EOF too early - clean up how it waits for the local temp file to be created
+ * David McKnight   (IBM)        - [240710] [dstore] DStoreFileService.getFile() fails with NPE for valid root files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1120,8 +1121,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor)
 	{
-		DataElement de = getSubjectFor(remoteParent, name);
-
+		DataElement de = null;
+		if (remoteParent != null && remoteParent.length() > 0){ 
+			// this is a root
+			de = getSubjectFor(remoteParent, name);
+		}
+		else {
+			de = getElementFor(name);
+		}
+		
 		// with 207095, it's possible to get here unconnected such that there is no element
 		if (de != null) {
 			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);

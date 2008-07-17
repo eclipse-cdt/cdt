@@ -760,4 +760,36 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void A::a(C e) { if (D::iterator it = m.find (e)) m.erase(it);}
+	//T* A::b(T* t) { S::iterator it = m.find(t); if (!it) return NULL; else return *it; }
+	//M* A::c(M* tm) { N::iterator it = myN.find(tm); if (!it) return NULL; else return *it; }
+
+	//void A::a(C e) {
+	//	if (D::iterator it = m.find (e))
+	//		m.erase(it);
+	//}
+	//T* A::b(T* t) {
+	//	S::iterator it = m.find(t);
+	//	if (!it)
+	//		return NULL;
+	//	else
+	//		return *it;
+	//}
+	//M* A::c(M* tm) {
+	//	N::iterator it = myN.find(tm);
+	//	if (!it)
+	//		return NULL;
+	//	else
+	//		return *it;
+	//}
+	public void testHandleParsingProblemsInIfCondition_Bug240564() throws Exception {
+		assertFormatterResult();
+	}
+
+	//TestType1<TESTNS::TestType2<3> > test_variable;
+
+	//TestType1<TESTNS::TestType2<3> > test_variable;
+	public void testNestedTemplatedArgument_Bug241058() throws Exception {
+		assertFormatterResult();
+	}
 }

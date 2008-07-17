@@ -2289,8 +2289,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 
 	public ICSourceEntry[] getSourceEntries() {
-		if(sourceEntries == null){
-			if(parent != null)
+		if(sourceEntries == null || sourceEntries.length == 0){
+			if(parent != null && sourceEntries == null)
 				return parent.getSourceEntries();
 			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)}; //$NON-NLS-1$
 			

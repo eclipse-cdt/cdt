@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kenya Ishimoto   (IBM)        - [241197] Paste action causes IllegalArgumentException at Resource.copy
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -98,6 +99,11 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 				if (targetAdapter != null)
 				{
 					List rulesList = new ArrayList();
+				
+					if (target instanceof ISchedulingRule) {
+						rulesList.add(target);
+					}
+					
 					int j = 0;
 					for (int i = 0; i < srcObjects.size(); i++)
 					{

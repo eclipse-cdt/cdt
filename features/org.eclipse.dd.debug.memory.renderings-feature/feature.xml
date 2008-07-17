@@ -37,4 +37,6 @@ Memory Renderings
          version="0.0.0"
          unpack="false"/>
 
+   <includes id="org.eclipse.dd.debug.memory.renderings.source"  version="0.0.0"/>
+   
 </feature>

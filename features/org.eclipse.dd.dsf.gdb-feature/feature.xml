@@ -48,5 +48,7 @@ GDB-MI Implementation
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <includes id="org.eclipse.dd.dsf.gdb.source"  version="0.0.0"/>
 
 </feature>

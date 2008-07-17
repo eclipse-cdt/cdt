@@ -3214,6 +3214,10 @@ public class SystemView extends SafeTreeViewer
 			updateItem(widget, data);
 		}
 
+		/* may cause performance issue in bug 238363
+		 * calling refresh on each child item means that we'll be doing update on it
+		 * which ends up making it a pending decoration change since it's an update on an
+		 * item that already has text
 		// recurse
 		Item[] children = getChildren(widget);
 		if (children != null) {
@@ -3226,6 +3230,8 @@ public class SystemView extends SafeTreeViewer
 				if (data != null) doOurInternalRefresh(item, data, doStruct, false);
 			}
 		}
+		*/
+		
 		if (firstCall) {
 			
 			internalRefresh(element);
@@ -6382,10 +6388,6 @@ public class SystemView extends SafeTreeViewer
 			internalUpdate((Widget)matches.get(i), element, properties);
 		}		
 	}
-	
-	// bug 238363 - this is workaround for performance problem
-	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-		
-	}
+
 	
 }

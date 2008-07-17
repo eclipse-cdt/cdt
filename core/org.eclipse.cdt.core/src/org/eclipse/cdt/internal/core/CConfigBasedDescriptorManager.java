@@ -122,7 +122,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				if (dr.getProjectOwner().getID().equals(NULLCOwner.getOwnerID())) {
 					// non owned descriptors are simply configure to the new owner no questions ask!
 					dr = updateDescriptor(project, dr, id);
-					dr.apply(true);
+
 				} else if (!dr.getProjectOwner().getID().equals(id)) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 //				try {
 					dr = findDescriptor(project, true);
 					dr = updateDescriptor(project, dr, id);
-					dr.apply(true);
+
 //				} catch (CoreException e) { // if .cdtproject already exists we'll use that
 //					IStatus status = e.getStatus();
 //					if (status.getCode() == CCorePlugin.STATUS_CDTPROJECT_EXISTS) {
@@ -145,7 +145,8 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 //				}
 			}
 		}
-		
+
+		dr.apply(true);
 		if(dr.isOperationStarted())
 			dr.setOpEvent(new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, 0));
 	}
@@ -185,9 +186,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 
 		synchronized(CProjectDescriptionManager.getInstance()){
 			dr = updateDescriptor(project, dr, id);
-			dr.apply(true);
 		}
 		
+		dr.apply(true);
 		if(dr.isOperationStarted())
 			dr.setOpEvent(new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));
 	}

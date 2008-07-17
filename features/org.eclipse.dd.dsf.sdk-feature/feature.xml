@@ -58,5 +58,7 @@ Core SDK
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <includes id="org.eclipse.dd.dsf.sdk.source"  version="0.0.0"/>
 
 </feature>

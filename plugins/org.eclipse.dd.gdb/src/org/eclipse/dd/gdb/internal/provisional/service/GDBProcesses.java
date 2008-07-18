@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
+import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -25,6 +30,7 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
@@ -126,6 +132,10 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
     }
     
     private GDBControl fCommandControl;
+    
+    // A map of pid to names.  It is filled when we get all the
+    // processes that are running
+    private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
 
     public GDBProcesses(DsfSession session) {
     	super(session);
@@ -231,8 +241,17 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		// We must first check for GdbProcessDMC because it is also a GdbThreadDMC
 		if (dmc instanceof GdbProcessDMC) {
-			rm.setData(new GdbThreadDMData(fCommandControl.getExecutablePath().lastSegment(), 
-					                       ((GdbProcessDMC)dmc).getId()));
+			String pidStr = ((GdbProcessDMC)dmc).getId();
+			int pid = 0;
+			try {
+				pid = Integer.parseInt(pidStr);
+			} catch (NumberFormatException e) {
+			}
+			
+			String name = fProcessNames.get(pid);
+			// If we don't find the name in our list, return the default name of our program
+			if (name == null) name = fCommandControl.getExecutablePath().lastSegment();
+			rm.setData(new GdbThreadDMData(name, pidStr));
 			rm.done();
 		} else if (dmc instanceof GdbThreadDMC) {
 			rm.setData(new GdbThreadDMData("", ((GdbThreadDMC)dmc).getId())); //$NON-NLS-1$
@@ -317,21 +336,59 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 		rm.done();
 	}
 
-    public void getRunningProcesses(IDMContext dmc, DataRequestMonitor<IProcessDMContext[]> rm) {
-		// monitor list processes is only for remote session
-		fCommandControl.queueCommand(
-				new CLIMonitorListProcesses(dmc), 
-				new DataRequestMonitor<CLIMonitorListProcessesInfo>(getExecutor(), rm) {
-					@Override
-					protected void handleSuccess() {
-						IProcessInfo[] processes = getData().getProcessList();
-						IProcessDMContext[] procDmcs = new GdbProcessDMC[processes.length];
-						for (int i=0; i<procDmcs.length; i++) {
-							procDmcs[i] = createProcessContext(Integer.toString(processes[i].getPid())); 
+	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
+		if (fCommandControl.getSessionType() == SessionType.LOCAL) {
+			IProcessList list = null;
+			try {
+				list = CCorePlugin.getDefault().getProcessList();
+			} catch (CoreException e) {
+			}
+
+			if (list == null) {
+				// If the list is null, the prompter will deal with it
+				fProcessNames.clear();
+				rm.setData(null);
+			} else {
+				fProcessNames.clear();
+				for (IProcessInfo procInfo : list.getProcessList()) {
+					fProcessNames.put(procInfo.getPid(), procInfo.getName());
+				}
+				rm.setData(makeProcessDMCs(list.getProcessList()));
+			}
+			rm.done();
+		} else {
+			// monitor list processes is only for remote session
+			fCommandControl.queueCommand(
+					new CLIMonitorListProcesses(dmc), 
+					new DataRequestMonitor<CLIMonitorListProcessesInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleCompleted() {
+							if (isSuccess()) {
+								for (IProcessInfo procInfo : getData().getProcessList()) {
+									fProcessNames.put(procInfo.getPid(), procInfo.getName());
+								}
+								rm.setData(makeProcessDMCs(getData().getProcessList()));
+							} else {
+								// The monitor list command is not supported.
+								// Just return an empty list and let the caller deal with it.
+								fProcessNames.clear();
+								rm.setData(new IProcessDMContext[0]);
+							}
+							rm.done();
 						}
-					}
-				});
+
+					});
+		}
 	}
+
+	private IProcessDMContext[] makeProcessDMCs(IProcessInfo[] processes) {
+		IProcessDMContext[] procDmcs = new GdbProcessDMC[processes.length];
+		for (int i=0; i<procDmcs.length; i++) {
+			procDmcs[i] = createProcessContext(Integer.toString(processes[i].getPid())); 
+		}
+		return procDmcs;
+	}
+    	
 
 	public void runNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,

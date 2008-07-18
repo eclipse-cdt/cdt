@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
+ * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -127,6 +128,7 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	
 		if (pm != null) 
 		{
+			shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 			PreferenceDialog d = new WorkbenchPreferenceDialog(shell, pm);
 			d.create();
 			// TODO - hack to make this work in  3.1

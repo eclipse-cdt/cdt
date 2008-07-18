@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
+ * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -53,6 +54,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -84,12 +86,12 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.RSEInitJob;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.actions.SystemCascadingPreferencesAction;
 import org.eclipse.rse.internal.ui.actions.SystemCollapseAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemImportConnectionAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionNamesAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
+import org.eclipse.rse.internal.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -679,8 +681,16 @@ public class SystemViewPart
 
 		// Now display any contributed action shortcuts for bringing up
 		// a particular preference page...
-		SystemCascadingPreferencesAction preferencesAction = new SystemCascadingPreferencesAction(shell);
-		menuMgr.add(preferencesAction.getSubMenu());
+		MenuManager subMenu = new MenuManager(SystemResources.ACTION_CASCADING_PREFERENCES_LABEL, ISystemContextMenuConstants.MENU_PREFERENCES);
+		menuMgr.add(subMenu);
+		
+		SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
+		action.setPreferencePageID("org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"); //$NON-NLS-1$
+		action.setText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_LABEL);
+		action.setToolTipText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_TOOLTIP);
+		action.setHelp("org.eclipse.rse.ui.aprefrse"); //$NON-NLS-1$
+		subMenu.add(action);
+		subMenu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_ADDITIONS));
 
 		SystemViewMenuListener menuListener = new SystemViewMenuListener(true); // true says this is a persistent menu
 		if (viewPart instanceof ISystemMessageLine)

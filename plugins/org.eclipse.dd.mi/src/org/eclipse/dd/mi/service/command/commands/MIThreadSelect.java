@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -27,9 +28,12 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 public class MIThreadSelect extends MICommand<MIInfo>
 {
-	
+	@Deprecated
 	public MIThreadSelect(IDMContext ctx, int threadNum) {
 		super(ctx, "-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
 	}
 
+	public MIThreadSelect(IMIExecutionDMContext ctx) {
+		super(ctx, "-thread-select", new String[]{Integer.toString(ctx.getThreadId())}); //$NON-NLS-1$
+	}
 }

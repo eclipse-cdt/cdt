@@ -31,6 +31,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
@@ -84,7 +85,7 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
 
     @Immutable
     protected class GdbProcessDMC extends GdbThreadDMC
-    implements IProcessDMContext
+    implements IMIProcessDMContext
     {
     	/**
     	 * Constructor for the context.  It should not be called directly by clients.
@@ -98,6 +99,8 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
     	protected GdbProcessDMC(String sessionId, String id) {
     		super(sessionId, null, id);
     	}
+    	
+    	public String getProcId() { return getId(); }
     	
     	@Override
     	public String toString() { return baseToString() + ".proc[" + getId() + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
@@ -269,18 +272,9 @@ public class GDBProcesses extends AbstractDsfService implements IProcesses {
     }
 
     public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
-		if (procCtx instanceof GdbProcessDMC) {
-			int pid;
-			try {
-				pid = Integer.parseInt(((GdbProcessDMC)procCtx).getId());
-			} catch (NumberFormatException e) {
-	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid process id.", null)); //$NON-NLS-1$
-	            rm.done();
-	            return;
-			}
-			
+		if (procCtx instanceof IMIProcessDMContext) {
 			fCommandControl.queueCommand(
-					new CLIAttach(procCtx, pid),
+					new CLIAttach((IMIProcessDMContext)procCtx),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {

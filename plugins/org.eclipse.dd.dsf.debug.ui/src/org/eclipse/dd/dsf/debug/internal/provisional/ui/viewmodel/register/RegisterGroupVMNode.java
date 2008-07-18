@@ -80,7 +80,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapter2.class)) {
-                return fRegisterGroupExpressionFactory;
+                return getWatchExpressionFactory();
             } else {
                 return super.getAdapter(adapter);
             }
@@ -112,7 +112,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
          * Expected format: Group(GroupName)
          */
         public String createWatchExpression(Object element) throws CoreException {
-            IRegisterGroupDMData groupData = fSyncRegisterDataAccess.getRegisterGroupDMData(element);
+            IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
             if (groupData != null) {
                 StringBuffer exprBuf = new StringBuffer();
                 exprBuf.append("GRP( "); //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     }
 
     final private SyncRegisterDataAccess fSyncRegisterDataAccess; 
-    final protected RegisterGroupExpressionFactory fRegisterGroupExpressionFactory = new RegisterGroupExpressionFactory(); 
+    private IWatchExpressionFactoryAdapter2 fRegisterGroupExpressionFactory = null; 
     private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
 
     public RegisterGroupVMNode(AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
@@ -143,6 +143,13 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return fSyncRegisterDataAccess;
     }
 
+    public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
+    	if ( fRegisterGroupExpressionFactory == null ) {
+    		fRegisterGroupExpressionFactory = new RegisterGroupExpressionFactory();
+    	}
+    	return fRegisterGroupExpressionFactory;
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)

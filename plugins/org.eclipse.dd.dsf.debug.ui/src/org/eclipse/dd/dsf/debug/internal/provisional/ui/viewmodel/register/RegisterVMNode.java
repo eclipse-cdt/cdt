@@ -89,7 +89,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapter2.class)) {
-                return fRegisterExpressionFactory;
+                return getWatchExpressionFactory();
             } else {
                 return super.getAdapter(adapter);
             }
@@ -125,8 +125,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
          * Expected format: GRP( GroupName ).REG( RegisterName )
          */
         public String createWatchExpression(Object element) throws CoreException {
-            IRegisterGroupDMData groupData = fSyncRegisterDataAccess.getRegisterGroupDMData(element);
-            IRegisterDMData registerData = fSyncRegisterDataAccess.getRegisterDMData(element);
+            IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
+            IRegisterDMData registerData = getSyncRegisterDataAccess().getRegisterDMData(element);
             
             if (groupData != null && registerData != null) { 
             	StringBuffer exprBuf = new StringBuffer();
@@ -141,7 +141,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
-    final protected RegisterExpressionFactory fRegisterExpressionFactory = new RegisterExpressionFactory(); 
+    private IWatchExpressionFactoryAdapter2 fRegisterExpressionFactory = null; 
     final private SyncRegisterDataAccess fSyncRegisterDataAccess; 
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
 
@@ -162,6 +162,13 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
     public IFormattedValuePreferenceStore getPreferenceStore() {
         return fFormattedPrefStore;
+    }
+    
+    public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
+    	if ( fRegisterExpressionFactory == null ) {
+    		fRegisterExpressionFactory = new RegisterExpressionFactory();
+    	}
+    	return fRegisterExpressionFactory;
     }
     
     /**
@@ -738,7 +745,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
            *   See if the register is writable and if so we will created a
            *   cell editor for it.
            */
-          IRegisterDMData regData = fSyncRegisterDataAccess.readRegister(element);
+          IRegisterDMData regData = getSyncRegisterDataAccess().readRegister(element);
 
           if ( regData != null && regData.isWriteable() ) {
               return new TextCellEditor(parent);
@@ -753,7 +760,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return new RegisterCellModifier( 
-            getDMVMProvider(), fFormattedPrefStore, fSyncRegisterDataAccess );
+            getDMVMProvider(), fFormattedPrefStore, getSyncRegisterDataAccess() );
     }
     
     /*

@@ -99,7 +99,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapter2.class)) {
-                return fBitFieldExpressionFactory;
+                return getWatchExpressionFactory();
             } else {
                 return super.getAdapter(adapter);
             }
@@ -131,9 +131,9 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
          * Expected format: GRP( GroupName ).REG( RegisterName ).BFLD( BitFieldname )
          */
         public String createWatchExpression(Object element) throws CoreException {
-            IRegisterGroupDMData groupData = fDataAccess.getRegisterGroupDMData(element);
-            IRegisterDMData registerData = fDataAccess.getRegisterDMData(element);
-            IBitFieldDMData bitFieldData = fDataAccess.getBitFieldDMData(element);
+            IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
+            IRegisterDMData registerData   = getSyncRegisterDataAccess().getRegisterDMData(element);
+            IBitFieldDMData bitFieldData   = getSyncRegisterDataAccess().getBitFieldDMData(element);
 
             if (groupData != null && registerData != null && bitFieldData != null) { 
                 StringBuffer exprBuf = new StringBuffer();
@@ -149,13 +149,13 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
     
-    private SyncRegisterDataAccess fDataAccess = null;
-    final protected BitFieldExpressionFactory fBitFieldExpressionFactory = new BitFieldExpressionFactory(); 
+    private SyncRegisterDataAccess fSyncRegisterDataAccess = null;
+    private IWatchExpressionFactoryAdapter2 fBitFieldExpressionFactory = null; 
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
     
     public RegisterBitFieldVMNode(IFormattedValuePreferenceStore prefStore, AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess access) {
         super(provider, session, IRegisters.IBitFieldDMContext.class);
-        fDataAccess = access;
+        fSyncRegisterDataAccess = access;
         fFormattedPrefStore = prefStore;
     }
     
@@ -168,6 +168,18 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     public IFormattedValuePreferenceStore getPreferenceStore() {
         return fFormattedPrefStore;
     }
+    
+    public SyncRegisterDataAccess getSyncRegisterDataAccess() {
+        return fSyncRegisterDataAccess;
+    }
+
+    public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
+    	if ( fBitFieldExpressionFactory == null ) {
+    		fBitFieldExpressionFactory = new BitFieldExpressionFactory();
+    	}
+    	return fBitFieldExpressionFactory;
+    }
+    
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
@@ -560,7 +572,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
              *   editor.  If there are bit groups then the modifier will check the size of  the
              *   value being entered.
              */
-            IBitFieldDMData bitFieldData = fDataAccess.readBitField(element);
+            IBitFieldDMData bitFieldData = getSyncRegisterDataAccess().readBitField(element);
 
             if ( bitFieldData != null && bitFieldData.isWriteable() ) {
 
@@ -606,7 +618,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
          *   In order to decide what kind of modifier to present we need to know if there
          *   are mnemonics which can be used to represent the values. 
          */
-        IBitFieldDMData bitFieldData = fDataAccess.readBitField(element);
+        IBitFieldDMData bitFieldData = getSyncRegisterDataAccess().readBitField(element);
 
         if ( bitFieldData != null && bitFieldData.isWriteable() ) {
 
@@ -617,14 +629,14 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                  *  Note we are complex COMBO and return the right editor.
                  */
                 return new RegisterBitFieldCellModifier(
-                    getDMVMProvider(), fFormattedPrefStore, BitFieldEditorStyle.BITFIELDCOMBO, fDataAccess );
+                    getDMVMProvider(), fFormattedPrefStore, BitFieldEditorStyle.BITFIELDCOMBO, getSyncRegisterDataAccess() );
             }
             else {
                 /*
                  *  Text editor even if we need to clamp the value entered.
                  */
                 return new RegisterBitFieldCellModifier( 
-                    getDMVMProvider(), fFormattedPrefStore, BitFieldEditorStyle.BITFIELDTEXT, fDataAccess );
+                    getDMVMProvider(), fFormattedPrefStore, BitFieldEditorStyle.BITFIELDTEXT, getSyncRegisterDataAccess() );
             }
         }
         else {

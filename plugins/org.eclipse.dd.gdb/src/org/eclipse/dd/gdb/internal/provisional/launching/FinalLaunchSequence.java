@@ -419,12 +419,8 @@ public class FinalLaunchSequence extends Sequence {
         			}
 
         			if (pid != -1) {
-        				//FIXME
-        				IProcessDMContext procDmc = 
-        					fProcService.createProcessContext(Integer.toString(pid));
-
         				fProcService.attachDebuggerToProcess(
-        						procDmc, 
+            					fProcService.createProcessContext(Integer.toString(pid)),
         						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         			} else {
         				fProcService.getRunningProcesses(

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.IProcessInfo;
  */
 public class CLIMonitorListProcessesInfo extends MIInfo {
 
+	@Deprecated
 	public class ProcessInfo implements IProcessInfo, Comparable<ProcessInfo> {
 		int pid;
 		String name;

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -41,6 +42,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	};
 	
 	private static CWorkbenchAdapter fgCWorkbenchAdapter;
+	private static CActionFilter fgCActionFilter;
 	
 	/**
 	 * @see CElementAdapterFactory#getAdapterList
@@ -70,7 +72,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		} else if (IWorkbenchAdapter.class.equals(key)) {
 			return getWorkbenchAdapter(celem);
 		} else if (IActionFilter.class.equals(key)) {
-			return getWorkbenchAdapter(celem);
+			return getActionFilter(celem);
 		}
 		return null; 
 	}
@@ -102,5 +104,12 @@ public class CElementAdapterFactory implements IAdapterFactory {
 			fgCWorkbenchAdapter = new CWorkbenchAdapter();
 		}
 		return fgCWorkbenchAdapter;
+	}
+	
+	private IActionFilter getActionFilter(ICElement celement) {
+		if (fgCActionFilter == null) {
+			fgCActionFilter = new CActionFilter();
+		}
+		return fgCActionFilter;
 	}
 }

@@ -8,7 +8,8 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
- *******************************************************************************/
+ *     Sergey Prigogin (Google)
+******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
 import org.eclipse.cdt.core.CConventions;
@@ -38,7 +39,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardPage {
-	
+	private final String KEY_LAST_USED_TEMPLATE = "LastUsedHeaderTemplate"; //$NON-NLS-1$
+
 	private ITranslationUnit fNewFileTU = null;
 	private StringDialogField fNewFileDialogField;
 	
@@ -65,7 +67,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 
 	/**
 	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at 
-	 * least 3 columns.
+	 * least 2 columns.
 	 * 
 	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
@@ -153,7 +155,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	            	fNewFileTU = (ITranslationUnit) CoreModel.getDefault().create(newFile);
 	            	if (fNewFileTU != null) {
 	            		String lineDelimiter= StubUtility.getLineDelimiterUsed(fNewFileTU);
-						String content= CodeGeneration.getHeaderFileContent(getSelectedTemplate(), fNewFileTU, null, null, lineDelimiter);
+						String content= CodeGeneration.getHeaderFileContent(getTemplate(), fNewFileTU, null, null, lineDelimiter);
 						if (content != null) {
 							fNewFileTU.getBuffer().setContents(content.toCharArray());
 							fNewFileTU.save(monitor, true);
@@ -181,5 +183,21 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	protected Template[] getApplicableTemplates() {
 		return StubUtility.getFileTemplatesForContentTypes(
 				new String[] { CCorePlugin.CONTENT_TYPE_CXXHEADER, CCorePlugin.CONTENT_TYPE_CHEADER }, null);
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#getPreferredTemplateName()
+	 */
+	@Override
+	public String getLastUsedTemplateName() {
+		return getDialogSettings().get(KEY_LAST_USED_TEMPLATE);
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#savePreferredTemplateName(String)
+	 */
+	@Override
+	public void saveLastUsedTemplateName(String name) {
+		getDialogSettings().put(KEY_LAST_USED_TEMPLATE, name);
 	}
 }

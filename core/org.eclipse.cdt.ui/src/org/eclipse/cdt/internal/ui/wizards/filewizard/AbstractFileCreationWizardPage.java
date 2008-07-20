@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
@@ -80,6 +81,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 public abstract class AbstractFileCreationWizardPage extends NewElementWizardPage {
 
 	private static final int MAX_FIELD_CHARS = 50;
+	private static final String NO_TEMPLATE = ""; //$NON-NLS-1$
 	
 	private IWorkspaceRoot fWorkspaceRoot;
 
@@ -147,11 +149,13 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
         
         createSourceFolderControls(composite, nColumns);
         
-        createFileControls(composite, nColumns);
+        createFileControls(composite, nColumns - 1);
+        // Placeholder for the right column.
+        (new Composite(composite, SWT.NO_FOCUS)).setLayoutData(new GridData(1, 1));
 
         createTemplateControls(composite, nColumns);
 
-		composite.layout();			
+		composite.layout();
 
 		setErrorMessage(null);
 		setMessage(null);
@@ -187,7 +191,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	
 	/**
 	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at 
-	 * least 3 columns.
+	 * least 2 columns.
 	 * 
 	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
@@ -206,6 +210,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			fTemplateDialogField.doFillIntoGrid(parent, columns - 1);
 			Button configureButton= new Button(parent, SWT.PUSH);
 			configureButton.setText(NewFileWizardMessages.AbstractFileCreationWizardPage_configure_label);
+			configureButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 			configureButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -237,30 +242,41 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	protected void updateTemplates() {
 		Template selected= getSelectedTemplate();
+		String name = selected != null ?
+				selected.getName() :
+				getLastUsedTemplateName();
 		fTemplates= getApplicableTemplates();
-		int idx= 1;
+		int idx= NO_TEMPLATE.equals(name) ? 0 : 1;
 		String[] names= new String[fTemplates.length + 1];
 		for (int i = 0; i < fTemplates.length; i++) {
 			names[i + 1]= fTemplates[i].getName();
-			if (selected != null && selected.getName().equals(names[i + 1])) {
-				idx= i;
+			if (name != null && name.equals(names[i + 1])) {
+				idx= i + 1;
 			}
 		}
 		names[0]= NewFileWizardMessages.AbstractFileCreationWizardPage_noTemplate;
 		fTemplateDialogField.setItems(names);
-		fTemplateDialogField.selectItem(idx + 1);
+		fTemplateDialogField.selectItem(idx);
 	}
 
 	/**
-     * Configure the set of selectable templates.
+     * Configure the set of templates to select from.
 	 * @return the set of templates
 	 */
 	protected abstract Template[] getApplicableTemplates();
 
 	/**
-	 * @return the selected template or <code>null</code> if none
+	 * Returns the selected template and saves its name for future use.
+	 *  
+	 * @return the selected template or <code>null</code> if none.
 	 */
-	protected Template getSelectedTemplate() {
+	protected Template getTemplate() {
+		Template template = getSelectedTemplate();
+		saveLastUsedTemplateName(template != null ? template.getName() : NO_TEMPLATE);
+		return template;
+	}
+
+	private Template getSelectedTemplate() {
 		if (fTemplateDialogField != null) {
 			int index= fTemplateDialogField.getSelectionIndex() - 1;
 			if (index >= 0 && index < fTemplates.length) {
@@ -269,7 +285,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		}
 		return null;
 	}
-
+	
     /**
      * The wizard owning this page is responsible for calling this method with the
      * current selection. The selection is used to initialize the fields of the wizard 
@@ -699,4 +715,16 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 * @see #createFile(IProgressMonitor)
 	 */			
 	public abstract ITranslationUnit getCreatedFileTU();
+	
+	/**
+	 * @return the name of the template used in the previous dialog invocation. 
+	 */
+	public abstract String getLastUsedTemplateName();
+	
+	/**
+	 * Saves the name of the last used template.
+	 * 
+	 * @param name the name of a template, or an empty string for no template.
+	 */
+	public abstract void saveLastUsedTemplateName(String name);
 }

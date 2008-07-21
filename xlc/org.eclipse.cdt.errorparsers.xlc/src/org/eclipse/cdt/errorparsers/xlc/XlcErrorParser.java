@@ -110,7 +110,7 @@ public class XlcErrorParser implements IErrorParser
 			/* look for '.' character after the first occurance
 			   of comma. */
 			tok = new StringTokenizer(secondPart,".");  //$NON-NLS-1$
-			if(tok.hasMoreTokens())
+			if(tok.countTokens()>1)
 			{
 				String token = tok.nextToken();
 				/* look for the string  "line " before the
@@ -219,7 +219,7 @@ public class XlcErrorParser implements IErrorParser
 		}
 		catch(NumberFormatException e )
 		{
-			throw e;
+			return false;
 		}
 	}
 }

@@ -40,7 +40,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public IScannerInfo getBuildConfiguration(int linkageID, Object tu) {
-		return fIndexer.getScannerInfo();
+		return fIndexer.getScannerInfo((String)tu);
 	}
 
 	@Override

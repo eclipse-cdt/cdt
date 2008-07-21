@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIDisposable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
@@ -265,7 +266,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	protected ICDIStackFrame[] getCDIStackFrames( int lowFrame, int highFrame ) throws DebugException {
 		try {
-			return getCDIThread().getStackFrames( lowFrame, highFrame );
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				return cdiThread.getStackFrames( lowFrame, highFrame );
+			}
 		}
 		catch( CDIException e ) {
 			setStatus( ICDebugElementStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.0" ), new String[]{ e.getMessage() } ) ); //$NON-NLS-1$
@@ -373,7 +377,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
 	public String getName() throws DebugException {
-		return getCDIThread().toString();
+		final ICDIThread cdiThread = getCDIThread();
+		return cdiThread != null ? cdiThread.toString() : "";
 	}
 
 	/* (non-Javadoc)
@@ -402,7 +407,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
 			ICDIObject source = event.getSource();
-			if ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) {
+			final ICDIThread cdiThread = getCDIThread();
+			if ( source instanceof ICDIThread && cdiThread != null && source.equals( cdiThread ) ) {
 				if ( event instanceof ICDISuspendedEvent ) {
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
@@ -467,7 +473,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		CDebugElementState oldState = getState();
 		setState( CDebugElementState.RESUMING );
 		try {
-			getCDIThread().resume( false );
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				cdiThread.resume( false );
+			}
 		}
 		catch( CDIException e ) {
 			setState( oldState );
@@ -497,7 +506,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		
 		try {
 			final ICDIThread cdiThread = getCDIThread();
-			cdiThread.stepUntil( location );
+			if (cdiThread != null) {
+				cdiThread.stepUntil( location );
+			}
 		}
 		catch( CDIException e ) {
 			setState( oldState );
@@ -517,7 +528,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		CDebugElementState oldState = getState();
 		setState( CDebugElementState.SUSPENDING );
 		try {
-			getCDIThread().suspend();
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				cdiThread.suspend();
+			}
 		}
 		catch( CDIException e ) {
 			setState( oldState );
@@ -577,11 +591,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
 		try {
-			if ( !isInstructionsteppingEnabled() ) {
-				getCDIThread().stepInto( 1 );
-			}
-			else {
-				getCDIThread().stepIntoInstruction( 1 );
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				if ( !isInstructionsteppingEnabled() ) {
+					cdiThread.stepInto( 1 );
+				}
+				else {
+					cdiThread.stepIntoInstruction( 1 );
+				}
 			}
 		}
 		catch( CDIException e ) {
@@ -599,11 +616,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
 		try {
-			if ( !isInstructionsteppingEnabled() ) {
-				getCDIThread().stepOver( 1 );
-			}
-			else {
-				getCDIThread().stepOverInstruction( 1 );
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				if ( !isInstructionsteppingEnabled() ) {
+					cdiThread.stepOver( 1 );
+				}
+				else {
+					cdiThread.stepOverInstruction( 1 );
+				}
 			}
 		}
 		catch( CDIException e ) {
@@ -828,6 +848,12 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	protected void cleanup() {
 		getCDISession().getEventManager().removeEventListener( this );
 		disposeStackFrames();
+
+		final ICDIThread cdiThread = getCDIThread();
+		setCDIThread(null);		
+		if (cdiThread instanceof ICDIDisposable) {
+			((ICDIDisposable)cdiThread).dispose();
+		}
 	}
 
 	private void setRefreshChildren( boolean refresh ) {
@@ -872,7 +898,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	protected int getStackDepth() throws DebugException {
 		int depth = 0;
 		try {
-			depth = getCDIThread().getStackFrameCount();
+			final ICDIThread cdiThread = getCDIThread();
+			if (cdiThread != null) {
+				depth = cdiThread.getStackFrameCount();
+			}
 		}
 		catch( CDIException e ) {
 			setStatus( ICDebugElementStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.1" ), new String[]{ e.getMessage() } ) ); //$NON-NLS-1$
@@ -997,7 +1026,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	protected void suspendByTarget( ICDISessionObject reason, ICDIThread suspensionThread ) {
 		setState( CDebugElementState.SUSPENDED );
 		setCurrentStateInfo( null );
-		if ( getCDIThread().equals( suspensionThread ) ) {
+		final ICDIThread cdiThread = getCDIThread();
+		if ( cdiThread != null && cdiThread.equals( suspensionThread ) ) {
 			setCurrent( true );
 			setCurrentStateInfo( reason );
 			if ( reason instanceof ICDIEndSteppingRange ) {
@@ -1022,6 +1052,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 
 	private void syncWithBackend() {
 		ICDIThread cdiThread = getCDIThread();
+		if (cdiThread == null) {
+			return;
+		}
+		
 		ICDIThread currentThread = null;
 		try {
 			currentThread = cdiThread.getTarget().getCurrentThread();

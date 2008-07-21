@@ -56,6 +56,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressFactoryManagement;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIDisposable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
@@ -320,9 +321,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * Adds all of the pre-existing threads to this debug target.
 	 */
 	protected void initializeThreads( List debugEvents ) {
+		final ICDITarget cdiTarget = getCDITarget();
+		if (cdiTarget == null) {
+			return;
+		}
+		
 		ICDIThread[] cdiThreads = new ICDIThread[0];
 		try {
-			cdiThreads = getCDITarget().getThreads();
+			cdiThreads = cdiTarget.getThreads();
 		}
 		catch( CDIException e ) {
 			// ignore
@@ -332,7 +338,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			CThread thread = createThread( cdiThreads[i] );
 			debugEvents.add( thread.createCreateEvent() );
 			try {
-				if ( cdiThreads[i].equals( getCDITarget().getCurrentThread() ) && thread.isSuspended() ) {
+				if ( cdiThreads[i].equals( cdiTarget.getCurrentThread() ) && thread.isSuspended() ) {
 					// Use BREAKPOINT as a detail to force perspective switch
 					suspendEvent = thread.createSuspendEvent( DebugEvent.BREAKPOINT );
 				}
@@ -379,9 +385,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	protected void initializeModuleManager() {
+		final ICDITarget cdiTarget = getCDITarget();
+		if (cdiTarget == null) {
+			return;
+		}
+		
 		ICDISharedLibrary[] slibs = new ICDISharedLibrary[0];
 		try {
-			slibs = getCDITarget().getSharedLibraries();
+			slibs = cdiTarget.getSharedLibraries();
 		}
 		catch( CDIException e ) {
 			DebugPlugin.log( e );
@@ -517,7 +528,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.TERMINATING;		
 		changeState( newState );
 		try {
-			getCDITarget().terminate();
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.terminate();
+			}
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -569,7 +583,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.RESUMING; 
 		changeState( newState );
 		try {
-			getCDITarget().resume( false );
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.resume( false );
+			}
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -588,7 +605,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.SUSPENDING; 
 		changeState( newState );
 		try {
-			getCDITarget().suspend();
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.suspend();
+			}
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -611,7 +631,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			CThread thread = (CThread)it.next();
 			ICDIThread suspensionThread = null;
 			try {
-				suspensionThread = getCDITarget().getCurrentThread();
+				final ICDITarget cdiTarget = getCDITarget();
+				if (cdiTarget != null) {
+					suspensionThread = cdiTarget.getCurrentThread();
+				}
 			}
 			catch( CDIException e ) {
 				// ignore
@@ -631,8 +654,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		ICDIThread[] cdiThreads = new ICDIThread[0];
 		ICDIThread currentCDIThread = null;
 		try {
-			cdiThreads = getCDITarget().getThreads();
-			currentCDIThread = getCDITarget().getCurrentThread();
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiThreads = cdiTarget.getThreads();
+				currentCDIThread = cdiTarget.getCurrentThread();
+			}
 		}
 		catch( CDIException e ) {
 		}
@@ -727,7 +753,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.DISCONNECTING;		
 		changeState( newState );
 		try {
-			getCDITarget().disconnect();
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.disconnect();
+			}
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -848,10 +877,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
 			ICDIObject source = event.getSource();
+			final ICDITarget cdiTarget = getCDITarget();
 			if ( source == null && event instanceof ICDIDestroyedEvent ) {
 				handleTerminatedEvent( (ICDIDestroyedEvent)event );
 			}
-			else if ( source != null && source.getTarget().equals( getCDITarget() ) ) {
+			else if ( source != null && cdiTarget != null && source.getTarget().equals( cdiTarget ) ) {
 				if ( event instanceof ICDICreatedEvent ) {
 					if ( source instanceof ICDIThread ) {
 						handleThreadCreatedEvent( (ICDICreatedEvent)event );
@@ -922,6 +952,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canRestart() ) {
 			return;
 		}
+		final ICDITarget cdiTarget = getCDITarget();
+		if (cdiTarget == null) {
+			return;
+		}
+		
 		try {
 			ILaunchConfiguration launchConfig = getLaunch().getLaunchConfiguration();
 			if ( launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT ) ) {
@@ -930,10 +965,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				// See if the expression is a numeric address
 				try {
 					IAddress address = getAddressFactory().createAddress(mainSymbol);
-					location = getCDITarget().createAddressLocation( address.getValue() );
+					location = cdiTarget.createAddressLocation( address.getValue() );
 				} catch (NumberFormatException nfexc) {
 					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
-					location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$	
+					location = cdiTarget.createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$	
 				}
 				
 				setInternalTemporaryBreakpoint( location );
@@ -946,7 +981,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.RESTARTING;
 		changeState( newState );
 		try {
-			getCDITarget().restart();
+			cdiTarget.restart();
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -1031,6 +1066,12 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		disposeBreakpointManager();
 		removeAllExpressions();
 		disposePreferences();
+		
+		ICDITarget cdiTarget = getCDITarget();
+		setCDITarget(null);
+		if (cdiTarget instanceof ICDIDisposable) {
+			((ICDIDisposable)cdiTarget).dispose();
+		}		
 	}
 
 	/**
@@ -1308,12 +1349,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException {
 		try {
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget == null) {
+				return;
+			}
 			if (location instanceof ICDIFunctionLocation) {
-				getCDITarget().setFunctionBreakpoint( ICBreakpointType.TEMPORARY, (ICDIFunctionLocation)location, null, false );
+				cdiTarget.setFunctionBreakpoint( ICBreakpointType.TEMPORARY, (ICDIFunctionLocation)location, null, false );
 			} else if (location instanceof ICDILineLocation) {
-				getCDITarget().setLineBreakpoint( ICBreakpointType.TEMPORARY, (ICDILineLocation)location, null, false );
+				cdiTarget.setLineBreakpoint( ICBreakpointType.TEMPORARY, (ICDILineLocation)location, null, false );
 			} else if (location instanceof ICDIAddressLocation) {
-				getCDITarget().setAddressBreakpoint( ICBreakpointType.TEMPORARY, (ICDIAddressLocation)location, null, false );
+				cdiTarget.setAddressBreakpoint( ICBreakpointType.TEMPORARY, (ICDIAddressLocation)location, null, false );
 			} else {
 				// ???
 				targetRequestFailed("not_a_location", null); //$NON-NLS-1$
@@ -1481,7 +1526,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		final CDebugElementState newState = CDebugElementState.RESUMING;
 		changeState( newState );
 		try {
-			getCDITarget().resume( false );
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.resume( false );
+			}
 		}
 		catch( CDIException e ) {
 			if ( getState() == newState ) {
@@ -1685,8 +1733,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public IAddressFactory getAddressFactory() {
 		if ( fAddressFactory == null ) {			
 			// Ask CDI plug-in for the default AddressFactory.
-			if (fCDITarget instanceof ICDIAddressFactoryManagement) {
-				fAddressFactory = ((ICDIAddressFactoryManagement) fCDITarget).getAddressFactory();
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget instanceof ICDIAddressFactoryManagement) {
+				fAddressFactory = ((ICDIAddressFactoryManagement) cdiTarget).getAddressFactory();
 			}
 			// And if that doesn't work, use the one from the file.
 			if ( fAddressFactory == null ){
@@ -1733,7 +1782,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public ICGlobalVariable createGlobalVariable( IGlobalVariableDescriptor info ) throws DebugException {
 		ICDIVariableDescriptor vo = null;
 		try {
-			vo = getCDITarget().getGlobalVariableDescriptors( info.getPath().lastSegment(), null, info.getName() );
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				vo = cdiTarget.getGlobalVariableDescriptors( info.getPath().lastSegment(), null, info.getName() );
+			}
 		}
 		catch( CDIException e ) {
 			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, e.getMessage(), null ) );
@@ -1749,7 +1801,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		ArrayList list = new ArrayList( containers.length );
 		getSourceLookupPath( list, containers );
 		try {
-			getCDITarget().setSourcePaths( (String[])list.toArray( new String[list.size()] ) );
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				cdiTarget.setSourcePaths( (String[])list.toArray( new String[list.size()] ) );
+			}
 		}
 		catch( CDIException e ) {
 			CDebugCorePlugin.log( e );
@@ -1835,7 +1890,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			setInternalTemporaryBreakpoint( location );
 		}
 		catch( CoreException e ) {
-			boolean isTerminated = getCDITarget().isTerminated();
+			final ICDITarget cdiTarget = getCDITarget();
+			boolean isTerminated = cdiTarget != null && cdiTarget.isTerminated();
 			if ( isTerminated ) {
 				String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.0" ), new String[]{ stopExpression } ); //$NON-NLS-1$
 				MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), IStatus.OK, message, null );
@@ -1851,21 +1907,30 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 	
 	protected void stopAtSymbol( String stopSymbol ) throws DebugException {
-		ICDILocation location = getCDITarget().createFunctionLocation( "", stopSymbol ); //$NON-NLS-1$
-		stopAtLocation(location, stopSymbol);			
+		final ICDITarget cdiTarget = getCDITarget();
+		if (cdiTarget != null) {
+			ICDILocation location = cdiTarget.createFunctionLocation( "", stopSymbol ); //$NON-NLS-1$
+			stopAtLocation(location, stopSymbol);
+		}
 	}
 
 	protected void stopAtAddress( IAddress address ) throws DebugException {
-		ICDIAddressLocation location = getCDITarget().createAddressLocation(address.getValue()); 
-		stopAtLocation(location, address.toHexAddressString());			
+		final ICDITarget cdiTarget = getCDITarget();
+		if (cdiTarget != null) {
+			ICDIAddressLocation location = cdiTarget.createAddressLocation(address.getValue()); 
+			stopAtLocation(location, address.toHexAddressString());
+		}
 	}
 	
 	protected void stopInMain() throws DebugException {
 		String mainSymbol = new String( ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 		try {
-			mainSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-			ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$ 
-			setInternalTemporaryBreakpoint( location );
+			final ICDITarget cdiTarget = getCDITarget();
+			if (cdiTarget != null) {
+				mainSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+				ICDILocation location = cdiTarget.createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$ 
+				setInternalTemporaryBreakpoint( location );
+			}
 		}
 		catch( CoreException e ) {
 			String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.2" ), new String[]{ mainSymbol, e.getStatus().getMessage() } ); //$NON-NLS-1$

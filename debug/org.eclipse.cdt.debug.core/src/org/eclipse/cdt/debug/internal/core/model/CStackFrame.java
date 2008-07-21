@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIDisposable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
@@ -197,8 +198,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			ISourceLocator locator = ((CDebugTarget)getDebugTarget()).getSourceLocator();
 			if ( locator != null && locator instanceof IAdaptable && ((IAdaptable)locator).getAdapter( ICSourceLocator.class ) != null )
 				return ((ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class )).getLineNumber( this );
-			if ( getCDIStackFrame() != null && getCDIStackFrame().getLocator() != null )
-				return getCDIStackFrame().getLocator().getLineNumber();
+			
+			final ICDIStackFrame cdiFrame = getCDIStackFrame();
+			if ( cdiFrame != null && cdiFrame.getLocator() != null )
+				return cdiFrame.getLocator().getLineNumber();
 		}
 		return -1;
 	}
@@ -221,7 +224,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
 	public String getName() throws DebugException {
-		ICDILocator locator = getCDIStackFrame().getLocator();
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		if (cdiFrame == null) {
+			return ""; //$NON-NLS-1$
+		}
+
+		ICDILocator locator = cdiFrame.getLocator();
 		String func = ""; //$NON-NLS-1$
 		String file = ""; //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
@@ -515,6 +523,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		getCDISession().getEventManager().removeEventListener( this );
 		disposeAllVariables();
 		disposeExpressions();
+
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		setCDIStackFrame(null);
+		if (cdiFrame instanceof ICDIDisposable)  {
+			((ICDIDisposable)cdiFrame).dispose();
+		}
 	}
 
 	/**
@@ -524,7 +538,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected List getCDILocalVariableObjects() throws DebugException {
 		List list = new ArrayList();
 		try {
-			list.addAll( Arrays.asList( getCDIStackFrame().getLocalVariableDescriptors( ) ) );
+			final ICDIStackFrame cdiFrame = getCDIStackFrame();
+			if (cdiFrame != null) {
+				list.addAll( Arrays.asList( cdiFrame.getLocalVariableDescriptors( ) ) );
+			}
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -539,7 +556,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected List getCDIArgumentObjects() throws DebugException {
 		List list = new ArrayList();
 		try {
-			list.addAll( Arrays.asList( getCDIStackFrame().getArgumentDescriptors() ) );
+			final ICDIStackFrame cdiFrame = getCDIStackFrame();
+			if (cdiFrame != null) {
+				list.addAll( Arrays.asList( cdiFrame.getArgumentDescriptors() ) );
+			}
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -586,35 +606,40 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public IAddress getAddress() {
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
-		return factory.createAddress( getCDIStackFrame().getLocator().getAddress() );
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		return cdiFrame != null ? factory.createAddress( cdiFrame.getLocator().getAddress() ) : null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFile()
 	 */
 	public String getFile() {
-		return getCDIStackFrame().getLocator().getFile();
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		return cdiFrame != null ? cdiFrame.getLocator().getFile() : "";
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFunction()
 	 */
 	public String getFunction() {
-		return getCDIStackFrame().getLocator().getFunction();
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		return cdiFrame != null ? cdiFrame.getLocator().getFunction() : "";
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getLevel()
 	 */
 	public int getLevel() {
-		return getCDIStackFrame().getLevel();
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		return cdiFrame != null ? cdiFrame.getLevel() : -1;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFrameLineNumber()
 	 */
 	public int getFrameLineNumber() {
-		return getCDIStackFrame().getLocator().getLineNumber();
+		final ICDIStackFrame cdiFrame = getCDIStackFrame();
+		return cdiFrame != null ? cdiFrame.getLocator().getLineNumber() : -1;
 	}
 
 	protected synchronized void preserve() {
@@ -730,7 +755,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public String evaluateExpressionToString( String expression ) throws DebugException {
 		try {
-			return getCDITarget().evaluateExpressionToString( getCDIStackFrame(), expression );
+			final ICDIStackFrame cdiFrame = getCDIStackFrame();
+			if (cdiFrame != null) {
+				return getCDITarget().evaluateExpressionToString( cdiFrame, expression );
+			}
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -748,7 +776,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 
 	protected void doStepReturn() throws DebugException {
 		try {
-			getCDIStackFrame().stepReturn();
+			final ICDIStackFrame cdiFrame = getCDIStackFrame();
+			if (cdiFrame != null) {
+				cdiFrame.stepReturn();
+			}
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );

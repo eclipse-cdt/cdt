@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -134,6 +135,9 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		}		
 	}
 	
+	public void visit(ASTLiteralNode lit) {
+		scribe.print(lit.getRawSignature());
+	}
 	
 	@Override
 	public int visit(IASTName name) {

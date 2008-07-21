@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
 /**
  * Used for inserting literal code by means of the rewrite facility. The node
@@ -34,7 +35,10 @@ public class ASTLiteralNode implements IASTNode {
 	}
 
 	public boolean accept(ASTVisitor visitor) {
-		return false;
+		if (visitor instanceof ASTWriterVisitor) {
+			((ASTWriterVisitor) visitor).visit(this);
+		}
+		return true;
 	}
 
 	public boolean contains(IASTNode node) {

@@ -54,6 +54,7 @@
  * David McKnight   (IBM)        - [234057] Wrong or missing model change event
  * David Dykstal (IBM) - [227750] do not fire events if there are no listeners
  * David McKnight   (IBM)        - [238673] Expansion icon (plus sign) disappears from Work With Libraries entry
+ * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -1618,7 +1619,9 @@ public class SystemRegistry implements ISystemRegistry
 		IHost host = op.getHost();
 		ISubSystem[] subsystems = op.getSubSystems();
 		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
-		Display.getDefault().asyncExec(fire);
+		if (modelListenerManager.hasListeners())
+			Display.getDefault().asyncExec(fire);
+		
 		////Listening to FireNewHostEvents now
 		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list
 		return host;

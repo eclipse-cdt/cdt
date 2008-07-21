@@ -16,13 +16,18 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David McKnight   (IBM)        - [237300] Problem with setDefaultHistory for SystemHistoryCombo.
+ * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
@@ -34,6 +39,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * A utility class that encapsulates all global preferences for the remote system framework
@@ -483,9 +489,23 @@ public class SystemPreferencesManager {
 			alreadyListening = (fModelChangeListeners>0);
 			fModelChangeListeners++;
 		}
+
 		if (!alreadyListening) {
-			fModelChangeListener = new ModelChangeListener();
-			RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+			Job addListenerJob = new Job("Add Listener"){ //$NON-NLS-1$
+				public IStatus run(IProgressMonitor monitor){			
+					IWorkbench wb = RSEUIPlugin.getDefault().getWorkbench();
+					while (wb.getDisplay() == null) {
+						try {
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e){}
+					}
+					fModelChangeListener = new ModelChangeListener();
+					RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+					return Status.OK_STATUS;
+				}
+			};
+			addListenerJob.setSystem(true);
 		}
 	}
 	

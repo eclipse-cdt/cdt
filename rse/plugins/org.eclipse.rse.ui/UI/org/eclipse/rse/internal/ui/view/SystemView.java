@@ -65,6 +65,7 @@
 
 package org.eclipse.rse.internal.ui.view;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -208,6 +209,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -2425,6 +2427,29 @@ public class SystemView extends SafeTreeViewer
 	// ISYSTEMREMOTEChangeListener METHOD
 	// ------------------------------------
 
+	
+	private class CheckPending implements Runnable
+	{
+		private boolean _notReady = true;
+		private TreeItem _item;
+		
+		public CheckPending(TreeItem item)
+		{
+			_item = item;
+		}
+		
+		public void run()
+		{	
+			Item[] items = _item.getItems();
+			_notReady = (items.length <= 0 || items[0].getText().equals(ProgressMessages.PendingUpdateAdapter_PendingLabel));
+		}	
+		
+		public boolean isNotReady()
+		{
+			return _notReady;
+		}
+	}
+	
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
@@ -2522,10 +2547,54 @@ public class SystemView extends SafeTreeViewer
 						createChildren(selectedItem);
 						selectedItem.setExpanded(true);
 					}
-					if (remoteResourceNames != null)
-						selectRemoteObjects(remoteResourceNames, ss, selectedItem);
-					else
-						selectRemoteObjects(remoteResourceName, ss, selectedItem);
+					if (adapter.supportsDeferredQueries(ss))
+					{
+						final List names = remoteResourceNames;
+						final String name = remoteResourceName;						
+						final ISubSystem subsys = ss;
+						final TreeItem item = selectedItem;
+						
+						// do the selection after the query triggered via refreshRemoteObject() completes
+						Job job = new Job("select resource") //$NON-NLS-1$
+						{
+							public IStatus run(IProgressMonitor monitor) {
+									
+								boolean notReady = true;
+								while (notReady)
+								{
+									try {
+										Thread.sleep(100);
+									}
+									catch (InterruptedException e){}
+	
+									CheckPending checkRunnable = new CheckPending(item);
+									Display.getDefault().syncExec(checkRunnable);
+									notReady = checkRunnable.isNotReady();
+								}
+								
+								Display.getDefault().asyncExec(new Runnable()
+								{
+									public void run()
+									{
+										if (names != null)
+											selectRemoteObjects(names, subsys, item);
+										else										
+											selectRemoteObjects(name, subsys, item);
+									}
+								});
+								
+								return Status.OK_STATUS;						
+							}
+						};
+						job.setSystem(true);
+						job.schedule();
+					}
+					else {
+						if (remoteResourceNames != null)
+							selectRemoteObjects(remoteResourceNames, ss, selectedItem);
+						else
+							selectRemoteObjects(remoteResourceName, ss, selectedItem);
+					}
 				}
 				//else 
 				//System.out.println("Hmm, nothing selected");

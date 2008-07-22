@@ -60,6 +60,7 @@
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  * David McKnight   (IBM)        - [236874] NPE upon selecting an item that is not associated with subsystem
  * David McKnight   (IBM)        - [238363] Performance improvement for refresh in system view.
+ * David McKnight   (IBM)        - [241722] New -> File doesn't select the newly created file
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -117,6 +118,7 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.events.SystemRemoteChangeEvent;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
@@ -2433,10 +2435,16 @@ public class SystemView extends SafeTreeViewer
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		boolean originatedHere;
+		
 		if (event instanceof SystemResourceChangeEventUI) {
 			Viewer viewer = ((SystemResourceChangeEventUI)event).getOriginatingViewer();
 			originatedHere = (viewer==this);
-		} else {
+		} 
+		else if (event instanceof SystemRemoteChangeEvent){
+			Object viewer = ((SystemRemoteChangeEvent)event).getOriginatingViewer();
+			originatedHere = (viewer==this);		
+		}
+		else {
 			originatedHere = false;
 		}
 		
@@ -2495,7 +2503,7 @@ public class SystemView extends SafeTreeViewer
 			if (selectedFilters != null) setSelection(selectedFilters);
 			// if the create event originated here, then expand the selected node and 
 			//  select the new resource under it.
-			if (originatedHere) {
+			if (originatedHere){
 				// first, restore previous selection...
 				if (prevSelection != null) selectRemoteObjects(prevSelection, ss, parentSelectionItem);
 				TreeItem selectedItem = getFirstSelectedTreeItem();
@@ -3217,7 +3225,7 @@ public class SystemView extends SafeTreeViewer
 		/* may cause performance issue in bug 238363
 		 * calling refresh on each child item means that we'll be doing update on it
 		 * which ends up making it a pending decoration change since it's an update on an
-		 * item that already has text
+		 * item that already has text 
 		// recurse
 		Item[] children = getChildren(widget);
 		if (children != null) {
@@ -3230,7 +3238,7 @@ public class SystemView extends SafeTreeViewer
 				if (data != null) doOurInternalRefresh(item, data, doStruct, false);
 			}
 		}
-		*/
+*/
 		
 		if (firstCall) {
 			

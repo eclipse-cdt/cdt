@@ -80,7 +80,6 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @param writableIndexFile - the file where the PDOM index is stored
 	 * @param converter - a converter used to convert between String locations and IIndexLocations
 	 * @param linkageFactoryMappings - all of the available IPDOMLinkageFactories the index can use during indexing
-	 * @param scannerProvider - provides include paths and defined symbols
 	 * @param mapper - a mapper used to determine ICLanguage for a particular file
 	 * @param log - logger
 	 * @throws CoreException

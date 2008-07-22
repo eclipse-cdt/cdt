@@ -19,18 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
-import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 

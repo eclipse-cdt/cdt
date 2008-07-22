@@ -506,6 +506,7 @@ public class SystemPreferencesManager {
 				}
 			};
 			addListenerJob.setSystem(true);
+			addListenerJob.schedule();
 		}
 	}
 	

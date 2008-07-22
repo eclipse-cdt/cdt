@@ -15,6 +15,7 @@
  * David McKnight  (IBM)  - [226086] [dstore][api][breaking] Move ServerLogger class to dstore.core
  * Jacob Garcowski (IBM)  - [232738] [dstore] Delay creation of log file until written to
  * Noriaki Takatsu (IBM)  - [232443] [multithread] A single rsecomm.log for all clients
+ * Noriaki Takatsu (IBM)  - [239419] [multithread] Dynamically change the level of logging
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -50,7 +51,7 @@ public class ServerLogger implements IServerLogger
 	private PrintWriter _logFileStream = null;
 
 	public static final boolean DEBUG = false;
-	private static int log_level = 0;
+	private int log_level = 0;
 
 	private boolean initialized = false;
 	private String logPathName = null;
@@ -110,6 +111,10 @@ public class ServerLogger implements IServerLogger
 	public void logInfo(String minerName, String message) {
 		if (!initialized)
 			initialize();
+		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		if (loggerLogLevel != null){
+			log_level = Integer.parseInt(loggerLogLevel);
+		}
 		if (log_level >= LOG_INFO) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {
@@ -134,6 +139,10 @@ public class ServerLogger implements IServerLogger
 	public void logWarning(String minerName, String message) {
 		if (!initialized)
 			initialize();
+		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		if (loggerLogLevel != null){
+			log_level = Integer.parseInt(loggerLogLevel);
+		}
 		if (log_level >= LOG_WARNING) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {

@@ -35,7 +35,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		parse();
 	}
 
-	public class ThreadInfo{
+	public class ThreadInfo {
 		String fName;
 		String fGdbId;
 		String fPid;

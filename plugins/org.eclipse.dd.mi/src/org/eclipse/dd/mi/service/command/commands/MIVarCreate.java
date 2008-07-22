@@ -53,7 +53,7 @@ public class MIVarCreate extends MICommand<MIVarCreateInfo>
         this(dmc, "-", "*", expression); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public MIVarCreate(IExpressionDMContext dmc,String name, String expression) {
+    public MIVarCreate(IExpressionDMContext dmc, String name, String expression) {
         this(dmc, name, "*", expression); //$NON-NLS-1$
     }
 

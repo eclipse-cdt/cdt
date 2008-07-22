@@ -15,8 +15,6 @@ package org.eclipse.dd.mi.service.command.commands;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
-
-
 /**
  * 
  *     -stack-select-frame FRAMENUM
@@ -29,5 +27,9 @@ public class MIStackSelectFrame extends MICommand<MIInfo> {
 	
 	public MIStackSelectFrame(IDMContext ctx, int frameNum) {
 		super(ctx, "-stack-select-frame", new String[]{Integer.toString(frameNum)}, new String[0]); //$NON-NLS-1$
+	}
+	
+	public MIStackSelectFrame(IDMContext ctx, int threadNum, int frameNum) {
+		super(ctx, "-stack-select-frame", new String[]{ "--thread", Integer.toString(threadNum), Integer.toString(frameNum) }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

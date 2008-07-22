@@ -14,11 +14,12 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *     -exec-until [ LOCATION ]
+ *     -exec-until [--thread <tid>] [ LOCATION ]
  *
  *  Asynchronous command.  Executes the inferior until the LOCATION
  * specified in the argument is reached.  If there is no argument, the
@@ -34,6 +35,22 @@ public class MIExecUntil extends MICommand<MIInfo>
     }
 
     public MIExecUntil(IExecutionDMContext dmc, String loc) {
-        super(dmc, "-exec-until", new String[]{loc}); //$NON-NLS-1$
+        super(dmc, "-exec-until", new String[] { loc }); //$NON-NLS-1$
+    }
+
+    public MIExecUntil(IMIExecutionDMContext dmc, boolean setThread) {
+        super(dmc, "-exec-until"); //$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()) }); //$NON-NLS-1$
+        }
+    }
+
+    public MIExecUntil(IMIExecutionDMContext dmc, boolean setThread, String loc) {
+        super(dmc, "-exec-until"); //$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()), loc }); //$NON-NLS-1$
+        } else {
+        	setParameters(new String[] { loc });
+        }
     }
 }

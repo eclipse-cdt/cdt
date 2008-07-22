@@ -69,8 +69,6 @@ public class MIMemory extends AbstractDsfService implements IMemory {
         }
     }
 
-    @SuppressWarnings("unused")
-	private MIRunControl fRunControl;
     private MIMemoryCache fMemoryCache;
 
 	/**
@@ -112,9 +110,6 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 
     	// Register this service
     	register(new String[] { MIMemory.class.getName(), IMemory.class.getName() }, new Hashtable<String, String>());
-
-    	// Get the RunControl so we can retrieve the current Execution context
-    	fRunControl = getServicesTracker().getService(MIRunControl.class);
 
     	// Create the memory requests cache
     	fMemoryCache = new MIMemoryCache();
@@ -279,7 +274,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
     //////////////////////////////////////////////////////////////////////////
 
     @DsfServiceEventHandler
-	public void eventDispatched(IRunControl.IResumedDMEvent e) {
+	public void eventDispatched(IRunControl.IContainerResumedDMEvent e) {
 		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
 		if (e.getReason() != StateChangeReason.STEP) {
 			fMemoryCache.reset();
@@ -287,7 +282,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 	}
    
     @DsfServiceEventHandler
-	public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+	public void eventDispatched(IRunControl.IContainerSuspendedDMEvent e) {
 		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
 		fMemoryCache.reset();
 	}

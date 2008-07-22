@@ -30,8 +30,8 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBThreadData;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBThreadData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
@@ -493,12 +493,12 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), GDBRunControl.class
+                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBRunControl.class
                     .getName(), null);
                 tracker.open();
-                GDBRunControl runControl = (GDBRunControl) tracker.getService();
+                IGDBRunControl runControl = (IGDBRunControl) tracker.getService();
                 if (runControl != null) {
-                    runControl.getThreadData((IMIExecutionDMContext) thread, new DataRequestMonitor<GDBThreadData>(
+                    runControl.getThreadData((IMIExecutionDMContext) thread, new DataRequestMonitor<IGDBThreadData>(
                         ImmediateExecutor.getInstance(), rm) {
                         @Override
                         protected void handleSuccess() {

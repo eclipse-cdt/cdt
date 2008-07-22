@@ -37,6 +37,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.service.GdbDebugServicesFactory;
+import org.eclipse.dd.gdb.internal.provisional.service.GdbDebugServicesFactoryNS;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -56,7 +57,9 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
         
-    public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
+	private boolean isNonStopSession = false;
+
+	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
 		if ( monitor == null ) {
 			monitor = new NullProgressMonitor();
 		}
@@ -167,6 +170,16 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	return SessionType.LOCAL;
     }
     
+	private boolean isNonStopSession(ILaunchConfiguration config) {
+		try {
+			boolean nonStopMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+                    IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+    		return nonStopMode;
+    	} catch (CoreException e) {    		
+    	}
+    	return false;
+    }
+    
 	private boolean getIsAttach(ILaunchConfiguration config) {
     	try {
     		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
@@ -202,6 +215,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
         
+		isNonStopSession = isNonStopSession(configuration);
+
         GdbLaunch launch = new GdbLaunch(configuration, mode, null);
         launch.initialize();
         launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
@@ -314,6 +329,12 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	}
 	
 	private IDsfDebugServicesFactory newServiceFactory(String version) {
+
+		// TODO: Fix version number once non-stop GDB is delivered
+		if (isNonStopSession && version.startsWith("6.8.50.20080327")) { //$NON-NLS-1$
+			return new GdbDebugServicesFactoryNS(version);
+		}
+
 		if (version.startsWith("6.6") ||  //$NON-NLS-1$
 			version.startsWith("6.7") ||  //$NON-NLS-1$
 			version.startsWith("6.8")) {  //$NON-NLS-1$

@@ -13,6 +13,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -28,10 +29,23 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 public class MIExecNextInstruction extends MICommand<MIInfo> 
 {
     public MIExecNextInstruction(IExecutionDMContext dmc) {
-        super(dmc, "-exec-next-instruction"); //$NON-NLS-1$
+        this(dmc, 1);
     }
 
     public MIExecNextInstruction(IExecutionDMContext dmc, int count) {
         super(dmc, "-exec-next-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+    }
+
+    public MIExecNextInstruction(IMIExecutionDMContext dmc, boolean setThread) {
+        this(dmc, setThread, 1);
+    }
+
+    public MIExecNextInstruction(IMIExecutionDMContext dmc, boolean setThread, int count) {
+        super(dmc, "-exec-next-instruction");	//$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()), Integer.toString(count) }); //$NON-NLS-1$
+        } else {
+        	setParameters(new String[] { Integer.toString(count) });
+        }
     }
 }

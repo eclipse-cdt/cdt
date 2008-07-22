@@ -14,11 +14,12 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-step
+ *      -exec-step [--thread <tid>] [count]
  *
  *   Asynchronous command.  Resumes execution of the inferior program,
  * stopping when the beginning of the next source line is reached, if the
@@ -29,10 +30,23 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 public class MIExecStep extends MICommand<MIInfo> 
 {
     public MIExecStep(IExecutionDMContext dmc) {
-        super(dmc, "-exec-step"); //$NON-NLS-1$
+        this(dmc, 1);
     }
 
     public MIExecStep(IExecutionDMContext dmc, int count) {
         super(dmc, "-exec-step", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+    }
+
+    public MIExecStep(IMIExecutionDMContext dmc, boolean setThread) {
+        this(dmc, setThread, 1);
+    }
+
+    public MIExecStep(IMIExecutionDMContext dmc, boolean setThread, int count) {
+        super(dmc, "-exec-step");	//$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()), Integer.toString(count) }); //$NON-NLS-1$
+        } else {
+        	setParameters(new String[] { Integer.toString(count) });
+        }
     }
 }

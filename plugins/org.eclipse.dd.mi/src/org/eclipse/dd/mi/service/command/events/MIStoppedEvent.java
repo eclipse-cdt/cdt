@@ -15,7 +15,7 @@ package org.eclipse.dd.mi.service.command.events;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.mi.service.MIRunControl;
+import org.eclipse.dd.mi.service.IMIRunControl;
 import org.eclipse.dd.mi.service.command.output.MIConst;
 import org.eclipse.dd.mi.service.command.output.MIFrame;
 import org.eclipse.dd.mi.service.command.output.MIResult;
@@ -41,7 +41,7 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
     }
 
     public static MIStoppedEvent parse(
-        MIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
+        IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
 	    int threadId = -1;
 	    MIFrame frame = null;

@@ -17,7 +17,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *  <code>-exec-return</code>
+ *  -exec-return [args]
  *
  *  <p>
  *  Makes current function return immediately.  Doesn't execute the
@@ -38,5 +38,4 @@ public class MIExecReturn extends MICommand<MIInfo>
     public MIExecReturn(IFrameDMContext dmc, String arg) {
         super(dmc, "-exec-return", new String[] { arg }); //$NON-NLS-1$
     }
-
 }

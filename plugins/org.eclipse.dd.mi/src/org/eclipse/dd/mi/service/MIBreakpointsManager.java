@@ -71,7 +71,6 @@ import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointAddedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointRemovedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
-import org.eclipse.dd.mi.service.MIRunControl.MIExecutionDMC;
 import org.eclipse.dd.mi.service.breakpoint.actions.BreakpointActionAdapter;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIGDBExitEvent;
@@ -1516,8 +1515,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         Set<String> results = new HashSet<String>();
         if ((threads != null) && (supportsThreads(breakpoint))) {
             for (IExecutionDMContext thread : threads) {
-                if (thread instanceof MIExecutionDMC) {
-                    MIExecutionDMC dmc = (MIExecutionDMC) thread;
+                if (thread instanceof IMIExecutionDMContext) {
+                	IMIExecutionDMContext dmc = (IMIExecutionDMContext) thread;
                     results.add(((Integer) dmc.getThreadId()).toString());
                 }
             }

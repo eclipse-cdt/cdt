@@ -37,7 +37,7 @@ public interface IRunControl extends IDMService
     
     /**
      * Context representing a process, kernel, or some other logical container 
-     * for execution cotnexts, which by itself can perform run-control
+     * for execution contexts, which by itself can perform run-control
      * operations. 
      */
 

@@ -54,12 +54,27 @@ import org.eclipse.dd.mi.service.command.output.MIStackListFramesInfo;
 public class MIStackListFrames extends MICommand<MIStackListFramesInfo>
 {
     public MIStackListFrames(IMIExecutionDMContext execDmc) {
+        this(execDmc, false);
+    }
+    
+    public MIStackListFrames(IMIExecutionDMContext execDmc, boolean setThread) {
         super(execDmc, "-stack-list-frames"); //$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(execDmc.getThreadId()) } ); //$NON-NLS-1$
+        }
     }
     
     public MIStackListFrames(IMIExecutionDMContext execDmc, int low, int high) {
-        super(execDmc, "-stack-list-frames", new String[]{Integer.toString(low), //$NON-NLS-1$
-        										 Integer.toString(high)});
+        this(execDmc, false, low, high);
+    }
+    
+    public MIStackListFrames(IMIExecutionDMContext execDmc, boolean setThread, int low, int high) {
+        super(execDmc, "-stack-list-frames"); //$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(execDmc.getThreadId()), Integer.toString(low), Integer.toString(high) } ); //$NON-NLS-1$
+        } else {
+        	setParameters(new String[] { Integer.toString(low), Integer.toString(high) } );
+        }
     }
     
     @Override

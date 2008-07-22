@@ -45,6 +45,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected TabFolder fTabFolder;
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
+	protected Button fNonStopCheckBox;
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
 
@@ -64,6 +65,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+				                   IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
 	}
@@ -86,6 +90,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		setInitializing(true);
 		String gdbCommand = IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
 		String gdbInit = IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
+		boolean nonStopMode = IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT;
+
 		try {
 			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
 					                                IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
@@ -99,10 +105,18 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		catch(CoreException e) {
 		}
 
+		try {
+			nonStopMode = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+					                                 IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+		}
+		catch(CoreException e) {
+		}
+
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
 		fGDBCommandText.setText(gdbCommand);
 		fGDBInitText.setText(gdbInit);
+		fNonStopCheckBox.setSelection(nonStopMode);
 
 		setInitializing(false); 
 	}
@@ -112,6 +126,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   fGDBCommandText.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
 				                   fGDBInitText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+				                   fNonStopCheckBox.getSelection());
 
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
@@ -242,8 +258,23 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				fGDBInitText.setText(res);
 			}
 		});
+
+		// TODO: Fetch the string from LaunchUIMessages
+		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
+		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
+		// Button fNonStopButton = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString( "GDBDebuggerPage.15") ); //$NON-NLS-1$
+		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.13")); //$NON-NLS-1$
+		fNonStopCheckBox.setEnabled(false);
+		fNonStopCheckBox.addSelectionListener( new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			});
+		
 		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.9"), //$NON-NLS-1$
 				200, SWT.DEFAULT, SWT.WRAP);
+
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;

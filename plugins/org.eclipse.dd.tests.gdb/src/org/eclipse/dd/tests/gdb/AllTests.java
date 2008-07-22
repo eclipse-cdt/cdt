@@ -26,7 +26,8 @@ import org.junit.runners.Suite;
         MIRunControlTest.class,
         ExpressionServiceTest.class,
         MIMemoryTest.class,
-        MIBreakpointsTest.class
+        MIBreakpointsTest.class,
+        MIDisassemblyTest.class,
         
         /* Add your test class here */
         })

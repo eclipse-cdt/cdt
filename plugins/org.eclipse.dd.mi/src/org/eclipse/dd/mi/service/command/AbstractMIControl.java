@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
@@ -74,7 +76,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     private RxThread fRxThread;
     
     private int fCurrentStackLevel = -1;
-    private int fCurrentThreadId = -1;
+    private int fCurrentThreadId   = -1;
     
     
     private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
@@ -85,7 +87,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * that the TX thread should shut down.
      */
     private final CommandHandle fTerminatorHandle = new CommandHandle(null, null);
-    
 
     /*
      *   Various listener control variables used to keep track of listeners who want to monitor
@@ -207,7 +208,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         // Cast the return token to match the result type of MI Command.  This is checking
         // against an erased type so it should never throw any exceptions.
         @SuppressWarnings("unchecked")
-        DataRequestMonitor<MIInfo> miDone = (DataRequestMonitor<MIInfo>)rm;
+        DataRequestMonitor<MIInfo> miDone = (DataRequestMonitor<MIInfo>) rm;
 
         final CommandHandle handle = new CommandHandle(miCommand, miDone);
 
@@ -240,38 +241,43 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
 
     private void processNextQueuedCommand() {
-		if ( fCommandQueue.size() > 0 ) {
-			CommandHandle handle = fCommandQueue.remove(0);
-			if ( handle != null ) {
+		if (fCommandQueue.size() > 0) {
+			final CommandHandle handle = fCommandQueue.remove(0);
+			if (handle != null) {
 				processCommandSent(handle);
 
-				// Before the command is sent, Check the Thread Id and send it to 
-				// the queue only if the id has been changed.
-				if( handle.getThreadId()!= null && 
-						handle.getThreadId().intValue() != fCurrentThreadId && handle.getThreadId().intValue() != 0)
-				{
-					// Re-set the level
-					fCurrentThreadId = handle.getThreadId().intValue();
-					CommandHandle cmdHandle = new CommandHandle(
-							new MIThreadSelect(handle.fCommand.getContext(), fCurrentThreadId), null);
-					cmdHandle.generateTokenId();
-					fTxCommands.add(cmdHandle);
-				}
+				// Identify target thread/frame (we might have to update them at the target)
+				final IDMContext targetContext = handle.fCommand.getContext();
+				final int targetThread = (handle.getThreadId()     != null) ? handle.getThreadId().intValue()     : -1;
+				final int targetFrame  = (handle.getStackFrameId() != null) ? handle.getStackFrameId().intValue() : -1;
 
-				// Before the command is sent, Check the Stack level and send it to 
-				// the queue only if the level has been changed. 
-				if( handle.getStackFrameId()!= null && 
-						handle.getStackFrameId().intValue() != fCurrentStackLevel)
-				{
-					// Re-set the level
-					fCurrentStackLevel = handle.getStackFrameId().intValue();
-					CommandHandle cmdHandle = new CommandHandle(
-							new MIStackSelectFrame(handle.fCommand.getContext(), fCurrentStackLevel), null);
-					cmdHandle.generateTokenId();
-					fTxCommands.add(cmdHandle);
+			    // The thread-select and frame-select make sense only if the thread is stopped.
+				// Some non-stop commands don't require the thread to be stopped so we send the
+				// command anyway.
+			    IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+				IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(targetContext, IMIExecutionDMContext.class);
+				if (runControl != null && execDmc != null && runControl.isSuspended(execDmc)) {
+			    	// Before the command is sent, Check the Thread Id and send it to 
+			    	// the queue only if the id has been changed.
+			    	if (targetThread != -1 && targetThread != fCurrentThreadId) {
+			    		fCurrentThreadId = targetThread;
+			    		resetCurrentStackLevel();
+			    		CommandHandle cmdHandle = new CommandHandle(new MIThreadSelect(execDmc), null);
+			    		cmdHandle.generateTokenId();
+			    		fTxCommands.add(cmdHandle);
+			    	}
+
+			    	// Before the command is sent, Check the Stack level and send it to 
+			    	// the queue only if the level has been changed. 
+			    	if (targetFrame != -1 && targetFrame != fCurrentStackLevel) {
+			    		fCurrentStackLevel = targetFrame;
+			    		CommandHandle cmdHandle = new CommandHandle(new MIStackSelectFrame(execDmc, targetFrame), null);
+			    		cmdHandle.generateTokenId();
+			    		fTxCommands.add(cmdHandle);
+			    	}
 				}
-				handle.generateTokenId();
-				fTxCommands.add(handle);
+		    	handle.generateTokenId();
+		    	fTxCommands.add(handle);
 			}
 		}
     }

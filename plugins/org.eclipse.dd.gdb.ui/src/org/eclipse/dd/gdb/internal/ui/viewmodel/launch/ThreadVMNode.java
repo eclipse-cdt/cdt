@@ -20,8 +20,8 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBThreadData;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBThreadData;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -49,7 +49,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-        	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+        	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
             if ( runControl == null ) {
                     handleFailedUpdate(update);
                     continue;
@@ -78,7 +78,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
 
                     // We're in a new dispatch cycle, and we have to check whether the
                     // service reference is still valid.
-                    final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                    final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
                     if ( runControl == null ) {
                         handleFailedUpdate(update);
                         return;
@@ -89,7 +89,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
                     // Retrieve the rest of the thread information
                     runControl.getThreadData(
                         dmc,
-                        new ViewerDataRequestMonitor<GDBThreadData>(getSession().getExecutor(), update) {
+                        new ViewerDataRequestMonitor<IGDBThreadData>(getSession().getExecutor(), update) {
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {

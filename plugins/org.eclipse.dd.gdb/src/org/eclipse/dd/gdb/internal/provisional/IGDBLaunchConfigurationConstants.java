@@ -49,6 +49,12 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_GDB_INIT = GdbPlugin.PLUGIN_ID + ".GDB_INIT"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. Boolean value to set the non-stop mode
+	 * Debuger/gdb/MI property.
+	 */
+	public static final String ATTR_DEBUGGER_NON_STOP = GdbPlugin.PLUGIN_ID + ".NON_STOP"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. Boolean value to set the 'automatically load shared library symbols' flag of the debugger.
 	 */
 	public static final String ATTR_DEBUGGER_AUTO_SOLIB = GdbPlugin.PLUGIN_ID + ".AUTO_SOLIB"; //$NON-NLS-1$
@@ -77,6 +83,11 @@ public class IGDBLaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_GDB_INIT.
 	 */
 	public static final String DEBUGGER_GDB_INIT_DEFAULT = ".gdbinit"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_NON_STOP.
+	 */
+	public static final boolean DEBUGGER_NON_STOP_DEFAULT = false;
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_AUTO_SOLIB.

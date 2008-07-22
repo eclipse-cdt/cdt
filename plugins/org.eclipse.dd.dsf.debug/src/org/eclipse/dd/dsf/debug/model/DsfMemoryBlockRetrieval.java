@@ -379,8 +379,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
         // Drill for the actual DMC
         IMemoryDMContext memoryDmc = null;
+        IDMContext dmc = null;
         if (context instanceof IAdaptable) {
-            IDMContext dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
             if (dmc != null) {
                 memoryDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
             }
@@ -425,7 +426,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// In case of failure, simply return 'null'
 
 			// Resolve the expression
-			blockAddress = resolveMemoryAddress(memoryDmc, expression);
+			blockAddress = resolveMemoryAddress(dmc, expression);
 			if (blockAddress == null) {
 				return null;
 			}
@@ -451,7 +452,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	// Helper functions
 	///////////////////////////////////////////////////////////////////////////
 
-	private BigInteger resolveMemoryAddress(final IDMContext idmContext, final String expression) throws DebugException {
+	private BigInteger resolveMemoryAddress(final IDMContext dmc, final String expression) throws DebugException {
 
 		// Use a Query to "synchronize" the downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
@@ -461,7 +462,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				final IExpressions expressionService = (IExpressions) fExpressionServiceTracker.getService();
 				if (expressionService != null) {
 					// Create the expression
-					final IExpressionDMContext expressionDMC = expressionService.createExpression(idmContext, expression);
+					final IExpressionDMContext expressionDMC = expressionService.createExpression(dmc, expression);
 					String formatId = IFormattedValues.HEX_FORMAT;
 					FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
 	                expressionService.getFormattedExpressionValue(

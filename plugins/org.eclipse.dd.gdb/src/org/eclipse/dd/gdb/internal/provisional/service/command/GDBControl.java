@@ -179,7 +179,7 @@ public class GDBControl extends AbstractMIControl {
      * More strongly typed version of {@link #getControlDMContext()}.
      */
     public GDBControlDMContext getGDBDMContext() {
-        return (GDBControlDMContext)getControlDMContext();
+        return (GDBControlDMContext) getControlDMContext();
     }
 
     public SessionType getSessionType() { 

@@ -24,8 +24,8 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBThreadData;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBProcessData;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBThreadData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -91,8 +91,8 @@ public class GDBProcessesTest extends BaseTestCase {
 		/*
 		 * Create a request monitor 
 		 */
-        final DataRequestMonitor<GDBProcessData> rm = 
-        	new DataRequestMonitor<GDBProcessData>(fSession.getExecutor(), null) {
+        final DataRequestMonitor<IGDBProcessData> rm = 
+        	new DataRequestMonitor<IGDBProcessData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
@@ -123,7 +123,7 @@ public class GDBProcessesTest extends BaseTestCase {
         /*
          * Get process data 
          */
-        GDBProcessData processData = rm.getData();
+        IGDBProcessData processData = rm.getData();
  
         if(processData == null)
        	  Assert.fail("No process data is returned for Process DMC");
@@ -141,8 +141,8 @@ public class GDBProcessesTest extends BaseTestCase {
 	 */
 	@Test
 	public void getThreadData() throws InterruptedException{
-        final DataRequestMonitor<GDBThreadData> rm = 
-        	new DataRequestMonitor<GDBThreadData>(fSession.getExecutor(), null) {
+        final DataRequestMonitor<IGDBThreadData> rm = 
+        	new DataRequestMonitor<IGDBThreadData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
@@ -166,7 +166,7 @@ public class GDBProcessesTest extends BaseTestCase {
         fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(fWait.getMessage(), fWait.isOK());
         
-        GDBThreadData threadData = rm.getData();
+        IGDBThreadData threadData = rm.getData();
         if(threadData == null)
        	 fail("Thread data not returned for thread id = " + fExecDmc.getThreadId());
         else{

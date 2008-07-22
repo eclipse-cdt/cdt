@@ -17,7 +17,7 @@ import org.eclipse.dd.mi.service.command.output.MIStackInfoDepthInfo;
 
 /**
  * 
- *     -stack-info-depth [maxDepth]
+ *     -stack-info-depth [--thread <tid>] [maxDepth]
  *
  * 
  */
@@ -25,13 +25,30 @@ public class MIStackInfoDepth extends MICommand<MIStackInfoDepthInfo>
 {
 	
     public MIStackInfoDepth(IMIExecutionDMContext ctx) {
+    	this(ctx, false);
+    }    	
+
+    public MIStackInfoDepth(IMIExecutionDMContext ctx, boolean setThread) {
     	super(ctx, "-stack-info-depth"); //$NON-NLS-1$
+    	if (setThread) {
+    		setParameters(new String[] { "--thread", Integer.toString(ctx.getThreadId()) }); //$NON-NLS-1$
+    	}
     }    	
 
     public MIStackInfoDepth(IMIExecutionDMContext ctx, int maxDepth) {
-        super(ctx, "-stack-info-depth", new String[]{Integer.toString(maxDepth)}); //$NON-NLS-1$
+        this(ctx, false, maxDepth);
     }
     
+    public MIStackInfoDepth(IMIExecutionDMContext ctx, boolean setThread, int maxDepth) {
+        super(ctx, "-stack-info-depth"); //$NON-NLS-1$
+        if (setThread) {
+        	setParameters(new String[] { "--thread", Integer.toString(ctx.getThreadId()), Integer.toString(maxDepth) }); //$NON-NLS-1$
+        }
+        else {
+        	setParameters(new String[] { Integer.toString(maxDepth) });
+        }
+    }
+
     @Override
     public MIStackInfoDepthInfo getResult(MIOutput out) {
         return new MIStackInfoDepthInfo(out);

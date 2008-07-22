@@ -25,8 +25,8 @@ import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBProcessData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
@@ -72,7 +72,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	
     @Override
 	protected void updateLabelInSessionThread(final ILabelUpdate update) {
-    	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+    	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
         if ( runControl == null ) {
             handleFailedUpdate(update);
             return;
@@ -90,7 +90,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
         
         runControl.getProcessData(
             dmc,
-            new ViewerDataRequestMonitor<GDBProcessData>(getExecutor(), update) {
+            new ViewerDataRequestMonitor<IGDBProcessData>(getExecutor(), update) {
 				@Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -151,11 +151,11 @@ public class ContainerVMNode extends AbstractContainerVMNode
                     	try {
                             getSession().getExecutor().execute(new DsfRunnable() {
                                 public void run() {
-                                	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                                	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
                                 	if ( runControl != null ) {
                                 		runControl.getProcessData(
                                 		    procDmc,
-                                		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
+                                		    new ViewerDataRequestMonitor<IGDBProcessData>(runControl.getExecutor(), request) {
                                                 @Override
                                                 protected void handleCompleted() {
                                                     if ( getStatus().isOK() ) {
@@ -203,11 +203,11 @@ public class ContainerVMNode extends AbstractContainerVMNode
                 	try {
                         getSession().getExecutor().execute(new DsfRunnable() {
                             public void run() {
-                            	final GDBRunControl runControl = getServicesTracker().getService(GDBRunControl.class);
+                            	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
                             	if ( runControl != null ) {
                             		runControl.getProcessData(
                             		    procDmc,
-                            		    new ViewerDataRequestMonitor<GDBProcessData>(runControl.getExecutor(), request) {
+                            		    new ViewerDataRequestMonitor<IGDBProcessData>(runControl.getExecutor(), request) {
                                             @Override
                                             protected void handleCompleted() {
                                                 if ( getStatus().isOK() ) {

@@ -893,7 +893,6 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 		}
 	}
 
-
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.IResumedDMEvent e) {
         fExpressionCache.setContextAvailable(e.getDMContext(), false);

@@ -106,6 +106,7 @@ public class MIRunControlEventProcessor
     
     public void eventReceived(Object output) {
     	for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
+			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
     		if (oobr instanceof MIExecAsyncOutput) {
     			MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
     			// Change of state.
@@ -116,66 +117,35 @@ public class MIRunControlEventProcessor
     				fCommandControl.resetCurrentThreadLevel();
     				fCommandControl.resetCurrentStackLevel();
 
-    				String threadId = null; 
-    				// For now, since GDB does not support thread-groups, fake an empty one
-    				String groupId = "";//null; //$NON-NLS-1$
-    				// I'm putting support for multiple reasons because it was
-    				// there before, but I'm not sure this can actually happen
-    				List<String> reasons = new LinkedList<String>();
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
     					String var = results[i].getVariable();
     					MIValue val = results[i].getMIValue();
     					if (var.equals("reason")) { //$NON-NLS-1$
     						if (val instanceof MIConst) {
-    							reasons.add(((MIConst) val).getString());
-    						}
-    					} else if (var.equals("thread-id")) { //$NON-NLS-1$
-    						if (val instanceof MIConst) {
-    							threadId = ((MIConst)val).getString();
-    						}
-    					} else if (var.equals("group-id")) { //$NON-NLS-1$
-    						if (val instanceof MIConst) {
-    							groupId = ((MIConst)val).getString();
+    							String reason = ((MIConst) val).getString();
+    							MIEvent<?> e = createEvent(reason, exec);
+    							if (e != null) {
+    								events.add(e);
+    								continue;
+    							}
     						}
     					}
     				}
+        			// We were stopped for some unknown reason, for example
+        			// GDB for temporary breakpoints will not send the
+        			// "reason" ??? still fire a stopped event.
+        			if (events.isEmpty()) {
+        				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
+        				events.add(e);
+        			}
 
-    				// We were stopped for some unknown reason, for example
-    				// GDB for temporary breakpoints will not send the
-    				// "reason" ??? still fire a stopped event.
-    				if (reasons.isEmpty()) {
-    					reasons.add(STOPPED_REASON);
-    				}
-    				for (String reason : reasons) {
-    					MIEvent<?> event = createEvent(reason, exec, threadId, groupId);
-    					if (event != null) {
-    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
-    					}
-    				}
+        			for (MIEvent<?> event : events) {
+        				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        			}
     			}
     			else if ("running".equals(state)) { //$NON-NLS-1$
-
-    				String threadId = null; 
-    				// For now, since GDB does not support thread-groups, fake an empty one
-    				String groupId = "";//null; //$NON-NLS-1$
-
-    				MIResult[] results = exec.getMIResults();
-    				for (int i = 0; i < results.length; i++) {
-    					String var = results[i].getVariable();
-    					MIValue val = results[i].getMIValue();
-    					if (var.equals("thread-id")) { //$NON-NLS-1$
-    						if (val instanceof MIConst) {
-    							threadId = ((MIConst) val).getString();
-    						}
-    					} else if (var.equals("group-id")) { //$NON-NLS-1$
-    						if (val instanceof MIConst) {
-    							groupId = ((MIConst)val).getString();
-    						}
-    					}
-    				}
-
-					MIEvent<?> event = createEvent(RUNNING_REASON, exec, threadId, groupId);
+					MIEvent<?> event = createEvent(RUNNING_REASON, exec);
 					if (event != null) {
 						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
 					}
@@ -221,36 +191,28 @@ public class MIRunControlEventProcessor
     	}
     }
     
-    @Deprecated
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
-        IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
-        MIEvent<?> event = null;
-        if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
-                event = MIBreakpointHitEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if (
-            "watchpoint-trigger".equals(reason) //$NON-NLS-1$
-                || "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
-                || "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
-                event = MIWatchpointTriggerEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
-            event = MIWatchpointScopeEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
-            event = MISteppingRangeEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("signal-received".equals(reason)) { //$NON-NLS-1$
-            event = MISignalEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("location-reached".equals(reason)) { //$NON-NLS-1$
-            event = MILocationReachedEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("function-finished".equals(reason)) { //$NON-NLS-1$
-            event = MIFunctionFinishedEvent.parse(runControl, fContainerDmc, exec.getToken(), exec.getMIResults());
-        } else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
-            event = MIInferiorExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
-        } else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
-            event = MIInferiorSignalExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
-        }
-        return event;
-    }
-    
-    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec, String threadId, String groupId) {
+    	String threadId = null; 
+
+    	// For now, since GDB does not support thread-groups, fake an empty one
+    	String groupId = "";//null; //$NON-NLS-1$
+
+    	MIResult[] results = exec.getMIResults();
+    	for (int i = 0; i < results.length; i++) {
+    		String var = results[i].getVariable();
+    		MIValue val = results[i].getMIValue();
+
+    		if (var.equals("thread-id")) { //$NON-NLS-1$
+    			if (val instanceof MIConst) {
+    				threadId = ((MIConst)val).getString();
+    			}
+    		} else if (var.equals("group-id")) { //$NON-NLS-1$
+    			if (val instanceof MIConst) {
+    				groupId = ((MIConst)val).getString();
+    			}
+    		}
+    	}
+
     	IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
     	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
 
@@ -270,7 +232,7 @@ public class MIRunControlEventProcessor
     			}
     		}
     	}
-
+    	
     	MIEvent<?> event = null;
     	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
     		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
@@ -300,8 +262,7 @@ public class MIRunControlEventProcessor
     	}
     	return event;
     }
-
-
+    
     public void commandQueued(ICommandToken token) {
         // Do nothing.
     }

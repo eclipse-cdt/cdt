@@ -15,6 +15,7 @@
  * Kevin Doyle		(IBM)	 - [222825] NPE when changing profile on Work with User Actions Dialog
  * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  * Kevin Doyle (IBM)   - [240725] Add Null Pointer checking when there are no default user actions
+ * Kevin Doyle (IBM)   - [239702] Copy/Paste doesn't work with User Defined Actions and Named Types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -36,6 +37,7 @@ import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.PropertySet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -710,26 +712,18 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 	 * if the reference in the clipboard corresponds to a node clone in this object.
 	 * @return an id that uniquely identifies the cloned node, or null if it failed.
 	 */
-	//TODO - XUAN
-	/*
 	public String prepareClipboardCopy(SystemXMLElementWrapper elementWrapper) {
 		getDocument(elementWrapper.getProfile());
-		Element element = elementWrapper.getElement();
-		currentNodeClone = null;
-		try {
-			currentNodeClone = (Element) element.cloneNode(true); // true=>deep clone, including text vs just attributes
-		} catch (Exception exc) {
-			SystemBasePlugin.logError("Error cloning user action/type element for clipboard", exc); //$NON-NLS-1$
-			return null;
-		}
+		IPropertySet element = elementWrapper.getElement();
+		currentNodeClone = new PropertySet(element);
 		currentNodeCloneID = getActionSubSystem().getClass().getName() + "." + //$NON-NLS-1$
-				getFileName() + "." + //$NON-NLS-1$
+				getActionSubSystem().getOSType() + "." + //$NON-NLS-1$
 				elementWrapper.getName();
 		currentNodeCloneDomain = elementWrapper.getDomain();
-		//		currentNodeCloneName = elementWrapper.getName();
+//		currentNodeCloneName = elementWrapper.getName();
 		return currentNodeCloneID;
 	}
-	*/
+
 
 	/**
 	 * Test if the given ID, read from the clipboard, matches a node we prepared for
@@ -749,12 +743,21 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 	 * @return SystemXMLElementWrapper wrapper object of pasted element, or null if it failed
 	 */
 	public SystemXMLElementWrapper pasteClipboardCopy(SystemXMLElementWrapper selectedElementWrapper, String id) {
-		getDocument(selectedElementWrapper.getProfile());
+		ISystemProfile profile = selectedElementWrapper.getProfile();
+		if (profile == null)
+			profile = getActionSubSystem().getSubsystem().getSystemProfile();
+		getDocument(profile);
 		IPropertySet selectedElement = selectedElementWrapper.getElement();
 		SystemXMLElementWrapper pastedElementWrapper = null;
 		try {
 			IPropertySetContainer parentElement = null;
 			IPropertySet pastedElement = null;
+			
+			pastedElementWrapper = createElementWrapper(currentNodeClone, selectedElementWrapper.getProfile(), selectedElementWrapper.getDomain());
+			pastedElementWrapper.setName(getUniqueCloneName(pastedElementWrapper));
+			currentNodeClone.setName(getUniqueCloneName(pastedElementWrapper));
+			pastedElementWrapper.setIBM(false); // not an IBM action, even if source was
+			
 			if (selectedElementWrapper.isDomain()) {
 				parentElement = selectedElement;
 				parentElement.addPropertySet(currentNodeClone);
@@ -765,14 +768,12 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 				parentElement.addPropertySet(currentNodeClone);
 				pastedElement = currentNodeClone;
 			}
-			pastedElementWrapper = createElementWrapper(pastedElement, selectedElementWrapper.getProfile(), selectedElementWrapper.getDomain());
-			pastedElementWrapper.setName(getUniqueCloneName(pastedElementWrapper));
-			pastedElementWrapper.setIBM(false); // not an IBM action, even if source was
+			
 		} catch (Exception exc) {
 			SystemBasePlugin.logError("Error pasting user action/type", exc); //$NON-NLS-1$
 			return null;
 		}
-		saveUserData(selectedElementWrapper.getProfile());
+		saveUserData(profile);
 		return pastedElementWrapper;
 	}
 

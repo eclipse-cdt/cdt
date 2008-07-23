@@ -13,7 +13,8 @@
  *                                API to the user actions plugin
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Kevin Doyle		(IBM)		 - [222831] Can't Delete User Actions/Named Types
- * Kevin Doyle		(IBM)		 - [222827] Treeview is collapsed after creating new user action                                                               
+ * Kevin Doyle		(IBM)		 - [222827] Treeview is collapsed after creating new user action      
+ * Kevin Doyle	    (IBM)		 - [239702] Copy/Paste doesn't work with User Defined Actions and Named Types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -48,6 +49,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
@@ -456,7 +458,6 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Called by the SystemChangeFilterActionCopyString action class.
 	 */
 	public boolean doCopy() {
-		/*
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		SystemXMLElementWrapper firstSelect = (SystemXMLElementWrapper) selection.getFirstElement();
 		if (clipboard == null) clipboard = new Clipboard(getShell().getDisplay());
@@ -464,7 +465,6 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 		if (id == null) return false;
 		TextTransfer transfer = TextTransfer.getInstance();
 		clipboard.setContents(new Object[] { id }, new Transfer[] { transfer });
-		*/
 		return true;
 	}
 

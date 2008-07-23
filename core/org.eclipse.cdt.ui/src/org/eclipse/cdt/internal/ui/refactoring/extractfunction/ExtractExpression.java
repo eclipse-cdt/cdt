@@ -25,16 +25,19 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
@@ -152,7 +155,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		return declSpec;
 	}
 	
-	private static CPPFunction findCalledFunction(IASTFunctionCallExpression callExpression) {
+	private static IASTName findCalledFunctionName(IASTFunctionCallExpression callExpression) {
 		IASTExpression functionNameExpression = callExpression.getFunctionNameExpression();
 		IASTName functionName = null;
 		
@@ -162,39 +165,38 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		} else  if(functionNameExpression instanceof CPPASTFieldReference) {
 			CPPASTFieldReference fieldReference = (CPPASTFieldReference) functionNameExpression;
 			functionName = fieldReference.getFieldName();
-		} else {
-			return null;
-		}
-		
-		if (functionName.resolveBinding() instanceof CPPFunction) {
-			return (CPPFunction) functionName.resolveBinding();
-		}
-		
-		return null;
+		}		
+		return functionName;
 	}
 	
 	private static IASTDeclSpecifier handleFunctionCallExpression(IASTFunctionCallExpression callExpression) {
-		CPPFunction function = findCalledFunction(callExpression);
-		
-		if (function != null) {
-			if(function.getDefinition() != null) {
-				IASTNode parent = function.getDefinition().getParent();
-				if(parent instanceof CPPASTFunctionDefinition) {
-					CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-					return definition.getDeclSpecifier();
+		IASTName functionName = findCalledFunctionName(callExpression);
+		if(functionName != null) {
+			IBinding binding = functionName.resolveBinding();
+			if (binding instanceof CPPFunction) {
+				CPPFunction function =  (CPPFunction) binding;
+				if(function.getDefinition() != null) {
+					IASTNode parent = function.getDefinition().getParent();
+					if(parent instanceof CPPASTFunctionDefinition) {
+						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
+						return definition.getDeclSpecifier();
+					}
+				} else if(hasDeclaration(function)) {
+					IASTNode parent = function.getDeclarations()[0].getParent();
+					if (parent instanceof CPPASTSimpleDeclaration) {
+						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
+						return declaration.getDeclSpecifier();
+					}
 				}
-			} else if(hasDeclaration(function)) {
-				IASTNode parent = function.getDeclarations()[0].getParent();
-				if (parent instanceof CPPASTSimpleDeclaration) {
-					CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-					return declaration.getDeclSpecifier();
-				}
+			}else if(binding instanceof CPPTypedef) {
+				CPPTypedef typedef = (CPPTypedef) binding;
+				return new CPPASTNamedTypeSpecifier(new CPPASTName(typedef.getNameCharArray()), false);
 			}
-		}
-			
+
+		}			
 		return null;
 	}
-	
+
 	@Override
 	protected boolean isReturnTypeAPointer(IASTNode node) {
 		if(node instanceof ICPPASTNewExpression) {
@@ -202,25 +204,30 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		} else if(!(node instanceof IASTFunctionCallExpression)) {
 			return false;
 		}
-		
-		CPPFunction function = findCalledFunction((IASTFunctionCallExpression) node);
-		
-		if (function != null) {
-			if(function.getDefinition() != null) {
-				IASTNode parent = function.getDefinition().getParent();
-				if(parent instanceof CPPASTFunctionDefinition) {
-					CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-					return definition.getDeclarator().getPointerOperators().length > 0;
-				}
-			} else if(hasDeclaration(function)) {
-				IASTNode parent = function.getDeclarations()[0].getParent();
-				if (parent instanceof CPPASTSimpleDeclaration) {
-					CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-					return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
+
+		IASTName functionName = findCalledFunctionName((IASTFunctionCallExpression) node);
+		if(functionName != null) {
+			IBinding binding = functionName.resolveBinding();
+			if (binding instanceof CPPFunction) {
+				CPPFunction function =  (CPPFunction) binding;
+
+				if (function != null) {
+					if(function.getDefinition() != null) {
+						IASTNode parent = function.getDefinition().getParent();
+						if(parent instanceof CPPASTFunctionDefinition) {
+							CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
+							return definition.getDeclarator().getPointerOperators().length > 0;
+						}
+					} else if(hasDeclaration(function)) {
+						IASTNode parent = function.getDeclarations()[0].getParent();
+						if (parent instanceof CPPASTSimpleDeclaration) {
+							CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
+							return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
+						}
+					}
 				}
 			}
 		}
-			
 		return false;
 	}
 

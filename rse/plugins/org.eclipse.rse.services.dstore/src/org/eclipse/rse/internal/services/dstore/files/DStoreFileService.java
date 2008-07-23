@@ -1123,7 +1123,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		DataElement de = null;
 		if (remoteParent != null && remoteParent.length() > 0){ 
-			// this is a root
+			// this is not a root
 			de = getSubjectFor(remoteParent, name);
 		}
 		else {

@@ -113,7 +113,12 @@ public class ServerLogger implements IServerLogger
 			initialize();
 		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
 		if (loggerLogLevel != null){
-			log_level = Integer.parseInt(loggerLogLevel);
+			try {
+				log_level = Integer.parseInt(loggerLogLevel);
+			} 
+			catch (NumberFormatException e){				
+				// leaving level as it was
+			}
 		}
 		if (log_level >= LOG_INFO) {
 			if (_logFileStream != null) {
@@ -141,7 +146,12 @@ public class ServerLogger implements IServerLogger
 			initialize();
 		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
 		if (loggerLogLevel != null){
-			log_level = Integer.parseInt(loggerLogLevel);
+			try {
+				log_level = Integer.parseInt(loggerLogLevel);
+			}
+			catch (NumberFormatException e){
+				// leaving level as it was
+			}
 		}
 		if (log_level >= LOG_WARNING) {
 			if (_logFileStream != null) {

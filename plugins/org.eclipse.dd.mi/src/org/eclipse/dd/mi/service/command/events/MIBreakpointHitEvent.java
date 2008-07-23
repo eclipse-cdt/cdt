@@ -39,6 +39,7 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
         return bkptno;
     }
 
+    @Deprecated
     public static MIBreakpointHitEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     { 
@@ -61,5 +62,28 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
         }
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
+    }
+    
+    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    { 
+       int bkptno = -1;
+
+       for (int i = 0; i < results.length; i++) {
+           String var = results[i].getVariable();
+           MIValue value = results[i].getMIValue();
+           String str = ""; //$NON-NLS-1$
+           if (value != null && value instanceof MIConst) {
+               str = ((MIConst)value).getString();
+           }
+
+           if (var.equals("bkptno")) { //$NON-NLS-1$
+               try {
+                   bkptno = Integer.parseInt(str.trim());
+               } catch (NumberFormatException e) {
+               }
+           }
+       }
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+       return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }
 }

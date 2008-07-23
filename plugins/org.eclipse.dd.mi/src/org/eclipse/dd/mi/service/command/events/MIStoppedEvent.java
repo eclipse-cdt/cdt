@@ -40,6 +40,7 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
     	return frame;
     }
 
+    @Deprecated
     public static MIStoppedEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
@@ -69,5 +70,22 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
 		    execDmc = runControl.createMIExecutionContext(containerDmc, threadId);
 		}
 		return new MIStoppedEvent(execDmc, token, results, frame);
+    }
+    
+    public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    {
+    	MIFrame frame = null;
+
+    	for (int i = 0; i < results.length; i++) {
+    		String var = results[i].getVariable();
+    		MIValue value = results[i].getMIValue();
+
+    		if (var.equals("frame")) { //$NON-NLS-1$
+    			if (value instanceof MITuple) {
+    				frame = new MIFrame((MITuple)value);
+    			}
+    		}
+    	}
+    	return new MIStoppedEvent(dmc, token, results, frame);
     }
 }

@@ -29,11 +29,18 @@ public class MISharedLibEvent extends MIStoppedEvent {
         super(ctx, token, results, frame);
     }
 
+    @Deprecated
     public static MIStoppedEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MISharedLibEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+    }
+
+    public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    {
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+       return new MISharedLibEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }
 
 }

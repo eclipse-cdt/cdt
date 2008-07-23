@@ -20,16 +20,17 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractContainerVMNode;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBProcessData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -55,53 +56,72 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	}
 
 	@Override
-	protected void updateElementsInSessionThread(IChildrenUpdate update) {
-      GDBControl controlService = getServicesTracker().getService(GDBControl.class);
-      if ( controlService == null ) {
-              handleFailedUpdate(update);
-              return;
-      }
-      
-      MIInferiorProcess inferiorProcess = controlService.getInferiorProcess();
-      if (inferiorProcess != null && inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
-          update.setChild(createVMContext(inferiorProcess.getExecutionContext()), 0);
-      }
-      update.done();
+	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+		IProcesses processService = getServicesTracker().getService(IProcesses.class);
+		GDBControl controlService = getServicesTracker().getService(GDBControl.class);
+		if (processService == null || controlService == null) {
+			handleFailedUpdate(update);
+			return;
+		}
+
+		processService.getProcessesBeingDebugged(
+				controlService.getGDBDMContext(),
+				new ViewerDataRequestMonitor<IDMContext[]>(getExecutor(), update) {
+					@Override
+					public void handleCompleted() {
+						if (!isSuccess()) {
+							handleFailedUpdate(update);
+							return;
+						}
+						fillUpdateWithVMCs(update, getData());
+						update.done();
+					}
+				});
 	}
 
 	
-    @Override
+	@Override
 	protected void updateLabelInSessionThread(final ILabelUpdate update) {
-    	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
-        if ( runControl == null ) {
-            handleFailedUpdate(update);
-            return;
-        }
-        
-        final GDBControlDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), GDBControlDMContext.class);
+		IProcesses processService = getServicesTracker().getService(IProcesses.class);
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		if (processService == null) {
+			handleFailedUpdate(update);
+			return;
+		}
 
-        String imageKey = null;
-        if (runControl.isSuspended(dmc)) {
-            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
-        } else {
-            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
-        }
-        update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-        
-        runControl.getProcessData(
-            dmc,
-            new ViewerDataRequestMonitor<IGDBProcessData>(getExecutor(), update) {
-				@Override
-                public void handleCompleted() {
-                    if (!isSuccess()) {
-                        update.done();
-                        return;
-                    }
-                    update.setLabel(getData().getName(), 0);
-                    update.done();
-                }
-            });
-    }
+		final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
+		final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+
+		String imageKey = null;
+		if (runControl.isSuspended(contDmc)) {
+			imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
+		} else {
+			imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
+		}
+		update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
+
+		processService.getExecutionData(
+				procDmc,
+				new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
+					@Override
+					public void handleCompleted() {
+						if (!isSuccess()) {
+							update.setLabel("<unavailable>", 0); //$NON-NLS-1$
+							update.done();
+							return;
+						}
+
+						// Create Labels of type Name[PID] if the pid is available
+						final StringBuilder builder = new StringBuilder();
+						builder.append(getData().getName());
+						if (getData().getId() != null && getData().getId().length() > 0) {
+							builder.append("[" + getData().getId()+ "]"); //$NON-NLS-1$//$NON-NLS-2$
+						}
+						update.setLabel(builder.toString(), 0);
+						update.done();
+					}
+				});
+	}
 
 	@Override
 	public int getDeltaFlags(Object e) {
@@ -133,53 +153,55 @@ public class ContainerVMNode extends AbstractContainerVMNode
     private final String MEMENTO_NAME = "CONTAINER_MEMENTO_NAME"; //$NON-NLS-1$
     
     public void compareElements(IElementCompareRequest[] requests) {
-        
-        for ( final IElementCompareRequest request : requests ) {
-        	
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString(MEMENTO_NAME);
-            
-            if (mementoName != null) {
-            	if (element instanceof IDMVMContext) {
-                	
-                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
-                    
-                    if ( dmc instanceof GDBControlDMContext )
-                    {
-                    	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
-                    	try {
-                            getSession().getExecutor().execute(new DsfRunnable() {
-                                public void run() {
-                                	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
-                                	if ( runControl != null ) {
-                                		runControl.getProcessData(
-                                		    procDmc,
-                                		    new ViewerDataRequestMonitor<IGDBProcessData>(runControl.getExecutor(), request) {
-                                                @Override
-                                                protected void handleCompleted() {
-                                                    if ( getStatus().isOK() ) {
-                                                        request.setEqual( mementoName.equals( "Container." + getData().getName() ) ); //$NON-NLS-1$
-                                                    }
-                                                    request.done();
-                                                }
-                                            });
-                                	}
-                                	else {
-                                		request.done();
-                                	}
-                                }
-                            });
-                        } catch (RejectedExecutionException e) {
-                            request.done();
-                        }
+    	for (final IElementCompareRequest request : requests) {
 
-                    	continue;
-                    }
-                }
-            }
-            request.done();
-        }
+    		Object element = request.getElement();
+    		final IMemento memento = request.getMemento();
+    		final String mementoName = memento.getString(MEMENTO_NAME);
+
+    		if (mementoName != null) {
+    			if (element instanceof IDMVMContext) {
+
+    				IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+    				if (dmc instanceof IContainerDMContext)
+    				{
+    					final IProcessDMContext procDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IProcessDMContext.class);
+
+    					if (procDmc != null) {
+    						try {
+    							getSession().getExecutor().execute(new DsfRunnable() {
+    								public void run() {
+    									final IProcesses processService = getServicesTracker().getService(IProcesses.class);
+    									if (processService != null) {
+    										processService.getExecutionData(
+    												procDmc,
+    												new ViewerDataRequestMonitor<IThreadDMData>(processService.getExecutor(), request) {
+    													@Override
+    													protected void handleCompleted() {
+    														if ( getStatus().isOK() ) {
+    															memento.putString(MEMENTO_NAME, "Container." + getData().getName() + getData().getId()); //$NON-NLS-1$
+    														}
+    														request.done();
+    													}
+    												});
+    									}
+    									else {
+    										request.done();
+    									}
+    								}
+    							});
+    						} catch (RejectedExecutionException e) {
+    							request.done();
+    						}
+
+    						continue;
+    					}
+    				}
+    			}
+    		}
+    		request.done();
+    	}
     }
     
     /*
@@ -187,49 +209,50 @@ public class ContainerVMNode extends AbstractContainerVMNode
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
     public void encodeElements(IElementMementoRequest[] requests) {
-    	
-    	for ( final IElementMementoRequest request : requests ) {
-    		
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            
-            if (element instanceof IDMVMContext) {
-            	
-                IDMContext dmc = ((IDMVMContext)element).getDMContext();
-                
-                if ( dmc instanceof GDBControlDMContext )
-                {
-                	final GDBControlDMContext procDmc = (GDBControlDMContext) dmc;
-                	try {
-                        getSession().getExecutor().execute(new DsfRunnable() {
-                            public void run() {
-                            	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
-                            	if ( runControl != null ) {
-                            		runControl.getProcessData(
-                            		    procDmc,
-                            		    new ViewerDataRequestMonitor<IGDBProcessData>(runControl.getExecutor(), request) {
-                                            @Override
-                                            protected void handleCompleted() {
-                                                if ( getStatus().isOK() ) {
-                                                    memento.putString(MEMENTO_NAME, "Container." + getData().getName()); //$NON-NLS-1$
-                                                }
-                                                request.done();
-                                            }
-                                        });
-                            	}
-                            	else {
-                            		request.done();
-                            	}
-                            }
-                        });
-                    } catch (RejectedExecutionException e) {
-                        request.done();
-                    }
+    	for (final IElementMementoRequest request : requests) {
 
-                	continue;
-                }
-            }
-            request.done();
-        }
+    		Object element = request.getElement();
+    		final IMemento memento = request.getMemento();
+
+    		if (element instanceof IDMVMContext) {
+
+    			IDMContext dmc = ((IDMVMContext)element).getDMContext();
+
+    			if (dmc instanceof IContainerDMContext)
+    			{
+    				final IProcessDMContext procDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IProcessDMContext.class);
+
+    				if (procDmc != null) {
+    					try {
+    						getSession().getExecutor().execute(new DsfRunnable() {
+    							public void run() {
+    								final IProcesses processService = getServicesTracker().getService(IProcesses.class);
+    								if (processService != null) {
+    									processService.getExecutionData(
+    											procDmc,
+    											new ViewerDataRequestMonitor<IThreadDMData>(processService.getExecutor(), request) {
+    												@Override
+    												protected void handleCompleted() {
+    													if ( getStatus().isOK() ) {
+    														memento.putString(MEMENTO_NAME, "Container." + getData().getName() + getData().getId()); //$NON-NLS-1$
+    													}
+    													request.done();
+    												}
+    											});
+    								} else {
+    									request.done();
+    								}
+    							}
+    						});
+    					} catch (RejectedExecutionException e) {
+    						request.done();
+    					}
+
+    					continue;
+    				}
+    			}
+    		}
+    		request.done();
+    	}
     }
 }

@@ -48,6 +48,8 @@ public class MISignalEvent extends MIStoppedEvent {
     	return sigMeaning;
     }
 
+
+    @Deprecated
     public static MISignalEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
@@ -72,4 +74,28 @@ public class MISignalEvent extends MIStoppedEvent {
         return new MISignalEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), sigName, sigMeaning);
 
     }
+    
+    public static MISignalEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    {
+       String sigName = ""; //$NON-NLS-1$
+       String sigMeaning = ""; //$NON-NLS-1$
+
+       for (int i = 0; i < results.length; i++) {
+           String var = results[i].getVariable();
+           MIValue value = results[i].getMIValue();
+           String str = ""; //$NON-NLS-1$
+           if (value instanceof MIConst) {
+               str = ((MIConst)value).getString();
+           }
+
+           if (var.equals("signal-name")) { //$NON-NLS-1$
+               sigName = str;
+           } else if (var.equals("signal-meaning")) { //$NON-NLS-1$
+               sigMeaning = str;
+           } 
+       }
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+       return new MISignalEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), sigName, sigMeaning);
+    }
+
 }

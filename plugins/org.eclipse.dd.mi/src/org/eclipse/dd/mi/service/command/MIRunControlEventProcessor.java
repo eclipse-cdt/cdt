@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
@@ -22,8 +23,8 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIRunControl;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecNext;
@@ -64,7 +65,10 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
 public class MIRunControlEventProcessor 
     implements IEventListener, ICommandListener
 {
-    /**
+	private static final String STOPPED_REASON = "stopped"; //$NON-NLS-1$
+	private static final String RUNNING_REASON = "running"; //$NON-NLS-1$
+	   
+	/**
      * The connection service that this event processor is registered with.
      */
     private final AbstractMIControl fCommandControl;
@@ -75,9 +79,6 @@ public class MIRunControlEventProcessor
      */
     private final IContainerDMContext fContainerDmc; 
     
-    /**
-     * Services tracker used to retrieve the MIRunControl service.
-     */
     private final DsfServicesTracker fServicesTracker;
     
     /**
@@ -105,7 +106,6 @@ public class MIRunControlEventProcessor
     
     public void eventReceived(Object output) {
     	for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
-			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
     		if (oobr instanceof MIExecAsyncOutput) {
     			MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
     			// Change of state.
@@ -116,73 +116,103 @@ public class MIRunControlEventProcessor
     				fCommandControl.resetCurrentThreadLevel();
     				fCommandControl.resetCurrentStackLevel();
 
+    				String threadId = null; 
+    				// For now, since GDB does not support thread-groups, fake an empty one
+    				String groupId = "";//null; //$NON-NLS-1$
+    				// I'm putting support for multiple reasons because it was
+    				// there before, but I'm not sure this can actually happen
+    				List<String> reasons = new LinkedList<String>();
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
     					String var = results[i].getVariable();
     					MIValue val = results[i].getMIValue();
     					if (var.equals("reason")) { //$NON-NLS-1$
     						if (val instanceof MIConst) {
-    							String reason = ((MIConst) val).getString();
-    							MIEvent<?> e = createEvent(reason, exec);
-    							if (e != null) {
-    								events.add(e);
-    								continue;
-    							}
+    							reasons.add(((MIConst) val).getString());
+    						}
+    					} else if (var.equals("thread-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							threadId = ((MIConst)val).getString();
+    						}
+    					} else if (var.equals("group-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst)val).getString();
     						}
     					}
     				}
-        			// We were stopped for some unknown reason, for example
-        			// GDB for temporary breakpoints will not send the
-        			// "reason" ??? still fire a stopped event.
-        			if (events.isEmpty()) {
-        				MIEvent<?> e = MIStoppedEvent.parse(
-        						fServicesTracker.getService(IMIRunControl.class), fContainerDmc, exec.getToken(), exec.getMIResults());
-        				events.add(e);
-        			}
 
-        			for (MIEvent<?> event : events) {
-        				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
-        			}
+    				// We were stopped for some unknown reason, for example
+    				// GDB for temporary breakpoints will not send the
+    				// "reason" ??? still fire a stopped event.
+    				if (reasons.isEmpty()) {
+    					reasons.add(STOPPED_REASON);
+    				}
+    				for (String reason : reasons) {
+    					MIEvent<?> event = createEvent(reason, exec, threadId, groupId);
+    					if (event != null) {
+    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    					}
+    				}
     			}
     			else if ("running".equals(state)) { //$NON-NLS-1$
-    				int token = exec.getToken();
+
+    				String threadId = null; 
+    				// For now, since GDB does not support thread-groups, fake an empty one
+    				String groupId = "";//null; //$NON-NLS-1$
+
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
     					String var = results[i].getVariable();
     					MIValue val = results[i].getMIValue();
     					if (var.equals("thread-id")) { //$NON-NLS-1$
     						if (val instanceof MIConst) {
-    							String thread = ((MIConst) val).getString();
-    							MIEvent<?> evt = null;
-    							int threadId = 0;
-    							try {
-    								threadId = Integer.parseInt(thread);
-        							IMIExecutionDMContext context = fServicesTracker.getService(IMIRunControl.class).createMIExecutionContext(fContainerDmc, threadId);
-        							evt = new MIRunningEvent(context, token, MIRunningEvent.CONTINUE);
-    							}
-    							catch (NumberFormatException e) {
-        							evt = new MIRunningEvent(fContainerDmc, token, MIRunningEvent.CONTINUE);
-    								
-    							}
-    	        				fCommandControl.getSession().dispatchEvent(evt, fCommandControl.getProperties());
+    							threadId = ((MIConst) val).getString();
+    						}
+    					} else if (var.equals("group-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst)val).getString();
     						}
     					}
     				}
-    			}
 
-    		} 
-    		else if (oobr instanceof MINotifyAsyncOutput) {
+					MIEvent<?> event = createEvent(RUNNING_REASON, exec, threadId, groupId);
+					if (event != null) {
+						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+					}
+    			}
+    		} else if (oobr instanceof MINotifyAsyncOutput) {
     			// Parse the string and dispatch the corresponding event
     			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
     			String miEvent = exec.getAsyncClass();
-    			if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
-    				MIEvent<?> event = MIThreadCreatedEvent.parse(fContainerDmc, exec.getToken(), exec.getMIResults());
-    				if (event != null) {
-    					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    			if ("thread-created".equals(miEvent) || "thread-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				
+    				// For now, since GDB does not support thread-groups, fake an empty one
+    				String groupId = "";//null; //$NON-NLS-1$
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("group-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString();
+    						}
+    					}
     				}
-    			}
-    			else if ("thread-exited".equals(miEvent)) { //$NON-NLS-1$
-    				MIEvent<?> event = MIThreadExitEvent.parse(fContainerDmc, exec.getToken(), exec.getMIResults());
+
+    		    	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+    		    	IContainerDMContext processContainerDmc = fContainerDmc;
+    		    	if (procService != null && groupId != null) {
+    		    		processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, groupId);
+    		    	}
+
+    		    	MIEvent<?> event = null;
+    				if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
+    					 event = MIThreadCreatedEvent.parse(processContainerDmc, exec.getToken(), exec.getMIResults());
+    				} else if ("thread-exited".equals(miEvent)) { //$NON-NLS-1$
+        				event = MIThreadExitEvent.parse(processContainerDmc, exec.getToken(), exec.getMIResults());
+    				}
+    				
     				if (event != null) {
     					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     				}
@@ -191,6 +221,7 @@ public class MIRunControlEventProcessor
     	}
     }
     
+    @Deprecated
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
         IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
         MIEvent<?> event = null;
@@ -218,6 +249,58 @@ public class MIRunControlEventProcessor
         }
         return event;
     }
+    
+    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec, String threadId, String groupId) {
+    	IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
+    	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+
+    	IExecutionDMContext execDmc = fContainerDmc;
+    	if (procService != null && groupId != null) {
+    		IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, groupId);
+
+    		execDmc = processContainerDmc;
+    		if (runControl != null && threadId != null) {
+    			int threadIdInt = -1;
+    			try {
+    				threadIdInt = Integer.parseInt(threadId);
+    			} catch (NumberFormatException e) {
+    			}
+    			if (threadIdInt != -1) {
+    				execDmc = runControl.createMIExecutionContext(processContainerDmc, threadIdInt);
+    			}
+    		}
+    	}
+
+    	MIEvent<?> event = null;
+    	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
+    		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if (
+    			"watchpoint-trigger".equals(reason) //$NON-NLS-1$
+    			|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
+    			|| "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
+    		event = MIWatchpointTriggerEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
+    		event = MIWatchpointScopeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
+    		event = MISteppingRangeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("signal-received".equals(reason)) { //$NON-NLS-1$
+    		event = MISignalEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("location-reached".equals(reason)) { //$NON-NLS-1$
+    		event = MILocationReachedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
+    		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
+    		event = MIInferiorExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    	} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
+    		event = MIInferiorSignalExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    	} else if (STOPPED_REASON.equals(reason)) {
+    		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if (RUNNING_REASON.equals(reason)) {
+    		event = new MIRunningEvent(execDmc, exec.getToken(), MIRunningEvent.CONTINUE);
+    	}
+    	return event;
+    }
+
 
     public void commandQueued(ICommandToken token) {
         // Do nothing.
@@ -254,9 +337,12 @@ public class MIRunControlEventProcessor
                 else if (cmd instanceof MIExecReturn)          { type = MIRunningEvent.RETURN; }
                 else if (cmd instanceof MIExecContinue)        { type = MIRunningEvent.CONTINUE; }
                 else                                           { type = MIRunningEvent.CONTINUE; }
-                
+
+                MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, ""); //$NON-NLS-1$
+
                 fCommandControl.getSession().dispatchEvent(
-                    new MIRunningEvent(fContainerDmc, id, type), fCommandControl.getProperties());
+                		new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());
             } else if ("exit".equals(state)) { //$NON-NLS-1$
                 // No need to do anything, terminate() will.
                 // Send exited?

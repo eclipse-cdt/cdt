@@ -30,10 +30,17 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
         super(ctx, token, results, frame);
     }
 
+    @Deprecated
     public static MISteppingRangeEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+    }    
+    
+    public static MISteppingRangeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results)
+    {
+    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+    	return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }
 }

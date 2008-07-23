@@ -41,6 +41,7 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
         return number;
     }
 
+    @Deprecated
     public static MIWatchpointScopeEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
@@ -62,5 +63,27 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MIWatchpointScopeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number);
+    }
+
+    public static MIWatchpointScopeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    {
+       int number = 0;
+       for (int i = 0; i < results.length; i++) {
+           String var = results[i].getVariable();
+           MIValue value = results[i].getMIValue();
+
+           if (var.equals("wpnum")) { //$NON-NLS-1$
+               if (value instanceof MIConst) {
+                   String str = ((MIConst) value).getString();
+                   try {
+                       number = Integer.parseInt(str.trim());
+                   } catch (NumberFormatException e) {
+                   }
+               }
+           } 
+       }
+
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+       return new MIWatchpointScopeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number);
     }
 }

@@ -28,11 +28,18 @@ public class MILocationReachedEvent extends MIStoppedEvent {
     protected MILocationReachedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
         super(ctx, token, results, frame);
     }
-
+    
+    @Deprecated
     public static MILocationReachedEvent parse(
         IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+    }
+
+    public static MILocationReachedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    {
+    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+    	return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }
 }

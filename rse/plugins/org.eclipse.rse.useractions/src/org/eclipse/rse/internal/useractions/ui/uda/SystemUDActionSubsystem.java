@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Kevin Doyle		(IBM)		 - [241015] Add getActionSubstVarList(SystemUDActionElement)
+ * Kevin Doyle		(IBM)		 - [241866] Refresh After doesn't work for User Actions
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -485,13 +486,17 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 		// ------------------------------------------------------------
 		// REFRESH VIEW IF REQUESTED IN ACTION         
 		// ------------------------------------------------------------
-		if (actionRunEvenOnce && action.getRefresh() && (viewer != null)) {
+		if (actionRunEvenOnce && action.getRefresh()) {
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			try {
 				Thread.sleep(500L);
 			} catch (Exception exc) {
 			} // defect 46380: give action's command time to run? I don't know, but this works!
-			sr.fireEvent(viewer, new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+			if (viewer != null) {
+				sr.fireEvent(viewer, new SystemResourceChangeEvent(selection.toArray(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+			} else {
+				sr.fireEvent(new SystemResourceChangeEvent(selection.toArray(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+			}
 			// todo! verify we are sending the right event! ok, done... its the right one.
 		}
 		if (testWriter != null && testFile != null) {

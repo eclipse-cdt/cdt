@@ -29,6 +29,7 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.MIProcesses;
+import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
 import org.osgi.framework.BundleContext;
@@ -111,6 +112,16 @@ public class GDBProcesses extends MIProcesses {
 		} else {
 			super.getExecutionData(dmc, rm);
 		}
+	}
+	
+	@Override
+	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
+        MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+	    if (inferiorProcess != null && inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
+	    	super.getProcessesBeingDebugged(dmc, rm);
+	    } else {
+	    	rm.done();
+	    }
 	}
 	
 	@Override

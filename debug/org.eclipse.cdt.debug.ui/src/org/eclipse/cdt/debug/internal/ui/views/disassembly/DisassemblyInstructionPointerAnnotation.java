@@ -64,8 +64,10 @@ public class DisassemblyInstructionPointerAnnotation extends Annotation {
 		IDisassembly disassembly = getDisassembly( frame );
 		hashCode = 37*hashCode + (( disassembly != null ) ? disassembly.hashCode() : 0);
 		if ( frame != null ) {
-			IAddress address = frame.getAddress();
-			hashCode = 37*hashCode + address.hashCode();
+			IAddress address = frame.getAddress();	// will return null if frame has been disposed
+			if (address != null) {
+				hashCode = 37*hashCode + address.hashCode();
+			}
 		}
 		return hashCode;
 	}

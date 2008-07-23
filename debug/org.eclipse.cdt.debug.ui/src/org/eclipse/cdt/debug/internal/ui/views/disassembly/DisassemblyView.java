@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -587,12 +588,15 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	private IRegion getLineInformation( ICStackFrame frame, IEditorInput input ) {
 		if ( input instanceof DisassemblyEditorInput ) {
-			int line = ((DisassemblyEditorInput)input).getInstructionLine( frame.getAddress() );
-			if ( line > 0 ) {
-				try {
-					return getSourceViewer().getDocument().getLineInformation( --line );
-				}
-				catch( BadLocationException e1 ) {
+			final IAddress address = frame.getAddress();	// will return null if frame has been disposed
+			if (address != null) {
+				int line = ((DisassemblyEditorInput)input).getInstructionLine( address );
+				if ( line > 0 ) {
+					try {
+						return getSourceViewer().getDocument().getLineInformation( --line );
+					}
+					catch( BadLocationException e1 ) {
+					}
 				}
 			}
 		}

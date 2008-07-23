@@ -122,8 +122,8 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 			return false;
 		if ( fStartAddress == null || fEndAddress == null )
 			return false;
-		IAddress address = frame.getAddress();
-		return (address.compareTo( fStartAddress ) >= 0 && address.compareTo( fEndAddress ) <= 0);
+		IAddress address = frame.getAddress();	// will return null if frame was disposed
+		return (address != null && address.compareTo( fStartAddress ) >= 0 && address.compareTo( fEndAddress ) <= 0);
 	}
 
 	/*

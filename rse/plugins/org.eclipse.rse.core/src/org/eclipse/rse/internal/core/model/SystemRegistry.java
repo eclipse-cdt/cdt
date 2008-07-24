@@ -947,12 +947,12 @@ public class SystemRegistry implements ISystemRegistry
 		if (firstObject == null || secondObject == null){
 			return false;
 		}
-		
+
 		// two different message objects should not be considered the same
 		if (firstObject instanceof SystemMessageObject){
 			return false;
 		}
-		
+
 		ISystemDragDropAdapter adA = null;
 		ISystemDragDropAdapter adB = null;
 		if (firstObjectFullName == null) {
@@ -1617,12 +1617,16 @@ public class SystemRegistry implements ISystemRegistry
 			throw lastException;
 		}
 		IHost host = op.getHost();
-		ISubSystem[] subsystems = op.getSubSystems();
-		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
-		if (modelListenerManager.hasListeners())
+		if (modelListenerManager.hasListeners()) {
+			ISubSystem[] subsystems = op.getSubSystems();
+			FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
+			// FIXME bug 240991: With the current workaround, we might miss events
+			// in SystemPreferencesManager. Instead of Display.getDefault(),
+			// we should use the IRSEInteractionProvider here.
 			Display.getDefault().asyncExec(fire);
-		
-		////Listening to FireNewHostEvents now
+		}
+
+		// //SystemPreferencesManager listens itself to FireNewHostEvents now
 		//SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list
 		return host;
 	}

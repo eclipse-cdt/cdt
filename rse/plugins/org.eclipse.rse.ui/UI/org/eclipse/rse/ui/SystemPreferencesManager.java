@@ -1,17 +1,17 @@
 /********************************************************************************
  * Copyright (c) 2000, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * David Dykstal (IBM) - moved SystemPreferencesManager to a this package, was in 
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a this package, was in
  *                       the org.eclipse.rse.core package of the UI plugin.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
@@ -33,7 +33,6 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.events.ISystemModelChangeListener;
-import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -56,9 +55,9 @@ import org.eclipse.ui.IWorkbench;
  * This class should not be subclassed.
  */
 public class SystemPreferencesManager {
-	
+
 	/*
-	 * The following are preferences that may be set from the 
+	 * The following are preferences that may be set from the
 	 * system properties.
 	 */
 	private static boolean showLocalConnection;
@@ -71,9 +70,9 @@ public class SystemPreferencesManager {
 	private static SystemPreferencesManager fInstance = new SystemPreferencesManager();
 	private int fModelChangeListeners = 0;
 	private ISystemModelChangeListener fModelChangeListener = null;
-	
+
 	/*
-	 * Private Constructor to discourage instance creation other than by ourselves. 
+	 * Private Constructor to discourage instance creation other than by ourselves.
 	 */
 	private SystemPreferencesManager() {
 	}
@@ -83,8 +82,8 @@ public class SystemPreferencesManager {
 	 */
 	private static void migrateCorePreferences() {
 		String[] keys = {
-				IRSEPreferenceNames.ACTIVEUSERPROFILES,  
-				IRSEPreferenceNames.USE_DEFERRED_QUERIES, 
+				IRSEPreferenceNames.ACTIVEUSERPROFILES,
+				IRSEPreferenceNames.USE_DEFERRED_QUERIES,
 				IRSEPreferenceNames.USERIDPERKEY
 		};
 		for (int i = 0; i < keys.length; i++) {
@@ -116,7 +115,7 @@ public class SystemPreferencesManager {
 	}
 
 	private static void initDefaultsUI() {
-		
+
 		//String showProp = System.getProperty("rse.showNewConnectionPrompt");
 		RSEUIPlugin ui = RSEUIPlugin.getDefault();
 		Preferences store = ui.getPluginPreferences();
@@ -136,7 +135,7 @@ public class SystemPreferencesManager {
 	    store.setDefault(ISystemPreferencesConstants.SHOW_EMPTY_LISTS, ISystemPreferencesConstants.DEFAULT_SHOW_EMPTY_LISTS);
 	    savePreferences();
 	}
-	
+
 	private static boolean getBooleanProperty(String propertyName, boolean defaultValue) {
 		String property = System.getProperty(propertyName);
 		boolean value = (property == null) ? defaultValue : property.equals(Boolean.toString(true));
@@ -220,10 +219,10 @@ public class SystemPreferencesManager {
 	}
 
 	/**
-	 * Sets user's preference for the order of the connection names according to the 
+	 * Sets user's preference for the order of the connection names according to the
 	 * list kept in the system registry.
 	 * This resets any user-specified ordering of profiles since the SystemRegistry
-	 * has no concept of ordered profiles. The hosts inside a profile, though, 
+	 * has no concept of ordered profiles. The hosts inside a profile, though,
 	 * will be ordered according to user preference.
 	 */
 	public static void setConnectionNamesOrder() {
@@ -341,7 +340,7 @@ public class SystemPreferencesManager {
 	}
 
 	/**
-	 * Set if the user has elected to restore the state of the 
+	 * Set if the user has elected to restore the state of the
 	 * Remote Systems View from cached information
 	 * @param restore whether or not to restore the state of RSE from cached information.
 	 */
@@ -418,8 +417,8 @@ public class SystemPreferencesManager {
 	public static String[] getWidgetHistory(String key) {
 		Preferences store = RSEUIPlugin.getDefault().getPluginPreferences();
 		String result = store.getString(key);
-		
-		// bug 237300  
+
+		// bug 237300
 		// don't parse strings if we have ""
 		if (result == null || result.length() == 0){
 			return null;
@@ -460,7 +459,7 @@ public class SystemPreferencesManager {
 	}
 
 	/**
-	 * Parse out list of multiple values into a string array per value. 
+	 * Parse out list of multiple values into a string array per value.
 	 * This is the inverse of the {@link #makeString(String[])} operation.
 	 * @param allvalues the string holding the condensed value
 	 * @return the reconstituted array of strings.
@@ -478,7 +477,7 @@ public class SystemPreferencesManager {
 		RSEUIPlugin.getDefault().savePluginPreferences();
 		RSECorePlugin.getDefault().savePluginPreferences();
 	}
-	
+
 	/*
 	 * Start listening to SystemRegistry model change events
 	 */
@@ -491,17 +490,23 @@ public class SystemPreferencesManager {
 		}
 
 		if (!alreadyListening) {
+			// FIXME bug 240991: With the current workaround, we might miss events
+			// Instead of adding the listener deferred in a job, the SystemRegistry
+			// should send events via the IRSEInteractionProvider
 			Job addListenerJob = new Job("Add Listener"){ //$NON-NLS-1$
-				public IStatus run(IProgressMonitor monitor){			
+				public IStatus run(IProgressMonitor monitor){
 					IWorkbench wb = RSEUIPlugin.getDefault().getWorkbench();
-					while (wb.getDisplay() == null) {
+					while (wb.getDisplay() == null && !wb.isClosing()) {
 						try {
-							Thread.sleep(1000);
+							//Checks in the loop are fast enough so we can poll often
+							Thread.sleep(100);
 						}
 						catch (InterruptedException e){}
 					}
-					fModelChangeListener = new ModelChangeListener();
-					RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+					if (!wb.isClosing()) {
+						fModelChangeListener = new ModelChangeListener();
+						RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+					}
 					return Status.OK_STATUS;
 				}
 			};
@@ -509,7 +514,7 @@ public class SystemPreferencesManager {
 			addListenerJob.schedule();
 		}
 	}
-	
+
 	/*
 	 * A listener for SystemRegistry Model Change events
 	 */
@@ -550,7 +555,7 @@ public class SystemPreferencesManager {
 				SystemPreferencesManager.setConnectionNamesOrder();
 			}
 		}
-		
+
 	}
-	
+
 }

@@ -10,46 +10,56 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfSession;
 
 public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServicesFactory {
 
     @SuppressWarnings("unchecked")
 	public <V> V createService(DsfSession session, Class<V> clazz) {
-        if (IDisassembly.class.isAssignableFrom(clazz)) {
+       	if (IBreakpoints.class.isAssignableFrom(clazz)) {
+    		return (V)createBreakpointService(session);
+       	} else if (ICommandControl.class.isAssignableFrom(clazz)) {
+        	return (V)createCommandControl(session);
+        } else if (IDisassembly.class.isAssignableFrom(clazz)) {
 			return (V)createDisassemblyService(session);
-		} else if (IRegisters.class.isAssignableFrom(clazz)) {
-			return (V)createRegistersService(session);
-		} else if (IBreakpoints.class.isAssignableFrom(clazz)) {
-			return (V)createBreakpointService(session);
-		} else if (ISourceLookup.class.isAssignableFrom(clazz)) {
-			return (V)createSourceLookupService(session);
 		} else if (IExpressions.class.isAssignableFrom(clazz)) {
 			return (V)createExpressionService(session);
-		} else if (IStack.class.isAssignableFrom(clazz)) {
-			return (V)createStackService(session);
-		} else if (IModules.class.isAssignableFrom(clazz)) {
-			return (V)createModulesService(session);
 		} else if (IMemory.class.isAssignableFrom(clazz)) {
 			return (V)createMemoryService(session);
-		} else if (IRunControl.class.isAssignableFrom(clazz)) {
-			return (V)createRunControlService(session);
+		} else if (IModules.class.isAssignableFrom(clazz)) {
+			return (V)createModulesService(session);
 		} else if (IProcesses.class.isAssignableFrom(clazz)) {
 			return (V)createProcessesService(session);
+		} else if (IRegisters.class.isAssignableFrom(clazz)) {
+			return (V)createRegistersService(session);
+		} else if (IRunControl.class.isAssignableFrom(clazz)) {
+			return (V)createRunControlService(session);
+		} else if (ISourceLookup.class.isAssignableFrom(clazz)) {
+			return (V)createSourceLookupService(session);
+		} else if (ISignals.class.isAssignableFrom(clazz)) {
+			return (V)createSignalsService(session);
+		} else if (IStack.class.isAssignableFrom(clazz)) {
+			return (V)createStackService(session);
+		} else if (ISymbols.class.isAssignableFrom(clazz)) {
+			return (V)createSymbolsService(session);
 		} 
 		
 		return null;
 	}
-    
-	protected abstract IDisassembly createDisassemblyService(DsfSession session);
-	protected abstract IRegisters createRegistersService(DsfSession session);
-	protected abstract IBreakpoints createBreakpointService(DsfSession session);
-	protected abstract ISourceLookup createSourceLookupService(DsfSession session);
-	protected abstract IExpressions createExpressionService(DsfSession session);
-	protected abstract IStack createStackService(DsfSession session);
-	protected abstract IModules createModulesService(DsfSession session);
-	protected abstract IMemory createMemoryService(DsfSession session);
-	protected abstract IRunControl createRunControlService(DsfSession session);
-	protected abstract IProcesses createProcessesService(DsfSession session);
-	
+
+	protected IBreakpoints createBreakpointService(DsfSession session) { return null; }
+	protected ICommandControl createCommandControl(DsfSession session) { return null; }
+	protected IDisassembly createDisassemblyService(DsfSession session) { return null; }
+	protected IExpressions createExpressionService(DsfSession session) { return null; }
+	protected IMemory createMemoryService(DsfSession session) { return null; }
+	protected IModules createModulesService(DsfSession session) { return null; }
+	protected IProcesses createProcessesService(DsfSession session) { return null; }
+	protected IRegisters createRegistersService(DsfSession session) { return null; }
+	protected IRunControl createRunControlService(DsfSession session) { return null; }
+	protected ISourceLookup createSourceLookupService(DsfSession session) { return null; }
+	protected ISignals createSignalsService(DsfSession session) { return null; }	
+	protected IStack createStackService(DsfSession session) { return null; }	
+	protected ISymbols createSymbolsService(DsfSession session) { return null; }
+
 }

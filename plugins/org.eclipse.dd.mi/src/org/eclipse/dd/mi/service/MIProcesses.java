@@ -311,6 +311,11 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		rm.done();
     }
     
+    public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+    	rm.setData(true);
+    	rm.done();
+    }
+
     public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 			fCommandControl.queueCommand(
@@ -329,7 +334,12 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	    }
 	}
 	
-	public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
+    public void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm) {
+    	rm.setData(true);
+    	rm.done();
+    }
+
+    public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
 //		if (procCtx instanceof MIProcessDMC) {
 //			int pid;
 //			try {

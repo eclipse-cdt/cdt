@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kevin Doyle (IBM) - [180875] - Removed part of double click listener that opens files
  * Michael Berger (IBM) - Patch to remove non-standard expand/collapse from menu.
@@ -26,7 +26,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [186964] Fix adapter actions for multiselect, and and NPE
- * Martin Oberhuber (Wind River) - [186991] Avoid remote refresh if no element is remote 
+ * Martin Oberhuber (Wind River) - [186991] Avoid remote refresh if no element is remote
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [194602] handleDoubleClick does expand/collapse on treepath instead of element
  * David McKnight   (IBM)        - [194897] Should not remote refresh objects above subsystem.
@@ -65,7 +65,6 @@
 
 package org.eclipse.rse.internal.ui.view;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -103,7 +102,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
@@ -231,7 +229,7 @@ public class SystemView extends SafeTreeViewer
 		ISystemResourceChangeListener, ISystemRemoteChangeListener,
 		IMenuListener, IPostSelectionProvider,
 		ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget,
-		ISelectionChangedListener,  ITreeViewerListener 
+		ISelectionChangedListener,  ITreeViewerListener
 {
 
 	protected Shell shell; // shell hosting this viewer: TODO can be removed
@@ -256,8 +254,8 @@ public class SystemView extends SafeTreeViewer
 	// global actions: to be accessed by getters only
 	// Note the Edit menu actions are set in SystemViewPart. Here we use these
 	//   actions from our own popup menu actions.
-	private SystemCommonDeleteAction _deleteAction; // for global delete menu item	
-	private SystemCommonRenameAction _renameAction; // for common rename menu item	
+	private SystemCommonDeleteAction _deleteAction; // for global delete menu item
+	private SystemCommonRenameAction _renameAction; // for common rename menu item
 	private SystemCommonSelectAllAction _selectAllAction; // for common Ctrl+A select-all
 	// special flags needed when building popup menu, set after examining selections
 	protected boolean selectionShowPropertiesAction;
@@ -361,7 +359,7 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Constructor to use when you create your own tree widget. 
+	 * Constructor to use when you create your own tree widget.
 	 * @param shell The shell hosting this tree viewer widget
 	 * @param tree The Tree widget you created.
 	 * @param inputProvider The input object which will supply the initial root objects in the tree.
@@ -442,12 +440,12 @@ public class SystemView extends SafeTreeViewer
 	protected void init() {
 		_setList = new ArrayList();
 		busyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
-		
+
 		setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
-		setComparer(new ElementComparer()); 
-		 
-		
-		
+		setComparer(new ElementComparer());
+
+
+
 		// set content provider
 		SystemViewLabelAndContentProvider lcProvider = new SystemViewLabelAndContentProvider();
 		setLabelAndContentProvider(lcProvider);
@@ -462,7 +460,7 @@ public class SystemView extends SafeTreeViewer
 
 		fromSystemViewPart = ((messageLine != null) && (messageLine instanceof SystemViewPart));
 
-		// set the tree's input. Provides initial roots.	
+		// set the tree's input. Provides initial roots.
 		if (inputProvider != null) {
 			inputProvider.setViewer(this);
 			setInput(inputProvider);
@@ -489,7 +487,7 @@ public class SystemView extends SafeTreeViewer
 		getTree().setMenu(menu);
 		// -------------------------------------------
 		// Enable specific keys: dbl-click, Delete, F5
-		// -------------------------------------------		
+		// -------------------------------------------
 		addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
@@ -502,7 +500,7 @@ public class SystemView extends SafeTreeViewer
 		});
 		getControl().addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				mouseButtonPressed = e.button; //d40615 	    
+				mouseButtonPressed = e.button; //d40615
 				if (!enabledMode) {
 					//e.doit = false;
 					return;
@@ -522,13 +520,13 @@ public class SystemView extends SafeTreeViewer
 	protected void initRefreshKey() {
 		/* DKM - no need for explicit key listener since we
 		 * have global action
-		 getControl().addKeyListener(new KeyAdapter() 
+		 getControl().addKeyListener(new KeyAdapter()
 		 {
-		 public void keyReleased(KeyEvent event) 
+		 public void keyReleased(KeyEvent event)
 		 {
 		 if (!enabledMode)
 		 return;
-		 if (event.keyCode == SWT.F5) 
+		 if (event.keyCode == SWT.F5)
 		 {
 		 //if (debug)
 		 //  System.out.println("F5 pressed");
@@ -578,13 +576,13 @@ public class SystemView extends SafeTreeViewer
 			/* DKM - 53694
 			 if (showDelete() && canDelete())
 			 {
-			 
+
 			 SystemCommonDeleteAction dltAction = (SystemCommonDeleteAction)getDeleteAction();
 			 dltAction.setShell(getShell());
 			 dltAction.setSelection(getSelection());
 			 dltAction.setViewer(this);
 			 dltAction.run();
-			 
+
 			 }
 			 */
 		} else if ((event.character == '-') && (event.stateMask == SWT.CTRL)) {
@@ -844,7 +842,7 @@ public class SystemView extends SafeTreeViewer
 	 * This is method is called to populate the popup menu
 	 */
 	public void fillContextMenu(IMenuManager menu) {
-		
+
 		if (!showActions) return;
 		//SystemViewPlugin.getDefault().logMessage("inside fillContextMenu");
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
@@ -862,7 +860,7 @@ public class SystemView extends SafeTreeViewer
 				if (!allSelectionsFromSameParent) {
 					if (selectionHasAncestryRelationship()) {
 						// don't show the menu because actions with
-						//  multiple select on objects that are ancestors 
+						//  multiple select on objects that are ancestors
 						//  of each other is problematic
 						// still create the standard groups
 						createStandardGroups(menu);
@@ -904,20 +902,20 @@ public class SystemView extends SafeTreeViewer
 				((ISystemAction) getDeleteAction()).setInputs(getShell(), this, selection);
 				menu.add(new Separator());
 			}
-			
+
 			// PROPERTIES ACTION...
 			// This is supplied by the system, so we pretty much get it for free. It finds the
 			// registered propertyPages extension points registered for the selected object's class type.
-			//_propertyDialogAction.selectionChanged(selection);		  
+			//_propertyDialogAction.selectionChanged(selection);
 			if (showProperties()) {
 				PropertyDialogAction pdAction = getPropertyDialogAction();
 				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
 			}
-			
+
 			// GO INTO ACTION...
 			// OPEN IN NEW WINDOW ACTION...
 			if (fromSystemViewPart) {
-				
+
 				Object selectedObject = selection.getFirstElement();
 				ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
 				boolean hasChildren = adapter.hasChildren((IAdaptable)selectedObject);
@@ -934,7 +932,7 @@ public class SystemView extends SafeTreeViewer
 							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 						}
 					}
-				
+
 
 					if (showOpenViewActions()) {
 						SystemOpenExplorerPerspectiveAction opa = getOpenToPerspectiveAction();
@@ -942,7 +940,7 @@ public class SystemView extends SafeTreeViewer
 						menu.appendToGroup(opa.getContextMenuGroup(), opa);
 					}
 				}
-				
+
 				if (showGenericShowInTableAction() && hasChildren) {
 					SystemShowInTableAction showInTableAction = getShowInTableAction();
 					showInTableAction.setSelection(selection);
@@ -954,7 +952,7 @@ public class SystemView extends SafeTreeViewer
 
 				}
 			}
-			
+
 			// GO TO CASCADING ACTIONS...
 			if (fromSystemViewPart && (selectionIsRemoteObject || showOpenViewActions())) {
 				SystemCascadingGoToAction gotoActions = getGoToActions();
@@ -962,11 +960,11 @@ public class SystemView extends SafeTreeViewer
 				menu.appendToGroup(gotoActions.getContextMenuGroup(), gotoActions.getSubMenu());
 			}
 
-			// ADAPTER SPECIFIC ACTIONS (Must be the last actions added to the menu!!!) 	      
+			// ADAPTER SPECIFIC ACTIONS (Must be the last actions added to the menu!!!)
 			SystemMenuManager ourMenu = new SystemMenuManager(menu);
 
-			// yantzi:artemis 6.0 (defect 53970), do not show adapter specific actions when 
-			// there is not a common adapter for all selected elements (i.e. there are 2 or 
+			// yantzi:artemis 6.0 (defect 53970), do not show adapter specific actions when
+			// there is not a common adapter for all selected elements (i.e. there are 2 or
 			// more selected elements that have different adapters
 			Iterator elements = selection.iterator();
 			//Hashtable adapters = new Hashtable();
@@ -997,21 +995,21 @@ public class SystemView extends SafeTreeViewer
 				//{
 				//	 ISystemViewElementAdapter nextAdapter = (ISystemViewElementAdapter)uniqueAdapters.nextElement();
 				adapter.addActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
-				
+
 			     if (adapter instanceof AbstractSystemViewAdapter)
 			     {
-		
+
 						AbstractSystemViewAdapter aVA = (AbstractSystemViewAdapter)adapter;
-						
+
 						// add dynamic menu popups
 						aVA.addDynamicPopupMenuActions(ourMenu, selection, shell,  ISystemContextMenuConstants.GROUP_ADDITIONS);
-						
+
 						// add remote actions
 						aVA.addCommonRemoteActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
 			     }
 				//}
 			}
-	
+
 
 			// whale through all actions, updating shell and selection
 			IContributionItem[] items = menu.getItems();
@@ -1029,8 +1027,8 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 
-			// ***** DO NOT ADD ANY ACTIONS AFTER HERE *****			
-		
+			// ***** DO NOT ADD ANY ACTIONS AFTER HERE *****
+
 		}
 
 	}
@@ -1077,7 +1075,7 @@ public class SystemView extends SafeTreeViewer
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_BUILD)); // build, rebuild, refresh
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_CHANGE)); // update, change
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORGANIZE)); // rename,move,copy,delete,bookmark,refactoring
-		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORDER)); // move up, move down		
+		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORDER)); // move up, move down
 		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GENERATE)); // getters/setters, etc. Typically in editor
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_SEARCH)); // search
 		menu.add(new Separator(ISystemContextMenuConstants.GROUP_CONNECTION)); // connection-related actions
@@ -1117,15 +1115,15 @@ public class SystemView extends SafeTreeViewer
 	 * Determines whether the view has an ancestor relation selection so
 	 * that actions can be enable/disabled appropriately.
 	 * For example, delete needs to be disabled when a parent and it's child
-	 * are both selected. 
+	 * are both selected.
 	 * @return true if the selection has one or more ancestor relations
 	 */
 	protected boolean hasAncestorRelationSelection() {
 		return selectionHasAncestryRelationship();
 		/*
 		TreeItem[] elements = getTree().getSelection();
-		
-				
+
+
 		//Item[] elements = getSelection(getControl());
 		for (int i = 0; i < elements.length; i++) {
 			TreeItem parentItem = elements[i];
@@ -1138,7 +1136,7 @@ public class SystemView extends SafeTreeViewer
 				//}
 		//	}
 		}
-		return false; 
+		return false;
 		*/
 	}
 
@@ -1165,7 +1163,7 @@ public class SystemView extends SafeTreeViewer
 			if (adapter == null) continue;
 			if (enableDelete) enableDelete = adapter.showDelete(element) && adapter.canDelete(element);
 		}
-		//System.out.println("Enabling delete action: "+enableDelete);                
+		//System.out.println("Enabling delete action: "+enableDelete);
 		//System.out.println("Enabling selectAll action: "+enableSelectAll(sel));
 		((SystemCommonDeleteAction) getDeleteAction()).setEnabled(enableDelete);
 		((SystemCommonSelectAllAction) getSelectAllAction()).setEnabled(enableSelectAll(sel)); // added by Phil. Noticed Edit->Select All not enabled when it should be
@@ -1174,7 +1172,7 @@ public class SystemView extends SafeTreeViewer
 		if (adapter != null) {
 			displayMessage(adapter.getStatusLineText(firstSelection));
 			if ((mouseButtonPressed == LEFT_BUTTON) && (!expandingTreeOnly)) //d40615
-				adapter.selectionChanged(firstSelection); //d40615  
+				adapter.selectionChanged(firstSelection); //d40615
 		} else
 			clearMessage();
 		//System.out.println("Inside selectionChanged in SystemView");
@@ -1183,7 +1181,7 @@ public class SystemView extends SafeTreeViewer
 
 	protected void logMyDebugMessage(String prefix, String msg) {
 		if (!debugProperties) return;
-		//RSEUIPlugin.logDebugMessage(prefix, msg);		
+		//RSEUIPlugin.logDebugMessage(prefix, msg);
 		System.out.println(prefix + " " + msg); //$NON-NLS-1$
 	}
 
@@ -1299,7 +1297,7 @@ public class SystemView extends SafeTreeViewer
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				String[] allProps = {IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE};
-				update(element, allProps); // for refreshing non-structural properties in viewer when model changes   	   	          	    
+				update(element, allProps); // for refreshing non-structural properties in viewer when model changes
 			}
 		});
 	}
@@ -1317,11 +1315,11 @@ public class SystemView extends SafeTreeViewer
 			public void run() {
 				updatePropertySheet();
 				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
-				update(element, allProps); // for refreshing non-structural properties in viewer when model changes   	   	          	    
+				update(element, allProps); // for refreshing non-structural properties in viewer when model changes
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * Here only for observability.
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleTreeCollapse(org.eclipse.swt.events.TreeEvent)
@@ -1365,7 +1363,7 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
-	
+
 	/**
 	 * Clear current selection. Ignore widget disposed message.
 	 */
@@ -1375,7 +1373,7 @@ public class SystemView extends SafeTreeViewer
 		} catch (Exception exc) {
 		}
 	}
-			
+
 
 
 	/**
@@ -1406,16 +1404,16 @@ public class SystemView extends SafeTreeViewer
 	 * @deprecated 	should use {@link #getViewAdapter(Object)} since IRemoteObjectIdentifier
 	 * 		is not defined in the adapter factories
 	 */
-	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
+	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o)
 	{
 		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
 	}
-	
+
 	/**
 	 * Returns the implementation of ISystemRemoteElementAdapter for the given
 	 * object.  Returns null if this object is not adaptable to this.
 	 */
-	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
+	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o)
 	{
 		if (o instanceof IAdaptable)
 		{
@@ -1423,7 +1421,7 @@ public class SystemView extends SafeTreeViewer
 		}
 		return null;
 	}
-	
+
 
 	/**
 	 *
@@ -1439,7 +1437,7 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Return the connection of the selected object, whatever it is. 
+	 * Return the connection of the selected object, whatever it is.
 	 */
 	public IHost getSelectedConnection() {
 		Object firstSelection = ((StructuredSelection) getSelection()).getFirstElement();
@@ -1509,8 +1507,8 @@ public class SystemView extends SafeTreeViewer
 				children = oldResult;
 		} else
 			children = getChildren(parentItem);
-		
-		for (int i = 0; i < oldResult.length; i++) 
+
+		for (int i = 0; i < oldResult.length; i++)
 		{
 			Item first = removeFirstItem(oldResult, children);
 			newResult[i] = first;
@@ -1520,26 +1518,26 @@ public class SystemView extends SafeTreeViewer
 
 	}
 
-	
-	protected Item removeFirstItem(Item[] items, Item[] children) 
-	{	
+
+	protected Item removeFirstItem(Item[] items, Item[] children)
+	{
 		if (items != null)
 		{
-			for (int i = 0; i < items.length; i++) 
+			for (int i = 0; i < items.length; i++)
 			{
-				if (items[i] != null) 
+				if (items[i] != null)
 				{
 					Item current = items[i];
 					items[i] = null;
-					return current;			
+					return current;
 				}
 			}
 		}
 		return null;
 	}
 
-	
-	
+
+
 	/**
 	 * Move one tree item to a new location
 	 */
@@ -1551,13 +1549,13 @@ public class SystemView extends SafeTreeViewer
 		}
 		if (getExpanded(item)) {
 			setExpanded(item, false);
-			refresh(src); // flush items from memory  	  
+			refresh(src); // flush items from memory
 		}
 
 		createTreeItem(parentItem, src, newPosition);
 
 		//createTreeItem(parentItem, (new String("New")), newPosition);
-		//remove(src);    
+		//remove(src);
 
 		disassociate(item);
 		item.dispose();
@@ -1566,7 +1564,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Move existing items a given number of positions within the same node.
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 */
 	protected void moveTreeItems(Widget parentItem, Object[] src, int delta) {
@@ -1575,14 +1573,14 @@ public class SystemView extends SafeTreeViewer
 
 		for (int idx = 0; idx < src.length; idx++)
 			oldItems[idx] = (Item) internalFindRelativeItem(parentItem, src[idx], 1);
-		
+
 		Item[] children = null;
 		if (parentItem instanceof Item) {
 			children = getItems((Item) parentItem);
 		} else
 			children = getChildren(parentItem);
-		
-		for (int idx = 0; idx < src.length; idx++) 
+
+		for (int idx = 0; idx < src.length; idx++)
 		{
 			oldPositions[idx] = getTreeItemPosition(oldItems[idx], children) + 1;
 		}
@@ -1622,8 +1620,8 @@ public class SystemView extends SafeTreeViewer
 		return pos;
 	}
 	*/
-	
-	
+
+
 	/**
 	 * Get the position of a tree item within its parent
 	 */
@@ -1634,14 +1632,14 @@ public class SystemView extends SafeTreeViewer
 		}
 		return pos;
 	}
-	
+
 
 	/**
 	 * Expand a given filter, given a subsystem that contains a reference to the filter's pool.
 	 * This will expand down to the filter if needed
 	 * @param parentSubSystem - the subsystem containing a reference to the filter's parent pool
 	 * @param filter - the filter to find, reveal, and expand within the subsystem context
-	 * @return the filter reference to the filter if found and expanded. This is a unique binary address 
+	 * @return the filter reference to the filter if found and expanded. This is a unique binary address
 	 *   within the object's in this tree, so can be used in the viewer methods to affect this particular
 	 *   node.
 	 */
@@ -1694,12 +1692,12 @@ public class SystemView extends SafeTreeViewer
 			trace("resource changed while shutting down"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void trace(String str) {
 		String id = RSEUIPlugin.getDefault().getBundle().getSymbolicName();
 		String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
 		if ("true".equals(val)) { //$NON-NLS-1$
-			try { 
+			try {
 				throw new IllegalStateException(str);
 			} catch(IllegalStateException e) {
 				e.printStackTrace();
@@ -1738,7 +1736,7 @@ public class SystemView extends SafeTreeViewer
 			int type = _event.getType();
 			Object src = _event.getSource();
 			Object parent = _event.getParent();
-			
+
 			String[] properties = new String[1];
 			if (parent == RSECorePlugin.getTheSystemRegistry()) parent = inputProvider;
 			ISubSystem ss = null;
@@ -1829,7 +1827,7 @@ public class SystemView extends SafeTreeViewer
 							return Status.OK_STATUS;
 						}
 					}
-					
+
 					//System.out.println("ADDING CONNECTIONS.........................: " + addingConnection);
 					//System.out.println("event.getParent() instanceof SystemRegistry: " + (event.getParent() instanceof SystemRegistry));
 					//System.out.println("inputProvider.showingConnections().........: " + (inputProvider.showingConnections()));
@@ -1841,14 +1839,14 @@ public class SystemView extends SafeTreeViewer
 						if (pos >= 0) pos++; // want to add after previous
 					} else
 						pos = _event.getPosition();
-					
+
 					Item[] currentItems = null;
 					if (parentItem instanceof Tree)
 					{
 						currentItems = ((Tree)parentItem).getItems();
 					}
 					else
-					{	
+					{
 						currentItems = getItems((Item)parentItem);
 					}
 					boolean exists = false;
@@ -1897,7 +1895,7 @@ public class SystemView extends SafeTreeViewer
 						if (done) return Status.OK_STATUS;
 					}
 					// are we adding connections and yet we are not a secondary perspective?
-					// If so, this event does not apply to us.                      
+					// If so, this event does not apply to us.
 					else if (addingConnections && (_event.getParent() instanceof ISystemRegistry) && !inputProvider.showingConnections()) return Status.OK_STATUS;
 
 					for (int idx = 0; idx < multiSource.length; idx++) {
@@ -1918,7 +1916,7 @@ public class SystemView extends SafeTreeViewer
 				if (parentItem == null) return Status.OK_STATUS;
 				if (multiSource.length > 0 && parentItem instanceof Item) {
 					getControl().setRedraw(false);
-					collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
+					collapseNode(parent, true); // collapse and flush gui widgets from memory
 					//setExpandedState(parent, true); // expand the parent
 					setExpanded((Item) parentItem, true); // expand the parent without calling resolveFilterString
 					TreeItem[] kids = ((TreeItem) parentItem).getItems(); // any kids? Like a dummy node?
@@ -1949,7 +1947,7 @@ public class SystemView extends SafeTreeViewer
 					//System.out.println("WAS SELECTED? " + wasSrcSelected);
 				}
 				item = findItem(parent);
-				//logDebugMsg("  parent = " + parent);  
+				//logDebugMsg("  parent = " + parent);
 				//logDebugMsg("  item = " + item);
 				// INTERESTING BUG HERE. GETEXPANDED WILL RETURN TRUE IF THE TREE ITEM HAS EVER BEEN
 				// EXPANDED BUT IS NOW COLLAPSED! I CANNOT FIND ANY API IN TreeItem or TreeViewer THAT
@@ -1962,7 +1960,7 @@ public class SystemView extends SafeTreeViewer
 					//refresh(parent);
 					if (debug) System.out.println("Found item and it was expanded for " + parent); //$NON-NLS-1$
 					getControl().setRedraw(false);
-					collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
+					collapseNode(parent, true); // collapse and flush gui widgets from memory
 					setExpandedState(parent, true); // expand the parent
 					getControl().setRedraw(true);
 					if (wasSrcSelected) {
@@ -2013,7 +2011,7 @@ public class SystemView extends SafeTreeViewer
 								parentItem = ((TreeItem)sitem).getParent();
 							}
 						}
-					}						
+					}
 				}
 				if (parentItem == null) {
 					return Status.OK_STATUS;
@@ -2038,7 +2036,7 @@ public class SystemView extends SafeTreeViewer
 				}
 				break;
 			/* Now done below in systemRemoteResourceChanged
-			 case EVENT_DELETE_REMOTE:   	    	  
+			 case EVENT_DELETE_REMOTE:
 			 if (debug)
 			 logDebugMsg("SV event: EVENT_DELETE_REMOTE ");
 			 deleteRemoteObject(src);
@@ -2047,19 +2045,19 @@ public class SystemView extends SafeTreeViewer
 			 case EVENT_DELETE_REMOTE_MANY:
 			 // multi-source: array of objects to delete
 			 if (debug)
-			 logDebugMsg("SV event: EVENT_DELETE_REMOTE_MANY ");  
+			 logDebugMsg("SV event: EVENT_DELETE_REMOTE_MANY ");
 			 multiSource = event.getMultiSource();
 			 //remoteItemsToSkip = null; // reset
 			 if ((multiSource == null) || (multiSource.length==0))
 			 return;
 			 for (int idx=0; idx<multiSource.length; idx++)
 			 deleteRemoteObject(multiSource[idx]);
-			 break;   	    	      
+			 break;
 			 */
 			case ISystemResourceChangeEvents.EVENT_RENAME:
 				if (debug) logDebugMsg("SV event: EVENT_RENAME "); //$NON-NLS-1$
 				properties[0] = IBasicPropertyConstants.P_TEXT;
-				update(src, properties); // for refreshing non-structural properties in viewer when model changes   	   	      
+				update(src, properties); // for refreshing non-structural properties in viewer when model changes
 				updatePropertySheet();
 				break;
 			/* Now done below in systemRemoteResourceChanged
@@ -2068,7 +2066,7 @@ public class SystemView extends SafeTreeViewer
 			 // PARENT: the String from calling getAbsoluteName() on the remote adapter BEFORE updating the remote object's name
 			 if (debug)
 			 logDebugMsg("SV event: EVENT_RENAME_REMOTE ");
-			 
+
 			 renameRemoteObject(src, (String)parent);
 			 break;
 			 */
@@ -2103,7 +2101,7 @@ public class SystemView extends SafeTreeViewer
 				//  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
 				//else
 				//  refresh(); // refresh entire tree
-				if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistryUI()))						
+				if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistryUI()))
 					refreshAll();
 				else {
 					//FIXME Why do we forceRemote here? EVENT_REFRESH_SELECTED also does not do forceRemote.
@@ -2125,10 +2123,10 @@ public class SystemView extends SafeTreeViewer
 						smartRefresh(new TreeItem[] { (TreeItem) parentItem });
 					}
 					//else
-					//System.out.println("parent of selection is empty");    	   	      	
+					//System.out.println("parent of selection is empty");
 				}
 				//else
-				//System.out.println("Selection is empty");    	   	      
+				//System.out.println("Selection is empty");
 				break;
 			case ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_SELECTED "); //$NON-NLS-1$
@@ -2169,10 +2167,10 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 				// the following is another tweak. If an expanded object is selected for refresh, which has remote children,
-				// and any of those children are expanded, then on refresh the resulting list may be in a different 
+				// and any of those children are expanded, then on refresh the resulting list may be in a different
 				// order and the silly algorithm inside tree viewer will simply re-expand the children at the previous
 				// relative position. If that position has changed, the wrong children are re-expanded!
-				// How to fix this? Ugly code to get the query the list of expanded child elements prior to refresh, 
+				// How to fix this? Ugly code to get the query the list of expanded child elements prior to refresh,
 				// collapse them, do the refresh, then re-expand them based on absolute name versus tree position.
 				// Actually, to do this right we need to test if the children of the selected item are remote objects
 				// versus just the selected items because they may have selected a filter!
@@ -2181,7 +2179,7 @@ public class SystemView extends SafeTreeViewer
 					smartRefresh(getTree().getSelection());
 				}
 				//else
-				//{                  	
+				//{
 				//i = selected.iterator();
 				//while (i.hasNext())
 				//refresh(i.next());
@@ -2206,7 +2204,7 @@ public class SystemView extends SafeTreeViewer
 					if (adapter != null) {
 						Item parItem = getParentItem((Item) findItem(element));
 
-						if (parItem != null) parentElemItem = parItem; //.getData();    	   	      	    
+						if (parItem != null) parentElemItem = parItem; //.getData();
 
 						while (parItem != null && !(parItem.getData() instanceof ISystemFilterReference)) {
 							parItem = getParentItem(parItem);
@@ -2236,29 +2234,29 @@ public class SystemView extends SafeTreeViewer
 				break;
 			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = " + src); //$NON-NLS-1$
-				
+
 				// Fake expanded is set to the item for the src object if the object is in a collapsed state and
-				// resides directly under a filter.  The item is artificially expanded in order to allow 
-				// refreshRemoteObject() to go through with a query of the item.  After the query is kicked off, 
+				// resides directly under a filter.  The item is artificially expanded in order to allow
+				// refreshRemoteObject() to go through with a query of the item.  After the query is kicked off,
 				// fakeExpanded is contracted in order to retain the original tree expand state.
 				TreeItem fakeExpanded = null;
-				
+
 				ISystemViewElementAdapter adapter = getViewAdapter(src);
 				if (adapter != null)
-				{					
+				{
 					// we need to refresh filters
 					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-					
+
 					// if this is a filter reference, we just need to refresh it
 					if (src instanceof ISystemFilterReference)
 					{
 						refresh(src);
 						break;
 					}
-					
+
 					// need to find filter references contain this object
 		        	List filterReferences = sr.findFilterReferencesFor(src, adapter.getSubSystem(src), false);
-		        	
+
 					// first, find out if src is a container or not
 					// if it's a container, just pass into refreshRemoteObject
 					// if it's NOT a container, pass in it's parent
@@ -2275,11 +2273,11 @@ public class SystemView extends SafeTreeViewer
 									refresh(ref);
 								}
 								break;
-							}								
+							}
 							else {
 								src = srcParent;
 							}
-								
+
 						}
 					}
 					else
@@ -2307,21 +2305,21 @@ public class SystemView extends SafeTreeViewer
 										// the item is artificially expanded in order to allow the query to go through in
 										// refreshRemoteObject()
 										titem.setExpanded(true);
-											
+
 										// we set this so that after calling refreshRemoteObject(), the item can be re-collapsed
-										fakeExpanded = titem;									
+										fakeExpanded = titem;
 									}
 								}
 							}
 						}
 					}
 				}
-				
+
 				refreshRemoteObject(src, parent, originatedHere);
 				if (fakeExpanded != null){
 					fakeExpanded.setExpanded(false);
 				}
-	        			        	
+
 				break;
 			case ISystemResourceChangeEvents.EVENT_SELECT_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = " + src); //$NON-NLS-1$
@@ -2350,7 +2348,7 @@ public class SystemView extends SafeTreeViewer
 				if (ra != null) {
 					updateRemoteObjectProperties(src);
 				} else
-					update(src, allProps); // for refreshing non-structural properties in viewer when model changes   	   	      
+					update(src, allProps); // for refreshing non-structural properties in viewer when model changes
 				updatePropertySheet();
 				break;
 			case ISystemResourceChangeEvents.EVENT_PROPERTYSHEET_UPDATE:
@@ -2427,29 +2425,37 @@ public class SystemView extends SafeTreeViewer
 	// ISYSTEMREMOTEChangeListener METHOD
 	// ------------------------------------
 
-	
-	private class CheckPending implements Runnable
+
+	private static class CheckPending implements Runnable
 	{
 		private boolean _notReady = true;
 		private TreeItem _item;
-		
+
 		public CheckPending(TreeItem item)
 		{
 			_item = item;
 		}
-		
+
 		public void run()
-		{	
-			Item[] items = _item.getItems();
-			_notReady = (items.length <= 0 || items[0].getText().equals(ProgressMessages.PendingUpdateAdapter_PendingLabel));
-		}	
-		
+		{
+			if (_item.isDisposed()) {
+				// Parent was deleted in the meantime
+				_notReady = false;
+			} else {
+				Item[] items = _item.getItems();
+				// We know that a child must appear eventualy, because the
+				// REMOTE_RESOURCE_CREATED event is only sent in case of
+				// successful creation of the element.
+				_notReady = (items.length <= 0 || ProgressMessages.PendingUpdateAdapter_PendingLabel.equals(items[0].getText()));
+			}
+		}
+
 		public boolean isNotReady()
 		{
 			return _notReady;
 		}
 	}
-	
+
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 *  changes. You will be called after the resource is changed.
@@ -2460,21 +2466,21 @@ public class SystemView extends SafeTreeViewer
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		boolean originatedHere;
-		
+
 		if (event instanceof SystemResourceChangeEventUI) {
 			Viewer viewer = ((SystemResourceChangeEventUI)event).getOriginatingViewer();
 			originatedHere = (viewer==this);
-		} 
+		}
 		else if (event instanceof SystemRemoteChangeEvent){
 			Object viewer = ((SystemRemoteChangeEvent)event).getOriginatingViewer();
-			originatedHere = (viewer==this);		
+			originatedHere = (viewer==this);
 		}
 		else {
 			originatedHere = false;
 		}
-		
+
 		List remoteResourceNames = null;
-		if (remoteResource instanceof List) { 
+		if (remoteResource instanceof List) {
 			remoteResourceNames = (List) remoteResource;
 			remoteResource = remoteResourceNames.get(0);
 		}
@@ -2522,27 +2528,27 @@ public class SystemView extends SafeTreeViewer
 					smartRefresh(new TreeItem[] { filterItem }, null, true);
 				}
 			}
-			// now, refresh all occurrences of the remote parent object. 
+			// now, refresh all occurrences of the remote parent object.
 			refreshRemoteObject(remoteResourceParent, null, false);
 			// restore selected filters...
 			if (selectedFilters != null) setSelection(selectedFilters);
-			// if the create event originated here, then expand the selected node and 
+			// if the create event originated here, then expand the selected node and
 			//  select the new resource under it.
 			if (originatedHere){
 				// first, restore previous selection...
 				if (prevSelection != null) selectRemoteObjects(prevSelection, ss, parentSelectionItem);
 				TreeItem selectedItem = getFirstSelectedTreeItem();
-				if (selectedItem != null) 
+				if (selectedItem != null)
 				{
 					Object data = selectedItem.getData();
 					boolean allowExpand = true;
 					ISystemViewElementAdapter adapter = getViewAdapter(data);
-					
+
 					if (adapter != null && data instanceof IAdaptable)
 					{
 						allowExpand = adapter.hasChildren((IAdaptable)data);
 					}
-					if (allowExpand && !selectedItem.getExpanded()) // if the filter is expanded, then we already refreshed it... 
+					if (allowExpand && !selectedItem.getExpanded()) // if the filter is expanded, then we already refreshed it...
 					{
 						createChildren(selectedItem);
 						selectedItem.setExpanded(true);
@@ -2550,40 +2556,43 @@ public class SystemView extends SafeTreeViewer
 					if (adapter.supportsDeferredQueries(ss))
 					{
 						final List names = remoteResourceNames;
-						final String name = remoteResourceName;						
+						final String name = remoteResourceName;
 						final ISubSystem subsys = ss;
 						final TreeItem item = selectedItem;
-						
+						final IWorkbench wb = RSEUIPlugin.getDefault().getWorkbench();
+
 						// do the selection after the query triggered via refreshRemoteObject() completes
 						Job job = new Job("select resource") //$NON-NLS-1$
 						{
 							public IStatus run(IProgressMonitor monitor) {
-									
+
 								boolean notReady = true;
-								while (notReady)
+								while (notReady && !wb.isClosing())
 								{
 									try {
 										Thread.sleep(100);
 									}
 									catch (InterruptedException e){}
-	
+
 									CheckPending checkRunnable = new CheckPending(item);
-									Display.getDefault().syncExec(checkRunnable);
+									wb.getDisplay().syncExec(checkRunnable);
 									notReady = checkRunnable.isNotReady();
 								}
-								
-								Display.getDefault().asyncExec(new Runnable()
+
+								wb.getDisplay().asyncExec(new Runnable()
 								{
 									public void run()
 									{
-										if (names != null)
-											selectRemoteObjects(names, subsys, item);
-										else										
-											selectRemoteObjects(name, subsys, item);
+										if (!wb.isClosing() && !item.isDisposed()) {
+											if (names != null)
+												selectRemoteObjects(names, subsys, item);
+											else
+												selectRemoteObjects(name, subsys, item);
+										}
 									}
 								});
-								
-								return Status.OK_STATUS;						
+
+								return Status.OK_STATUS;
 							}
 						};
 						job.setSystem(true);
@@ -2596,7 +2605,7 @@ public class SystemView extends SafeTreeViewer
 							selectRemoteObjects(remoteResourceName, ss, selectedItem);
 					}
 				}
-				//else 
+				//else
 				//System.out.println("Hmm, nothing selected");
 			}
 			break;
@@ -2639,7 +2648,7 @@ public class SystemView extends SafeTreeViewer
 		// --------------------------
 		// REMOTE RESOURCE RENAMED...
 		// --------------------------
-		case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED: 
+		case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED:
 			// we can easily lose our original selection so we need save and restore it if needed
 			prevSelection = null;
 			parentSelectionItem = null;
@@ -2656,7 +2665,7 @@ public class SystemView extends SafeTreeViewer
 			if (remoteResource instanceof IAdaptable && adapter.hasChildren((IAdaptable) remoteResource)) {
 				refreshRemoteObject(remoteResource, remoteResource, originatedHere);
 			}
-			
+
 			// now, find all filters that list the contents of the OLD name container.
 			filterMatches = findAllRemoteItemFilterReferences(event.getOldNames()[0], ss, null); // assuming only one resource renamed
 			if (filterMatches != null) {
@@ -2951,7 +2960,7 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 				if (dupes) // defect 46818
-				{ // if there are multiple references to the same binary object, ...    	      
+				{ // if there are multiple references to the same binary object, ...
 					//System.out.println(".....calling refresh(data) on this match");
 					/*
 					 if (pItem!=null)
@@ -2968,7 +2977,7 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 		}
-		
+
 		// do the remove now
 		for (int i = 0; i < toRemove.size(); i++)
 		{
@@ -3023,20 +3032,20 @@ public class SystemView extends SafeTreeViewer
 
 		TreeItem[] selected = getTree().getSelection();
 		getTree().deselectAll();
-		
+
 		boolean refresh = false;
 		// STEP 3: process all references to the old name object
 		for (int idx = 0; idx < matches.size(); idx++) {
 			Item match = (Item) matches.get(idx);
 			// a reference to this remote object
-			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) 
+			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed())
 			{
 				Object data = match.getData();
-				
+
 				ISystemRemoteElementAdapter	remoteAdapter = (ISystemRemoteElementAdapter)((IAdaptable)data).getAdapter(ISystemRemoteElementAdapter.class);
-				
+
 				if (data != renameObject) // not a binary match
-				{	
+				{
 					if (remoteAdapter != null)
 					{
 						// DKM - would be nice to eventually get rid of remote element adapter
@@ -3045,12 +3054,12 @@ public class SystemView extends SafeTreeViewer
 				} else {
 					refresh = true;
 				}
-			
+
 				// rename explicitly here (since internalUpdate doesn't seem to have an effect
 				match.setText(newElementName);
 				//updateItem(match, renameObject);
 				internalUpdate(match, data, properties);
-						
+
 				//update(data, properties); // for refreshing non-structural properties in viewer when model changes
 				//System.out.println("Match found. refresh required? " + refresh);
 //				if (refresh)
@@ -3058,7 +3067,7 @@ public class SystemView extends SafeTreeViewer
 	//				smartRefresh(new TreeItem[] { (TreeItem) match });
 			}
 		}
-		
+
 		if (refresh)
 		{
 			// causes duplicates to appear when there are more than one rename objects
@@ -3066,7 +3075,7 @@ public class SystemView extends SafeTreeViewer
 			getTree().setSelection(selected);
 		}
 
-		// STEP 4: update property sheet, just in case.    	
+		// STEP 4: update property sheet, just in case.
 		updatePropertySheet();
 
 		return;
@@ -3080,7 +3089,7 @@ public class SystemView extends SafeTreeViewer
 
 		// STEP 1: get the object's remote adapter and subsystem
 		ISystemRemoteElementAdapter	rmtAdapter = (ISystemRemoteElementAdapter)((IAdaptable)remoteObject).getAdapter(ISystemRemoteElementAdapter.class);
-		
+
 		ISubSystem subsystem = rmtAdapter.getSubSystem(remoteObject);
 
 		// STEP 2: find all references to the object
@@ -3099,7 +3108,7 @@ public class SystemView extends SafeTreeViewer
 				else // match by name
 				{
 
-				
+
 					rmtAdapter.refreshRemoteObject(data, remoteObject); // old, new
 					update(data, allProps);
 				}
@@ -3112,11 +3121,11 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Refresh contents of remote container. Refreshes all references to this container including filters that 
+	 * Refresh contents of remote container. Refreshes all references to this container including filters that
 	 *  display the contents of this container.
 	 * @param remoteObject - either an actual remote object, or the absolute name of a remote object
 	 * @param toSelect - the child object to select after refreshing the given object. This will force the
-	 *   object to be expanded, and then select this object which can be a remote object or absolute name of a 
+	 *   object to be expanded, and then select this object which can be a remote object or absolute name of a
 	 *   remote object. To simply force an expand of the remote object, without bothering to select a child,
 	 *   pass an instance of SystemViewDummyObject.
 	 * @return true if a refresh done, false if given a non-remote object.
@@ -3173,7 +3182,7 @@ public class SystemView extends SafeTreeViewer
 						(data == remoteObject)) // same binary object as given?
 				{
 					firstSelection = false;
-					if ((toSelect != null) && originatedHere) 
+					if ((toSelect != null) && originatedHere)
 					{
 						boolean allowExpand = true;
 						if (rmtAdapter != null && data instanceof IAdaptable)
@@ -3185,8 +3194,8 @@ public class SystemView extends SafeTreeViewer
 							createChildren(matchedItem);
 							setExpanded(matchedItem, true);
 						}
-						// todo: handle cumulative selections. 
-						// STEP 4: If requested, select the kids in the newly refreshed object. 
+						// todo: handle cumulative selections.
+						// STEP 4: If requested, select the kids in the newly refreshed object.
 						// If the same binary object appears multiple times, select the kids in the first occurrence.
 						//  ... what else to do?
 						// DKM - added wasExpanded check since we don't want to expand something that isn't already expanded
@@ -3201,7 +3210,7 @@ public class SystemView extends SafeTreeViewer
 		}
 		return true;
 	}
-	
+
 	protected void doUpdateItem(final Item item, Object element)
 	{
 		// adding this because base eclipse version isn't renaming properly on duplicates
@@ -3217,7 +3226,7 @@ public class SystemView extends SafeTreeViewer
 				//}
 			}
 		}
-		
+
 		super.doUpdateItem(item, element);
 	}
 
@@ -3294,7 +3303,7 @@ public class SystemView extends SafeTreeViewer
 		/* may cause performance issue in bug 238363
 		 * calling refresh on each child item means that we'll be doing update on it
 		 * which ends up making it a pending decoration change since it's an update on an
-		 * item that already has text 
+		 * item that already has text
 		// recurse
 		Item[] children = getChildren(widget);
 		if (children != null) {
@@ -3308,9 +3317,9 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 */
-		
+
 		if (firstCall) {
-			
+
 			internalRefresh(element);
 		}
 	}
@@ -3329,14 +3338,14 @@ public class SystemView extends SafeTreeViewer
 			internalRSERefreshStruct(widget, element, updateLabels);
 		}
 	}
-	
+
 	/**
 	 * This is used during RSE refresh - otherwise filters aren't applied during refresh
 	 * @param widget the widget to refresh
 	 * @param element the element to refresh
 	 * @param updateLabels whether to update labels (ends up being ignored and having the value of true)
 	 */
-	private void internalRSERefreshStruct(Widget widget, Object element, boolean updateLabels) 
+	private void internalRSERefreshStruct(Widget widget, Object element, boolean updateLabels)
 	{
 		updateChildren(widget, element, null); // DKM - using deprecated API because it's the only way to call updateChildren
 											   // need a better solution for this in the future (the proper updateChildren is private)
@@ -3355,26 +3364,26 @@ public class SystemView extends SafeTreeViewer
 		}
 
 	}
-	
+
 	protected Object[] getRawChildren(Widget w) {
 		Object parent = w.getData();
 
 		if (parent.equals(getRoot())) return super.getRawChildren(parent);
 		Object[] result = ((ITreeContentProvider) getContentProvider()).getChildren(parent);
 		if (result != null) return result;
-	
+
 		return new Object[0];
 	}
 
 	/*
-	 protected void preservingSelection(Runnable updateCode) 
+	 protected void preservingSelection(Runnable updateCode)
 	 {
 	 super.preservingSelection(updateCode);
-	 System.out.println("After preservingSelection: new selection = "+getFirstSelectionName(getSelection()));       		
+	 System.out.println("After preservingSelection: new selection = "+getFirstSelectionName(getSelection()));
 	 }
-	 protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) 
+	 protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection)
 	 {
-	 System.out.println("Inside handleInvalidSelection: old = "+getFirstSelectionName(invalidSelection)+", new = "+getFirstSelectionName(newSelection));       
+	 System.out.println("Inside handleInvalidSelection: old = "+getFirstSelectionName(invalidSelection)+", new = "+getFirstSelectionName(newSelection));
 	 updateSelection(newSelection);
 	 }
 	 */
@@ -3399,8 +3408,8 @@ public class SystemView extends SafeTreeViewer
 	 * Expand a remote object within the tree. Must be given its parent element within the tree,
 	 *   in order to uniquely find it. If not given this, we expand the first occurrence we find!
 	 * @param remoteObject - either a remote object or a remote object absolute name
-	 * @param subsystem - the subsystem that owns the remote objects, to optimize searches. 
-	 * @param parentObject - the parent that owns the remote objects, to optimize searches. Can 
+	 * @param subsystem - the subsystem that owns the remote objects, to optimize searches.
+	 * @param parentObject - the parent that owns the remote objects, to optimize searches. Can
 	 *          be an object or the absolute name of a remote object.
 	 * @return the tree item of the remote object if found and expanded, else null
 	 */
@@ -3486,7 +3495,7 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Select a remote object or objects given the parent remote object (can be null) and subsystem (can be null) and parent TreeItem to 
+	 * Select a remote object or objects given the parent remote object (can be null) and subsystem (can be null) and parent TreeItem to
 	 *  start the search at (can be null)
 	 * @param src - either a remote object, a remote object absolute name, or a List of remote objects or remote object absolute names
 	 * @param subsystem - the subsystem that owns the remote objects, to optimize searches.
@@ -3621,7 +3630,7 @@ public class SystemView extends SafeTreeViewer
 				wasExpanded[idx] = false;
 			}
 		}
-		// ok, we have found all expanded descendants of all selected items. 
+		// ok, we have found all expanded descendants of all selected items.
 		// If none of the expanded sub-nodes are remote simply use the inherited algorithm for refresh
 		if (!areAnyRemote) {
 			for (int idx = 0; idx < itemsToRefresh.length; idx++)
@@ -3638,7 +3647,7 @@ public class SystemView extends SafeTreeViewer
 			TreeItem currItem = itemsToRefresh[idx];
 			setExpanded(currItem, false); // collapse node
 			ourInternalRefresh(currItem, currItem.getData(), true, true); // dispose of children, update plus
-			
+
 			if (wasExpanded[idx]) {
 				createChildren(currItem); // re-expand
 				currItem.setExpanded(true);
@@ -3647,19 +3656,19 @@ public class SystemView extends SafeTreeViewer
 
 			}
 		}
-		
 
-		// 2. expand each previously expanded sub-node, recursively        
+
+		// 2. expand each previously expanded sub-node, recursively
 		for (int idx = 0; idx < expandedChildren.size(); idx++) {
 			ExpandedItem itemToExpand = (ExpandedItem) expandedChildren.get(idx);
 			if (itemToExpand.isRemote()) {
-				// find remote item based on its original name and unchanged root parent 
+				// find remote item based on its original name and unchanged root parent
 				Item item = null;
 				//if (itemToExpand.parentItem != null)
 				//item = (Item)recursiveFindRemoteItem(itemToExpand.parentItem, itemToExpand.remoteName, itemToExpand.subsystem);
 				//else
 				//item = (Item)findRemoteItem(itemToExpand.remoteName, itemToExpand.subsystem);
-				
+
 				//************************************************************///
 				// FIXME!!
 				// TODO
@@ -3681,9 +3690,9 @@ public class SystemView extends SafeTreeViewer
 
 		getControl().setRedraw(true);
 	}
-	
+
 	public void refreshRemote(Object element)
-	{		
+	{
 		smartRefresh(element, true);
 	}
 
@@ -3708,7 +3717,7 @@ public class SystemView extends SafeTreeViewer
 						setExpandedState(data, false);
 					}
 					else {
-						//setExpanded(roots[idx], false);	
+						//setExpanded(roots[idx], false);
 						expandedChildren.add(new ExpandedItem(null, currItem));
 						anyExpanded = true;
 						//gatherExpandedChildren(currItem, currItem, expandedChildren);
@@ -3719,7 +3728,7 @@ public class SystemView extends SafeTreeViewer
 				super.refresh();
 			else {
 				internalRefresh(getInput());
-				roots = tree.getItems(); // re-query roots 	
+				roots = tree.getItems(); // re-query roots
 				smartRefresh(roots, expandedChildren, forceRemote);
 			}
 		} else if (getViewAdapter(element) != null) {
@@ -3734,13 +3743,13 @@ public class SystemView extends SafeTreeViewer
 				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				// DKM - taken out as per defect 174295
 				//String elementName = adapter.getName(element);
-	
+
 				String searchString = adapter.getAbsoluteName(element);
 				ISubSystem subSystem = adapter.getSubSystem(element);
 
 				List matches = new Vector();
 				findAllRemoteItemReferences(searchString, element, subSystem, matches);
-				
+
 				// DKM - taken out as per defect 174295
 				//findAllRemoteItemReferences(elementName, element, subSystem, matches);
 				if (matches.size() > 0) {
@@ -3754,14 +3763,14 @@ public class SystemView extends SafeTreeViewer
 			}
 
 			/*
-			 Item item = null; 
+			 Item item = null;
 			 if (element instanceof String)
 			 item = findFirstRemoteItemReference((String)element, (SubSystem)null, (Item)null);
 			 else
 			 item = findFirstRemoteItemReference(element, (Item)null);
 			 if (item != null)
 			 smartRefresh(new TreeItem[] {(TreeItem)item});
-			 
+
 			 */
 		} else {
 			Item item = (Item) findItem(element);
@@ -3919,14 +3928,14 @@ public class SystemView extends SafeTreeViewer
 				// STEP 3: UPDATE THAT FILTER...
 				if (type == ISystemResourceChangeEvents.EVENT_RENAME_FILTER_REFERENCE) {
 					String[] rproperties = { IBasicPropertyConstants.P_TEXT };
-					update(item.getData(), rproperties); // for refreshing non-structural properties in viewer when model changes   	   	      
+					update(item.getData(), rproperties); // for refreshing non-structural properties in viewer when model changes
 				} else if (type == ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE) {
-					//if (((TreeItem)item).getExpanded())    	      
-					//refresh(item.getData()); 
+					//if (((TreeItem)item).getExpanded())
+					//refresh(item.getData());
 					smartRefresh(new TreeItem[] { (TreeItem) item });
 					/*
 					 Object data = item.getData();
-					 boolean wasExpanded = getExpanded((Item)item);                                
+					 boolean wasExpanded = getExpanded((Item)item);
 					 setExpandedState(data, false); // collapse node
 					 refresh(data); // clear all cached widgets
 					 if (wasExpanded)
@@ -3955,15 +3964,15 @@ public class SystemView extends SafeTreeViewer
 				if (type == ISystemResourceChangeEvents.EVENT_CHANGE_FILTERSTRING_REFERENCE) // HAD BETTER!
 				{
 					//if (((TreeItem)item).getExpanded())
-					//refresh(item.getData()); 
-					// boolean wasExpanded = getExpanded((Item)item);                  
+					//refresh(item.getData());
+					// boolean wasExpanded = getExpanded((Item)item);
 					Object data = item.getData();
 					setExpandedState(data, false); // collapse node
 					refresh(data); // clear all cached widgets
 					//if (wasExpanded)
 					//setExpandedState(data, true); // hmm, should we?
 					String properties[] = { IBasicPropertyConstants.P_TEXT };
-					update(item.getData(), properties); // for refreshing non-structural properties in viewer when model changes   	   	      
+					update(item.getData(), properties); // for refreshing non-structural properties in viewer when model changes
 					updatePropertySheet();
 				}
 			}
@@ -3975,7 +3984,7 @@ public class SystemView extends SafeTreeViewer
 	 *  for each subtree of each subsystem. Yet, each event is relative to the filter,
 	 *  not our special filter references. Hence, all this code!!
 	 * <p>
-	 * Special case handling for updates to filters which affect the parent of the 
+	 * Special case handling for updates to filters which affect the parent of the
 	 *  filter, such that the parent's children must be re-generated:
 	 *   1. New filter created (ADD)
 	 *   2. Existing filter deleted (DELETE)
@@ -4004,8 +4013,8 @@ public class SystemView extends SafeTreeViewer
 	 */
 	protected void findAndUpdateFilterParent(ISystemResourceChangeEvent event, int type) {
 		ISubSystem ss = (ISubSystem) event.getGrandParent();
-		
-		
+
+
 		boolean add = false, move = false, delete = false;
 		boolean afilterstring = false;
 		//if (debug)
@@ -4076,12 +4085,12 @@ public class SystemView extends SafeTreeViewer
 		if (parent instanceof ISystemFilterContainerReference) // given a reference to parent?
 		{
 			refdParent = ((ISystemFilterContainerReference) parent).getReferencedSystemFilterContainer();
-			parentRefItem = (Item) internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
+			parentRefItem = internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
 		}
 		// 3b and 3d. (filter pool or filter)
 		else if (parent instanceof ISystemFilterContainer) {
 			refdParent = (ISystemFilterContainer) parent;
-			parentRefItem = (Item) internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
+			parentRefItem = internalFindReferencedItem(item, refdParent, SEARCH_INFINITE);
 		}
 		// 3c (subsystem)
 		else {
@@ -4102,7 +4111,7 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 
-				
+
 				// move or delete and parent is expanded...
 				Item oldItem = (Item) internalFindReferencedItem(parentRefItem, afilterstring ? (Object) filterstring : (Object) filter, 1);
 				//if (debug)
@@ -4157,7 +4166,7 @@ public class SystemView extends SafeTreeViewer
 						}
 					}
 				}
-				//refresh(parentRefItem.getData());            	
+				//refresh(parentRefItem.getData());
 			}
 
 			// STEP 4: DECIDE WHAT TO SELECT:
@@ -4206,7 +4215,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Move existing items a given number of positions within the same node.
-	 * If the delta is negative, they are all moved up by the given amount. If 
+	 * If the delta is negative, they are all moved up by the given amount. If
 	 * positive, they are all moved down by the given amount.<p>
 	 */
 	protected void moveReferencedTreeItems(Widget parentItem, Object[] masterSrc, int delta) {
@@ -4223,7 +4232,7 @@ public class SystemView extends SafeTreeViewer
 			children = getItems((Item) parentItem);
 		} else
 			children = getChildren(parentItem);
-		
+
 		for (int idx = 0; idx < src.length; idx++) {
 			oldPositions[idx] = getTreeItemPosition(oldItems[idx], children) + 1;
 			//logDebugMsg("::: Old position : " + oldPositions[idx]);
@@ -4265,7 +4274,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Recursively tries to find a reference the given filtercontainer
-	 * Limits search depth to when we find an item that is not a connection, 
+	 * Limits search depth to when we find an item that is not a connection,
 	 *    subsystem, filter pool, filter or filter string.
 	 * @param parent the parent item at which to start the search.
 	 * @param element the master element to which we want to find a tree item which references it
@@ -4277,9 +4286,9 @@ public class SystemView extends SafeTreeViewer
 		if ((data != null) && (data instanceof IRSEBaseReferencingObject)) {
 			IRSEBaseReferencingObject refingData = (IRSEBaseReferencingObject) data;
 			Object refedData = refingData.getReferencedObject();
-			//logDebugMsg("data is a refing obj to " + refingData);	      
+			//logDebugMsg("data is a refing obj to " + refingData);
 			if (refedData == element)
-				//if (refedData.equals(element))		  
+				//if (refedData.equals(element))
 				return parent;
 			else
 				previousItem = parent;
@@ -4291,7 +4300,7 @@ public class SystemView extends SafeTreeViewer
 			++searchDepth;
 			int oldDepth = searchDepth;
 			Item[] items = getChildren(parent);
-			for (int i = 0; (i < items.length); i++) 
+			for (int i = 0; (i < items.length); i++)
 			{
 				Widget o = recursiveInternalFindReferencedItem(items[i], element, searchLimit);
 				if (o != null) return o;
@@ -4355,7 +4364,7 @@ public class SystemView extends SafeTreeViewer
 			match = internalFindFirstRemoteItemReference(remoteObjectName, null, subsystem);
 		else {
 
-			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, null, subsystem, matches);    	  
+			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, null, subsystem, matches);
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, null, subsystem);
 		}
 		//if (matches.size() > 0)
@@ -4372,22 +4381,22 @@ public class SystemView extends SafeTreeViewer
 	 * @return TreeItem hit if found
 	 */
 	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem) {
-		
+
 		Item match = mappedFindFirstRemoteItemReference(remoteObject);
 		if (match != null)
 			return match;
-		
+
 		//List matches = new Vector();
 		ISystemViewElementAdapter adapter = getViewAdapter(remoteObject);
 		if (adapter == null) return null;
-		
+
 		ISubSystem subsystem = adapter.getSubSystem(remoteObject);
 		String remoteObjectName = adapter.getAbsoluteName(remoteObject);
 		if (parentItem == null)
 			//findAllRemoteItemReferences(remoteObjectName, remoteObject, subsystem, matches);
 			match = internalFindFirstRemoteItemReference(remoteObjectName, remoteObject, subsystem);
 		else {
-			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 			
+			//recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches);
 			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
 		}
@@ -4400,9 +4409,9 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Recursively tries to find a given remote object. Since the object memory object 
+	 * Recursively tries to find a given remote object. Since the object memory object
 	 *  for a remote object is not dependable we call getAbsoluteName() on the adapter to
-	 *  do the comparisons. Note this does not take into account the parent connection or 
+	 *  do the comparisons. Note this does not take into account the parent connection or
 	 *  subsystem or filter, hence you must know where to start the search, else you risk
 	 *  finding the wrong one.
 	 *
@@ -4419,35 +4428,35 @@ public class SystemView extends SafeTreeViewer
 		if (element instanceof String)
 			searchString = (String) element;
 		else {
-			if (elementObject == null) 
+			if (elementObject == null)
 				elementObject = element;
 			ISystemViewElementAdapter adapter = getViewAdapter(element);
-			if (adapter == null) 
+			if (adapter == null)
 				return matches;
 			subsystem = adapter.getSubSystem(element);
 			searchString = adapter.getAbsoluteName(element);
 		}
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
-		if (roots == null) 
+		if (roots == null)
 			return matches;
-		if (matches == null) 
+		if (matches == null)
 			matches = new Vector();
-		
+
 		// try new map lookup method - won't work in cases of rename
-		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){ 
+		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){
 			for (int idx = 0; idx < roots.length; idx++) {
 				//System.out.println("recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);");
 				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
 			}
 		}
-		
+
 		return matches;
 	}
 
 	/**
-	 * Recursively tries to find all occurrences of a given remote object, starting at the tree root. 
-	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName() 
+	 * Recursively tries to find all occurrences of a given remote object, starting at the tree root.
+	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName()
 	 * on the adapter to do the comparisons.
 	 * <p>
 	 * TODO: This method should not return any invalid matches, i.e. remote objects
@@ -4455,18 +4464,18 @@ public class SystemView extends SafeTreeViewer
 	 * same remote object can appear in multiple contexts in the RSE Tree, a single
 	 * remote object identifier String may evaluate to multiple different matches
 	 * to fill into the matches argument. All those context object matches, however,
-	 * reference the same real-world model objects due to the constraint that 
-	 * {@link IRemoteObjectIdentifier} uniquely identifies a remote object. 
+	 * reference the same real-world model objects due to the constraint that
+	 * {@link IRemoteObjectIdentifier} uniquely identifies a remote object.
 	 * <p>
 	 * This overload takes a string and a subsystem.
-	 * 
+	 *
 	 * @param searchString the absolute name of the remote object to which
 	 *    we want to find a tree item which references it.
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @param matches the List to populate with hits (TreeItem objects), 
+	 * @param matches the List to populate with hits (TreeItem objects),
 	 *     or <code>null</code> to get a new List created and returned
-	 * @return the List populated with hits, or <code>null</code> if 
+	 * @return the List populated with hits, or <code>null</code> if
 	 *     <code>null</code> was passed as matches to populate and no matches
 	 *     were found.
 	 */
@@ -4474,12 +4483,12 @@ public class SystemView extends SafeTreeViewer
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
-		if (matches == null) 
+		if (matches == null)
 			matches = new Vector();
 
 		// try new map lookup method - won't work in cases of rename
 		if (!mappedFindAllRemoteItemReferences(elementObject, matches)){
-			
+
 			boolean foundExact = false;
 			for (int idx = 0; idx < roots.length; idx++){
 				if (recursiveFindExactMatches((TreeItem)roots[idx], elementObject, subsystem, matches)){
@@ -4496,8 +4505,8 @@ public class SystemView extends SafeTreeViewer
 		}
 		return matches;
 	}
-	
-	
+
+
 	private boolean recursiveFindExactMatches(TreeItem root, Object elementObject, ISubSystem subsystem, List matches)
 	{
 		boolean foundSomething = false;
@@ -4517,7 +4526,7 @@ public class SystemView extends SafeTreeViewer
 					return false;
 			}
 		}
-		
+
 		TreeItem[] children = root.getItems();
 		for (int i = 0; i < children.length; i++)
 		{
@@ -4530,13 +4539,13 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Recursively tries to find the first occurrence of a given remote object, starting at the tree root. 
+	 * Recursively tries to find the first occurrence of a given remote object, starting at the tree root.
 	 * Optionally scoped to a specific subsystem.
-	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName() 
-	 * on the adapter to do the comparisons. 
+	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName()
+	 * on the adapter to do the comparisons.
 	 * <p>
 	 * This overload takes a string and a subsystem.
-	 * 
+	 *
 	 * @param searchString the absolute name of the remote object to which we want to find a tree item which references it.
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
@@ -4545,10 +4554,10 @@ public class SystemView extends SafeTreeViewer
 	protected Item internalFindFirstRemoteItemReference(String searchString, Object elementObject, ISubSystem subsystem) {
 		Item[] roots = getTree().getItems();
 		if ((roots == null) || (roots.length == 0)) return null;
-		
+
 		// use map first
 		Item match = mappedFindFirstRemoteItemReference(elementObject);
-		
+
 		for (int idx = 0; (match == null) && (idx < roots.length); idx++) {
 			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
@@ -4561,9 +4570,9 @@ public class SystemView extends SafeTreeViewer
 	{
 		return (Item)findItem(elementObject);
 	}
-	
+
 	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, List occurrences)
-	{				
+	{
 		Widget[] items = findItems(elementObject);
 		if (items.length > 0)
 		{
@@ -4573,10 +4582,10 @@ public class SystemView extends SafeTreeViewer
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Recursively tries to find all references to a remote object.
 	 * @param parent the parent item at which to start the search.
@@ -4624,21 +4633,21 @@ public class SystemView extends SafeTreeViewer
 				return occurrences; // they don't match, so don't bother checking the kids
 			}
 			// if we are currently visiting a connection, and that connection's hostname is not the same
-			//  as that of our given subsystem, then we can assume the remote object occurrences we are 
+			//  as that of our given subsystem, then we can assume the remote object occurrences we are
 			//  looking for are not to be found within this branch...
 			else if ((rawData instanceof IHost) && (!((IHost) rawData).getHostName().equals(subsystem.getHost().getHostName()))) {
 				return occurrences; // they don't match, so don't bother checking the kids
 			}
 		}
-		// recurse over children	    
+		// recurse over children
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
-					
+
 			if (!items[i].isDisposed()) occurrences = recursiveFindAllRemoteItemReferences(items[i], elementName, elementObject, subsystem, occurrences);
 		}
 		return occurrences;
 	}
-	
+
 
 
 
@@ -4649,7 +4658,7 @@ public class SystemView extends SafeTreeViewer
 	 * @param elementName the absolute name of the remote element to find
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @return TreeItem match if found, null if not found. 
+	 * @return TreeItem match if found, null if not found.
 	 */
 	protected Item recursiveFindFirstRemoteItemReference(Item parent, String elementName, Object elementObject, ISubSystem subsystem) {
 		Object rawData = parent.getData();
@@ -4692,13 +4701,13 @@ public class SystemView extends SafeTreeViewer
 				return null; // they don't match, so don't bother checking the kids
 			}
 			// if we are currently visiting a connection, and that connection's hostname is not the same
-			//  as that of our given subsystem, then we can assume the remote object occurrences we are 
+			//  as that of our given subsystem, then we can assume the remote object occurrences we are
 			//  looking for are not to be found within this branch...
 			else if ((rawData instanceof IHost) && !((IHost) rawData).getHostName().equals(subsystem.getHost().getHostName())) {
 				return null; // they don't match, so don't bother checking the kids
 			}
 		}
-		// recurse over children	    
+		// recurse over children
 		Item[] items = getChildren(parent);
 		Item match = null;
 		for (int i = 0; (match == null) && (i < items.length); i++) {
@@ -4708,8 +4717,8 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Recursively tries to find all filters affected by a given remote object. 
-	 * 
+	 * Recursively tries to find all filters affected by a given remote object.
+	 *
 	 * @param elementName the absolute name of the remote object to which we want to find a filters which result in it.
 	 * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
 	 * @param matches the List to populate with hits. Can be <code>null</code>,
@@ -4722,7 +4731,7 @@ public class SystemView extends SafeTreeViewer
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
-		if (matches == null) 
+		if (matches == null)
 			matches = new Vector();
 
 		for (int idx = 0; idx < roots.length; idx++){
@@ -4739,7 +4748,7 @@ public class SystemView extends SafeTreeViewer
 	 * @param elementName the absolute name of the remote element that has been created, changed, deleted or renamed.
 	 * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
 	 * @param occurrences the List to populate with hits. Must not be <code>null</code>.
-	 * 
+	 *
 	 * @return The given List of occurrences, populated with FilterMatch objects
 	 *     for each affected filter.
 	 */
@@ -4791,7 +4800,7 @@ public class SystemView extends SafeTreeViewer
 			}
 			// -----------------------------------------------------------------------------------------
 			// if we are currently visiting a connection, and that connection's hostname is not the same
-			//  as that of our given subsystem, then we can assume the remote object occurrences we are 
+			//  as that of our given subsystem, then we can assume the remote object occurrences we are
 			//  looking for are not to be found within this branch...
 			// -----------------------------------------------------------------------------------------
 			else if (rawData instanceof IHost) {
@@ -4811,7 +4820,7 @@ public class SystemView extends SafeTreeViewer
 			// ------------------------------------------------------------------------
 			else if (getRemoteAdapter(rawData) != null) return occurrences;
 		}
-		// recurse over children	    
+		// recurse over children
 		Item[] items = getChildren(parent);
 		for (int i = 0; (i < items.length); i++) {
 			occurrences = recursiveFindAllRemoteItemFilterReferences(items[i], elementName, subsystem, occurrences);
@@ -4867,7 +4876,7 @@ public class SystemView extends SafeTreeViewer
 		// protected boolean selectionEnableDeleteAction;
 		// protected boolean selectionEnableRenameAction;
 
-		
+
 		// initial these variables to true. Then if set to false even once, leave as false always...
 		selectionShowPropertiesAction = true;
 		selectionShowRefreshAction = true;
@@ -4892,7 +4901,7 @@ public class SystemView extends SafeTreeViewer
 			if (adapter == null) continue;
 
 			if (selectionShowPropertiesAction) selectionShowPropertiesAction = adapter.showProperties(element);
-			
+
 			if (selectionShowRefreshAction) selectionShowRefreshAction = adapter.showRefresh(element);
 
 			if (selectionShowOpenViewActions) selectionShowOpenViewActions = adapter.showOpenViewActions(element);
@@ -4912,8 +4921,8 @@ public class SystemView extends SafeTreeViewer
 
 			if (selectionIsRemoteObject && !selectionFlagsUpdated) {
 				ISubSystem srcSubSystem = adapter.getSubSystem(element);
-				if (srcSubSystem != null && 
-						(srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem)) 
+				if (srcSubSystem != null &&
+						(srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem))
 				{
 					SystemRemoteElementResourceSet set = null;
 					if (lastSet != null)
@@ -4925,18 +4934,18 @@ public class SystemView extends SafeTreeViewer
 					}
 					if (set == null)
 					{
-						set = getSetFor(srcSubSystem, adapter);	
+						set = getSetFor(srcSubSystem, adapter);
 						lastSet = set;
 					}
 					set.addResource(element);
 				}
 			}
-	
+
 		}
 
 
 		selectionFlagsUpdated = true;
-		//System.out.println("Inside scan selections: selectionShowOpenViewActions = " + selectionShowOpenViewActions);		
+		//System.out.println("Inside scan selections: selectionShowOpenViewActions = " + selectionShowOpenViewActions);
 
 	}
 
@@ -4947,7 +4956,7 @@ public class SystemView extends SafeTreeViewer
 	protected boolean showProperties() {
 		return selectionShowPropertiesAction;
 	}
-	
+
 	/**
 	 * Decides whether to even show the refresh menu item.
 	 * Assumes scanSelections() has already been called
@@ -5013,7 +5022,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Required method from ISystemDeleteTarget
-	 * Decides whether to enable the delete menu item. 
+	 * Decides whether to enable the delete menu item.
 	 * Assumes scanSelections() has already been called
 	 */
 	public boolean canDelete() {
@@ -5026,7 +5035,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Required method from ISystemDeleteTarget
-	 * 
+	 *
 	 * @deprecated all deletion should now occur independently of the view and the
 	 *       view should only deal with the handling of refresh events
 	 */
@@ -5043,10 +5052,10 @@ public class SystemView extends SafeTreeViewer
 		boolean ok = true;
 		boolean anyOk = false;
 		List deletedVector = new Vector();
-		
+
 		// keep track of the current set
 		SystemRemoteElementResourceSet set = null;
-		
+
 		try {
 			while (ok && elements.hasNext()) {
 				element = elements.next();
@@ -5067,10 +5076,10 @@ public class SystemView extends SafeTreeViewer
 				ISystemViewElementAdapter srcAdapter = set.getViewAdapter();
 
 				if (srcSubSystem != null) {
-					
+
 					// this call can throw an exception
 					ok = srcAdapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
-					
+
 					if (ok) {
 						anyOk = true;
 						deletedVector.addAll(set.getResourceSet());
@@ -5084,28 +5093,28 @@ public class SystemView extends SafeTreeViewer
 			String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException)) msg = exc.getClass().getName();
 			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
-			
+
 			// refresh all parents if selection is remote objects
 			if (selectionIsRemoteObject) {
-				
+
 				// we only need to iterate over the last set in the list of sets since presumably the sets before did not cause any exceptions
 				// if elements in the list before were deleted successfully, then the code after this catch block will handle them (by firing delete events)
 				// for the current set that caused the exception, we refresh the parents of the elements in the set (since we don't know which
-				// elements in the set may have been deleted successfully before the exception occurred). 
+				// elements in the set may have been deleted successfully before the exception occurred).
 				if (set != null) {
 					List list = set.getResourceSet();
-					
+
 					if (list != null && list.size() > 0) {
-						
+
 						Iterator iter = list.iterator();
-						
+
 						List refreshedList = new Vector();
-						
+
 						while (iter.hasNext()) {
 							Object obj = iter.next();
 							ISystemViewElementAdapter adp = getViewAdapter(obj);
 							Object parent = adp.getParent(obj);
-							
+
 							if ((parent != null) && !(refreshedList.contains(parent))) {
 								SystemResourceChangeEvent event = new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
 								sr.fireEvent(event);
@@ -5115,7 +5124,7 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 			}
-			
+
 			ok = false;
 		}
 		//System.out.println("in doDelete. Any ok? " + anyOk + ", selectionIsRemoteObject? " + selectionIsRemoteObject);
@@ -5143,7 +5152,7 @@ public class SystemView extends SafeTreeViewer
 		Object[] elementAdapters = null;
 		Object parentElement = null;
 		String renameMessage = null;
-		
+
 		/**
 		 * RenameJob job.
 		 * @param newNames array of new names of all the elements need to be renamed
@@ -5162,7 +5171,7 @@ public class SystemView extends SafeTreeViewer
 			setUser(true);
 		}
 
-		public IStatus runInWorkspace(IProgressMonitor monitor) 
+		public IStatus runInWorkspace(IProgressMonitor monitor)
 		{
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 			Object element = null;
@@ -5171,7 +5180,7 @@ public class SystemView extends SafeTreeViewer
 			String oldFullName = "";  //$NON-NLS-1$
 			String oldName = "";      //$NON-NLS-1$
 			Vector fileNamesRenamed = new Vector();
-			
+
 			boolean ok = true;
 			try {
 				int steps = elements.length;
@@ -5181,14 +5190,14 @@ public class SystemView extends SafeTreeViewer
 					element = elements[i];
 					adapter = (ISystemViewElementAdapter)elementAdapters[i];
 					remoteAdapter = getRemoteAdapter(element);
-					if (remoteAdapter != null) 
+					if (remoteAdapter != null)
 					{
 						oldName = remoteAdapter.getName(element);
 						oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
 						monitor.subTask(getRenamingMessage(oldName).getLevelOneText());
 					}
 					ok = adapter.doRename(null, element, newNames[i], monitor);
-					if (ok) 
+					if (ok)
 					{
 						fileNamesRenamed.add(oldName);
 						if (remoteAdapter != null)
@@ -5202,8 +5211,8 @@ public class SystemView extends SafeTreeViewer
 					}
 					 monitor.worked(1);
 				}
-			} 
-			catch (SystemMessageException exc) 
+			}
+			catch (SystemMessageException exc)
 			{
 				ok = false;
 				//If this operation is cancelled, need to display a proper message to the user.
@@ -5233,7 +5242,7 @@ public class SystemView extends SafeTreeViewer
 						exc);
 				ok = false;
 			}
-			
+
 			return Status.OK_STATUS;
 		}
 	}
@@ -5248,20 +5257,20 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Required method from ISystemRenameTarget
-	 * Decides whether to enable the rename menu item. 
+	 * Decides whether to enable the rename menu item.
 	 * Assumes scanSelections() has already been called
 	 */
 	public boolean canRename() {
 		if (!selectionFlagsUpdated) scanSelections("canRename"); //$NON-NLS-1$
 		return selectionEnableRenameAction;
 	}
-	
+
 	/**
-	 * Get the specific "Renaming %1..." 
+	 * Get the specific "Renaming %1..."
 	 */
     protected SystemMessage getRenamingMessage(String oldName)
     {
-    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS); 
+    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS);
 		msg.makeSubstitution(oldName);
 		return msg;
     }
@@ -5273,7 +5282,7 @@ public class SystemView extends SafeTreeViewer
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		Object parentElement = getSelectedParent();
-		
+
 		Object[] renameElements = new Object[newNames.length];
 		Object[] elementAdapters = new Object[newNames.length];
 		int i = 0;
@@ -5322,9 +5331,9 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * When this action is run via Edit->Select All or via Ctrl+A, perform the
-	 * select all action. For a tree view, this should select all the children 
+	 * select all action. For a tree view, this should select all the children
 	 * of the given selected object. You can use the passed in selected object
-	 * or ignore it and query the selected object yourself. 
+	 * or ignore it and query the selected object yourself.
 	 */
 	public void doSelectAll(IStructuredSelection selection) {
 		Tree tree = getTree();
@@ -5338,12 +5347,12 @@ public class SystemView extends SafeTreeViewer
 		fireSelectionChanged(new SelectionChangedEvent(this, new StructuredSelection(childObjects)));
 	}
 
-	// --------------------------------------------	
+	// --------------------------------------------
 	// ISystemTree methods to facilitate our GUI...
 	// --------------------------------------------
 	/**
 	 * This is called to ensure all elements in a multiple-selection have the same parent in the
-	 *  tree viewer. If they don't we automatically disable all actions. 
+	 *  tree viewer. If they don't we automatically disable all actions.
 	 * <p>
 	 * Designed to be as fast as possible by going directly to the SWT widgets
 	 */
@@ -5367,7 +5376,7 @@ public class SystemView extends SafeTreeViewer
 
 	protected boolean selectionHasAncestryRelationship() {
 		if (selectionFlagsUpdated) return selectionHasAncestorRelation;
-		
+
 		Tree tree = getTree();
 		TreeItem[] items = tree.getSelection();
 		return hasSelectedAncestor(items);
@@ -5388,7 +5397,7 @@ public class SystemView extends SafeTreeViewer
 		return false;
 		*/
 	}
-	
+
 	protected boolean isAncestorOf(TreeItem container, TreeItem[] items) {
 		TreeItem[] children = container.getItems();
 		for (int i = 0; i < children.length; i++) {
@@ -5398,10 +5407,10 @@ public class SystemView extends SafeTreeViewer
 				TreeItem item = items[j];
 				if (child == item) {
 					return true;
-				} 
-				else if (child.getItemCount() > 0) 
+				}
+				else if (child.getItemCount() > 0)
 				{
-					if (isAncestorOf(child, items)) 
+					if (isAncestorOf(child, items))
 					{
 						return true;
 					}
@@ -5410,18 +5419,18 @@ public class SystemView extends SafeTreeViewer
 		}
 		return false;
 	}
-	
-	
+
+
 	protected boolean hasSelectedAncestor(TreeItem[] items) {
 
 		List cleanParents = new ArrayList();
-		
+
 		for (int j = 0; j < items.length; j++)
 		{
 			TreeItem item = items[j];
 			TreeItem parent = item.getParentItem();
 			while (parent != null && !cleanParents.contains(parent))
-			{			
+			{
 				if (isTreeItemSelected(parent))
 				{
 					return true;
@@ -5429,18 +5438,18 @@ public class SystemView extends SafeTreeViewer
 				else
 				{
 					cleanParents.add(parent);
-					parent = parent.getParentItem();					
+					parent = parent.getParentItem();
 				}
 			}
 		}
 		return false;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 /*
 	protected boolean isAncestorOf(TreeItem container, TreeItem item) {
 		TreeItem[] children = container.getItems();
@@ -5457,10 +5466,10 @@ public class SystemView extends SafeTreeViewer
 		return false;
 	}
 */
-	
+
 	/**
 	 * This is called to accurately get the parent object for the current selection
-	 *  for this viewer. 
+	 *  for this viewer.
 	 * <p>
 	 * The getParent() method in the adapter is very unreliable... adapters can't be sure
 	 * of the context which can change via filtering and view options.
@@ -5584,7 +5593,7 @@ public class SystemView extends SafeTreeViewer
 	 * The array is in reverse order, starting at the leaf and going up.
 	 * This flavor is optimized for the case when you have the tree item directly.
 	 * @return Array of Objects leading to the given TreeItem,
-	 *    sorted from the leaf item up. 
+	 *    sorted from the leaf item up.
 	 */
 	public Object[] getElementNodes(TreeItem item) {
 		List v = new Vector();
@@ -5604,7 +5613,7 @@ public class SystemView extends SafeTreeViewer
 	 * The array is in reverse order, starting at the leaf and going up.
 	 * This flavor returns an array of TreeItem objects versus element objects.
 	 * @return Array of TreeItem objects leading to the given TreeItem,
-	 *    sorted from the leaf item up. 
+	 *    sorted from the leaf item up.
 	 */
 	public TreeItem[] getItemNodes(TreeItem item) {
 		List v = new Vector();
@@ -5642,7 +5651,7 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 		return isSelected;
-		//return isSelected(element, (IStructuredSelection)getSelection());		
+		//return isSelected(element, (IStructuredSelection)getSelection());
 	}
 
 	/**
@@ -5666,7 +5675,7 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 		return isSelected;
-		//return isSelected(element, (IStructuredSelection)getSelection());		
+		//return isSelected(element, (IStructuredSelection)getSelection());
 	}
 
 	/**
@@ -5687,7 +5696,7 @@ public class SystemView extends SafeTreeViewer
 				Item[] items = getItems(ti);
 				for (int i=0; i<count; i++) {
 				    Object itemData = items[i].getData();
-				    if (itemData==null 
+				    if (itemData==null
 				        || itemData instanceof SystemMessageObject
 				        || itemData instanceof PendingUpdateAdapter
 				    ) {
@@ -5702,7 +5711,7 @@ public class SystemView extends SafeTreeViewer
 		return getItemCount((Control) w);
 	}
 
-	/** 
+	/**
 	 * Return the tree item of the first selected object
 	 */
 	protected TreeItem getFirstSelectedTreeItem() {
@@ -5735,10 +5744,10 @@ public class SystemView extends SafeTreeViewer
 	public void updatePropertySheet() {
 		ISelection selection = getSelection();
 		if (selection == null) return;
-		
+
 		// only fire this event if the view actually has focus
 		if (getControl().isFocusControl())
-		{		
+		{
 			// create an event
 			SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
 			// fire the event
@@ -5803,35 +5812,35 @@ public class SystemView extends SafeTreeViewer
 
     /**
      * Initialize drag and drop support for this view.
-     * 
-     */  
-    protected void initDragAndDrop() 
+     *
+     */
+    protected void initDragAndDrop()
     {
         int ops = DND.DROP_COPY | DND.DROP_MOVE;
-        Transfer[] dragtransfers = new Transfer[]   
-            { PluginTransfer.getInstance(), 
+        Transfer[] dragtransfers = new Transfer[]
+            { PluginTransfer.getInstance(),
         		EditorInputTransfer.getInstance()
-            };  
-   
-        Transfer[] droptransfers = new Transfer[]   
-            { PluginTransfer.getInstance(), 
+            };
+
+        Transfer[] droptransfers = new Transfer[]
+            { PluginTransfer.getInstance(),
         		FileTransfer.getInstance(),
                 EditorInputTransfer.getInstance(),
                 ResourceTransfer.getInstance()
-             };  
-        
+             };
+
         addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));
         addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
     }
 	// ----------------------------------
 	// Support for EXPAND TO-> ACTIONS...
 	// ----------------------------------
-	
+
 	public void expandTo(Object parentObject, Object remoteObject)
 	{
 		SystemViewLabelAndContentProvider provider = (SystemViewLabelAndContentProvider)getContentProvider();
-		provider.setEnableDeferredQueries(false); 
-		
+		provider.setEnableDeferredQueries(false);
+
 		ISystemViewElementAdapter adapter = getViewAdapter(parentObject);
 		ISystemViewElementAdapter targetAdapter = getViewAdapter(remoteObject);
 		Assert.isNotNull(adapter, "adapter is null for " + parentObject); //$NON-NLS-1$
@@ -5840,13 +5849,13 @@ public class SystemView extends SafeTreeViewer
 		String remoteObjectName = targetAdapter.getAbsoluteName(remoteObject);
 		Item parentItem = findFirstRemoteItemReference(parentName, ss, null);
 		if (parentItem != null)
-		{		
+		{
 			createChildren(parentItem);
 			Item[] children = getItems(parentItem);
 			setExpanded(parentItem, true);
 			for (int i = 0; i < children.length; i++)
 			{
-				
+
 				Item child = children[i];
 				Object data = child.getData();
 				if (data.equals(remoteObject))
@@ -5860,7 +5869,7 @@ public class SystemView extends SafeTreeViewer
 					ISystemFilterReference ref = (ISystemFilterReference)data;
 					if (ss.doesFilterMatch(ref.getReferencedFilter(), remoteObjectName)){
 						expandTo(data, remoteObject);
-					}					
+					}
 					else if (ss.doesFilterListContentsOf(ref.getReferencedFilter(),remoteObjectName)){
 						expandTo(data, remoteObject);
 					}
@@ -5868,9 +5877,9 @@ public class SystemView extends SafeTreeViewer
 				else if (data instanceof ISystemFilterPoolReference)
 				{
 					expandTo(data, remoteObject);
-				}				
+				}
 				else
-				{					
+				{
 					ISystemViewElementAdapter dataAdapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
 					String path = dataAdapter.getAbsoluteName(data);
 					if (remoteObjectName.startsWith(path))
@@ -5882,8 +5891,8 @@ public class SystemView extends SafeTreeViewer
 		}
 		provider.setEnableDeferredQueries(true);
 	}
-	
-	
+
+
 	/**
 	 * Called when user selects an Expand To action to expand the selected remote object with a quick filter
 	 */
@@ -5996,8 +6005,8 @@ public class SystemView extends SafeTreeViewer
 */
 
 		/**
-		 * For bug 204684: 
-		 * 
+		 * For bug 204684:
+		 *
 		 * Because we don't have an API for ISystemViewElementAdapter.exists()...
 		 * This class is used to determine whether an object exists and consequently whether to remove it from the view
 		 * after a query comes back with either no children or a SystemMessageObject.  We query the parent to determine
@@ -6006,8 +6015,8 @@ public class SystemView extends SafeTreeViewer
 		 */
 		public static class CheckExistenceJob extends Job
 		{
-			
-			
+
+
 			private IAdaptable _remoteObject;
 			//private TreeItem _parentItem;
 			private IContextObject _context;
@@ -6018,9 +6027,9 @@ public class SystemView extends SafeTreeViewer
 				//_parentItem = parentItem;
 				_context = context;
 			}
-			
+
 			public IStatus run(IProgressMonitor monitor)
-			{				
+			{
 				// need to use the model object to get the adapter (since it could be a filter)
 				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)_context.getModelObject().getAdapter(ISystemViewElementAdapter.class);
 				if (adapter != null)
@@ -6046,8 +6055,8 @@ public class SystemView extends SafeTreeViewer
 										items[i].dispose();
 										}
 									}
-								
-	
+
+
 								// we want to propagate the changes to the view
 								add(_context.getModelObject(), children);
 								*/
@@ -6055,15 +6064,15 @@ public class SystemView extends SafeTreeViewer
 								IAdaptable par = _context.getModelObject();
 								ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 								sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
-						
-							}		
+
+							}
 						});
 					}
 				}
-				
+
 				return Status.OK_STATUS;
 			}
-			
+
 			public static boolean contains(Object[] children, IAdaptable remoteObject)
 			{
 				ISystemViewElementAdapter adapter1 = (ISystemViewElementAdapter)remoteObject.getAdapter(ISystemViewElementAdapter.class);
@@ -6091,12 +6100,12 @@ public class SystemView extends SafeTreeViewer
 				return false;
 			}
 		}
-		
+
 
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
-		
+
 		assertElementsNotNull(childElements);
-		
+
 		ISystemFilterReference originalFilter = null;
 		if (parentElementOrTreePath instanceof IContextObject)
 		{
@@ -6110,7 +6119,7 @@ public class SystemView extends SafeTreeViewer
 
 		// get rid of references to items for different connection
 		if (parentElementOrTreePath instanceof IAdaptable)
-		{			
+		{
 			List invalidMatches = new ArrayList();
 			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
 			if (adapter != null)
@@ -6134,7 +6143,7 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 			}
-			
+
 			if (invalidMatches.size() > 0)
 			{
 				for (int m = invalidMatches.size() - 1; m >= 0 ; m--)
@@ -6144,7 +6153,7 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 		}
-		
+
 		//Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.
 		if (matches.size() == 0) {
@@ -6165,32 +6174,32 @@ public class SystemView extends SafeTreeViewer
 			{
 				// could have the same object under multiple filters
 				// need to apply filter
-				
+
 				Object[] newChildren = null;
 				if (match instanceof TreeItem)
 				{
 					IContextObject contextObject = getContextObject((TreeItem)match);
 					newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
 					internalAdd(match, parentElementOrTreePath, newChildren);
-				}	
+				}
 			}
 			else
-			{	
+			{
 				internalAdd(match, parentElementOrTreePath, childElements);
-				
+
 				// refresh parent in this case because the parentElementOrTreePath may no longer exist
 				if (childElements.length == 0 || childElements[0] instanceof SystemMessageObject)
 				{
-					if (adapter.isRemote(parentElementOrTreePath) && !adapter.hasChildren((IAdaptable)parentElementOrTreePath))						
+					if (adapter.isRemote(parentElementOrTreePath) && !adapter.hasChildren((IAdaptable)parentElementOrTreePath))
 					{
 						/*
 							// refresh the parent
-							Object par = adapter.getParent(parentElementOrTreePath);					
+							Object par = adapter.getParent(parentElementOrTreePath);
 							ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 							sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
-					
+
 							*/
-						
+
 						// for bug 204684, using this job to determine whether or not the object exists before trying to update
 						if (match instanceof TreeItem)
 						{
@@ -6213,11 +6222,11 @@ public class SystemView extends SafeTreeViewer
 						}
 					}
 				}
-				
+
 			}
 		}
 		}
-		
+
 		TreeItem item = getFirstSelectedTreeItem();
 		if (item != null)
 		{
@@ -6227,7 +6236,7 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 
-		
+
 	}
 
 
@@ -6250,7 +6259,7 @@ public class SystemView extends SafeTreeViewer
 			{
 				return getContainingFilterReference(parent);
 			}
-			else				
+			else
 			{
 				Object input = getInput();
 				if (input instanceof ISystemFilterReference)
@@ -6264,7 +6273,7 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the containing subsystem from an item
 	 * @param item the item to get the subsystem for
@@ -6284,7 +6293,7 @@ public class SystemView extends SafeTreeViewer
 			{
 				return getContainingSubSystem(parent);
 			}
-			else				
+			else
 			{
 				Object input = getInput();
 				if (input instanceof ISubSystem)
@@ -6298,8 +6307,8 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Get the context object from a tree item
 	 * @param item the item to get the context for
@@ -6321,23 +6330,23 @@ public class SystemView extends SafeTreeViewer
 				return new ContextObject(data, subSystem);
 			}
 			else
-			{				
+			{
 				return new ContextObject(data);
 			}
 		}
 	}
 
-	
+
 	/**
 	 * Create tree items for the specified children
-	 * 
+	 *
 	 * @param widget the parent item for the items to create
 	 * @param children the children to create items for
 	 */
 	public void createTreeItems(TreeItem widget, Object[] children)
 	{
-		TreeItem[] tis = widget.getItems();		
-		
+		TreeItem[] tis = widget.getItems();
+
 		// first dispose of dummies
 		for (int i = 0; i < tis.length; i++) {
 			if (tis[i].getData() != null) {
@@ -6347,19 +6356,19 @@ public class SystemView extends SafeTreeViewer
 			}
 			tis[i].dispose();
 		}
-		
+
 		// now create children
-		for (int i = 0; i < children.length; i++) 
-		{	
+		for (int i = 0; i < children.length; i++)
+		{
 			createTreeItem(widget, children[i], -1);
 		}
 	}
-	
+
 	/**
-	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead 
+	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead
 	 * of the model object, itself
 	 */
-	protected void createChildren(final Widget widget) 
+	protected void createChildren(final Widget widget)
 	{
 		if (widget instanceof TreeItem)
 		{
@@ -6387,14 +6396,14 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 				Object d = widget.getData();
-				if (d != null) 
+				if (d != null)
 				{
 					Object parentElement = getContextObject((TreeItem)widget);
 					Object[] children = getSortedChildren(parentElement);
 					if (children != null)
 					{
-						for (int i = 0; i < children.length; i++) 
-						{	
+						for (int i = 0; i < children.length; i++)
+						{
 							createTreeItem(widget, children[i], -1);
 						}
 					}
@@ -6411,7 +6420,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Override to pass context into hasChildren()
-	 * 
+	 *
 	 */
 	public boolean isExpandable(Object elementOrTreePath) {
 		Object element;
@@ -6439,7 +6448,7 @@ public class SystemView extends SafeTreeViewer
 			}
 			return tpcp.hasChildren(path);
 		}
-		if (cp instanceof ITreeContentProvider) 
+		if (cp instanceof ITreeContentProvider)
 		{
 			ITreeContentProvider tcp = (ITreeContentProvider) cp;
 			if (elementOrTreePath instanceof TreeItem)
@@ -6454,17 +6463,17 @@ public class SystemView extends SafeTreeViewer
 		}
 		return false;
 	}
-	
+
 	public void update(Object element, String[] properties) {
 		Assert.isNotNull(element);
 		List matches = new Vector();
 		findAllRemoteItemReferences(element, element, matches);
 
 		for (int i = 0; i < matches.size(); i++) {
-		 
+
 			internalUpdate((Widget)matches.get(i), element, properties);
-		}		
+		}
 	}
 
-	
+
 }

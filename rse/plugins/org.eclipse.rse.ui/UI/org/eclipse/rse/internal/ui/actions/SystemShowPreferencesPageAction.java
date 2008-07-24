@@ -1,15 +1,15 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
@@ -38,15 +38,14 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
  * child pages registered under that page ("category").
  * <p>
  * @deprecated this will be moved to use the command/handler extension point.
- * @see SystemCascadingPreferencesAction 
  */
-public class SystemShowPreferencesPageAction extends SystemBaseAction implements IViewActionDelegate                                  
+public class SystemShowPreferencesPageAction extends SystemBaseAction implements IViewActionDelegate
 {
-	
-	private PreferenceManager preferenceManager;	
+
+	private PreferenceManager preferenceManager;
 	private String[] preferencePageIDs;
 	private String preferencePageCategory;
-	
+
 	/**
 	 * Constructor.
 	 * We are instantiated inside {@link RSEUIPlugin#getShowPreferencePageActions()}
@@ -56,7 +55,7 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	{
 		super("temp label", null); //$NON-NLS-1$
 	}
-    
+
 	/**
 	 * Set ID of the preference root page to show.
 	 * @param preferencePageID The ID of the preference page root to show. All child nodes will also be shown.
@@ -71,25 +70,25 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	 */
 	public void setPreferencePageID(String[] preferencePageIDs)
 	{
-		allowOnMultipleSelection(false);        
+		allowOnMultipleSelection(false);
 		setSelectionSensitive(false);
 		this.preferencePageIDs = preferencePageIDs;
 	}
 	/**
 	 * Set the category of the pages to be shown. This only needs to be called
 	 *  for non-root pages. Note that the ID to give here is not of the immediate
-	 *  parent, but that of the root parent. It tells us which root subtree to 
+	 *  parent, but that of the root parent. It tells us which root subtree to
 	 *  search for the given page(s).
 	 */
 	public void setPreferencePageCategory(String preferencePageCategory)
 	{
 		this.preferencePageCategory = preferencePageCategory;
 	}
-	
+
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
-	public void init(IViewPart view) 
+	public void init(IViewPart view)
 	{
 		setShell(view.getSite().getShell());
 	}
@@ -99,7 +98,7 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run(IAction action) 
+	public void run(IAction action)
 	{
 		run();
 	}
@@ -107,15 +106,15 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) 
+	public void selectionChanged(IAction action, ISelection selection)
 	{
 	}
-	
+
 	/**
 	 * This is the method called when the user selects this action.
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	public void run() 
+	public void run()
 	{
 		// Bring up the preferences page
 		/*
@@ -125,25 +124,25 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 		dialog.open();
 		*/
 		PreferenceManager pm = getPreferenceManager();
-	
-		if (pm != null) 
+
+		if (pm != null)
 		{
 			shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 			PreferenceDialog d = new WorkbenchPreferenceDialog(shell, pm);
 			d.create();
 			// TODO - hack to make this work in  3.1
 			String id = PlatformUI.PLUGIN_ID + ".preference_dialog_context"; //$NON-NLS-1$
-		
+
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(d.getShell(), id);
-			d.open();	
-		}				
-	}		
+			d.open();
+		}
+	}
 	/*
 	 * Get the preference manager.
 	 */
-	public PreferenceManager getPreferenceManager() 
+	public PreferenceManager getPreferenceManager()
 	{
-		if (preferenceManager == null) 
+		if (preferenceManager == null)
 		{
 			preferenceManager = new PreferenceManager('/');
 
@@ -151,16 +150,16 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 			//PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(PlatformUI.getWorkbench());
 
 			//List pageContributions = registryReader.getPreferenceContributions(Platform.getExtensionRegistry());
-			
+
 			PreferenceManager workbenchMgr = PlatformUI.getWorkbench().getPreferenceManager();
-			
+
 			List pageContributions = workbenchMgr.getElements(PreferenceManager.POST_ORDER);
-			
-			
+
+
 
 			//Add the contributions to the manager
 			Iterator iter = pageContributions.iterator();
-			while (iter.hasNext()) 
+			while (iter.hasNext())
 			{
 				IPreferenceNode prefNode = (IPreferenceNode) iter.next();
 				//System.out.println("prefNode.getId() == "+prefNode.getId());
@@ -176,16 +175,16 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 					//System.out.println("Made it here");
 					prefNode = searchForSubPage(prefNode, prefNodeID);
 					if (prefNode != null)
-						match = true;				
+						match = true;
 				}
 				if (match)
 					preferenceManager.addToRoot(prefNode);
 			}
-			
+
 		}
 		return preferenceManager;
 	}
-	
+
 	private IPreferenceNode searchForSubPage(IPreferenceNode parent, String prefNodeID)
 	{
 		IPreferenceNode match = null;
@@ -196,18 +195,18 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 			{
 				if (testForMatch(subNodes[idx].getId()))
 					match = subNodes[idx];
-				else 
+				else
 					match = searchForSubPage(subNodes[idx], prefNodeID);
 			}
-		
+
 		return match;
 	}
-	
+
 	private boolean testForMatch(String prefNodeID)
 	{
 		boolean match = false;
 		for (int idx=0; !match && (idx<preferencePageIDs.length); idx++)
-		{	 				
+		{
 			if (prefNodeID.equals(preferencePageIDs[idx]))
 				match = true;
 		}

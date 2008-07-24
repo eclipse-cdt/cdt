@@ -266,7 +266,10 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
 <!-- ================================================================================= -->
 <!-- Define Remote System Explorer view pulldown menu submenu for preferences actions -->
 <!-- ================================================================================= -->
-<!-- TODO migrate to command/handler
+<!-- FIXME this is hardcoded for now, but will be migrated to command/handler -->
+<!-- Clients can add their actions already if they create their own handler   -->
+<!-- See the patch on https://bugs.eclipse.org/bugs/show_bug.cgi?id=186769    -->
+<!--
 	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions">
  		<action	
 			id="org.eclipse.rse.ui.preferences.actions.rse"

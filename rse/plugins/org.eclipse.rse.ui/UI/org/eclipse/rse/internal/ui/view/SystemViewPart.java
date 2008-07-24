@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Kevin Doyle (IBM) - [180875] - Added double click listener that handles opening of files
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
@@ -140,7 +140,7 @@ import org.eclipse.ui.views.framelist.FrameList;
 /**
  * This is the desktop view wrapper of the System View viewer.
  */
-public class SystemViewPart 
+public class SystemViewPart
 	extends ViewPart
 	implements ISetSelectionTarget, IShellProvider, ISystemMessageLine, IElementFactory, IPersistableElement, IAdapterFactory, ISystemPreferenceChangeListener, ISelectionChangedListener, IRSEViewPart
 {
@@ -157,10 +157,10 @@ public class SystemViewPart
 
 	protected FrameList frameList;
 	protected SystemViewPartGotoActionGroup gotoActionGroup;
-	
+
 	// link with editor stuff
 	protected boolean _isLinkingEnabled = false;
-	
+
 	// view linker is used when a link with editor is required
 	protected IViewLinker _viewLinker;
 
@@ -195,8 +195,8 @@ public class SystemViewPart
 
 	public static final String MEMENTO_DELIM = "///"; //$NON-NLS-1$
 
-	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.systemView"; // matches id in plugin.xml, view tag //$NON-NLS-1$	
+	// constants
+	public static final String ID = "org.eclipse.rse.ui.view.systemView"; // matches id in plugin.xml, view tag //$NON-NLS-1$
 
 	/**
 	 * SystemViewPart constructor.
@@ -218,7 +218,7 @@ public class SystemViewPart
 	{
 		return systemView;
 	}
-	
+
 	/**
 	 * When an element is added/deleted/changed/etc and we have focus, this
 	 * method is called. See SystemStaticHelpers.selectReveal method.
@@ -230,7 +230,7 @@ public class SystemViewPart
 
 	/**
 	 * Returns the name for the given element.
-	 * Used as the name for the current frame. 
+	 * Used as the name for the current frame.
 	 */
 	protected String getFrameName(Object element)
 	{
@@ -250,7 +250,7 @@ public class SystemViewPart
 	{
 		return _isLinkingEnabled;
 	}
-	
+
 	public void setLinkingEnabled(boolean flag, IViewLinker viewLinker)
 	{
 		_isLinkingEnabled = flag;
@@ -270,7 +270,7 @@ public class SystemViewPart
 	/**
 		  * An editor has been activated.  Sets the selection in this navigator
 		  * to be the editor's input, if linking is enabled.
-		  * 
+		  *
 		  * @param editor the active editor
 		  */
 	protected void editorActivated(IEditorPart editor)
@@ -282,7 +282,7 @@ public class SystemViewPart
 			_viewLinker.linkEditorToView(editor, systemView);
 		}
 	}
-	/** 
+	/**
 	 * Updates the title text and title tool tip.
 	 * Called whenever the input of the viewer changes.
 	 */
@@ -337,7 +337,7 @@ public class SystemViewPart
 		this.input = input;
 	}*/
 	/**
-	 * Creates the SWT controls for a part.  
+	 * Creates the SWT controls for a part.
 	 * Called by Eclipse framework.
 	 */
 	public void createPartControl(Composite parent)
@@ -362,7 +362,7 @@ public class SystemViewPart
 			statusLine = actionBars.getStatusLineManager();
 		}
 
-		// register global edit actions 		
+		// register global edit actions
 		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -384,7 +384,7 @@ public class SystemViewPart
 				handleDoubleClick(event);
 			}
 		});
-		
+
 		//prime the selection
 		//selectionChanged(null, getSite().getDesktopWindow().getSelectionService().getSelection());
 
@@ -422,7 +422,7 @@ public class SystemViewPart
 			Job waitForRestoreCompleteJob = new Job("WaitForRestoreComplete") { //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						//Wait for initRSEJob. 
+						//Wait for initRSEJob.
 						initRSEJob.waitForCompletion();
 						//callback
 						display.asyncExec(new Runnable() {
@@ -462,7 +462,7 @@ public class SystemViewPart
 			// assume this is the primary RSE view
 
 			// WE GET ALL THE WAY HERE, BUT THESE LINES OF CODE ARE INEFFECTIVE FOR SOME REASON!!
-			
+
 			if (systemView.getTree().getItemCount() > 0) {
 				TreeItem firstItem = systemView.getTree().getItems()[0];
 				systemView.setSelection(new StructuredSelection(firstItem.getData()));
@@ -470,7 +470,7 @@ public class SystemViewPart
 			}
 		}
 	}
-	
+
 	/**
 	 * Handles double clicks in viewer.
 	 * Opens editor if file double-clicked.
@@ -488,7 +488,7 @@ public class SystemViewPart
 			adapter.handleDoubleClick(element);
 
 	}
-	
+
 	/**
 	 * Creates the frame source and frame list, and connects them.
 	 */
@@ -542,7 +542,7 @@ public class SystemViewPart
 		IWorkbench wb = PlatformUI.getWorkbench();
 		wb.getActiveWorkbenchWindow().getShell().setFocus();
 		systemView.getControl().setFocus();
-		/* the following was an attempt to fix problem with scrollbar needing two clicks to activate. didn't help.		
+		/* the following was an attempt to fix problem with scrollbar needing two clicks to activate. didn't help.
 		if (!SystemPreferencesGlobal.getGlobalSystemPreferences().getRememberState())
 		{
 			TreeItem[] roots = systemView.getTree().getItems();
@@ -565,9 +565,9 @@ public class SystemViewPart
 		}
 	}
 
-	
+
 	// link back to editor
-	protected void linkToEditor(IStructuredSelection selection) 
+	protected void linkToEditor(IStructuredSelection selection)
 	{
 		if (_viewLinker != null)
 		{
@@ -595,7 +595,7 @@ public class SystemViewPart
 		//       much constants from the remote system view context menu as possible.
 		//       This in particular makes orientating and contributing via plugin.xml
 		//       much easier.
-		
+
 		IToolBarManager toolBarMgr = actionBars.getToolBarManager();
 		if (showConnectionActions)
 		{
@@ -631,7 +631,7 @@ public class SystemViewPart
 			}
 		}
 	}
-	
+
 	/**
 	 * Pulldown the local toolbar menu with actions
 	 */
@@ -663,7 +663,7 @@ public class SystemViewPart
 			menuMgr.add(new Separator());
 			menuMgr.add(wwProfilesAction);
 			menuMgr.add(new Separator());
-			// moved Qualify Connection Names from here for d51541		
+			// moved Qualify Connection Names from here for d51541
 			//menuMgr.add(new Separator()); d51541
 		}
 		menuMgr.add(refreshAllAction);
@@ -677,13 +677,17 @@ public class SystemViewPart
 		}
 		//menuMgr.add(userIdPerSystemTypeAction.getSubMenu()); d51541
 		menuMgr.add(showFilterPoolsAction);
-		menuMgr.add(restoreStateAction); // d51541		
+		menuMgr.add(restoreStateAction); // d51541
 
 		// Now display any contributed action shortcuts for bringing up
 		// a particular preference page...
 		MenuManager subMenu = new MenuManager(SystemResources.ACTION_CASCADING_PREFERENCES_LABEL, ISystemContextMenuConstants.MENU_PREFERENCES);
 		menuMgr.add(subMenu);
-		
+
+		// The initial "RSE" Preference page action is added hardcoded.
+		// This comes from the former SystemCascadingPreferencesAction.
+		// FIXME will be moved to using command/hander extension point as per
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=186769
 		SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
 		action.setPreferencePageID("org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"); //$NON-NLS-1$
 		action.setText(SystemResources.ACTION_SHOW_PREFERENCEPAGE_LABEL);
@@ -712,7 +716,7 @@ public class SystemViewPart
 		//System.out.println("INSIDE DISPOSE FOR SYSTEMVIEWPART.");
 	}
 
-	/** 
+	/**
 	 * Returns the initial input provider for the viewer.
 	 * Tries to deduce the appropriate input provider based on current input.
 	 */
@@ -762,11 +766,11 @@ public class SystemViewPart
 
 			if (platformManager != null)
 				registerWithManager(platformManager, inputObj);
-			//msg = "INSIDE GETINPUTPROVIDER FOR SYSTEMVIEWPART: inputObj="+inputObj+", input class="+inputObj.getClass().getName()+", inputProvider="+inputProvider;		
+			//msg = "INSIDE GETINPUTPROVIDER FOR SYSTEMVIEWPART: inputObj="+inputObj+", input class="+inputObj.getClass().getName()+", inputProvider="+inputProvider;
 		}
 		else
 		{
-			//msg = "INSIDE GETINPUTPROVIDER FOR SYSTEMVIEWPART: inputObj is null, inputProvider="+inputProvider;		
+			//msg = "INSIDE GETINPUTPROVIDER FOR SYSTEMVIEWPART: inputObj is null, inputProvider="+inputProvider;
 		}
 		//RSEUIPlugin.logDebugMessage(this.getClass().getName(),msg);
 		//System.out.println("INSIDE getInputProvider. inputProvider = "+inputProvider);
@@ -877,7 +881,7 @@ public class SystemViewPart
 		if (statusLine != null)
 			statusLine.setMessage(message);
 	}
-	/** 
+	/**
 	 *If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
 	 */
@@ -896,7 +900,7 @@ public class SystemViewPart
 	 * within the part controls.
 	 * <p>
 	 * The parent's default implementation will ignore the memento and initialize
-	 * the view in a fresh state.  Subclasses may override the implementation to 
+	 * the view in a fresh state.  Subclasses may override the implementation to
 	 * perform any state restoration as needed.
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException
@@ -918,7 +922,7 @@ public class SystemViewPart
 		{
 			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 			URL installURL = plugin.getDescriptor().getInstallURL();
-		
+
 			URL url = new URL(installURL, iconPath + relativePath);
 			ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 			return descriptor;
@@ -963,7 +967,7 @@ public class SystemViewPart
 		//  restoring expansion state and hence will abandon it.
 
 		memento.putString(TAG_SHOWFILTERPOOLS, SystemPreferencesManager.getShowFilterPools() ? "t" : "f"); //$NON-NLS-1$ //$NON-NLS-2$
-		//memento.putString(TAG_SHOWFILTERSTRINGS, SystemPreferencesManager.getPreferencesManager().getShowFilterStrings() ? "t" : "f");       
+		//memento.putString(TAG_SHOWFILTERSTRINGS, SystemPreferencesManager.getPreferencesManager().getShowFilterStrings() ? "t" : "f");
 
 		String inputMemento = memento.getString("factoryID"); // see IWorkbenchWindow ... this is only clue I can figure out!  //$NON-NLS-1$
 		if (inputMemento != null)
@@ -1080,7 +1084,7 @@ public class SystemViewPart
 		//System.out.println("SYSTEMVIEWPART: restoreState");
 		if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
 		  return;
-		  
+
 		// restore the show filter pools and show filter strings settings as they were when this was saved
 		boolean showFilterPools = false;
 		boolean showFilterStrings = false;
@@ -1089,22 +1093,22 @@ public class SystemViewPart
 		  showFilterPools = savedValue.equals("t");
 		else
 		  showFilterPools = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
-		
+
 		savedValue = memento.getString(TAG_SHOWFILTERSTRINGS); // historical
 		if (savedValue != null)
 		  showFilterStrings = savedValue.equals("t");
 		//else
 		  //showFilterStrings = SystemPreferencesManager.getPreferencesManager().getShowFilterStrings();
-		
+
 		IMemento childMem = null;
-		
+
 		// restore expand-to hashtable state
-			childMem= memento.getChild(TAG_EXPANDED_TO);        
-		if (childMem != null) 
+			childMem= memento.getChild(TAG_EXPANDED_TO);
+		if (childMem != null)
 		{
 			IMemento[] elementMem= childMem.getChildren(TAG_ELEMENT);
 			Hashtable ht = new Hashtable();
-			for (int i= 0; i < elementMem.length; i++) 
+			for (int i= 0; i < elementMem.length; i++)
 			{
 				String key   = elementMem[i].getString(TAG_PATH);
 				String value = elementMem[i].getString(TAG_FILTER);
@@ -1114,16 +1118,16 @@ public class SystemViewPart
 			if (ht.size() > 0)
 			  systemView.setExpandToFilterTable(ht);
 		}
-		        
+
 		// restore expansion state
 			childMem= memento.getChild(TAG_EXPANDED);
-		if (childMem != null) 
+		if (childMem != null)
 		{
 		    ArrayList elements= new ArrayList();
 		    Vector remoteElements = new Vector();
 			IMemento[] elementMem= childMem.getChildren(TAG_ELEMENT);
 			// walk through list of expanded nodes, breaking into 2 lists: non-remote and remote
-			for (int i= 0; i < elementMem.length; i++) 
+			for (int i= 0; i < elementMem.length; i++)
 			{
 				Object element= getObjectFromMemento(showFilterPools, showFilterStrings, elementMem[i].getString(TAG_PATH));
 				if (element != null)
@@ -1154,15 +1158,15 @@ public class SystemViewPart
 				}
 			}
 		}
-		
+
 		// restoreSelection
 		childMem= memento.getChild(TAG_SELECTION);
-		if (childMem != null) 
+		if (childMem != null)
 		{
 			ArrayList list= new ArrayList();
 		    Vector remoteElements = new Vector();
 			IMemento[] elementMem= childMem.getChildren(TAG_ELEMENT);
-			for (int i= 0; i < elementMem.length; i++) 
+			for (int i= 0; i < elementMem.length; i++)
 			{
 				Object element= getObjectFromMemento(showFilterPools, showFilterStrings, elementMem[i].getString(TAG_PATH));
 				if (element != null)
@@ -1182,7 +1186,7 @@ public class SystemViewPart
 					v.addElement(ro.name);
 				}
 			    SystemResourceChangeEvent event = new SystemResourceChangeEvent(v,ISystemResourceChangeEvents.EVENT_SELECT_REMOTE,null);
-			    systemView.systemResourceChanged(event);								
+			    systemView.systemResourceChanged(event);
 			}
 		}
 		Tree tree= systemView.getTree();
@@ -1190,7 +1194,7 @@ public class SystemViewPart
 		ScrollBar bar= tree.getVerticalBar();
 		if (bar != null)
 		 {
-			try 
+			try
 			{
 				String posStr= memento.getString(TAG_VERTICAL_POSITION);
 				if (posStr != null)
@@ -1199,15 +1203,15 @@ public class SystemViewPart
 				  position= new Integer(posStr).intValue();
 				  bar.setSelection(position);
 				}
-			} catch (NumberFormatException e) 
+			} catch (NumberFormatException e)
 			{
 			}
 		}
 		//restore vertical position
 		bar= tree.getHorizontalBar();
-		if (bar != null) 
+		if (bar != null)
 		{
-			try 
+			try
 			{
 				String posStr= memento.getString(TAG_HORIZONTAL_POSITION);
 				if (posStr != null)
@@ -1216,7 +1220,7 @@ public class SystemViewPart
 				  position= new Integer(posStr).intValue();
 				  bar.setSelection(position);
 				}
-			} catch (NumberFormatException e) 
+			} catch (NumberFormatException e)
 			{
 			}
 		}
@@ -1255,22 +1259,22 @@ public class SystemViewPart
 		// 1. connections
 		//    2. subsystems
 		//       3. filter pools (optional)
-		//          4. filters 
+		//          4. filters
 		//             5. filter strings (optional)
 		//                6. remote objects
 		// 1. connections
 		//    2. subsystems
-		//          3. filters 
+		//          3. filters
 		//             4. filter strings (optional)
 		//                5. remote objects
 		// 1. connections
 		//    2. subsystems
 		//       3. filter pools (optional)
-		//          4. filters 
+		//          4. filters
 		//                5. remote objects
 		// 1. connections
 		//    2. subsystems
-		//          3. filters 
+		//          3. filters
 		//                4. remote objects
 
 		int index = 0;
@@ -1340,7 +1344,7 @@ public class SystemViewPart
 										if (refs[refidx].getFullName().equals(poolName))
 											fpRef = refs[refidx];
 							}
-						
+
 							// TODO: handle nested filters. in this case they are separated by ';'. See SystemFilterReferenceAdapter's getMementoHandle()
 							if (fpRef != null)
 							{
@@ -1452,7 +1456,7 @@ public class SystemViewPart
 			{
 				lastToken = token.toString();
 				v.addElement(lastToken);
-				//System.out.println("...token: " + token);    		  
+				//System.out.println("...token: " + token);
 				token.setLength(0);
 				idx += delimLen - 1;
 			}
@@ -1477,36 +1481,36 @@ public class SystemViewPart
 			_restoredObject = restoredObject;
 			_children = children;
 		}
-		
+
 		public void run()
 		{
 			Vector matches = new Vector();
 			systemView.findAllRemoteItemReferences(_restoredObject, _restoredObject, matches);
 			if (matches.size() > 0){
 				TreeItem item = (TreeItem)matches.get(0);
-				systemView.createTreeItems(item, _children);				
+				systemView.createTreeItems(item, _children);
 				item.setExpanded(true);
 			}
 
 		}
 	}
-	
-	
+
+
 	protected class RestoreRemoteObjects extends Job
 	{
 		private Vector _remoteObjectsToRestore;
 		private List _cacheSubSystemList;
 		private Vector _remoteObjectsToSelect;
-		
+
 		public RestoreRemoteObjects(Vector remoteObjects, List cacheSubSystemList, Vector remoteObjectsToSelect)
-		{			
+		{
 			super("Restore Remote Objects"); //$NON-NLS-1$
 			_remoteObjectsToRestore = remoteObjects;
 			_cacheSubSystemList = cacheSubSystemList;
 			_remoteObjectsToSelect = remoteObjectsToSelect;
 		}
 
-		protected IStatus run(IProgressMonitor monitor) 
+		protected IStatus run(IProgressMonitor monitor)
 		{
 			IStatus status = doRestore(monitor);
 			if (status.isOK()){
@@ -1514,42 +1518,42 @@ public class SystemViewPart
 			}
 			return status;
 		}
-		
+
 		protected IStatus doSelect(IProgressMonitor monitor)
-		{		
+		{
 			Vector v = new Vector();
 			for (int i = 0; i < _remoteObjectsToSelect.size(); i++){
-				
+
 				Object object = _remoteObjectsToSelect.get(i);
 				if (object instanceof RemoteObject)
 				{
-					RemoteObject robject = (RemoteObject)object;					
+					RemoteObject robject = (RemoteObject)object;
 					v.addElement(robject.name);
 				}
 			}
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(v, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null);
 			systemView.systemResourceChanged(event);
-			
+
 			return Status.OK_STATUS;
 		}
-		
-		
+
+
 		protected IStatus doRestore(IProgressMonitor monitor)
 		{
 			for (int i = 0; i < _remoteObjectsToRestore.size(); i++){
-				
+
 				if (monitor.isCanceled()){
 					return Status.CANCEL_STATUS;
 				}
-				
+
 				Object object = _remoteObjectsToRestore.get(i);
 				if (object instanceof RemoteObject)
 				{
 					RemoteObject robject = (RemoteObject)object;
-				
+
 					ISubSystem ss = robject.subsystem;
 
-					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they 
+					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they
 					// can optionally use the cache if desired
 					if (ss != null && ss.supportsCaching())
 					{
@@ -1559,37 +1563,37 @@ public class SystemViewPart
 					if (!ss.isOffline()){
 						String path = robject.name;
 						ISystemFilterReference fref = robject.fRef;
-						
+
 						try
 						{
 							Object actualObject = ss.getObjectWithAbsoluteName(path, monitor);
-							
+
 							if (actualObject instanceof IAdaptable)
 							{
 								// get the adapter
 								ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)actualObject).getAdapter(ISystemViewElementAdapter.class);
-								
+
 								// get the context
 								ContextObject contextObject = new ContextObject(actualObject, ss, fref);
-								
-								// get the children	
+
+								// get the children
 								Object[] children = adapter.getChildren(contextObject, monitor);
-							
+
 								ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
 								Display.getDefault().asyncExec(showRunnable);
 							}
-							
+
 						}
 						catch (Exception e)
 						{
 							// unexpected
 						}
-						
+
 						// yantzi: artemis 6.0:  reset restore from memento flag
 						if (ss != null && ss.supportsCaching())
 						{
 							ss.getCacheManager().setRestoreFromMemento(false);
-						}	
+						}
 					}
 				}
 				else if (object instanceof ISystemFilterReference)
@@ -1610,16 +1614,16 @@ public class SystemViewPart
 						{
 							// get the adapter
 							ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)object).getAdapter(ISystemViewElementAdapter.class);
-							
+
 							// get the context
 							ContextObject contextObject = new ContextObject(fref, ss, fref);
-							
-							// get the children	
+
+							// get the children
 							Object[] children = adapter.getChildren(contextObject, monitor);
-						
+
 							ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(fref, children);
 							Display.getDefault().asyncExec(showRunnable);
-						}	
+						}
 					}
 				}
 			}
@@ -1632,11 +1636,11 @@ public class SystemViewPart
 					((ISubSystem) _cacheSubSystemList.get(i)).getCacheManager().setRestoreFromMemento(false);
 				}
 			}
-			
+
 			return Status.OK_STATUS;
-		}				
+		}
 	}
-	
+
 	protected class RemoteObject
 	{
 		public String name;
@@ -1656,14 +1660,14 @@ public class SystemViewPart
 		{
 			return "Remote object: " + name; //$NON-NLS-1$
 		}
-		
+
 		public boolean equals(RemoteObject compared)
 		{
 			if (name.equals(compared.name) &&
 				subsystem == compared.subsystem &&
 				fRef == compared.fRef)
 				return true;
-		
+
 			return false;
 		}
 	}
@@ -1696,10 +1700,10 @@ public class SystemViewPart
 		{
 			super("Restore RSE Tree"); //$NON-NLS-1$
 			_memento = memento;
-			
+
 		}
 
-		public IStatus runInUIThread(IProgressMonitor monitor)		
+		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
 			IMemento memento = _memento;
 			//System.out.println("SYSTEMVIEWPART: restoreState");
@@ -1747,12 +1751,12 @@ public class SystemViewPart
 			if (childMem != null)
 			{
 				ArrayList elements = new ArrayList();
-				
+
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 
 				// yantzi: artemis6.0, keep track subsystems which have their memento flag set in order
 				// to restore system view from cache (if the subsystem supports this)
-				
+
 				ISubSystem cacheSubSystem;
 				boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
@@ -1771,7 +1775,7 @@ public class SystemViewPart
 							remoteElementsToRestore.add(element); // filters trigger asynchronous queries, so best to expand this with remote items
 
 							if (restoreFromCache)
-							{								
+							{
 								// yantzi: artemis 6.0, see comment above
 								cacheSubSystem = ((ISystemFilterReference)element).getSubSystem();
 								if (cacheSubSystem.supportsCaching() && cacheSubSystem.getCacheManager() != null)
@@ -1793,12 +1797,12 @@ public class SystemViewPart
 
 			// restoreSelection
 			childMem = memento.getChild(TAG_SELECTION);
-			
+
 			Vector remoteElementsToSelect = new Vector();
 			if (childMem != null)
 			{
 				ArrayList list = new ArrayList();
-				
+
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++)
 				{
@@ -1814,13 +1818,13 @@ public class SystemViewPart
 					systemView.setSelection(new StructuredSelection(list));
 				}
 			}
-			
+
 			if (remoteElementsToRestore.size() > 0)
 			{
 				RestoreRemoteObjects restoreRemoteJob = new RestoreRemoteObjects(remoteElementsToRestore, cacheSubSystemList, remoteElementsToSelect);
-				restoreRemoteJob.schedule();				
-			}				
-			
+				restoreRemoteJob.schedule();
+			}
+
 			Tree tree = systemView.getTree();
 			//restore vertical position
 			ScrollBar bar = tree.getVerticalBar();
@@ -1858,8 +1862,8 @@ public class SystemViewPart
 				{
 				}
 			}
-			
-			
+
+
 			String linkWithEditor = memento.getString(TAG_LINKWITHEDITOR);
 			if (linkWithEditor != null)
 			{
@@ -1873,11 +1877,11 @@ public class SystemViewPart
 				_isLinkingEnabled = false;
 			}
 
-			
-			
+
+
 			return Status.OK_STATUS;
 		}
-		
+
 	}
 
 	// THE FOLLOWING ARE TO ENABLE PERSISTENCE OF NON-PRIMARY REMOTE SYSTEM EXPLORER VIEWS OPENED UP BY THE
@@ -1941,7 +1945,7 @@ public class SystemViewPart
 	 *
 	public void saveState(IMemento memento)
 	{
-		
+
 	}*/
 
 	/**
@@ -1982,7 +1986,7 @@ public class SystemViewPart
 	}
 
 	/**
-	 * Called by our plugin's startup method to register our adaptable object types 
+	 * Called by our plugin's startup method to register our adaptable object types
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
 	 * logic in this one place.
 	 */
@@ -1993,7 +1997,7 @@ public class SystemViewPart
 		manager.registerAdapters(this, input.getClass());
 	}
 	/**
-	 * Called by our plugin's startup method to register our adaptable object types 
+	 * Called by our plugin's startup method to register our adaptable object types
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
 	 * logic in this one place.
 	 */

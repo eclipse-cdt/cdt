@@ -112,6 +112,7 @@ Select the configuration to be used for this subsystem and then edit the propert
 <description>Set as the default user ID for a given system type when creating a new connection, or change it for existing connections that inherit the user ID.</description>
 </context>
 <!-- PULLDOWN ACTION: Preferences cascading action...   -->
+<!-- FIXME this one is OBSOLETE, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=186769 -->
 <context id="actnpref">
 <description>Go directly to a preference page. Saves drilling down via Windows->Preferences.</description>
 </context>

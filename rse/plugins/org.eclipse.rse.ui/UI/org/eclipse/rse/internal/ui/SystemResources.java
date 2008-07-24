@@ -733,6 +733,7 @@ public class SystemResources extends NLS
 	public static String ACTION_CASCADING_VIEW_TOOLTIP;
 
 	public static String ACTION_CASCADING_PREFERENCES_LABEL;
+	//FIXME This one is OBSOLETE with https://bugs.eclipse.org/bugs/show_bug.cgi?id=186769
 	public static String ACTION_CASCADING_PREFERENCES_TOOLTIP;
 
 	public static String ACTION_CASCADING_PULLDOWN_LABEL;

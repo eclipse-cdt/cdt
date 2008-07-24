@@ -41,7 +41,7 @@
 			<topic label="Customizing the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
 			<topic label="Viewing and managing compile errors" href="tasks/cdt_o_tasksview.htm">
 				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>
-				<topic label="Filtering errors" href="tasks/cdt_t_filtererror.htm"/>
+				<topic label="Filtering the Problems view" href="tasks/cdt_t_filtererror.htm"/>
 				<topic label="Setting reminders" href="tasks/cdt_t_setreminder.htm"/>
 			</topic>
 		</topic>
@@ -61,7 +61,7 @@
 				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
 				<topic label="Debugging an existing executable" href="tasks/cdt_t_debug_exes.htm"/>
 				
-				<topic label="Working with breakpoints, watchpoints, and breakpoint actions" href="tasks/cdt_o_brkpnts_watch.htm">
+				<topic label="Using breakpoints, watchpoints, and breakpoint actions" href="tasks/cdt_o_brkpnts_watch.htm">
 					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
 					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>
 					<topic label="Adding breakpoint actions" href="tasks/cdt_t_add_brk_action.htm"/>
@@ -80,7 +80,7 @@
 		</topic>
 		
 		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
-			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
+			<topic label="Selection Searching for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>
 		</topic>
 </toc>

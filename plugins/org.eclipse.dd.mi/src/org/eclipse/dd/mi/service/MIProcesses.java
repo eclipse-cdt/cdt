@@ -71,7 +71,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && ((MIExecutionGroupDMC)obj).fId == fId;
+			return super.baseEquals(obj) && ((MIExecutionGroupDMC)obj).fId.equals(fId);
 		}
 
 		@Override
@@ -109,11 +109,11 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     	public String getId(){ return fOSId; }
 
     	@Override
-    	public String toString() { return baseToString() + ".thread[" + fOSId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
+    	public String toString() { return baseToString() + ".OSthread[" + fOSId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
 
     	@Override
     	public boolean equals(Object obj) {
-    		return super.baseEquals(obj) && ((MIThreadDMC)obj).fOSId == fOSId;
+    		return super.baseEquals(obj) && ((MIThreadDMC)obj).fOSId.equals(fOSId);
     	}
 
     	@Override

@@ -5238,4 +5238,10 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
 	}
 	
+	// enum __declspec(uuid("uuid")) bla { a, b};
+	public void testDeclspecInEnumSpecifier_bug241203() throws Exception  {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			parseAndCheckBindings(getAboveComment(), lang, true);
+		}
+	}
 }

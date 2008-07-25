@@ -1272,6 +1272,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         final IToken mark= mark();
         final int offset= consume().getOffset();
 
+        // if __attribute__ or __declspec occurs after struct/union/class and before the identifier        
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+
         IASTName name;
         if (LT(1) == IToken.tIDENTIFIER) {
             name= createName(identifier());
@@ -2227,21 +2230,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected void __declspec() throws BacktrackException, EndOfFileException {
     	IToken token = LA(1);
-
     	if (token.getType() == IGCCToken.t__declspec) {
     		consume();
-
-    		token = LA(1);
-
-    		if (token.getType() == IToken.tLPAREN) {
-    			consume();
-    			while(true) {
-    				token = LA(1);
-    				consume();
-    				if (token.getType() == IToken.tRPAREN) {
-    					break;
-    				}
-    			}
+    		if (LT(1) == IToken.tLPAREN) {
+    	    	skipBrackets(IToken.tLPAREN, IToken.tRPAREN);
     		}
     	}
     }    

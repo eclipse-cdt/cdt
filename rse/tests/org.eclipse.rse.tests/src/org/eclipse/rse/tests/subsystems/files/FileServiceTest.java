@@ -36,7 +36,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 
 	private String fPropertiesFileName;
 	// For testing the test: verify methods on Local
-	public static String fDefaultPropertiesFile = "local.properties";
+	public static String fDefaultPropertiesFile = "localConnection.properties";
 
 	private IFileServiceSubSystem fss;
 	private IFileService fs;

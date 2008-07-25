@@ -11,7 +11,7 @@
       <suite type="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" name="RSE Connection Test Suite"/>
       	<type name="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" class="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" />
 
-      <suite type="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" name="RSE File Subsystem Test Suite"/>
+      <suite type="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" name="RSEFileSubsystemTestSuite"/>
       	<type name="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" class="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" />
 
       <suite type="org.eclipse.rse.tests.persistence.PersistenceTestSuite" name="RSE Persistence Test Suite"/>

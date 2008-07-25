@@ -1618,6 +1618,14 @@ public class Scribe {
 		}
 		int braceLevel= 0;
 		int parenLevel= 0;
+		switch (expectedTokenType) {
+		case Token.tRBRACE:
+			++braceLevel;
+			break;
+		case Token.tRPAREN:
+			++parenLevel;
+			break;
+		}
 		while ((currentToken= scanner.nextToken()) != null) {
 			switch (currentToken.type) {
 			case Token.tLBRACE:

@@ -408,14 +408,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 	
 	//void f() {
 	//int *px= :: new int(  0 );
-	//int  py [] =  new   int [5 ] (0, 1,2,3, 4);
+	//int* py [] =  new   int [5 ] (0, 1,2,3, 4);
 	//int  *pz[ ] =new ( px)int(0);
 	//delete  []  py;
 	//:: delete px;}
 
 	//void f() {
 	//	int *px = ::new int(0);
-	//	int py[] = new int[5](0, 1, 2, 3, 4);
+	//	int* py[] = new int[5](0, 1, 2, 3, 4);
 	//	int *pz[] = new (px) int(0);
 	//	delete[] py;
 	//	::delete px;
@@ -760,4 +760,36 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void A::a(C e) { if (D::iterator it = m.find (e)) m.erase(it);}
+	//T* A::b(T* t) { S::iterator it = m.find(t); if (!it) return NULL; else return *it; }
+	//M* A::c(M* tm) { N::iterator it = myN.find(tm); if (!it) return NULL; else return *it; }
+
+	//void A::a(C e) {
+	//	if (D::iterator it = m.find (e))
+	//		m.erase(it);
+	//}
+	//T* A::b(T* t) {
+	//	S::iterator it = m.find(t);
+	//	if (!it)
+	//		return NULL;
+	//	else
+	//		return *it;
+	//}
+	//M* A::c(M* tm) {
+	//	N::iterator it = myN.find(tm);
+	//	if (!it)
+	//		return NULL;
+	//	else
+	//		return *it;
+	//}
+	public void testHandleParsingProblemsInIfCondition_Bug240564() throws Exception {
+		assertFormatterResult();
+	}
+
+	//TestType1<TESTNS::TestType2<3> > test_variable;
+
+	//TestType1<TESTNS::TestType2<3> > test_variable;
+	public void testNestedTemplatedArgument_Bug241058() throws Exception {
+		assertFormatterResult();
+	}
 }

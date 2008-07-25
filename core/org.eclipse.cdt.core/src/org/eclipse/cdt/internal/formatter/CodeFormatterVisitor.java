@@ -2382,7 +2382,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 		IASTExpression condExpr= node.getConditionExpression();
-		if (condExpr instanceof IASTProblemExpression) {
+		if (condExpr == null || condExpr instanceof IASTProblemExpression) {
 			scribe.skipToToken(Token.tRPAREN);
 		} else {
 			condExpr.accept(this);
@@ -2500,7 +2500,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			// destructor
 			scribe.printNextToken(Token.tCOMPL, false);
 		}
-		scribe.printNextToken(Token.tIDENTIFIER, false);
+		names[names.length-1].accept(this);
 		return PROCESS_SKIP;
 	}
 
@@ -2519,10 +2519,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			formatList(Arrays.asList(templateArguments), align, false, false);
 		}
 		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
-		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
+		int nextToken= peekNextToken();
+		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
 			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
 				// avoid explicit space if followed by pointer operator
-				int nextToken= peekNextToken();
 				if (nextToken != Token.tSTAR && nextToken != Token.tAMPER) {
 					scribe.space();
 				}

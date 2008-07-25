@@ -506,7 +506,7 @@ public class PDARunControl extends AbstractDsfService
 	}
 
 	public boolean isStepping(IExecutionDMContext context) {
-	    if (isSuspended(context)) {
+	    if (!isSuspended(context)) {
             if (context instanceof PDAThreadDMContext) {
                 PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
                 // Threads can be resumed only if the VM is not suspended.

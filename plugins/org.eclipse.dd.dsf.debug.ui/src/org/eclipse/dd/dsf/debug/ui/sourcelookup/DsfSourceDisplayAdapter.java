@@ -12,10 +12,12 @@
 package org.eclipse.dd.dsf.debug.ui.sourcelookup;
 
 import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.filesystem.EFS;
@@ -51,14 +53,20 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -67,9 +75,11 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -92,30 +102,63 @@ import org.eclipse.ui.texteditor.ITextEditor;
 @ThreadSafe
 public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControlParticipant
 {
+    private static final class FrameData {
+		IFrameDMContext fDmc;
+        int fLine;
+        int fLevel;
+		String fFile;
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			FrameData other = (FrameData) obj;
+			if (!fDmc.equals(other.fDmc))
+				return false;
+			if (fFile == null) {
+				if (other.fFile != null)
+					return false;
+			} else if (!fFile.equals(other.fFile))
+				return false;
+			return true;
+		}
+
+		/**
+		 * Test whether the given frame data instance refers to the very same location.
+		 * 
+		 * @param frameData
+		 * @return <code>true</code> if the frame data refers to the same location
+		 */
+		public boolean isIdentical(FrameData frameData) {
+			return equals(frameData) && fLine == frameData.fLine;
+		}
+    }
+    
     /**
 	 * A job to perform source lookup on the given DMC.
 	 */
 	class LookupJob extends Job {
 		
-		private IDMContext fDmc;
-		private IWorkbenchPage fPage;
+		private final IWorkbenchPage fPage;
+		private final FrameData fFrameData;
 
 		/**
 		 * Constructs a new source lookup job.
 		 */
-		public LookupJob(IDMContext dmc, IWorkbenchPage page) {
+		public LookupJob(FrameData frameData, IWorkbenchPage page) {
 			super("DSF Source Lookup");  //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
-			fDmc = dmc;
+			fFrameData = frameData;
 			fPage = page;
 		}
 
-        IDMContext getDmc() { return fDmc; }
+        IDMContext getDmc() { return fFrameData.fDmc; }
         
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
         protected IStatus run(final IProgressMonitor monitor) {
 			if (monitor.isCanceled()) {
@@ -126,22 +169,23 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             executeFromJob(new DsfRunnable() { public void run() {
                 if (!monitor.isCanceled()) { 
                     fPrevResult = result;
-                    fPrevModelContext = fDmc;
+                    fPrevFrameData = fFrameData;
                     fRunningLookupJob = null;
-                    startDisplayJob(fPrevResult, fPage);
+                    startDisplayJob(fPrevResult, fFrameData, fPage);
                 }
             }});
 			return Status.OK_STATUS;
 		}
         
         private SourceLookupResult performLookup() {
-            SourceLookupResult result = new SourceLookupResult(fDmc, null, null, null);
+            IDMContext dmc = fFrameData.fDmc;
+			SourceLookupResult result = new SourceLookupResult(dmc , null, null, null);
             String editorId = null;
             IEditorInput editorInput = null;
-            Object sourceElement = fSourceLookup.getSourceElement(fDmc);
+            Object sourceElement = fSourceLookup.getSourceElement(dmc);
 
             if (sourceElement == null) {
-                editorInput = new CommonSourceNotFoundEditorInput(fDmc);
+                editorInput = new CommonSourceNotFoundEditorInput(dmc);
                 editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
             } else if (sourceElement instanceof IFile) {
                 editorId = getEditorIdForFilename(((IFile)sourceElement).getName());
@@ -153,7 +197,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             		editorInput = new FileStoreEditorInput(fileStore);
             		editorId = getEditorIdForFilename(uriLocation.getPath());
             	} catch (CoreException e) {
-                    editorInput = new CommonSourceNotFoundEditorInput(fDmc);
+                    editorInput = new CommonSourceNotFoundEditorInput(dmc);
                     editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
             	}
             }
@@ -181,61 +225,107 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	class DisplayJob extends UIJob {
 		private SourceLookupResult fResult;
 		private IWorkbenchPage fPage;
+		private FrameData fFrameData;
+
+		private DsfRunnable fDisplayJobFinishedRunnable = new DsfRunnable() { 
+            public void run() {
+                // If the current display job does not match up with "this", it means that this job got canceled
+                // after it already completed and after this runnable was queued into the dispatch thread.
+                if (fRunningDisplayJob == DisplayJob.this) {
+                    fRunningDisplayJob = null;
+                    if (!fDoneStepping.getAndSet(true)) {
+                        doneStepping(fResult.getDmc());
+                    }
+                    serviceDisplayAndClearingJobs();
+                }
+            }
+        }; 
+
+        private AtomicBoolean fDoneStepping = new AtomicBoolean(false);
+        private IRegion fRegion;
+        private ITextViewer fTextViewer;
         
         IDMContext getDmc() { return fResult.getDmc(); }
         
 		/**
 		 * Constructs a new source display job
 		 */
-		public DisplayJob(SourceLookupResult result, IWorkbenchPage page) {
+		public DisplayJob(SourceLookupResult result, FrameData frameData, IWorkbenchPage page) {
 			super("Debug Source Display");  //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 			fResult = result;
+			fFrameData = frameData;
 			fPage = page;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
         public IStatus runInUIThread(final IProgressMonitor monitor) {
-            DsfRunnable displayJobFinishedRunnable = new DsfRunnable() { 
-                public void run() {
-                    // If the current display job does not match up with "this", it means that this job got cancelled
-                    // after it already completed and after this runnable was queued into the dispatch thread.
-                    if (fRunningDisplayJob == DisplayJob.this) {
-                        fRunningDisplayJob = null;
-                        serviceDisplayAndClearingJobs();
-                    }
-                }
-            }; 
             
             if (monitor.isCanceled()) {
-                executeFromJob(displayJobFinishedRunnable);
+                executeFromJob(fDisplayJobFinishedRunnable);
                 return Status.CANCEL_STATUS;
             }
             
-            IEditorPart editor = openEditor(fResult, fPage);
-            if (editor == null) {
-                executeFromJob(displayJobFinishedRunnable);
-                return Status.OK_STATUS;
-            }
-
-            ITextEditor textEditor = null;
-            if (editor instanceof ITextEditor) {                    
-                textEditor = (ITextEditor)editor;
+            if (fRegion != null && fTextViewer != null) {
+            	if (fRunningDisplayJob == this) {
+            		if (!shouldCancelSelectionChange()) {
+	        			enableLineBackgroundPainter();
+		                fTextViewer.setSelectedRange(fRegion.getOffset(), 0);
+            		}
+	                executeFromJob(fDisplayJobFinishedRunnable);
+            	}
             } else {
-                textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
+                IEditorPart editor = openEditor(fResult, fPage);
+                if (editor == null) {
+                    executeFromJob(fDisplayJobFinishedRunnable);
+                    return Status.OK_STATUS;
+                }
+    
+                ITextEditor textEditor = null;
+                if (editor instanceof ITextEditor) {                    
+                    textEditor = (ITextEditor)editor;
+                } else {
+                    textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
+                }
+                if (textEditor != null) {
+                    if (positionEditor(textEditor, fFrameData)) {
+                        return Status.OK_STATUS;
+                    }
+                }
+                executeFromJob(fDisplayJobFinishedRunnable);    
             }
-            if (textEditor != null) {
-                positionEditor(textEditor, fResult.getDmc());
-            }
-
-            executeFromJob(displayJobFinishedRunnable);
-
 			return Status.OK_STATUS;
 		}
+		
+		private boolean shouldCancelSelectionChange() {
+            Query<Boolean> delaySelectionChangeQuery = new Query<Boolean>() {
+                @Override
+                protected void execute(DataRequestMonitor<Boolean> rm) {
+                    IExecutionDMContext execCtx = DMContexts.getAncestorOfType(fFrameData.fDmc,
+                        IExecutionDMContext.class);
+                    
+                    IRunControl runControl = fServicesTracker.getService(IRunControl.class);
+                    rm.setData(runControl != null && execCtx != null && 
+                               (fController.getPendingStepCount(execCtx) != 0 || runControl.isStepping(execCtx)));
+                    rm.done();
+                }
+            };
+
+            try {
+                fController.getExecutor().execute(delaySelectionChangeQuery);
+            } catch (RejectedExecutionException e) {
+                return false;
+            }
+
+            try {
+                return delaySelectionChangeQuery.get();
+            } catch (InterruptedException e) {
+                return false;
+            } catch (ExecutionException e) {
+                return false;
+            }
+        }
 		
         /**
          * Opens the editor used to display the source for an element selected in
@@ -275,70 +365,92 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         /**
          * Positions the text editor for the given stack frame
          */
-        private void positionEditor(ITextEditor editor, final IDMContext dmc) {
-            if (!(dmc instanceof IFrameDMContext)) return;
-            final IFrameDMContext frameDmc = (IFrameDMContext)dmc;
-            
-            // We need to retrieve the frame level and line number from the service.  
-            // Normally we could just get the needed information from IFrameDMData, but
-            // IFrameDMData, which derives from IModelData can only be accessed on the 
-            // dispatch thread, so we need to copy over relevant information from 
-            // IFrameDMData into this structure so we can read it in the job thread.
-            class FramePositioningData {
-                int fLine;
-                int fLevel;
+        private boolean positionEditor(ITextEditor editor, final FrameData frameData) {
+            // Position and annotate the editor.
+            fRegion= getLineInformation(editor, frameData.fLine);
+            if (fRegion != null) {
+                // add annotation
+                fIPManager.addAnnotation(
+                        editor, frameData.fDmc, new Position(fRegion.getOffset(), fRegion.getLength()), 
+                        frameData.fLevel == 0);
+
+                // this is a dirty trick to get access to the ITextViewer of the editor
+            	Object tot = editor.getAdapter(ITextOperationTarget.class);
+            	if (tot instanceof ITextViewer) {
+                    fTextViewer = (ITextViewer)tot;
+            		int widgetLine = frameData.fLine;
+            		if (tot instanceof ITextViewerExtension5) {
+            			ITextViewerExtension5 ext5 = (ITextViewerExtension5) tot;
+            			// expand region if collapsed
+            			ext5.exposeModelRange(fRegion);
+            			widgetLine = ext5.modelLine2WidgetLine(widgetLine);
+            		}
+            		revealLine(fTextViewer, widgetLine);
+            		
+            		if (fStepCount > 0 && fSelectionChangeDelay > 0) {
+            			disableLineBackgroundPainter();
+            			// reschedule for selection change
+                		schedule(fSelectionChangeDelay);
+                		if (!fDoneStepping.getAndSet(true)) {
+                		    doneStepping(getDmc());
+                		}
+                		return true;
+            		} else {
+            			fTextViewer.setSelectedRange(fRegion.getOffset(), 0);
+            		}
+            	} else {
+            		editor.selectAndReveal(fRegion.getOffset(), 0);
+            	}
             }
-            
-            // Query the service for frame data.  We are calling from a job thread, 
-            // so we use the Query.get() method, which will block until the 
-            // query is completed.
-            Query<FramePositioningData> query = new Query<FramePositioningData>() {
-                @Override
-                protected void execute(final DataRequestMonitor<FramePositioningData> rm) {
-                    IStack stackService = fServicesTracker.getService(IStack.class); 
-                    if (stackService == null) {
-                        doneException(new CoreException(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, -1, "Stack data not available", null))); //$NON-NLS-1$
-                        return;
-                    }
-                	stackService.getFrameData(
-                        frameDmc, 
-                        new DataRequestMonitor<IFrameDMData>(fExecutor, rm) { 
-                            @Override
-                            public void handleSuccess() {
-                                FramePositioningData clientData = new FramePositioningData();
-                                clientData.fLevel = frameDmc.getLevel();
-                                // Document line numbers are 0-based. While debugger line numbers are 1-based.
-                                clientData.fLine = getData().getLine() - 1;
-                                rm.setData(clientData);
-                                rm.done();
-                    		}
-            			});
-                }
-            };
-            try {
-                fExecutor.execute(query);
-                FramePositioningData framePositioningData = query.get();
-                // If the frame data is not available, or the line number is not 
-                // known, give up.
-                if (framePositioningData == null || framePositioningData.fLevel < 0) {
-                    return;
-                }
-                
-                // Position and annotate the editor.
-                IRegion region= getLineInformation(editor, framePositioningData.fLine);
-                if (region != null) {
-                    editor.selectAndReveal(region.getOffset(), 0);
-                    fIPManager.addAnnotation(
-                        editor, frameDmc, new Position(region.getOffset(), region.getLength()), 
-                        framePositioningData.fLevel == 0);
-                }
-            } catch (InterruptedException e) { assert false : "Interrupted exception in DSF thread"; //$NON-NLS-1$
-            } catch (ExecutionException e) { // Ignore 
-            }
-            
-            
+            return false;
         }
-    
+
+    	/**
+    	 * Scroll the given line into the visible area if it is not yet visible.
+    	 * @param focusLine
+    	 * @see org.eclipse.jface.text.TextViewer#revealRange(int, int)
+    	 */
+    	private void revealLine(ITextViewer viewer, int focusLine) {
+    		StyledText textWidget = viewer.getTextWidget();
+			int top = textWidget.getTopIndex();
+			if (top > -1) {
+
+				// scroll vertically
+				int lines = getEstimatedVisibleLinesInViewport(textWidget);
+				int bottom = top + lines;
+
+				int bottomBuffer = Math.max(1, lines / 3);
+				
+				if (focusLine >= top && focusLine <= bottom - bottomBuffer) {
+					// do not scroll at all as it is already visible
+				} else {
+					if (focusLine > bottom - bottomBuffer && focusLine <= bottom) {
+						// focusLine is already in bottom bufferZone
+						// scroll to top of bottom bufferzone - for smooth down-scrolling
+						int scrollDelta = focusLine - (bottom - bottomBuffer);
+						textWidget.setTopIndex(top + scrollDelta);
+					} else {
+						// scroll to top of visible area minus buffer zone
+						int topBuffer = lines / 3;
+						textWidget.setTopIndex(Math.max(0, focusLine - topBuffer));
+					}
+				}
+			}
+    	}
+
+    	/**
+    	 * @return the number of visible lines in the view port assuming a constant
+    	 *         line height.
+    	 */
+    	private int getEstimatedVisibleLinesInViewport(StyledText textWidget) {
+    		if (textWidget != null) {
+    			Rectangle clArea= textWidget.getClientArea();
+    			if (!clArea.isEmpty())
+    				return clArea.height / textWidget.getLineHeight();
+    		}
+    		return -1;
+    	}
+
         /**
          * Returns the line information for the given line in the given editor
          */
@@ -368,9 +480,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
      * context.
      */
     class ClearingJob extends UIJob {
-        List<IRunControl.IExecutionDMContext> fDmcsToClear;
+        Set<IRunControl.IExecutionDMContext> fDmcsToClear;
         
-        public ClearingJob(List<IRunControl.IExecutionDMContext> dmcs) {
+        public ClearingJob(Set<IRunControl.IExecutionDMContext> dmcs) {
             super("Debug Source Display");  //$NON-NLS-1$
             setSystem(true);
             setPriority(Job.INTERACTIVE);
@@ -388,6 +500,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                 serviceDisplayAndClearingJobs();
             }}; 
             
+            enableLineBackgroundPainter();
+            
             if (monitor.isCanceled()) {
                 executeFromJob(clearingJobFinishedRunnable);
                 return Status.CANCEL_STATUS;
@@ -402,10 +516,12 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         }
     }
 
+	private static final boolean DEBUG = false;
+
     private DsfSession fSession;
     private DsfExecutor fExecutor;
     private DsfServicesTracker fServicesTracker;
-    private IDMContext fPrevModelContext;
+    private FrameData fPrevFrameData;
     private SourceLookupResult fPrevResult;
     private ISourceLookupDirector fSourceLookup;
     private DsfSourceLookupParticipant fSourceLookupParticipant;
@@ -415,9 +531,18 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     private DisplayJob fRunningDisplayJob;
     private DisplayJob fPendingDisplayJob;
     private ClearingJob fRunningClearingJob;
-    private List<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();
+    private Set<IRunControl.IExecutionDMContext> fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();
 	private SteppingController fController;
- 
+
+	/** Delay (in milliseconds) before the selection is changed to the IP location */
+	private int fSelectionChangeDelay = 150;
+	
+    private long fStepStartTime = 0;
+    private long fLastStepTime = 0;
+    private long fStepCount;
+
+    private boolean fEnableLineBackgroundPainter;
+
     public DsfSourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
     	this(session, sourceLocator, null);
     }
@@ -442,7 +567,19 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			fController.addSteppingControlParticipant(this);
 		}
     }
-    
+
+	/**
+	 * Configure the delay (in milliseconds) before the selection in the editor
+	 * is changed to the IP location.
+	 * 
+	 * @param delay  the delay in milliseconds, a non-negative integer
+	 * 
+	 * @since 1.1
+	 */
+    public void setSelectionChangeDelay(int delay) {
+    	fSelectionChangeDelay  = delay;
+    }
+
     public void dispose() {
 		if (fController != null) {
 			fController.removeSteppingControlParticipant(this);
@@ -455,7 +592,14 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         // fSourceLookupParticipant is disposed by the source lookup director
         
         // Need to remove annotations in UI thread.
-        //fIPManager.removeAllAnnotations();
+        Display display = Display.getDefault();
+        if (!display.isDisposed()) {
+        	display.asyncExec(new Runnable() {
+				public void run() {
+					enableLineBackgroundPainter();
+			        fIPManager.removeAllAnnotations();
+				}});
+        }
     }
     
 	/* (non-Javadoc)
@@ -468,18 +612,43 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         // Quick test.  DMC is checked again in source lookup participant, but 
         // it's much quicker to test here. 
         if (!(dmc instanceof IFrameDMContext)) return;
+        doDisplaySource((IFrameDMContext) dmc, page, force);
+	}
 
+    private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force) {
+    	if (context.getLevel() < 0) {
+    		return;
+    	}
         // Re-dispatch to executor thread before accessing job lists.
         fExecutor.execute(new DsfRunnable() { public void run() {
-            if (!force && dmc.equals(fPrevModelContext)) {
-                fPrevResult.updateArtifact(dmc);
-                startDisplayJob(fPrevResult, page);
-            } else {
-                startLookupJob(dmc, page);
+            // We need to retrieve the frame level and line number from the service.  
+        	IStack stackService = fServicesTracker.getService(IStack.class); 
+            if (stackService == null) {
+                return;
             }
+        	stackService.getFrameData(
+                context, 
+                new DataRequestMonitor<IFrameDMData>(fExecutor, null) { 
+					@Override
+					public void handleSuccess() {
+						FrameData frameData = new FrameData();
+						frameData.fDmc = context;
+						frameData.fLevel = context.getLevel();
+						// Document line numbers are 0-based. While debugger line numbers are 1-based.
+						IFrameDMData data = getData();
+						frameData.fLine = data.getLine() - 1;
+						frameData.fFile = data.getFile();
+						if (!force && frameData.equals(fPrevFrameData)) {
+							fPrevResult.updateArtifact(context);
+							startDisplayJob(fPrevResult, frameData, page);
+						} else {
+							startLookupJob(frameData, page);
+						}
+					}
+    			});
         }});
 	}
-    
+
     private void executeFromJob(Runnable runnable) {
         try {
             fExecutor.execute(runnable);
@@ -488,34 +657,32 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         }
     }
     
-    private void startLookupJob(final IDMContext dmc, final IWorkbenchPage page) {
+    private void startLookupJob(final FrameData frameData, final IWorkbenchPage page) {
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
-            if (fRunningLookupJob.cancel()) {
-            	doneSourceLookup(fRunningLookupJob.getDmc());
-            }
+            fRunningLookupJob.cancel();
         }
         
-        fRunningLookupJob = new LookupJob(dmc, page);
+        fRunningLookupJob = new LookupJob(frameData, page);
         fRunningLookupJob.schedule();
     }
     
     // To be called only on dispatch thread. 
-    private void startDisplayJob(SourceLookupResult lookupResult, IWorkbenchPage page) {
-        DisplayJob nextDisplayJob = new DisplayJob(lookupResult, page);
-        if (fRunningDisplayJob != null) {
-            // There is a display job currently running.  Cancel it, and set 
-            // the next display job to be run.
-            if (false && fRunningDisplayJob.cancel()) {
-                fPendingDisplayJob = nextDisplayJob;
-                fRunningDisplayJob = null;
-                serviceDisplayAndClearingJobs();
-            } else {
-                // The job already started, so we need to wait until 
-                // serviceDisplayAndClearingJobs() is called by the job itself.
-                fPendingDisplayJob = nextDisplayJob;
-            }
-        } else if (fRunningClearingJob != null) {
+    private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page) {
+    	DisplayJob nextDisplayJob = new DisplayJob(lookupResult, frameData, page);
+    	if (fRunningDisplayJob != null) {
+    		fPendingDisplayJob = null;
+    		IExecutionDMContext[] execCtxs = DMContexts.getAllAncestorsOfType(frameData.fDmc, IExecutionDMContext.class);
+    		fPendingExecDmcsToClear.removeAll(Arrays.asList(execCtxs));
+
+    		if (frameData.isIdentical(fRunningDisplayJob.fFrameData)) {
+    			// identical location - we are done
+    			return;
+    		}
+    		// cancel running display job
+    		fRunningDisplayJob.cancel();
+    	}
+    	if (fRunningClearingJob != null) {
             // Wait for the clearing job to finish, instead, set the 
             // display job as pending.
             fPendingDisplayJob = nextDisplayJob;
@@ -523,11 +690,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             fRunningDisplayJob = nextDisplayJob;
             fRunningDisplayJob.schedule();        
         }
-        doneSourceLookup(lookupResult.getDmc());
     }
 
-	private void doneSourceLookup(IDMContext context) {
-		if (fController != null) {
+	private void doneStepping(IDMContext context) {
+		if (fController != null && fController.isSynchronizedSteppingEnabled()) {
 			// indicate completion of step
         	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         	if (dmc != null) {
@@ -545,7 +711,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             // There are annotations to be cleared, run the job first
             fRunningClearingJob = new ClearingJob(fPendingExecDmcsToClear);
             fRunningClearingJob.schedule();
-            fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();            
+            fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();            
         } else if (fPendingDisplayJob != null) {
             fRunningDisplayJob = fPendingDisplayJob;
             fRunningDisplayJob.schedule();
@@ -578,7 +744,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         if (fRunningClearingJob == null && fRunningDisplayJob == null) {
             fRunningClearingJob = new ClearingJob(fPendingExecDmcsToClear);
             fRunningClearingJob.schedule();
-            fPendingExecDmcsToClear = new LinkedList<IRunControl.IExecutionDMContext>();
+            fPendingExecDmcsToClear = new HashSet<IRunControl.IExecutionDMContext>();
         }
     }
     
@@ -605,7 +771,66 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     }
     
     @DsfServiceEventHandler
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-        fPrevModelContext = null;
+    public void eventDispatched(final IRunControl.ISuspendedDMEvent e) {
+		updateStepTiming();
+    	if (e.getReason() == StateChangeReason.STEP) {
+	        // trigger source display immediately (should be optional?)
+	        Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+			        Object context = DebugUITools.getDebugContext();
+			        if (context instanceof IDMVMContext) {
+				        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
+				        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
+				        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+							doDisplaySource((IFrameDMContext) dmc, page, false);
+				        }
+			        }
+				}});
+    	}
     }
+
+	private void updateStepTiming() {
+		long now = System.currentTimeMillis();
+		if (now - fLastStepTime > Math.max(fSelectionChangeDelay, 200)) {
+			fStepCount = 0;
+			fStepStartTime = fLastStepTime = now;
+			return;
+		}
+		fLastStepTime = now;
+		++fStepCount;
+		if (DEBUG) {
+			long delta = now - fStepStartTime;
+			float meanTime = delta/(float)fStepCount/1000;
+			System.out.println("[DsfSourceDisplayAdapter] step speed = " + 1/meanTime); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Disable editor line background painter if it is enabled.
+	 * <p>
+	 * <strong>Must be called on display thread.</strong>
+	 * </p>
+	 */
+	private void disableLineBackgroundPainter() {
+		if (!fEnableLineBackgroundPainter) {
+			fEnableLineBackgroundPainter = EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE);
+			if (fEnableLineBackgroundPainter) {
+				EditorsUI.getPreferenceStore().setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, false);
+			}
+		}
+	}
+
+	/**
+	 * Enable the editor line background painter if it was enabled before.
+	 * <p>
+	 * <strong>Must be called on display thread.</strong>
+	 * </p>
+	 */
+	private void enableLineBackgroundPainter() {
+		if (fEnableLineBackgroundPainter) {
+			fEnableLineBackgroundPainter = false;
+			EditorsUI.getPreferenceStore().setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
+		}
+	}
+
 }

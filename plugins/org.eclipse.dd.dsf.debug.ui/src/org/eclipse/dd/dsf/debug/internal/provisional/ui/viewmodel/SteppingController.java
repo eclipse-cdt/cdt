@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
@@ -64,7 +65,7 @@ public final class SteppingController implements IStepQueueManager
      * The depth of the step queue.  In other words, the maximum number of steps 
      * that are queued before the step queue manager is throwing them away. 
      */
-    public final static int STEP_QUEUE_DEPTH = 1;
+    public final static int STEP_QUEUE_DEPTH = 2;
 
 	/**
 	 * The maximum delay (in milliseconds) between steps when synchronized
@@ -101,8 +102,11 @@ public final class SteppingController implements IStepQueueManager
 	}
 
 	private static class StepRequest {
+		IExecutionDMContext fContext;
         StepType fStepType;
-        StepRequest(StepType type) {
+        boolean inProgress = false;
+        StepRequest(IExecutionDMContext execCtx, StepType type) {
+        	fContext = execCtx;
             fStepType = type;
         }
     }
@@ -187,6 +191,13 @@ public final class SteppingController implements IStepQueueManager
     	fSynchronizedStepping = enable;
     }
 
+	/**
+	 * @return whether synchronized stepping is enabled.
+	 */
+	public boolean isSynchronizedSteppingEnabled() {
+		return fSynchronizedStepping;
+	}
+    
     /**
      * Configure the minimum time (in milliseconds) to wait between steps.
      * 
@@ -346,7 +357,7 @@ public final class SteppingController implements IStepQueueManager
      * context.
      */
     public int getPendingStepCount(IExecutionDMContext execCtx) {
-        List<StepRequest> stepQueue = fStepQueues.get(execCtx);
+        List<StepRequest> stepQueue = getStepQueue(execCtx);
         if (stepQueue == null) return 0;
         return stepQueue.size();
     }
@@ -357,30 +368,10 @@ public final class SteppingController implements IStepQueueManager
      * @param stepType Type of step to execute.
      */
     public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
-    	if (shouldDelayStep(execCtx)) {
-    		if (doCanEnqueueStep(execCtx, stepType)) {
-	            doEnqueueStep(execCtx, stepType);
-	            if (!getRunControl().isStepping(execCtx)) {
-	            	processStepQueue(execCtx);
-	            }
-    		}
-    	} else {
-	        getRunControl().canStep(
-	            execCtx, stepType, new DataRequestMonitor<Boolean>(getExecutor(), null) {
-	                @Override
-	                protected void handleCompleted() {
-	                    if (isSuccess() && getData()) {
-	                    	if (isSteppingDisabled(execCtx)) {
-		                        doEnqueueStep(execCtx, stepType);
-	                    	} else {
-	                    		doStep(execCtx, stepType);
-	                    	}
-	                    } else if (doCanEnqueueStep(execCtx, stepType)) {
-	                        doEnqueueStep(execCtx, stepType);
-	                    }
-	                }
-	            });
-    	}
+        if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
+            doEnqueueStep(execCtx, stepType);
+            processStepQueue(execCtx);
+        }
     }
 
 	private void doStep(final IExecutionDMContext execCtx, final StepType stepType) {
@@ -388,7 +379,17 @@ public final class SteppingController implements IStepQueueManager
 			disableStepping(execCtx);
 		}
         updateLastStepTime(execCtx);
-		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null));
+		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
+		    @Override
+		    protected void handleFailure() {
+		        if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+	                // Ignore errors.  During fast stepping there can be expected race
+	                // conditions leading to stepping errors.
+		            return;
+		        } 
+		        super.handleFailure();
+		    }
+		});
 	}
 
 	/**
@@ -404,7 +405,7 @@ public final class SteppingController implements IStepQueueManager
 		    fStepQueues.put(execCtx, stepQueue);
 		}
 		if (stepQueue.size() < fQueueDepth) {
-		    stepQueue.add(new StepRequest(stepType));
+		    stepQueue.add(new StepRequest(execCtx, stepType));
 		}
 	}
 
@@ -428,7 +429,8 @@ public final class SteppingController implements IStepQueueManager
 		if (isSteppingDisabled(execCtx)) {
 			return;
 		}
-		if (fStepQueues.containsKey(execCtx)) {
+        final List<StepRequest> queue = getStepQueue(execCtx);
+		if (queue != null) {
 			final int stepDelay = getStepDelay(execCtx);
 			if (stepDelay > 0) {
 				getExecutor().schedule(new DsfRunnable() {
@@ -438,24 +440,40 @@ public final class SteppingController implements IStepQueueManager
 				}, stepDelay, TimeUnit.MILLISECONDS);
 				return;
 			}
-            List<StepRequest> queue = fStepQueues.get(execCtx);
-            final StepRequest request = queue.remove(queue.size() - 1);
-            if (queue.isEmpty()) fStepQueues.remove(execCtx);
-            getRunControl().canStep(
-                execCtx, request.fStepType, 
-                new DataRequestMonitor<Boolean>(getExecutor(), null) {
-                    @Override
-                    protected void handleCompleted() {
-                        if (isSuccess() && getData()) {
-                    		doStep(execCtx, request.fStepType);
-                        } else {
-                            // For whatever reason we can't step anymore, so clear out
-                            // the step queue.
-                            fStepQueues.remove(execCtx);
+            final StepRequest request = queue.get(0);
+            if (!request.inProgress) {
+                request.inProgress = true;
+                getRunControl().canStep(
+                    execCtx, request.fStepType, 
+                    new DataRequestMonitor<Boolean>(getExecutor(), null) {
+                        @Override
+                        protected void handleCompleted() {
+                            if (isSuccess() && getData()) {
+                        		queue.remove(0);
+                                if (queue.isEmpty()) fStepQueues.remove(request.fContext);                               
+                        		doStep(request.fContext, request.fStepType);
+                            } else { 
+                                // For whatever reason we can't step anymore, so clear out
+                                // the step queue.
+                                fStepQueues.remove(request.fContext);
+                            }
                         }
-                    }
-                });
+                    });
+            } 
         }
+	}
+
+	private List<StepRequest> getStepQueue(IExecutionDMContext execCtx) {
+		List<StepRequest> queue = fStepQueues.get(execCtx);
+		if (queue == null) {
+	        for (IExecutionDMContext stepCtx : fStepQueues.keySet()) {
+	            if (DMContexts.isAncestorOf(stepCtx, execCtx)) {
+	            	queue = fStepQueues.get(stepCtx);
+	            	break;
+	            }
+	        }
+		}
+		return queue;
 	}
 
 	/**
@@ -512,10 +530,11 @@ public final class SteppingController implements IStepQueueManager
 	        		enableStepping(execCtx);
 	        		disabled = false;
 	        	}
-	        }
+	        }            
 	        return disabled;
-		}
-        return false;
+		} else {
+            return getRunControl().isStepping(execCtx);
+        }   
 	}
 
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
@@ -573,6 +592,5 @@ public final class SteppingController implements IStepQueueManager
         fTimedOutFlags.put(e.getDMContext(), Boolean.TRUE);
         enableStepping(e.getDMContext());
     }
-    
     
 }

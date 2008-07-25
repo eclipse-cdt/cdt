@@ -369,6 +369,11 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		rm.done();
 	}
 
+	public void isDebugNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		rm.setData(false);
+		rm.done();	
+	}
+
 	public void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
@@ -391,6 +396,11 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		rm.done();
 	}
 
+	public void isRunNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		rm.setData(false);
+		rm.done();			
+	}
+	
 	public void runNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$

@@ -284,7 +284,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
 	
-	private static final int NO_THREAD_ID = 0;
+	private static final int DEFAULT_THREAD_ID = 1;
 
     public MIRunControl(DsfSession session) {
         super(session);
@@ -628,7 +628,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 		if (info.getThreadIds().length == 0) {
 			//Main thread always exist even if it is not reported by GDB.
 			//So create thread-id= 0 when no thread is reported
-			return new IMIExecutionDMContext[]{new MIExecutionDMC(getSession().getId(), containerCtx, NO_THREAD_ID)};
+			return new IMIExecutionDMContext[]{new MIExecutionDMC(getSession().getId(), containerCtx, DEFAULT_THREAD_ID)};
 		} else {
 			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getThreadIds().length];
 			for (int i = 0; i < info.getThreadIds().length; i++) {

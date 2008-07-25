@@ -23,10 +23,26 @@ import org.eclipse.rse.tests.core.RSECoreTestCase;
 
 /**
  * Tests the subsystem configuration proxy functionality.
- *
- * @author uwe.stieber@windriver.com
  */
 public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
+
+	private void assertProxyApplicable(ISubSystemConfigurationProxy proxy, IRSESystemType systemType, boolean isApplicable) {
+		if (proxy.appliesToSystemType(systemType) != isApplicable) {
+			StringBuffer buf = new StringBuffer(120);
+			buf.append("Proxy \""); //$NON-NLS-1$
+			buf.append(proxy.getId());
+			buf.append("\" is expected "); //$NON-NLS-1$
+			if (!isApplicable)
+				buf.append("not "); //$NON-NLS-1$
+			buf.append("to be applicable to systemType \""); //$NON-NLS-1$
+			buf.append(systemType.getId());
+			buf.append("\", but returned "); //$NON-NLS-1$
+			if (isApplicable)
+				buf.append("not "); //$NON-NLS-1$
+			buf.append("to be!"); //$NON-NLS-1$
+			assertTrue(buf.toString(), false);
+		}
+	}
 
 	public void testSubSystemConfigurationProxy() {
 		//-test-author-:UweStieber
@@ -64,10 +80,10 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					for (int j = 0; j < systemTypes.length; j++) {
 						IRSESystemType systemType = systemTypes[j];
 						assertNotNull("Invalid null value in list of registered system types!", systemType); //$NON-NLS-1$
-						if (systemType.isLocal() || systemType.isWindows()) {
-							assertTrue("Proxy is expected to be applicable, but returned not to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+						if (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_LOCAL_ID) || systemType.getId().equals(IRSESystemType.SYSTEMTYPE_WINDOWS_ID)) {
+							assertProxyApplicable(proxy, systemType, true);
 						} else {
-							assertFalse("Proxy is expected not to be applicable, but returned to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+							assertProxyApplicable(proxy, systemType, false);
 						}
 					}
 				}
@@ -89,9 +105,9 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 						IRSESystemType systemType = systemTypes[j];
 						assertNotNull("Invalid null value in list of registered system types!", systemType); //$NON-NLS-1$
 						if (systemType.getId().startsWith("org.eclipse.rse.tests.")) { //$NON-NLS-1$
-							assertTrue("Proxy is expected to be applicable, but returned not to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+							assertProxyApplicable(proxy, systemType, true);
 						} else {
-							assertFalse("Proxy is expected not to be applicable, but returned to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+							assertProxyApplicable(proxy, systemType, false);
 						}
 					}
 				}
@@ -113,9 +129,9 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 						IRSESystemType systemType = systemTypes[j];
 						assertNotNull("Invalid null value in list of registered system types!", systemType); //$NON-NLS-1$
 						if ("Unix".equalsIgnoreCase(systemType.getName()) || "Linux".equalsIgnoreCase(systemType.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
-							assertTrue("Proxy is expected to be applicable, but returned not to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+							assertProxyApplicable(proxy, systemType, true);
 						} else {
-							assertFalse("Proxy is expected not to be applicable, but returned to be!", proxy.appliesToSystemType(systemType)); //$NON-NLS-1$
+							assertProxyApplicable(proxy, systemType, false);
 						}
 					}
 				}

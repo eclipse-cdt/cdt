@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
@@ -210,20 +209,17 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			IBinding binding = functionName.resolveBinding();
 			if (binding instanceof CPPFunction) {
 				CPPFunction function =  (CPPFunction) binding;
-
-				if (function != null) {
-					if(function.getDefinition() != null) {
-						IASTNode parent = function.getDefinition().getParent();
-						if(parent instanceof CPPASTFunctionDefinition) {
-							CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-							return definition.getDeclarator().getPointerOperators().length > 0;
-						}
-					} else if(hasDeclaration(function)) {
-						IASTNode parent = function.getDeclarations()[0].getParent();
-						if (parent instanceof CPPASTSimpleDeclaration) {
-							CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-							return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
-						}
+				if(function.getDefinition() != null) {
+					IASTNode parent = function.getDefinition().getParent();
+					if(parent instanceof CPPASTFunctionDefinition) {
+						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
+						return definition.getDeclarator().getPointerOperators().length > 0;
+					}
+				} else if(hasDeclaration(function)) {
+					IASTNode parent = function.getDeclarations()[0].getParent();
+					if (parent instanceof CPPASTSimpleDeclaration) {
+						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
+						return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
 					}
 				}
 			}

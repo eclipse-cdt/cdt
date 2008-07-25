@@ -792,4 +792,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testNestedTemplatedArgument_Bug241058() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//#define TP_SMALLINT int32_t
+	//void foo(const TP_SMALLINT &intVal) { }
+	//void bar(const TP_SMALLINT intVal) { }
+
+	//#define TP_SMALLINT int32_t
+	//void foo(const TP_SMALLINT &intVal) {
+	//}
+	//void bar(const TP_SMALLINT intVal) {
+	//}
+	public void testPreserveSpaceInParameterDecl_Bug241967() throws Exception {
+		assertFormatterResult();
+	}
 }

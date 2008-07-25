@@ -1338,6 +1338,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.space();
 			}
 		}
+		if (scribe.printModifiers()) {
+			scribe.space();
+		}
 		node.getName().accept(this);
 		return PROCESS_SKIP;
 	}

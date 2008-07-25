@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -60,6 +61,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -159,6 +161,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		 */
 		public IPath getPath() {
 			return Path.EMPTY;
+		}
+	}
+
+	private static final class SingletonRule implements ISchedulingRule {
+		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
 		}
 	}
 
@@ -984,36 +996,17 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 	
 	public void generateMarkers(final IProject project, final ICModelStatus[] problems) {
-		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
-			
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
-						
-						/* (non-Javadoc)
-						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public void run(IProgressMonitor mon) throws CoreException {
-							PathEntryUtil.flushPathEntryProblemMarkers(project);
-							for (int i = 0; i < problems.length; ++i) {
-								PathEntryUtil.createPathEntryProblemMarker(project, problems[i]);
-							}
-						}
-					}, null);
-				} catch (CoreException e) {
-					return e.getStatus();
+		Job markerTask = new WorkspaceJob("PathEntry Marker Job") { //$NON-NLS-1$
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
+				
+				PathEntryUtil.flushPathEntryProblemMarkers(project);
+				for (int i = 0; i < problems.length; ++i) {
+					PathEntryUtil.createPathEntryProblemMarker(project, problems[i]);
 				}
-
 				return Status.OK_STATUS;
 			}
 		};
-		ISchedulingRule rule = project.getWorkspace().getRuleFactory().markerRule(project);
-		markerTask.setRule(rule);
+		markerTask.setRule(SingletonRule.INSTANCE);
 		markerTask.schedule();
 	}
 	

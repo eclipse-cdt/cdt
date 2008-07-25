@@ -131,4 +131,11 @@ public class EmptyIndexFragment implements IIndexFragment {
 	public IIndexFragmentFile[] getAllFiles() {
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
+
+	public Object getCachedResult(Object key) {
+		return null;
+	}
+
+	public void putCachedResult(Object key, Object newMap) {
+	}
 }

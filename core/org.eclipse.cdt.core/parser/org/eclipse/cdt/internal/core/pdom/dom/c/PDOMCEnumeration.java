@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -66,17 +67,9 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 				enums.add(enumerator);
 			}
 			
-			IEnumerator[] enumerators = enums.toArray(new IEnumerator[enums.size()]);
-			
 			// Reverse the list since they are last in first out
-			int n = enumerators.length;
-			for (int i = 0; i < n / 2; ++i) {
-				IEnumerator tmp = enumerators[i];
-				enumerators[i] = enumerators[n - 1 - i];
-				enumerators[n - 1 - i] = tmp;
-			}
-				
-			return enumerators;
+			Collections.reverse(enums);
+			return enums.toArray(new IEnumerator[enums.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new IEnumerator[0];

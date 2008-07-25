@@ -99,4 +99,8 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
+	
+	public IBinding getOwner() {
+		return CPPVisitor.findDeclarationOwner(name, true);
+	}
 }

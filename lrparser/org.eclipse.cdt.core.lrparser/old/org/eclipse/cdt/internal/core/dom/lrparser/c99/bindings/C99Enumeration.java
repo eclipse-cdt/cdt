@@ -14,12 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -102,6 +106,10 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		this.scope = scope;
 	}
 
-	
-
+	public IBinding getOwner() throws DOMException {
+		if (scope != null) {
+			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
+		}
+		return null;
+	}
 }

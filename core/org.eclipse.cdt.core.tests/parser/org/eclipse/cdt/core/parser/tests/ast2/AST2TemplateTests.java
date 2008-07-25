@@ -2982,13 +2982,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// class A {};
 	//
 	// template<>
-	// class C<A, 5> {};
+	// class C<A, 5> {
+	// public: int test;
+	// };
 	//
 	// C<A,5L> ca5L;
+	// void xx() {
+	//    ca5L.test= 0;
+	// }
 	public void testIntegralConversionInSpecializationMatching_237914() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPSpecialization ctps= ba.assertNonProblem("C<A,5L>", 7, ICPPSpecialization.class, ICPPClassType.class);
-		assertFalse(ctps instanceof ICPPTemplateInstance);
+		ba.assertNonProblem("test=", 4, ICPPField.class);
 	}
 	
 	//	class A {

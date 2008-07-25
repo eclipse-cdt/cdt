@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.CoreException;
  * Represents macro definitions. They are stored with the file and with a PDOMMacroContainer. The latter also
  * contains the references to all macros with the same name.
  */
-public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLocation {
+public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	
 	private static final int CONTAINER = 0;
 	private static final int FILE = 4;
@@ -118,7 +118,7 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		return fRecord;
 	}
 	
-	public void delete() throws CoreException {
+	public void delete(PDOMLinkage linkage) throws CoreException {
 		// Delete from the binding chain
 		PDOMMacro prevName = getPrevInContainer();
 		PDOMMacro nextName = getNextInContainer();
@@ -128,7 +128,7 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 			PDOMMacroContainer container= getContainer();
 			container.setFirstDefinition(nextName);
 			if (nextName == null && container.isOrphaned()) {
-				container.delete(container.getLinkageImpl());
+				container.delete(linkage);
 			}
 		}
 		if (nextName != null)
@@ -348,7 +348,7 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 		return false;
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public PDOMLinkage getLinkage() throws CoreException {
 		return getFile().getLinkage();
 	}
 
@@ -400,5 +400,17 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 
 	public boolean hasDefinition() throws CoreException {
 		return true;
+	}
+
+	public IIndexFragmentBinding getOwner() {
+		return null;
+	}
+
+	public void accept(IPDOMVisitor visitor) {
+	}
+
+
+	public int getId() {
+		return fRecord;
 	}
 }

@@ -12,28 +12,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * Represents a binding found within a template definition that cannot be resolved until
- * the template gets instantiated.
- * 
- * This interface should be made public
- * @since 5.0
+ * Represents the binding for a dependent name within a template declaration.
  */
 public interface ICPPUnknownBinding extends ICPPBinding {
 	
-	/**
-	 * Returns the binding of the unknown scope containing this binding, or <code>null</code> if the container is not unknown
-	 * (applies for {@link ICPPDeferredTemplateInstance}).
-	 * @since 5.0
-	 */
-	public ICPPUnknownBinding getUnknownContainerBinding();
-
 	/**
 	 * Returns the scope this binding represents.
 	 * @throws DOMException 
@@ -45,16 +31,4 @@ public interface ICPPUnknownBinding extends ICPPBinding {
 	 * The ast-node may not be rooted in an ast-tree. May be <code>null</code>.
 	 */
 	public IASTName getUnknownName();
-
-	/**
-	 * Resolves unknown type to another unknown type that is a step closer to the final
-	 * name resolution.
-	 * @param parentBinding a new parent binding, usually a result of partial resolution
-	 *        of the original parent binding, or <code>null</code> for deferred template 
-	 *        instantiations.
-	 * @param argMap template argument map.
-	 * @param instantiationScope the scope in which the current instantiation takes place, may be <code>null</code>.
-	 * @return a partially resolved, but still unknown, binding.
-	 */
-    public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope);
 }

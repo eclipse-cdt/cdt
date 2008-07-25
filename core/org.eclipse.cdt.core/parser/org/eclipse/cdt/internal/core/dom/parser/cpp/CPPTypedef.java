@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -209,5 +210,12 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		if (declarations != null && declarations.length > 0) {
+			return CPPVisitor.findDeclarationOwner(declarations[0], true);
+		}
+		return null;
 	}
 }

@@ -356,4 +356,11 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
     	}
     	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
 	}
+    
+	public IBinding getOwner() throws DOMException {
+		if (namespaceDefinitions != null && namespaceDefinitions.length > 0) {
+			return CPPVisitor.findDeclarationOwner(namespaceDefinitions[0], false);
+		}
+		return null;
+	}
 }

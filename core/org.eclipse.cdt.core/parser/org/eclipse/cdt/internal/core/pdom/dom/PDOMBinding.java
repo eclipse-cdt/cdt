@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmentBinding {
+public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
 
 	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
@@ -198,33 +198,22 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return null;
 	}
 	
-	/*
-	 * Most of the time, the parent node in the binding hierarchy is also the scope. For
-	 * some template bindings, this does not hold.
-	 * 
-	 * @see org.eclipse.cdt.internal.core.index.IIndexFragmentBinding#getScope()
-	 */
 	public IIndexScope getScope() {
+		// The parent node in the binding hierarchy is the scope. 
 		try {
-			IBinding parent = getParentBinding(); 
+			IBinding parent= getParentBinding(); 
+			if (parent instanceof ICPPClassType) {
+				return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
+			} else if (parent instanceof ICPPUnknownBinding) {
+				return (IIndexScope) ((ICPPUnknownBinding) parent).getUnknownScope();
+			}
+			
 			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
-			}
-			// unknown bindings don't always implement the scope directly
-			if (parent instanceof ICPPUnknownBinding) {
-				return (IIndexScope) ((ICPPUnknownBinding) parent).getUnknownScope();
 			}
 		} catch (DOMException e) {
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
-		}
-		return null;
-	}
-	
-	public IIndexBinding getParentBinding() throws CoreException {
-		PDOMNode parent= getParentNode();
-		if (parent instanceof IIndexBinding) {
-			return (IIndexBinding) parent;
 		}
 		return null;
 	}

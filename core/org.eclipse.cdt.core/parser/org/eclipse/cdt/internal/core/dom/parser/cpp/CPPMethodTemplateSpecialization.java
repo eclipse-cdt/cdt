@@ -13,12 +13,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -28,14 +24,9 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 public class CPPMethodTemplateSpecialization extends
 		CPPFunctionTemplateSpecialization implements ICPPMethod {
 
-	/**
-	 * @param specialized
-	 * @param scope
-	 * @param argumentMap
-	 */
 	public CPPMethodTemplateSpecialization(IBinding specialized,
-			ICPPScope scope, ObjectMap argumentMap) {
-		super(specialized, scope, argumentMap);
+			ICPPClassType owner, ObjectMap argumentMap) {
+		super(specialized, owner, argumentMap);
 	}
 
 	public boolean isVirtual() {
@@ -51,14 +42,7 @@ public class CPPMethodTemplateSpecialization extends
 	}
 	
 	public ICPPClassType getClassOwner() throws DOMException {
-		IScope scope= getScope();
-		if (scope instanceof ICPPTemplateScope) {
-			scope= scope.getParent();
-		}
-		if( scope instanceof ICPPClassScope ){
-			return ((ICPPClassScope)scope).getClassType();
-		}
-		return null;
+		return (ICPPClassType) getOwner();
 	}
 
 	public boolean isDestructor() {

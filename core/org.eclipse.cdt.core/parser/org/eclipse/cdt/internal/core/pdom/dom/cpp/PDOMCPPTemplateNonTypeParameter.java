@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -59,10 +58,6 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		addMember(member);
-	}
-	
-	public void addMember(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
@@ -71,10 +66,6 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
-	}
-	
-	public ICPPBinding getParameterOwner() throws CoreException {
-		return (ICPPBinding) getParentBinding();
 	}
 	
 	@Override

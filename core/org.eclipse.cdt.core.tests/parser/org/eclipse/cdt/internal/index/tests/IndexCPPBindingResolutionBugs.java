@@ -48,7 +48,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -211,9 +211,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
         assertInstance(b0, ICPPClassType.class);
         assertInstance(b1, ICPPClassType.class);
         assertInstance(b1, ICPPClassTemplate.class);
-        assertInstance(b1, ICPPInternalTemplateInstantiator.class);
+        assertInstance(b1, ICPPInstanceCache.class);
         
-        ICPPInternalTemplateInstantiator ct= (ICPPInternalTemplateInstantiator) b1;
+        ICPPInstanceCache ct= (ICPPInstanceCache) b1;
         ICPPSpecialization inst= ct.getInstance(new IType[]{(IType)b0});
         assertInstance(inst, ICPPClassType.class);
         ICPPClassType c2t= (ICPPClassType) inst;

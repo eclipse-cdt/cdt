@@ -67,9 +67,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	
 	public PDOMCPPFunctionSpecialization(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
 		super(pdom, parent, (ICPPSpecialization) function, specialized);
-		if (specialized instanceof PDOMCPPFunctionTemplate) {
-			((PDOMCPPFunctionTemplate)specialized).addMember(this);
-		}
 		
 		Database db = pdom.getDB();
 		try {

@@ -139,4 +139,9 @@ public class CPPImplicitFunction extends CPPFunction {
 	public boolean takesVarArgs() {
         return takesVarArgs;
     }
+    
+    @Override
+	public IBinding getOwner() {
+    	return null;
+    }
 }

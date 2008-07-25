@@ -352,16 +352,16 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstInclude(include);
 
 		// Delete all the macros in this file
+		PDOMLinkage linkage= getLinkage();
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
 			PDOMMacro nextMacro = macro.getNextMacro();
-			macro.delete();
+			macro.delete(linkage);
 			macro = nextMacro;
 		}
 		setFirstMacro(null);
 
 		// Delete all the names in this file
-		PDOMLinkage linkage= getLinkage();
 		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
 		PDOMName name = getFirstName();
 		while (name != null) {

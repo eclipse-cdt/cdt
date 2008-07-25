@@ -11,10 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -58,5 +62,12 @@ public class C99Label extends PlatformObject implements IC99Binding, ILabel {
 
 	public void setScope(IScope scope) {
 		this.scope = scope;
+	}
+
+	public IBinding getOwner() throws DOMException {
+		if (scope != null) {
+			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
+		}
+		return null;
 	}
 }

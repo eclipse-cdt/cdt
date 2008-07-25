@@ -103,4 +103,8 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
+	
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findDeclarationOwner(alias, false);
+	}
 }

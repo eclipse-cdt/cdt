@@ -21,14 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * Represents a C++ class, declaration of which is not yet available.
@@ -37,12 +34,8 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownClassType {
 
-    public CPPUnknownClass(ICPPUnknownBinding scopeBinding, IASTName name) {
-        super(scopeBinding, name);
-    }
-
-    protected CPPUnknownClass(ICPPClassTemplate template) {
-        super(template);
+    public CPPUnknownClass(IBinding binding, IASTName name) {
+        super(binding, name);
     }
 
     public ICPPBase[] getBases() {
@@ -101,10 +94,13 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 				&& type instanceof ICPPDeferredClassInstance == false) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
-				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+				try {
+					final IBinding lhsContainer = getOwner();
+					final IBinding rhsContainer = rhs.getOwner();
+					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+						return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+					}
+				} catch (DOMException e) {
 				}
 			}
 		}
@@ -113,12 +109,5 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
-	}
-
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		if (parentBinding == this.unknownContainerBinding) {
-			return this;
-		}
-		return new CPPUnknownClass(parentBinding, name);
 	}
 }

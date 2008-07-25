@@ -2205,4 +2205,64 @@ public class CVisitor {
 		}
 		return result;
 	}
+
+	
+	/**
+	 * Searches for the function enclosing the given node. May return <code>null</code>.
+	 */
+	public static IBinding findEnclosingFunction(IASTNode node) {
+		while(node != null && node instanceof IASTFunctionDefinition == false) {
+			node= node.getParent();
+		}
+		if (node == null)
+			return null;
+		
+		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+		if (dtor != null) {
+			IASTName name= dtor.getName();
+			if (name != null) {
+				return name.resolveBinding();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Searches for the first function, struct or union enclosing the declaration the provided
+	 * node belongs to and returns the binding for it. Returns <code>null</code>, if the declaration is not
+	 * enclosed by any of the above constructs.
+	 */
+	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
+		// search for declaration
+		while (node instanceof IASTDeclaration == false) {
+			if (node == null)
+				return null;
+			
+			node= node.getParent();
+		}
+				
+		// search for enclosing binding
+		IASTName name= null;
+		node= node.getParent();
+		for (; node != null; node= node.getParent()) {
+			if (node instanceof IASTFunctionDefinition) {
+				if (!allowFunction) 
+					continue;
+
+				IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+				if (dtor != null) {
+					name= dtor.getName();
+				}
+				break;
+			} 
+			if (node instanceof IASTCompositeTypeSpecifier) {
+				name= ((IASTCompositeTypeSpecifier) node).getName();
+				break;
+			}
+		}
+		if (name == null) 
+			return null;
+		
+		return name.resolveBinding();
+	}
 }

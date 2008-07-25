@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 /**
  * @author dsteffle
- * mstodo the class should be removed
+ * mstodo- the class should be removed
  */
 public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 

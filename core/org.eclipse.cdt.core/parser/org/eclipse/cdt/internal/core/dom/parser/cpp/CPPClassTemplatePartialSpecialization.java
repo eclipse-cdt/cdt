@@ -17,13 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author aniefer
@@ -56,35 +53,6 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
 		return (ICPPClassTemplate) id.getTemplateName().resolveBinding();
-	}
-
-	@Override
-	public IBinding instantiate( IType [] args ){
-		args= SemanticUtil.getSimplifiedTypes(args);
-		ICPPSpecialization instance = getInstance( args );
-		if( instance != null ){
-			return instance;
-		}
-		
-		ObjectMap argMap= CPPTemplates.deduceTemplateArguments(getArguments(), args, true);
-		if (argMap == null)
-			return null;
-		
-		if (CPPTemplates.containsDependentArg(argMap)) {
-			return deferredInstance(argMap, args);
-		}
-		
-		ICPPTemplateParameter [] params = getTemplateParameters();
-		int numParams = params.length;
-		for( int i = 0; i < numParams; i++ ){
-			if( params[i] instanceof IType && !argMap.containsKey( params[i] ) )
-				return null;
-		}
-		
-		instance = (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
-		addSpecialization( args, instance );
-		
-		return instance;
 	}
 
 	public IBinding getSpecializedBinding() {

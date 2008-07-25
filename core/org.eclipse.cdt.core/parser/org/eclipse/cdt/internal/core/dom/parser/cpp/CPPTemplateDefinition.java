@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -30,12 +29,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -77,7 +74,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
-	
+
 	public CPPTemplateDefinition(IASTName name) {
 		if (name != null) {
 			ASTNodeProperty prop = name.getPropertyInParent();
@@ -100,71 +97,41 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			}
 		}
 	}
-
-	public abstract ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments);
 	
-	public IBinding instantiate(ICPPASTTemplateId id) {
-		IType[] types = CPPTemplates.createTemplateArgumentArray(id);
-		return instantiate(types);
-	}
-	
-	public IBinding instantiate(IType[] arguments) {
-		ICPPTemplateDefinition template = null;
-		if (this instanceof ICPPClassTemplate) {
-			try {
-				template = CPPTemplates.matchTemplatePartialSpecialization((ICPPClassTemplate) this, arguments);
-			} catch (DOMException e) {
-				return e.getProblem();
-			}
-		}
-		
-		if (template instanceof IProblemBinding) {
-			return template;
-		}
-		if (template != null && template instanceof ICPPClassTemplatePartialSpecialization) {
-			return ((ICPPInternalTemplateInstantiator)template).instantiate(arguments);	
-		}
-		
-		return CPPTemplates.instantiateTemplate(this, arguments, null);
-	}
-	
-	public ICPPSpecialization getInstance(IType[] arguments) {
+	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
-			return null;
-		
-		int found = -1;
-		for (int i = 0; i < instances.size(); i++) {
-			IType[] args = (IType[]) instances.keyAt(i);
-			if (args.length == arguments.length) {
-				int j = 0;
-				for (; j < args.length; j++) {
-					if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j]))
-						break;
-				}
-				if (j == args.length) {
-					found = i;
-					break;
+			instances = new ObjectMap(2);
+		instances.put(arguments, instance);
+	}
+
+	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+		if (instances != null) {
+			loop: for (int i=0; i < instances.size(); i++) {
+				IType[] args = (IType[]) instances.keyAt(i);
+				if (args.length == arguments.length) {
+					for (int j=0; j < args.length; j++) {
+						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
+							continue loop;
+						}
+					}
+					return (ICPPTemplateInstance) instances.getAt(i);
 				}
 			}
-		}
-		if (found != -1) {
-			return (ICPPSpecialization) instances.getAt(found);
 		}
 		return null;
 	}
 	
-	public void addSpecialization(IType[] types, ICPPSpecialization spec) {
-		if (types == null)
-			return;
-		for (IType type : types) {
-			if (type == null)
-				return;
+	public ICPPTemplateInstance[] getAllInstances() {
+		if (instances != null) {
+			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
+			for (int i=0; i < instances.size(); i++) {
+				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			}
+			return result;
 		}
-		if (instances == null)
-			instances = new ObjectMap(2);
-		instances.put(types, spec);
+		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
-	
+
 	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
 	   	IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
     	IASTName preferredName= name;
@@ -231,7 +198,11 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	}
 	
 	public IASTName getTemplateName() {
-		return definition != null ? definition : declarations[0];
+		if (definition != null)
+			return definition;
+		if (declarations != null && declarations.length > 0)
+			return declarations[0];
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -382,5 +353,13 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+	
+	public final IBinding getOwner() {
+		IASTName templateName= getTemplateName();
+		if (templateName == null)
+			return null;
+		
+		return CPPVisitor.findNameOwner(templateName, false);
 	}
 }

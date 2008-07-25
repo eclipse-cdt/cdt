@@ -29,12 +29,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -61,8 +58,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	
 	private ICPPScope unknownScope;
 
-	public PDOMCPPUnknownClassType(PDOM pdom, PDOMNode parent, ICPPUnknownClassType classType)
-			throws CoreException {
+	public PDOMCPPUnknownClassType(PDOM pdom, PDOMNode parent, ICPPUnknownClassType classType) throws CoreException {
 		super(pdom, parent, classType.getNameCharArray());
 
 		setKind(classType);
@@ -90,7 +86,8 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		}
 	}
 	
-	public void addMember(PDOMNode member) throws CoreException {
+	@Override
+	public void addChild(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
@@ -142,11 +139,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 
 	public ICPPClassType getClassType() {
 		return this;
-	}
-
-	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		addMember(member);
 	}
 
 	@Override
@@ -258,10 +250,13 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 				&& type instanceof ICPPDeferredClassInstance == false) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
-				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+				try {
+					final IBinding lhsContainer = getOwner();
+					final IBinding rhsContainer = rhs.getOwner();
+					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+						return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+					}
+				} catch (DOMException e) {
 				}
 			}
 		}
@@ -272,22 +267,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding,	ObjectMap argMap, ICPPScope instantiationScope) {
-		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding)) {
-			return this;
-		}
-		return new CPPUnknownClass(parentBinding, getUnknownName());
-	}
-
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
-	}
-	
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		try {
-			return (ICPPUnknownBinding) getParentBinding();
-		} catch (CoreException e) {
-			return null;
-		}
 	}
 }

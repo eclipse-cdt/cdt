@@ -11,10 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -109,4 +113,10 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 		this.scope = scope;
 	}
 
+	public IBinding getOwner() throws DOMException {
+		if (scope == null)
+			return null;
+		
+		return CVisitor.findDeclarationOwner((IASTNode) scope.getScopeName(), true);
+	}
 }

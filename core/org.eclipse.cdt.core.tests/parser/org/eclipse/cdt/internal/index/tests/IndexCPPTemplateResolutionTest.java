@@ -599,7 +599,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template<typename T>
 	//	class A {
 	//      T t;
-	//      int x;
 	//		T foo(T t) { return t; }
 	//      void bar(T t, int& x) {}
 	//	};
@@ -617,12 +616,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		IBinding b0= getBindingFromASTName("A<B> ab", 4);
  		assertInstance(b0, ICPPClassType.class);
  		assertInstance(b0, ICPPSpecialization.class);
- 		assertFalse(b0 instanceof ICPPTemplateInstance);
  		
  		ICPPClassType ct= (ICPPClassType) b0;
  		ICPPMethod[] dms= ct.getDeclaredMethods();
  		assertEquals(2, dms.length);
- 		
+
+ 		// if the specialization was used, we have 2 fields.
+ 		ICPPField[] fs= ct.getDeclaredFields();
+ 		assertEquals(2, fs.length);
+
  		ICPPMethod foo= dms[0].getName().equals("foo") ? dms[0] : dms[1];
  		ICPPMethod bar= dms[0].getName().equals("bar") ? dms[0] : dms[1];
  		
@@ -637,9 +639,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		
  		assertInstance(bar.getType().getReturnType(), ICPPBasicType.class);
  		assertEquals(((ICPPBasicType)bar.getType().getReturnType()).getType(), IBasicType.t_void);
- 		
- 		ICPPField[] fs= ct.getDeclaredFields();
- 		assertEquals(2, fs.length);
  	}
  	
 	// template<typename T> class A {
@@ -1064,11 +1063,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	assertTrue(sc0.isSameType(sc1));
     	
     	IIndexScope sc2= assertInstance(sc0.getScope(), IIndexScope.class, ICPPTemplateScope.class);
+    	assertNull(b0.getScope());
+    	assertEquals(sc2.getScopeBinding(), sc1);
     	
-    	assertInstance(b0.getScope(), ICPPTemplateScope.class);
-    	
-    	assertNotSame(sc2, b0.getScope());
-    	assertEquals(sc2.getScopeBinding(), ((IIndexScope)b1.getScope()).getScopeBinding());
+    	// template scopes will not be supported in the future, see bug 237026
+    	//    	assertInstance(b0.getScope(), ICPPTemplateScope.class);
+    	//    	assertNotSame(sc2, b0.getScope());
     }
     
     // template<typename T>

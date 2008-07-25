@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -295,5 +296,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	public String toString() {
 		String name = getName();
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findEnclosingFunction(declarations[0]);
 	}
 }

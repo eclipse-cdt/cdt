@@ -52,6 +52,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		return suite(CPPClassTemplateTests.class);
 	}
 	
+	@Override
 	public void setUp() throws Exception {
 		cproject= CProjectHelper.createCCProject("classTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		setUpSections(1);
@@ -74,6 +75,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if(pdom!=null) {
 			pdom.releaseReadLock();
@@ -135,7 +137,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testSimpleDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -154,7 +156,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -180,7 +182,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testDefinition2() throws Exception {
 		assertDeclarationCount(pdom, "E", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'E'}}, IndexFilter.ALL, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'E'}}, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -266,7 +268,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		
 		{
 			// template
-			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL, NPM);
+			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
 			assertEquals(2, b.length);
 			assertTrue(!(b[0] instanceof ICPPClassTemplate) || !(b[1] instanceof ICPPClassTemplate));
 			int i= b[0] instanceof ICPPClassTemplate ? 0 : 1;
@@ -318,6 +320,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		}
 	}
 	
+	@Override
 	protected void assertInstance(Object o, Class c) {
 		assertNotNull(o);
 		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));

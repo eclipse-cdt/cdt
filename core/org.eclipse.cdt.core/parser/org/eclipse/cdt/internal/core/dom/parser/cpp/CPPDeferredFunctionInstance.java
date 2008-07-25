@@ -33,71 +33,79 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * @author aniefer
  */
-public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunction, ICPPInternalFunction, ICPPDeferredTemplateInstance {
-	private IParameter [] parameters;
-	private IType[] arguments;
-	private IFunctionType functionType;
+public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements ICPPFunction, ICPPInternalFunction, ICPPDeferredTemplateInstance {
+	private IType[] fArguments;
+	private ICPPFunctionTemplate fFunctionTemplate;
 
+	private ObjectMap fArgmap;
+	private IParameter [] fParameters;
+	private IFunctionType fFunctionType;
 
-	public CPPDeferredFunctionInstance( ICPPFunctionTemplate template, IType[] arguments ) {
-		super( null, template, null, arguments );
-		this.arguments = arguments;
-		this.argumentMap = createArgumentMap( arguments );
+	public CPPDeferredFunctionInstance( ICPPFunctionTemplate template, IType[] arguments ) throws DOMException {
+		super(template.getOwner(), new CPPASTName(template.getNameCharArray()));
+		fArguments= arguments;
+		fFunctionTemplate= template;
 	}
 
-	private ObjectMap createArgumentMap( IType [] args ){
-		ICPPTemplateDefinition template = getTemplateDefinition();
-		ICPPTemplateParameter [] params;
-		try {
-			params = template.getTemplateParameters();
-		} catch (DOMException e) {
-			return null;
-		}
-		ObjectMap map = new ObjectMap( params.length );
-		for( int i = 0; i < params.length; i++ ){
-			if( i < args.length )
-				map.put( params[i], args[i] );
-		}
-		return map;
+	public ICPPTemplateDefinition getTemplateDefinition() {
+		return fFunctionTemplate;
 	}
-	
 
-	@Override
+	public IBinding getSpecializedBinding() {
+		return fFunctionTemplate;
+	}
+
+	public ObjectMap getArgumentMap() {
+		if (fArgmap == null) {
+			fArgmap= ObjectMap.EMPTY_MAP;
+			try {
+				ICPPTemplateParameter[] params= fFunctionTemplate.getTemplateParameters();
+				ObjectMap result= new ObjectMap(params.length);
+				for (int i=0; i < params.length; i++) {
+					if (i < fArguments.length) {
+						result.put(params[i], fArguments[i]);
+					}
+				}
+				fArgmap= result;
+			} catch (DOMException e) {
+			}
+		}
+		return fArgmap;
+	}
+
 	public IType[] getArguments() {
-		return arguments;
+		return fArguments;
 	}
 	
 	public IParameter[] getParameters() throws DOMException {
-		if( getArgumentMap() == null )
+		ObjectMap map= getArgumentMap();
+		if (map == null || map.isEmpty()) {
 			return ((ICPPFunction)getTemplateDefinition()).getParameters();
-		if( parameters == null ){
+		}
+		if( fParameters == null ){
 			IParameter [] params = ((ICPPFunction)getTemplateDefinition()).getParameters();
-			parameters = new IParameter[ params.length ];
+			fParameters = new IParameter[ params.length ];
 			for (int i = 0; i < params.length; i++) {
-				parameters[i] = new CPPParameterSpecialization( (ICPPParameter)params[i], null, getArgumentMap() );
+				fParameters[i] = new CPPParameterSpecialization( (ICPPParameter)params[i], null, getArgumentMap() );
 			}
 		}
-		
-		return parameters;
-
+		return fParameters;
 	}
-
 
 	public IScope getFunctionScope() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
-
+	
 	public IFunctionType getType() throws DOMException {
-		if( functionType == null ){
+		if( fFunctionType == null ){
             IFunctionType ft = ((ICPPFunction)getTemplateDefinition()).getType(); 
             IType returnType = ft.getReturnType();
+            // mstodo- is that necessary?
 			returnType = CPPTemplates.instantiateType( returnType, getArgumentMap(), null);
-			functionType = CPPVisitor.createImplicitFunctionType( returnType, getParameters(), null);
+			fFunctionType = CPPVisitor.createImplicitFunctionType( returnType, getParameters(), null);
         }
         
-        return functionType;
+        return fFunctionType;
 	}
 
 
@@ -141,8 +149,7 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 		}
     }
 
-    public IBinding resolveParameter( IASTParameterDeclaration param ) {
-        // TODO Auto-generated method stub
+    public IBinding resolveParameter(IASTParameterDeclaration param) {
         return null;
     }
 }

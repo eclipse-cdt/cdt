@@ -20,43 +20,44 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public abstract class CPPSpecialization extends PlatformObject
-		implements ICPPSpecialization, ICPPInternalBinding {
+public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
+	private IBinding owner;
 	private IBinding specialized;
-	private ICPPScope scope;
 	protected ObjectMap argumentMap;
-
 	private IASTNode definition;
 	private IASTNode[] declarations;
-
-	public CPPSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
+	
+	public CPPSpecialization(IBinding specialized, IBinding owner, ObjectMap argumentMap) {
 		this.specialized = specialized;
-		this.scope = scope;
+		this.owner = owner;
 		this.argumentMap = argumentMap;
-
-		if (specialized instanceof ICPPInternalBinding) {
-			definition = ((ICPPInternalBinding) specialized).getDefinition();
-			IASTNode[] decls = ((ICPPInternalBinding) specialized).getDeclarations();
-			if (decls != null && decls.length > 0)
-				declarations = new IASTNode[] { decls[0] };
-		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization#getSpecializedBinding()
-	 */
+	protected IType specializeType(IType type) throws DOMException {
+		if (owner instanceof ICPPClassSpecialization) {
+			return CPPTemplates.instantiateType(type, argumentMap, (ICPPClassSpecialization) owner);
+		} else {
+			return CPPTemplates.instantiateType(type, argumentMap, null);
+		}
+	}
+	
 	public IBinding getSpecializedBinding() {
 		return specialized;
 	}
@@ -103,8 +104,24 @@ public abstract class CPPSpecialization extends PlatformObject
 		return specialized.getNameCharArray();
 	}
 
-	public IScope getScope() {
-		return scope;
+	public IBinding getOwner() {
+		return owner;
+	}
+	
+	public IScope getScope() throws DOMException {
+		if (owner instanceof ICPPClassType) {
+			return ((ICPPClassType) owner).getCompositeScope();
+		} else if (owner instanceof ICPPNamespace) {
+			return ((ICPPNamespace) owner).getNamespaceScope();
+		} else if (owner instanceof ICPPFunction) {
+			return ((ICPPFunction) owner).getFunctionScope();
+		}
+		if (definition != null) 
+			return CPPVisitor.getContainingScope(definition);
+		if (declarations != null && declarations.length > 0) 
+			return CPPVisitor.getContainingScope(declarations[0]);
+		
+		return specialized.getScope();
 	}
 
 	public String[] getQualifiedName() {

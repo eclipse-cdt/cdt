@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -110,5 +111,17 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	@Override
 	public int hashCode() {
 		return rbinding.hashCode();
+	}
+	
+	public IIndexBinding getOwner() throws DOMException {
+		final IIndexFragmentBinding owner= rbinding.getOwner();
+		if (owner == null)
+			return null;
+		
+		return cf.getCompositeBinding(owner);
+	}
+	
+	public IIndexBinding getRawBinding() {
+		return rbinding;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Nov 17, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -20,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -27,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Represents a label.
  */
 public class CLabel extends PlatformObject implements ILabel {
     
@@ -76,5 +73,9 @@ public class CLabel extends PlatformObject implements ILabel {
 
     public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
+	}
+    
+	public IBinding getOwner() throws DOMException {
+		return CVisitor.findEnclosingFunction(labelStatement);
 	}
 }

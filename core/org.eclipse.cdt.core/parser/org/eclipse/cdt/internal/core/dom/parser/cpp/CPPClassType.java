@@ -458,4 +458,8 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public String toString() {
 		return getName(); 
 	}
+
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findDeclarationOwner(definition != null ? definition : declarations[0], true);
+	}
 }

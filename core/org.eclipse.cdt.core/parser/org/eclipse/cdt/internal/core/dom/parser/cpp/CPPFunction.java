@@ -539,4 +539,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		return result.toString();
 	}
+	
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findNameOwner(getASTName(), false);
+	}
 }

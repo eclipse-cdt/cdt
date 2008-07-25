@@ -174,7 +174,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
-		assertNotNull(o);
+		assertNotNull("Expected "+clazz.getName()+" but got null", o);
 		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
 		for(Class c : cs) {
 			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));

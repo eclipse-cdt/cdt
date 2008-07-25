@@ -11,13 +11,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /*
@@ -35,15 +34,6 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 
 	public IType[] getArguments() {
 		return arguments;
-	}
-
-	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
-		if (parentBinding == unknownContainerBinding && newArgs == arguments) {
-			return this;
-		}
-		return new CPPUnknownClassInstance(parentBinding, name, newArgs);
 	}
 
 	@Override
@@ -77,10 +67,13 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 							return false;
 					}
 				}
-				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
-				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+				try {
+					final IBinding lhsContainer = getOwner();
+					final IBinding rhsContainer = rhs.getOwner();
+					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+						 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+					}
+				} catch (DOMException e) {
 				}
 			}
 		}

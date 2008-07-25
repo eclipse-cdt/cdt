@@ -142,7 +142,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
 						IBinding[] bindings= index.findBindings(name.toCharArray(),
-								IndexFilter.CPP_DECLARED_OR_IMPLICIT, NPM);
+								IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, NPM);
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
 						}
@@ -238,7 +238,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			if (index != null) {
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
-						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT;
+						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE;
 						IBinding[] bindings = prefixLookup ?
 								index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
 								index.findBindings(name.toCharArray(), filter, null);

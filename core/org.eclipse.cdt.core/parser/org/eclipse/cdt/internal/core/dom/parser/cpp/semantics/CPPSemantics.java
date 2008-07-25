@@ -135,7 +135,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -146,7 +145,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -216,8 +214,7 @@ public class CPPSemantics {
         if (data.checkAssociatedScopes()) {
             //3.4.2 argument dependent name lookup, aka Koenig lookup
             try {
-                IScope scope = (binding != null) ? binding.getScope() : null;
-                if (scope == null || !(scope instanceof ICPPClassScope)) {
+            	if (binding == null || binding.getOwner() instanceof ICPPClassType == false) {
                     data.ignoreUsingDirectives = true;
                     data.forceQualified = true;
                     for (int i = 0; i < data.associated.size(); i++) {
@@ -286,11 +283,13 @@ public class CPPSemantics {
 		
         if (binding instanceof ICPPClassType && data.considerConstructors) {
         	ICPPClassType cls = (ICPPClassType) binding;
-        	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPTemplateDefinition) {
-        		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
-        		IType[] args = CPPTemplates.createTemplateArgumentArray(id);
-        		IBinding inst = ((ICPPInternalTemplateInstantiator)cls).instantiate(args); 
-        		cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
+        	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
+        		if (data.tu != null) {
+        			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
+        			IType[] args = CPPTemplates.createTemplateArgumentArray(id);
+        			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
+        			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
+        		}
         	}
 		    if (cls != null) {
 			    try {
@@ -1937,21 +1936,13 @@ public class CPPSemantics {
 	    	
 	    final IType[] result = new IType[ptypes.length + 1];
 	    System.arraycopy(ptypes, 0, result, 1, ptypes.length);
-	    IScope scope = fn.getScope();
-	    if (scope instanceof ICPPTemplateScope)
-	    	scope = scope.getParent();
-	    ICPPClassType cls = null;
-	    if (scope instanceof ICPPClassScope) {
-	    	cls = ((ICPPClassScope)scope).getClassType();
-	    } else {
-	    	cls = new CPPClassType.CPPClassTypeProblem(ASTInternal.getPhysicalNodeOfScope(scope), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray());
-	    }
-	    if (cls instanceof ICPPClassTemplate) {
-	    	IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) cls);
+	    ICPPClassType owner= ((ICPPMethod) fn).getClassOwner();
+	    if (owner instanceof ICPPClassTemplate) {
+	    	IBinding within= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
 	    	if (within instanceof ICPPClassType)
-	    		cls = (ICPPClassType)within;
+	    		owner = (ICPPClassType)within;
 	    }
-	    IType implicitType = cls;
+	    IType implicitType= owner;
 	    if (ftype.isConst() || ftype.isVolatile()) {
 	    	implicitType = new CPPQualifierType(implicitType, ftype.isConst(), ftype.isVolatile());
 	    }

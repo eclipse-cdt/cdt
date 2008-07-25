@@ -17,22 +17,16 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -60,19 +54,6 @@ public class IndexCPPSignatureUtil {
 		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 			ICPPClassTemplatePartialSpecialization partial = (ICPPClassTemplatePartialSpecialization) binding;
 			buffer.append(getTemplateArgString(partial.getArguments(), false));
-		} else if (binding instanceof ICPPSpecialization) {
-			ICPPSpecialization spec = (ICPPSpecialization) binding;
-			if (!(spec instanceof ICPPTemplateDefinition)
-					&& spec.getSpecializedBinding() instanceof ICPPTemplateDefinition) {
-				ICPPTemplateDefinition template = (ICPPTemplateDefinition) spec.getSpecializedBinding();
-				ICPPTemplateParameter[] params = template.getTemplateParameters();
-				ObjectMap argMap = spec.getArgumentMap();
-				IType[] args = new IType[params.length];
-				for (int i = 0; i < params.length; i++) {
-					args[i] = (IType) argMap.get(params[i]);
-				}
-				buffer.append(getTemplateArgString(args, false));	
-			}
 		} 
 		
 		if (binding instanceof IFunction) {
@@ -103,27 +84,19 @@ public class IndexCPPSignatureUtil {
 			final IType type = types[i];
 			if (qualifyTemplateParameters && type instanceof ICPPTemplateParameter) {
 				List<IBinding> parents = new ArrayList<IBinding>();
-				IScope parentScope= ((ICPPTemplateParameter) type).getScope();
-				IBinding lastBinding= null;
-				while (parentScope != null) {
-					IBinding binding = getBindingForScope(parentScope);
-					if (binding != null) {
-						// template definitions are returned as binding for template scope and
-						// the class/function scope.
-						if (!binding.equals(lastBinding)) { 
-							parents.add(lastBinding= binding);
-						}
-					}
-					parentScope= parentScope.getParent();
+				IBinding parent= ((ICPPTemplateParameter) type).getOwner();
+				while (parent != null) {
+					parents.add(parent);
+					parent= parent.getOwner();
 				}
 				//identical template parameters from different template specializations must have unique signatures
 				Collections.reverse(parents);
 				for (IBinding binding : parents) {
 					if (binding != null) {
 						buffer.append(binding.getNameCharArray());
-						if (binding instanceof ICPPSpecialization) {
-							ICPPSpecialization spec= (ICPPSpecialization) binding;
-							appendTemplateArgs(spec.getArgumentMap().valueArray(), buffer);
+						if (binding instanceof ICPPTemplateInstance) {
+							ICPPTemplateInstance inst= (ICPPTemplateInstance) binding;
+							appendTemplateArgs(inst.getArguments(), buffer);
 						}
 						buffer.append("::"); //$NON-NLS-1$
 					}
@@ -137,20 +110,6 @@ public class IndexCPPSignatureUtil {
 		return buffer.toString();
 	}
 
-	private static IBinding getBindingForScope(IScope parentScope) throws DOMException {
-		IBinding binding= null;
-		if (parentScope instanceof IIndexScope) {
-			binding= ((IIndexScope)parentScope).getScopeBinding();
-		}
-		else {
-			final IName scopeName = parentScope.getScopeName();
-			if (scopeName instanceof IASTName) {
-				binding= ((IASTName) scopeName).resolveBinding();
-			}
-		}
-		return binding;
-	}
-	
 	private static void appendTemplateArgs(Object[] values, StringBuilder buffer) {
 		boolean needcomma= false;
 		buffer.append('<');

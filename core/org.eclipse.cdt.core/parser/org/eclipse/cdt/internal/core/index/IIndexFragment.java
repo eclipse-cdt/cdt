@@ -254,4 +254,16 @@ public interface IIndexFragment {
 	 * @return an array of all files contained in this index.
 	 */
 	IIndexFragmentFile[] getAllFiles() throws CoreException;
+
+	/**
+	 * Caches an object with the key, the cache must be cleared at latest when the fragment no
+	 * longer holds a locks. 
+	 */
+	void putCachedResult(Object key, Object value);
+
+	/**
+	 * Returns a previously cached object, the cache is cleared at latest when the fragment no
+	 * longer holds a locks. 
+	 */
+	Object getCachedResult(Object key);
 }

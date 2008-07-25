@@ -19,7 +19,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -131,7 +130,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -319,10 +317,11 @@ public class CPPVisitor {
         ICPPScope scope = (ICPPScope) getContainingScope(specifier);
         IBinding enumeration;
         try {
-            enumeration = scope.getBinding(specifier.getName(), false);
+            final IASTName name = specifier.getName();
+			enumeration = scope.getBinding(name, false);
             if (enumeration == null || !(enumeration instanceof IEnumeration)) {
-                enumeration = new CPPEnumeration(specifier.getName());
-                ASTInternal.addName(scope,  specifier.getName());
+                enumeration = new CPPEnumeration(name);
+                ASTInternal.addName(scope, name);
             }
         } catch (DOMException e) {
             enumeration = e.getProblem();
@@ -439,10 +438,10 @@ public class CPPVisitor {
 			scope = parentScope;
 		}
 		IBinding binding = null;
-		if (name instanceof ICPPASTTemplateId) {
-			return CPPTemplates.createClassSpecialization(compType);
-		} 
         try {
+    		if (name instanceof ICPPASTTemplateId) {
+    			return CPPTemplates.createExplicitClassSpecialization(compType);
+    		} 
         	if (name.toCharArray().length > 0 && scope != null) //can't lookup anonymous things
         		binding = scope.getBinding(name, false);
             if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)) {
@@ -542,7 +541,11 @@ public class CPPVisitor {
 		    return CPPSemantics.resolveBinding(name);
 		} else if (prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION ||
 		         prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION) {
-			return CPPTemplates.createFunctionSpecialization(name);
+			try {
+				return CPPTemplates.createFunctionSpecialization(name);
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
 		} else if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
@@ -1759,14 +1762,14 @@ public class CPPVisitor {
 				}
 				if (node instanceof IASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
-					IASTName fName = findInnermostDeclarator(dtor).getName();
-					if (fName instanceof ICPPASTQualifiedName) {
-					    IASTName[] ns = ((ICPPASTQualifiedName)fName).getNames();
-					    fName = ns[ns.length - 1];
+					IASTName funcName = findInnermostDeclarator(dtor).getName();
+					if (funcName instanceof ICPPASTQualifiedName) {
+					    IASTName[] ns = ((ICPPASTQualifiedName)funcName).getNames();
+					    funcName = ns[ns.length - 1];
 					}
-					IScope s = getContainingScope(fName);
+					IScope s = getContainingScope(funcName);
 					if (s instanceof ICPPTemplateScope)
-						s = getParentScope(s, fName.getTranslationUnit());
+						s = getParentScope(s, funcName.getTranslationUnit());
 					if (s instanceof ICPPClassScope) {
 						ICPPClassScope cScope = (ICPPClassScope) s;
 						IType type = cScope.getClassType();
@@ -1840,12 +1843,9 @@ public class CPPVisitor {
 	        IBinding binding = resolveBinding(expression);
 	        if (binding instanceof ICPPConstructor) {
 				try {
-					IScope scope= binding.getScope();
-					if (scope instanceof ICPPTemplateScope && ! (scope instanceof ICPPClassScope)) {
-						scope= scope.getParent();
-					}
-					if (scope instanceof ICPPClassScope) {
-						return ((ICPPClassScope) scope).getClassType();
+		        	IBinding owner= binding.getOwner();
+					if (owner instanceof ICPPClassType) {
+						return (ICPPClassType) owner;
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -2236,67 +2236,55 @@ public class CPPVisitor {
 	}
 	
 	public static String[] getQualifiedName(IBinding binding) {
-		IName[] ns = null;
+		String[] ns = null;
 	    try {
-            ICPPScope scope = (ICPPScope) binding.getScope();
-            while (scope != null) {
-            	if (scope instanceof ICPPTemplateScope)
-            		scope = (ICPPScope) scope.getParent();
-            	
-            	if (scope == null) 
-            		break;
-            	
-            	IName n = scope.getScopeName();
+	    	IBinding owner= binding.getOwner();
+            while (owner != null) {
+            	String n= owner.getName();
             	if (n == null)
             		break;
-                if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) 
+                if (owner instanceof ICPPFunction) 
                     break;
-                if (scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0)
-                    break;
+                if (owner instanceof ICPPNamespace && n.length() == 0)
+                	continue;
             
-                ns = (IName[]) ArrayUtil.append(IName.class, ns, n);
-                scope = (ICPPScope) scope.getParent();
+                ns = (String[]) ArrayUtil.append(String.class, ns, n);
+                owner = owner.getOwner();
             }
         } catch (DOMException e) {
         }
-        ns = (IName[]) ArrayUtil.trim(IName.class, ns);
+        ns = (String[]) ArrayUtil.trim(String.class, ns);
         String[] result = new String[ns.length + 1];
         for (int i = ns.length - 1; i >= 0; i--) {
-            result[ns.length - i - 1] = ns[i].toString();
+            result[ns.length - i - 1] = ns[i];
         }
-        result[ns.length] = binding.getName();
+        result[ns.length]= binding.getName();
 	    return result;
 	}
 	
 	public static char[][] getQualifiedNameCharArray(IBinding binding) {
-		IName[] ns = null;
-	    try {
-            ICPPScope scope = (ICPPScope) binding.getScope();
-            while (scope != null) {
-            	if (scope instanceof ICPPTemplateScope)
-            		scope = (ICPPScope) scope.getParent();
-            	
-            	if (scope == null) 
-            		break;
-            	IName n = scope.getScopeName();
+		char[][] ns = null;
+		try {
+	    	for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {
+            	char[] n= owner.getNameCharArray();
             	if (n == null)
             		break;
-                if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) 
+                if (owner instanceof ICPPFunction) 
                     break;
-                if (scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0)
-                    break;
-                
-                ns = (IName[]) ArrayUtil.append(IName.class, ns, n);
-                scope = (ICPPScope) scope.getParent();
+                if (owner instanceof ICPPNamespace && n.length == 0)
+                	continue;
+            
+                ns = (char[][]) ArrayUtil.append(n.getClass(), ns, n);
             }
         } catch (DOMException e) {
         }
-        ns = (IName[]) ArrayUtil.trim(IName.class, ns);
+        final char[] bname = binding.getNameCharArray();
+        ns = (char[][]) ArrayUtil.trim(bname.getClass(), ns);
         char[][] result = new char[ns.length + 1][];
         for (int i = ns.length - 1; i >= 0; i--) {
-            result[ns.length - i - 1] = ns[i].toCharArray();
+            result[ns.length - i - 1] = ns[i];
         }
-        result[ns.length] = binding.getNameCharArray();
+		result[ns.length]= bname;
 	    return result;
 	}
 
@@ -2478,5 +2466,82 @@ public class CPPVisitor {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Searches for the function enclosing the given node. May return <code>null</code>.
+	 */
+	public static IBinding findEnclosingFunction(IASTNode node) {
+		while(node != null && node instanceof IASTFunctionDefinition == false) {
+			node= node.getParent();
+		}
+		if (node == null)
+			return null;
+		
+		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+		if (dtor != null) {
+			IASTName name= dtor.getName();
+			if (name != null) {
+				return name.resolveBinding();
+			}
+		}
+		return null;
+	}
+
+	public static IBinding findNameOwner(IASTName name, boolean allowFunction) {
+		IASTNode node= name;
+		while (node instanceof IASTName) {
+			if (node instanceof ICPPASTQualifiedName) {
+				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();
+				if (qn.length < 2) 
+					return null;
+				return qn[qn.length-2].resolveBinding();
+			}
+			node= node.getParent();
+		}
+		return findDeclarationOwner(node, allowFunction);
+	}
+	
+	/**
+	 * Searches for the first function, class or namespace enclosing the declaration the provided
+	 * node belongs to and returns the binding for it. Returns <code>null</code>, if the declaration is not
+	 * enclosed by any of the above constructs.
+	 */
+	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
+		// search for declaration
+		while (node instanceof IASTDeclaration == false) {
+			if (node == null)
+				return null;
+			
+			node= node.getParent();
+		}
+				
+		// search for enclosing binding
+		IASTName name= null;
+		node= node.getParent();
+		for (; node != null; node= node.getParent()) {
+			if (node instanceof IASTFunctionDefinition) {
+				if (!allowFunction) 
+					continue;
+
+				IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+				if (dtor != null) {
+					name= dtor.getName();
+				}
+				break;
+			} 
+			if (node instanceof IASTCompositeTypeSpecifier) {
+				name= ((IASTCompositeTypeSpecifier) node).getName();
+				break;
+			}
+			if (node instanceof ICPPASTNamespaceDefinition) {
+				name= ((ICPPASTNamespaceDefinition) node).getName();
+				break;
+			}
+		}
+		if (name == null) 
+			return null;
+		
+		return name.resolveBinding();
 	}
 }

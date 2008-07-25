@@ -106,7 +106,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 
 	// template <int I, int J> A<I+J> f(A<I>, A<J>); // #1
 	// template <int K, int L> A<K+L> f(A<K>, A<L>); // same as #1
-	// template <int I, int J> A<IJ> f(A<I>, A<J>); // different from #1
+	// template <int I, int J> A<I-J> f(A<I>, A<J>); // different from #1
 	public void _test14_5_5_1s5() throws Exception { // TODO raised bug 90683
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}

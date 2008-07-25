@@ -11,10 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 
 /**
  * Interface for deferred class template instances. 
  */
 public interface ICPPDeferredClassInstance extends ICPPUnknownClassType, ICPPDeferredTemplateInstance {
+
+	/**
+	 * Returns the class template for the deferred instantiation.
+	 */
+	ICPPClassTemplate getClassTemplate();
 }

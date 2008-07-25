@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -345,5 +346,10 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
     
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		IASTName node= definition != null ? definition : declarations[0];
+		return CPPVisitor.findNameOwner(node, !hasStorageClass(IASTDeclSpecifier.sc_extern)); 
 	}
 }

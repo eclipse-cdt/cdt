@@ -18,11 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -41,13 +40,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	private IType type;
     private int fResolutionDepth;
 
-    /**
-     * @param specialized
-     * @param scope
-     * @param argumentMap
-     */
-    public CPPTypedefSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
-        super(specialized, scope, argumentMap);
+    public CPPTypedefSpecialization(IBinding specialized, ICPPClassType owner, ObjectMap argumentMap) {
+        super(specialized, owner, argumentMap);
     }
 
     private ITypedef getTypedef() {
@@ -63,7 +57,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
 	        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
 	        	} else {
-		            type = CPPTemplates.instantiateType(getTypedef().getType(), argumentMap, getScope());
+		            type= specializeType(getTypedef().getType());
 		        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
 		            // with a problem binding.
 		            if (type instanceof CPPTypedefSpecialization &&

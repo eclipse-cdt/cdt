@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -103,17 +104,12 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     }
 
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public void removeDeclaration(IASTNode node) {
-
 	}
 
     public boolean isSameType( IType type ) {
@@ -126,5 +122,9 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findDeclarationOwner(enumName, true);
 	}
 }

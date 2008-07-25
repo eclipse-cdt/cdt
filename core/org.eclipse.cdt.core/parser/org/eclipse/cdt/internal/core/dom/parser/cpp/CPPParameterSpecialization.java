@@ -12,11 +12,10 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * @author aniefer
@@ -24,13 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private IType type = null;
 	
-	/**
-	 * @param scope
-	 * @param orig
-	 * @param argMap
-	 */
-	public CPPParameterSpecialization(ICPPParameter orig, ICPPScope scope, ObjectMap argMap) {
-		super( orig, scope, argMap );
+	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, ObjectMap argMap) {
+		super(orig, owner, argMap);
 	}
 
 	private ICPPParameter getParameter(){
@@ -42,7 +36,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	 */
 	public IType getType() throws DOMException {
 		if( type == null ){
-			type = CPPTemplates.instantiateType( getParameter().getType(), argumentMap, getScope());
+			type= specializeType(getParameter().getType());
 		}
 		return type;
 	}

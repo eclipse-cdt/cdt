@@ -12,11 +12,14 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -97,5 +100,12 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 
 	public void setScope(IScope scope) {
 		this.scope = scope;
+	}
+
+	public IBinding getOwner() throws DOMException {
+		if (scope != null) {
+			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
+		}
+		return null;
 	}
 }

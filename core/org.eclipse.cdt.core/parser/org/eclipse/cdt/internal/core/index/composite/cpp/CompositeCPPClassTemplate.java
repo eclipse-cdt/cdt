@@ -13,26 +13,21 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 
 public class CompositeCPPClassTemplate extends CompositeCPPClassType 
-		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator {
+		implements ICPPClassTemplate, ICPPInstanceCache {
 
 	public CompositeCPPClassTemplate(ICompositesFactory cf, ICPPClassType ct) {
 		super(cf, ct);
@@ -65,28 +60,15 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 		return result;
 	}
 
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.deferredInstance(argMap, arguments, cf, rbinding);
+	public ICPPTemplateInstance getInstance(IType[] arguments) {
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
 	}
 
-	public ICPPSpecialization getInstance(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.getInstance(arguments, cf, this);
+	public void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
 	}
 
-	public IBinding instantiate(IType[] arguments) {
-		ICPPTemplateDefinition template = null;
-		try {
-			template = CPPTemplates.matchTemplatePartialSpecialization(this, arguments);
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
-		
-		if( template instanceof IProblemBinding )
-			return template;
-		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
-			return ((ICPPInternalTemplateInstantiator)template).instantiate( arguments );	
-		}
-		
-		return CPPTemplates.instantiateTemplate(this, arguments, null);
+	public ICPPTemplateInstance[] getAllInstances() {
+		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -104,16 +103,11 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 
-	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec, boolean searchSpecializations) 
+	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec) 
 			throws CoreException {
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, sigHash, localToFileRec);
 		try {
 			node.accept(visitor);
-			if (searchSpecializations && visitor.getResult() == null) {
-				if (node instanceof PDOMCPPClassTemplate) { 
-					((PDOMCPPClassTemplate) node).specializationsAccept(visitor);
-				} 
-			}
 		} catch(OperationCanceledException ce) {
 		}
 		return visitor.getResult();
@@ -139,7 +133,7 @@ public class CPPFindBinding extends FindBinding {
 		} catch (DOMException e) {
 		}
 		if(hash != null) {
-			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec, binding instanceof ICPPSpecialization);
+			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
 		}
 		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}

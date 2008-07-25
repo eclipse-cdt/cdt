@@ -30,11 +30,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -49,17 +49,30 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  *
  */
-public class CPPClassSpecialization extends CPPSpecialization implements
-		ICPPClassType {
+public class CPPClassSpecialization extends CPPSpecialization implements ICPPClassSpecialization {
 
 	private IScope specScope;
+	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
+
+	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ObjectMap argumentMap) {
+		super(specialized, owner, argumentMap);
+	}
+
 	
-	/**
-	 * @param specialized
-	 * @param scope
-	 */
-	public CPPClassSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
-		super(specialized, scope, argumentMap);
+	@Override
+	public ICPPClassType getSpecializedBinding() {
+		return (ICPPClassType) super.getSpecializedBinding();
+	}
+	
+	public IBinding specializeMember(IBinding original) {		
+		IBinding result= (IBinding) specializationMap.get(original);
+		if (result == null) {
+			result= CPPTemplates.createSpecialization(this, original, argumentMap);
+			if (specializationMap == ObjectMap.EMPTY_MAP)
+				specializationMap = new ObjectMap(2);
+			specializationMap.put(original, result);
+		}
+		return result;
 	}
 
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
@@ -80,12 +93,12 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	public ICPPBase[] getBases() throws DOMException {
 		if( getDefinition() == null ){
 			ICPPBase[] result = null;
-			ICPPBase[] bindings = ((ICPPClassType)getSpecializedBinding()).getBases();
+			ICPPBase[] bindings = (getSpecializedBinding()).getBases();
 			for (ICPPBase binding : bindings) {
 				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)binding).clone();
     		    IBinding base = binding.getBaseClass();
     		    if (base instanceof IType) {
-    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, specScope);
+    		    	IType specBase= specializeType((IType) base);
     		    	specBase = SemanticUtil.getUltimateType(specBase, false);
     		    	if (specBase instanceof IBinding && !(specBase instanceof IProblemBinding)) {
     		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
@@ -105,7 +118,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			bindings[i] = new CPPBaseClause(bases[i]);
 			IBinding base = bindings[i].getBaseClass();
 			if (base instanceof IType) {
-				IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap, specScope);
+				IType specBase = specializeType((IType) base);
 				if (specBase instanceof ICPPClassType) {
 					((CPPBaseClause) bindings[i]).setBaseClass((ICPPClassType) specBase);
 				}
@@ -252,7 +265,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 		if (getDefinition() != null)
 			return getCompositeTypeSpecifier().getKey();
 		
-		return ((ICPPClassType)getSpecializedBinding()).getKey();
+		return (getSpecializedBinding()).getKey();
 	}
 
 	/* (non-Javadoc)
@@ -279,7 +292,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public boolean isSameType(IType type) {
+	public final boolean isSameType(IType type) {
 		if( type == this )
 			return true;
 		if( type instanceof ITypedef || type instanceof IIndexType )

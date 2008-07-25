@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -56,6 +55,10 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 		return bindings[0].getScope();
 	}
 
+	public IBinding getOwner() throws DOMException {
+		return bindings[0].getOwner();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
@@ -70,7 +73,7 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 		return bindings;
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 

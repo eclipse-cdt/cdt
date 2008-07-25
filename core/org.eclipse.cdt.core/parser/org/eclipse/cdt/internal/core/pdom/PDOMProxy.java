@@ -251,4 +251,11 @@ public class PDOMProxy implements IPDOM {
 		}
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
+
+	public Object getCachedResult(Object key) {
+		return null;
+	}
+
+	public void putCachedResult(Object key, Object value) {
+	}
 }

@@ -19,42 +19,40 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
  */
-abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
-		ICPPSpecialization, IPDOMOverloader {
+abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpecialization, IPDOMOverloader {
 
 	private static final int ARGMAP_PARAMS = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int ARGMAP_ARGS = PDOMCPPBinding.RECORD_SIZE + 4;
 	private static final int SIGNATURE_HASH = PDOMCPPBinding.RECORD_SIZE + 8;
 	private static final int SPECIALIZED = PDOMCPPBinding.RECORD_SIZE + 12;
-	
 	/**
 	 * The size in bytes of a PDOMCPPSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 16;
 	
-	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, PDOMNamedNode specialized)
+	private IBinding fSpecializedCache= null;
+	private ObjectMap fArgMap;
+	
+	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, IPDOMBinding specialized)
 	throws CoreException {
 		super(pdom, parent, spec.getNameCharArray());
 		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
@@ -104,17 +102,15 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	}
 
 	public IBinding getSpecializedBinding() {
-		try {
-			int specializedRec = pdom.getDB().getInt(record + SPECIALIZED);
-			PDOMNode node = specializedRec != 0 ?
-					getLinkageImpl().getNode(specializedRec) : null;
-			if (node instanceof IBinding) {
-				return (IBinding) node;
+		if (fSpecializedCache == null) {
+			try {
+				int specializedRec = pdom.getDB().getInt(record + SPECIALIZED);
+				fSpecializedCache= (IPDOMBinding) getLinkageImpl().getNode(specializedRec);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
 		}
-		return null;
+		return fSpecializedCache;
 	}
 	
 	private static class NodeCollector implements IPDOMVisitor {
@@ -131,26 +127,27 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 	}
 	
 	public ObjectMap getArgumentMap() {
-		try {
-			PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
-			PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
-			NodeCollector paramVisitor = new NodeCollector();
-			paramList.accept(paramVisitor);
-			IPDOMNode[] paramNodes = paramVisitor.getNodes();
-			NodeCollector argVisitor = new NodeCollector();
-			argList.accept(argVisitor);
-			IPDOMNode[] argNodes = argVisitor.getNodes();
-			
-			ObjectMap map = new ObjectMap(paramNodes.length);
-			for (int i = 0; i < paramNodes.length; i++) {
-				map.put(paramNodes[i], argNodes[i]);
+		if (fArgMap == null) {
+			try {
+				PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
+				PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
+				NodeCollector paramVisitor = new NodeCollector();
+				paramList.accept(paramVisitor);
+				IPDOMNode[] paramNodes = paramVisitor.getNodes();
+				NodeCollector argVisitor = new NodeCollector();
+				argList.accept(argVisitor);
+				IPDOMNode[] argNodes = argVisitor.getNodes();
+
+				ObjectMap map = new ObjectMap(paramNodes.length);
+				for (int i = 0; i < paramNodes.length; i++) {
+					map.put(paramNodes[i], argNodes[i]);
+				}
+				fArgMap= map;
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
-			
-			return map;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
 		}
-		return null;
+		return fArgMap;
 	}
 	
 	public int getSignatureHash() throws CoreException {
@@ -205,25 +202,5 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements
 			result.append(getNodeType());
 		}
 		return result.toString();
-	}
-	
-	@Override
-	public IIndexScope getScope() {
-		try {
-			IBinding parent= getParentBinding();
-			if(parent instanceof ICPPSpecialization && parent instanceof ICPPClassType) {
-				return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
-			} else {
-				IScope scope= getSpecializedBinding().getScope();
-				if(scope instanceof IIndexScope) {
-					return (IIndexScope) scope;
-				}
-			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		}
-		return null;
 	}
 }

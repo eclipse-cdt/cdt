@@ -21,28 +21,25 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -54,19 +51,16 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-public class PDOMCPPClassTemplate extends PDOMCPPClassType
-		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator, ICPPTemplateScope {
+public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassTemplate, ICPPInstanceCache {
 	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
-	private static final int INSTANCES = PDOMCPPClassType.RECORD_SIZE + 4;
-	private static final int SPECIALIZATIONS = PDOMCPPClassType.RECORD_SIZE + 8;
-	private static final int FIRST_PARTIAL = PDOMCPPClassType.RECORD_SIZE + 12;
+	private static final int FIRST_PARTIAL = PDOMCPPClassType.RECORD_SIZE + 4;
 	
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplate record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 16;
+	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 8;
 	
 	private ICPPTemplateParameter[] params;  // Cached template parameters.
 	
@@ -147,11 +141,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return new ICPPClassTemplatePartialSpecialization[0];
 		}
 	}
-	
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
-		return null;
-	}
-	
+		
 	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {
 		public IBinding[] find(String name) throws DOMException {
 			return CPPSemantics.findBindings(this, name, false);
@@ -227,103 +217,18 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 		list.accept(visitor);
-		list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
-		list.accept(visitor);
 	}
 	
-	public void specializationsAccept(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list= new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
-		list.accept(visitor);
-	}
-
 	@Override
-	public void addMember(PDOMNode member) throws CoreException {
+	public void addChild(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateParameter) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 			list.addMember(member);
-		} else if (member instanceof ICPPTemplateInstance) {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
-			list.addMember(member);
-		} else if (member instanceof ICPPSpecialization) {
-			if (this.equals(((ICPPSpecialization)member).getSpecializedBinding())) {
-				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
-				list.addMember(member);
-			} else {
-				super.addMember(member);
-			}
 		} else {
-			super.addMember(member);
+			super.addChild(member);
 		}
 	}
-
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		ICPPSpecialization instance = getInstance(arguments);
-		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, argMap, arguments);
-		}
-		return instance;
-	}
-
-	private static class InstanceFinder implements IPDOMVisitor {
-		private ICPPSpecialization instance = null;
-		private IType[] arguments;
 		
-		public InstanceFinder(IType[] arguments) {
-			this.arguments = arguments;
-		}
-		
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (instance == null && node instanceof PDOMCPPSpecialization) {
-				PDOMCPPSpecialization spec = (PDOMCPPSpecialization) node;
-				if (spec.matchesArguments(arguments)) {
-					instance = spec;
-				}
-			}
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPSpecialization getInstance() {
-			return instance;
-		}
-	}
-	
-	public ICPPSpecialization getInstance(IType[] arguments) {
-		try {
-			InstanceFinder visitor = new InstanceFinder(arguments);
-			
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + INSTANCES, getLinkageImpl());
-			list.accept(visitor);
-			
-			if (visitor.getInstance() == null) {
-				list = new PDOMNodeLinkedList(pdom, record + SPECIALIZATIONS, getLinkageImpl());
-				list.accept(visitor);
-			}
-			
-			return visitor.getInstance();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	public IBinding instantiate(IType[] arguments) {
-		ICPPTemplateDefinition template = null;
-		try {
-			template = CPPTemplates.matchTemplatePartialSpecialization(this, arguments);
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
-		
-		if (template instanceof IProblemBinding)
-			return template;
-		if (template != null && template instanceof ICPPClassTemplatePartialSpecialization) {
-			return ((PDOMCPPClassTemplate) template).instantiate(arguments);	
-		}
-		
-		return CPPTemplates.instantiateTemplate(this, arguments, null);
-	}
-	
 	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
@@ -337,56 +242,74 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			}
 		}
 
+		// need a class template
+		if (type instanceof ICPPClassTemplate == false || type instanceof ProblemBinding) 
+			return false;
+		
+		// exclude other kinds of class templates
+		if (type instanceof ICPPClassTemplatePartialSpecialization ||
+				type instanceof ICPPTemplateTemplateParameter ||
+				type instanceof ICPPClassSpecialization)
+			return false;
+				
 		try {
-			if (type instanceof ICPPClassTemplate  && !(type instanceof ProblemBinding)) {
-				boolean same= !(type instanceof ICPPClassTemplatePartialSpecialization);
-				ICPPClassType ctype= (ICPPClassType) type;
-				try {
-					if (same && ctype.getKey() == getKey()) {
-						char[][] qname= ctype.getQualifiedNameCharArray();
-						same= hasQualifiedName(qname, qname.length - 1);
-					}
-				} catch (DOMException e) {
-					CCorePlugin.log(e);
-				}
-				if (!same)
-					return false;
+			ICPPClassType ctype= (ICPPClassType) type;
+			if (ctype.getKey() != getKey())
+				return false;
 				
-				ICPPTemplateParameter[] params= getTemplateParameters();
-				ICPPTemplateParameter[] oparams= ((ICPPClassTemplate) type).getTemplateParameters();
+			final char[][] qname= ctype.getQualifiedNameCharArray();
+			if (!hasQualifiedName(qname, qname.length - 1)) 
+				return false;
 				
-				if (params == null && oparams == null)
-					return true;
-				
-				if (params == null || oparams == null)
-					return false;
-				
-				if (params.length != oparams.length)
-					return false;
-				
-				for (int i = 0; same && i < params.length; i++) {
-					ICPPTemplateParameter p= params[i];
-					ICPPTemplateParameter op= oparams[i];
-					if (p instanceof IType && op instanceof IType) {
-						same &= (((IType)p).isSameType((IType)op));
-					} else {
-						if(p instanceof ICPPTemplateNonTypeParameter
-						&& op instanceof ICPPTemplateNonTypeParameter) {
-							IType pt= ((ICPPTemplateNonTypeParameter)p).getType();
-							IType opt= ((ICPPTemplateNonTypeParameter)op).getType();
-							return pt!=null && opt!=null ? pt.isSameType(opt) : pt == opt;
-						}
+			ICPPTemplateParameter[] params1= getTemplateParameters();
+			ICPPTemplateParameter[] params2= ((ICPPClassTemplate) type).getTemplateParameters();
+
+			if (params1 == params2)
+				return true;
+
+			if (params1 == null || params2 == null)
+				return false;
+
+			if (params1.length != params2.length)
+				return false;
+
+			for (int i = 0; i < params1.length; i++) {
+				ICPPTemplateParameter p1= params1[i];
+				ICPPTemplateParameter p2= params2[i];
+				if (p1 instanceof IType && p2 instanceof IType) {
+					IType t1= (IType) p1;
+					IType t2= (IType) p2;
+					if (!t1.isSameType(t2)) {
 						return false;
 					}
+				} else if (p1 instanceof ICPPTemplateNonTypeParameter
+						&& p2 instanceof ICPPTemplateNonTypeParameter) {
+					IType t1= ((ICPPTemplateNonTypeParameter)p1).getType();
+					IType t2= ((ICPPTemplateNonTypeParameter)p2).getType();
+					if (t1 != t2) {
+						if (t1 == null || t2 == null || !t1.isSameType(t2)) {
+							return false;
+						}
+					}
+				} else {
+					return false;
 				}
-				
-				return same;
 			}
+			return true;
 		} catch (DOMException e) {
-			CCorePlugin.log(e);
 			return false;
 		}
-		
-		return false;
+	}
+
+	public ICPPTemplateInstance getInstance(IType[] arguments) {
+		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
+	}
+
+	public void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
+	}
+
+	public ICPPTemplateInstance[] getAllInstances() {
+		return PDOMInstanceCache.getCache(this).getAllInstances();	
 	}
 }

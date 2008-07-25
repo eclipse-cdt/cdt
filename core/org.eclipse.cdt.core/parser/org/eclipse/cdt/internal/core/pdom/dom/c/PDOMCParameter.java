@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragmentBinding {
+class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;

@@ -118,7 +118,7 @@ public class PDOMTestBase extends BaseTestCase {
 		for (int i = 0; i < segments.length; i++) {
 			pattern[i] = Pattern.compile(segments[i]);
 		}
-		return pdom.findBindings(pattern, true, IndexFilter.ALL, PROGRESS);
+		return pdom.findBindings(pattern, true, IndexFilter.ALL_DECLARED, PROGRESS);
 	}
 
 	protected IBinding[] findUnqualifiedName(PDOM pdom, String name) throws CoreException {

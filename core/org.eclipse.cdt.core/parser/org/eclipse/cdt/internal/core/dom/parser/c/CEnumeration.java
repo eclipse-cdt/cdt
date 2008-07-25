@@ -9,19 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Nov 23, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -172,5 +170,14 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 
 	public IASTNode getDefinition() {
 		return definition;
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		IASTNode node= definition;
+		if (node == null && declarations != null && declarations.length > 0) {
+			node= declarations[0];
+		}
+		// either local or global, never part of structs
+		return CVisitor.findEnclosingFunction(node);
 	}
 }

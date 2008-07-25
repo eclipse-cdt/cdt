@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -182,63 +182,45 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
-	public IBinding instantiate(IType[] arguments) {
-		return deferredInstance(null, arguments);
-	}
-
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		ICPPSpecialization instance = getInstance(arguments);
-		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, argMap, arguments);
-			addSpecialization(arguments, instance);
-		}
-		return instance;
-	}
-
-	public ICPPSpecialization getInstance(IType[] arguments) {
+	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
-			return null;
-		
-		int found = -1;
-		for (int i = 0; i < instances.size(); i++) {
-			IType[] args = (IType[]) instances.keyAt(i);
-			if (args.length == arguments.length) {
-				int j = 0;
-				for (; j < args.length; j++) {
-					if (!(args[j].isSameType(arguments[j])))
-						break;
-				}
-				if (j == args.length) {
-					found = i;
-					break;
+			instances = new ObjectMap(2);
+		instances.put(arguments, instance);
+	}
+
+	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+		if (instances != null) {
+			loop: for (int i=0; i < instances.size(); i++) {
+				IType[] args = (IType[]) instances.keyAt(i);
+				if (args.length == arguments.length) {
+					for (int j=0; j < args.length; j++) {
+						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
+							continue loop;
+						}
+					}
+					return (ICPPTemplateInstance) instances.getAt(i);
 				}
 			}
 		}
-		if (found != -1) {
-			return (ICPPSpecialization) instances.getAt(found);
-		}
 		return null;
 	}
-	
-	public void addSpecialization(IType[] types, ICPPSpecialization spec) {
-		if (instances == null)
-			instances = new ObjectMap(2);
-		instances.put(types, spec);
+
+	public ICPPTemplateInstance[] getAllInstances() {
+		if (instances != null) {
+			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
+			for (int i=0; i < instances.size(); i++) {
+				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			}
+			return result;
+		}
+		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		return null;
-	}
-
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
-	}
-
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return null;
 	}
 }

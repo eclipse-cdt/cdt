@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -149,5 +150,9 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 
 	public void setScope(IScope scope) {
 		this.scope = scope;
+	}
+
+	public IBinding getOwner() {
+		return null;
 	}
 }

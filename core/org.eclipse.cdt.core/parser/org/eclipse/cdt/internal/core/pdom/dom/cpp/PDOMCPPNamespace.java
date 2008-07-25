@@ -144,7 +144,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				return getBindingsViaCache(name.toCharArray());
 			}
 			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(),
-					IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
+					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			IBinding[] bindings = visitor.getBindings();
 			if (fileSet != null) {
@@ -164,7 +164,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			return result;
 		}
 		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name,
-				IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
+				IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
 		getIndex().accept(visitor);
 		result = visitor.getBindings();
 		pdom.putCachedResult(key, result);

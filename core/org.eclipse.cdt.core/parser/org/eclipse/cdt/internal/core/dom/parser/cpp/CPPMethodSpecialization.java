@@ -17,12 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -32,8 +29,8 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		implements ICPPMethod {
 
-	public CPPMethodSpecialization(IBinding orig, ICPPScope scope, ObjectMap argMap ) {
-		super(orig, scope, argMap );
+	public CPPMethodSpecialization(IBinding orig, ICPPClassType owner, ObjectMap argMap ) {
+		super(orig, owner, argMap );
 	}
 
 	public boolean isVirtual() throws DOMException {
@@ -67,11 +64,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		IScope scope= getScope();
-		if (scope instanceof ICPPClassScope) {
-			return ((ICPPClassScope) scope).getClassType();
-		}
-		return null;
+		return (ICPPClassType) getOwner();
 	}
 	
 	public boolean isDestructor() {

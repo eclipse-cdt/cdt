@@ -21,12 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Can be subclassed and used for queries in the index.
  * @since 4.0
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the CDT team.
- * </p>
  */
 
 abstract public class IndexFilter {
@@ -34,6 +28,10 @@ abstract public class IndexFilter {
 	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(-1, false);
 	public static final IndexFilter ALL_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(-1, true);
 	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
+	/**
+	 * @since 5.1
+	 */
+	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true, false);
 	public static final IndexFilter C_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
 
 	/**
@@ -59,7 +57,19 @@ abstract public class IndexFilter {
 	 * @return an IndexFilter instance
 	 */
 	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit) {
-		return new DeclaredBindingsFilter(linkageID, acceptImplicit);
+		return new DeclaredBindingsFilter(linkageID, acceptImplicit, true);
+	}
+
+	/**
+	 * Get an IndexFilter that filters out bindings without declarations and those
+	 * from linkages other than that specified. 
+	 * @param linkageID the id of the linkage whose bindings should be retained, or -1 
+	 * to accept all linkages.
+	 * @return an IndexFilter instance
+	 * @since 5.1
+	 */
+	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit, boolean allowInstances) {
+		return new DeclaredBindingsFilter(linkageID, acceptImplicit, allowInstances);
 	}
 
 	/**

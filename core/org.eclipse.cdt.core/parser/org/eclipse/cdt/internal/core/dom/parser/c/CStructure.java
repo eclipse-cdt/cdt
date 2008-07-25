@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems) 
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems) 
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -40,8 +39,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Created on Nov 8, 2004
- * @author aniefer
+ * Represents structs and unions.
  */
 public class CStructure extends PlatformObject implements ICompositeType, ICInternalBinding {
 	
@@ -274,5 +272,15 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 
 	public IASTNode getDefinition() {
 		return definition;
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		IASTNode node= definition;
+		if (node == null) {
+			if (declarations != null && declarations.length > 0) { 
+				node= declarations[0];
+			}
+		}
+		return CVisitor.findEnclosingFunction(node); // local or global
 	}
 }

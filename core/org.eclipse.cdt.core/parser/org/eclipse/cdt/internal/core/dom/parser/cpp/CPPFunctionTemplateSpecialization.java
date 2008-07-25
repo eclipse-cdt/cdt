@@ -14,9 +14,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -30,8 +30,8 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 
 	private ObjectMap instances = null;
 	
-	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
-		super(specialized, scope, argumentMap);
+	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPClassType owner, ObjectMap argumentMap) {
+		super(specialized, owner, argumentMap);
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
@@ -39,42 +39,37 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return template.getTemplateParameters();
 	}
 
-	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
-		if( instances == null )
+	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+		if (instances == null)
 			instances = new ObjectMap(2);
-		instances.put( arguments, specialization );
+		instances.put(arguments, instance);
 	}
-	
-	public ICPPSpecialization getInstance( IType [] arguments ) {
-		if( instances == null )
-			return null;
-		
-		int found = -1;
-		for( int i = 0; i < instances.size(); i++ ){
-			IType [] args = (IType[]) instances.keyAt( i );
-			if( args.length == arguments.length ){
-				int j = 0;
-				for(; j < args.length; j++) {
-					if(!CPPTemplates.isSameTemplateArgument(args[j], arguments[j]))
-						break;
-				}
-				if( j == args.length ){
-					found = i;
-					break;
+
+	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+		if (instances != null) {
+			loop: for (int i=0; i < instances.size(); i++) {
+				IType[] args = (IType[]) instances.keyAt(i);
+				if (args.length == arguments.length) {
+					for (int j=0; j < args.length; j++) {
+						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
+							continue loop;
+						}
+					}
+					return (ICPPTemplateInstance) instances.getAt(i);
 				}
 			}
 		}
-		if( found != -1 ){
-			return (ICPPSpecialization) instances.getAt(found);
-		}
 		return null;
 	}
 	
-	public IBinding instantiate(IType[] arguments) {
-		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap ); 
-	}
-
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		return null;
+	public ICPPTemplateInstance[] getAllInstances() {
+		if (instances != null) {
+			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
+			for (int i=0; i < instances.size(); i++) {
+				result[i]= (ICPPTemplateInstance) instances.getAt(i);
+			}
+			return result;
+		}
+		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 }

@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -69,6 +68,10 @@ public abstract class PDOMNode implements IPDOMNode {
 	public int getRecord() {
 		return record;
 	}
+	
+	public int getId() {
+		return record;
+	}
 
 	/**
 	 * Checks if <code>other</code> node is the immediate parent of this one.
@@ -120,12 +123,12 @@ public abstract class PDOMNode implements IPDOMNode {
 		return parentrec != 0 ? getLinkageImpl().getNode(parentrec) : null;
 	}
 	
-	public ILinkage getLinkage() throws CoreException {
+	public PDOMLinkage getLinkage() throws CoreException {
 		return getLinkage(pdom, record);
 	}
 
-	public PDOMLinkage getLinkageImpl() throws CoreException {
-		return getLinkage(pdom, record);
+	public final PDOMLinkage getLinkageImpl() throws CoreException {
+		return getLinkage();
 	}
 
 	public static PDOMLinkage getLinkage(PDOM pdom, int record) throws CoreException {

@@ -16,30 +16,29 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Represents a binding that is unknown because it depends on template arguments.
  */
 public abstract class CPPUnknownBinding extends PlatformObject
 		implements ICPPUnknownBinding, ICPPInternalBinding, Cloneable {
+    protected IBinding fOwner;
     private ICPPScope unknownScope;
-    protected ICPPUnknownBinding unknownContainerBinding;
     protected IASTName name;
 
-    public CPPUnknownBinding(ICPPUnknownBinding scopeBinding, IASTName name) {
+    public CPPUnknownBinding(IBinding owner, IASTName name) {
         super();
         this.name = name;
-        this.unknownContainerBinding = scopeBinding;
-    }
-
-    public CPPUnknownBinding(ICPPTemplateDefinition templateDef) {
-    	this.name= new CPPASTName(templateDef.getNameCharArray());
+        fOwner= owner;
     }
 
     public IASTNode[] getDeclarations() {
@@ -80,9 +79,15 @@ public abstract class CPPUnknownBinding extends PlatformObject
     }
 
     public IScope getScope() throws DOMException {
-    	if (unknownContainerBinding != null) {
-    		return unknownContainerBinding.getUnknownScope();
-    	} 
+    	if (fOwner instanceof ICPPUnknownBinding) {
+    		return ((ICPPUnknownBinding) fOwner).getUnknownScope();
+    	} else if (fOwner instanceof ICPPClassType) {
+    		return ((ICPPClassType) fOwner).getCompositeScope();
+    	} else if (fOwner instanceof ICPPNamespace) {
+    		return ((ICPPNamespace) fOwner).getNamespaceScope();
+    	} else if (fOwner instanceof ICPPFunction) {
+    		return ((ICPPFunction) fOwner).getFunctionScope();
+    	}
     	return null;
     }
 
@@ -115,7 +120,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
 		return name;
 	}
 
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return unknownContainerBinding;
+	public IBinding getOwner() {
+		return fOwner;
 	}
 }

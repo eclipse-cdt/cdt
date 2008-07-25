@@ -12,11 +12,9 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -52,16 +50,7 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 		return unknownScope;
 	}
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-    	// Cannot do resolution here since the result is not necessarily a binding.
-		return null;
-	}
-
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
-	}
-
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return null;
 	}
 }

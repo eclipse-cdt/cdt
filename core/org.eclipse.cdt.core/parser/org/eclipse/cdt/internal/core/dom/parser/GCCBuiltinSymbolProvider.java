@@ -2380,6 +2380,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		public ILinkage getLinkage() {
 			return Linkage.C_LINKAGE;
 		}
+		
+		public IBinding getOwner() {
+			return null;
+		}
 	}
     
 	static public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter {
@@ -2467,6 +2471,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 		public ILinkage getLinkage() {
 			return Linkage.CPP_LINKAGE;
+		}
+
+		public IBinding getOwner() {
+			return null;
 		}
     }
 }

@@ -53,6 +53,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
@@ -66,6 +68,7 @@ import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
 import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
+import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPCompositesFactory extends AbstractCompositeFactory {
@@ -83,6 +86,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				return null;
 			} 
 			if (rscope instanceof ICPPClassScope) {
+				if (rscope instanceof ICPPClassSpecializationScope) {
+					return new CompositeCPPClassSpecializationScope(this, (IIndexFragmentBinding) rscope.getScopeBinding());
+				}
 				ICPPClassScope classScope = (ICPPClassScope) rscope;
 				return new CompositeCPPClassScope(this,	findOneBinding(classScope.getClassType()));
 			} 
@@ -182,8 +188,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			} else if (binding instanceof ICPPSpecialization) {
 				if (binding instanceof ICPPTemplateInstance) {
 					if (binding instanceof ICPPDeferredTemplateInstance) {
-						if (binding instanceof ICPPClassType) {
-							return new CompositeCPPDeferredClassInstance(this, (ICPPClassType) findOneBinding(binding));
+						if (binding instanceof ICPPDeferredClassInstance) {
+							return new CompositeCPPDeferredClassInstance(this, (ICPPDeferredClassInstance) findOneBinding(binding));
 						} else if (binding instanceof ICPPFunction) {
 							return new CompositeCPPDeferredFunctionInstance(this, (ICPPFunction) binding);
 						} else {
@@ -300,5 +306,40 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		}
 
 		return result;
+	}
+
+	private static class Key {
+		final long i;
+		final int j;
+		final int k;
+		public Key(long id1, int id2, int id3) {
+			i= id1;
+			j= id2;
+			k= id3;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (i ^ (i >>> 32));
+			result = prime * result + j;
+			result = prime * result + k;
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Key) {
+				Key other = (Key) obj;
+				return i == other.i && j == other.j && k == other.k;
+			}
+			return false;
+		}
+	}
+	
+	public static Object createInstanceCacheKey(ICompositesFactory cf,IIndexFragmentBinding rbinding) {
+		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getId());
+	}
+	public static Object createSpecializationKey(ICompositesFactory cf,IIndexFragmentBinding rbinding) {
+		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getId()+1);
 	}
 }

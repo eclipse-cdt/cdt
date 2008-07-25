@@ -13,108 +13,76 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassSpecializationScope extends CompositeCPPClassScope implements ICPPClassSpecializationScope {
-	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
-	
+public class CompositeCPPClassSpecializationScope extends CompositeScope implements ICPPClassSpecializationScope {
+	private ICPPClassSpecializationScope fDelegate;
+
 	public CompositeCPPClassSpecializationScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
 	}
 
-	private ICPPSpecialization specialization() {
-		return (ICPPSpecialization) cf.getCompositeBinding(rbinding);
+	private ICPPClassSpecialization specialization() {
+		return (ICPPClassSpecialization) cf.getCompositeBinding(rbinding);
 	}
 
 	public ICPPClassType getOriginalClassType() {
-		return (ICPPClassType) specialization().getSpecializedBinding();
+		return specialization().getSpecializedBinding();
 	}
 
-	
-	@Override
+	public ICPPClassSpecialization getClassType() {
+		return (ICPPClassSpecialization) cf.getCompositeBinding(rbinding);
+	}
+
+	public IIndexBinding getScopeBinding() {
+		return (IIndexBinding) getClassType();
+	}
+
+	private void createDelegate() {
+		if (fDelegate == null) {
+			fDelegate= new AbstractCPPClassSpecializationScope(specialization()) {};
+		}
+	}
+
 	public ICPPMethod[] getImplicitMethods() {
-		// Implicit methods shouldn't have implicit specializations
-		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		createDelegate();
+		return fDelegate.getImplicitMethods();
 	}
 
-	@Override
 	public IBinding[] find(String name) throws DOMException {
-		return CPPSemantics.findBindings(this, name, false);
+		createDelegate();
+		return fDelegate.find(name);
 	}
 
-	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) throws DOMException {
-		char[] c = name.toCharArray();
-		
-	    if (CharArrayUtils.equals(c, specialization().getNameCharArray()) &&
-	    		!CPPClassScope.isConstructorReference(name)) {
-	    	return specialization();
-	    }
-
-		ICPPClassType specialized = (ICPPClassType) specialization().getSpecializedBinding();
-		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.getBindings(name, resolve, false) : null;
-		
-		if (bindings == null)
-			return null;
-    	
-		IBinding[] specs = new IBinding[0];
-		for (IBinding binding : bindings) {
-			specs = (IBinding[]) ArrayUtil.append(IBinding.class, specs, getInstance(binding));
-		}
-		specs = (IBinding[]) ArrayUtil.trim(IBinding.class, specs);
-    	return CPPSemantics.resolveAmbiguities(name, specs);
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings)
+			throws DOMException {
+		createDelegate();
+		return fDelegate.getBinding(name, resolve, acceptLocalBindings);
 	}
 
-	@Override
-	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
-			IIndexFileSet fileSet) throws DOMException {
-		char[] c = name.toCharArray();
-		IBinding[] result = null;
-		
-	    if ((!prefixLookup && CharArrayUtils.equals(c, specialization().getNameCharArray())) ||
-	    		(prefixLookup && CharArrayUtils.equals(specialization().getNameCharArray(), 0, c.length, c, true))) {
-	    	result = new IBinding[] { specialization() };
-	    }
-
-		ICPPClassType specialized = (ICPPClassType) specialization().getSpecializedBinding();
-		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ?
-				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
-		
-		if (bindings != null) {
-			for (IBinding binding : bindings) {
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, getInstance(binding));
-			}
-		}
-
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
+			IIndexFileSet acceptLocalBindings) throws DOMException {
+		createDelegate();
+		return fDelegate.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
 	}
-	
-	public IBinding getInstance(IBinding binding) {
-		if (instanceMap.containsKey(binding)) {
-			return (IBinding) instanceMap.get(binding);
-		} else if (!(binding instanceof ICPPClassTemplatePartialSpecialization)) {
-			IBinding spec = CPPTemplates.createSpecialization(this, binding, specialization().getArgumentMap());
-			if (instanceMap == ObjectMap.EMPTY_MAP)
-				instanceMap = new ObjectMap(2);
-			instanceMap.put(binding, spec);
-			return spec;
-		}
-		return null;
+
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		createDelegate();
+		return fDelegate.getConstructors();
+	}
+
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		createDelegate();
+		return fDelegate.getDeclaredMethods();
 	}
 }

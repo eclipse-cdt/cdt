@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -50,4 +51,16 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	 * Returns the scope that contains this binding, or <code>null</code> for bindings in global scope.
 	 */
 	IIndexScope getScope();
+	
+	/**
+	 * @since 5.1
+	 * {@inheritDoc}
+	 */
+	IIndexFragmentBinding getOwner() throws DOMException;
+
+	/**
+	 * Returns a unique id for the binding within the fragment
+	 * @since 5.1
+	 */
+	int getId();
 }

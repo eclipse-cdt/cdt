@@ -23,8 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -134,15 +132,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
     	return unknownScope;
     }
 
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		return ((ICPPUnknownClassType) rbinding).resolvePartially(parentBinding, argMap, instantiationScope);
-	}
-
 	public IASTName getUnknownName() {
 		return ((ICPPUnknownClassType) rbinding).getUnknownName();
-	}
-
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return (ICPPUnknownBinding) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPUnknownClassType) rbinding).getUnknownContainerBinding());
 	}
 }

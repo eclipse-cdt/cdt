@@ -20,11 +20,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * An instance of a class template will also implement ICPPClassType and similarly
  * a function template instance will also implement ICPPFunction (or even ICPPMethod 
  * or ICPPConstructor as appropriate)
- * 
- * @author aniefer
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateInstance extends ICPPSpecialization {
-	
+	/**
+	 * @since 5.1
+	 */
+	ICPPTemplateInstance[] EMPTY_TEMPLATE_INSTANCE_ARRAY = {};
+
 	/**
 	 * get the template that this was instantiated from
 	 */

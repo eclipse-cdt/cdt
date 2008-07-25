@@ -12,19 +12,17 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPFunctionTemplate extends CompositeCPPFunction 
-		implements ICPPFunctionTemplate, ICPPInternalTemplateInstantiator {
+		implements ICPPFunctionTemplate, ICPPInstanceCache {
 
 	public CompositeCPPFunctionTemplate(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -38,15 +36,15 @@ public class CompositeCPPFunctionTemplate extends CompositeCPPFunction
 		return result;
 	}
 
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.deferredInstance(argMap, arguments, cf, rbinding);
+	public ICPPTemplateInstance getInstance(IType[] arguments) {
+		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
 	}
 
-	public ICPPSpecialization getInstance(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.getInstance(arguments, cf, this);
+	public void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
 	}
 
-	public IBinding instantiate(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.instantiate(arguments, cf, rbinding);
+	public ICPPTemplateInstance[] getAllInstances() {
+		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
 }

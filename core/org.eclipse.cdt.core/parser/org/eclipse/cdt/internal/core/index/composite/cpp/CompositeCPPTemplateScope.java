@@ -30,22 +30,28 @@ public class CompositeCPPTemplateScope extends CompositeScope implements ICPPTem
 	}
 
 	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
-		ICPPTemplateDefinition preresult= ((ICPPTemplateScope) rbinding).getTemplateDefinition();
+		ICPPTemplateDefinition preresult= (getTemplateScope()).getTemplateDefinition();
 		return (ICPPTemplateDefinition) processUncertainBinding(preresult);
 	}
 
+	private ICPPTemplateScope getTemplateScope() {
+		if (rbinding instanceof ICPPTemplateScope) 
+			return (ICPPTemplateScope) rbinding;
+		return (ICPPTemplateScope) rbinding.getScope();
+	}
+
 	public IBinding[] find(String name) throws DOMException {
-		IBinding[] preresult = ((ICPPTemplateScope)rbinding).find(name);
+		IBinding[] preresult = (getTemplateScope()).find(name);
 		return processUncertainBindings(preresult);	
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
-		IBinding binding = ((ICPPTemplateScope)rbinding).getBinding(name, resolve, fileSet);
+		IBinding binding = (getTemplateScope()).getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
-		IBinding[] bindings = ((ICPPTemplateScope)rbinding).getBindings(name, resolve, prefixLookup, fileSet);
+		IBinding[] bindings = (getTemplateScope()).getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 

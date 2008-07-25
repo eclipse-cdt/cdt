@@ -215,6 +215,10 @@ public class PDOMASTAdapter {
 		public boolean isSameType(IType type) {
 			return fDelegate.isSameType(type);
 		}
+
+		public IBinding getOwner() throws DOMException {
+			return fDelegate.getOwner();
+		}
 	}
 
 	private static class AnonymousCompositeType implements ICompositeType {
@@ -270,6 +274,10 @@ public class PDOMASTAdapter {
 
 		public boolean isSameType(IType type) {
 			return fDelegate.isSameType(type);
+		}
+		
+		public IBinding getOwner() throws DOMException {
+			return fDelegate.getOwner();
 		}
 	}
 
@@ -328,6 +336,10 @@ public class PDOMASTAdapter {
 
 		public boolean isGloballyQualified() throws DOMException {
 			return fDelegate.isGloballyQualified();
+		}
+
+		public IBinding getOwner() throws DOMException {
+			return fDelegate.getOwner();
 		}
 	}
 

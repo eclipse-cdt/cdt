@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -53,8 +54,13 @@ public abstract class CompositeScope implements IIndexScope {
 	}
 
 	public IIndexName getScopeName() {
-		if(rbinding instanceof IIndexScope)
-			return ((IIndexScope) rbinding).getScopeName();
+		try {
+			if(rbinding instanceof IIndexScope)
+				return ((IIndexScope) rbinding).getScopeName();
+			if(rbinding instanceof ICPPClassType) 
+				return (IIndexName) ((ICPPClassType) rbinding).getCompositeScope().getScopeName();
+		} catch (DOMException e) {
+		}
 		return null;
 	}
 

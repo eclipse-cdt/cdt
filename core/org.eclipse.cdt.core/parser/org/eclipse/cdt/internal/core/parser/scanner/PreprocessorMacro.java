@@ -14,6 +14,7 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.IToken;
@@ -46,6 +47,10 @@ abstract class PreprocessorMacro implements IMacroBinding {
 	}
 
 	public IScope getScope() {
+		return null;
+	}
+	
+	public IBinding getOwner() {
 		return null;
 	}
 

@@ -32,9 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -254,17 +252,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	}
     	return binding;	
     }
-
-
-	@Override
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		ICPPSpecialization instance = getInstance( arguments );
-		if( instance == null ){
-			instance = new CPPDeferredFunctionInstance( this, arguments );
-			addSpecialization( arguments, instance );
-		}
-		return instance;
-	}
 
 	public boolean isStatic() {
 		return hasStorageClass( IASTDeclSpecifier.sc_static);

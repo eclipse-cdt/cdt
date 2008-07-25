@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassTemplate;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -39,9 +38,9 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	final String step = "   "; //$NON-NLS-1$
 
 	public void leave(IPDOMNode node) throws CoreException {
-		if (node instanceof PDOMCPPClassTemplate) {
-			((PDOMCPPClassTemplate) node).specializationsAccept(this);
-		}
+//		if (node instanceof PDOMCPPClassTemplate) {
+//			((PDOMCPPClassTemplate) node).specializationsAccept(this);
+//		}
 		if(indent.length()>=step.length())
 			indent.setLength(indent.length()-step.length());
 	}

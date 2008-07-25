@@ -9,7 +9,6 @@
  *    IBM Rational Software - Initial API and implementation
  *    Markus Schorn (Wind River Systems) 
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -20,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -29,8 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Created on Nov 5, 2004
- * @author aniefer
+ * Represents a global or a local variable.
  */
 public class CVariable extends PlatformObject implements IVariable, ICInternalVariable {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
@@ -145,5 +144,11 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
 	}
 	public IASTNode getDefinition() {
 		return getPhysicalNode();
+	}
+	public IBinding getOwner() throws DOMException {
+		if (declarations == null || declarations.length == 0)
+			return null;
+		
+		return CVisitor.findDeclarationOwner(declarations[0], true);
 	}
 }

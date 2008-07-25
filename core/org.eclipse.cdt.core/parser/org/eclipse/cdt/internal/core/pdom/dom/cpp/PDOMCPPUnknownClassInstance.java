@@ -18,16 +18,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -105,18 +100,6 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	}
 
 	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
-		if (parentBinding instanceof PDOMNode && isChildOf((PDOMNode) parentBinding) &&
-				newArgs == arguments) {
-			return this;
-		}
-		IASTName name = new CPPASTName(getNameCharArray());
-		return new CPPUnknownClassInstance(parentBinding, name, newArgs);
-	}
-
-	@Override
 	public String toString() {
 		return getName() + " <" + ASTTypeUtil.getTypeListString(getArguments()) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -151,10 +134,13 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 							return false;
 					}
 				}
-				final ICPPUnknownBinding lhsContainer = getUnknownContainerBinding();
-				final ICPPUnknownBinding rhsContainer = rhs.getUnknownContainerBinding();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+				try {
+					final IBinding lhsContainer= getOwner();
+					final IBinding rhsContainer= rhs.getOwner();
+					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+						 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+					}
+				} catch (DOMException e) {
 				}
 			}
 		}

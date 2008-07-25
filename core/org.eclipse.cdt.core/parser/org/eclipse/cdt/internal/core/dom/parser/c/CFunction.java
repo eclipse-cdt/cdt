@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -34,12 +35,10 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Created on Nov 5, 2004
- * @author aniefer
+ * Represents a function.
  */
 public class CFunction extends PlatformObject implements IFunction, ICInternalFunction {
 	private IASTStandardFunctionDeclarator [] declarators = null;
@@ -458,7 +457,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			bits &= ~FULLY_RESOLVED;
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
@@ -468,5 +467,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	public IASTNode getDefinition() {
 		return definition;
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		return null;
 	}
 }

@@ -39,16 +39,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * 
- * @author aniefer
+ * Represents a class template.
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassTemplate,
@@ -114,16 +111,6 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 public CPPClassTemplate(IASTName name) {
 		super(name);
 		this.mixin= new ClassTypeMixin(this);
-	}
-
-	@Override
-	public ICPPSpecialization deferredInstance(ObjectMap argMap, IType[] arguments) {
-		ICPPSpecialization instance = getInstance(arguments);
-		if (instance == null) {
-			instance = new CPPDeferredClassInstance(this, argMap, arguments);
-			addSpecialization(arguments, instance);
-		}
-		return instance;
 	}
 
 	public void checkForDefinition() {

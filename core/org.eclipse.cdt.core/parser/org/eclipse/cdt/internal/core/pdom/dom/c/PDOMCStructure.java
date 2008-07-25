@@ -89,10 +89,6 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).accept(visitor);
 	}
 	
-	public void addMember(PDOMNode member) throws CoreException {
-		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).addMember(member);
-	}
-	
 	@Override
 	public int getNodeType() {
 		return IIndexCBindingConstants.CSTRUCTURE;
@@ -231,7 +227,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		addMember(member);
+		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).addMember(member);
 	}
 	
 	@Override

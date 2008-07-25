@@ -14,12 +14,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -144,4 +148,10 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		this.scope = scope;
 	}
 
+	public IBinding getOwner() throws DOMException {
+		if (scope != null) {
+			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
+		}
+		return null;
+	}
 }

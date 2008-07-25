@@ -18,31 +18,26 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * Represents a partially instantiated class template, where instance arguments contain at least one
- * template type parameter.
- *
- * @author aniefer
+ * Represents a instantiation that cannot be performed because of dependent arguments or an unknown template.
  */
 public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDeferredClassInstance {
 	
 	private final IType[] fArguments;
-	private final ObjectMap fArgmap;
 	private final ICPPClassTemplate fClassTemplate;
 
-	public CPPDeferredClassInstance(ICPPClassTemplate orig,	ObjectMap argMap, IType[] arguments) {
-		super(orig);
-		fArgmap= argMap;
+	public CPPDeferredClassInstance(ICPPClassTemplate template, IType[] arguments) throws DOMException {
+		super(template.getOwner(), new CPPASTName(template.getNameCharArray()));
+
 		fArguments= arguments;
-		fClassTemplate= orig;
+		fClassTemplate= template;
 	}
 	
-	private ICPPClassTemplate getClassTemplate() {
+	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
 	}
 
@@ -100,25 +95,8 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 
 	public ObjectMap getArgumentMap() {
-		return fArgmap;
-	}
-
-	@Override
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
-
-		boolean changed= arguments != newArgs;
-		ICPPClassTemplate classTemplate = getClassTemplate();
-		if (argMap.containsKey(classTemplate)) {
-			classTemplate = (ICPPClassTemplate) argMap.get(classTemplate);
-			changed= true;
-		}
-
-		if (!changed) {
-			return this;
-		}
-		return ((ICPPInternalTemplateInstantiator) classTemplate).instantiate(newArgs);
+		// mstodo- compute argmap
+		return null;
 	}
 
 	public IBinding getSpecializedBinding() {

@@ -10,9 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 /**
  * Composite scope of a class specialization. Supports creating instances for bindings found
@@ -27,8 +30,17 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	ICPPClassType getOriginalClassType();
 
 	/**
-	 * Returns the instance for a binding that belongs to the scope of the original
-	 * class type.
+	 * The specialized class.
 	 */
-	IBinding getInstance(IBinding original);
+	ICPPClassSpecialization getClassType();
+
+	/**
+	 * Computes constructors off specialized class.
+	 */
+	ICPPConstructor[] getConstructors() throws DOMException;
+
+	/**
+	 * Computes the declared methods off the specialized class.
+	 */
+	ICPPMethod[] getDeclaredMethods() throws DOMException;
 }

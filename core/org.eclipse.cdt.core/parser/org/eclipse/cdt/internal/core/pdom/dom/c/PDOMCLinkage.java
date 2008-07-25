@@ -14,12 +14,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
-import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -28,19 +25,14 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
-import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
+import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
@@ -130,12 +122,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
 			try {
-				IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-				PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-				if (pdomEnumeration instanceof PDOMCEnumeration)
-					pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
+				IType enumeration= ((IEnumerator)binding).getType();
+				if (enumeration instanceof IEnumeration) {
+					PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
+					if (pdomEnumeration instanceof PDOMCEnumeration)
+						pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
+				}
 			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
+				CCorePlugin.log(e);
 			}
 		} else if (binding instanceof ITypedef) {
 			pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
@@ -210,67 +204,25 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	 */
 	final private PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
 		try {
-			IScope scope = binding.getScope();
 			if (binding instanceof IIndexBinding) {
 				IIndexBinding ib= (IIndexBinding) binding;
 				if (ib.isFileLocal()) {
 					return null;
 				}
-				// in an index the null scope represents global scope.
-				if (scope == null) {
-					return this;
-				}
-			}
+			} 
 			
-			if (scope == null) {
+			IBinding owner= binding.getOwner();
+			if (owner == null) {
+				return this;
+			}
+			if (owner instanceof IFunction) {
 				return null;
 			}
 
-			if (scope instanceof IIndexScope) {
-				if (scope instanceof CompositeScope) { // we special case for performance
-					return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
-				} else {
-					return adaptBinding(((IIndexScope) scope).getScopeBinding());
-				}
-			}
-
-			// the scope is from the ast
-			IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
-			IBinding scopeBinding = null;
-			if (scopeNode instanceof IASTCompoundStatement) {
-				return null;
-			} 
-			if (scopeNode instanceof IASTTranslationUnit) {
-				boolean isGlobal= true;
-				if (binding instanceof ICompositeType) {
-					ICompositeType ct= (ICompositeType) binding;
-					final IScope ctscope = ct.getCompositeScope();
-					if (ctscope != null) {
-						final IName myOrigScopeName = ctscope.getScopeName();
-						if (myOrigScopeName instanceof IASTName && myOrigScopeName.toCharArray().length == 0) {
-							scope= CVisitor.getContainingScope((IASTName) myOrigScopeName);
-							if (scope instanceof ICCompositeTypeScope) {
-								isGlobal= false;
-							} 
-						}
-					}
-				}
-				if (isGlobal) {
-					return this;
-				}
-			} 
-			
-			IName scopeName = scope.getScopeName();
-			if (scopeName instanceof IASTName) {
-				scopeBinding = ((IASTName) scopeName).resolveBinding();
-				if (scopeBinding != null && scopeBinding != binding) {
-					return adaptBinding(scopeBinding);
-				}
-			}
+			return adaptBinding(owner);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
-		return null;
 	}
 
 	@Override
@@ -279,6 +231,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 	
 	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding) throws CoreException {
+		if (inputBinding instanceof CompositeIndexBinding) {
+			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
+		}
+		
 		if (cannotAdapt(inputBinding)) {
 			return null;
 		}

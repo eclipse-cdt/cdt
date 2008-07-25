@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -66,7 +67,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
         return ICPPASTVisibilityLabel.v_public;
     }
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope)getScope();
 		return scope.getClassType();
 	}
@@ -168,5 +169,10 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		} catch (DOMException e) {
 		}
 		return true;
+	}
+	
+	@Override
+	public IBinding getOwner() {
+		return getClassOwner();
 	}
 }

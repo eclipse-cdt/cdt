@@ -236,4 +236,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public String toString() {
 		return getMessage();
 	}
+
+	public IBinding getOwner() throws DOMException {
+		return null;
+	}
 }

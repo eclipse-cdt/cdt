@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
  * Interface for PDOM entities that contain members. Note this is not a generic
  */
 public interface IPDOMMemberOwner {
-	public void addMember(PDOMNode member) throws CoreException;
 	public void accept(IPDOMVisitor visitor) throws CoreException;
 	public void addChild(PDOMNode member) throws CoreException;
 }

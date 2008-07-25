@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -119,23 +120,17 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+	
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findDeclarationOwner(enumName, true);
 	}
 }

@@ -1,25 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 29, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -27,14 +22,8 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod {
 
-	/**
-	 * @param scope
-	 * @param orig
-	 * @param argMap
-	 * @param args
-	 */
-	public CPPMethodInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args) {
-		super(scope, orig, argMap, args);
+	public CPPMethodInstance(ICPPClassType owner, ICPPMethod orig, ObjectMap argMap, IType[] args) {
+		super(owner, orig, argMap, args);
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +34,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		return ((ICPPMethod)getTemplateDefinition()).getClassOwner();
+		return (ICPPClassType) getOwner();
 	}
 	
     /* (non-Javadoc)
@@ -69,5 +58,4 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	public boolean isImplicit() {
 		return false;
 	}
-
 }

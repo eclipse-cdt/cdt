@@ -11,6 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -26,12 +31,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -45,21 +48,29 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
+class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
 
-	private static final int MEMBERLIST = PDOMCPPInstance.RECORD_SIZE + 0;
-	
+	private static final int MEMBERLIST = PDOMCPPSpecialization.RECORD_SIZE + 0;
+	private static final int ARGUMENTS = PDOMCPPSpecialization.RECORD_SIZE + 4;	
 	/**
 	 * The size in bytes of a PDOMCPPDeferredClassInstance record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 
 	private ICPPScope unknownScope;
 	
-	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
+	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPDeferredClassInstance classType, PDOMBinding instantiated)
 			throws CoreException {
-		super(pdom, parent, (ICPPTemplateInstance) classType, instantiated);
+		super(pdom, parent, classType, instantiated);
+
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
+		IType[] args = ((ICPPTemplateInstance) classType).getArguments();
+		for (int i = 0; i < args.length; i++) {
+			PDOMNode typeNode = getLinkageImpl().addType(this, args[i]);
+			if (typeNode != null)
+				list.addMember(typeNode);
+		}
 	}
 
 	public PDOMCPPDeferredClassInstance(PDOM pdom, int bindingRecord) {
@@ -76,18 +87,10 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 		return IIndexCPPBindingConstants.CPP_DEFERRED_CLASS_INSTANCE;
 	}
 
-	public ICPPBase[] getBases() throws DOMException {
-		return ((ICPPClassType) getSpecializedBinding()).getBases();
-	}
-	
 	public IScope getCompositeScope() throws DOMException {
 		return ((ICPPClassType) getSpecializedBinding()).getCompositeScope();
 	}
-	
-	public int getKey() throws DOMException {
-		return ((ICPPClassType) getSpecializedBinding()).getKey();
-	}
-	
+		
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -99,7 +102,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 			}
         }
 		
-		ICPPClassTemplate classTemplate = (ICPPClassTemplate) getTemplateDefinition();
+		ICPPClassTemplate classTemplate = getClassTemplate();
 		
 		if (type instanceof ICPPDeferredClassInstance) {
 			final ICPPDeferredClassInstance rhs = (ICPPDeferredClassInstance) type;
@@ -124,12 +127,13 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 		} 
 		return false;
 	}
-	
-	public ICPPConstructor[] getConstructors() throws DOMException {
-		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+
+	public ICPPClassTemplate getClassTemplate() {
+		return (ICPPClassTemplate) getTemplateDefinition();
 	}
-		
-	public void addMember(PDOMNode member) throws CoreException {
+			
+	@Override
+	public void addChild(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
@@ -140,48 +144,57 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
-	
-	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		addMember(member);
+		
+    public ICPPBase[] getBases() {
+        return ICPPBase.EMPTY_BASE_ARRAY;
+    }
+
+    public IField[] getFields() {
+        return IField.EMPTY_FIELD_ARRAY;
+    }
+
+    public IField findField(String name) {
+        return null;
+    }
+
+    public ICPPField[] getDeclaredFields() {
+        return ICPPField.EMPTY_CPPFIELD_ARRAY;
+    }
+
+    public ICPPMethod[] getMethods() {
+        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+    }
+
+    public ICPPMethod[] getAllDeclaredMethods() {
+        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+    }
+
+    public ICPPMethod[] getDeclaredMethods() {
+        return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+    }
+
+    public ICPPConstructor[] getConstructors() {
+        return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+    }
+
+    public IBinding[] getFriends() {
+        return IBinding.EMPTY_BINDING_ARRAY;
+    }
+
+	public ICPPClassType[] getNestedClasses() {
+		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		try {
-			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
-			accept(methods);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			return new ICPPMethod[0];
-		}
-	}
-	
-	//Unimplemented
-	public IField findField(String name) throws DOMException { fail(); return null; }
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
-	public ICPPField[] getDeclaredFields() throws DOMException { fail(); return null; }
-	public IField[] getFields() throws DOMException { fail(); return null; }
-	public IBinding[] getFriends() throws DOMException { fail(); return null; }
-	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
+
+    public int getKey() throws DOMException{
+        return 0;
+    }
+
 	@Override
 	public Object clone() {fail();return null;}
 
-	public ICPPMethod[] getMethods() throws DOMException {
-		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-	}
-
-	public IBinding resolvePartially(ICPPUnknownBinding parentBinding, ObjectMap argMap, ICPPScope instantiationScope) {
-		IType[] arguments = getArguments();
-		IType[] newArgs = CPPTemplates.instantiateTypes(arguments, argMap, instantiationScope);
-		if (arguments == newArgs) {
-			return this;
-		}
-		return ((ICPPInternalTemplateInstantiator) getTemplateDefinition()).instantiate(newArgs);
-	}
-
 	public ICPPScope getUnknownScope() throws DOMException {
 		if (unknownScope == null) {
-			unknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+			unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
 		}
 		return unknownScope;
 	}
@@ -190,7 +203,34 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPInstance implements ICPPDeferr
 		return new CPPASTName(getNameCharArray());
 	}
 
-	public ICPPUnknownBinding getUnknownContainerBinding() {
-		return null;
+	public ICPPTemplateDefinition getTemplateDefinition() {
+		return (ICPPTemplateDefinition) getSpecializedBinding();
+	}
+	
+	private static class TemplateArgumentCollector implements IPDOMVisitor {
+		private List<IType> args = new ArrayList<IType>();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof IType)
+				args.add((IType) node);
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public IType[] getTemplateArguments() {
+			return args.toArray(new IType[args.size()]);
+		}
+	}
+	
+	public IType[] getArguments() {
+		try {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
+			TemplateArgumentCollector visitor = new TemplateArgumentCollector();
+			list.accept(visitor);
+			
+			return visitor.getTemplateArguments();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return IType.EMPTY_TYPE_ARRAY;
+		}
 	}
 }

@@ -12,9 +12,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -82,20 +84,18 @@ public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBind
     }
 
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
 	}
 	public void removeDeclaration(IASTNode node) {
-		
 	}
 
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	public IBinding getOwner() throws DOMException {
+		return CPPVisitor.findEnclosingFunction(statement);
+	}
 }

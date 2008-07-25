@@ -23,13 +23,11 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -165,32 +163,6 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			}
 		}
 		return cmp;
-	}
-
-	@Override
-	public IBinding instantiate(IType[] args) {
-		args= SemanticUtil.getSimplifiedTypes(args);
-		
-		ICPPSpecialization instance = getInstance( args );
-		if( instance != null ){
-			return instance;
-		}
-		
-		ObjectMap argMap= CPPTemplates.deduceTemplateArguments(getArguments(), args, true);
-		if (argMap == null)
-			return null;
-		if (CPPTemplates.containsDependentArg(argMap)) {
-			return deferredInstance(argMap, args);
-		}
-		
-		ICPPTemplateParameter [] params = getTemplateParameters();
-		int numParams = params.length;
-		for( int i = 0; i < numParams; i++ ){
-			if( params[i] instanceof IType && !argMap.containsKey( params[i] ) )
-				return null;
-		}
-		
-		return CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
 	}
 
 	private static class NodeCollector implements IPDOMVisitor {

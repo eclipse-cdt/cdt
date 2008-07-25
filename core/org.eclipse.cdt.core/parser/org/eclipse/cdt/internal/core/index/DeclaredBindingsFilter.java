@@ -16,26 +16,23 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 
 public class DeclaredBindingsFilter extends IndexFilter {
 	final private int fLinkageID;
 	final private boolean fAcceptImplicit;
-	final private boolean fAcceptSpecializations;
+	final private boolean fAllowInstances;
 
 	public DeclaredBindingsFilter() {
-		this(-1, false);
-	}
-
-	public DeclaredBindingsFilter(int linkageID, boolean acceptImplicit) {
-		this(linkageID, acceptImplicit, acceptImplicit /* assume specializations should behave like implicit bindings*/);
+		this(-1, false, true);
 	}
 	
-	public DeclaredBindingsFilter(int linkageID, boolean acceptImplicit, boolean acceptSpecializations) {
+	public DeclaredBindingsFilter(int linkageID, boolean acceptImplicit, boolean allowInstances) {
 		fLinkageID= linkageID;
 		fAcceptImplicit= acceptImplicit;
-		fAcceptSpecializations= acceptSpecializations;
+		fAllowInstances= allowInstances;
 	}
 	
 	@Override
@@ -45,16 +42,20 @@ public class DeclaredBindingsFilter extends IndexFilter {
 
 	@Override
 	public boolean acceptBinding(IBinding binding) throws CoreException {
+		if (!fAllowInstances && binding instanceof ICPPTemplateInstance)
+			return false;
+		
 		if (binding instanceof IIndexFragmentBinding) {
 			return  ((IIndexFragmentBinding) binding).hasDeclaration()
-					|| (fAcceptImplicit && isImplicit(binding))
-					|| (fAcceptSpecializations && binding instanceof ICPPSpecialization);
+					|| (fAcceptImplicit && isImplicit(binding));
 		}
 		// composite bindings don't support that kind of check.
 		return fAcceptImplicit || !isImplicit(binding);	
 	}
 
 	private boolean isImplicit(IBinding binding) {
+		if (binding instanceof ICPPSpecialization)
+			return true;
 		if (binding instanceof ICPPMethod) { 
 			return ((ICPPMethod) binding).isImplicit();
 		}

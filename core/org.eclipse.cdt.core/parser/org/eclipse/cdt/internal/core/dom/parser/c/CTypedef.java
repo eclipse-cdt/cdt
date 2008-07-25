@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -24,8 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Created on Nov 8, 2004
- * @author aniefer
+ * Represents a typedef.
  */
 public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICInternalBinding {
 	private final IASTName name; 
@@ -112,5 +112,9 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
 
 	public IASTNode getDefinition() {
 		return name;
+	}
+
+	public IBinding getOwner() throws DOMException {
+		return CVisitor.findEnclosingFunction(name);
 	}
 }

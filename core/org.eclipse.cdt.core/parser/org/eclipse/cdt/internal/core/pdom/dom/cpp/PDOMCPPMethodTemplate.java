@@ -29,8 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements
-		ICPPMethod {
+class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMethod {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of

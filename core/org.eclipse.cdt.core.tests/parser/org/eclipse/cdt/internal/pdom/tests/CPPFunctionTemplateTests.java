@@ -38,6 +38,7 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 		return suite(CPPFunctionTemplateTests.class);
 	}
 	
+	@Override
 	public void setUp() throws Exception {
 		cproject= CProjectHelper.createCCProject("functionTemplateTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);		
 	}
@@ -56,6 +57,7 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if(pdom!=null) {
 			pdom.releaseReadLock();
@@ -87,7 +89,7 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 	//	}
 	public void testSimpleInstantiation() throws Exception {
 		setUpSections(1);
-		IBinding[] bs= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL, NPM);
+		IBinding[] bs= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(2, bs.length);
 		assertInstance(bs[0], ICPPFunctionTemplate.class);
 		assertInstance(bs[1], ICPPFunctionTemplate.class);

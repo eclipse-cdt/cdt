@@ -11,47 +11,30 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPClassInstance extends CompositeCPPClassType
-		implements ICPPTemplateInstance, ICPPSpecialization {
+public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization implements ICPPTemplateInstance {
 
 	public CompositeCPPClassInstance(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
 	}
 
 	@Override
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		ICPPClassType specialized = (ICPPClassType) getSpecializedBinding();
-		ICPPMethod[] bindings = specialized.getDeclaredMethods();
-		for (int i = 0; i < bindings.length; i++) {
-			bindings[i]= (ICPPMethod) CPPTemplates.createSpecialization((ICPPScope)getScope(), (IIndexBinding) bindings[i], getArgumentMap());
-		}
-		return bindings;
-	}	
-
-	@Override
 	public IScope getCompositeScope() throws DOMException {
-		return new CompositeCPPClassSpecializationScope(cf, rbinding);
+		return cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 	
+	@Override
 	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
-	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
+	@Override
+	public ICPPClassType getSpecializedBinding() { return (ICPPClassType) TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
 	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding); }
 	public ICPPTemplateDefinition getTemplateDefinition() {	return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding); }
-	@Override
-	public ICPPBase[] getBases() throws DOMException { return CPPTemplates.getBases(this); }
 }

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * A container collecting definitions and references for macros.
  * @since 5.0
  */
-public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroContainer, IIndexFragmentBinding {
+public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroContainer, IPDOMBinding {
 	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 0; // size 4
 	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
 	

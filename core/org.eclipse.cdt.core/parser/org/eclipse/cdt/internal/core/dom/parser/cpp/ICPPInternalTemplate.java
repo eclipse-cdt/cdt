@@ -6,20 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * /
+ *    IBM - Initial API and implementation
  *******************************************************************************/
-/*
- * Created on Apr 29, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 
 /**
- * @author aniefer
+ * Interface for templates from the ast.
  */
-public interface ICPPInternalTemplate extends ICPPInternalBinding, ICPPInternalTemplateInstantiator {
-	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization);
+public interface ICPPInternalTemplate extends ICPPInternalBinding, ICPPInstanceCache {
 }

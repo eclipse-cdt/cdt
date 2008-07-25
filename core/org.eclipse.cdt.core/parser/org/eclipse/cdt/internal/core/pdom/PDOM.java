@@ -104,7 +104,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 61; 
+	public static final int MAJOR_VERSION = 70; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
@@ -174,7 +174,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  58.0 - non-type parameters (bug 207840)
 	 *  59.0 - changed modeling of deferred class instances (bug 229218)
 	 *  60.0 - store integral values with basic types (bug 207871)
-	 *  61.0 - properly insert macro undef statements into macro-containers (bug 234591)
+	 *  #61.0# - properly insert macro undef statements into macro-containers (bug 234591) - <<CDT 5.0>>
+	 *  
+	 *  70.0 - cleaned up templates, fixes bug 236197
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
@@ -207,7 +209,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static interface IListener {
 		public void handleChange(PDOM pdom, ChangeEvent event);
 	}
-
 
 	// Local caches
 	protected Database db;

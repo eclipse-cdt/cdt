@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -46,6 +47,9 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 	}
 	public IScope getScope() throws DOMException {
 		return delegate.getScope();
+	}
+	public IBinding getOwner() throws DOMException {
+		return delegate.getOwner();
 	}
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {

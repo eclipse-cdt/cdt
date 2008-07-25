@@ -83,6 +83,13 @@ public interface IProcesses extends IDMService {
     void getRunningProcesses(IDMContext dmc, DataRequestMonitor<IProcessDMContext[]> rm);
     
     /**
+     * Checks whether it is possible to attach the debugger to a new process.
+     * @param dmc The processor or core on which we want to attach to a process.
+     * @param rm Return if it is possible to attach.
+     */
+    void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm);
+
+    /**
      * Attaches debugger to the given process.     
      * When attaching to a process, a debugging context can now be used to characterize the process.
      * This method can optionally choose to return this IDMContext inside the DataRequestMonitor.  
@@ -92,9 +99,23 @@ public interface IProcesses extends IDMService {
     void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm);
 
     /**
+     * Checks whether it is possible to detach the debugger from the specified process.
+     * @param procCtx The process from which we want to detach.
+     * @param rm Return if it is possible to detach.
+     */
+    void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm);
+
+    /**
      * Detaches debugger from the given process.
      */
     void detachDebuggerFromProcess(IProcessDMContext procCtx, RequestMonitor requestMonitor);
+
+    /**
+     * Checks whether it is possible to run a new process.
+     * @param dmc The processor or core on which we want to run a new process.
+     * @param rm Return if it is possible to run a new process.
+     */
+    void isRunNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm);
 
     /**
      * Starts a new process.
@@ -104,15 +125,22 @@ public interface IProcesses extends IDMService {
     void runNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm);
     
     /**
-     * Starts a new process with debugger attached.
+     * Checks whether it is possible to start a new process with the debugger attached
+     * @param dmc The processor or core on which we want to start and debug the new process.
+     * @param rm Return if it is possible to start a new process with the debugger attached.
+     */
+    void isDebugNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm);
+
+    /**
+     * Starts a new process with the debugger attached.
      * @param file Process image to use for the new process.
      * @param rm Request completion monitor, to be willed in with the process context.
      */
     void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm);
 
     /**
-     * Retrieves the list of processes which are currently under
-     * debugger control.
+     * Retrieves the list of processes which are currently under debugger control.
+     * 
      * @param dmc The processor or core for which to list processes being debugged
      * @param rm Request completion monitor which contains all debugging contexts representing
      *           the processes being debugged.  Note that each of these contexts should also have

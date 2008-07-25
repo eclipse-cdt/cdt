@@ -29,6 +29,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
@@ -98,8 +99,8 @@ public class GDBProcesses extends MIProcesses {
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		// We must first check for GdbProcessDMC because it is also a GdbThreadDMC
-		if (dmc instanceof MIProcessDMC) {
-			String pidStr = ((MIProcessDMC)dmc).getProcId();
+		if (dmc instanceof IMIProcessDMContext) {
+			String pidStr = ((IMIProcessDMContext)dmc).getProcId();
 			int pid = -1;
 			try {
 				pid = Integer.parseInt(pidStr);
@@ -174,7 +175,7 @@ public class GDBProcesses extends MIProcesses {
 	}
 
 	private IProcessDMContext[] makeProcessDMCs(MIControlDMContext controlDmc, IProcessInfo[] processes) {
-		IProcessDMContext[] procDmcs = new MIProcessDMC[processes.length];
+		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
 			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 
 		}
@@ -183,7 +184,7 @@ public class GDBProcesses extends MIProcesses {
 	
 	@Override
     public void terminate(IThreadDMContext thread, RequestMonitor rm) {
-		if (thread instanceof MIProcessDMC) {
+		if (thread instanceof IMIProcessDMContext) {
 			fGdb.terminate(rm);
 	    } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$

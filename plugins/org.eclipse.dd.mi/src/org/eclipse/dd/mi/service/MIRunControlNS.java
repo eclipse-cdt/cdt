@@ -77,7 +77,8 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	// it would be declared only once in IMIRunControl but this is real life and
 	// it has to be duplicated for the sake of backward compatibility.
 	// It sucks and leads to bloated, error-prone code but that's the way it is.
-	class MIExecutionDMCNS extends AbstractDMContext implements IMIExecutionDMContext
+	@Immutable
+	private static class MIExecutionDMCNS extends AbstractDMContext implements IMIExecutionDMContext
 	{
 		/**
 		 * Integer ID that is used to identify the thread in the GDB/MI protocol.

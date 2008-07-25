@@ -57,7 +57,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	protected class MIExecutionGroupDMC extends AbstractDMContext
+	private static class MIExecutionGroupDMC extends AbstractDMContext
 	implements IMIExecutionGroupDMContext
 	{
 		/**
@@ -74,7 +74,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		 * @param processDmc The process context that is the parent of this context.
 		 * @param groupId GDB/MI thread group identifier.
 		 */
-		protected MIExecutionGroupDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
+		public MIExecutionGroupDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc == null ? new IDMContext[0] : new IDMContext[] { processDmc });
 			fId = groupId;
 		}
@@ -101,7 +101,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	 * Context representing a thread. 
 	 */
     @Immutable
-    protected class MIThreadDMC extends AbstractDMContext
+    private static class MIThreadDMC extends AbstractDMContext
     implements IThreadDMContext
     {
     	/**
@@ -119,7 +119,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     	 * @param processDmc The process that this thread belongs to.
     	 * @param id thread identifier.
     	 */
-    	protected MIThreadDMC(String sessionId, IProcessDMContext processDmc, String id) {
+    	public MIThreadDMC(String sessionId, IProcessDMContext processDmc, String id) {
 			super(sessionId, processDmc == null ? new IDMContext[0] : new IDMContext[] { processDmc });
     		fId = id;
     	}
@@ -144,7 +144,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     }
 
     @Immutable
-    protected class MIProcessDMC extends AbstractDMContext
+    private static class MIProcessDMC extends AbstractDMContext
     implements IMIProcessDMContext
     {
       	/**
@@ -162,7 +162,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
          * @param controlDmc The control context parent of this process.
     	 * @param id process identifier.
     	 */
-    	protected MIProcessDMC(String sessionId, MIControlDMContext controlDmc, String id) {
+    	public MIProcessDMC(String sessionId, MIControlDMContext controlDmc, String id) {
 			super(sessionId, controlDmc == null ? new IDMContext[0] : new IDMContext[] { controlDmc });
     		fId = id;
     	}

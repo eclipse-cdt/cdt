@@ -13,16 +13,17 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractThreadVMNode;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBThreadData;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIRunControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -49,24 +50,27 @@ public class ThreadVMNode extends AbstractThreadVMNode
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-        	final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
-            if ( runControl == null ) {
+        	final IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+            if (runControl == null) {
                     handleFailedUpdate(update);
                     continue;
             }
             
-            final IMIExecutionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
+            final IMIExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
 
             String imageKey = null;
-            if (getServicesTracker().getService(IRunControl.class).isSuspended(dmc)) {
+            final boolean threadSuspended;
+            if (runControl.isSuspended(execDmc)) {
+            	threadSuspended = true;
                 imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
             } else {
+            	threadSuspended = false;
                 imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
             }
             update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
 
             // Find the Reason for the State
-            runControl.getExecutionData(dmc,
+            runControl.getExecutionData(execDmc,
             		new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) {
             	@Override
 				public void handleCompleted(){
@@ -76,10 +80,8 @@ public class ThreadVMNode extends AbstractThreadVMNode
                         return;
                     }
 
-                    // We're in a new dispatch cycle, and we have to check whether the
-                    // service reference is still valid.
-                    final IGDBRunControl runControl = getServicesTracker().getService(IGDBRunControl.class);
-                    if ( runControl == null ) {
+                    final IProcesses procService = getServicesTracker().getService(IProcesses.class);
+                    if ( procService == null ) {
                         handleFailedUpdate(update);
                         return;
                     }
@@ -87,9 +89,11 @@ public class ThreadVMNode extends AbstractThreadVMNode
                     final StateChangeReason reason = getData().getStateChangeReason();
 
                     // Retrieve the rest of the thread information
-                    runControl.getThreadData(
-                        dmc,
-                        new ViewerDataRequestMonitor<IGDBThreadData>(getSession().getExecutor(), update) {
+                    final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
+
+                    procService.getExecutionData(
+                    	threadDmc,
+                        new ViewerDataRequestMonitor<IThreadDMData>(getSession().getExecutor(), update) {
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
@@ -99,11 +103,11 @@ public class ThreadVMNode extends AbstractThreadVMNode
                                 // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
                                 // Thread[1] 3457 (Suspended:BREAKPOINT)
                                 final StringBuilder builder = new StringBuilder("Thread["); //$NON-NLS-1$
-                                builder.append(dmc.getThreadId());
+                                builder.append(execDmc.getThreadId());
                                 builder.append("] "); //$NON-NLS-1$
                                 builder.append(getData().getId());
                                 builder.append(getData().getName());
-                                if(getServicesTracker().getService(IRunControl.class).isSuspended(dmc))
+                                if(threadSuspended)
                                     builder.append(" (Suspended"); //$NON-NLS-1$
                                 else
                                     builder.append(" (Running"); //$NON-NLS-1$

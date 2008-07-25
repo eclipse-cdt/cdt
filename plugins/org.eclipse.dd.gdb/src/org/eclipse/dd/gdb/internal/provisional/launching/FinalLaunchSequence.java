@@ -393,7 +393,8 @@ public class FinalLaunchSequence extends Sequence {
         			try {
         				Object result = prompter.handleStatus(processPromptStatus, fProcessList);
         				if (result instanceof Integer) {
-        					fRequestMonitor.setData(fProcService.createProcessContext(Integer.toString((Integer)result)));
+        					fRequestMonitor.setData(fProcService.createProcessContext(fCommandControl.getGDBDMContext(),
+        							                                                  Integer.toString((Integer)result)));
         				} else {
         					fRequestMonitor.setStatus(NO_PID_STATUS);
         				}
@@ -420,7 +421,7 @@ public class FinalLaunchSequence extends Sequence {
 
         			if (pid != -1) {
         				fProcService.attachDebuggerToProcess(
-            					fProcService.createProcessContext(Integer.toString(pid)),
+            					fProcService.createProcessContext(fCommandControl.getGDBDMContext(), Integer.toString(pid)),
         						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         			} else {
         				fProcService.getRunningProcesses(

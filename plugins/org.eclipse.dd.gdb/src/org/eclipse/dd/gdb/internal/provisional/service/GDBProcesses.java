@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -29,6 +30,7 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.MIProcesses;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
@@ -97,7 +99,7 @@ public class GDBProcesses extends MIProcesses {
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		// We must first check for GdbProcessDMC because it is also a GdbThreadDMC
 		if (dmc instanceof MIProcessDMC) {
-			String pidStr = ((MIProcessDMC)dmc).getId();
+			String pidStr = ((MIProcessDMC)dmc).getProcId();
 			int pid = -1;
 			try {
 				pid = Integer.parseInt(pidStr);
@@ -126,6 +128,7 @@ public class GDBProcesses extends MIProcesses {
 	
 	@Override
 	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
+		final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
 		if (fGdb.getSessionType() == SessionType.LOCAL) {
 			IProcessList list = null;
 			try {
@@ -142,7 +145,7 @@ public class GDBProcesses extends MIProcesses {
 				for (IProcessInfo procInfo : list.getProcessList()) {
 					fProcessNames.put(procInfo.getPid(), procInfo.getName());
 				}
-				rm.setData(makeProcessDMCs(list.getProcessList()));
+				rm.setData(makeProcessDMCs(controlDmc, list.getProcessList()));
 			}
 			rm.done();
 		} else {
@@ -156,7 +159,7 @@ public class GDBProcesses extends MIProcesses {
 								for (IProcessInfo procInfo : getData().getProcessList()) {
 									fProcessNames.put(procInfo.getPid(), procInfo.getName());
 								}
-								rm.setData(makeProcessDMCs(getData().getProcessList()));
+								rm.setData(makeProcessDMCs(controlDmc, getData().getProcessList()));
 							} else {
 								// The monitor list command is not supported.
 								// Just return an empty list and let the caller deal with it.
@@ -170,10 +173,10 @@ public class GDBProcesses extends MIProcesses {
 		}
 	}
 
-	private IProcessDMContext[] makeProcessDMCs(IProcessInfo[] processes) {
+	private IProcessDMContext[] makeProcessDMCs(MIControlDMContext controlDmc, IProcessInfo[] processes) {
 		IProcessDMContext[] procDmcs = new MIProcessDMC[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
-			procDmcs[i] = createProcessContext(Integer.toString(processes[i].getPid())); 
+			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 
 		}
 		return procDmcs;
 	}

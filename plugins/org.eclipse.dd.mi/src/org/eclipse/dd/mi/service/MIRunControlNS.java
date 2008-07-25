@@ -13,6 +13,7 @@
 package org.eclipse.dd.mi.service;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +26,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
@@ -319,6 +321,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
+        register(new String[]{IRunControl.class.getName(), IMIRunControl.class.getName()}, new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), fConnection);
         fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
@@ -328,6 +331,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 
 	@Override
 	public void shutdown(final RequestMonitor rm) {
+        unregister();
 		getSession().removeServiceEventListener(this);
         fMICommandCache.reset();
 		super.shutdown(rm);

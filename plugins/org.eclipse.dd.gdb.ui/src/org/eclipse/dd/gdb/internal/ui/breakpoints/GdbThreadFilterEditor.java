@@ -24,14 +24,15 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.IGDBRunControl.IGDBThreadData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
@@ -493,12 +494,14 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBRunControl.class
+                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IProcesses.class
                     .getName(), null);
                 tracker.open();
-                IGDBRunControl runControl = (IGDBRunControl) tracker.getService();
-                if (runControl != null) {
-                    runControl.getThreadData((IMIExecutionDMContext) thread, new DataRequestMonitor<IGDBThreadData>(
+                IProcesses procService = (IProcesses) tracker.getService();
+                if (procService != null) {
+                    IThreadDMContext threadDmc = DMContexts.getAncestorOfType(thread, IThreadDMContext.class);
+                	procService.getExecutionData(threadDmc, new DataRequestMonitor<IThreadDMData>(
+              			// Is it ok to use the ImmediateExecutor here?
                         ImmediateExecutor.getInstance(), rm) {
                         @Override
                         protected void handleSuccess() {
@@ -513,7 +516,7 @@ public class GdbThreadFilterEditor {
                         }
                     });
                 } else {
-                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "IProcesses service not accessible.")); //$NON-NLS-1$
                     rm.done();
                 }
                 tracker.close();

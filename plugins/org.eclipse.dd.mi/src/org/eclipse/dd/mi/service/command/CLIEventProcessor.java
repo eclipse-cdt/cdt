@@ -22,6 +22,7 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
@@ -54,7 +55,7 @@ public class CLIEventProcessor
 {
     private final AbstractMIControl fCommandControl;
     private MIInferiorProcess fInferior;
-    private final IContainerDMContext fContainerDmc;
+    private final MIControlDMContext fControlDmc;
     private final List<Object> fEventList = new LinkedList<Object>();
     
     // Last Thread ID created 
@@ -65,7 +66,7 @@ public class CLIEventProcessor
     public CLIEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
         fCommandControl = connection;
         fInferior = inferior;
-        fContainerDmc = containerDmc;
+        fControlDmc = DMContexts.getAncestorOfType(containerDmc, MIControlDMContext.class);
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addCommandListener(this);
         connection.addEventListener(this);
@@ -123,7 +124,8 @@ public class CLIEventProcessor
             	Matcher matcher = pattern.matcher(exec.getCString());
             	if (matcher.find()) {
                     MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, ""); //$NON-NLS-1$
+                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
             		MIEvent<?> e =  new MIThreadCreatedEvent(processContainerDmc, ++fLastThreadId);
             		fCommandControl.getSession().dispatchEvent(e, fCommandControl.getProperties());
             	}
@@ -145,7 +147,8 @@ public class CLIEventProcessor
                 if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
                     fInferior.setState(MIInferiorProcess.State.STOPPED);
                     MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, ""); //$NON-NLS-1$
+                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
                     fCommandControl.getSession().dispatchEvent(
                         MIErrorEvent.parse(processContainerDmc, rr.getToken(), rr.getMIResults(), null),
                         fCommandControl.getProperties());
@@ -157,7 +160,7 @@ public class CLIEventProcessor
 
     private void processStateChanges(CLICommand<? extends ICommandResult> cmd) {
         String operation = cmd.getOperation().trim();
-        // In refactoring we are no longer genwerating the token id as
+        // In refactoring we are no longer generating the token id as
         // part of the command. It is passed here and stored away  and
         // then never really used. So it has just been changed to 0.
         processStateChanges(0, operation);
@@ -166,7 +169,7 @@ public class CLIEventProcessor
     private void processStateChanges(MIInterpreterExecConsole<? extends ICommandResult> exec) {
         String[] operations = exec.getParameters();
         if (operations != null && operations.length > 0) {
-        	// In refactoring we are no longer genwerating the token id as
+        	// In refactoring we are no longer generating the token id as
             // part of the command. It is passed here and stored away  and
             // then never really used. So it has just been changed to 0.
             processStateChanges(0, operations[0]);
@@ -188,7 +191,8 @@ public class CLIEventProcessor
         if (type != -1) {
             // if it was a step instruction set state running
             MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
-            IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, ""); //$NON-NLS-1$
+            IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+            IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
             MIEvent<?> event = new MIRunningEvent(processContainerDmc, token, type);
             fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         }

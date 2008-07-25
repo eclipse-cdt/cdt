@@ -14,6 +14,8 @@ package org.eclipse.dd.mi.service.command;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
@@ -77,7 +79,7 @@ public class MIRunControlEventProcessor
      * Container context used as the context for the run control events generated
      * by this processor.
      */
-    private final IContainerDMContext fContainerDmc; 
+    private final MIControlDMContext fControlDmc; 
     
     private final DsfServicesTracker fServicesTracker;
     
@@ -89,7 +91,7 @@ public class MIRunControlEventProcessor
      */
     public MIRunControlEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc) {
         fCommandControl = connection;
-        fContainerDmc = containerDmc;
+        fControlDmc = DMContexts.getAncestorOfType(containerDmc, MIControlDMContext.class);
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addEventListener(this);
         connection.addCommandListener(this);
@@ -171,10 +173,8 @@ public class MIRunControlEventProcessor
     				}
 
     		    	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
-    		    	IContainerDMContext processContainerDmc = fContainerDmc;
-    		    	if (procService != null && groupId != null) {
-    		    		processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, groupId);
-    		    	}
+    		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+    		    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
     		    	MIEvent<?> event = null;
     				if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
@@ -216,20 +216,18 @@ public class MIRunControlEventProcessor
     	IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
     	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
 
-    	IExecutionDMContext execDmc = fContainerDmc;
-    	if (procService != null && groupId != null) {
-    		IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, groupId);
+    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
-    		execDmc = processContainerDmc;
-    		if (runControl != null && threadId != null) {
-    			int threadIdInt = -1;
-    			try {
-    				threadIdInt = Integer.parseInt(threadId);
-    			} catch (NumberFormatException e) {
-    			}
-    			if (threadIdInt != -1) {
-    				execDmc = runControl.createMIExecutionContext(processContainerDmc, threadIdInt);
-    			}
+    	IExecutionDMContext execDmc = processContainerDmc;
+    	if (runControl != null && threadId != null) {
+    		int threadIdInt = -1;
+    		try {
+    			threadIdInt = Integer.parseInt(threadId);
+    		} catch (NumberFormatException e) {
+    		}
+    		if (threadIdInt != -1) {
+    			execDmc = runControl.createMIExecutionContext(processContainerDmc, threadIdInt);
     		}
     	}
     	
@@ -300,7 +298,8 @@ public class MIRunControlEventProcessor
                 else                                           { type = MIRunningEvent.CONTINUE; }
 
                 MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
-                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(fContainerDmc, ""); //$NON-NLS-1$
+                IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
 
                 fCommandControl.getSession().dispatchEvent(
                 		new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());

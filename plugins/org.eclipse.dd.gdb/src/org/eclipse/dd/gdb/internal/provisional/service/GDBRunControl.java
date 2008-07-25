@@ -24,6 +24,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
@@ -36,14 +37,14 @@ import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
 
-public class GDBRunControl extends MIRunControl implements IGDBRunControl {
+public class GDBRunControl extends MIRunControl {
 
 	/**
      * Implement a custom execution data for threads in order to provide additional 
      * information.  This object can be made separate from IExecutionDMData after
      * the deprecated method: IDMService.getModelData() is no longer used.  
      */
-    public static class GDBThreadData implements IGDBThreadData {
+    public static class GDBThreadData {
         private final String fId;
         private final String fName;
 
@@ -65,7 +66,7 @@ public class GDBRunControl extends MIRunControl implements IGDBRunControl {
      * information.  This object can be made separate from IExecutionDMData after
      * the deprecated method: IDMService.getModelData() is no longer used.  
      */
-    public static class GDBProcessData implements IGDBProcessData {
+    public static class GDBProcessData {
         private final String fName;
         
         GDBProcessData(String name) {
@@ -102,7 +103,7 @@ public class GDBRunControl extends MIRunControl implements IGDBRunControl {
         fGdb = getServicesTracker().getService(GDBControl.class);
         register(new String[]{IRunControl.class.getName(), 
         		IMIRunControl.class.getName(),  MIRunControl.class.getName(), 
-        		IGDBRunControl.class.getName(), GDBRunControl.class.getName()}, new Hashtable<String,String>());
+        		GDBRunControl.class.getName()}, new Hashtable<String,String>());
         requestMonitor.done();
     }
 
@@ -152,15 +153,16 @@ public class GDBRunControl extends MIRunControl implements IGDBRunControl {
 		super.getExecutionContexts(c, rm1);
     }
 
-	public void getProcessData(GDBControlDMContext gdbDmc, DataRequestMonitor<IGDBProcessData> rm) {
+	@Deprecated
+	public void getProcessData(GDBControlDMContext gdbDmc, DataRequestMonitor<GDBProcessData> rm) {
         rm.setData( new GDBProcessData(fGdb.getExecutablePath().lastSegment()) );
         rm.done();
 	}
 	
-	public void getThreadData(final IMIExecutionDMContext execDmc, final DataRequestMonitor<IGDBThreadData> rm) {
-        IContainerDMContext containerDmc = DMContexts.getAncestorOfType(execDmc, IContainerDMContext.class);
-        assert containerDmc != null; // Every exec context should have a container as an ancestor.
-        getCache().execute(new CLIInfoThreads(containerDmc),
+	@Deprecated
+	public void getThreadData(final IMIExecutionDMContext execDmc, final DataRequestMonitor<GDBThreadData> rm) {
+		IProcessDMContext prodDmc = DMContexts.getAncestorOfType(execDmc, IProcessDMContext.class);
+        getCache().execute(new CLIInfoThreads(prodDmc),
                 new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
                     @Override
                     protected void handleSuccess() {

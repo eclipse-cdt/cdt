@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
- *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -62,7 +60,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -122,23 +119,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private Map storeMap = new HashMap();
 
 	private static PathEntryManager pathEntryManager;
-
-	protected ConcurrentLinkedQueue markerProblems = new ConcurrentLinkedQueue();
-	
-	//Setting up a generate markers job, it does not get scheduled
-	Job markerTask = new GenerateMarkersJob("PathEntry Marker Job"); //$NON-NLS-1$
-
 	private PathEntryManager() {
-	}
-
-	private class PathEntryProblem {
-		IProject project;
-		ICModelStatus[] problems;
-		
-		public PathEntryProblem(IProject project, ICModelStatus[] problems) {
-			this.project = project;
-			this.problems = problems;
-		}		
 	}
 
 	private class PathEntryContainerLock implements IPathEntryContainer {
@@ -592,7 +573,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				problemList.toArray(problems);
 				IProject project = cproject.getProject();
 				if (PathEntryUtil.hasPathEntryProblemMarkersChange(project, problems)) {
-					addProblemMarkers(project, problems);
+					generateMarkers(project, problems);
 				}
 			}
 
@@ -1002,36 +983,38 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 	
-	/**
-	 * Collects path entry errors for each project and generate error markers for these errors
-	 * @param project - Project with path entry errors
-	 * @param problems - The path entry errors associated with the project
-	 */
-	public void addProblemMarkers(final IProject project, final ICModelStatus[] problems) {
-		PathEntryProblem problem = new PathEntryProblem(project, problems);
-		//queue up the problems to be logged
-		markerProblems.add(problem);
-		//generate the error markers
-		markerTask.schedule();
-	}
-
-	private class GenerateMarkersJob extends WorkspaceJob {
-		public GenerateMarkersJob(String name) {
-			super(name);
-		}
-
-		public IStatus runInWorkspace(IProgressMonitor monitor) {								
-			while (markerProblems.peek() != null) {
-				PathEntryProblem problem = (PathEntryProblem) markerProblems.poll();
-				IProject project = problem.project;
-				ICModelStatus[] problems = problem.problems;
-				PathEntryUtil.flushPathEntryProblemMarkers(project);
-				for (int i = 0; i < problems.length; ++i) {
-					PathEntryUtil.createPathEntryProblemMarker(project, problems[i]);
+	public void generateMarkers(final IProject project, final ICModelStatus[] problems) {
+		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
+			
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
+						
+						/* (non-Javadoc)
+						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						public void run(IProgressMonitor mon) throws CoreException {
+							PathEntryUtil.flushPathEntryProblemMarkers(project);
+							for (int i = 0; i < problems.length; ++i) {
+								PathEntryUtil.createPathEntryProblemMarker(project, problems[i]);
+							}
+						}
+					}, null);
+				} catch (CoreException e) {
+					return e.getStatus();
 				}
+
+				return Status.OK_STATUS;
 			}
-			return Status.OK_STATUS;
-		}
+		};
+		ISchedulingRule rule = project.getWorkspace().getRuleFactory().markerRule(project);
+		markerTask.setRule(rule);
+		markerTask.schedule();
 	}
 	
 	private boolean needDelta(ICProject cproject){
@@ -1342,7 +1325,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								ICModelStatus[] problems = new ICModelStatus[problemList.size()];
 								problemList.toArray(problems);
 								if (PathEntryUtil.hasPathEntryProblemMarkersChange(project, problems)) {
-									addProblemMarkers(project, problems);
+									generateMarkers(project, problems);
 								}
 							}
 						} catch (CoreException e) {

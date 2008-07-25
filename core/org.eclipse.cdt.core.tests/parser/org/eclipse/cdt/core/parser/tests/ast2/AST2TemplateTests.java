@@ -2380,7 +2380,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// };
 	//
 	// void f(map<int>::value_type r) {}
-	public void _testRebindPattern_236197() throws Exception {
+	public void testRebindPattern_236197() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);

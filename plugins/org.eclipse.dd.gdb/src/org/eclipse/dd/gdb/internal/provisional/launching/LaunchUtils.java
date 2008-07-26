@@ -212,12 +212,12 @@ public class LaunchUtils {
         	InputStream stream = process.getInputStream();
         	Reader r = new InputStreamReader(stream);
         	BufferedReader reader = new BufferedReader(r);
-        	Pattern pattern = Pattern.compile(" gdb (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+        	Pattern pattern = Pattern.compile(" gdb( \\(GDB\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
         	while ((line = reader.readLine()) != null) {
         		Matcher matcher = pattern.matcher(line);
         		if (matcher.find()) {
-        			version = matcher.group(1);
+        			version = matcher.group(2);
         		}
         	}
         } catch (IOException e) {

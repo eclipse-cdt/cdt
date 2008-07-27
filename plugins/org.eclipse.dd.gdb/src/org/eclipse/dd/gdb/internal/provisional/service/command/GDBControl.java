@@ -103,7 +103,7 @@ public class GDBControl extends AbstractMIControl {
     private IPath fExecPath; 
     private Process fProcess;
     private int fGDBExitValue;
-    final private int fGDBLaunchTimeout;
+    private int fGDBLaunchTimeout = 30;
     
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
@@ -112,6 +112,22 @@ public class GDBControl extends AbstractMIControl {
     
     private PTY fPty;
     
+    public GDBControl(DsfSession session) {
+        super(session);
+        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void setGdbPath(IPath path) { fGdbPath = path; }
+
+    public void setExecPath(IPath path) { fExecPath = path; }
+
+    public void setSessionType(SessionType type) { fSessionType = type; }
+
+    public void setAttach(boolean attach) { fAttach = attach; }
+
+    public void setLaunchTimeout(int timeout) { fGDBLaunchTimeout = timeout; }
+
+    @Deprecated
     public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType sessionType, boolean attach, int gdbLaunchTimeout) {
         super(session);
         fSessionType = sessionType;

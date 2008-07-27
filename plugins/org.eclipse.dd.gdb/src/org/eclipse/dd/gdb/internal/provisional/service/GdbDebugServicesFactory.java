@@ -22,7 +22,9 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
@@ -35,10 +37,14 @@ import org.eclipse.dd.mi.service.MIStack;
 
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
+	private final String fVersion;
+	
 	public GdbDebugServicesFactory(String version) {
+		fVersion = version;
 	}
 	
-
+	public String getVersion() { return fVersion; }
+	
 	@Override
     @SuppressWarnings("unchecked")
     public <V> V createService(DsfSession session, Class<V> clazz) {
@@ -49,58 +55,62 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
         return super.createService(session, clazz);
 	}
 
-	@Override
-	protected IDisassembly createDisassemblyService(DsfSession session) {
-		return new MIDisassembly(session);
+	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
+		return new MIBreakpointsManager(session, CDebugCorePlugin.PLUGIN_ID);
 	}
-	
-	@Override
-	protected IRegisters createRegistersService(DsfSession session) {
-		return new MIRegisters(session);
-	}
-		
+
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
 		return new MIBreakpoints(session);
 	}
 	
 	@Override
-	protected ISourceLookup createSourceLookupService(DsfSession session) {
-		return new CSourceLookup(session);
+	protected ICommandControl createCommandControl(DsfSession session) {	
+		return new GDBControl(session);
+	}
+
+	@Override
+	protected IDisassembly createDisassemblyService(DsfSession session) {
+		return new MIDisassembly(session);
 	}
 	
 	@Override
 	protected IExpressions createExpressionService(DsfSession session) {
 		return new ExpressionService(session);
 	}
+
+	@Override
+	protected IMemory createMemoryService(DsfSession session) {
+		return new MIMemory(session);
+	}
+
+	@Override
+	protected IModules createModulesService(DsfSession session) {
+		return new MIModules(session);
+	}
+		
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+		return new GDBProcesses(session);
+	}
+
+	@Override
+	protected IRegisters createRegistersService(DsfSession session) {
+		return new MIRegisters(session);
+	}
+
+	@Override
+	protected IRunControl createRunControlService(DsfSession session) {
+		return new GDBRunControl(session);
+	}
+
+	@Override
+	protected ISourceLookup createSourceLookupService(DsfSession session) {
+		return new CSourceLookup(session);
+	}
 	
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStack(session);
 	}
-	
-	@Override
-	protected IModules createModulesService(DsfSession session) {
-		return new MIModules(session);
-	}
-	
-	@Override
-	protected IMemory createMemoryService(DsfSession session) {
-		return new MIMemory(session);
-	}
-	
-	@Override
-	protected IRunControl createRunControlService(DsfSession session) {
-		return new GDBRunControl(session);
-	}
-	
-	@Override
-	protected IProcesses createProcessesService(DsfSession session) {
-		return new GDBProcesses(session);
-	}
-	
-	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
-		return new MIBreakpointsManager(session, CDebugCorePlugin.PLUGIN_ID);
-	}
-
 }

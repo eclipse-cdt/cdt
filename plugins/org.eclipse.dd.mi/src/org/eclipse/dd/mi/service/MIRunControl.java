@@ -303,7 +303,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
 	
-	private static final int DEFAULT_THREAD_ID = 1;
+	private static final int FAKE_THREAD_ID = 0;
 
     public MIRunControl(DsfSession session) {
         super(session);
@@ -655,9 +655,11 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 
 	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerCtx, MIThreadListIdsInfo info) {
 		if (info.getThreadIds().length == 0) {
-			//Main thread always exist even if it is not reported by GDB.
-			//So create thread-id= 0 when no thread is reported
-			return new IMIExecutionDMContext[]{createMIExecutionContext(containerCtx, DEFAULT_THREAD_ID)};
+			// Main thread always exist even if it is not reported by GDB.
+			// So create thread-id = 0 when no thread is reported.
+			// This hack is necessary to prevent AbstractMIControl from issuing a thread-select
+			// because it doesn't work if the application was not compiled with pthread.
+			return new IMIExecutionDMContext[]{new MIExecutionDMC(getSession().getId(), containerCtx, FAKE_THREAD_ID)};
 		} else {
 			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getThreadIds().length];
 			for (int i = 0; i < info.getThreadIds().length; i++) {

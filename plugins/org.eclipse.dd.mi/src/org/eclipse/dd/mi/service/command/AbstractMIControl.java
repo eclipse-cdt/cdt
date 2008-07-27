@@ -259,7 +259,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 				if (runControl != null && execDmc != null && runControl.isSuspended(execDmc)) {
 			    	// Before the command is sent, Check the Thread Id and send it to 
 			    	// the queue only if the id has been changed.
-			    	if (targetThread != -1 && targetThread != fCurrentThreadId) {
+			    	if (targetThread > 0 && targetThread != fCurrentThreadId) {
 			    		fCurrentThreadId = targetThread;
 			    		resetCurrentStackLevel();
 			    		CommandHandle cmdHandle = new CommandHandle(new MIThreadSelect(execDmc), null);

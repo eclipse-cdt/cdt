@@ -103,6 +103,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
             fThreadId = threadId;
         }
 
+        @Deprecated
 		protected MIExecutionDMC(String sessionId, IContainerDMContext containerDmc, int threadId) {
 			super(sessionId, 
 				  containerDmc == null ? new IDMContext[0]
@@ -659,7 +660,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 			// So create thread-id = 0 when no thread is reported.
 			// This hack is necessary to prevent AbstractMIControl from issuing a thread-select
 			// because it doesn't work if the application was not compiled with pthread.
-			return new IMIExecutionDMContext[]{new MIExecutionDMC(getSession().getId(), containerCtx, FAKE_THREAD_ID)};
+			return new IMIExecutionDMContext[]{createMIExecutionContext(containerCtx, FAKE_THREAD_ID)};
 		} else {
 			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getThreadIds().length];
 			for (int i = 0; i < info.getThreadIds().length; i++) {

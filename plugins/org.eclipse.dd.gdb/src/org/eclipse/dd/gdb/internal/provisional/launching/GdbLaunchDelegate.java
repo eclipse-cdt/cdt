@@ -56,7 +56,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     implements ILaunchConfigurationDelegate2
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.dd.gdb"; //$NON-NLS-1$
-        
+
+    private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
 	private boolean isNonStopSession = false;
 
 	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
@@ -107,8 +108,15 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	
         monitor.worked( 1 );
 
-        launch.setServiceFactory(newServiceFactory(LaunchUtils.getGDBVersion(config)));
+        String gdbVersion = LaunchUtils.getGDBVersion(config);
         
+        // First make sure non-stop is supported, if the user want to use this mode
+        if (isNonStopSession && !isNonStopSupported(gdbVersion)) {
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
+        }
+
+        launch.setServiceFactory(newServiceFactory(gdbVersion));
+
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
             new ServicesLaunchSequence(launch.getSession(), launch, exePath, sessionType, attach);
@@ -328,10 +336,16 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		return false;
 	}
 	
+	private boolean isNonStopSupported(String version) {
+		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	private IDsfDebugServicesFactory newServiceFactory(String version) {
 
-		// TODO: Fix version number once non-stop GDB is delivered
-		if (isNonStopSession && version.startsWith("6.8.50.20080327")) { //$NON-NLS-1$
+		if (isNonStopSession && isNonStopSupported(version)) {
 			return new GdbDebugServicesFactoryNS(version);
 		}
 

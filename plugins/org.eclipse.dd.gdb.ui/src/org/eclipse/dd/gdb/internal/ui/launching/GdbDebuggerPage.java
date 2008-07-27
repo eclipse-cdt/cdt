@@ -264,7 +264,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
 		// Button fNonStopButton = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString( "GDBDebuggerPage.15") ); //$NON-NLS-1$
 		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.13")); //$NON-NLS-1$
-		fNonStopCheckBox.setEnabled(false);
 		fNonStopCheckBox.addSelectionListener( new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

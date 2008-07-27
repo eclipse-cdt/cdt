@@ -53,9 +53,11 @@ import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSysroot;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
+import org.eclipse.dd.mi.service.command.commands.RawCommand;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
@@ -68,13 +70,22 @@ public class FinalLaunchSequence extends Sequence {
          */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
-            fCommandControl = tracker.getService(GDBControl.class);
-            fProcService = tracker.getService(GDBProcesses.class);
+            fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
+            requestMonitor.done();
+        }
+        @Override
+        public void rollBack(RequestMonitor requestMonitor) {
+            if (fTracker != null) fTracker.dispose();
+            fTracker = null;
+            requestMonitor.done();
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fCommandControl = fTracker.getService(GDBControl.class);
+            fProcService = fTracker.getService(GDBProcesses.class);
             if (fCommandControl == null || fProcService == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
             }
-            tracker.dispose();
 
             requestMonitor.done();
         }},
@@ -209,6 +220,44 @@ public class FinalLaunchSequence extends Sequence {
         		requestMonitor.done();
         	}
         }},
+    	/*
+    	 * Enable non-stop mode if necessary
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	boolean isNonStop = false;
+    		try {
+    			isNonStop = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+                        IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+        	} catch (CoreException e) {    		
+        	}
+
+        	// GDBs that don't support non-stop don't allow you to set it to false.
+        	// We really should set it to false when GDB supports it though.
+        	// Something to fix later.
+        	if (isNonStop) {
+        		// The two raw commands should not be necessary in the official GDB release
+        		fCommandControl.queueCommand(
+        				new RawCommand(fCommandControl.getControlDMContext(), "maint set linux-async 1"), //$NON-NLS-1$
+        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+        					@Override
+        					protected void handleSuccess() {
+        						fCommandControl.queueCommand(
+        								new RawCommand(fCommandControl.getControlDMContext(), "set breakpoint always-inserted 1"),  //$NON-NLS-1$ 
+        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+        									@Override
+        									protected void handleSuccess() {
+        										fCommandControl.queueCommand(
+        												new MIGDBSetNonStop(fCommandControl.getControlDMContext(), true), 
+        												new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        									}
+        								});
+        					}
+        				});
+        	} else {
+        		requestMonitor.done();
+        	}
+        }},        
         /*
          * Tell GDB to automatically load or not the shared library symbols
          */
@@ -263,9 +312,7 @@ public class FinalLaunchSequence extends Sequence {
     	 */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
-            CSourceLookup sourceLookup = tracker.getService(CSourceLookup.class);
-            tracker.dispose();
+            CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
 
             CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
             sourceLookup.setSourceLookupPath(fCommandControl.getGDBDMContext(), 
@@ -482,9 +529,7 @@ public class FinalLaunchSequence extends Sequence {
          */
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-            DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
-            MIBreakpointsManager bpmService = tracker.getService(MIBreakpointsManager.class);
-            tracker.dispose();
+            MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
         	bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
         }},
         /*
@@ -496,6 +541,17 @@ public class FinalLaunchSequence extends Sequence {
             	fCommandControl.start(fLaunch, requestMonitor);
             }
         },
+        /*
+         * Cleanup
+         */
+        new Step() {
+            @Override
+            public void execute(final RequestMonitor requestMonitor) {
+            	fTracker.dispose();
+                fTracker = null;
+                requestMonitor.done();
+            }
+        },
     };
 
     GdbLaunch fLaunch;
@@ -504,6 +560,7 @@ public class FinalLaunchSequence extends Sequence {
 
     GDBControl fCommandControl;
     GDBProcesses fProcService;
+    DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach) {
         super(executor);

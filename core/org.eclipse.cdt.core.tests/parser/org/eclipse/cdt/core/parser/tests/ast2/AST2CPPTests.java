@@ -5951,5 +5951,18 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
-
+	
+	//	class A {
+	//		public:
+	//			void m(int c);
+	//	};
+	//
+	//	void test(char c) {
+	//		void (A::* ptr2mem)(char);
+	//		ptr2mem= reinterpret_cast<void (A::*)(char)>(&A::m);
+	//      ptr2mem= (void (A::*)(int))(0); 
+	//	}
+	public void testTypeIdForPtrToMember_Bug242197() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
 }

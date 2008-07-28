@@ -35,115 +35,114 @@ public final class CProjectDescriptionEvent {
 			ICDescriptionDelta delta,
 			ICProjectDescription newDes,
 			ICProjectDescription oldDes,
-			ICProjectDescription appliedDes){
+			ICProjectDescription appliedDes) {
 		fType = type;
 		fProjDelta = delta;
 		fNewDescription = newDes;
 		fOldDescription = oldDes;
 		fAppliedDescription = appliedDes;
-		if(fNewDescription != null){
+		if (fNewDescription != null) {
 			fProject = fNewDescription.getProject();
-		} else if(fOldDescription != null){
+		} else if (fOldDescription != null) {
 			fProject = fOldDescription.getProject();
 		}
 	}
 	
-	public IProject getProject(){
+	public IProject getProject() {
 		return fProject;
 	}
 
-	public int getEventType(){
+	public int getEventType() {
 		return fType;
 	}
 	
-	public ICDescriptionDelta getProjectDelta(){
+	public ICDescriptionDelta getProjectDelta() {
 		return fProjDelta;
 	}
 	
-	public ICDescriptionDelta getActiveCfgDelta(){
-		if(fActiveCfgDelta == null){
+	public ICDescriptionDelta getActiveCfgDelta() {
+		if (fActiveCfgDelta == null) {
 			fActiveCfgDelta = getDelta(true);
 		}
 		return fActiveCfgDelta;
 	}
 
-	public ICDescriptionDelta getDefaultSettingCfgDelta(){
-		if(fIndexCfgDelta == null){
+	public ICDescriptionDelta getDefaultSettingCfgDelta() {
+		if (fIndexCfgDelta == null) {
 			fIndexCfgDelta = getDelta(false);
 		}
 		return fIndexCfgDelta;
 	}
 	
-	private ICDescriptionDelta getDelta(boolean active){
+	private ICDescriptionDelta getDelta(boolean active) {
 		ICDescriptionDelta delta = null;
-		switch(getEventType()){
+		switch(getEventType()) {
 		case LOADED:
 		case ABOUT_TO_APPLY:
 		case APPLIED:
 		case DATA_APPLIED:
-			if(fProjDelta != null){
+			if (fProjDelta != null) {
 				ICProjectDescription oldDes = getOldCProjectDescription();
 				ICProjectDescription newDes = getNewCProjectDescription();
-				if(oldDes == null){
+				if (oldDes == null) {
 					ICConfigurationDescription cfg = getCfg(newDes, active);
-					if(cfg != null){
+					if (cfg != null) {
 						delta = findCfgDelta(fProjDelta, cfg.getId());
 					}
-				} else if(newDes == null){
+				} else if (newDes == null) {
 					ICConfigurationDescription cfg = getCfg(oldDes, active);
-					if(cfg != null){
+					if (cfg != null) {
 						delta = findCfgDelta(fProjDelta, cfg.getId());
 					}
 				} else {
 					ICConfigurationDescription newCfg = getCfg(newDes, active);
 					ICConfigurationDescription oldCfg = getCfg(oldDes, active);
-					if(oldCfg == null){
-						if(newCfg != null){
+					if (oldCfg == null) {
+						if (newCfg != null) {
 							delta = new CProjectDescriptionDelta(newCfg, null);
 						}
-					} else if (newCfg == null){
+					} else if (newCfg == null) {
 						delta = new CProjectDescriptionDelta(null, oldCfg);
+					} else if (newCfg.getId().equals(oldCfg.getId())) {
+						delta = findCfgDelta(fProjDelta, newCfg.getId());
 					} else {
-						if(newCfg.getId().equals(oldCfg.getId())){
-							delta = findCfgDelta(fProjDelta, newCfg.getId());
-						} else {
-							delta = CProjectDescriptionManager.getInstance().createDelta(newCfg, oldCfg);
-						}
+						delta = CProjectDescriptionManager.getInstance().createDelta(newCfg, oldCfg);
 					}
 				}
 			}
+			break;
+			
 		case COPY_CREATED:
 			break;
 		}
 		return delta;
 	}
 	
-	private ICConfigurationDescription getCfg(ICProjectDescription des, boolean active){
+	private ICConfigurationDescription getCfg(ICProjectDescription des, boolean active) {
 		return active ? des.getActiveConfiguration() : des.getDefaultSettingConfiguration(); 
 	}
 	
-	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id){
-		if(delta == null)
+	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id) {
+		if (delta == null)
 			return null;
 		ICDescriptionDelta children[] = delta.getChildren();
-		for(int i = 0; i < children.length; i++){
+		for (int i = 0; i < children.length; i++) {
 			ICSettingObject s = children[i].getNewSetting();
-			if(s != null && id.equals(s.getId()))
+			if (s != null && id.equals(s.getId()))
 				return children[i];
 		}
 		return null;
 	}
 
-	public ICProjectDescription getOldCProjectDescription(){
+	public ICProjectDescription getOldCProjectDescription() {
 		return fOldDescription;
 	}
 
-	public ICProjectDescription getNewCProjectDescription(){
+	public ICProjectDescription getNewCProjectDescription() {
 		return fNewDescription;
 	}
 
-	public ICProjectDescription getAppliedCProjectDescription(){
+	public ICProjectDescription getAppliedCProjectDescription() {
 		return fAppliedDescription;
 	}
-
 }

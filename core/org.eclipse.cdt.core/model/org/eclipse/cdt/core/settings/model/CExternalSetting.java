@@ -25,7 +25,7 @@ public final class CExternalSetting implements ICExternalSetting {
 	private String[] fExtensions;
 //	private String fId;
 
-	public CExternalSetting(ICExternalSetting base){
+	public CExternalSetting(ICExternalSetting base) {
 		fLanguageIds = base.getCompatibleLanguageIds();
 		fContentTypeIds = base.getCompatibleContentTypeIds();
 		fExtensions = base.getCompatibleExtensions();
@@ -34,28 +34,27 @@ public final class CExternalSetting implements ICExternalSetting {
 		initEntryStore(base.getEntries());
 	}
 
-	public CExternalSetting(ICExternalSetting base, ICSettingEntry entries[]){
+	public CExternalSetting(ICExternalSetting base, ICSettingEntry entries[]) {
 		this(base);
 		
 		initEntryStore(entries);
 	}
 
-	public CExternalSetting(String[] languageIDs,
-			String[] contentTypeIds, String[] extensions,
-			ICSettingEntry[] entries){
-		if(languageIDs != null)
-			fLanguageIds = (String[])languageIDs.clone();
-		if(contentTypeIds != null)
-			fContentTypeIds = (String[])contentTypeIds.clone();
-		if(extensions != null)
-			fExtensions = (String[])extensions.clone();
+	public CExternalSetting(String[] languageIDs, String[] contentTypeIds, String[] extensions,
+			ICSettingEntry[] entries) {
+		if (languageIDs != null)
+			fLanguageIds = languageIDs.clone();
+		if (contentTypeIds != null)
+			fContentTypeIds = contentTypeIds.clone();
+		if (extensions != null)
+			fExtensions = extensions.clone();
 		
 		initEntryStore(entries);
 	}
 	
-	private void initEntryStore(ICSettingEntry entries[]){
+	private void initEntryStore(ICSettingEntry entries[]) {
 		ICSettingEntry entry;
-		for(int i = 0; i < entries.length; i++){
+		for (int i = 0; i < entries.length; i++) {
 			entry = entries[i];
 			
 			addEntry(entry);
@@ -64,22 +63,22 @@ public final class CExternalSetting implements ICExternalSetting {
 //		trimToSize();
 	}
 	
-	private void addEntry(ICSettingEntry entry){
+	private void addEntry(ICSettingEntry entry) {
 		getEntriesSet(entry.getKind(), true).addEntry(entry);
 	}
 	
-/*	private void trimToSize(){
-		int kinds[] = KindBasedStore.getSupportedKinds();
-		for(int i = 0; i < kinds.length; i++){
-			CEntriesSet set = getEntriesSet(kinds[i], false);
-			if(set != null)
-				set.trimToSize();
-		}
-	}
-*/	
-	private CEntriesSet getEntriesSet(int kind, boolean create){
+//	private void trimToSize() {
+//		int kinds[] = KindBasedStore.getSupportedKinds();
+//		for (int i = 0; i < kinds.length; i++) {
+//			CEntriesSet set = getEntriesSet(kinds[i], false);
+//			if (set != null)
+//				set.trimToSize();
+//		}
+//	}
+	
+	private CEntriesSet getEntriesSet(int kind, boolean create) {
 		CEntriesSet set = (CEntriesSet)fStore.get(kind);
-		if(set == null && create){
+		if (set == null && create) {
 			set = new CEntriesSet();
 			fStore.put(kind, set);
 		}
@@ -87,43 +86,43 @@ public final class CExternalSetting implements ICExternalSetting {
 	}
 
 	public String[] getCompatibleContentTypeIds() {
-		if(fContentTypeIds != null)
-			return (String[])fContentTypeIds.clone();
+		if (fContentTypeIds != null)
+			return fContentTypeIds.clone();
 		return null;
 	}
 
 	public String[] getCompatibleExtensions() {
-		if(fExtensions != null)
-			return (String[])fExtensions.clone();
+		if (fExtensions != null)
+			return fExtensions.clone();
 		return null;
 	}
 
 	public String[] getCompatibleLanguageIds() {
-		if(fLanguageIds != null)
-			return (String[])fLanguageIds.clone();
+		if (fLanguageIds != null)
+			return fLanguageIds.clone();
 		return null;
 	}
 
 	public ICSettingEntry[] getEntries(int kind) {
 		CEntriesSet set = getEntriesSet(kind, false);
-		if(set != null)
+		if (set != null)
 			return set.toArray();
 		return new ICSettingEntry[0];
 	}
 
-//	public String getId(){
+//	public String getId() {
 //		return fId;
 //	}
 
 	public ICSettingEntry[] getEntries() {
-		List result = new ArrayList();
+		List<ICSettingEntry> result = new ArrayList<ICSettingEntry>();
 		int kinds[] = KindBasedStore.getAllEntryKinds();
-		for(int i = 0; i < kinds.length; i++){
+		for (int i = 0; i < kinds.length; i++) {
 			CEntriesSet list = getEntriesSet(kinds[i], false);
-			if(list != null)
+			if (list != null)
 				result.addAll(Arrays.asList(list.toArray()));
 		}
 		
-		return (ICSettingEntry[])result.toArray(new ICSettingEntry[result.size()]);
+		return result.toArray(new ICSettingEntry[result.size()]);
 	}
 }

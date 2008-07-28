@@ -2763,6 +2763,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 identifier= name();
+                if (identifier.getLastToken().getType() == IToken.tCOLONCOLON)
+                	throwBacktrack(identifier.getLastToken());
+                
                 endOffset= identifier.getLastToken().getEndOffset();
                 encounteredTypename= true;
                 break;

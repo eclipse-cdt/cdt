@@ -292,6 +292,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		// The exit command is called to force the remote shell to close after our command
 		// is executed. This is to prevent a running process at the end of the debug session.
 		// See Bug 158786.
+		monitor.beginTask("Executing "+ remoteCommandPath +" "+ arguments, 10);
 		String real_remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
 												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 		String remote_command = real_remote_command + CMD_DELIMITER + EXIT_CMD;
@@ -312,6 +313,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			abort(Messages.RemoteRunLaunchDelegate_7, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
+		monitor.done();
 		return p;
 
 	}

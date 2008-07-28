@@ -13,7 +13,10 @@
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
+import java.io.File;
+
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.core.runtime.CoreException;
@@ -82,8 +85,14 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 			name = (String)object;
 		}
 		Object[] foundElements = super.findSourceElements( object );
-		if (foundElements.length == 0 && (object instanceof IDebugElement))
-			foundElements = new Object[] { new CSourceNotFoundElement( (IDebugElement) object ) };
+		if (foundElements.length == 0 && (object instanceof IDebugElement)) {
+			// debugger could have resolved it itself and "name" is an absolute path
+			if (new File(name).exists()) {
+				foundElements = new AbsolutePathSourceContainer().findSourceElements(name);
+			} else {
+				foundElements = new Object[] { new CSourceNotFoundElement((IDebugElement) object) };
+			}
+		}
 		return foundElements;
 	}
 

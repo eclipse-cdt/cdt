@@ -5645,7 +5645,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// using ns::A;
 	//
 	// class B: public A {};
-	public void _testBug235196() throws Exception {
+	public void testBug235196() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
 	

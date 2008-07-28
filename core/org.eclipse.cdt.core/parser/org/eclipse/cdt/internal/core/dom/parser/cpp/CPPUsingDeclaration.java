@@ -28,14 +28,14 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding{
+public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding {
     private IASTName name;
-    private IBinding [] delegates;
+    private IBinding[] delegates;
     
-    public CPPUsingDeclaration( IASTName name, IBinding [] bindings ) {
-    	if( name instanceof ICPPASTQualifiedName ){
-    		IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-    		name = ns[ ns.length - 1 ];
+    public CPPUsingDeclaration(IASTName name, IBinding[] bindings) {
+    	if (name instanceof ICPPASTQualifiedName) {
+    		IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+    		name = ns[ns.length - 1];
     	}
         this.name = name;
         this.delegates= bindings;
@@ -46,17 +46,17 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     }
 
     public String[] getQualifiedName() {
-    	return CPPVisitor.getQualifiedName( this );
+    	return CPPVisitor.getQualifiedName(this);
     }
 
     public char[][] getQualifiedNameCharArray() {
-    	return CPPVisitor.getQualifiedNameCharArray( this );
+    	return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while (scope != null) {
+            if(scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -72,7 +72,7 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     }
 
     public IScope getScope() {
-        return CPPVisitor.getContainingScope( name.getParent() );
+        return CPPVisitor.getContainingScope(name.getParent());
     }
 
     public IASTNode[] getDeclarations() {
@@ -81,19 +81,19 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
 
     public IASTNode getDefinition() {
         IASTNode n = name.getParent();
-        if( n instanceof ICPPASTTemplateId )
+        if (n instanceof ICPPASTTemplateId)
             n = n.getParent();
             
         return n;
     }
 
-    public void addDefinition( IASTNode node ) {
+    public void addDefinition(IASTNode node) {
     }
 
-    public void addDeclaration( IASTNode node ) {
+    public void addDeclaration(IASTNode node) {
     }
 
-    public void removeDeclaration( IASTNode node ) {
+    public void removeDeclaration(IASTNode node) {
     }
 
 	public ILinkage getLinkage() {

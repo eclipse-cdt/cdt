@@ -1518,8 +1518,9 @@ public class CPPSemantics {
 	    		return null;
 	    	}
 	        if (candidate != null) {
-	        	if (candidate instanceof IType == false && candidate instanceof ICPPNamespace == false 
-	        			&& LookupData.typesOnly(name)) {
+	        	if (!(candidate instanceof IType) && !(candidate instanceof ICPPNamespace) &&
+	        			!(candidate instanceof ICPPUsingDeclaration) &&
+	        			LookupData.typesOnly(name)) {
 	        		return null;
 	        	}
 

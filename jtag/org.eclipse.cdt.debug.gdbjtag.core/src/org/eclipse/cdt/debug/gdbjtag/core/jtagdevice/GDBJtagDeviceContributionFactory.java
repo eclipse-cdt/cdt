@@ -55,6 +55,7 @@ public class GDBJtagDeviceContributionFactory {
 				adapter.setDeviceId(id);
 				adapter.setDeviceName(name);
 				adapter.setDeviceClassName(className);
+				adapter.setDeviceClassBundleName(configurationElement.getContributor().getName());
 				addContribution(adapter);
 			}
 		}

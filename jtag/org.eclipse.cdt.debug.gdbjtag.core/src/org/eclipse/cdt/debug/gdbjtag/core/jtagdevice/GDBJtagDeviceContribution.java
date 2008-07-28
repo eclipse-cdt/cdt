@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import org.eclipse.cdt.debug.gdbjtag.core.Activator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 
@@ -22,6 +23,7 @@ public class GDBJtagDeviceContribution {
 	private String deviceName;
 	private String deviceClassName;
 	private IGDBJtagDevice device;
+	private String deviceClassBundleName;
 
 	/**
 	 * @return the deviceId
@@ -64,13 +66,21 @@ public class GDBJtagDeviceContribution {
 	public void setDeviceClassName(String deviceClassName) {
 		this.deviceClassName = deviceClassName;
 	}
+
+	public String getDeviceClassBundleName() {
+		return deviceClassBundleName;
+	}
+
+	public void setDeviceClassBundleName(String deviceClassBundleName) {
+		this.deviceClassBundleName = deviceClassBundleName;
+	}
 	
 	public IGDBJtagDevice getDevice() throws NullPointerException {
 		if (device != null) 
 			return device;
 		Object o = null;
 		try {
-			o = Class.forName(getDeviceClassName()).newInstance();
+			o = Platform.getBundle(deviceClassBundleName).loadClass(deviceClassName).newInstance();
 		} catch (InstantiationException e) {
 			Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
 					DebugPlugin.INTERNAL_ERROR, "Error instantiating "

@@ -11,7 +11,6 @@
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  * Michael Scharf (Wing River) - [236458] Fix 168197 lost the last entry
- * Martin Oberhuber (Wing River) - [236458] Fix addition of the last history entry
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -148,19 +148,9 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		// add history entries separated by '\n'
 		// fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
 		//<J2ME CDC-1.1 Foundation-1.1 variant>
-		int i = 0;
-		int j = history.indexOf('\n');
-		while (j > i) {
-			fHistory.add(history.substring(i, j));
-			do {
-				j++;
-			} while (j < history.length() && history.charAt(j) == '\n');
-			i = j;
-			j = history.indexOf('\n', i);
-		}
-		if (i < history.length()) {
-			fHistory.add(history.substring(i));
-		}
+		StringTokenizer tok=new StringTokenizer(history,"\n"); //$NON-NLS-1$
+		while(tok.hasMoreElements())
+			fHistory.add(tok.nextElement());
 		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 	/**

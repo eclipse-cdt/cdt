@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     Anna Dushistova(MontaVista) - Hardware Debugging: Host name or ip address not saving in the debug configuration, bug 241279
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -65,6 +66,8 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	private Text ipAddress;
 	private Text portNumber;
 	private Combo jtagDevice;
+	private String savedJtagDevice;
+
 	
 	public String getName() {
 		return TAB_NAME;
@@ -302,24 +305,26 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	 * @param text
 	 */
 	protected void updateDeviceIpPort(String selectedDeviceName) {
-		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
-			getInstance().getGDBJtagDeviceContribution();
+		if (selectedDeviceName.equals(savedJtagDevice)) {
+			return;
+		}
+		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
+				.getGDBJtagDeviceContribution();
 		IGDBJtagDevice selectedDevice = null;
 		for (int i = 0; i < availableDevices.length; i++) {
 			String name = availableDevices[i].getDeviceName();
 			if (name.equals(selectedDeviceName)) {
-				try {
-					selectedDevice = availableDevices[i].getDevice();
-				} catch (NullPointerException e) {
-					return;
+				selectedDevice = availableDevices[i].getDevice();
+				if (selectedDevice != null) {
+					String ip = selectedDevice.getDefaultIpAddress();
+					ipAddress.setText(ip);
+					String port = selectedDevice.getDefaultPortNumber();
+					portNumber.setText(port);
+					updateLaunchConfigurationDialog();
+					break;
 				}
-				break;
 			}
 		}
-		String ip = selectedDevice.getDefaultIpAddress();
-		ipAddress.setText(ip);
-		String port = selectedDevice.getDefaultPortNumber();
-		portNumber.setText(port);
 	}
 
 	private void useRemoteChanged() {
@@ -366,15 +371,16 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 			int portNumberAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 			portNumber.setText(String.valueOf(portNumberAttr));
 			
-			String jtagDeviceString = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+			savedJtagDevice = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
 			for (int i = 0; i < jtagDevice.getItemCount(); i++) {
-				if (jtagDevice.getItem(i).equals(jtagDeviceString)) {
+				if (jtagDevice.getItem(i).equals(savedJtagDevice)) {
 					jtagDevice.select(i);
 				}
 			}
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
+		
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -382,7 +388,8 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, commandFactory.getText());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, miProtocol.getText());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, verboseMode.getSelection());
-		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, jtagDevice.getText());
+		savedJtagDevice = jtagDevice.getText();
+		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, savedJtagDevice);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ipAddress.getText().trim());
 		try {

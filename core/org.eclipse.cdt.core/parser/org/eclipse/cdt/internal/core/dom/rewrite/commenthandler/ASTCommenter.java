@@ -15,21 +15,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
-import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * This is the starting point of the entire comment handling  process. The creation of the 

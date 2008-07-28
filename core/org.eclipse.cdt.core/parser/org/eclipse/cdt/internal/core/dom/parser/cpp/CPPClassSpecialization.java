@@ -309,4 +309,23 @@ public class CPPClassSpecialization extends CPPSpecialization implements ICPPCla
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
+
+
+	public boolean isAnonymous() throws DOMException {
+		if (getNameCharArray().length > 0) 
+			return false;
+		
+		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier(); 
+		if (spec == null) {
+			return getSpecializedBinding().isAnonymous();
+		}
+
+		IASTNode node= spec.getParent();
+		if (node instanceof IASTSimpleDeclaration) {
+			if (((IASTSimpleDeclaration) node).getDeclarators().length == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

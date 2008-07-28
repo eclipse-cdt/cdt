@@ -343,4 +343,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			result+=" <"+map.keyAt(i)+"=>"+getArgumentMap().getAt(i)+">";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		return result;
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

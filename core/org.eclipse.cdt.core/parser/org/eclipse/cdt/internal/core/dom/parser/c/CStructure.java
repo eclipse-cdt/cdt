@@ -59,6 +59,9 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		public int getKey() throws DOMException {
 			throw new DOMException( this );
 		}
+		public boolean isAnonymous() throws DOMException {
+			throw new DOMException( this );
+		}
 	}
 
 	private IASTName [] declarations = null;
@@ -281,6 +284,29 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 				node= declarations[0];
 			}
 		}
-		return CVisitor.findEnclosingFunction(node); // local or global
+		IBinding result= CVisitor.findEnclosingFunction(node); // local or global
+		if (result != null)
+			return result;
+		
+		if (definition != null && isAnonymous()) {
+			return CVisitor.findDeclarationOwner(definition, false);
+		}
+		return null;
+	}
+	
+	public boolean isAnonymous() throws DOMException {
+		if (getNameCharArray().length > 0 || definition == null) 
+			return false;
+		
+		IASTCompositeTypeSpecifier spec= ((IASTCompositeTypeSpecifier)definition.getParent());
+		if (spec != null) {
+			IASTNode node= spec.getParent();
+			if (node instanceof IASTSimpleDeclaration) {
+				if (((IASTSimpleDeclaration) node).getDeclarators().length == 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

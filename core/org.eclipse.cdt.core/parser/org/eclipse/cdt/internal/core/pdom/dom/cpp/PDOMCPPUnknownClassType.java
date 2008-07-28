@@ -270,4 +270,8 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

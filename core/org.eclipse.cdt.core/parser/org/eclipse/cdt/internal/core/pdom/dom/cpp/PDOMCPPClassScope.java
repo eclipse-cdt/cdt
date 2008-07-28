@@ -167,8 +167,11 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 						}
 						list.add(binding);
 
-						if (binding instanceof ICompositeType && nchars.length > 0 && nchars[0] == '{') {
-							return true; // visit children
+						try {
+							if (binding instanceof ICompositeType && ((ICompositeType) binding).isAnonymous()) {
+								return true; // visit children
+							}
+						} catch (DOMException e) {
 						}
 					}
 					return false;

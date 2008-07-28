@@ -661,7 +661,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//void f() {e/*cursor*/
 	public void testEnums_FunctionScope() throws Exception {
 		final String[] expected= {
-				"e11", "e12"
+				"e11", "e12", "e21", "e22"
 		};
 		assertCompletionResults(expected);
 	}
@@ -950,7 +950,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	}
 	
 	//  void test() {struct s206450 x; x./*cursor*/
-	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
+	public void testNestedAnonymousStructs_Bug206450() throws Exception {
 		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b"};
 		assertCompletionResults(expected);
 	}

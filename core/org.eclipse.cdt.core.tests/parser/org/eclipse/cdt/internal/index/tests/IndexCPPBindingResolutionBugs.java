@@ -728,12 +728,16 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    struct {
 	//       int var1;
 	//    };
+	//    struct {
+	//       int var2;
+	//    } hide;
 	// };
 	  
 	// #include "header.h"
 	// void test() {
 	//    union outer x;
 	//    x.var1=1;
+	//    x.var2= 2; // must be a problem
 	// }
 	public void testAnonymousStruct_Bug216791() throws DOMException {
 		// struct
@@ -743,6 +747,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IScope outer= f.getCompositeTypeOwner().getScope();
 		assertTrue(outer instanceof ICPPClassScope);
 		assertEquals("outer", outer.getScopeName().toString());
+		
+		getProblemFromASTName("var2=", 4);
 	}
 	
 	// namespace ns {

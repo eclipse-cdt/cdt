@@ -53,12 +53,14 @@ import org.eclipse.core.runtime.Status;
 public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
 	private static final int KEY = MEMBERLIST + 4; // byte
+	private static final int ANONYMOUS= MEMBERLIST + 5;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = MEMBERLIST + 6;
 	
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
 		super(pdom, parent, compType.getNameCharArray());		
 		setKind(compType);
+		setAnonymous(compType);
 		// linked list is initialized by malloc zeroing allocated storage
 	}
 
@@ -71,6 +73,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		if (newBinding instanceof ICompositeType) {
 			ICompositeType ct= (ICompositeType) newBinding;
 			setKind(ct);
+			setAnonymous(ct);
 			super.update(linkage, newBinding);
 		}
 	}
@@ -82,6 +85,15 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
+	
+	private void setAnonymous(ICompositeType ct) throws CoreException {
+		try {
+			pdom.getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+	}
+
 
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -107,6 +119,15 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 			return ICompositeType.k_struct; // or something
 		}
 	}
+	
+	public boolean isAnonymous() throws DOMException {
+		try {
+			return pdom.getDB().getByte(record + ANONYMOUS) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false; 
+		}
+	}
 
 	private static class GetFields implements IPDOMVisitor {
 		private List<IPDOMNode> fields = new ArrayList<IPDOMNode>();
@@ -115,6 +136,13 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 				IField field= (IField) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(field)) {
 					fields.add(node);
+				}
+			} else if (node instanceof ICompositeType) {
+				try {
+					if (((ICompositeType) node).isAnonymous()) {
+						return true; // visit children
+					}
+				} catch (DOMException e) {
 				}
 			}
 			return false;
@@ -151,11 +179,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 						throw new CoreException(Status.OK_STATUS);
 					}
 				}
-			}
-			else if (node instanceof ICompositeType) {
-				char[] nchars= ((ICompositeType) node).getNameCharArray();
-				if (nchars.length > 0 && nchars[0] == '{') {
-					return true; // visit children
+			} else if (node instanceof ICompositeType) {
+				try {
+					if (((ICompositeType) node).isAnonymous()) {
+						return true; // visit children
+					}
+				} catch (DOMException e) {
 				}
 			}
 			return false;

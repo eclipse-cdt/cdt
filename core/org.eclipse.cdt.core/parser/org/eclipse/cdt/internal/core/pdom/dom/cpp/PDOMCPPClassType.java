@@ -56,12 +56,14 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDOMMemberOwner {
 
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
+
+	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
+
+	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 8; // byte
+	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 9; // byte
 	
-	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
-	
-	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 10;
 
 	private ICPPClassScope fScope;
 
@@ -70,6 +72,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		super(pdom, parent, classType.getNameCharArray());
 
 		setKind(classType);
+		setAnonymous(classType);
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
@@ -82,6 +85,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		if (newBinding instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) newBinding;
 			setKind(ct);
+			setAnonymous(ct);
 			super.update(linkage, newBinding);
 		}
 	}
@@ -93,7 +97,15 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
-	
+
+	private void setAnonymous(ICPPClassType ct) throws CoreException {
+		try {
+			pdom.getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+	}
+
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_MEMBERS);
@@ -326,6 +338,15 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPClassType.k_class; // or something
+		}
+	}
+
+	public boolean isAnonymous() throws DOMException {
+		try {
+			return pdom.getDB().getByte(record + ANONYMOUS) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false; 
 		}
 	}
 

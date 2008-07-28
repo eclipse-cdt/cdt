@@ -135,4 +135,8 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
 	public IASTName getUnknownName() {
 		return ((ICPPUnknownClassType) rbinding).getUnknownName();
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

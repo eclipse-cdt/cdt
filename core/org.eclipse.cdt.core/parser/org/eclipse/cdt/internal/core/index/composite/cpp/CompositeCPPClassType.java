@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -173,5 +174,9 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	public boolean isSameType(IType type) {
 		return ((ICPPClassType)rbinding).isSameType(type);
+	}
+
+	public boolean isAnonymous() throws DOMException {
+		return ((ICPPClassType)rbinding).isAnonymous();
 	}
 }

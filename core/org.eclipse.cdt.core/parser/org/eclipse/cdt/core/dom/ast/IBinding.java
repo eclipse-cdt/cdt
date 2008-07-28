@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -53,8 +54,10 @@ public interface IBinding extends IAdaptable {
 	 * declared else where). 
 	 * <p> Possible owners are:
 	 * <br> {@link IFunction}: for parameters, local types, variables, enumerators, labels and using declarations;
-	 * <br> {@link ICompositeType}: for class-, struct- and union-members, even if the composite type is anonymous; 
+	 * <br> {@link ICPPClassType}: for class-, struct- and union-members, even if the composite type is anonymous; 
 	 * also for enumerators and using declarations;
+	 * <br> {@link ICompositeType}: for struct- and union-members, even if the composite type is anonymous; 
+	 * also for anonymous structs or unions found within another struct;
 	 * <br> {@link ICPPNamespace}: for global types, functions, variables, enumerators, namespaces and using declarations;
 	 * <br> <code>null</code>: for types, functions, variables, enumerators, namespaces and using declarations;
 	 * @since 5.1

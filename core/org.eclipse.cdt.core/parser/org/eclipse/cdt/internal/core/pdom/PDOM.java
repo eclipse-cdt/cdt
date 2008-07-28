@@ -177,6 +177,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  #61.0# - properly insert macro undef statements into macro-containers (bug 234591) - <<CDT 5.0>>
 	 *  
 	 *  70.0 - cleaned up templates, fixes bug 236197
+	 *  71.0 - proper support for anonymous unions, bug 206450
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

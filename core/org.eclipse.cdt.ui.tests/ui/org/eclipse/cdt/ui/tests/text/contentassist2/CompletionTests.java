@@ -1164,7 +1164,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	}
 	
 	//  void test() {struct s206450 x; x./*cursor*/
-	public void _testNestedAnonymousStructs_Bug206450() throws Exception {
+	public void testNestedAnonymousStructs_Bug206450() throws Exception {
 		final String[] expected= {"a1", "a2", "u1", "u2", "a4", "b", "s206450"};
 		assertCompletionResults(expected);
 	}

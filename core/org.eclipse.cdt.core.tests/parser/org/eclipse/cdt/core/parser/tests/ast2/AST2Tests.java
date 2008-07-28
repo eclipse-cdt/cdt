@@ -5244,4 +5244,22 @@ public class AST2Tests extends AST2BaseTest {
 			parseAndCheckBindings(getAboveComment(), lang, true);
 		}
 	}
+	
+	// struct Outer {
+	//    struct {int a1;}; 
+	//    struct {int a2;} a3;
+	// };
+	// void test() {
+	//    struct Outer o;
+	//    o.a1=0; o.a2=0; o.a3=0;
+	// }
+	public void testAnonymousUnionMember() throws Exception {
+		final boolean[] isCpps= {false, true};
+		for (boolean isCpp : isCpps) {
+			BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), isCpp);
+			bh.assertNonProblem("a1=", 2);
+			bh.assertProblem("a2=", 2);
+			bh.assertNonProblem("a3=", 2);
+		}
+	}
 }

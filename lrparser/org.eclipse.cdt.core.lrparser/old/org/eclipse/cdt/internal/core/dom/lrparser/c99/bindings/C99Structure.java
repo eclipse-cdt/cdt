@@ -154,4 +154,8 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		}
 		return null;
 	}
+
+	public boolean isAnonymous() {
+		return name == null || name.length() == 0;
+	}
 }

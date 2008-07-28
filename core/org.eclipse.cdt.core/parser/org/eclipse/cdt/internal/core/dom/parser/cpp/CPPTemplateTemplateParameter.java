@@ -223,4 +223,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

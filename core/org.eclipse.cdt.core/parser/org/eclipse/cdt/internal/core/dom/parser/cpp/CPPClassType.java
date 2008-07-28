@@ -138,6 +138,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public ICPPClassType[] getNestedClasses() throws DOMException {
 			throw new DOMException( this );
 		}
+		public boolean isAnonymous() throws DOMException {
+			throw new DOMException( this );
+		}
 	}
 
 	private class FindDefinitionAction extends CPPASTVisitor {
@@ -461,5 +464,21 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	public IBinding getOwner() throws DOMException {
 		return CPPVisitor.findDeclarationOwner(definition != null ? definition : declarations[0], true);
+	}
+	
+	public boolean isAnonymous() throws DOMException {
+		if (getNameCharArray().length > 0) 
+			return false;
+		
+		ICPPASTCompositeTypeSpecifier spec= getCompositeTypeSpecifier(); 
+		if (spec != null) {
+			IASTNode node= spec.getParent();
+			if (node instanceof IASTSimpleDeclaration) {
+				if (((IASTSimpleDeclaration) node).getDeclarators().length == 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

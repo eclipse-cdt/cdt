@@ -110,4 +110,8 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
+	
+	public boolean isAnonymous() {
+		return false;
+	}
 }

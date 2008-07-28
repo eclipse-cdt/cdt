@@ -233,4 +233,8 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			return IType.EMPTY_TYPE_ARRAY;
 		}
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

@@ -252,4 +252,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
+
+	public boolean isAnonymous() {
+		return false;
+	}
 }

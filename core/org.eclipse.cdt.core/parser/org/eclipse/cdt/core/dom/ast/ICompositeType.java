@@ -12,7 +12,9 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
- * @author Doug Schaefer
+ * Interface for all composite types: classes, structs or unions.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICompositeType extends IBinding, IType {
 
@@ -22,6 +24,18 @@ public interface ICompositeType extends IBinding, IType {
 	 *  what kind of composite type is this?
 	 */
 	public int getKey() throws DOMException;
+	
+	/**
+	 * Returns whether the type is anonymous or not. A type for which objects or 
+	 * pointers are declared is not considered an anonymous type.
+	 * <pre> struct Outer {
+	 *    struct {int a;}; // anonymous
+	 *    struct {int b;} c; // not anonymous
+	 * }
+	 * </pre>
+	 * @since 5.1
+	 */
+	boolean isAnonymous() throws DOMException;
 	
 	/**
 	 * Returns the fields for this type.

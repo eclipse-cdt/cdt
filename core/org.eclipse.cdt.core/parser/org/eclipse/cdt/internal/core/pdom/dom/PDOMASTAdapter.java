@@ -279,6 +279,10 @@ public class PDOMASTAdapter {
 		public IBinding getOwner() throws DOMException {
 			return fDelegate.getOwner();
 		}
+
+		public boolean isAnonymous() throws DOMException {
+			return fDelegate.isAnonymous();
+		}
 	}
 
 	private static class AnonymousCPPBinding implements ICPPBinding {
@@ -412,6 +416,10 @@ public class PDOMASTAdapter {
 
 		public boolean isSameType(IType type) {
 			return ((ICPPClassType) fDelegate).isSameType(type);
+		}
+
+		public boolean isAnonymous() throws DOMException {
+			return ((ICPPClassType) fDelegate).isAnonymous();
 		}
 	}
 

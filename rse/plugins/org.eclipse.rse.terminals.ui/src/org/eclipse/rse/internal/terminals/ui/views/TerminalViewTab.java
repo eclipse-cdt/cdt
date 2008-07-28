@@ -13,10 +13,11 @@
  *
  * Contributors:
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
- * Yu-Fen Kuo      (MontaVista)  - Adapted from CommandsViewWorkbook
- * Anna Dushistova (MontaVista)  - Adapted from CommandsViewWorkbook
- * Yu-Fen Kuo      (MontaVista)  - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Yu-Fen Kuo       (MontaVista) - Adapted from CommandsViewWorkbook
+ * Anna Dushistova  (MontaVista) - Adapted from CommandsViewWorkbook
+ * Yu-Fen Kuo       (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  * Martin Oberhuber (Wind River) - [227571] RSE Terminal should honor Encoding set on the IHost
+ * Michael Scharf   (Wind River) - [236203] [rseterminal] Potentially UI blocking code in TerminalViewTab.createTabItem
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -66,7 +67,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 public class TerminalViewTab extends Composite implements ITerminalListener{
 
     public static String DATA_KEY_CONTROL = "$_control_$"; //$NON-NLS-1$
-    private CTabFolder tabFolder;
+    private final CTabFolder tabFolder;
     private Menu menu;
     private boolean fMenuAboutToShow;
     private TerminalActionCopy fActionEditCopy;
@@ -78,6 +79,8 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
     private TerminalActionClearAll fActionEditClearAll;
 
     private TerminalActionSelectAll fActionEditSelectAll;
+	private String fInitialWorkingDirCmd;
+	private ITerminalViewControl fTerminalControl;
 
     protected class TerminalContextMenuHandler implements MenuListener,
             IMenuListener {
@@ -176,9 +179,9 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
 
         }
     }
-
+    
     public CTabItem createTabItem(IAdaptable root, String initialWorkingDirCmd) {
-
+    	fInitialWorkingDirCmd = initialWorkingDirCmd;
         CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
         setTabTitle(root, item);
 
@@ -191,22 +194,18 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
             IHost host = (IHost) root;
 
             ITerminalConnector connector = new RSETerminalConnector(host);
-            ITerminalViewControl terminalControl = TerminalViewControlFactory
+            fTerminalControl = TerminalViewControlFactory
                     .makeControl(this, c,
                             new ITerminalConnector[] { connector });
 			// Specify Encoding for Terminal
 			try {
-				terminalControl.setEncoding(host.getDefaultEncoding(true));
+				fTerminalControl.setEncoding(host.getDefaultEncoding(true));
 			} catch (UnsupportedEncodingException e) {
 				/* ignore and allow fallback to default encoding */
 			}
-            terminalControl.setConnector(connector);
-            terminalControl.connectTerminal();
-            if (initialWorkingDirCmd != null) {
-                while (!terminalControl.pasteString(initialWorkingDirCmd))
-                    ;
-            }
-            item.setData(DATA_KEY_CONTROL, terminalControl);
+            fTerminalControl.setConnector(connector);
+            fTerminalControl.connectTerminal();
+            item.setData(DATA_KEY_CONTROL, fTerminalControl);
         }
         item.setControl(c);
         tabFolder.setSelection(item);
@@ -338,8 +337,15 @@ public class TerminalViewTab extends Composite implements ITerminalListener{
                                     ISystemResourceChangeEvents.EVENT_REFRESH, terminalServiceSubSystem));
                         }
                     }
+                  	if(state == TerminalState.CONNECTED) {
+                		if(fInitialWorkingDirCmd != null) {
+                			fTerminalControl.pasteString(fInitialWorkingDirCmd);
+                			fInitialWorkingDirCmd = null;
+                		}
+              
+                	}
                 }
-            });
+             });
         }
 
     }

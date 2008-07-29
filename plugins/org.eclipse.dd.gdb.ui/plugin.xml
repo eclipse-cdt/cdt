@@ -65,13 +65,24 @@
             targetID="org.eclipse.debug.ui.DebugView">
          <action
                class="org.eclipse.dd.gdb.internal.ui.actions.ConnectActionDelegate"
-               enablesFor="9999"
                icon="icons/full/obj16/connect.gif"
                id="org.eclipse.dd.gdb.ui.connect"
                label="%action.connect.label"
                menubarPath="threadGroup"
                tooltip="%action.connect.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.dd.gdb.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
+         <visibility>
+            <pluginState
+                  id="org.eclipse.dd.gdb.ui"
+                  value="activated">
+            </pluginState>
+         </visibility>
       </viewerContribution>
    </extension>
    <extension
@@ -81,12 +92,17 @@
             targetID="org.eclipse.debug.ui.DebugView">
          <action
                class="org.eclipse.dd.gdb.internal.ui.actions.ConnectActionDelegate"
-               enablesFor="9999"
                icon="icons/full/obj16/connect.gif"
                id="org.eclipse.dd.gdb.ui.connect"
                label="%action.connect.label"
                toolbarPath="threadGroup"
                tooltip="%action.connect.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.dd.gdb.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </viewContribution>
    </extension>

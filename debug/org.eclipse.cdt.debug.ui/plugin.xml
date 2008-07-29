@@ -97,7 +97,7 @@
                relationship="stack">
          </view>
          <viewShortcut
-               id="org.eclipse.cdt.debug.internal.ui.views.executables.ExecutablesView">
+               id="org.eclipse.cdt.debug.ui.executablesView">
          </viewShortcut>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
@@ -1483,7 +1483,7 @@
             icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
       <sourceContainerPresentation
-            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.AbsolutePathSourceContainerBrowser "
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.AbsolutePathSourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.absolutePath"
             icon="icons/obj16/abspath_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.absolutePath"/>
@@ -1678,7 +1678,9 @@
              tooltip="%OpenDisassembly.tooltip">
           <visibleWhen
                 checkEnabled="false">
-             <iterate>
+             <iterate
+                   ifEmpty="false"
+                   operator="or">
                 <adapt
                       type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
                 </adapt>

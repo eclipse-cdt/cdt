@@ -805,4 +805,45 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveSpaceInParameterDecl_Bug241967() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//#define MY_MACRO int a; \
+	//    int b; \
+	//    int c();
+	//
+	//class asdf {
+	//		MY_MACRO
+	//
+	//public:
+	//		asdf();
+	//~asdf();
+	//};
+	
+	//#define MY_MACRO int a; \
+	//    int b; \
+	//    int c();
+	//
+	//class asdf {
+	//	MY_MACRO
+	//
+	//public:
+	//	asdf();
+	//	~asdf();
+	//};
+	public void testMacroWithMultipleDeclarations_Bug242053() throws Exception {
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//for(int i=0;i<50;++i){}
+	//}
+	
+	//void foo() {
+	//	for (int i = 0 ; i < 50 ; ++i) {
+	//	}
+	//}
+	public void testSpaceBeforeSemicolonInFor_Bug242232() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
 }

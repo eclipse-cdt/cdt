@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
@@ -472,7 +473,10 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 			}
 			fCDIBlock = null;
 		}
-		getCDISession().getEventManager().removeEventListener( this );
+		final ICDISession cdiSession = getCDISession();
+		if (cdiSession != null) {
+			cdiSession.getEventManager().removeEventListener( this );
+		}
 	}
 
 	/* (non-Javadoc)

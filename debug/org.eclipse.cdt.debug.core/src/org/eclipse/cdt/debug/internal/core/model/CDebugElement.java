@@ -207,7 +207,8 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @return the CDI session
 	 */
 	public ICDISession getCDISession() {
-		return getCDITarget().getSession();
+		final ICDITarget cdiTarget = getCDITarget();
+		return cdiTarget != null ? cdiTarget.getSession() : null;
 	}
 
 	/**

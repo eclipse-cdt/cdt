@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -43,6 +44,7 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
+import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.CLIEventProcessor;
@@ -59,6 +61,7 @@ import org.eclipse.dd.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.dd.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -117,15 +120,16 @@ public class GDBControl extends AbstractMIControl {
         fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void setGdbPath(IPath path) { fGdbPath = path; }
-
-    public void setExecPath(IPath path) { fExecPath = path; }
-
-    public void setSessionType(SessionType type) { fSessionType = type; }
-
-    public void setAttach(boolean attach) { fAttach = attach; }
-
-    public void setLaunchTimeout(int timeout) { fGDBLaunchTimeout = timeout; }
+    public void initData(ILaunchConfiguration config) { 
+        fSessionType = LaunchUtils.getSessionType(config);
+        fAttach = LaunchUtils.getIsAttach(config);
+        fGdbPath = LaunchUtils.getGDBPath(config);
+        try {
+			fExecPath = LaunchUtils.verifyProgramPath(config, LaunchUtils.getCProject(config));
+		} catch (CoreException e) {
+			fExecPath = new Path(""); //$NON-NLS-1$
+		}
+    }
 
     @Deprecated
     public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType sessionType, boolean attach, int gdbLaunchTimeout) {

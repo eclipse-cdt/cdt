@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -227,5 +228,44 @@ public class LaunchUtils {
 
         return version;
 	}
+	
+	public static boolean getIsAttach(ILaunchConfiguration config) {
+    	try {
+    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+    			return false;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+    			return true;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+    			return false;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+    			return false;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+    		    return true;
+    	    }
+    	} catch (CoreException e) {    		
+    	}
+    	return false;
+    }
+	
+	public static SessionType getSessionType(ILaunchConfiguration config) {
+    	try {
+    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+    			return SessionType.LOCAL;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+    			return SessionType.LOCAL;
+    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+    			return SessionType.CORE;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+    			return SessionType.REMOTE;
+    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
+    		    return SessionType.REMOTE;
+    	    }
+    	} catch (CoreException e) {    		
+    	}
+    	return SessionType.LOCAL;
+    }
+    
 }
 

@@ -41,12 +41,7 @@ public class ServicesLaunchSequence extends Sequence {
                 // Create the connection.
                 //
                 fCommandControl = fLaunch.getServiceFactory().createService(fSession, GDBControl.class);
-
-                fCommandControl.setAttach(fAttach);
-                fCommandControl.setExecPath(fExecPath);
-                fCommandControl.setGdbPath(LaunchUtils.getGDBPath(fLaunch.getLaunchConfiguration()));
-                fCommandControl.setSessionType(fSessionType);
-
+                fCommandControl.initData(fLaunch.getLaunchConfiguration());
                 fCommandControl.initialize(requestMonitor);
             }
         },

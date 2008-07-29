@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -88,8 +87,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 			return;
 		}
 		
-		SessionType sessionType = getSessionType(config);
-		boolean attach = getIsAttach(config);
+		SessionType sessionType = LaunchUtils.getSessionType(config);
+		boolean attach = LaunchUtils.getIsAttach(config);
 		
         final GdbLaunch launch = (GdbLaunch)l;
 
@@ -159,25 +158,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		return new FinalLaunchSequence(executor, launch, type, attach);
 	}
 	
-	private SessionType getSessionType(ILaunchConfiguration config) {
-    	try {
-    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-    			return SessionType.LOCAL;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-    			return SessionType.LOCAL;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-    			return SessionType.CORE;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-    			return SessionType.REMOTE;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
-    		    return SessionType.REMOTE;
-    	    }
-    	} catch (CoreException e) {    		
-    	}
-    	return SessionType.LOCAL;
-    }
-    
+
 	private boolean isNonStopSession(ILaunchConfiguration config) {
 		try {
 			boolean nonStopMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
@@ -187,31 +168,12 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	}
     	return false;
     }
-    
-	private boolean getIsAttach(ILaunchConfiguration config) {
-    	try {
-    		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
-    		if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-    			return false;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-    			return true;
-    		} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-    			return false;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
-    			return false;
-    		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
-    		    return true;
-    	    }
-    	} catch (CoreException e) {    		
-    	}
-    	return false;
-    }
-    
+
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
 		// no pre launch check for core file
-		if (mode.equals(ILaunchManager.DEBUG_MODE) && getSessionType(config) == SessionType.CORE) return true; 
+		if (mode.equals(ILaunchManager.DEBUG_MODE) && LaunchUtils.getSessionType(config) == SessionType.CORE) return true; 
 		
 		return super.preLaunchCheck(config, mode, monitor);
 	}

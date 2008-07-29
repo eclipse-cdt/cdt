@@ -40,38 +40,37 @@ public class ServicesLaunchSequence extends Sequence {
                 //
                 // Create the connection.
                 //
-                fCommandControl = fLaunch.getServiceFactory().createService(fSession, GDBControl.class);
-                fCommandControl.initData(fLaunch.getLaunchConfiguration());
+                fCommandControl = fLaunch.getServiceFactory().createService(GDBControl.class, fSession, fLaunch.getLaunchConfiguration());
                 fCommandControl.initialize(requestMonitor);
             }
         },
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IRunControl.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IProcesses.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IMemory.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IMemory.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IModules.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IModules.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IStack.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IStack.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IExpressions.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IExpressions.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fSourceLookup = (CSourceLookup)fLaunch.getServiceFactory().createService(fSession, ISourceLookup.class);
+        	fSourceLookup = (CSourceLookup)fLaunch.getServiceFactory().createService(ISourceLookup.class, fSession);
             fSourceLookup.initialize(requestMonitor);
         }},
         new Step() { @Override
@@ -82,21 +81,21 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
             // Create the low-level breakpoint service 
-        	fLaunch.getServiceFactory().createService(fSession, IBreakpoints.class).initialize(new RequestMonitor(getExecutor(), requestMonitor));
+        	fLaunch.getServiceFactory().createService(IBreakpoints.class, fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor));
         }},
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
             // Create high-level breakpoint service and install breakpoints 
             // for the GDB debug context.
-        	fLaunch.getServiceFactory().createService(fSession, MIBreakpointsManager.class).initialize(new RequestMonitor(getExecutor(), requestMonitor)); 
+        	fLaunch.getServiceFactory().createService(MIBreakpointsManager.class, fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor)); 
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IRegisters.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IRegisters.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(fSession, IDisassembly.class).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IDisassembly.class, fSession).initialize(requestMonitor);
         }},
     };
 

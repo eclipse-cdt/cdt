@@ -114,13 +114,9 @@ public class GDBControl extends AbstractMIControl {
     private MIInferiorProcess fInferiorProcess = null;
     
     private PTY fPty;
-    
-    public GDBControl(DsfSession session) {
-        super(session);
-        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
 
-    public void initData(ILaunchConfiguration config) { 
+    public GDBControl(DsfSession session, ILaunchConfiguration config) { 
+        super(session);
         fSessionType = LaunchUtils.getSessionType(config);
         fAttach = LaunchUtils.getIsAttach(config);
         fGdbPath = LaunchUtils.getGDBPath(config);
@@ -129,6 +125,7 @@ public class GDBControl extends AbstractMIControl {
 		} catch (CoreException e) {
 			fExecPath = new Path(""); //$NON-NLS-1$
 		}
+        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Deprecated

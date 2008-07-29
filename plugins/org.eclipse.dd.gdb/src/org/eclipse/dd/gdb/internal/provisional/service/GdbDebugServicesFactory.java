@@ -34,6 +34,7 @@ import org.eclipse.dd.mi.service.MIMemory;
 import org.eclipse.dd.mi.service.MIModules;
 import org.eclipse.dd.mi.service.MIRegisters;
 import org.eclipse.dd.mi.service.MIStack;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
@@ -47,12 +48,19 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	@Override
     @SuppressWarnings("unchecked")
-    public <V> V createService(DsfSession session, Class<V> clazz) {
-        if (MIBreakpointsManager.class.isAssignableFrom(clazz)) {
+    public <V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments) {
+		if (MIBreakpointsManager.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointManagerService(session);
-		} 
+		} else if (ICommandControl.class.isAssignableFrom(clazz)) {
+			for (Object arg : optionalArguments) {
+				if (arg instanceof ILaunchConfiguration) {
+					return (V)createCommandControl(session, (ILaunchConfiguration)arg);
+				}
+			}
+		}
 
-        return super.createService(session, clazz);
+
+        return super.createService(clazz, session);
 	}
 
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
@@ -64,9 +72,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new MIBreakpoints(session);
 	}
 	
-	@Override
-	protected ICommandControl createCommandControl(DsfSession session) {	
-		return new GDBControl(session);
+	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {	
+		return new GDBControl(session, config);
 	}
 
 	@Override

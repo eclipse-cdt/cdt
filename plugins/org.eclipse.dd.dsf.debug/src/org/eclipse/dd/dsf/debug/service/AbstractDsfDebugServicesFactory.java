@@ -16,7 +16,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServicesFactory {
 
     @SuppressWarnings("unchecked")
-	public <V> V createService(DsfSession session, Class<V> clazz) {
+	public <V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments) {
        	if (IBreakpoints.class.isAssignableFrom(clazz)) {
     		return (V)createBreakpointService(session);
        	} else if (ICommandControl.class.isAssignableFrom(clazz)) {

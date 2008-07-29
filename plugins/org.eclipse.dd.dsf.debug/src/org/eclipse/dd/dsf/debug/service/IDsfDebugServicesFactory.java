@@ -17,5 +17,5 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * to easily have different service implementation for different backends.
  */
 public interface IDsfDebugServicesFactory {
-	public <V> V createService(DsfSession session, Class<V> clazz);
+	<V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments);
 }

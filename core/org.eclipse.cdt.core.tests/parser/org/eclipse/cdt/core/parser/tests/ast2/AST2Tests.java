@@ -5265,7 +5265,7 @@ public class AST2Tests extends AST2BaseTest {
 	
 	// void test() {
 	//    char* p;
-	//    if (__builtin_types_compatible_p(typeof(p), char[]))) {
+	//    if (__builtin_types_compatible_p(typeof(p), char[])) {
 	//    }
 	// }
 	public void testBuiltinTypesCompatible_bug241570() throws Exception  {

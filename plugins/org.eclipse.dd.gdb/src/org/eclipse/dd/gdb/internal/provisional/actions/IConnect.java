@@ -1,0 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Ericsson and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Ericsson - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.dd.gdb.internal.provisional.actions;
+
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+
+public interface IConnect {
+	/**
+	 * Returns whether this element can currently attempt to 
+	 * connect to a new process.
+	 */
+	public boolean canConnect();
+
+	/**
+	 * Causes this element to attempt to connect to a new process.
+	 */
+	public void connect(RequestMonitor rm);
+}

@@ -58,5 +58,37 @@
             id="org.eclipse.dd.gdb.ui.GdbServerDebuggerPage">
       </debuggerPage>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.dd.gdb.ui.debugview.context"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.dd.gdb.internal.ui.actions.ConnectActionDelegate"
+               enablesFor="9999"
+               icon="icons/full/obj16/connect.gif"
+               id="org.eclipse.dd.gdb.ui.connect"
+               label="%action.connect.label"
+               menubarPath="threadGroup"
+               tooltip="%action.connect.tooltip">
+         </action>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.dd.gdb.ui.debugview.toolbar"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.dd.gdb.internal.ui.actions.ConnectActionDelegate"
+               enablesFor="9999"
+               icon="icons/full/obj16/connect.gif"
+               id="org.eclipse.dd.gdb.ui.connect"
+               label="%action.connect.label"
+               toolbarPath="threadGroup"
+               tooltip="%action.connect.tooltip">
+         </action>
+      </viewContribution>
+   </extension>
    
 </plugin>

@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -25,29 +24,24 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
+import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
 import org.eclipse.dd.gdb.internal.provisional.service.GDBProcesses;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
-import org.eclipse.dd.mi.service.ProcessInfo;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
@@ -59,8 +53,6 @@ import org.eclipse.dd.mi.service.command.commands.MIGDBSetSysroot;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.commands.RawCommand;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IStatusHandler;
 
 public class FinalLaunchSequence extends Sequence {
 
@@ -406,54 +398,6 @@ public class FinalLaunchSequence extends Sequence {
         * If attach session, perform the attach. 
         */
        new Step() {
-
-        	// Need a job because prompter.handleStatus will block
-        	class PromptForPidJob extends Job {
-        		
-        	    // The list of processes used in the case of an ATTACH session
-        	    IProcessInfo[] fProcessList = null;
-        	    DataRequestMonitor<IProcessDMContext> fRequestMonitor;
-        	    
-        	    public PromptForPidJob(String name, IProcessInfo[] procs, DataRequestMonitor<IProcessDMContext> rm) {
-        	    	super(name);
-        	    	fProcessList = procs;
-        	    	fRequestMonitor = rm;
-        	    }
-        	    
-        		@Override
-        		protected IStatus run(IProgressMonitor monitor) {
-        			IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
-        			final IStatus processPromptStatus = new Status(IStatus.INFO, "org.eclipse.dd.gdb.ui", 100, "", null); //$NON-NLS-1$//$NON-NLS-2$
-
-        			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-        			
-					final Status NO_PID_STATUS = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
-								                          LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"), //$NON-NLS-1$
-								                          null);
-
-        			if (prompter == null) {
-        				fRequestMonitor.setStatus(NO_PID_STATUS);
-        				fRequestMonitor.done();
-            			return Status.OK_STATUS;
-        			} 				
-
-        			try {
-        				Object result = prompter.handleStatus(processPromptStatus, fProcessList);
-        				if (result instanceof Integer) {
-        					fRequestMonitor.setData(fProcService.createProcessContext(fCommandControl.getGDBDMContext(),
-        							                                                  Integer.toString((Integer)result)));
-        				} else {
-        					fRequestMonitor.setStatus(NO_PID_STATUS);
-        				}
-        			} catch (CoreException e) {
-        				fRequestMonitor.setStatus(NO_PID_STATUS);
-        			}
-        			fRequestMonitor.done();
-
-        			return Status.OK_STATUS;
-        		}
-        	};
-  	
         	@Override
         	public void execute(final RequestMonitor requestMonitor) {
         		if (fAttach) {
@@ -468,56 +412,15 @@ public class FinalLaunchSequence extends Sequence {
 
         			if (pid != -1) {
         				fProcService.attachDebuggerToProcess(
-            					fProcService.createProcessContext(fCommandControl.getGDBDMContext(), Integer.toString(pid)),
+        						fProcService.createProcessContext(fCommandControl.getGDBDMContext(), Integer.toString(pid)),
         						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         			} else {
-        				fProcService.getRunningProcesses(
-        						fCommandControl.getGDBDMContext(),        
-        						new DataRequestMonitor<IProcessDMContext[]>(getExecutor(), requestMonitor) {
-        							@Override
-        							protected void handleSuccess() {
-        								
-        								final List<IProcessInfo> procInfoList = new ArrayList<IProcessInfo>();
-        								
-        								// For each process, obtain its name
-        								// Once all the names are obtained, prompt the user the pid to use
-    									final CountingRequestMonitor countingRm = 
-    										new CountingRequestMonitor(getExecutor(), requestMonitor) {
-    										@Override
-    										protected void handleSuccess() {
-    											new PromptForPidJob(
-    													"Prompt for Process", procInfoList.toArray(new IProcessInfo[0]),   //$NON-NLS-1$
-    													new DataRequestMonitor<IProcessDMContext>(getExecutor(), requestMonitor) {
-    														@Override
-    														protected void handleSuccess() {
-    															fProcService.attachDebuggerToProcess(
-    																	getData(), 
-    																	new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
-    														}
-    													}).schedule();
-    										}
-    									};
-
-    									countingRm.setDoneCount(getData().length);
-
-    									for (IProcessDMContext processCtx : getData()) {
-    										fProcService.getExecutionData(
-    												processCtx,
-    												new DataRequestMonitor<IThreadDMData> (getExecutor(), countingRm) {
-    													@Override
-    													protected void handleSuccess() {
-    														int pid = 0;
-    														try {
-    															pid = Integer.parseInt(getData().getId());
-    														} catch (NumberFormatException e) {
-    														}
-    														procInfoList.add(new ProcessInfo(pid, getData().getName()));
-    														countingRm.done();
-    													}
-    												});
-    									}
-        							}
-        						});
+        				IConnect connectCommand = (IConnect)fLaunch.getSession().getModelAdapter(IConnect.class);
+        				if (connectCommand != null) {
+       						connectCommand.connect(requestMonitor);
+        				} else {
+    						requestMonitor.done();
+        				}
         			}
         		} else {
         			requestMonitor.done();

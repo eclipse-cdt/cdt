@@ -116,7 +116,13 @@ public class GDBProcesses extends MIProcesses {
 			super.getExecutionData(dmc, rm);
 		}
 	}
-	
+
+	@Override
+	public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+		rm.setData(!fGdb.isConnected());
+		rm.done();
+	}
+
 	@Override
 	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
         MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();

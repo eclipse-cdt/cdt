@@ -356,7 +356,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(true);
+    	rm.setData(false);
     	rm.done();
     }
 

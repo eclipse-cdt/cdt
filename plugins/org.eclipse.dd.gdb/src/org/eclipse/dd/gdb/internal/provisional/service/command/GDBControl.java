@@ -96,7 +96,7 @@ public class GDBControl extends AbstractMIControl {
     
     public boolean fAttach;
     
-    private boolean fConnected = false;
+    private boolean fConnected = true;
     
     private MonitorJob fMonitorJob;
     private IPath fGdbPath; 

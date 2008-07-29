@@ -50,7 +50,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
@@ -1429,5 +1431,47 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPTemplateTypeParameter np= getBindingFromASTName("I>()", 1, ICPPTemplateTypeParameter.class);
 		ICPPClassType clazz= getBindingFromASTName("That<I>()", 4, ICPPClassType.class);
 		ICPPConstructor ctor= getBindingFromASTName("That<I>()", 7, ICPPConstructor.class);
+	}
+	
+	
+	// template<typename T> class CT {
+	//    public: int field;
+	// };
+	
+	// CT<int> v1;
+	public void testUniqueSpecializations_Bug241641() throws Exception {
+		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
+		ICPPVariable v2= getBindingFromASTName("v1", 2, ICPPVariable.class);
+		
+		IType t1= v1.getType();
+		assertInstance(t1, ICPPClassType.class);
+		
+		ICPPClassType ct= (ICPPClassType) t1;
+		IBinding f1= ct.getCompositeScope().find("field")[0];
+		IBinding f2= ct.getCompositeScope().find("field")[0];
+		
+		assertSame(f1, f2);
+	}
+	
+	// template<typename T> class CT {
+	//    public: int field;
+	// };
+	
+	// CT<int> v1;
+	public void testUniqueInstance_Bug241641() throws Exception {
+		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
+		ICPPVariable v2= getBindingFromASTName("v1", 2, ICPPVariable.class);
+		
+		IType t1= v1.getType();
+		assertInstance(t1, ICPPTemplateInstance.class);
+		
+		ICPPTemplateInstance inst= (ICPPTemplateInstance) t1;
+		final ICPPTemplateDefinition tmplDef = inst.getTemplateDefinition();
+		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getArguments());
+		assertSame(inst, inst2);
+		
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new IType[] {new CPPBasicType(IBasicType.t_char, 0)});
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new IType[] {new CPPBasicType(IBasicType.t_char, 0)});
+		assertSame(charInst1, charInst2);
 	}
 }

@@ -5,6 +5,7 @@ Bundle-Vendor: Eclipse.org
 Bundle-SymbolicName: org.eclipse.dd.gdb.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.dd.gdb.internal.ui.GdbUIPlugin
+Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.dd.dsf.debug.ui,

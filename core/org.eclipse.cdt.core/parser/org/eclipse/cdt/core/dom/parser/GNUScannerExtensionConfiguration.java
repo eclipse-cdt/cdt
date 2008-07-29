@@ -25,15 +25,17 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  */
 public abstract class GNUScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
+	@SuppressWarnings("nls")
 	private static IMacro[] sAdditionalMacros= new IMacro[] {
-		createMacro("__complex__", "_Complex"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__extension__", ""), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__imag__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__real__", "(int)"), //$NON-NLS-1$ //$NON-NLS-2$
-		createMacro("__stdcall", ""), //$NON-NLS-1$ //$NON-NLS-2$
+		createMacro("__complex__", "_Complex"), 
+		createMacro("__extension__", ""), 
+		createMacro("__imag__", "(int)"), 
+		createMacro("__real__", "(int)"), 
+		createMacro("__stdcall", ""), 
 
-		createMacro("__builtin_va_arg(ap,type)", "*(type *)ap"),  //$NON-NLS-1$//$NON-NLS-2$
-		createMacro("__builtin_constant_p(exp)", "0") //$NON-NLS-1$//$NON-NLS-2$
+		createMacro("__builtin_va_arg(ap,type)", "*(type *)ap"),  
+		createMacro("__builtin_constant_p(exp)", "0"), 
+		createMacro("__builtin_types_compatible_p(x,y)", "__builtin_types_compatible_p(sizeof(x),sizeof(y)"),
 	};
 
 	public static IMacro[] getAdditionalGNUMacros() {

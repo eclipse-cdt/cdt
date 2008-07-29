@@ -124,6 +124,39 @@ public class GDBProcesses extends MIProcesses {
 	}
 
 	@Override
+    public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
+		super.attachDebuggerToProcess(
+			procCtx, 
+			new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					fGdb.setConnected(true);
+					rm.setData(getData());
+					rm.done();
+				}
+			});
+	}
+
+	@Override
+    public void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm) {
+    	rm.setData(false); // don't turn on yet, as we need to generate events to use this properly
+    	rm.done();
+    }
+
+	@Override
+    public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
+		super.detachDebuggerFromProcess(
+			procCtx, 
+			new RequestMonitor(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					fGdb.setConnected(false);
+					rm.done();
+				}
+			});
+	}
+	
+	@Override
 	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
         MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
 	    if (inferiorProcess != null && inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {

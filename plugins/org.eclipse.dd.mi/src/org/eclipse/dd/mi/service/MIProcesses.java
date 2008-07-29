@@ -31,6 +31,7 @@ import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
+import org.eclipse.dd.mi.service.command.commands.CLIDetach;
 import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;
 import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -380,33 +381,22 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	}
 	
     public void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(true);
+    	rm.setData(false);
     	rm.done();
     }
 
     public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
-//		if (procCtx instanceof MIProcessDMC) {
-//			int pid;
-//			try {
-//				pid = Integer.parseInt(((MIProcessDMC)procCtx).getId());
-//			} catch (NumberFormatException e) {
-//	            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid process id.", null)); //$NON-NLS-1$
-//	            rm.done();
-//	            return;
-//			}
-//
-//		    // The service version cannot use -target-detach because it didn't exist
-//		    // in versions of GDB up to and including GDB 6.8
-//			fCommandControl.queueCommand(
-//					new CLIDetach(procCtx, pid),
-//					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-//	    } else {
-//            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-//            rm.done();
-//	    }
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
-		rm.done();
+		if (procCtx instanceof MIProcessDMC) {
+			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
+		    // This service version cannot use -target-detach because it didn't exist
+		    // in versions of GDB up to and including GDB 6.8
+			fCommandControl.queueCommand(
+					new CLIDetach(controlDmc),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	    } else {
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            rm.done();
+	    }
 	}
 
 	public void canTerminate(IThreadDMContext thread, DataRequestMonitor<Boolean> rm) {

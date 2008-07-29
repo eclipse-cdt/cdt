@@ -401,7 +401,7 @@ public class GDBControl extends AbstractMIControl {
         return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && fConnected;
     }
     
-    void setConnected(boolean connected) {
+    public void setConnected(boolean connected) {
         fConnected = connected;
     }
     

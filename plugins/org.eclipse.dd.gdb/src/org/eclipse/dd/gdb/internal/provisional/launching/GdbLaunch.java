@@ -43,6 +43,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ITerminate;
@@ -52,7 +53,7 @@ import org.eclipse.debug.core.model.ITerminate;
  */
 @ThreadSafe
 public class GdbLaunch extends Launch
-    implements ITerminate
+    implements ITerminate, IDisconnect
 {
     private DefaultDsfExecutor fExecutor;
     private DsfSession fSession;
@@ -208,6 +209,25 @@ public class GdbLaunch extends Launch
     // ITerminate
     ///////////////////////////////////////////////////////////////////////////
 
+    ///////////////////////////////////////////////////////////////////////////
+    // IDisconnect
+    @Override
+    public boolean canDisconnect() {
+        return canTerminate();
+    }
+
+    @Override
+    public boolean isDisconnected() {
+        return isTerminated();
+    }
+
+    @Override
+    public void disconnect() throws DebugException {
+    	terminate();
+    }
+    // IDisconnect
+    ///////////////////////////////////////////////////////////////////////////
+    
     /**
      * Shuts down the services, the session and the executor associated with 
      * this launch.  

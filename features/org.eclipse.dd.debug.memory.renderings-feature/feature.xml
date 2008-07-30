@@ -23,6 +23,10 @@ Memory Renderings
       <update label="Device Debug" url="http://download.eclipse.org/dsdp/dd/updates"/>
    </url>
 
+   <includes
+         id="org.eclipse.dd.debug.memory.renderings.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.dd.debug.memory.renderings.traditional"
          download-size="0"
@@ -37,6 +41,11 @@ Memory Renderings
          version="0.0.0"
          unpack="false"/>
 
-   <includes id="org.eclipse.dd.debug.memory.renderings.source"  version="0.0.0"/>
-   
+   <plugin
+         id="org.eclipse.dd.debug.ui.memory.search"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

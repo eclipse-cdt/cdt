@@ -12,25 +12,17 @@ package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class CCoreInternals {
-
-	private static final String PREFS_FILE_EXTENSION = ".prefs"; //$NON-NLS-1$
-	private static final String SETTINGS_DIRECTORY_NAME = ".settings"; //$NON-NLS-1$
 
 	public static PDOMManager getPDOMManager() {
 		return (PDOMManager) CCorePlugin.getIndexManager();
@@ -62,15 +54,8 @@ public class CCoreInternals {
     	};
     	job.setSystem(true);
     	if (project != null) {
-    		IResourceRuleFactory rf= ResourcesPlugin.getWorkspace().getRuleFactory();
-    		IFile wsFile= project.getFile(new Path(SETTINGS_DIRECTORY_NAME).append(CCorePlugin.PLUGIN_ID + PREFS_FILE_EXTENSION));
-    		ISchedulingRule[] rules= {
-    				rf.modifyRule(wsFile), 
-    				rf.createRule(wsFile.getParent()),
-    				rf.createRule(wsFile), 
-    				rf.deleteRule(wsFile) 
-    		};
-    		job.setRule(MultiRule.combine(rules));
+    		// using workspace rule, see bug 240888
+    		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
     	}
     	job.schedule();
 	}

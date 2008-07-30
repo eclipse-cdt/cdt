@@ -10,12 +10,13 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.NamedNodeCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -49,28 +50,29 @@ public class PDOMInstanceCache {
 		return newCache;
 	}
 	
-	private final ArrayList<Object> fList;
+	private final HashMap<String, ICPPTemplateInstance> fMap;
 
 	public PDOMInstanceCache() {
-		fList= new ArrayList<Object>();
+		fMap= new HashMap<String, ICPPTemplateInstance>();
 	}
 	
 	synchronized public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
-		fList.add(arguments);
-		fList.add(instance);
+		try {
+			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
+			fMap.put(key, instance);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
+		}
 	}
 
-	synchronized public final ICPPTemplateInstance getInstance(IType[] arguments) {
-		loop: for (int i=0; i < fList.size(); i+=2) {
-			final IType[] args = (IType[]) fList.get(i);
-			if (args.length == arguments.length) {
-				for (int j=0; j < args.length; j++) {
-					if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
-						continue loop;
-					}
-				}
-				return (ICPPTemplateInstance) fList.get(i+1);
-			}
+	synchronized public final ICPPTemplateInstance getInstance(IType[] arguments) {		
+		try {
+			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
+			return fMap.get(key);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
 		}
 		return null;
 	}
@@ -88,18 +90,13 @@ public class PDOMInstanceCache {
 				ICPPTemplateInstance inst= (ICPPTemplateInstance) node;
 				if (binding.equals(inst.getTemplateDefinition())) {
 					IType[] args= inst.getArguments();
-					fList.add(args);
-					fList.add(inst);
+					addInstance(args, inst);
 				}
 			}
 		}
 	}
 
 	synchronized public ICPPTemplateInstance[] getAllInstances() {
-		ICPPTemplateInstance[] result= new ICPPTemplateInstance[fList.size()/2];
-		for (int i=0; i < fList.size(); i+=2) {
-			result[i/2]= (ICPPTemplateInstance) fList.get(i+1);
-		}
-		return result;
+		return fMap.values().toArray(new ICPPTemplateInstance[fMap.size()]);
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -57,35 +58,38 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		super(pdom, parent, spec.getNameCharArray());
 		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
 
-		PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
-		PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
-		ObjectMap argMap = spec.getArgumentMap();
-		if (argMap != null) {
-			for (int i = 0; i < argMap.size(); i++) {
-				Object param = argMap.keyAt(i);
-				Object arg = argMap.getAt(i);
-				
-				// TODO - non-type template arguments still needs attention
-				if (param instanceof ICPPTemplateNonTypeParameter && arg instanceof IType) {
-					try {
-						ICPPTemplateNonTypeParameter nontype= (ICPPTemplateNonTypeParameter) param;
-						PDOMNode paramNode= ((PDOMCPPLinkage)getLinkageImpl()).createBinding(this, nontype);
-						PDOMNode argNode= getLinkageImpl().addType(this, (IType) arg);
+		// specializations that are no instances have the same argmap as their owner.
+		if (this instanceof ICPPTemplateInstance) {
+			PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
+			PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
+			ObjectMap argMap = spec.getArgumentMap();
+			if (argMap != null) {
+				for (int i = 0; i < argMap.size(); i++) {
+					Object param = argMap.keyAt(i);
+					Object arg = argMap.getAt(i);
+
+					// TODO - non-type template arguments still needs attention
+					if (param instanceof ICPPTemplateNonTypeParameter && arg instanceof IType) {
+						try {
+							ICPPTemplateNonTypeParameter nontype= (ICPPTemplateNonTypeParameter) param;
+							PDOMNode paramNode= ((PDOMCPPLinkage)getLinkageImpl()).createBinding(this, nontype);
+							PDOMNode argNode= getLinkageImpl().addType(this, (IType) arg);
+							if (paramNode != null && argNode != null) {
+								paramList.addMember(paramNode);
+								argList.addMember(argNode);
+							}
+						} catch(DOMException de) {
+							CCorePlugin.log(de);
+						}
+					}
+
+					if (param instanceof IType && arg instanceof IType) {
+						PDOMNode paramNode = getLinkageImpl().addType(this, (IType) param);
+						PDOMNode argNode = getLinkageImpl().addType(this, (IType) arg);
 						if (paramNode != null && argNode != null) {
 							paramList.addMember(paramNode);
 							argList.addMember(argNode);
 						}
-					} catch(DOMException de) {
-						CCorePlugin.log(de);
-					}
-				}
-				
-				if (param instanceof IType && arg instanceof IType) {
-					PDOMNode paramNode = getLinkageImpl().addType(this, (IType) param);
-					PDOMNode argNode = getLinkageImpl().addType(this, (IType) arg);
-					if (paramNode != null && argNode != null) {
-						paramList.addMember(paramNode);
-						argList.addMember(argNode);
 					}
 				}
 			}
@@ -129,20 +133,28 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	public ObjectMap getArgumentMap() {
 		if (fArgMap == null) {
 			try {
-				PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
-				PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
-				NodeCollector paramVisitor = new NodeCollector();
-				paramList.accept(paramVisitor);
-				IPDOMNode[] paramNodes = paramVisitor.getNodes();
-				NodeCollector argVisitor = new NodeCollector();
-				argList.accept(argVisitor);
-				IPDOMNode[] argNodes = argVisitor.getNodes();
+				if (this instanceof ICPPTemplateInstance) {
+					PDOMNodeLinkedList paramList = new PDOMNodeLinkedList(pdom, record + ARGMAP_PARAMS, getLinkageImpl());
+					PDOMNodeLinkedList argList = new PDOMNodeLinkedList(pdom, record + ARGMAP_ARGS, getLinkageImpl());
+					NodeCollector paramVisitor = new NodeCollector();
+					paramList.accept(paramVisitor);
+					IPDOMNode[] paramNodes = paramVisitor.getNodes();
+					NodeCollector argVisitor = new NodeCollector();
+					argList.accept(argVisitor);
+					IPDOMNode[] argNodes = argVisitor.getNodes();
 
-				ObjectMap map = new ObjectMap(paramNodes.length);
-				for (int i = 0; i < paramNodes.length; i++) {
-					map.put(paramNodes[i], argNodes[i]);
+					ObjectMap map = new ObjectMap(paramNodes.length);
+					for (int i = 0; i < paramNodes.length; i++) {
+						map.put(paramNodes[i], argNodes[i]);
+					}
+					fArgMap= map;
+				} else {
+					// specializations that are no instances have the same argmap as their owner.
+					IBinding owner= getOwner();
+					if (owner instanceof ICPPSpecialization) {
+						fArgMap= ((ICPPSpecialization) owner).getArgumentMap();
+					}
 				}
-				fArgMap= map;
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

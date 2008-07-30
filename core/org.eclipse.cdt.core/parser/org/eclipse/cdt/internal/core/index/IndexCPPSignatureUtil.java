@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,14 +20,18 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -67,14 +72,8 @@ public class IndexCPPSignatureUtil {
 	/**
 	 * Constructs a string in the format:
 	 *   <typeName1,typeName2,...>
-	 * 
-	 * @param types
-	 * @param qualifyTemplateParameters
-	 * @return
-	 * @throws CoreException
-	 * @throws DOMException
 	 */
-	private static String getTemplateArgString(IType[] types, boolean qualifyTemplateParameters) throws CoreException, DOMException {
+	public static String getTemplateArgString(IType[] types, boolean qualifyTemplateParameters) throws CoreException, DOMException {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append('<');
 		for (int i = 0; i < types.length; i++) {
@@ -102,6 +101,13 @@ public class IndexCPPSignatureUtil {
 					}
 				}
 				buffer.append(((ICPPTemplateParameter)type).getName());
+			} else if (type instanceof ICPPBasicType){
+				IASTExpression expr= ((ICPPBasicType) type).getValue();
+				if (expr != null) {
+					buffer.append(getValueString(expr));
+				} else {
+					buffer.append(ASTTypeUtil.getType(type));
+				}
 			} else {
 				buffer.append(ASTTypeUtil.getType(type));
 			}
@@ -109,6 +115,24 @@ public class IndexCPPSignatureUtil {
 		buffer.append('>');
 		return buffer.toString();
 	}
+
+	private static String getValueString(IASTExpression e) {
+		e= CPPVisitor.reverseConstantPropogationLookup(e);
+		if (e instanceof IASTLiteralExpression) {
+			IType t1= e.getExpressionType();
+			try {
+				if(t1 instanceof ICPPBasicType) {
+					BigInteger i1= CPPVisitor.parseIntegral(e.toString());
+					return i1.toString();
+				}
+			} catch(NumberFormatException nfe) {
+				/* fall through */
+			}
+			return e.toString();
+		}
+		return "?"; //$NON-NLS-1$
+	}
+	
 
 	private static void appendTemplateArgs(Object[] values, StringBuilder buffer) {
 		boolean needcomma= false;

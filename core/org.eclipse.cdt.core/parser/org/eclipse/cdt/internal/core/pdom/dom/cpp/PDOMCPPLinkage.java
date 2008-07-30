@@ -71,7 +71,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -261,13 +260,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					if (pdomBinding != null) {
 						pdom.putCachedResult(inputBinding, pdomBinding);
 					}
-
-					if (binding instanceof ICPPClassType && (pdomBinding instanceof PDOMCPPClassInstance 
-							|| pdomBinding instanceof PDOMCPPDeferredClassInstance)) {
-						// Add instantiated constructors to the index (bug 201174).
-						addConstructors(pdomBinding, (ICPPClassType) binding);
-						addConversionOperators(pdomBinding, (ICPPClassType) binding);
-					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
 				}
@@ -279,18 +271,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding.update(this, fromName.getBinding());
 		}
 		return pdomBinding;
-	}
-
-	private void addConstructors(PDOMBinding pdomBinding, ICPPClassType binding)
-			throws DOMException, CoreException {
-		for(ICPPConstructor ctr : binding.getConstructors())
-			addBinding(ctr, null);
-	}
-	
-	private void addConversionOperators(PDOMBinding pdomBinding, ICPPClassType binding)
-	throws DOMException, CoreException {
-		for(ICPPMethod conv : SemanticUtil.getDeclaredConversionOperators(binding))
-			addBinding(conv, null);
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {

@@ -156,7 +156,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		
 		buttoncomp = new Composite(userdata, SWT.NONE);
 		buttoncomp.setLayoutData(gd= new GridData(GridData.END));
-		gd.widthHint= 150;
+		// width hint must be set to one, otherwise subclasses that do not have buttons
+		// don't look pretty, bug 242408
+		gd.widthHint= 1;
 		
 		pageBook.showPage(userdata);
 		

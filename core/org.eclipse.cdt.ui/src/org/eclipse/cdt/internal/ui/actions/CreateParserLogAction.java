@@ -41,6 +41,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -58,6 +59,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -67,6 +71,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
+@SuppressWarnings("nls")
 public class CreateParserLogAction implements IObjectActionDelegate {
 
 	private static final class MyVisitor extends ASTVisitor {
@@ -123,7 +128,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		if (!(fSelection instanceof IStructuredSelection))
 			return;
 		
-		final String title= action.getText().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		final String title= action.getText().replace("&", "");  
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
 		Iterator<?> i= cElements.iterator();
 		ArrayList<ITranslationUnit> tuSelection= new ArrayList<ITranslationUnit>();
@@ -139,7 +144,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		}
 		FileDialog dlg= new FileDialog(fSite.getShell(), SWT.SAVE);
 		dlg.setText(title);
-		dlg.setFilterExtensions(new String[]{"*.log"});  //$NON-NLS-1$
+		dlg.setFilterExtensions(new String[]{"*.log"});  
 		String path= null;
 		while(path == null) {
 			path= dlg.open();
@@ -149,12 +154,12 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			File file= new File(path);		
 			if (file.exists()) {
 				if (!file.canWrite()) {
-					final String msg= NLS.bind(ActionMessages.getString("CreateParserLogAction.readOnlyFile"), path); //$NON-NLS-1$
+					final String msg= NLS.bind(ActionMessages.getString("CreateParserLogAction.readOnlyFile"), path); 
 					MessageDialog.openError(fSite.getShell(), title, msg);
 					path= null;
 				}
 				else {
-					final String msg = NLS.bind(ActionMessages.getString("CreateParserLogAction.existingFile"), path); //$NON-NLS-1$
+					final String msg = NLS.bind(ActionMessages.getString("CreateParserLogAction.existingFile"), path); 
 					if (!MessageDialog.openQuestion(fSite.getShell(), title, msg)) {
 						path= null;
 					}
@@ -201,40 +206,41 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			ctx= itu.getSourceContextTU(ast.getIndex(), ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT);
 		}
 		final ExtendedScannerInfo scfg= new ExtendedScannerInfo(ctx.getScannerInfo(true));
-		final String indent= "   "; //$NON-NLS-1$
+		final String indent= "   "; 
 		final MyVisitor visitor= new MyVisitor();
 		ast.accept(visitor);
 		
-		out.println("Project:       " + projectName); //$NON-NLS-1$
-		out.println("Index Version: " + PDOM.CURRENT_VERSION); //$NON-NLS-1$
-		out.println("File:          " + tu.getLocationURI()); //$NON-NLS-1$
-		out.println("Context:       " + ctx.getLocationURI()); //$NON-NLS-1$
-		out.println("Language:      " + lang.getName()); //$NON-NLS-1$
+		out.println("Project:              " + projectName); 
+		out.println("Index Version:        " + PDOM.CURRENT_VERSION); 
+		out.println("Build Configuration:  " + getBuildConfig(cproject));
+		out.println("File:      " + tu.getLocationURI()); 
+		out.println("Context:   " + ctx.getLocationURI()); 
+		out.println("Language:  " + lang.getName()); 
 		out.println();
-		out.println("Include Search Path (option -I):");  //$NON-NLS-1$
+		out.println("Include Search Path (option -I):");  
 		output(out, indent, scfg.getIncludePaths());
 		out.println();
-		out.println("Local Include Search Path (option -iquote):"); //$NON-NLS-1$
+		out.println("Local Include Search Path (option -iquote):"); 
 		output(out, indent, scfg.getLocalIncludePath());
 		out.println();
-		out.println("Preincluded files (option -include):"); //$NON-NLS-1$
+		out.println("Preincluded files (option -include):"); 
 		output(out, indent, scfg.getIncludeFiles());
 		out.println();
-		out.println("Preincluded macro files (option -imacros):"); //$NON-NLS-1$
+		out.println("Preincluded macro files (option -imacros):"); 
 		output(out, indent, scfg.getMacroFiles());
 		out.println();
-		out.println("Macro definitions (option -D):"); //$NON-NLS-1$
+		out.println("Macro definitions (option -D):"); 
 		HashSet<String> reported= new HashSet<String>();
 		output(out, indent, scfg.getDefinedSymbols(), reported);
 		out.println();
-		out.println("Macro definitions (from configuration + headers in index):"); //$NON-NLS-1$
+		out.println("Macro definitions (from configuration + headers in index):"); 
 		output(out, indent, ast.getBuiltinMacroDefinitions(), reported);
 		out.println();
-		out.println("Macro definitions (from files actually parsed):"); //$NON-NLS-1$
+		out.println("Macro definitions (from files actually parsed):"); 
 		output(out, indent, ast.getMacroDefinitions(), reported);
 
 		out.println();
-		out.println("Unresolved includes (from headers in index):"); //$NON-NLS-1$
+		out.println("Unresolved includes (from headers in index):"); 
 		try {
 			outputUnresolvedIncludes(cproject, ast.getIndex(), out, indent, ast.getIncludeDirectives(), ast.getLinkage().getLinkageID());
 		} catch (CoreException e) {
@@ -242,22 +248,33 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		}
 		
 		out.println();
-		out.println("Scanner problems:"); //$NON-NLS-1$
+		out.println("Scanner problems:"); 
 		output(out, indent, ast.getPreprocessorProblems());
 
 		out.println();
-		out.println("Parser problems:"); //$NON-NLS-1$
+		out.println("Parser problems:"); 
 		output(out, indent, visitor.fProblems.toArray(new IASTProblem[visitor.fProblems.size()]));
 		
 		out.println();
-		out.println("Unresolved names:"); //$NON-NLS-1$
+		out.println("Unresolved names:"); 
 		output(out, indent, visitor.fProblemBindings);
 
 		out.println();
-		out.println("Exceptions in name resolution:"); //$NON-NLS-1$
+		out.println("Exceptions in name resolution:"); 
 		output(out, visitor.fExceptions);
 
 		return status;
+	}
+
+	private String getBuildConfig(ICProject cproject) {
+    	ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
+    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(cproject.getProject(), false);
+    	if (prefs != null) {
+    		ICConfigurationDescription cfg= prefs.getDefaultSettingConfiguration();
+    		if (cfg != null) 
+    			return cfg.getName();
+    	}
+    	return "unknown";
 	}
 
 	private void outputUnresolvedIncludes(ICProject prj, IIndex index, PrintStream out, String indent, 
@@ -278,7 +295,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		}
 		IIndexFile ifile= index.getFile(linkageID, ifl);
 		if (ifile == null) {
-			out.println(indent + ifl.getURI() + " is not indexed"); //$NON-NLS-1$
+			out.println(indent + ifl.getURI() + " is not indexed"); 
 		}
 		else {
 			IIndexInclude[] includes = ifile.getIncludes();
@@ -288,7 +305,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 						outputUnresolvedIncludes(index, out, indent, inc.getIncludesLocation(), linkageID, handled);
 					}
 					else {
-						out.println(indent + "Unresolved inclusion: " + inc.getName() + " in file " +  //$NON-NLS-1$//$NON-NLS-2$
+						out.println(indent + "Unresolved inclusion: " + inc.getName() + " in file " +  
 								inc.getIncludedByLocation().getURI());
 					}
 				}
@@ -336,7 +353,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		for (IProblemBinding problem : list) {
 	        String file= problem.getFileName();
 	        int line = problem.getLineNumber();
-			out.println(indent + problem.getMessage() + " in file " + file + ':' + line); //$NON-NLS-1$
+			out.println(indent + problem.getMessage() + " in file " + file + ':' + line); 
 		}
 	}
 

@@ -49,7 +49,6 @@ import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
-import org.eclipse.dd.mi.service.command.commands.MIGDBSetSysroot;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.commands.RawCommand;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -282,13 +281,16 @@ public class FinalLaunchSequence extends Sequence {
    	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
    	                		@Override
    	                		protected void handleSuccess() {
-   	                			// If we are able to set the solib-search-path,
-   	                			// we should disable the sysroot variable, as indicated
-   	                			// in the GDB documentation.  This is to avoid the sysroot
-   	                			// variable finding libraries that were not meant to be found.
-   	        	                fCommandControl.queueCommand(
-   	        	   	                	new MIGDBSetSysroot(fCommandControl.getControlDMContext()), 
-   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+// Sysroot is not available in GDB6.6 and will make the launch fail in that case.
+// Let's remove it for now
+   	                			requestMonitor.done();
+//   	                			// If we are able to set the solib-search-path,
+//   	                			// we should disable the sysroot variable, as indicated
+//   	                			// in the GDB documentation.  This is to avoid the sysroot
+//   	                			// variable finding libraries that were not meant to be found.
+//   	        	                fCommandControl.queueCommand(
+//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getControlDMContext()), 
+//   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
    	                		};
    	                	});
    				} else {

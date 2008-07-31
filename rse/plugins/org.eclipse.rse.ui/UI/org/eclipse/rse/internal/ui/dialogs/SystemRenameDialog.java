@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
+ * David McKnight   (IBM)        - [242714] Esc on Multiple Rename Dialog doesn't close the dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
@@ -146,13 +147,16 @@ public class SystemRenameDialog extends SystemPromptDialog
 		public boolean canModify(Object element, String property)
 		{
 			boolean modifiable = property.equals(ISystemPropertyConstants.P_NEWNAME);
-			if ((cellEditor != null) && (cellEditor.getControl() != null))
+			if (modifiable)
 			{
-			  SystemRenameTableRow row = (SystemRenameTableRow)element;
-			  int limit = row.getNameLengthLimit();
-			  if (limit == -1)
-			    limit = 1000;
-			  ((Text)cellEditor.getControl()).setTextLimit(limit);
+				if ((cellEditor != null) && (cellEditor.getControl() != null))
+				{
+					SystemRenameTableRow row = (SystemRenameTableRow)element;
+					int limit = row.getNameLengthLimit();
+					if (limit == -1)
+						limit = 1000;
+					((Text)cellEditor.getControl()).setTextLimit(limit);
+				}
 			}
 			return modifiable;
 		}
@@ -529,6 +533,9 @@ public class SystemRenameDialog extends SystemPromptDialog
     	    e.doit = true;
     	  }
     	}
+    	else if (detail == SWT.TRAVERSE_ESCAPE || e.detail == SWT.TRAVERSE_RETURN) {
+			e.doit = false;
+		}
     	else
     	  e.doit = true;
     	ignoreSelection = false;

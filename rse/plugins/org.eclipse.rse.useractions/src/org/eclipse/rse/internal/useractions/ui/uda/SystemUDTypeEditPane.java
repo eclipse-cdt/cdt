@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Kevin Doyle	 (IBM) - [242717] Need a way to set the name validator of Named Types
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -30,6 +31,8 @@ import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.internal.useractions.ui.validators.ValidatorUserTypeName;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.rse.ui.validators.ISystemValidatorUniqueString;
 import org.eclipse.rse.ui.widgets.SystemEditPaneStateMachine;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,7 +59,7 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 	protected ISystemUDTreeView treeView;
 	protected ISystemUDAEditPaneHoster parentDialog;
 	// validators
-	private ValidatorUserTypeName nameValidator;
+	private ISystemValidator nameValidator;
 	// listeners   
 	private NameModifyListener nameML = new NameModifyListener();
 	private TypesModifyListener typesML = new TypesModifyListener();
@@ -130,7 +133,9 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 	 * Create widgets and populate/return composite
 	 */
 	public Control createContents(Composite parent) {
-		nameValidator = new ValidatorUserTypeName();
+		if (nameValidator == null)
+			nameValidator = new ValidatorUserTypeName();
+		
 		// Inner composite
 		int nbrColumns = 2;
 		comp = SystemWidgetHelpers.createComposite(parent, nbrColumns);
@@ -385,7 +390,8 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 			stateMachine.setEditMode(); // resets Apply/Reset button status		}
 			if (sn.getDomain() != currentDomain) setDomain(sn.getDomain()); //indicate domain change
 		}
-		nameValidator.setExistingNamesList(getExistingNames());
+		if (nameValidator instanceof ISystemValidatorUniqueString)
+			((ISystemValidatorUniqueString) nameValidator).setExistingNamesList(getExistingNames());
 		setPageComplete();
 	}
 
@@ -523,4 +529,8 @@ public class SystemUDTypeEditPane implements ISelectionChangedListener {
 		}
 		setPageComplete();
 	} //apply
+	
+	public void setNameValidator(ISystemValidator validator) {
+		nameValidator = validator;
+	}
 }

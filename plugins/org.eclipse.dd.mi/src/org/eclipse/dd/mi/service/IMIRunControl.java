@@ -14,12 +14,7 @@ package org.eclipse.dd.mi.service;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 
 /**
- * This interface provides access to controlling and monitoring the execution 
- * state of a process being debugged.  This interface does not actually 
- * provide methods for creating or destroying execution contexts, it doesn't
- * even have methods for getting labels.  That's because it is expected that
- * higher level services, ones that deal with processes, kernels, or target 
- * features will provide that functionality. 
+ * This interface provides a method for creating execution contexts.
  */
 public interface IMIRunControl extends IRunControl
 {

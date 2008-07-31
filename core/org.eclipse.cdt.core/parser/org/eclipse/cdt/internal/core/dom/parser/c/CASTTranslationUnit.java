@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -36,7 +37,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit {
 	 */
 	public IScope getScope() {
 		if (compilationUnit == null)
-			compilationUnit = new CScope(this);
+			compilationUnit = new CScope(this, EScopeKind.eGlobal);
 		return compilationUnit;
 	}
 

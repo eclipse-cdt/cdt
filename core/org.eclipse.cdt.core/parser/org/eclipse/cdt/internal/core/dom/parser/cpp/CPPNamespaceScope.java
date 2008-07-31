@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -33,6 +35,13 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	
     public CPPNamespaceScope( IASTNode physicalNode ) {
 		super( physicalNode );
+	}
+
+	public EScopeKind getKind() {
+		if (getPhysicalNode() instanceof IASTTranslationUnit)
+			return  EScopeKind.eGlobal;
+		
+		return EScopeKind.eNamespace;
 	}
 
 	/* (non-Javadoc)

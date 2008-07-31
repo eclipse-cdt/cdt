@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -42,6 +43,10 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         this.scopeName = name;
         this.binding = binding;
     }
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()

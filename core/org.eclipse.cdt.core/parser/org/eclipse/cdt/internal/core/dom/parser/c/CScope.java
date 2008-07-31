@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -95,11 +96,17 @@ public class CScope implements ICScope, IASTInternalScope {
     
     private CharArrayObjectMap[] mapsToNameOrBinding = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
     private ObjectMap reuseBindings= null;
+	private final EScopeKind kind;
     
-    public CScope( IASTNode physical ){
+    public CScope( IASTNode physical, EScopeKind eKind){
         physicalNode = physical;
+        kind= eKind;
     }
     
+	public EScopeKind getKind() {
+		return kind;
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
      */

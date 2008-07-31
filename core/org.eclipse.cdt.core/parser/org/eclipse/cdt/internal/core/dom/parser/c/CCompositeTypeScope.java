@@ -16,6 +16,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -29,7 +30,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  */
 public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope {
     public CCompositeTypeScope( ICASTCompositeTypeSpecifier compTypeSpec ){
-        super( compTypeSpec );
+        super( compTypeSpec, EScopeKind.eClassType);
     }
 
     /* (non-Javadoc)

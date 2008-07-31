@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -38,6 +39,10 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	public ICPPClassType getOriginalClassType() {
 		return specialization().getSpecializedBinding();
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 
 	public ICPPClassSpecialization getClassType() {

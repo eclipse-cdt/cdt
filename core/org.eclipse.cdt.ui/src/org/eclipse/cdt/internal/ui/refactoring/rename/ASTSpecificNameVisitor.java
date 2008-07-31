@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 
 public abstract class ASTSpecificNameVisitor extends ASTNameVisitor {
     private String fSearchForName;
@@ -24,6 +26,9 @@ public abstract class ASTSpecificNameVisitor extends ASTNameVisitor {
     
     @Override
 	final public int visitName(IASTName name) {
+    	if (name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName)
+    		return PROCESS_CONTINUE;
+    	
         String nameStr= name.toString();
         if (nameStr != null) {
             final int len= nameStr.length();

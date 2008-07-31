@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -46,6 +47,10 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 		super(physicalNode);
 	}
 	
+	public EScopeKind getKind() {
+		return EScopeKind.eLocal;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */

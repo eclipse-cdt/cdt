@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -69,6 +70,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		super(physicalNode);
 		((CPPASTCompositeTypeSpecifier) physicalNode).setScope(this);
 		createImplicitMembers();
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 
 	// 12.1 The default constructor, copy constructor, copy assignment operator, and destructor are

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -157,5 +158,9 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	public String toString() {
 		IName name = getScopeName();
 		return name != null ? name.toString() : String.valueOf(specialClass);
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 }

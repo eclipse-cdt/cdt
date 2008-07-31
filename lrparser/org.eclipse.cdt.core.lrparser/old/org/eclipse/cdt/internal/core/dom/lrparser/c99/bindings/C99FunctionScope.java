@@ -11,13 +11,17 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 
 public class C99FunctionScope extends C99Scope implements ICFunctionScope {
 
-	
+	public C99FunctionScope() {
+		super(EScopeKind.eLocal);
+	}
+
 	/**
 	 * Scope that represents the compound statement of the body of this scope.
 	 * Does not include the parameters which are part of this function scope.
@@ -37,5 +41,4 @@ public class C99FunctionScope extends C99Scope implements ICFunctionScope {
 	public IScope getBodyScope() throws DOMException {
 		return bodyScope;
 	}
-
 }

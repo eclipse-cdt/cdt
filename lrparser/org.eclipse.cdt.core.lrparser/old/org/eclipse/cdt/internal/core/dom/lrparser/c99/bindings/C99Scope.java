@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -31,10 +32,11 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	private IScope parent;
 	private IASTNode physicalNode;
 	private IName scopeName;
+	private final EScopeKind kind;
 	
-	
-	
-	
+	public C99Scope(EScopeKind eKind) {
+		kind= eKind;
+	}
 	
 	public IScope getParent() {
 		return parent;
@@ -50,6 +52,10 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 
 	public void setPhysicalNode(IASTNode physicalNode) {
 		this.physicalNode = physicalNode;
+	}
+	
+	public final EScopeKind getKind() {
+		return kind;
 	}
 
 	public IName getScopeName() {

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
@@ -22,6 +23,7 @@ public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeSc
 	
 	
 	public C99CompositeTypeScope(ICompositeType struct) {
+		super(EScopeKind.eClassType);
 		this.struct = struct;
 	}
 
@@ -32,7 +34,4 @@ public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeSc
 	public IBinding getBinding(@SuppressWarnings("unused") char[] name) throws DOMException {
 		throw new UnsupportedOperationException();
 	}
-
-
-
 }

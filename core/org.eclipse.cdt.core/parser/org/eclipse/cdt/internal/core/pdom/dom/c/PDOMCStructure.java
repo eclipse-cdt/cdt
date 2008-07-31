@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -66,6 +67,10 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 
 	public PDOMCStructure(PDOM pdom, int record) {
 		super(pdom, record);
+	}
+	
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 	
 	@Override

@@ -785,9 +785,15 @@ public class CPPVisitor {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-					IScope scope= dtor.getFunctionScope();
-					if (scope != null)
-						return scope;
+					if (CPPVisitor.findTypeRelevantDeclarator(dtor) == dtor) {
+						while (parent.getParent() instanceof IASTDeclarator)
+						    parent = parent.getParent();
+						ASTNodeProperty prop = parent.getPropertyInParent();
+						if (prop == IASTSimpleDeclaration.DECLARATOR)
+						    return dtor.getFunctionScope();
+						else if (prop == IASTFunctionDefinition.DECLARATOR)
+						    return ((IASTCompoundStatement)((IASTFunctionDefinition)parent.getParent()).getBody()).getScope();
+					}
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);
 			    }

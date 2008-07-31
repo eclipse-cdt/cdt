@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -26,6 +27,10 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	public CompositeCPPClassScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
 		super(cf, rbinding);
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 
 	public ICPPClassType getClassType() {

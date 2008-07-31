@@ -38,6 +38,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"__TIME__",
 			"__builtin_constant_p(exp)",
 			"__builtin_va_arg(ap, type)",
+			"__builtin_types_compatible_p(x, y)",
 			"__complex__",
 			"__cplusplus",
 			"__extension__",

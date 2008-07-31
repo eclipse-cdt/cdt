@@ -22,6 +22,12 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScope {
+	
+	/**
+	 * Classifies the scope.
+	 * @since 5.1
+	 */
+	EScopeKind getKind();
 
 	/**
      * Get the IName for this scope, may be null 

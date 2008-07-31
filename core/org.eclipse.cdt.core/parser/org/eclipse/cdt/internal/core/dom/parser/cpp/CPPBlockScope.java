@@ -16,6 +16,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -29,6 +30,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 	public CPPBlockScope( IASTNode physicalNode ){
 		super( physicalNode );
+	}
+	
+	@Override
+	public EScopeKind getKind() {
+		return EScopeKind.eLocal;
 	}
 	
 	@Override

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
@@ -29,7 +30,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  */
 public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope( IASTFunctionDefinition function ){
-	    super( function );
+	    super( function, EScopeKind.eLocal);
 	}
 	
     /* (non-Javadoc)

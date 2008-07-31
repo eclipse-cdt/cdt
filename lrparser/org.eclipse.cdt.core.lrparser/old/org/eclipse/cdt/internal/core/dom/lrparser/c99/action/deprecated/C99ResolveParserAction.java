@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.*;
+import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.GOTO_LABEL;
+import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.IDENTIFIER;
+import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.STRUCT_TAG;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -137,7 +140,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	
 	public C99ResolveParserAction(IParserActionTokenProvider parser) {
 		this.parser = parser;
-		bindingScopeStack.add(new C99Scope()); // the global scope
+		bindingScopeStack.add(new C99Scope(EScopeKind.eGlobal)); // the global scope
 		System.out.println();
 	}
 	
@@ -187,7 +190,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		if(DEBUG) DebugUtil.printMethodTrace();
 		
 		symbolTableScopeStack.add(symbolTable);
-		bindingScopeStack.add(new C99Scope());
+		bindingScopeStack.add(new C99Scope(EScopeKind.eLocal));
 		
 		undoStack.add(new IUndoAction() {
 			public void undo() {

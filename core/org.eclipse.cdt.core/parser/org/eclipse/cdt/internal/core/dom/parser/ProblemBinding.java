@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -45,6 +46,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         this.node = node;
     }
     
+	public EScopeKind getKind() {
+		return EScopeKind.eLocal;
+	}
+
     public IASTNode getASTNode() {
         return node;
     }

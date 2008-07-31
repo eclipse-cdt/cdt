@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -42,6 +43,10 @@ public class CPPScopeMapper {
 
 		public NamespaceScopeWrapper(ICPPNamespaceScope scope) {
 			fScope= scope;
+		}
+
+		public EScopeKind getKind() {
+			return fScope.getKind();
 		}
 
 		public IBinding[] find(String name) throws DOMException {

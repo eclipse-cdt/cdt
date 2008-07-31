@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -27,6 +28,10 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 
 	public CPPTemplateScope(IASTNode physicalNode) {
 		super(physicalNode);
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eTemplateDeclaration;
 	}
 
 	public ICPPTemplateDefinition getTemplateDefinition() {

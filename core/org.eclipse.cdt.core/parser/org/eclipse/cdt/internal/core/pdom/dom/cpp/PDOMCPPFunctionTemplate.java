@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -61,6 +62,10 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 
 	public PDOMCPPFunctionTemplate(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eLocal;
 	}
 
 	@Override

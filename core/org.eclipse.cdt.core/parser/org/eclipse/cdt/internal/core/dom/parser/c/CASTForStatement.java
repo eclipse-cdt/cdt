@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -90,7 +91,7 @@ public class CASTForStatement extends CASTNode implements IASTForStatement, IAST
 
     public IScope getScope() {
         if( scope == null )
-            scope = new CScope( this );
+            scope = new CScope( this, EScopeKind.eLocal);
         return scope;
     }
 

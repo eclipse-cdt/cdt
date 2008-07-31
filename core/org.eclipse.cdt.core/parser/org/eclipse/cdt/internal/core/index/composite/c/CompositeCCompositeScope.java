@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -52,5 +53,9 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 	
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getCompositeType();
+	}
+
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -52,6 +53,10 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	public PDOMCPPClassScope(IPDOMCPPClassType binding) {
 		fBinding= binding;
+	}
+	
+	public EScopeKind getKind() {
+		return EScopeKind.eClassType;
 	}
 
 	public ICPPClassType getClassType() {

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -33,6 +34,10 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		this.namespaces = namespaces;
 	}
 	
+	public EScopeKind getKind() {
+		return EScopeKind.eNamespace;
+	}
+
 	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException {
 		fail();
 	}

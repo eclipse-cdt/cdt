@@ -136,7 +136,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ExecutionData implements IExecutionDMData {
+	private static class ExecutionData implements IExecutionDMData {
 		private final StateChangeReason fReason;
 		ExecutionData(StateChangeReason reason) {
 			fReason = reason;
@@ -154,7 +154,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	 * @see MIRunControl
 	 */
 	@Immutable
-	static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
+	protected static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
 	implements IDMEvent<V>, IMIDMEvent
 	{
 		final private T fMIInfo;
@@ -170,7 +170,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	 * Indicates that the given thread has been suspended.
 	 */
 	@Immutable
-	static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
+	protected static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
 	implements ISuspendedDMEvent
 	{
 		SuspendedEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo) {
@@ -197,7 +197,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ContainerSuspendedEvent extends SuspendedEvent
+	protected static class ContainerSuspendedEvent extends SuspendedEvent
 	implements IContainerSuspendedDMEvent
 	{
 		final IExecutionDMContext[] triggeringDmcs;
@@ -213,15 +213,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ThreadSuspendedEvent extends SuspendedEvent
-	{
-		ThreadSuspendedEvent(IExecutionDMContext executionDmc, MIStoppedEvent miInfo) {
-			super(executionDmc, miInfo);
-		}
-	}
-
-	@Immutable
-	static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
+	protected static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
 	implements IResumedDMEvent
 	{
 		ResumedEvent(IExecutionDMContext ctx, MIRunningEvent miInfo) {
@@ -249,7 +241,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ContainerResumedEvent extends ResumedEvent
+	protected static class ContainerResumedEvent extends ResumedEvent
 	implements IContainerResumedDMEvent
 	{
 		final IExecutionDMContext[] triggeringDmcs;
@@ -266,15 +258,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ThreadResumedEvent extends ResumedEvent
-	{
-		ThreadResumedEvent(IExecutionDMContext executionDmc, MIRunningEvent miInfo) {
-			super(executionDmc, miInfo);
-		}
-	}
-
-	@Immutable
-	static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
+	protected static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
 	implements IStartedDMEvent
 	{
 		StartedDMEvent(IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) {
@@ -283,7 +267,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 	}
 
 	@Immutable
-	static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
+	protected static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
 	implements IExitedDMEvent
 	{
 		ExitedDMEvent(IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) {

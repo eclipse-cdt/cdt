@@ -6,6 +6,60 @@
 <meta name="copyright" content="Copyright (c) 2006, 2007 Wind River Systems, Inc. and others. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page."/>
 <link rel="stylesheet" type="text/css" href="../book.css"/>
 <title>Extending Remote System Explorer</title>
+
+
+<script language="JavaScript" type="text/javascript">
+function handleLink(url){
+   if (isBadLink(url)){
+	   externalizeLink(url);
+   }
+   return true;
+}
+
+function externalizeLink(url){
+	var base = "http://dsdp.eclipse.org/help/latest/index.jsp?topic=//org.eclipse.rse.doc.isv/guide/";
+	var oldsegs = url.href.split('/');
+	var name = oldsegs[oldsegs.length-1];
+
+	var newref = base + name;
+	url.href = newref;
+}
+
+function isBadLink(url){
+    var status = getStatus(url);
+	if (status =='404'){ // not found on internet?
+		return true;
+	}
+    else if (status == '-1'){ //not found locally
+ 		return true;
+	}
+    else { // link is okay
+		return false;
+    }
+}
+
+function getStatus(url){
+	var request = null;
+	try { 
+		request = new XMLHttpRequest(); 
+	}
+	catch(e){
+	}
+
+	if(!request) 
+		return -1;
+	try { 
+		request.open("GET",url.href,false); 
+		request.send(null);
+	}
+	catch(e){ 
+		return -1; 
+	}
+	return request.status;
+}
+</script>
+
+
 </head>
 <body id="gxtending-body">
 <a name="gxtending"><!-- --></a>
@@ -13,11 +67,15 @@
 <div>
 <p>There are numerous ways how developers and software vendors can extend the 
 capabilities of the Remote System Explorer. Please look at the
-<a href="../../org.eclipse.rse.doc.isv/guide/rse_int_architecture.html">RSE Developer Guide</a> to learn about adding subsystems,
+
+<a href="../../org.eclipse.rse.doc.isv/guide/rse_int_architecture.html" onclick="return handleLink(this);">RSE Developer Guide</a> to learn about adding subsystems,
+
+
+
 remote property pages or additional popup actions. The developer guide
 holds extensive 
-<a href="../../org.eclipse.rse.doc.isv/guide/tutorials.html">tutorials</a>, 
-<a href="../../org.eclipse.rse.doc.isv/guide/rse_int_architecture.html">overview documentation and 
+<a href="../../org.eclipse.rse.doc.isv/guide/tutorials.html" onclick="return handleLink(this);">tutorials</a>, 
+<a href="../../org.eclipse.rse.doc.isv/guide/rse_int_architecture.html" onclick="return handleLink(this);">overview documentation and 
 reference</a>.</p>
 
 <p>Users can configure and customize the Remote System Explorer through

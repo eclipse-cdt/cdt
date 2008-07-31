@@ -3110,5 +3110,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testBug239586_ClassCast() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
-
+	
+	//	template<typename T1> class CT {
+	//		static int x;
+	//	};
+	//	template<typename T> int CT<T>::x = sizeof(T);
+	public void testUsingTemplParamInInitializerOfStaticField() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPTemplateTypeParameter t= ba.assertNonProblem("T)", 1, ICPPTemplateTypeParameter.class);
+	}
 }

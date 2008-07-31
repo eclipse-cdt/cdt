@@ -369,36 +369,25 @@ public class CPPVisitor {
 	    if (mustBeSimple && elabType.getName() instanceof ICPPASTQualifiedName)
 	    	return binding;
 	    
-		boolean template = false;
-		ICPPScope scope = (ICPPScope) getContainingScope(name);
-		if (scope instanceof ICPPTemplateScope) {
-			ICPPScope parentScope = null;
-			try {
-				template = true;
-				parentScope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
-			} catch (DOMException e1) {
-			}
-			scope = parentScope;
-		}
-		
-		if (mustBeSimple) {
-			//3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
-			//the declaration
-			while (scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
-				try {
-					scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
-				} catch (DOMException e1) {
-				}
-			}
-		}
-		if (scope instanceof ICPPClassScope && isFriend && !qualified) {
-	        try {
-	            while (scope instanceof ICPPClassScope)
-	                scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
-            } catch (DOMException e1) {
-		    }
-		}
         try {
+        	boolean template = false;
+        	ICPPScope scope = (ICPPScope) getContainingScope(name);
+        	while (scope instanceof ICPPTemplateScope) {
+        		template = true;
+        		scope= (ICPPScope) scope.getParent();
+        	}
+		
+        	if (mustBeSimple) {
+        		//3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
+        		//the declaration
+        		while (scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
+        			scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
+        		}
+        	}
+        	if (scope instanceof ICPPClassScope && isFriend && !qualified) {
+        		while (scope instanceof ICPPClassScope)
+        			scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
+        	}
         	if (scope != null) {
         		binding = scope.getBinding(elabType.getName(), false);
         	}
@@ -426,19 +415,15 @@ public class CPPVisitor {
 			IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
 			name = ns[ns.length - 1];
 		}
-		ICPPScope scope = (ICPPScope) getContainingScope(name);
-		boolean template = false;
-		if (scope instanceof ICPPTemplateScope) {
-			template = true;
-			ICPPScope parentScope = null;
-			try {
-				parentScope = (ICPPScope) getParentScope(scope, compType.getTranslationUnit());
-			} catch (DOMException e1) {
-			}
-			scope = parentScope;
-		}
-		IBinding binding = null;
+
+    	IBinding binding = null;
+    	ICPPScope scope = (ICPPScope) getContainingScope(name);
         try {
+        	boolean template = false;
+        	while (scope instanceof ICPPTemplateScope) {
+        		template = true;
+        		scope= (ICPPScope) scope.getParent();
+        	}
     		if (name instanceof ICPPASTTemplateId) {
     			return CPPTemplates.createExplicitClassSpecialization(compType);
     		} 
@@ -550,32 +535,27 @@ public class CPPVisitor {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 		
-		boolean template = false;
-		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
-		if (scope instanceof ICPPTemplateScope) {
-			ICPPScope parentScope = null;
-			try {
-				template = true;
-				parentScope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
-			} catch (DOMException e1) {
-			}
-			scope = parentScope;
-		}
-		if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
-		    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-		    if (declSpec.isFriend()) {
-		        try {
-                    scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
-                } catch (DOMException e1) {
-                }
-		    }
-		}
-		
 		IBinding binding;
-        try {
+		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
+
+		boolean template = false;
+		try {
+			while (scope instanceof ICPPTemplateScope) {
+				template = true;
+				scope= (ICPPScope) scope.getParent();
+			}
+			if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
+				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+				if (declSpec.isFriend()) {
+					try {
+						scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
+					} catch (DOMException e1) {
+					}
+				}
+			}
             binding = (scope != null) ? scope.getBinding(name, false) : null;
         } catch (DOMException e) {
-            binding = null;
+            return e.getProblem();
         }
         
         IASTSimpleDeclaration simpleDecl = (parent instanceof IASTSimpleDeclaration) ?
@@ -754,6 +734,14 @@ public class CPPVisitor {
 	    
 	}
 	
+	public static IScope getContainingNonTemplateScope(final IASTNode inputNode) {
+		IScope scope= getContainingScope(inputNode);
+		while (scope instanceof ICPPTemplateScope) {
+			scope= CPPVisitor.getContainingScope(((ICPPTemplateScope) scope).getTemplateDeclaration());
+		}
+		return scope;
+	}
+	
 	public static IScope getContainingScope(final IASTNode inputNode) {
 		if (inputNode == null || inputNode instanceof IASTTranslationUnit)
 			return null;
@@ -787,27 +775,19 @@ public class CPPVisitor {
 		        return getContainingScope((IASTStatement) node); 
 			} else if (node instanceof IASTTypeId) {
 				if (node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
-				    ICPPASTTemplateDeclaration decl = CPPTemplates.getTemplateDeclaration((IASTName) node.getParent());
-			        if (decl == null) {
-			            node = node.getParent();
-			            while (node instanceof IASTName)
-			                node = node.getParent();
-			            continue;
-			        }
+					node= node.getParent(); // template-id
+					while(node instanceof IASTName) { 
+						node= node.getParent();
+					}
+					continue;
 				}
 			} else if (node instanceof IASTParameterDeclaration) {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-					if (dtor.getNestedDeclarator() == null || dtor.getNestedDeclarator().getPointerOperators().length == 0) {
-						while (parent.getParent() instanceof IASTDeclarator)
-						    parent = parent.getParent();
-						ASTNodeProperty prop = parent.getPropertyInParent();
-						if (prop == IASTSimpleDeclaration.DECLARATOR)
-						    return dtor.getFunctionScope();
-						else if (prop == IASTFunctionDefinition.DECLARATOR)
-						    return ((IASTCompoundStatement)((IASTFunctionDefinition)parent.getParent()).getBody()).getScope();
-					}
+					IScope scope= dtor.getFunctionScope();
+					if (scope != null)
+						return scope;
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);
 			    }
@@ -890,9 +870,6 @@ public class CPPVisitor {
 		        name = (IASTName) parent;
 		        parent = name.getParent();
 		    }
-	        ICPPASTTemplateDeclaration tmplDecl = CPPTemplates.getTemplateDeclaration(name);
-	        if (tmplDecl != null)
-	            return tmplDecl.getScope();
 	            
 			if (parent instanceof ICPPASTQualifiedName) {
 				final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
@@ -905,12 +882,6 @@ public class CPPVisitor {
 					if (qname.isFullyQualified()) {
 						return parent.getTranslationUnit().getScope();
 					} 
-					for (int j=1; j < names.length; j++) {
-						tmplDecl = CPPTemplates.getTemplateDeclaration(names[j]);
-						if (tmplDecl != null) {
-							return getContainingScope(tmplDecl);
-						}
-					}
 				}
 				if (i > 0) {
 					IBinding binding = names[i-1].resolveBinding();
@@ -1768,8 +1739,9 @@ public class CPPVisitor {
 					    funcName = ns[ns.length - 1];
 					}
 					IScope s = getContainingScope(funcName);
-					if (s instanceof ICPPTemplateScope)
-						s = getParentScope(s, funcName.getTranslationUnit());
+					while (s instanceof ICPPTemplateScope) {
+						s = s.getParent();
+					}
 					if (s instanceof ICPPClassScope) {
 						ICPPClassScope cScope = (ICPPClassScope) s;
 						IType type = cScope.getClassType();

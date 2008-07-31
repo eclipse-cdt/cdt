@@ -23,10 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -46,7 +44,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
-		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, ICPPTemplateScope, IIndexScope {
+		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IIndexScope {
 
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
 	
@@ -120,10 +118,6 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
 		list.accept(visitor);
-	}
-
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
-		return this;
 	}
 
 	public IBinding[] find(String name) throws DOMException {

@@ -12,8 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -103,11 +101,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		IScope scope= getScope();
-		if (scope instanceof ICPPClassScope) {
-			return ((ICPPClassScope) scope).getClassType();
-		}
-		return null;
+		return (ICPPClassType) getOwner();
 	}
 
 	public int getVisibility() throws DOMException {

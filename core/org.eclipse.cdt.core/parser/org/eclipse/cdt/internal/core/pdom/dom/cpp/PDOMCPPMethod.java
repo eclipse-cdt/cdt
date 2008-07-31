@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -151,12 +150,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		try {
-			return (ICPPClassType) getParentNode();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return (ICPPClassType) getOwner();
 	}
 
 	@Override

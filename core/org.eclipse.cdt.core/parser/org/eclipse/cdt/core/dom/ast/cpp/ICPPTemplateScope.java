@@ -6,24 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 11, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
- * @author aniefer
+ * A separate template scope is used for each template declaration. This leads to a 
+ * non-hierarchical structure of scopes. E.g. for a method of a class-template the 
+ * declaration and definition will nests in different template-scopes. Therefore
+ * {@link IScope#getParent()} will never return a template scope unless the method is 
+ * called for a template-scope that directly nests in another one.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateScope extends ICPPScope {
-
 	/**
-	 * get the template that this scope represents
+	 * Returns the corresponding template declaration
+	 * @since 5.1
 	 */
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException;
+	public ICPPASTTemplateDeclaration getTemplateDeclaration();
 
+	@Deprecated
+	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException;
 }

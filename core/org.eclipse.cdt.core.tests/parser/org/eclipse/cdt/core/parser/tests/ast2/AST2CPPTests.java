@@ -5526,11 +5526,8 @@ public class AST2CPPTests extends AST2BaseTest {
 	// namespace ns { typedef int ns::TINT; } // illegal, still no CCE is expected.
 	public void testQualifiedTypedefs_Bug222093() throws Exception{
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
-		IBinding td= bh.assertNonProblem("TINT", 4);
+		IBinding td= bh.assertProblem("TINT", 4);
 		bh.assertProblem("ns::", 2);
-		
-		assertTrue(td instanceof ITypedef);
-		assertTrue(((ITypedef) td).getType() instanceof ICPPBasicType);
 	}
 	
 	// void func() {  

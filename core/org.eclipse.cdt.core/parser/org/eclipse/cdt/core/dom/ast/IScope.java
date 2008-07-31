@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -16,7 +16,10 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 
 /**
- * @author Doug Schaefer
+ * Scopes can be used to look-up names. With the exception of template-scopes the scopes
+ * can be arranged in a hierarchy.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScope {
 
@@ -28,10 +31,11 @@ public interface IScope {
     public IName getScopeName() throws DOMException;
     
 	/**
-	 * Scopes are arranged hierarchically. Lookups will generally
-	 * flow upward to find resolution.
-	 * 
-	 * @return The parent scope.
+	 * The method returns the first enclosing non-template scope, or <code>null</code> if this
+	 * is the global scope.
+	 * <p>
+	 * For scopes obtained from an index, <code>null</code> is returned to indicate that the
+	 * scope is only enclosed by the global scope.
 	 */
 	public IScope getParent() throws DOMException;
 

@@ -11,18 +11,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -127,8 +127,17 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         if (scope != null)
             return scope;
         
-        ASTNodeProperty prop = getPropertyInParent();
-        if (prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR) {
+        // introduce a scope for function declarations and definitions, only.
+        IASTNode node= getParent();
+        while(!(node instanceof IASTDeclaration)) {
+        	if (node==null)
+        		return null;
+        	node= node.getParent();
+        }
+        if (node instanceof IASTParameterDeclaration)
+        	return null;
+        
+        if (CPPVisitor.findTypeRelevantDeclarator(this) == this) {
             scope = new CPPFunctionScope(this);
         }
         return scope;

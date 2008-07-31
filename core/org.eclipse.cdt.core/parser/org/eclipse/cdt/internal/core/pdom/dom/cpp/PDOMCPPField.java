@@ -10,10 +10,8 @@
  *    IBM Corporation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -50,12 +48,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 	}
 	
 	public ICPPClassType getClassOwner() {
-		try {
-			return (ICPPClassType)getParentNode();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return (ICPPClassType) getOwner();
 	}
 
 	public int getVisibility() {

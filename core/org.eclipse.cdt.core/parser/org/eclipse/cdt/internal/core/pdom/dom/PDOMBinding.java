@@ -198,7 +198,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return null;
 	}
 	
-	public IIndexScope getScope() {
+	public final IIndexScope getScope() {
 		// The parent node in the binding hierarchy is the scope. 
 		try {
 			IBinding parent= getParentBinding(); 

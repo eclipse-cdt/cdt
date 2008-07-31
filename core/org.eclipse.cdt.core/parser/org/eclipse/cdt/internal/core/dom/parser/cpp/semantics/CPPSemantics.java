@@ -129,6 +129,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -633,33 +634,56 @@ public class CPPSemantics {
 	static protected void lookup(LookupData data, Object start) throws DOMException{
 		final IIndexFileSet fileSet= getIndexFileSet(data);
 		final boolean isIndexBased= fileSet != IIndexFileSet.EMPTY;
-		
-		IASTNode node = data.astName;
-		ICPPScope scope = null;
-		if (start instanceof ICPPScope)
-		    scope = (ICPPScope) start;
-		else if (start instanceof IASTName)
-		    scope = getLookupScope((IASTName) start);
-		else 
+
+		IASTNode blockItem= data.astName;
+		if (blockItem == null) 
 			return;
-		
-		if (data.astName == null) 
+
+		ICPPScope nextScope= null;
+		if (start instanceof ICPPScope) {
+			nextScope= (ICPPScope) start;
+		} else if (start instanceof IASTName) {
+			nextScope= getLookupScope((IASTName) start);
+		}
+		if (nextScope == null)
 			return;
-		
+
 		boolean friendInLocalClass = false;
-		if (scope instanceof ICPPClassScope && data.forFriendship()) {
+		if (nextScope instanceof ICPPClassScope && data.forFriendship()) {
 			try {
-				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
+				ICPPClassType cls = ((ICPPClassScope)nextScope).getClassType();
 				friendInLocalClass = !cls.isGloballyQualified();
 			} catch (DOMException e) {
 			}
 		}
+
+		ICPPTemplateScope nextTmplScope;
+		if (nextScope instanceof ICPPTemplateScope) {
+			nextTmplScope= (ICPPTemplateScope) nextScope;
+			nextScope= getParentScope(nextScope, data.tu);
+		} else {
+			nextTmplScope= enclosingTemplateScope(data.astName);
+		}
 		
-		while (scope != null) {
+		
+		while (nextScope != null || nextTmplScope != null) {
+			// when the non-template scope is no longer contained within the first template scope,
+			// we use the template scope for the next iteration.
+			boolean useTemplScope= false;
+			if (nextTmplScope != null) {
+				useTemplScope= true;
+				if (nextScope instanceof IASTInternalScope) {
+					final IASTNode node= ((IASTInternalScope) nextScope).getPhysicalNode();
+					if (node != null && nextTmplScope.getTemplateDeclaration().contains(node)) {
+						useTemplScope= false;
+					} 
+				}
+			}
+			ICPPScope scope= useTemplScope ? nextTmplScope : nextScope;
 			if (scope instanceof IIndexScope && data.tu != null) {
 				scope= (ICPPScope) data.tu.mapToASTScope(((IIndexScope) scope));
 			}
-			IASTNode blockItem = CPPVisitor.getContainingBlockItem(node);
+			blockItem = CPPVisitor.getContainingBlockItem(blockItem);
 			
 			if (!data.usingDirectivesOnly) {
 				if (data.contentAssist) {
@@ -737,29 +761,37 @@ public class CPPSemantics {
 				data.usingDirectivesOnly = true;
 			}
 			
-			if (blockItem != null)
-				node = blockItem;
-			
-			ICPPScope parentScope = (ICPPScope) getParentScope(scope, data.tu);
-			if (parentScope instanceof ICPPTemplateScope) {
-			    IASTNode declNode = node;
-			    while (declNode != null && !(declNode instanceof ICPPASTTemplateDeclaration)) {
-			        node = declNode;
-			        declNode = declNode.getParent();
-			    }
-			    if (declNode != null) {
-			        ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) declNode;
-			        ICPPTemplateScope templateScope = templateDecl.getScope();
-			        if (templateScope.getTemplateDefinition() == ((ICPPTemplateScope)parentScope).getTemplateDefinition()) {
-			            parentScope = templateScope;
-			        }
-			    }
+			// compute next scopes
+			if (useTemplScope && nextTmplScope != null) {
+				nextTmplScope= enclosingTemplateScope(nextTmplScope.getTemplateDeclaration());
+			} else {
+				nextScope= getParentScope(scope, data.tu);
 			}
-			scope = parentScope;
 		}
 	}
-	
-	private static IScope getParentScope(IScope scope, CPPASTTranslationUnit unit) throws DOMException {
+
+	private static ICPPTemplateScope enclosingTemplateScope(IASTNode node) {
+		IASTNode parent= node.getParent();
+		if (parent instanceof IASTName) {
+			if (parent instanceof ICPPASTTemplateId) {
+				node= parent;
+				parent= node.getParent();
+			}
+			if (parent instanceof ICPPASTQualifiedName) {
+				ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
+				if (qname.isFullyQualified() || qname.getNames()[0] != node)
+					return null;
+			}
+		}
+		while (!(parent instanceof ICPPASTTemplateDeclaration)) {
+			if (parent == null)
+				return null;
+			parent= parent.getParent();
+		}
+		return ((ICPPASTTemplateDeclaration) parent).getScope();
+	}
+
+	private static ICPPScope getParentScope(IScope scope, CPPASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
 		if (unit != null) {
@@ -770,7 +802,7 @@ public class CPPSemantics {
 				parentScope= unit.mapToASTScope((IIndexScope) parentScope);
 			}
 		}
-		return parentScope;
+		return (ICPPScope) parentScope;
 	}
 
 	private static Object lookupInParents(LookupData data, ICPPScope lookIn) throws DOMException{

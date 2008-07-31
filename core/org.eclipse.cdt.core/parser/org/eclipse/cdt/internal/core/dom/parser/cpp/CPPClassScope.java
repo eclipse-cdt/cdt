@@ -146,11 +146,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	@Override
 	public IScope getParent() {
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName();
-	    if (compName instanceof ICPPASTQualifiedName) {
-	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
-	    }
-		return CPPVisitor.getContainingScope(compName);
+	    IASTName compName = compType.getName().getLastName();
+		return CPPVisitor.getContainingNonTemplateScope(compName);
 	}
 
 	/* (non-Javadoc)

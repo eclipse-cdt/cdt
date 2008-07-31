@@ -70,7 +70,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		return ((ICPPMethod)getTemplateDefinition()).getClassOwner();
+		return (ICPPClassType) getOwner();
 	}
 
 	public int getVisibility() throws DOMException {

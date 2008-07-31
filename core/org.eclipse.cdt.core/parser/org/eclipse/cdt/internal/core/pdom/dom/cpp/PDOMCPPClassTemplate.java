@@ -19,32 +19,21 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
-import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -141,77 +130,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 			return new ICPPClassTemplatePartialSpecialization[0];
 		}
 	}
-		
-	private class PDOMCPPTemplateScope implements ICPPTemplateScope, IIndexScope {
-		public IBinding[] find(String name) throws DOMException {
-			return CPPSemantics.findBindings(this, name, false);
-		}
-
-		public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-			return getBinding(name, resolve, IIndexFileSet.EMPTY);
-		}
-
-		public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
-			return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
-		}
-
-		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
-				throws DOMException {
-			try {
-				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
-				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
-				list.accept(visitor);
 				
-				return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-			return null;
-		}
-		
-		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-				throws DOMException {
-			IBinding[] result = null;
-			try {
-				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null,
-						prefixLookup, !prefixLookup);
-				PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
-				list.accept(visitor);
-				result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-			return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
-		}
-		
-		public IIndexScope getParent() {
-			return PDOMCPPClassTemplate.this.getParent();
-		}
-		
-		public ICPPTemplateDefinition getTemplateDefinition()
-				throws DOMException {
-			return null;
-		}
-
-		public IIndexName getScopeName() {
-			return null;
-		}
-
-		public IIndexBinding getScopeBinding() {
-			return PDOMCPPClassTemplate.this;
-		}
-	}
-	
-	private PDOMCPPTemplateScope scope;
-	
-	@Override
-	public IIndexScope getScope() {
-		if (scope == null) {
-			scope = new PDOMCPPTemplateScope();
-		}
-		return scope;
-	}
-	
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);

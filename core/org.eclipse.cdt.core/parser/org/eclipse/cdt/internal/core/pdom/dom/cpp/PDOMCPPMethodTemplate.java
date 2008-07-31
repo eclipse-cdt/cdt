@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -92,12 +91,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
-		try {
-			return (ICPPClassType) getParentNode();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return (ICPPClassType) getOwner();
 	}
 
 	public int getVisibility() throws DOMException {

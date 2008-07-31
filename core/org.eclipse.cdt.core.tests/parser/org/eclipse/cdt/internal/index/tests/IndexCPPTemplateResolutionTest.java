@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -1064,13 +1063,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
     	assertTrue(sc0.isSameType(sc1));
     	
-    	IIndexScope sc2= assertInstance(sc0.getScope(), IIndexScope.class, ICPPTemplateScope.class);
+    	assertNull(sc0.getScope());
     	assertNull(b0.getScope());
-    	assertEquals(sc2.getScopeBinding(), sc1);
-    	
-    	// template scopes will not be supported in the future, see bug 237026
-    	//    	assertInstance(b0.getScope(), ICPPTemplateScope.class);
-    	//    	assertNotSame(sc2, b0.getScope());
     }
     
     // template<typename T>
@@ -1176,7 +1170,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassScope s1= assertInstance(b1.getScope(), ICPPClassScope.class);
     	assertInstance(s1.getClassType(), ICPPTemplateDefinition.class);
     	
-    	assertInstance(s1.getClassType().getScope(), ICPPTemplateScope.class);
+    	assertNull(s1.getClassType().getScope());
     }
     
 	//    typedef signed int SI;

@@ -64,11 +64,8 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		this.physicalNode = physicalNode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-	 */
 	public IScope getParent() throws DOMException {
-		return CPPVisitor.getContainingScope(physicalNode);
+		return CPPVisitor.getContainingNonTemplateScope(physicalNode);
 	}
 
 	public IASTNode getPhysicalNode() {

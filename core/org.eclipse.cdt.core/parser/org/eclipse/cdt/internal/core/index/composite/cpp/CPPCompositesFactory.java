@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -101,9 +100,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					namespaces = getNamespaces(rscope.getScopeBinding());
 				}
 				return new CompositeCPPNamespaceScope(this, namespaces);
-			} 
-			if (rscope instanceof ICPPTemplateScope) {
-				return new CompositeCPPTemplateScope(this, (ICPPTemplateScope) rscope);
 			} 
 			if (rscope instanceof ICPPInternalUnknownScope) {
 				ICPPInternalUnknownScope uscope= (ICPPInternalUnknownScope) rscope;

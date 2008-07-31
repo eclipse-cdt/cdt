@@ -10,9 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
@@ -30,10 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -102,25 +96,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    //we can't just resolve the function and get its parent scope, since there are cases where that 
 	    //could loop since resolving functions requires resolving their parameter types
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
-	    IASTName name = fdtor.getName();
-	    if (name instanceof ICPPASTQualifiedName) {
-	        ICPPASTQualifiedName qual = (ICPPASTQualifiedName) name;
-	        IASTName[] ns = qual.getNames();
-	        if (ns.length > 1) {
-	            IBinding binding = ns[ ns.length - 2 ].resolveBinding();
-	            if (binding == null)
-	            	return null;
-	            else if (binding instanceof ICPPClassType)
-	                return ((ICPPClassType)binding).getCompositeScope();
-	            else if (binding instanceof ICPPNamespace)
-	                return ((ICPPNamespace)binding).getNamespaceScope();
-	            return binding.getScope();
-	        } else if (qual.isFullyQualified()) {
-	            return qual.getTranslationUnit().getScope();
-	        }
-	    } 
-	        
-	    return CPPVisitor.getContainingScope(name);
+	    IASTName name = fdtor.getName().getLastName();
+	    return CPPVisitor.getContainingNonTemplateScope(name);
 	}
 
     /* (non-Javadoc)

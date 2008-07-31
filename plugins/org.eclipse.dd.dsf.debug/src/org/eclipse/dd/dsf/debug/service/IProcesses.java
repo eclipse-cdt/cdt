@@ -100,15 +100,18 @@ public interface IProcesses extends IDMService {
 
     /**
      * Checks whether it is possible to detach the debugger from the specified process.
-     * @param procCtx The process from which we want to detach.
+     * @param dmc The debugging context from which we want to detach.  This context
+     *            should have IProcessDMContext as an ancestor.
      * @param rm Return if it is possible to detach.
      */
-    void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm);
+    void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm);
 
     /**
      * Detaches debugger from the given process.
+     * @param dmc The debugging context from which we want to detach.  This context
+     *            should have IProcessDMContext as an ancestor.
      */
-    void detachDebuggerFromProcess(IProcessDMContext procCtx, RequestMonitor requestMonitor);
+    void detachDebuggerFromProcess(IDMContext dmc, RequestMonitor requestMonitor);
 
     /**
      * Checks whether it is possible to run a new process.

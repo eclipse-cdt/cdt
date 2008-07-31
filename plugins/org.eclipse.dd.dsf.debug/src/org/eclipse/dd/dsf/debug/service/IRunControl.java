@@ -83,7 +83,7 @@ public interface IRunControl extends IDMService
     }
     
     /**
-     * Indicates that a new execution context (thread) was started.  
+     * Indicates that a new execution context was started.  
      */
     public interface IStartedDMEvent extends IDMEvent<IExecutionDMContext> {}
 

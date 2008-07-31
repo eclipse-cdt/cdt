@@ -16,11 +16,15 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
+import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
@@ -203,6 +207,30 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		}
     }
     
+    /**
+     * Event indicating that an execution group (debugged process) has started.  This event
+     * implements the {@link IStartedMDEvent} from the IRunControl service. 
+     */
+    public static class ExecutionGroupStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IStartedDMEvent
+    {
+        public ExecutionGroupStartedDMEvent(IMIExecutionGroupDMContext context) {
+            super(context);
+        }
+    }        
+    
+    /**
+     * Event indicating that an execution group is no longer being debugged.  This event
+     * implements the {@link IExitedMDEvent} from the IRunControl service. 
+     */
+    public static class ExecutionGroupExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+        implements IExitedDMEvent
+    {
+        public ExecutionGroupExitedDMEvent(IContainerDMContext context) {
+            super(context);
+        }
+    }        
+
     private AbstractMIControl fCommandControl;
 	private CommandCache fCommandCache;
 
@@ -361,7 +389,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     	rm.done();
     }
 
-    public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
 			fCommandControl.queueCommand(
@@ -369,7 +397,10 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							rm.setData(null);
+							IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procCtx, ""); //$NON-NLS-1$
+			                getSession().dispatchEvent(new ExecutionGroupStartedDMEvent(groupDmc), 
+			                                           getProperties());
+			                rm.setData(groupDmc);
 							rm.done();
 						}
 					});
@@ -380,21 +411,32 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	    }
 	}
 	
-    public void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm) {
+    public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
     	rm.setData(false);
     	rm.done();
     }
 
-    public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
-		if (procCtx instanceof MIProcessDMC) {
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
-		    // This service version cannot use -target-detach because it didn't exist
-		    // in versions of GDB up to and including GDB 6.8
-			fCommandControl.queueCommand(
-					new CLIDetach(controlDmc),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+    public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
+    	MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+
+    	if (controlDmc != null) {
+    		// This service version cannot use -target-detach because it didn't exist
+    		// in versions of GDB up to and including GDB 6.8
+    		fCommandControl.queueCommand(
+    				new CLIDetach(controlDmc),
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    					@Override
+    					protected void handleSuccess() {
+    				    	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+    				    	if (containerDmc != null) {
+    				    		getSession().dispatchEvent(new ExecutionGroupExitedDMEvent(containerDmc), 
+    				    				getProperties());
+    				    	}
+    						rm.done();
+    					}
+    				});
+    	} else {
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
 	    }
 	}

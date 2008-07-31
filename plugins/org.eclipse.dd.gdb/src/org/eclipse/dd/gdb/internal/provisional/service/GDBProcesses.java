@@ -138,15 +138,15 @@ public class GDBProcesses extends MIProcesses {
 	}
 
 	@Override
-    public void canDetachDebuggerFromProcess(IProcessDMContext procCtx, DataRequestMonitor<Boolean> rm) {
+    public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
     	rm.setData(false); // don't turn on yet, as we need to generate events to use this properly
     	rm.done();
     }
 
 	@Override
-    public void detachDebuggerFromProcess(IProcessDMContext procCtx, final RequestMonitor rm) {
+    public void detachDebuggerFromProcess(IDMContext dmc, final RequestMonitor rm) {
 		super.detachDebuggerFromProcess(
-			procCtx, 
+			dmc, 
 			new RequestMonitor(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
@@ -159,7 +159,9 @@ public class GDBProcesses extends MIProcesses {
 	@Override
 	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
         MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-	    if (inferiorProcess != null && inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
+	    if (fGdb.isConnected() &&
+	    	inferiorProcess != null && 
+	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 	    	super.getProcessesBeingDebugged(dmc, rm);
 	    } else {
 	    	rm.done();

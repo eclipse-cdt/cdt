@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -45,10 +45,10 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                IProcessDMContext procDmc = DMContexts.getAncestorOfType(getContext(), IProcessDMContext.class);
+                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
 
                 getProcessService().canDetachDebuggerFromProcess(
-                		procDmc,
+                		containerDmc,
                 		new DataRequestMonitor<Boolean>(fExecutor, null) {
                 			@Override
                 			protected void handleCompleted() {
@@ -68,8 +68,8 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 
     	fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                IProcessDMContext procDmc = DMContexts.getAncestorOfType(getContext(), IProcessDMContext.class);
-            	getProcessService().detachDebuggerFromProcess(procDmc, new RequestMonitor(fExecutor, null));
+                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
+            	getProcessService().detachDebuggerFromProcess(containerDmc, new RequestMonitor(fExecutor, null));
             }
         });
 		return false;

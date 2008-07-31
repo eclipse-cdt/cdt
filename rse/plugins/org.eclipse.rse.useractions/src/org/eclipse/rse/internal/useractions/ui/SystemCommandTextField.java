@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Kevin Doyle	(IBM) - [239704] No Validation for Command textbox in Work with Compile and User Action dialogs
+ * Kevin Doyle	(IBM) - [242041] Bring back Undo/Content Assist for User Actions/Compile Commands Command Field
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui;
 
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.window.Window;
@@ -23,6 +25,8 @@ import org.eclipse.rse.ui.ISystemMassager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -177,6 +181,32 @@ public class SystemCommandTextField implements SelectionListener {
 		if ((guiProvider == null) || !guiProvider.createExtraButtons(comp, nbrColumns - 1)) addFillerLine(comp, nbrColumns - 1);
 		insertVariableButton.addSelectionListener(this);
 		editButton.addSelectionListener(this);
+		textCommand.getTextWidget().addKeyListener(new KeyAdapter()
+		{
+			public void keyReleased(KeyEvent e)
+			{
+	
+				if (!e.doit)
+					return;
+					
+				if (e.stateMask == SWT.CTRL)
+				{
+					switch (e.character)
+					{
+						case ' ' :
+							textCommand.setInCodeAssist(true);
+							textCommand.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+							break;
+							// CTRL-Z
+						case (int) 'z' - (int) 'a' + 1 :
+							textCommand.doOperation(ITextOperationTarget.UNDO);
+							//e.doit = false;
+							break;
+					}
+				}
+
+			}
+		});
 		return comp;
 	}
 

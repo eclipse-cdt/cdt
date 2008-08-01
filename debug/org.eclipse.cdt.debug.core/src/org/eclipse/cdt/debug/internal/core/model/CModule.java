@@ -83,7 +83,7 @@ public class CModule extends CDebugElement implements ICModule {
 		if ( cdiObject instanceof ICDISharedLibrary ) {
 			
 			if ( cdiObject instanceof ICDISharedLibrary ) {
-				// We used to ask the CodeModel to create the Binary (ICElement) for
+				// We used to ask the CoreModel to create the Binary (ICElement) for
 				// us but it will do so only for binary files that are in a project 
 				// output directory (for performance reasons). So, we do all the 
 				// leg work ourselves, duplicating much of the code, unfortunately.

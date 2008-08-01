@@ -23,6 +23,16 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 
 public class LexerTests extends BaseTestCase {
+	private static final LexerOptions DEFAULT_OPTIONS = new LexerOptions();
+	private static final LexerOptions NO_DOLLAR = new LexerOptions();
+	private static final LexerOptions NO_MINMAX = new LexerOptions();
+	private static final LexerOptions SLASH_PERCENT = new LexerOptions();
+	static {
+		NO_DOLLAR.fSupportDollarInIdentifiers= false;
+		NO_MINMAX.fSupportMinAndMax= false;
+		SLASH_PERCENT.fSupportSlashPercentComments= true;
+	}
+	
 	static String TRIGRAPH_REPLACES_CHARS= "#^[]|{}~\\";
 	static String TRIGRAPH_CHARS= "='()!<>-/";
 
@@ -43,19 +53,13 @@ public class LexerTests extends BaseTestCase {
 	}
 
 	private void init(String input) throws Exception {
-		fLog.clear();
-		fLexer= new Lexer(input.toCharArray(), new LexerOptions(), fLog, null);
-		fLog.setInput(input);
-		fLexer.nextToken();
-		fLastEndOffset= 0;
+		init(input, DEFAULT_OPTIONS);
 	}
 
-	private void init(String input, boolean dollar, boolean minmax) throws Exception {
+	private void init(String input, LexerOptions options) throws Exception {
 		fLog.clear();
-		final LexerOptions lexerOptions = new LexerOptions();
-		lexerOptions.fSupportDollarInIdentifiers= dollar;
-		lexerOptions.fSupportMinAndMax= minmax;
-		fLexer= new Lexer(input.toCharArray(), lexerOptions, fLog, null);
+		fLexer= new Lexer(input.toCharArray(), options, fLog, null);
+		fLog.setInput(input);
 		fLexer.nextToken();
 		fLastEndOffset= 0;
 	}
@@ -278,6 +282,19 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	public void testSlashPercentComments() throws Exception {
+		init("// /%\na", SLASH_PERCENT);
+		comment("// /%");
+		nl();
+		id("a");
+		eof();
+		
+		init("/% // /% \n xxx%/a", SLASH_PERCENT);
+		comment("/% // /% \n xxx%/");
+		id("a");
+		eof();
+	}
+
 	public void testMinimalComment() throws Exception {
 		init("a/**/b/**/");
 		id("a");
@@ -331,7 +348,7 @@ public class LexerTests extends BaseTestCase {
 			eof();
 		}
 		
-		init(ident, false, true); 
+		init(ident, NO_DOLLAR); 
 		final int idxDollar = ident.indexOf('$');
 		id(ident.substring(0, idxDollar));
 		token(Lexer.tOTHER_CHARACTER, "$");
@@ -470,7 +487,7 @@ public class LexerTests extends BaseTestCase {
 				eof();
 				assertEquals(ops, buf.toString()); // check token image
 
-				init(input, true, false); 
+				init(input, NO_MINMAX); 
 				for (int i = 0; i < tokens.length; i++) {
 					switch (tokens[i]) {
 					case IGCCToken.tMIN:

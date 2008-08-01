@@ -145,7 +145,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
-    	this(reader, info, language, log, configuration, readerFactory, false);
+    	this(reader, info, language, log, configuration, readerFactory, false, false);
+    }
+
+    /**
+     * Temporary, will be removed in 5.1
+     */
+    public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
+            IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory,
+            boolean supportAtSignInIndent) {
+    	this(reader, info, language, log, configuration, readerFactory, supportAtSignInIndent, false);
     }
 
     /**
@@ -153,11 +162,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      */
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory, 
-            boolean supportAtSignInIdent) {
+            boolean supportAtSignInIdent, boolean supportSlashPercentComments) {
         fLog = log;
         fAdditionalNumericLiteralSuffixes= nonNull(configuration.supportAdditionalNumericLiteralSuffixes());
         fLexOptions.fSupportDollarInIdentifiers= configuration.support$InIdentifiers();
         fLexOptions.fSupportAtSignInIdentifiers= supportAtSignInIdent;
+        fLexOptions.fSupportSlashPercentComments= supportSlashPercentComments;
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);

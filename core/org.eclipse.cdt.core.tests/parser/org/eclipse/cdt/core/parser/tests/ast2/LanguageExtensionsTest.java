@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -231,4 +232,21 @@ public class LanguageExtensionsTest extends AST2BaseTest {
     	fdef= getDeclaration(tu, 2);
     	fdef= getDeclaration(tu, 3);
     }
+    
+	protected IASTTranslationUnit parseSlashPercent(String code) throws Exception {
+		IScanner scanner= 
+			new CPreprocessor(new CodeReader(code.toCharArray()), new ScannerInfo(), ParserLanguage.CPP, NULL_LOG, 
+					new GPPScannerExtensionConfiguration(), FileCodeReaderFactory.getInstance(), false, true);
+		GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, new GPPParserExtensionConfiguration());
+		IASTTranslationUnit tu = parse(parser);
+		return tu;
+	}
+	
+	// /% a comment %/
+	// int a;
+	public void testSlashPercentComment() throws Exception {
+		IASTTranslationUnit tu= parseSlashPercent(getAboveComment());
+		IASTDeclaration d= getDeclaration(tu, 0);
+		assertEquals("int a;", d.getRawSignature());
+	}
 }

@@ -76,6 +76,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 		private IResourceInfo fInfo;
 		
+		@Override
 		public void createControls(Composite par)  {
 			super.createControls(par);
 			usercomp.setLayout(new GridLayout());
@@ -96,6 +97,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			createEditArea(sashForm);
 			
 			usercomp.addControlListener(new ControlAdapter() {
+				@Override
 				public void controlResized(ControlEvent e) {
 					specificResize();
 				}});
@@ -109,7 +111,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			Point p2 = optionList.getTree().getSize();
 			Point p3 = usercomp.getSize();
 			p1.x += calcExtra();
-			if (p1.x < p2.x || (p2.x * 2 < p3.x)) {
+			if (p3.x >= p1.x && (p1.x < p2.x || (p2.x * 2 < p3.x))) {
 				optionList.getTree().setSize(p1.x , p2.y);
 				sashForm.setWeights(new int[] {p1.x, (p3.x - p1.x)});
 			} 
@@ -131,6 +133,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			optionList.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 			optionList.setLabelProvider(new ToolListLabelProvider());
 			optionList.addFilter(new ViewerFilter() {
+				@Override
 				public boolean select(Viewer viewer,
 										Object parent,
 										Object element) {
@@ -161,7 +164,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			
 			while (iter.hasNext()) {
-				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
+				AbstractToolSettingUI page = iter.next();
 				if (page.isFor(optionHolder, category)) {
 					currentSettingsPage = page;
 					break;
@@ -214,7 +217,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			List<AbstractToolSettingUI> pages = getPagesForConfig();
 			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
-				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
+				AbstractToolSettingUI page = iter.next();
 				if (page.isFor(tool, null)) {
 					currentSettingsPage = page;
 					break;
@@ -271,6 +274,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			settingsPageContainer.layout();
 		}
 
+		@Override
 		public void setVisible(boolean visible){
 			if(visible){
 				selectedElement = null;
@@ -315,7 +319,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 				
 			if (selectedElement == null) {
-				selectedElement = (ToolListElement)(newElements != null && newElements.length > 0 ? newElements[0] : null);
+				selectedElement = (newElements != null && newElements.length > 0 ? newElements[0] : null);
 			}
 				
 			if (selectedElement != null) {
@@ -400,6 +404,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 *  (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 		 */
+		@Override
 		protected void performDefaults() {
 			if (page.isForProject()) {
 				ManagedBuildManager.resetConfiguration(page.getProject(), getCfg());
@@ -474,7 +479,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						String[] data = (String[])((List<String>)op1.getValue()).toArray(new String[0]);
+						String[] data = ((List<String>)op1.getValue()).toArray(new String[0]);
 						ManagedBuildManager.setOption(res, dst, op2, data);
 						break;
 					default :
@@ -537,7 +542,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 */
 		private List<AbstractToolSettingUI> getPagesForConfig() {
 			if (getCfg() == null) return null;
-			List<AbstractToolSettingUI> pages = (List<AbstractToolSettingUI>) configToPageListMap.get(getCfg().getId());
+			List<AbstractToolSettingUI> pages = configToPageListMap.get(getCfg().getId());
 			if (pages == null) {
 				pages = new ArrayList<AbstractToolSettingUI>();
 				configToPageListMap.put(getCfg().getId(), pages);	
@@ -557,7 +562,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if (pages == null) return;
 			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
-				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
+				AbstractToolSettingUI page = iter.next();
 				if (page == null) continue;
 				page.setDirty(b);
 			}
@@ -576,7 +581,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
 			while (iter.hasNext()) {
-				AbstractToolSettingUI page = (AbstractToolSettingUI) iter.next();
+				AbstractToolSettingUI page = iter.next();
 				if (page == null) continue;
 				if (page.isDirty()) return true;
 			}
@@ -595,12 +600,14 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 		}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 			fInfo = getResCfg(cfgd);
 			setValues();
 			handleOptionSelection();
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IResourceInfo ri1 = getResCfg(src);
 		IResourceInfo ri2 = getResCfg(dst);
@@ -620,10 +627,12 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	}
 
 	// IPreferencePageContainer methods
+	@Override
 	public void updateButtons() {}
 	public void updateMessage() {}
 	public void updateTitle() {}
 
+	@Override
 	public boolean canBeVisible() {
 		IConfiguration cfg = getCfg();
 		if (cfg instanceof MultiConfiguration) 

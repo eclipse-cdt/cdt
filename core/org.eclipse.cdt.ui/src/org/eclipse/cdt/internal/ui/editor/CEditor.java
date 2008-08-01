@@ -1716,7 +1716,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						((IWorkingCopy) unit).reconcile();
 					}
 					return unit.getElementAtOffset(offset);
-				} else if (unit.isConsistent()) {
+				} else if (unit.isStructureKnown() && unit.isConsistent()) {
 					return unit.getElementAtOffset(offset);
 				}
 			} catch (CModelException x) {

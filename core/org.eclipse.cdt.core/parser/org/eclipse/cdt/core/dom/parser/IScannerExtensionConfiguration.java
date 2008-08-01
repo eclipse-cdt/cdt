@@ -48,6 +48,14 @@ public interface IScannerExtensionConfiguration {
 	 */
 	public boolean supportAtSignInIdentifiers();
 
+	/** 
+	 * Support for block-comments comments using /% %/.
+	 * @return <code>true</code>, if /% should be interpreted as the start of a block-comment which is
+	 * ended by %/
+	 * @since 5.1
+	 */
+	public boolean supportSlashPercentComments();
+
 	/**
 	 * Support for (deprecated) GNU minimum and maximum operators (<code>&lt;?</code>
 	 * and <code>&gt;?</code>).

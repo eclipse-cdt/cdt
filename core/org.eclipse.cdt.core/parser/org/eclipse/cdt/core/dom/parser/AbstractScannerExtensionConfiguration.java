@@ -62,6 +62,14 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	public boolean supportAtSignInIdentifiers() {
 		return false;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportSlashPercentComments() {
+		return false;
+	}
 
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportAdditionalNumericLiteralSuffixes()

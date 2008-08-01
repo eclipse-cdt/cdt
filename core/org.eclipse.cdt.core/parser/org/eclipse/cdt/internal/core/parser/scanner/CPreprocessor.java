@@ -150,6 +150,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportDollarInIdentifiers= configuration.support$InIdentifiers();
         fLexOptions.fSupportAtSignInIdentifiers= configuration.supportAtSignInIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
+        fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);
         configureKeywords(language, configuration);

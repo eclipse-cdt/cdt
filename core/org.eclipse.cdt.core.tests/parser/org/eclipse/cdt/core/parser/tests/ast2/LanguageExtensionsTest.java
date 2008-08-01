@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -47,6 +48,7 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 	
 	protected static final int SIZEOF_EXTENSION   = 0x1;
 	protected static final int FUNCTION_STYLE_ASM = 0x2;
+	protected static final int SLASH_PERCENT_COMMENT = 0x4;
 
 	public static TestSuite suite() {
 		return suite(LanguageExtensionsTest.class);
@@ -87,7 +89,13 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 	}
 	
 	protected IASTTranslationUnit parseCPPWithExtension(String code, final int extensions) throws Exception {
-		return parse(code, GPPScannerExtensionConfiguration.getInstance(),
+		return parse(code,
+			new GPPScannerExtensionConfiguration() {
+				@Override
+				public boolean supportSlashPercentComments() {
+					return (extensions & SLASH_PERCENT_COMMENT) != 0;
+				}
+			},
 			new GPPParserExtensionConfiguration() {
 				@Override
 				public boolean supportExtendedSizeofOperator() {
@@ -102,7 +110,13 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 	}
 
 	protected IASTTranslationUnit parseCWithExtension(String code, final int extensions) throws Exception {
-		return parse(code, GCCScannerExtensionConfiguration.getInstance(),
+		return parse(code, 
+			new GCCScannerExtensionConfiguration() {
+				@Override
+				public boolean supportSlashPercentComments() {
+					return (extensions & SLASH_PERCENT_COMMENT) != 0;
+				}
+			},
 			new GCCParserExtensionConfiguration() {
 				@Override
 				public boolean supportExtendedSizeofOperator() {
@@ -217,4 +231,13 @@ public class LanguageExtensionsTest extends AST2BaseTest {
     	fdef= getDeclaration(tu, 2);
     	fdef= getDeclaration(tu, 3);
     }
+    	
+	// /% a comment %/
+	// int a;
+	public void testSlashPercentComment() throws Exception {
+    	IASTTranslationUnit tu= parseCWithExtension(getAboveComment(), SLASH_PERCENT_COMMENT);
+
+		IASTDeclaration d= getDeclaration(tu, 0);
+		assertEquals("int a;", d.getRawSignature());
+	}
 }

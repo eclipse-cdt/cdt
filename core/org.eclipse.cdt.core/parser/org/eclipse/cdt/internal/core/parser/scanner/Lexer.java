@@ -50,6 +50,7 @@ final public class Lexer {
 		public boolean fSupportAtSignInIdentifiers= true;
 		public boolean fSupportMinAndMax= true;
 		public boolean fCreateImageLocations= true;
+		public boolean fSupportSlashPercentComments= false;
 		
 		@Override
 		public Object clone() {
@@ -267,7 +268,12 @@ final public class Lexer {
 					lineComment(start);
 					continue; 
 				case '*':
-					blockComment(start);
+					blockComment(start, '*');
+					continue;
+				case '%':
+					if (fOptions.fSupportSlashPercentComments) {
+						blockComment(start, '%');
+					}
 					continue;
 				}
 				continue;
@@ -485,8 +491,14 @@ final public class Lexer {
 					lineComment(start);
 					continue; 
 				case '*':
-					blockComment(start);
+					blockComment(start, '*');
 					continue;
+				case '%':
+					if (fOptions.fSupportSlashPercentComments) {
+						blockComment(start, '%');
+						continue;
+					}
+					break;
 				}
 				return newToken(IToken.tDIV, start);
 
@@ -681,11 +693,11 @@ final public class Lexer {
 		return newToken((expectQuotes ? tQUOTE_HEADER_NAME : tSYSTEM_HEADER_NAME), start, length);
 	}
 
-	private void blockComment(final int start) {
+	private void blockComment(final int start, final char trigger) {
 		// we can ignore line-splices, trigraphs and windows newlines when searching for the '*'
 		int pos= fEndOffset;
 		while(pos < fLimit) {
-			if (fInput[pos++] == '*') {
+			if (fInput[pos++] == trigger) {
 				fEndOffset= pos;
 				if (nextCharPhase3() == '/') {
 					nextCharPhase3();

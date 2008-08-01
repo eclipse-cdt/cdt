@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
+ *     Doug Schaefer, Adrian Petrescu - QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     Peter Vidler  - Monitor support (progress and cancellation) bug 242699
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -39,15 +40,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @author Doug Schaefer, Adrian Petrescu
- *
+ * Debugger class for Jtag debugging (using gdb server)
  */
 public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
@@ -68,151 +70,200 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	}
 	
 	protected void doStartSession(ILaunch launch, Session session, IProgressMonitor monitor) throws CoreException {
-		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		ICDITarget[] targets = session.getTargets();
-		if (targets.length == 0 || !(targets[0] instanceof Target)) {
-			Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
-					DebugPlugin.INTERNAL_ERROR, "Error getting debug target", null));
-			return;
-		}
-		MISession miSession = ((Target)targets[0]).getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
+		SubMonitor submonitor = SubMonitor.convert(monitor, 100);
+		
 		try {
-			MIGDBSetNewConsole newConsole = factory.createMIGDBSetNewConsole();
-			miSession.postCommand(newConsole);
-			MIInfo info = newConsole.getMIInfo();
-			if (info == null) {
-				throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+			submonitor.subTask(Messages.getString("GDBJtagDebugger.0")); //$NON-NLS-1$
+			ILaunchConfiguration config = launch.getLaunchConfiguration();
+			ICDITarget[] targets = session.getTargets();
+			if (targets.length == 0 || !(targets[0] instanceof Target)) {
+				Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
+						DebugPlugin.INTERNAL_ERROR, Messages.getString("GDBJtagDebugger.1"), null)); //$NON-NLS-1$
+				return;
 			}
-		}
-		catch( MIException e ) {
-			// We ignore this exception, for example
-			// on GNU/Linux the new-console is an error.
-		}
-		
-		IGDBJtagDevice gdbJtagDevice;
-		try {
-			gdbJtagDevice = getGDBJtagDevice(config);
-		} catch (NullPointerException e) {
-			return;
-		}
-		
-		ArrayList commands = new ArrayList();
-		
-		// hook up to remote target
-		boolean useRemote = config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
-		if (useRemote) {
-			monitor.beginTask("Connecting to remote", 1);
-			String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-			int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-			gdbJtagDevice.doRemote(ipAddress, portNumber, commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		
-		// execute init script
-		monitor.beginTask("Executing init commands", 1);
-		
-		// Run device-specific code to reset the board
-		if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
-			commands = new ArrayList();
-			gdbJtagDevice.doReset(commands);
-			int defaultDelay = gdbJtagDevice.getDefaultDelay();
-			gdbJtagDevice.doDelay(config.getAttribute(IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		
-		// Run device-specific code to halt the board
-		if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
-			commands = new ArrayList();
-			gdbJtagDevice.doHalt(commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		// execute any user defined init command
-		executeGDBScript(config, IGDBJtagConstants.ATTR_INIT_COMMANDS, miSession);
-
-		// execute load
-		boolean doLoad = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE);
-		if (doLoad) {
-			// Escape windows path separator characters TWICE, once for Java and once for GDB.
-			String imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, "");
-			if (imageFileName.length() > 0) {
-				monitor.beginTask("Loading image", 1);
-				imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName).replace("\\", "\\\\");
-				String imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, "");
-				commands = new ArrayList();
-				gdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
-				executeGDBScript(getGDBScript(commands), miSession);
-
+			MISession miSession = ((Target)targets[0]).getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			if (submonitor.isCanceled()) {
+				throw new OperationCanceledException();
 			}
-		}
-		
-		// execute symbol load
-		boolean doLoadSymbols = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS);
-		if (doLoadSymbols) {
-			String symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, "");
-			if (symbolsFileName.length() > 0) {
-				symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName).replace("\\", "\\\\");
-				String symbolsOffset = "0x" + config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, "");
+			try {
+				MIGDBSetNewConsole newConsole = factory.createMIGDBSetNewConsole();
+				miSession.postCommand(newConsole);
+				MIInfo info = newConsole.getMIInfo();
+				if (info == null) {
+					throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+				}
+			}
+			catch( MIException e ) {
+				// We ignore this exception, for example
+				// on GNU/Linux the new-console is an error.
+			}
+
+			submonitor.worked(10);
+			if (submonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			IGDBJtagDevice gdbJtagDevice;
+			try {
+				gdbJtagDevice = getGDBJtagDevice(config);
+			} catch (NullPointerException e) {
+				return;
+			}
+
+			ArrayList commands = new ArrayList();
+
+			// hook up to remote target
+			if (submonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			boolean useRemote = config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+			if (useRemote) {
+				submonitor.subTask(Messages.getString("GDBJtagDebugger.2")); //$NON-NLS-1$
+				String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+				int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+				gdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(10));
+				if (submonitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+			}
+
+			// execute init script
+			submonitor.subTask(Messages.getString("GDBJtagDebugger.3")); //$NON-NLS-1$
+			submonitor.setWorkRemaining(80); // compensate for optional work above
+
+			// Run device-specific code to reset the board
+			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
 				commands = new ArrayList();
-				gdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
-				executeGDBScript(getGDBScript(commands), miSession);
+				gdbJtagDevice.doReset(commands);
+				int defaultDelay = gdbJtagDevice.getDefaultDelay();
+				gdbJtagDevice.doDelay(config.getAttribute(IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
+			}
+			submonitor.setWorkRemaining(65); // compensate for optional work above
+
+			// Run device-specific code to halt the board
+			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
+				commands = new ArrayList();
+				gdbJtagDevice.doHalt(commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
+			}
+			submonitor.setWorkRemaining(50); // compensate for optional work above
+			// execute any user defined init command
+			executeGDBScript(config, IGDBJtagConstants.ATTR_INIT_COMMANDS, miSession,
+					submonitor.newChild(15));
+
+			// execute load
+			boolean doLoad = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE);
+			if (doLoad) {
+				// Escape windows path separator characters TWICE, once for Java and once for GDB.
+				String imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
+				if (imageFileName.length() > 0) {
+					monitor.beginTask(Messages.getString("GDBJtagDebugger.5"), 1); //$NON-NLS-1$
+					imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName).replace("\\", "\\\\");
+					String imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""); //$NON-NLS-2$ //$NON-NLS-4$
+					commands = new ArrayList();
+					gdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
+					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+				}
+			}
+			submonitor.setWorkRemaining(15); // compensate for optional work above
+
+			// execute symbol load
+			boolean doLoadSymbols = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS);
+			if (doLoadSymbols) {
+				String symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, ""); //$NON-NLS-1$
+				if (symbolsFileName.length() > 0) {
+					symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName).replace("\\", "\\\\");
+					String symbolsOffset = "0x" + config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, ""); //$NON-NLS-2$
+					commands = new ArrayList();
+					gdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
+					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
+				}
+			}
+		} catch (OperationCanceledException e) {
+			if (launch != null && launch.canTerminate()) {
+				launch.terminate();
 			}
 		}
 	}
 
 	public void doRunSession(ILaunch launch, ICDISession session, IProgressMonitor monitor) throws CoreException {
-		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		ICDITarget[] targets = session.getTargets();
-		if ( targets.length == 0 || !(targets[0] instanceof Target) )
-			return;
-		MISession miSession = ((Target)targets[0]).getMISession();
+		SubMonitor submonitor = SubMonitor.convert(monitor, 100);
 		
-		IGDBJtagDevice gdbJtagDevice;
 		try {
-			gdbJtagDevice = getGDBJtagDevice(config);
-		} catch (NullPointerException e) {
-			return;
+			ILaunchConfiguration config = launch.getLaunchConfiguration();
+			ICDITarget[] targets = session.getTargets();
+			if ( targets.length == 0 || !(targets[0] instanceof Target) )
+				return;
+			MISession miSession = ((Target)targets[0]).getMISession();
+
+			IGDBJtagDevice gdbJtagDevice;
+			try {
+				gdbJtagDevice = getGDBJtagDevice(config);
+			} catch (NullPointerException e) {
+				return;
+			}
+
+			if (submonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			submonitor.worked(20);
+			ArrayList commands = new ArrayList();
+			// Set program counter
+			boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
+			if (setPc) {
+				String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, "")); //$NON-NLS-1$
+				gdbJtagDevice.doSetPC(pcRegister, commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+			}
+			submonitor.setWorkRemaining(60); // compensate for optional work above
+
+			// execute run script
+			monitor.beginTask(Messages.getString("GDBJtagDebugger.18"), 1); //$NON-NLS-1$
+			boolean setStopAt = config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT);
+			if (setStopAt) {
+				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, ""); //$NON-NLS-1$
+				commands = new ArrayList();
+				gdbJtagDevice.doStopAt(stopAt, commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+			}
+			submonitor.setWorkRemaining(40); // compensate for optional work above
+
+			boolean setResume = config.getAttribute(IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME);
+			if (setResume) {
+				commands = new ArrayList();
+				gdbJtagDevice.doContinue(commands);
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+			}
+			submonitor.setWorkRemaining(20); // compensate for optional work above
+			// Run any user defined command
+			executeGDBScript(config, IGDBJtagConstants.ATTR_RUN_COMMANDS, miSession, 
+					submonitor.newChild(20));
+		} catch (OperationCanceledException e) {
+			if (launch != null && launch.canTerminate()) {
+				launch.terminate();
+			}
 		}
-		
-		ArrayList commands = new ArrayList();
-		// Set program counter
-		boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
-		if (setPc) {
-			String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""));
-			gdbJtagDevice.doSetPC(pcRegister, commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		
-		// execute run script
-		monitor.beginTask("Executing run commands", 1);
-		boolean setStopAt = config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT);
-		if (setStopAt) {
-			String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, "");
-			commands = new ArrayList();
-			gdbJtagDevice.doStopAt(stopAt, commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		
-		boolean setResume = config.getAttribute(IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME);
-		if (setResume) {
-			commands = new ArrayList();
-			gdbJtagDevice.doContinue(commands);
-			executeGDBScript(getGDBScript(commands), miSession);
-		}
-		// Run any user defined command
-		executeGDBScript(config, IGDBJtagConstants.ATTR_RUN_COMMANDS, miSession);
 	}
 	
-	private void executeGDBScript(String script, MISession miSession) throws CoreException {
+	private void executeGDBScript(String script, MISession miSession, 
+			IProgressMonitor monitor) throws CoreException {
 		// Try to execute any extra command
 		if (script == null)
 			return;
 		script = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(script);
 		String[] commands = script.split("\\r?\\n");
+		SubMonitor submonitor = SubMonitor.convert(monitor, commands.length);
 		for (int j = 0; j < commands.length; ++j) {
 			try {
+				submonitor.subTask(Messages.getString("GDBJtagDebugger.21") + commands[j]); //$NON-NLS-1$
 				CLICommand cli = new CLICommand(commands[j]);
 				miSession.postCommand(cli, MISession.FOREVER);
+				submonitor.worked(1);
+				if (submonitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 				MIInfo info = cli.getMIInfo();
 				if (info == null) {
 					throw new MIException("Timeout"); //$NON-NLS-1$
@@ -221,7 +272,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 				MultiStatus status = new MultiStatus(
 						Activator.PLUGIN_ID,
 						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-						"Failed command", e);
+						Messages.getString("GDBJtagDebugger.22"), e); //$NON-NLS-1$
 				status
 						.add(new Status(
 								IStatus.ERROR,
@@ -235,14 +286,14 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	}
 	
 	private void executeGDBScript(ILaunchConfiguration configuration, String attribute,
-			MISession miSession) throws CoreException {
-		executeGDBScript(configuration.getAttribute(attribute, ""), miSession);
+			MISession miSession, IProgressMonitor monitor) throws CoreException {
+		executeGDBScript(configuration.getAttribute(attribute, ""), miSession, monitor); //$NON-NLS-1$
 	}
 
 	private IGDBJtagDevice getGDBJtagDevice (ILaunchConfiguration config) 
 		throws CoreException, NullPointerException {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
 			getInstance().getGDBJtagDeviceContribution();
 		for (int i = 0; i < availableDevices.length; i++) {

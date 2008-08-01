@@ -13,13 +13,24 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.math.BigInteger;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.internal.core.model.Binary;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -64,13 +75,60 @@ public class CModule extends CDebugElement implements ICModule {
 	}
 
 	/** 
-	 * Constructor for CModule. 
+	 * Constructor for CModule. Used for shared libraries. 
 	 */
 	private CModule( int type, CDebugTarget target, ICDIObject cdiObject ) {
 		super( target );
 		fType = type;
 		if ( cdiObject instanceof ICDISharedLibrary ) {
-			fCElement = CoreModel.getDefault().create( new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) );
+			
+			if ( cdiObject instanceof ICDISharedLibrary ) {
+				// We used to ask the CodeModel to create the Binary (ICElement) for
+				// us but it will do so only for binary files that are in a project 
+				// output directory (for performance reasons). So, we do all the 
+				// leg work ourselves, duplicating much of the code, unfortunately.
+				//
+				// THE OLD WAY...
+				// fCElement = CoreModel.getDefault().create( new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) );
+				
+				ICDISharedLibrary cdiSharedLib = (ICDISharedLibrary)cdiObject;
+				IPath path = new Path(cdiSharedLib.getFileName());
+				
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IFile file = root.getFileForLocation(path); 
+				if (file != null && !file.exists()) {
+					file = null;
+				}
+
+				// In case this is an external resource see if we can find
+				// a file for it.
+				if (file == null) {
+					IFile[] files = root.findFilesForLocation(path);
+					if (files.length > 0) {
+						file = files[0];
+					}
+				}
+
+				if (file != null) {
+					ICProject cproject = CoreModel.getDefault().create(file.getProject());
+					IPath resourcePath = file.getParent().getFullPath();
+					
+					try {
+						ICElement cfolder = cproject.findElement(resourcePath);
+						
+						// Check if folder is a source root and use that instead
+						ISourceRoot sourceRoot = cproject.findSourceRoot(resourcePath);
+						if (sourceRoot != null)
+							cfolder = sourceRoot;
+						
+						IBinaryFile bin = CModelManager.getDefault().createBinaryFile(file);
+						fCElement = new Binary(cfolder, file, (IBinaryObject)bin);
+					} catch (CModelException e) {
+						CDebugCorePlugin.log(e);
+					}
+				}
+			}
+
 		}
 		fCDIObject = cdiObject;
 		fImageName = ( ( cdiObject instanceof ICDISharedLibrary ) ) ? new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) : new Path( CoreModelMessages.getString( "CModule.0" ) ); //$NON-NLS-1$

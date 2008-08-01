@@ -324,9 +324,11 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		
 		int offset = editorSelection.getOffset();
 		
-		ICElement editorElement;
+		ICElement editorElement= null;
 		try {
-			editorElement = fInput.getElementAtOffset(offset);
+			 if (fInput.isStructureKnown() && fInput.isConsistent()) {
+				 editorElement = fInput.getElementAtOffset(offset);
+			 }
 		} catch (CModelException e) {
 			return;
 		}

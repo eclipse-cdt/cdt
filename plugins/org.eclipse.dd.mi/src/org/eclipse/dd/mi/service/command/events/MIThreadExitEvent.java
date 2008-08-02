@@ -26,19 +26,37 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
 @Immutable
 public class MIThreadExitEvent extends MIEvent<IContainerDMContext> {
 
-    final private int tid;
+    final private String fThreadId;
 
     public MIThreadExitEvent(IContainerDMContext ctx, int id) {
         this(ctx, 0, id);
     }
-
+    
     public MIThreadExitEvent(IContainerDMContext ctx, int token, int id) {
         super(ctx, token, null);
-        tid = id;
+        fThreadId = Integer.toString(id);
+    }
+
+    public MIThreadExitEvent(IContainerDMContext ctx, String threadId) {
+        this(ctx, 0, threadId);
+    }
+    
+    public MIThreadExitEvent(IContainerDMContext ctx, int token, String threadId) {
+        super(ctx, token, null);
+        fThreadId = threadId;
     }
 
     public int getId() {
-        return tid;
+    	try { 
+    		return Integer.parseInt(fThreadId);
+    	}
+    	catch (NumberFormatException e) {
+    		return 0;
+    	}
+    }
+    
+    public String getStrId() {
+    	return fThreadId;
     }
     
     public static MIThreadExitEvent parse(IContainerDMContext ctx, int token, MIResult[] results)
@@ -48,13 +66,7 @@ public class MIThreadExitEvent extends MIEvent<IContainerDMContext> {
     		MIValue val = results[i].getMIValue();
     		if (var.equals("id")) { //$NON-NLS-1$
     			if (val instanceof MIConst) {
-    				try { 
-    					int thread = Integer.parseInt(((MIConst) val).getString());
-    					return new MIThreadExitEvent(ctx, token, thread);
-    				}
-    				catch (NumberFormatException e) {
-    					return null;
-    				}
+   					return new MIThreadExitEvent(ctx, token, ((MIConst) val).getString().trim());
     			}
     		}
     	}

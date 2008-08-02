@@ -15,7 +15,7 @@ package org.eclipse.dd.mi.service.command.events;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIRunControl;
+import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.output.MIFrame;
 import org.eclipse.dd.mi.service.command.output.MIResult;
 
@@ -32,7 +32,7 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
 
     @Deprecated
     public static MISteppingRangeEvent parse(
-        IMIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
+        MIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
     {
         MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
         return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());

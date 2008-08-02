@@ -118,7 +118,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 
         // Create and invoke the launch sequence to create the debug control and services
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch, exePath, sessionType, attach);
+            new ServicesLaunchSequence(launch.getSession(), launch);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();

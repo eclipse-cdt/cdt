@@ -85,7 +85,7 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
         launch.setServiceFactory(new GdbDebugServicesFactory(LaunchUtils.getGDBVersion(config)));
 
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch, exePath, SessionType.LOCAL, false);
+            new ServicesLaunchSequence(launch.getSession(), launch);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();

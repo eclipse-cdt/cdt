@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
@@ -25,8 +26,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.IMIRunControl;
-import org.eclipse.dd.mi.service.MIProcesses;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecNext;
@@ -172,7 +172,7 @@ public class MIRunControlEventProcessor
     					}
     				}
 
-    		    	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+    		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
     		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
     		    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
@@ -213,22 +213,15 @@ public class MIRunControlEventProcessor
     		}
     	}
 
-    	IMIRunControl runControl = fServicesTracker.getService(IMIRunControl.class);
-    	MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
     	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
     	IExecutionDMContext execDmc = processContainerDmc;
-    	if (runControl != null && threadId != null) {
-    		int threadIdInt = -1;
-    		try {
-    			threadIdInt = Integer.parseInt(threadId);
-    		} catch (NumberFormatException e) {
-    		}
-    		if (threadIdInt != -1) {
-    			execDmc = runControl.createMIExecutionContext(processContainerDmc, threadIdInt);
-    		}
+    	if (procService != null && threadId != null) {
+   			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
+   			execDmc = procService.createExecutionContext(processContainerDmc, threadDmc, threadId);
     	}
     	
     	MIEvent<?> event = null;
@@ -297,7 +290,7 @@ public class MIRunControlEventProcessor
                 else if (cmd instanceof MIExecContinue)        { type = MIRunningEvent.CONTINUE; }
                 else                                           { type = MIRunningEvent.CONTINUE; }
 
-                MIProcesses procService = fServicesTracker.getService(MIProcesses.class);
+                IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
                 IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
                 IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
 

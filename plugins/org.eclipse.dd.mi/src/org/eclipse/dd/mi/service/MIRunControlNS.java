@@ -21,12 +21,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
@@ -71,57 +72,8 @@ import org.osgi.framework.BundleContext;
  * that listen to service events and track service state, to be perfectly in
  * sync with the service state.
  */
-public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
+public class MIRunControlNS extends AbstractDsfService implements IRunControl
 {
-	// This is an exact copy of the structures in MIRunControl. In an ideal world,
-	// it would be declared only once in IMIRunControl but this is real life and
-	// it has to be duplicated for the sake of backward compatibility.
-	// It sucks and leads to bloated, error-prone code but that's the way it is.
-	@Immutable
-	private static class MIExecutionDMCNS extends AbstractDMContext implements IMIExecutionDMContext
-	{
-		/**
-		 * Integer ID that is used to identify the thread in the GDB/MI protocol.
-		 */
-		private final int fThreadId;
-
-		/**
-		 * Constructor for the context.  It should not be called directly by clients.
-		 * Instead clients should call {@link MIRunControl#createMIExecutionContext(IContainerDMContext, int)}
-		 * to create instances of this context based on the thread ID.
-		 * <p/>
-		 * Classes extending {@link MIRunControl} may also extend this class to include
-		 * additional information in the context.
-		 * 
-		 * @param sessionId Session that this context belongs to.
-		 * @param containerDmc The container that this context belongs to.
-		 * @param threadId GDB/MI thread identifier.
-		 */
-		protected MIExecutionDMCNS(String sessionId, IContainerDMContext containerDmc, int threadId) {
-			super(sessionId, containerDmc != null ? new IDMContext[] { containerDmc } : new IDMContext[0]);
-			fThreadId = threadId;
-		}
-
-		/**
-		 * Returns the GDB/MI thread identifier of this context.
-		 * @return
-		 */
-		public int getThreadId(){
-			return fThreadId;
-		}
-
-		@Override
-		public String toString() { return baseToString() + ".thread[" + fThreadId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
-
-		@Override
-		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && ((MIExecutionDMCNS)obj).fThreadId == fThreadId;
-		}
-
-		@Override
-		public int hashCode() { return super.baseHashCode() ^ fThreadId; }
-	}
-
 	@Immutable
 	static class ExecutionData implements IExecutionDMData {
 		private final StateChangeReason fReason;
@@ -322,7 +274,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-        register(new String[]{IRunControl.class.getName(), IMIRunControl.class.getName()}, new Hashtable<String,String>());
+        register(new String[]{IRunControl.class.getName()}, new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), fConnection);
         fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
@@ -372,7 +324,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public boolean isSuspended(IExecutionDMContext context) {
 
 		// Thread case
-		if (context instanceof MIExecutionDMCNS) {
+		if (context instanceof IMIExecutionDMContext) {
 			MIThreadRunState threadState = fThreadRunStates.get(context);
 			return (threadState == null) ? false : !fTerminated && threadState.fSuspended;
 		}
@@ -395,7 +347,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 
 		// Thread case
-		if (context instanceof MIExecutionDMCNS) {
+		if (context instanceof IMIExecutionDMContext) {
 			rm.setData(doCanSuspend(context));
 			rm.done();
 			return;
@@ -472,7 +424,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 
 		// Thread case
-		if (context instanceof MIExecutionDMCNS) {
+		if (context instanceof IMIExecutionDMContext) {
 			rm.setData(doCanResume(context));
 			rm.done();
 			return;
@@ -558,7 +510,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public boolean isStepping(IExecutionDMContext context) {
 
 		// If it's a thread, just look it up
-		if (context instanceof MIExecutionDMCNS) {
+		if (context instanceof IMIExecutionDMContext) {
 			MIThreadRunState threadState = fThreadRunStates.get(context);
 			return (threadState == null) ? false : !fTerminated && threadState.fStepping;
 		}
@@ -570,7 +522,7 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
 
 		// If it's a thread, just look it up
-		if (context instanceof MIExecutionDMCNS) {
+		if (context instanceof IMIExecutionDMContext) {
 			canResume(context, rm);
 			return;
 		}
@@ -706,9 +658,9 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	}
 
 	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerCtx, MIThreadListIdsInfo info) {
-		IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getThreadIds().length];
-		for (int i = 0; i < info.getThreadIds().length; i++) {
-			executionDmcs[i] = createMIExecutionContext(containerCtx, info.getThreadIds()[i]);
+		IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getStrThreadIds().length];
+		for (int i = 0; i < info.getStrThreadIds().length; i++) {
+			executionDmcs[i] = createMIExecutionContext(containerCtx, info.getStrThreadIds()[i]);
 		}
 		return executionDmcs;
 	}
@@ -731,17 +683,20 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 		rm.done();
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	// IMIRunControl
-	///////////////////////////////////////////////////////////////////////////
 
-	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
-		return new MIExecutionDMCNS(getSession().getId(), container, threadId);
+	private IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, String threadId) {
+        IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+
+        IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
+        
+        IThreadDMContext threadDmc = null;
+        if (procDmc != null) {
+        	// For now, reuse the threadId as the OSThreadId
+        	threadDmc = procService.createThreadContext(procDmc, threadId);
+        }
+
+        return procService.createExecutionContext(container, threadDmc, threadId);
 	}
-
-	///////////////////////////////////////////////////////////////////////////
-	// IMIRunControl
-	///////////////////////////////////////////////////////////////////////////
 
 	public CommandCache getCache() {
 		 return fMICommandCache;
@@ -842,8 +797,8 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public void eventDispatched(final MIThreadCreatedEvent e) {
 		IContainerDMContext containerDmc = e.getDMContext();
 		IMIExecutionDMContext executionCtx = null;
-		if (e.getId() != -1) {
-			executionCtx = createMIExecutionContext(containerDmc, e.getId());
+		if (e.getStrId() != null) {
+			executionCtx = createMIExecutionContext(containerDmc, e.getStrId());
 			if (fThreadRunStates.get(executionCtx) == null) {
 				fThreadRunStates.put(executionCtx, new MIThreadRunState());
 			}
@@ -855,8 +810,8 @@ public class MIRunControlNS extends AbstractDsfService implements IMIRunControl
 	public void eventDispatched(final MIThreadExitEvent e) {
 		IContainerDMContext containerDmc = e.getDMContext();
 		IMIExecutionDMContext executionCtx = null;
-		if (e.getId() != -1) {
-			executionCtx = createMIExecutionContext(containerDmc, e.getId());
+		if (e.getStrId() != null) {
+			executionCtx = createMIExecutionContext(containerDmc, e.getStrId());
 			fThreadRunStates.remove(executionCtx);
 		}
 		getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());

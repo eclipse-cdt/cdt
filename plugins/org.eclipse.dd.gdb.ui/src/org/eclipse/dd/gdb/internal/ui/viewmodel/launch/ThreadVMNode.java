@@ -14,6 +14,7 @@ package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
@@ -23,7 +24,6 @@ import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIRunControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -50,7 +50,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-        	final IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+        	final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
             if (runControl == null) {
                     handleFailedUpdate(update);
                     continue;

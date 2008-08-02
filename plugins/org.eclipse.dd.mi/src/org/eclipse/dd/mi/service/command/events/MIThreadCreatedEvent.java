@@ -26,7 +26,7 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
 @Immutable
 public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
 
-    final private int tid;
+    final private String fThreadId;
 
     public MIThreadCreatedEvent(IContainerDMContext ctx, int id) {
         this(ctx, 0, id);
@@ -34,11 +34,29 @@ public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
 
     public MIThreadCreatedEvent(IContainerDMContext ctx, int token, int id) {
         super(ctx, token, null);
-        tid = id;
+        fThreadId = Integer.toString(id);
+    }
+
+    public MIThreadCreatedEvent(IContainerDMContext ctx, String threadId) {
+        this(ctx, 0, threadId);
+    }
+
+    public MIThreadCreatedEvent(IContainerDMContext ctx, int token, String threadId) {
+        super(ctx, token, null);
+        fThreadId = threadId;
     }
 
     public int getId() {
-        return tid;
+    	try { 
+    		return Integer.parseInt(fThreadId);
+    	}
+    	catch (NumberFormatException e) {
+    		return 0;
+    	}
+    }
+    
+    public String getStrId() {
+        return fThreadId;
     }
 
     public static MIThreadCreatedEvent parse(IContainerDMContext ctx, int token, MIResult[] results)
@@ -48,13 +66,7 @@ public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
     		MIValue val = results[i].getMIValue();
     		if (var.equals("id")) { //$NON-NLS-1$
     			if (val instanceof MIConst) {
-    				try { 
-    					int thread = Integer.parseInt(((MIConst) val).getString());
-    					return new MIThreadCreatedEvent(ctx, token, thread);
-    				}
-    				catch (NumberFormatException e) {
-    					return null;
-    				}
+   					return new MIThreadCreatedEvent(ctx, token, ((MIConst) val).getString().trim());
     			}
     		}
     	}

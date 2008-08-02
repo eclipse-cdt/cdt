@@ -15,6 +15,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
@@ -24,6 +26,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -49,6 +52,7 @@ public class MIRunControlTest extends BaseTestCase {
 
     private GDBControl fGDBCtrl;
 	private MIRunControl fRunCtrl;
+	private IMIProcesses fProcService;
 
 	/*
 	 * Path to executable
@@ -67,7 +71,9 @@ public class MIRunControlTest extends BaseTestCase {
                      			   getGDBLaunch().getSession().getId());
 		fGDBCtrl = fServicesTracker.getService(GDBControl.class);
 		fRunCtrl = fServicesTracker.getService(MIRunControl.class);
+		fProcService = fServicesTracker.getService(IMIProcesses.class);
 	}
+
 
 	@After
 	public void tearDown() {
@@ -105,7 +111,9 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rm);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+            	fRunCtrl.getExecutionContexts(groupDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -114,7 +122,7 @@ public class MIRunControlTest extends BaseTestCase {
         /*
          * Get data from the Request Monitor
          */
-        IRunControl.IExecutionDMContext[] ctxts = rm.getData();
+        IExecutionDMContext[] ctxts = (IExecutionDMContext[])wait.getReturnInfo();
 
         // Context can not be null
         if(ctxts == null)
@@ -187,7 +195,10 @@ public class MIRunControlTest extends BaseTestCase {
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-           		fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rmExecutionCtxts);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+           		fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -196,7 +207,7 @@ public class MIRunControlTest extends BaseTestCase {
         /*
          * Get data
          */
-        IRunControl.IExecutionDMContext[] data = rmExecutionCtxts.getData();
+        IExecutionDMContext[] data = rmExecutionCtxts.getData();
         /*
          * Contexts returned can not be null
          */
@@ -236,7 +247,10 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(fGDBCtrl.getGDBDMContext(), 1), rm);
+               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -417,7 +431,10 @@ public class MIRunControlTest extends BaseTestCase {
     @Test
     public void cacheAfterContainerSuspendEvent() throws InterruptedException{
 
-    	final IExecutionDMContext dmc = fRunCtrl.createMIExecutionContext(fGDBCtrl.getGDBDMContext(), 1);
+       	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+    	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+    	final IExecutionDMContext dmc = fRunCtrl.createMIExecutionContext(groupDmc, 1);
     	/*
     	 * Step to fire ContainerSuspendEvent
     	 */
@@ -454,7 +471,10 @@ public class MIRunControlTest extends BaseTestCase {
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-           		fRunCtrl.resume(fGDBCtrl.getGDBDMContext(), rm);
+               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+           		fRunCtrl.resume(groupDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -466,9 +486,22 @@ public class MIRunControlTest extends BaseTestCase {
 			e.printStackTrace();
 			return;
 		}
-        if (wait.isOK() == false)
-            Assert.assertTrue(wait.getMessage(), false);
-        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
+		Assert.assertTrue(wait.getMessage(), wait.isOK());
+		
+        wait.waitReset();
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+                wait.waitFinished();
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
+
         wait.waitReset();
     }
     
@@ -507,114 +540,22 @@ public class MIRunControlTest extends BaseTestCase {
 			return;
 		}
 
-        if (wait.isOK() == false)
-            Assert.assertTrue(wait.getMessage(), false);
-        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
+		Assert.assertTrue(wait.getMessage(), wait.isOK());
+		
+		wait.waitReset();
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+
+            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+                wait.waitFinished();
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
+
         wait.waitReset();
     }
-    
- // PP: test no longer applies, the resume command now takes a strongly-typed execution context as an argument.
- //  
-//    @Test
-//    public void resumeFrameContext() throws Throwable {
-//		//TestsPlugin.debugMethod("resumeFrameContext()");
-//        final DataRequestMonitor<DsfMIInfo> rm = 
-//        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
-//            @Override
-//			protected void handleCompleted() {
-//                wait.waitFinished(getStatus());
-//             }
-//        };
-//        final ServiceEventWaitor<IResumedDMEvent> eventWaitor =
-//            new ServiceEventWaitor<IResumedDMEvent>(
-//                    getGDBLaunch().getSession(),
-//                    IResumedDMEvent.class);
-//
-//        IExecutionDMContext execDmc = fRunCtrl.createMIExecutionContext(fGDBCtrl.getGDBDMContext(), 1);
-//        final IFrameDMContext dmc = SyncUtil.SyncGetStackFrame(execDmc, 0);
-//        fRunCtrl.getExecutor().submit(new Runnable() {
-//            public void run() {
-//           		fRunCtrl.resume(dmc, rm);
-//            }
-//        });
-//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-//        
-//        try {
-//			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
-//		} catch (Exception e) {
-//			Assert.fail("Exception raised:: " + e.getMessage());
-//			e.printStackTrace();
-//			return;
-//		}
-//
-//        if (wait.isOK() == false)
-//            Assert.assertTrue(wait.getMessage(), false);
-//        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(fGDBCtrl.getGDBDMContext()));
-//        wait.waitReset();
-//    }
-    
-//    @Test
-//    public void resumeAndSuspend() throws InterruptedException{
-//        final DataRequestMonitor<DsfMIInfo> rm = 
-//        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
-//            @Override
-//			protected void handleCompleted() {
-//                if (isSuccess()) {
-//             	   assert true;
-//             	   wait.setReturnInfo(getData());
-//                }
-//                System.out.println("Wait Finished called on getTHreads rm with status " + getStatus().getMessage());
-//                wait.waitFinished(getStatus());
-//             }
-//        };
-//        final MIExecutionDMC dmc = new MIExecutionDMC(fRunCtrl, 1);       
-//         fRunCtrl.getExecutor().submit(new Runnable() {
-//            public void run() {
-//           		fRunCtrl.resume(dmc, rm);
-//            }
-//        });
-//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-//        if (wait.isOK() == false)
-//            Assert.assertTrue(wait.getMessage(), false);
-//        System.out.println("Message from isSuspended " +fRunCtrl.isSuspended(dmc));
-//        Assert.assertFalse("Target is suspended. It should have been running", fRunCtrl.isSuspended(dmc));
-//        wait.waitReset();
-//        
-//        final DataRequestMonitor<DsfMIInfo> rmSuspend = 
-//        	new DataRequestMonitor<DsfMIInfo>(fRunCtrl.getExecutor(), null) {
-//            @Override
-//			protected void handleCompleted() {
-//                if (isSuccess()) {
-//             	   assert true;
-//             	   wait.setReturnInfo(getData());
-//                }
-//                System.out.println("Wait Finished called on getTHreads rm with status " + getStatus().getMessage());
-//                wait.waitFinished(getStatus());
-//             }
-//        };
-//
-//        final ServiceEventWaitor eventWaitor =
-//            new ServiceEventWaitor(
-//                    getGDBLaunch().getSession(),
-//                    DsfMIStoppedEvent.class);
-//
-//        fRunCtrl.getExecutor().submit(new Runnable() {
-//            public void run() {
-//           		fRunCtrl.suspend(dmc, rmSuspend);
-//            }
-//        });
-//        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-//		try {
-//			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}		
-//
-//        if (wait.isOK() == false)
-//            Assert.assertTrue(wait.getMessage(), false);
-//        System.out.println("Message from isSuspended !!!  " +fRunCtrl.isSuspended(dmc));
-//        Assert.assertTrue("Target is running. It should have been suspended.", fRunCtrl.isSuspended(dmc));
-//        wait.waitReset();
-//    }    
 }

@@ -19,7 +19,6 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -37,12 +36,14 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIDetach;
 import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;
+import org.eclipse.dd.mi.service.command.commands.MIThreadListIds;
 import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
+import org.eclipse.dd.mi.service.command.output.MIThreadListIdsInfo;
 import org.osgi.framework.BundleContext;
 
 
-public class MIProcesses extends AbstractDsfService implements IProcesses {
+public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -59,6 +60,67 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 	//
 	
 	/**
+	 * Context representing a thread in GDB/MI
+	 */
+	@Immutable
+	private static class MIExecutionDMC extends AbstractDMContext 
+	implements IMIExecutionDMContext
+	{
+		/**
+		 * String ID that is used to identify the thread in the GDB/MI protocol.
+		 */
+		private final String fThreadId;
+
+		/**
+		 * Constructor for the context.  It should not be called directly by clients.
+		 * Instead clients should call {@link IMIProcesses#createExecutionContext()}
+		 * to create instances of this context based on the thread ID.
+		 * <p/>
+		 * 
+		 * @param sessionId Session that this context belongs to.
+		 * @param containerDmc The container that this context belongs to.
+		 * @param threadDmc The thread context parents of this context.
+		 * @param threadId GDB/MI thread identifier.
+		 */
+        protected MIExecutionDMC(String sessionId, IContainerDMContext containerDmc, IThreadDMContext threadDmc, String threadId) {
+            super(sessionId, 
+                  containerDmc == null && threadDmc == null ? new IDMContext[0] :  
+                      containerDmc == null ? new IDMContext[] { threadDmc } :
+                          threadDmc == null ? new IDMContext[] { containerDmc } :
+                              new IDMContext[] { containerDmc, threadDmc });
+            fThreadId = threadId;
+        }
+
+		/**
+		 * Returns the GDB/MI thread identifier of this context.
+		 * @return
+		 */
+		public int getThreadId(){
+			try {
+				return Integer.parseInt(fThreadId);
+			} catch (NumberFormatException e) {
+			}
+			
+			return 0;
+		}
+
+		public String getId(){
+			return fThreadId;
+		}
+
+		@Override
+		public String toString() { return baseToString() + ".thread[" + fThreadId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.baseEquals(obj) && ((MIExecutionDMC)obj).fThreadId.equals(fThreadId);
+		}
+
+		@Override
+		public int hashCode() { return super.baseHashCode() ^ fThreadId.hashCode(); }
+	}
+
+	/**
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
@@ -72,7 +134,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 
 		/**
 		 * Constructor for the context.  It should not be called directly by clients.
-		 * Instead clients should call {@link MIRunControl#createMIExecutionGroupContext
+		 * Instead clients should call {@link IMIProcesses#createExecutionGroupContext
 		 * to create instances of this context based on the group name.
 		 * 
 		 * @param sessionId Session that this context belongs to.
@@ -116,7 +178,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 
     	/**
     	 * Constructor for the context.  It should not be called directly by clients.
-    	 * Instead clients should call {@link MIProcesses#createThreadContext}
+    	 * Instead clients should call {@link IMIProcesses#createThreadContext}
     	 * to create instances of this context based on the thread ID.
     	 * <p/>
     	 * 
@@ -159,7 +221,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 
     	/**
     	 * Constructor for the context.  It should not be called directly by clients.
-    	 * Instead clients should call {@link MIProcesses#createProcessContext}
+    	 * Instead clients should call {@link IMIProcesses#createProcessContext}
     	 * to create instances of this context based on the PID.
     	 * <p/>
     	 * 
@@ -234,6 +296,8 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     private AbstractMIControl fCommandControl;
 	private CommandCache fCommandCache;
 
+	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
+
     public MIProcesses(DsfSession session) {
     	super(session);
     }
@@ -299,31 +363,20 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		return MIPlugin.getBundleContext();
 	}
 	
-	/**
-	 * Create a thread context.
-	 * 
-	 * @param processDmc The parent process context
-	 * @param threadId The OS Id of the thread
-	 */
-    public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
+   public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
         return new MIThreadDMC(getSession().getId(), processDmc, threadId);
     }
 
-	/**
-	 * Create a process context.
-	 * 
-	 * @param pid The OS Id of the process
-	 */
     public IProcessDMContext createProcessContext(MIControlDMContext controlDmc, String pid) {
         return new MIProcessDMC(getSession().getId(), controlDmc, pid);
     }
     
-    /**
-     * Create a executionGroup context.
-     * 
-     * @param processDmc The parent process context of this context
-     * @param groupId The thread group id of the process
-     */
+    public IMIExecutionDMContext createExecutionContext(IContainerDMContext containerDmc, 
+                                                        IThreadDMContext threadDmc, 
+                                                        String threadId) {
+    	return new MIExecutionDMC(getSession().getId(), containerDmc, threadDmc, threadId);
+    }
+
     public IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
     															  String groupId) {
     	return new MIExecutionGroupDMC(getSession().getId(), processDmc, groupId);
@@ -457,15 +510,51 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
 		rm.done();
 	}
     
-	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
-		// This service version only handles a single process to debug, therefore, we can simply
-		// create the context describing this process ourselves.
-		MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
-		IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(createProcessContext(controlDmc, ""), "");//$NON-NLS-1$//$NON-NLS-2$
-		rm.setData(new IContainerDMContext[] {groupDmc});
-		rm.done();
+	public void getProcessesBeingDebugged(IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
+		final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
+		if (groupDmc != null) {
+			fCommandCache.execute(
+					new MIThreadListIds(groupDmc),
+					new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(makeExecutionDMCs(groupDmc, getData()));
+							rm.done();
+						}
+					});
+		} else {
+			// This service version only handles a single process to debug, therefore, we can simply
+			// create the context describing this process ourselves.
+			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(createProcessContext(controlDmc, ""), "");//$NON-NLS-1$//$NON-NLS-2$
+			rm.setData(new IContainerDMContext[] {newGroupDmc});
+			rm.done();
+		}
 	}
 
+	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, MIThreadListIdsInfo info) {
+		final IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+
+		if (info.getStrThreadIds().length == 0) {
+			// Main thread always exist even if it is not reported by GDB.
+			// So create thread-id = 0 when no thread is reported.
+			// This hack is necessary to prevent AbstractMIControl from issuing a thread-select
+			// because it doesn't work if the application was not compiled with pthread.
+			return new IMIExecutionDMContext[]{createExecutionContext(containerDmc, 
+					                                                  createThreadContext(procDmc, FAKE_THREAD_ID),
+					                                                  FAKE_THREAD_ID)};
+		} else {
+			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getStrThreadIds().length];
+			for (int i = 0; i < info.getStrThreadIds().length; i++) {
+				String threadId = info.getStrThreadIds()[i];
+				executionDmcs[i] = createExecutionContext(containerDmc, 
+						                                  createThreadContext(procDmc, threadId),
+						                                  threadId);
+			}
+			return executionDmcs;
+		}
+	}
+	
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
@@ -491,7 +580,6 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
         fCommandCache.setContextAvailable(e.getDMContext(), false);
-        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         if (e.getReason() != StateChangeReason.STEP) {
             fCommandCache.reset();
         }
@@ -501,6 +589,7 @@ public class MIProcesses extends AbstractDsfService implements IProcesses {
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
         fCommandCache.setContextAvailable(e.getDMContext(), true);
+        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         fCommandCache.reset();
     }
 }

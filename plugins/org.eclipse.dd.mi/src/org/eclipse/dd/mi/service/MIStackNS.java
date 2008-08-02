@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack2;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -124,7 +125,7 @@ public class MIStackNS extends AbstractDsfService
     
 	private CommandCache   fMICommandCache;
     private MIStoppedEvent fCachedStoppedEvent;
-    private IMIRunControl  fMIRunControl;
+    private IRunControl  fRunControl;
 
 	public MIStackNS(DsfSession session) 
 	{
@@ -152,7 +153,7 @@ public class MIStackNS extends AbstractDsfService
         AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), miControl);
         fMICommandCache.setContextAvailable(miControl.getControlDMContext(), true);
-	    fMIRunControl = getServicesTracker().getService(IMIRunControl.class);
+        fRunControl = getServicesTracker().getService(IRunControl.class);
         
         getSession().addServiceEventListener(this, null);
         register(new String[]{IStack.class.getName(), MIStackNS.class.getName()}, new Hashtable<String,String>());
@@ -219,7 +220,7 @@ public class MIStackNS extends AbstractDsfService
 	    }
 
 	    // Make sure the thread is stopped
-	    if (!fMIRunControl.isSuspended(execDmc)) {
+	    if (!fRunControl.isSuspended(execDmc)) {
 	    	rm.setData(new IFrameDMContext[0]);
 	    	rm.done();
 	    	return;
@@ -623,7 +624,7 @@ public class MIStackNS extends AbstractDsfService
         }
 		
 	    // Make sure the thread is stopped
-	    if (!fMIRunControl.isSuspended(execDmc)) {
+	    if (!fRunControl.isSuspended(execDmc)) {
 	    	rm.setData(0);
 	    	rm.done();
 	    	return;

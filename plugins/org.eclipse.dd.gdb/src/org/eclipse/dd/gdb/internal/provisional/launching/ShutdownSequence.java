@@ -114,12 +114,12 @@ public class ShutdownSequence extends Sequence {
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IProcesses.class, requestMonitor);
+            shutdownService(IRunControl.class, requestMonitor);
         }
     }, new Step() {
         @Override
         public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IRunControl.class, requestMonitor);
+            shutdownService(IProcesses.class, requestMonitor);
         }
     }, new Step() {
         @Override

@@ -11,7 +11,6 @@
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints;
@@ -26,7 +25,6 @@ import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 
@@ -46,11 +44,11 @@ public class ServicesLaunchSequence extends Sequence {
         },
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);
+           	fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-        	fLaunch.getServiceFactory().createService(IProcesses.class, fSession).initialize(requestMonitor);
+        	fLaunch.getServiceFactory().createService(IRunControl.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
@@ -101,21 +99,14 @@ public class ServicesLaunchSequence extends Sequence {
 
     DsfSession fSession;
     GdbLaunch fLaunch;
-    IPath fExecPath;
-
-    SessionType fSessionType;
-    boolean fAttach;
 
     GDBControl fCommandControl;
     CSourceLookup fSourceLookup;
-
-    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IPath execPath, SessionType sessionType, boolean attach) {
+    
+    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch) {
         super(session.getExecutor());
         fSession = session;
         fLaunch = launch;
-        fExecPath = execPath;
-        fSessionType = sessionType;
-        fAttach = attach;
     }
     
     @Override

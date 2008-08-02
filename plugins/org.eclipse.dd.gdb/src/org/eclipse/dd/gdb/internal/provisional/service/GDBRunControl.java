@@ -23,63 +23,24 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
+import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIRunControl;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
-import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;
 import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
-import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
 
 public class GDBRunControl extends MIRunControl {
-
-	/**
-     * Implement a custom execution data for threads in order to provide additional 
-     * information.  This object can be made separate from IExecutionDMData after
-     * the deprecated method: IDMService.getModelData() is no longer used.  
-     */
-    public static class GDBThreadData {
-        private final String fId;
-        private final String fName;
-
-        GDBThreadData(String id, String name) {
-            fId = id;
-            fName = name;
-        }
-        
-        public String getName() {
-            return fName; 
-        }
-        public String getId() { return fId; } 
-
-        public boolean isDebuggerAttached() { return true; }
-    }
-
-    /**
-     * Implement a custom execution data the process in order to provide additional 
-     * information.  This object can be made separate from IExecutionDMData after
-     * the deprecated method: IDMService.getModelData() is no longer used.  
-     */
-    public static class GDBProcessData {
-        private final String fName;
-        
-        GDBProcessData(String name) {
-            fName = name;
-        }
-        
-        public String getName() {
-            return fName;
-        }
-    }
-
     private GDBControl fGdb;
-    
+	private IMIProcesses fProcService;
+
 	// Record list of execution contexts
 	private IExecutionDMContext[] fOldExecutionCtxts;
 
@@ -101,8 +62,10 @@ public class GDBRunControl extends MIRunControl {
     private void doInitialize(final RequestMonitor requestMonitor) {
     	
         fGdb = getServicesTracker().getService(GDBControl.class);
+        fProcService = getServicesTracker().getService(IMIProcesses.class);
+
         register(new String[]{IRunControl.class.getName(), 
-        		IMIRunControl.class.getName(),  MIRunControl.class.getName(), 
+        		MIRunControl.class.getName(), 
         		GDBRunControl.class.getName()}, new Hashtable<String,String>());
         requestMonitor.done();
     }
@@ -113,6 +76,19 @@ public class GDBRunControl extends MIRunControl {
         super.shutdown(requestMonitor);
     }
     
+    @Override
+	public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
+        IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
+        
+        IThreadDMContext threadDmc = null;
+        if (procDmc != null) {
+        	// For now, reuse the threadId as the OSThreadId
+        	threadDmc = fProcService.createThreadContext(procDmc, Integer.toString(threadId));
+        }
+
+        return fProcService.createExecutionContext(container, threadDmc, Integer.toString(threadId));
+    }
+
     @Override
     public void suspend(IExecutionDMContext context, final RequestMonitor rm){
         canSuspend(
@@ -139,50 +115,25 @@ public class GDBRunControl extends MIRunControl {
 	 * See bug 200615 for details.
 	 */
 	@Override
-    public void getExecutionContexts(IContainerDMContext c, final DataRequestMonitor<IExecutionDMContext[]> rm) {
-		DataRequestMonitor<IExecutionDMContext[]> rm1 = new DataRequestMonitor<IExecutionDMContext[]>(
-				getExecutor(), rm) {
-			@Override
-			protected void handleSuccess() {
-				raiseExitEvents(getData());
-				fOldExecutionCtxts = getData();
-				rm.setData(fOldExecutionCtxts);
-				rm.done();
-			}
-		};
-		super.getExecutionContexts(c, rm1);
+    public void getExecutionContexts(IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
+		fProcService.getProcessesBeingDebugged(
+				containerDmc,
+				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						if (getData() instanceof IExecutionDMContext[]) {
+							IExecutionDMContext[] execDmcs = (IExecutionDMContext[])getData();
+							raiseExitEvents(execDmcs);
+							fOldExecutionCtxts = execDmcs;
+							rm.setData(fOldExecutionCtxts);
+						} else {
+							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid contexts", null)); //$NON-NLS-1$
+						}
+						rm.done();
+					}
+				});
     }
 
-	@Deprecated
-	public void getProcessData(GDBControlDMContext gdbDmc, DataRequestMonitor<GDBProcessData> rm) {
-        rm.setData( new GDBProcessData(fGdb.getExecutablePath().lastSegment()) );
-        rm.done();
-	}
-	
-	@Deprecated
-	public void getThreadData(final IMIExecutionDMContext execDmc, final DataRequestMonitor<GDBThreadData> rm) {
-		IProcessDMContext prodDmc = DMContexts.getAncestorOfType(execDmc, IProcessDMContext.class);
-        getCache().execute(new CLIInfoThreads(prodDmc),
-                new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        rm.setData( createThreadInfo(execDmc, getData()) );
-                        rm.done();
-                    }
-                });
-	}
-
-    private GDBThreadData createThreadInfo(IMIExecutionDMContext dmc, CLIInfoThreadsInfo info){
-        for (CLIInfoThreadsInfo.ThreadInfo thread : info.getThreadInfo()) {
-            if(Integer.parseInt(thread.getId()) == dmc.getThreadId()){
-                //fMapThreadIds.put(thread.getId(), String.valueOf(dmc.getId()));
-                return new GDBThreadData(thread.getOsId(), thread.getName());       
-            }
-        }
-        return  new GDBThreadData("","");  //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-	
 	private void raiseExitEvents(IExecutionDMContext[] ctxts){
 		if(ctxts == null || fOldExecutionCtxts == null)
 			return;
@@ -193,7 +144,7 @@ public class GDBRunControl extends MIRunControl {
 			IExecutionDMContext ctxt = iterator.next();
 			if(! list.contains(ctxt)){
 			    IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctxt, IContainerDMContext.class); 
-                MIEvent<?> e =  new MIThreadExitEvent(containerDmc, ((IMIExecutionDMContext)ctxt).getThreadId());
+                MIEvent<?> e =  new MIThreadExitEvent(containerDmc, Integer.toString(((IMIExecutionDMContext)ctxt).getThreadId()));
                 // Dispatch DsfMIThreadExitEvent
                 getSession().dispatchEvent(e, getProperties());
 			}

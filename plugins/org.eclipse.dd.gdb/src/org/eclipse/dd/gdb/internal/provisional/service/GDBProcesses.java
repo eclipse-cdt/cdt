@@ -30,6 +30,7 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
@@ -74,6 +75,7 @@ public class GDBProcesses extends MIProcesses {
         
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),
+				IMIProcesses.class.getName(),
 				MIProcesses.class.getName(),
 				GDBProcesses.class.getName() },
 				new Hashtable<String, String>());
@@ -98,7 +100,6 @@ public class GDBProcesses extends MIProcesses {
 
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
-		// We must first check for GdbProcessDMC because it is also a GdbThreadDMC
 		if (dmc instanceof IMIProcessDMContext) {
 			String pidStr = ((IMIProcessDMContext)dmc).getProcId();
 			int pid = -1;
@@ -164,6 +165,7 @@ public class GDBProcesses extends MIProcesses {
 	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 	    	super.getProcessesBeingDebugged(dmc, rm);
 	    } else {
+	    	rm.setData(new IDMContext[0]);
 	    	rm.done();
 	    }
 	}

@@ -92,7 +92,7 @@ public class LaunchUtils {
 				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
 		
-		if (!programPath.isAbsolute()) {
+		if (!programPath.isAbsolute() && cproject != null) {
 			// Find the specified program within the specified project
    			IFile wsProgramPath = cproject.getProject().getFile(programPath);
    			programPath = wsProgramPath.getLocation();

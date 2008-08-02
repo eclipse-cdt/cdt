@@ -21,13 +21,13 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBProcessData;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl.GDBThreadData;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BaseTestCase;
 import org.eclipse.dd.tests.gdb.launching.TestsPlugin;
@@ -52,7 +52,7 @@ public class GDBProcessesTest extends BaseTestCase {
     private DsfServicesTracker fServicesTracker;	
 	
     private GDBControl fGdbCtrl; 
-	private GDBRunControl fRunCtrl; 
+	private MIProcesses fProcService; 
 	
 	/*
      *  Create a waiter and a generic completion object. They will be used to 
@@ -67,13 +67,13 @@ public class GDBProcessesTest extends BaseTestCase {
         /*
          *  Get the GDBProcesses & MIRunControl service.
          */
-		fRunCtrl = fServicesTracker.getService(GDBRunControl.class);
+		fProcService = fServicesTracker.getService(MIProcesses.class);
         fGdbCtrl = fServicesTracker.getService(GDBControl.class);
 	}
 
 	@After
 	public void tearDown() {
-		fRunCtrl = null;
+		fProcService = null;
 		fServicesTracker.dispose();
 	}
 	
@@ -91,8 +91,8 @@ public class GDBProcessesTest extends BaseTestCase {
 		/*
 		 * Create a request monitor 
 		 */
-        final DataRequestMonitor<GDBProcessData> rm = 
-        	new DataRequestMonitor<GDBProcessData>(fSession.getExecutor(), null) {
+        final DataRequestMonitor<IThreadDMData> rm = 
+        	new DataRequestMonitor<IThreadDMData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
@@ -108,7 +108,8 @@ public class GDBProcessesTest extends BaseTestCase {
          */
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRunCtrl.getProcessData(fGdbCtrl.getGDBDMContext(), rm);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), "");
+            	fProcService.getExecutionData(procDmc, rm);
             }
         });
         /*
@@ -123,7 +124,7 @@ public class GDBProcessesTest extends BaseTestCase {
         /*
          * Get process data 
          */
-        GDBProcessData processData = rm.getData();
+        IThreadDMData processData = (IThreadDMData)fWait.getReturnInfo();
  
         if(processData == null)
        	  Assert.fail("No process data is returned for Process DMC");
@@ -135,14 +136,14 @@ public class GDBProcessesTest extends BaseTestCase {
        } 
 	}
 	
-    IMIExecutionDMContext fExecDmc = null;
 	/* 
 	 * getThreadData() for multiple threads
 	 */
 	@Test
 	public void getThreadData() throws InterruptedException{
-        final DataRequestMonitor<GDBThreadData> rm = 
-        	new DataRequestMonitor<GDBThreadData>(fSession.getExecutor(), null) {
+		final String THREAD_ID = "1";
+        final DataRequestMonitor<IThreadDMData> rm = 
+        	new DataRequestMonitor<IThreadDMData>(fSession.getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
@@ -153,29 +154,26 @@ public class GDBProcessesTest extends BaseTestCase {
         };
 
          
-        /*
-         * Create an execution DMC then getModelData for Execution DMC
-         */
-        fRunCtrl.getExecutor().submit(new Runnable() {
+        fProcService.getExecutor().submit(new Runnable() {
             public void run() {
-            	fExecDmc = fRunCtrl.createMIExecutionContext(fGdbCtrl.getGDBDMContext(), 1);
-
-            	fRunCtrl.getThreadData(fExecDmc, rm);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), "");
+            	IThreadDMContext threadDmc = fProcService.createThreadContext(procDmc, THREAD_ID);
+            	fProcService.getExecutionData(threadDmc, rm);
             }
         });
         fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(fWait.getMessage(), fWait.isOK());
         
-        GDBThreadData threadData = rm.getData();
+        IThreadDMData threadData = (IThreadDMData)fWait.getReturnInfo();
         if(threadData == null)
-       	 fail("Thread data not returned for thread id = " + fExecDmc.getThreadId());
+       	    fail("Thread data not returned for thread id = " + THREAD_ID);
         else{
         	// Thread id is only a series of numbers
         	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
 			Matcher matcher = pattern.matcher(threadData.getId());
 			assertTrue("Thread ID is a series of number", matcher.find());
         	// Name is blank in case of GDB back end
-        	assertEquals("Thread name is blank for GDB Back end", "", threadData.getName());
+        	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
        }
        fWait.waitReset(); 
 	}

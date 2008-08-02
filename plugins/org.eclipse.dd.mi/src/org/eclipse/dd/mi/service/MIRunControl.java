@@ -21,8 +21,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
@@ -72,8 +71,9 @@ import org.osgi.framework.BundleContext;
  * events and track service state, to be perfectly in sync with the service
  * state.
  */
-public class MIRunControl extends AbstractDsfService implements IMIRunControl
+public class MIRunControl extends AbstractDsfService implements IRunControl
 {
+    @Deprecated
 	protected class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
 	{
 		/**
@@ -91,27 +91,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 		 * 
 		 * @param sessionId Session that this context belongs to.
 		 * @param containerDmc The container that this context belongs to.
-		 * @param threadDmc The thread context parents of this context.
 		 * @param threadId GDB/MI thread identifier.
 		 */
-        protected MIExecutionDMC(String sessionId, IContainerDMContext containerDmc, IThreadDMContext threadDmc, int threadId) {
-            super(sessionId, 
-                  containerDmc == null && threadDmc == null ? new IDMContext[0] :  
-                      containerDmc == null ? new IDMContext[] { threadDmc } :
-                          threadDmc == null ? new IDMContext[] { containerDmc } :
-                              new IDMContext[] { containerDmc, threadDmc });
-            fThreadId = threadId;
-        }
-
-        @Deprecated
 		protected MIExecutionDMC(String sessionId, IContainerDMContext containerDmc, int threadId) {
-			super(sessionId, 
-				  containerDmc == null ? new IDMContext[0]
-					  : new IDMContext[] { containerDmc, 
-					                       fProcService.createThreadContext(DMContexts.getAncestorOfType(containerDmc, 
-					                    		                                                         IProcessDMContext.class),
-					                    		                            Integer.toString(threadId)) }); 
-
+			super(sessionId, containerDmc != null ? new IDMContext[] { containerDmc } : new IDMContext[0]);
 			fThreadId = threadId;
 		}
 
@@ -277,7 +260,6 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
 
 	private AbstractMIControl fConnection;
 	private CommandCache fMICommandCache;
-	private MIProcesses fProcService;
     
     // State flags
 	private boolean fSuspended = true;
@@ -308,7 +290,6 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
         fConnection = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), fConnection);
         fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
-        fProcService = getServicesTracker().getService(MIProcesses.class);
         getSession().addServiceEventListener(this, null);
         rm.done();
     }
@@ -335,16 +316,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
     public CommandCache getCache() { return fMICommandCache; }
     
     public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
-        MIProcesses procService = getServicesTracker().getService(MIProcesses.class);
-        IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
-        
-        IThreadDMContext threadDmc = null;
-        if (procService != null && procDmc != null) {
-        	// For now, reuse the threadId as the OSThreadId
-        	threadDmc = procService.createThreadContext(procDmc, Integer.toString(threadId));
-        }
-
-        return new MIExecutionDMC(getSession().getId(), container, threadDmc, threadId);
+        return new MIExecutionDMC(getSession().getId(), container, threadId);
     }
     
     //
@@ -390,7 +362,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadCreatedEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
-        IMIExecutionDMContext executionCtx = e.getId() != -1 ? createMIExecutionContext(containerDmc, e.getId()) : null;
+        IMIExecutionDMContext executionCtx = e.getStrId() != null ? createMIExecutionContext(containerDmc, e.getId()) : null;
         getSession().dispatchEvent(new StartedDMEvent(executionCtx, e), getProperties());
     }
 
@@ -401,7 +373,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadExitEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
-        IMIExecutionDMContext executionCtx = e.getId() != -1 ? createMIExecutionContext(containerDmc, e.getId()) : null;
+        IMIExecutionDMContext executionCtx = e.getStrId() != null ? createMIExecutionContext(containerDmc, e.getId()) : null;
     	getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());
     }
 

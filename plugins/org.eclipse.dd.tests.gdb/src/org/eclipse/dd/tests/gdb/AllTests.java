@@ -28,7 +28,7 @@ import org.junit.runners.Suite;
         MIMemoryTest.class,
         MIBreakpointsTest.class,
         MIDisassemblyTest.class,
-        
+        GDBProcessesTest.class
         /* Add your test class here */
         })
 

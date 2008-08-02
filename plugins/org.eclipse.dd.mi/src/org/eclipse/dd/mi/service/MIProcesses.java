@@ -580,6 +580,12 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
         fCommandCache.setContextAvailable(e.getDMContext(), false);
+        // I need to put this so that in non-stop mode, we can send the CLIInfo 
+        // command while some threads are running.
+        // However, in all-stop, this line breaks a thread exiting, and threads running
+        // because it allows us to send the thread-list-ids although we don't have a prompt
+        // We need to find a proper solution for the cache.
+//        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         if (e.getReason() != StateChangeReason.STEP) {
             fCommandCache.reset();
         }

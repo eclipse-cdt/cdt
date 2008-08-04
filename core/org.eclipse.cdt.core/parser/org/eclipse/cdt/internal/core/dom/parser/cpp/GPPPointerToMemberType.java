@@ -24,25 +24,24 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 /**
  * @author aniefer
  */
-public class GPPPointerToMemberType extends CPPPointerToMemberType implements
-        IGPPPointerToMemberType {
-
-    private boolean isRestrict = false;
+public class GPPPointerToMemberType extends CPPPointerToMemberType implements IGPPPointerToMemberType {
+    private boolean isRestrict;
+    
     /**
      * @param type
      * @param operator
      */
-    public GPPPointerToMemberType( IType type, IGPPASTPointerToMember operator ) {
-        super( type, operator );
+    public GPPPointerToMemberType(IType type, IGPPASTPointerToMember operator) {
+        super(type, operator);
         this.isRestrict = operator.isRestrict();
     }
 
     @Override
-	public IType stripQualifiers(){
+	public IType stripQualifiers() {
 		GPPPointerToMemberType result = (GPPPointerToMemberType) super.stripQualifiers();
 		
-		if( isRestrict ){
-			if( result == this ){
+		if (isRestrict) {
+			if (result == this) {
 				result = (GPPPointerToMemberType) clone();
 				result.isRestrict = false;
 			} else {
@@ -51,6 +50,7 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
 		} 
 		return result;
 	}
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType#isRestrict()
      */
@@ -59,16 +59,16 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
     }
 
     @Override
-	public boolean isSameType( IType o ){
-    	if (o==this) {
+	public boolean isSameType(IType o) {
+    	if (o == this) {
     		return true;
     	}
     	if (o instanceof ITypedef || o instanceof IIndexType) {
     		return o.isSameType(this);
     	}
     		
-        if( !super.isSameType( o ) ) return false;
-        if( o instanceof IGPPPointerToMemberType ){
+        if (!super.isSameType(o)) return false;
+        if (o instanceof IGPPPointerToMemberType) {
             return (isRestrict == ((IGPPPointerToMemberType) o).isRestrict());
         }
         return (isRestrict == false);

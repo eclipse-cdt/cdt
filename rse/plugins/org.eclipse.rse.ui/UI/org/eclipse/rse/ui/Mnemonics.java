@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [187860] review for adding foreign lang support
  * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
+ * Kevin Doyle 	 (IBM) - [242250] Using Mnemonics twice as fast as we should be
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -594,7 +595,7 @@ public class Mnemonics {
 						if ((text != null) && (text.trim().length() > 0)) {
 							String newText = setUniqueMnemonic(text);
 							if (!text.equals(newText)) {
-								label.setText(setUniqueMnemonic(text));
+								label.setText(newText);
 								mustLayout = true;
 							}
 						}

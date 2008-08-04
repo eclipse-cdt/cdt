@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -28,11 +27,21 @@ import org.eclipse.core.runtime.Path;
  * The standard location converter used by the per-project PDOM
  */
 public class PDOMProjectIndexLocationConverter implements IIndexLocationConverter {
-	IWorkspaceRoot root;
 	private static final String EXTERNAL = "<EXT>"; //$NON-NLS-1$
+	private static final String WS = "<WS>"; //$NON-NLS-1$
 	
+	final private IWorkspaceRoot fRoot;
+	final private String fFullPathPrefix;
+	final private boolean fIgnoreExternal;
+
 	public PDOMProjectIndexLocationConverter(IProject project) {
-		this.root = ResourcesPlugin.getWorkspace().getRoot();
+		this(project, false);
+	}
+
+	public PDOMProjectIndexLocationConverter(IProject project, boolean ignoreWSExternal) {
+		fRoot= (IWorkspaceRoot) project.getParent();
+		fFullPathPrefix= project.getFullPath().toString() + IPath.SEPARATOR;
+		fIgnoreExternal= ignoreWSExternal;
 	}
 	
 	/* (non-Javadoc)
@@ -47,13 +56,17 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 			} catch(URISyntaxException use) {
 			}
 		} else {
-			fullPath= raw;  
-			final IPath path= new Path(raw);
+			if (raw.startsWith(WS)) {
+				fullPath= raw.substring(WS.length());
+			} else {
+				fullPath= fFullPathPrefix+raw;  
+			}
+			final IPath path= new Path(fullPath);
 			if (path.segmentCount() > 1) {
-				IResource member= root.getFile(path);
+				IResource member= fRoot.getFile(path);
 				uri = member.getLocationURI();
 			}
-		}		
+		} 
 		return uri == null ? null : new IndexFileLocation(uri, fullPath);
 	}
 	
@@ -61,12 +74,17 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	 * @see org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter#toRaw(java.net.URI)
 	 */
 	public String toInternalFormat(IIndexFileLocation location) {
-		String result;
-		if(location.getFullPath()!=null) {
-			result = new Path(location.getFullPath()).toString();
-		} else {
-			result = EXTERNAL+location.getURI().toString();
+		String fullPath= location.getFullPath();
+		if(fullPath!=null) {
+			if (fullPath.startsWith(fFullPathPrefix)) {
+				return fullPath.substring(fFullPathPrefix.length());
+			} 
+			return WS + fullPath;
 		}
-		return result;
+	
+		if (fIgnoreExternal)
+			return null;
+		
+		return EXTERNAL+location.getURI().toString();
 	}
 }

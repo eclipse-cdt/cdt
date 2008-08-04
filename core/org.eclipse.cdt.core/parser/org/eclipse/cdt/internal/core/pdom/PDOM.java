@@ -104,7 +104,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 70; 
+	public static final int MAJOR_VERSION = 72; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
@@ -178,6 +178,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  70.0 - cleaned up templates, fixes bug 236197
 	 *  71.0 - proper support for anonymous unions, bug 206450
+	 *  72.0 - store project-relative paths for resources that belong to the project, bug 239472
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

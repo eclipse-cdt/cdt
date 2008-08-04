@@ -29,10 +29,10 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
-import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -89,7 +89,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			checkMonitor(monitor);
 	
 			// create index
-			IIndexLocationConverter converter= new ResourceContainerRelativeLocationConverter(ResourcesPlugin.getWorkspace().getRoot());
+			IIndexLocationConverter converter= new PDOMProjectIndexLocationConverter(fProject.getProject(), true);
 			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter);
 			checkMonitor(monitor);
 			monitor.worked(5);

@@ -46,16 +46,18 @@ public class EditorOpener {
 	 * Opens the editor selecting the given region.
 	 */
 	public static void open(IWorkbenchPage page, IFile file, IRegion region, long timestamp) {
-        IEditorPart editor= null;
-        if (timestamp == 0) {
-        	timestamp= file.getLocalTimeStamp();
-        }
-        try {
-        	editor= IDE.openEditor(page, file, false);
-        } catch (PartInitException e) {
-        	CUIPlugin.log(e);
-        }
-        selectRegion(file.getFullPath(), region, timestamp, editor);
+		if (file.getLocationURI() != null) {
+			IEditorPart editor= null;
+			if (timestamp == 0) {
+				timestamp= file.getLocalTimeStamp();
+			}
+			try {
+				editor= IDE.openEditor(page, file, false);
+			} catch (PartInitException e) {
+				CUIPlugin.log(e);
+			}
+			selectRegion(file.getFullPath(), region, timestamp, editor);
+		}
 	}
 
 	private static void selectRegion(IPath filebufferKey, IRegion region, long timestamp, IEditorPart editor) {
@@ -109,7 +111,9 @@ public class EditorOpener {
 		if (tu != null) {
 			IResource r= tu.getResource();
 			if (r instanceof IFile) {
-				EditorOpener.open(page, (IFile) r, region, timestamp);
+				if (r.getLocationURI() != null) {
+					EditorOpener.open(page, (IFile) r, region, timestamp);
+				}
 			}
 			else {
 				IPath location= tu.getPath();

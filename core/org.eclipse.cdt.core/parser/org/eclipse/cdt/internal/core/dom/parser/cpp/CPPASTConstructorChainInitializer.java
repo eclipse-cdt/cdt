@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -62,12 +63,25 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
 
     @Override
 	public boolean accept(ASTVisitor action) {
+    	if (action.shouldVisitInitializers) {
+    		switch(action.visit(this)) {
+    		case ASTVisitor.PROCESS_ABORT:
+    			return false;
+    		case ASTVisitor.PROCESS_SKIP:
+    			return true;
+    		}
+    	}
         if (name != null)
             if (!name.accept(action))
                 return false;
         if (value != null)
             if (!value.accept(action))
                 return false;
+        
+    	if (action.shouldVisitInitializers) {
+    		if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
+    			return false;
+    	}
         return true;
     }
 

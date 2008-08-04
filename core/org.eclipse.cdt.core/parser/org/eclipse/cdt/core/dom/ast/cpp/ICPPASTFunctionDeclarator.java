@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -16,41 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * C++ adds a few things to function declarators.
- * 
- * @author Doug Schaefer
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTFunctionDeclarator extends
-		IASTStandardFunctionDeclarator {
-
-	/**
-	 * Is this a const method?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isConst();
-
-	/**
-	 * Set the method to be const or not.
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setConst(boolean value);
-
-	/**
-	 * Is this a volatile method?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isVolatile();
-
-	/**
-	 * Set the method to be volatile or not.
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setVolatile(boolean value);
+public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
 
 	/**
 	 * <code>EXCEPTION_TYPEID</code> represents the type IDs throws in the
@@ -60,62 +30,62 @@ public interface ICPPASTFunctionDeclarator extends
 			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID - TypeId throws in the exception specification"); //$NON-NLS-1$
 
 	/**
+	 * Is this a const method?
+	 */
+	public boolean isConst();
+
+	/**
+	 * Set the method to be const or not.
+	 */
+	public void setConst(boolean value);
+
+	/**
+	 * Is this a volatile method?
+	 */
+	public boolean isVolatile();
+
+	/**
+	 * Set the method to be volatile or not.
+	 */
+	public void setVolatile(boolean value);
+
+	/**
+	 * Is the method pure virtual?
+	 */
+	public boolean isPureVirtual();
+
+	/**
+	 * Set this method to be pure virtual.
+	 */
+	public void setPureVirtual(boolean isPureVirtual);
+
+	/**
 	 * Get the exception specification.
-	 * 
-	 * @return <code>IASTTypeId []</code>
 	 */
 	public IASTTypeId[] getExceptionSpecification();
 
 	/**
 	 * Add an exception specification type Id.
-	 * 
-	 * @param typeId
-	 *            <code>IASTTypeId</code>
 	 */
 	public void addExceptionSpecificationTypeId(IASTTypeId typeId);
 
 	/**
-	 * Is the method pure virtual?
-	 * 
-	 * @return boolean
+	 * Get function scope this node represents. Returns <code>null</code>, if this declarator does not
+	 * declare a function-prototype or function-definition.
 	 */
-	public boolean isPureVirtual();
+	public ICPPFunctionScope getFunctionScope();
 
-	/**
-	 * Set thid method to be pure virtual.
-	 * 
-	 * @param isPureVirtual
-	 *            boolean
-	 */
-	public void setPureVirtual(boolean isPureVirtual);
 
-	/**
-	 * <code>CONSTRUCTOR_CHAIN_MEMBER</code> is the role of a constructor
-	 * chain initializer.
-	 */
+	@Deprecated
 	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
 
 	/**
-	 * Get constructor chain.
-	 * 
-	 * @return <code>ICPPASTConstructorChainInitializer[]</code>
+	 * @deprecated  use {@link ICPPASTFunctionDefinition#getMemberInitializers}, instead.
 	 */
+	@Deprecated
 	public ICPPASTConstructorChainInitializer[] getConstructorChain();
 
-	/**
-	 * Add a constructor chain initializer to constructor chain.
-	 * 
-	 * @param initializer
-	 *            ICPPASTConstructorChainInitializer
-	 */
-	public void addConstructorToChain(
-			ICPPASTConstructorChainInitializer initializer);
-
-	/**
-	 * Get function scope this node represents.
-	 * 
-	 * @return ICPPFunctionScope scope
-	 */
-	public ICPPFunctionScope getFunctionScope();
+	@Deprecated
+	public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer);
 }

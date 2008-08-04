@@ -528,8 +528,8 @@ public class CPPSemantics {
 	        scope = CPPVisitor.getContainingScope(n);
 	    } else if (parent instanceof ICPPASTConstructorChainInitializer) {
 	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
-	    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) initializer.getParent();
-	    	IBinding binding = dtor.getName().resolveBinding();
+	    	IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
+	    	IBinding binding = fdef.getDeclarator().getName().resolveBinding();
 	    	if (!(binding instanceof IProblemBinding))
 	    		scope = binding.getScope();
 	    } else {

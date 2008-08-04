@@ -47,23 +47,18 @@ public class CASTArrayModifier extends CASTNode implements IASTArrayModifier, IA
 
     @Override
 	public boolean accept(ASTVisitor action) {
-        if (exp != null) {
-            if( action.shouldVisitArrayModifiers ){
-    		    switch( action.visit( this ) ){
-    	            case ASTVisitor.PROCESS_ABORT : return false;
-    	            case ASTVisitor.PROCESS_SKIP  : return true;
-    	            default : break;
-    	        }
+    	if( action.shouldVisitArrayModifiers ){
+    		switch( action.visit( this ) ){
+    		case ASTVisitor.PROCESS_ABORT : return false;
+    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		default : break;
     		}
-            if (!exp.accept(action))
-                return false;
-            if( action.shouldVisitArrayModifiers ){
-    		    switch( action.leave( this ) ){
-    	            case ASTVisitor.PROCESS_ABORT : return false;
-    	            case ASTVisitor.PROCESS_SKIP  : return true;
-    	            default : break;
-    	        }
-    		}
+    	}
+        if (exp != null && !exp.accept(action))
+        	return false;
+        
+        if (action.shouldVisitArrayModifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
+        	return false;
         }
         return true;
     }

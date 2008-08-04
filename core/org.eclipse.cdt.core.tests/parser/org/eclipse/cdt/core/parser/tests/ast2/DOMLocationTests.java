@@ -55,8 +55,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -554,8 +556,12 @@ public class DOMLocationTests extends AST2BaseTest {
 		buffer.append( "};\n"); //$NON-NLS-1$
 		
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-		ICPPASTFunctionDeclarator funC = (ICPPASTFunctionDeclarator)((IASTFunctionDefinition)((ICPPASTCompositeTypeSpecifier)((IASTSimpleDeclaration)tu.getDeclarations()[2]).getDeclSpecifier()).getMembers()[1]).getDeclarator();
-		assertSoleLocation( funC, buffer.toString().indexOf("C() : c(0)"), "C() : c(0)".length() );  //$NON-NLS-1$//$NON-NLS-2$
+		final ICPPASTCompositeTypeSpecifier ct= getCompositeType(tu, 2);
+		final ICPPASTFunctionDefinition fdef = getDeclaration(ct, 1);
+		ICPPASTFunctionDeclarator funC = (ICPPASTFunctionDeclarator) fdef.getDeclarator();
+		assertSoleLocation( funC, buffer.toString().indexOf("C()"), "C()".length() );  //$NON-NLS-1$//$NON-NLS-2$
+		ICPPASTConstructorChainInitializer memInit= fdef.getMemberInitializers()[0];
+		assertSoleLocation( memInit, buffer.toString().indexOf("c(0)"), "c(0)".length() );  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
     public void testBug86698_2() throws Exception {
@@ -574,10 +580,13 @@ public class DOMLocationTests extends AST2BaseTest {
 		buffer.append( "catch (...)\n"); //$NON-NLS-1$
 		buffer.append( "{\n }\n"); //$NON-NLS-1$
 		
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        final String code = buffer.toString();
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
 		final IASTFunctionDefinition fdef = (IASTFunctionDefinition)tu.getDeclarations()[2];
-		ICPPASTFunctionTryBlockDeclarator funC = (ICPPASTFunctionTryBlockDeclarator)fdef.getDeclarator();
-		assertSoleLocation( funC, buffer.toString().indexOf("C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)"), "C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)".length() );  //$NON-NLS-1$//$NON-NLS-2$
+		assertInstance(fdef, ICPPASTFunctionWithTryBlock.class);
+		assertSoleLocation(fdef.getDeclarator(), code.indexOf("C::C(int ii, double id)"), "C::C(int ii, double id)".length() );  //$NON-NLS-1$//$NON-NLS-2$
+		ICPPASTFunctionWithTryBlock tryblock= ((ICPPASTFunctionWithTryBlock) fdef);
+		assertSoleLocation(tryblock.getCatchHandlers()[0], code.indexOf("catch"), "catch (...)\n{\n }".length());
 	}
 
     public void testBug157009_1() throws Exception {

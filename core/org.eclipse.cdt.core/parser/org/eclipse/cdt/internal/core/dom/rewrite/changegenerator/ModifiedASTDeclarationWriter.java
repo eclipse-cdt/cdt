@@ -7,12 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.DeclarationWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
@@ -32,5 +35,11 @@ public class ModifiedASTDeclarationWriter extends DeclarationWriter {
 		IASTDeclaration[] modifiedDeclarations = modificationHelper.createModifiedChildArray(namespaceDefinition, declarations, IASTDeclaration.class);
 		super.writeDeclarationsInNamespace(namespaceDefinition, modifiedDeclarations);
 	}
-
+	
+	@Override
+	protected void writeCtorChainInitializer(ICPPASTFunctionDefinition funcDec,
+			ICPPASTConstructorChainInitializer[] ctorInitChain) {
+		ICPPASTConstructorChainInitializer[] modifiedChainInitializer = modificationHelper.createModifiedChildArray(funcDec, ctorInitChain, ICPPASTConstructorChainInitializer.class);
+		super.writeCtorChainInitializer(funcDec, modifiedChainInitializer);
+	}
 }

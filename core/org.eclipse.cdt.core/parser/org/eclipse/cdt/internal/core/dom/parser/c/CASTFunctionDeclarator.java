@@ -57,13 +57,14 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     }
 
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        IASTParameterDeclaration [] params = getParameters();
-        for ( int i = 0; i < params.length; i++ ) {
-            if( !params[i].accept( action ) ) return false;
-        }
-        return true;
-    }
+	protected boolean postAccept(ASTVisitor action) {
+		IASTParameterDeclaration[] params = getParameters();
+		for (int i = 0; i < params.length; i++) {
+			if (!params[i].accept(action))
+				return false;
+		}
+		return super.postAccept(action);
+	}
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {

@@ -135,20 +135,20 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator, IASTAmbi
             if( !ptrOps[i].accept( action ) ) return false;
         }
 
-        if( action.shouldVisitDeclarators ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+        if (!postAccept(action))
+			return false;
+
+		if (action.shouldVisitDeclarators && action.leave(this) == ASTVisitor.PROCESS_ABORT) {
+			return false;
 		}
-        
-        return postAccept( action );
+		return true;
     }
     
     protected boolean postAccept( ASTVisitor action ){
-        if( initializer != null ) if( !initializer.accept( action ) ) return false;
-        return true;
+        if (initializer != null && !initializer.accept(action))
+        	return false;
+        
+		return true;
     }
 	
 	public int getRoleForName(IASTName n ) {

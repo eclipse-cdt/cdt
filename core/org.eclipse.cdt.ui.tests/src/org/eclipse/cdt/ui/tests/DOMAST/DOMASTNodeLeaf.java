@@ -111,11 +111,19 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		return false;
 	}
 	
+	@Override
 	public String toString() {
 	    if( node == null ) return BLANK_STRING; 
 		StringBuffer buffer = new StringBuffer();
 		
-		Class[] classes = node.getClass().getInterfaces();
+		Class<?> clazz= node.getClass();
+		Class<?>[] classes = clazz.getInterfaces();
+		while (classes.length == 0) {
+			clazz= clazz.getSuperclass();
+			if (clazz == null)
+				break;
+			classes= clazz.getInterfaces();
+		}
 		for(int i=0; i<classes.length; i++) {
             if (classes[i].getPackage().toString().indexOf(INTERNAL) >= 0)
                 continue;
@@ -275,6 +283,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		return name;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class key) {
 		if (key == IPropertySource.class)
 			return new ASTPropertySource(getNode());
@@ -386,8 +395,8 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		private IPropertyDescriptor[] getPropertyDescriptors(Object obj) {
 			IPropertyDescriptor[] desc = new IPropertyDescriptor[DEFAULT_DESCRIPTOR_SIZE];
 			if (obj==null) return BLANK_DESCRIPTORS;
-			Class objClass = obj.getClass();
-			Class[] interfaces = objClass.getInterfaces();
+			Class<?> objClass = obj.getClass();
+			Class<?>[] interfaces = objClass.getInterfaces();
 			
 			for(int i=0; i<interfaces.length; i++) {
 				Method[] methods = interfaces[i].getMethods();
@@ -438,7 +447,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			if (!(id instanceof String))
 				return BLANK_STRING;
 			
-			Class nodeClass = node.getClass();
+			Class<?> nodeClass = node.getClass();
 			
 			String value = BLANK_STRING;
 			
@@ -448,12 +457,12 @@ public class DOMASTNodeLeaf implements IAdaptable {
 					String methodName = id.toString();
 					methodName = methodName.replaceAll(BINDING_PREFIX, BLANK_STRING);
 					Method method = ((IASTName)node).resolveBinding().getClass().getMethod(methodName, new Class[0]); // only going to be getter methods...
-					result = method.invoke(((IASTName)node).resolveBinding(), null);
+					result = method.invoke(((IASTName)node).resolveBinding());
 				} else {
 					String methodName = id.toString();
 					methodName = methodName.replaceAll(NODE_PREFIX, BLANK_STRING);
 					Method method = nodeClass.getMethod(methodName, new Class[0]); // only going to be getter methods...
-					result = method.invoke(node, null);
+					result = method.invoke(node);
 				}
 				
 				if (result == null) {
@@ -552,7 +561,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			
 			if (hasGetType) {
 				try {
-					Object result = methods[i].invoke(obj, null);
+					Object result = methods[i].invoke(obj);
 					
 					if (result instanceof IType) {
 						return ASTTypeUtil.getType((IType)result);

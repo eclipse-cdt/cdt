@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -48,13 +48,12 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
     }
 
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        if( bitField != null ) if( !bitField.accept( action ) ) return false;
-        
-        IASTInitializer initializer = getInitializer();
-        if( initializer != null ) if( !initializer.accept( action ) ) return false;
-        return true;
-    }
+	protected boolean postAccept(ASTVisitor action) {
+		if (bitField != null && !bitField.accept(action))
+			return false;
+
+		return super.postAccept(action);
+	}
 
     public void replace(IASTNode child, IASTNode other) {
         if( child == bitField )

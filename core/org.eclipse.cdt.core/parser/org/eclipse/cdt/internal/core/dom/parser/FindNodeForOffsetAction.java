@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -29,10 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -50,6 +45,7 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 		shouldVisitNames = true;
 		shouldVisitDeclarations= true;
 		
+		shouldVisitArrayModifiers=
 		shouldVisitInitializers=
 		shouldVisitParameterDeclarations=
 		shouldVisitDeclarators=
@@ -95,26 +91,13 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 		for (int i = 0; i < ops.length; i++)
 			processNode(ops[i]);
 
-		if (declarator instanceof IASTArrayDeclarator) {
-			IASTArrayModifier[] mods = ((IASTArrayDeclarator) declarator)
-					.getArrayModifiers();
-			for (int i = 0; i < mods.length; i++)
-				processNode(mods[i]);
-		}
-		else if (declarator instanceof ICPPASTFunctionDeclarator) {
-			ICPPASTConstructorChainInitializer[] chainInit = ((ICPPASTFunctionDeclarator)declarator).getConstructorChain();
-			for(int i=0; i<chainInit.length; i++) {
-				processNode(chainInit[i]);
-			}
-			
-			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
-				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
-				for( int i = 0; i < catchHandlers.length; i++ ){
-					processNode(catchHandlers[i]);
-				}
-			}	
-		}
 		return ret;
+	}
+
+	
+	@Override
+	public int visit(IASTArrayModifier arrayModifier) {
+		return processNode(arrayModifier);
 	}
 
 	@Override

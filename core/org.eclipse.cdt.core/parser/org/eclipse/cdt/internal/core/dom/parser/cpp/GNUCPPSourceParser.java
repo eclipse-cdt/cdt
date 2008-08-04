@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -94,7 +93,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
@@ -171,7 +171,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
     private static final int DEFAULT_SIZE_EXCEPTIONS_LIST = 2;
-    private static final int DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE = 4;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE= 4;
     private static final int DEFAULT_PARAMETER_LIST_SIZE= 4;
     private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {};
@@ -2313,11 +2312,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             endOffset= consume().getEndOffset();
             break;
         case IToken.t_try:
-            consume();
-            return functionDefinition(firstOffset, declSpec, declarators, true);
         case IToken.tCOLON:
         case IToken.tLBRACE:
-            return functionDefinition(firstOffset, declSpec, declarators, false);
+            return functionDefinition(firstOffset, declSpec, declarators);
         default:
         	if (declOption != DeclarationOptions.LOCAL) {
         		insertSemi= true;
@@ -2372,7 +2369,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	private IASTDeclaration functionDefinition(final int firstOffset, IASTDeclSpecifier declSpec,
-			IASTDeclarator[] dtors, boolean hasFunctionTryBlock) throws EndOfFileException, BacktrackException {
+			IASTDeclarator[] dtors) throws EndOfFileException, BacktrackException {
 		
     	if (dtors.length != 1) 
     		throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
@@ -2382,64 +2379,59 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (dtor instanceof ICPPASTFunctionDeclarator == false)
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
-		final ICPPASTFunctionDeclarator fdtor= (ICPPASTFunctionDeclarator) dtor;
 		
+		ICPPASTFunctionDefinition fdef;
+		if (LT(1) == IToken.t_try) {
+			consume();
+			fdef= createFunctionTryBlock();
+		} else {
+			fdef= createFunctionDefinition();
+		}
+		fdef.setDeclSpecifier(declSpec);
+		fdef.setDeclarator((ICPPASTFunctionDeclarator) dtor);
 		if (LT(1) == IToken.tCOLON) {
-			List<ICPPASTConstructorChainInitializer> constructorChain= new ArrayList<ICPPASTConstructorChainInitializer>(DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
-		    ctorInitializer(constructorChain);
-		    if (!constructorChain.isEmpty()) {
-		    	for (ICPPASTConstructorChainInitializer initializer : constructorChain) {
-		    		fdtor.addConstructorToChain(initializer);
-		    	}
-		    	// fix for 86698, update the declarator's length
-		    	adjustLength(outerDtor, constructorChain.get(constructorChain.size()-1));
-		    }
+		    ctorInitializer(fdef);
 		}
 
-		IASTStatement body;
 		try {
-			body= handleFunctionBody();
+			IASTStatement body= handleFunctionBody();
+			fdef.setBody(body);
+			setRange(fdef, firstOffset, calculateEndOffset(body));
 		} catch (BacktrackException bt) {
 			final IASTNode n= bt.getNodeBeforeProblem();
-			if (n instanceof IASTCompoundStatement) {
-				IASTFunctionDefinition funcDefinition = createFunctionDefinition();
-				funcDefinition.setDeclSpecifier(declSpec);
-				funcDefinition.setDeclarator(fdtor);
-				funcDefinition.setBody((IASTCompoundStatement) n);
-				((ASTNode) funcDefinition).setOffsetAndLength(firstOffset, calculateEndOffset(n) - firstOffset);
-				throwBacktrack(bt.getProblem(), funcDefinition);
+			if (n instanceof IASTCompoundStatement && !(fdef instanceof ICPPASTFunctionWithTryBlock)) {
+				fdef.setBody((IASTCompoundStatement) n);
+				setRange(fdef, firstOffset, calculateEndOffset(n));
+				throwBacktrack(bt.getProblem(), fdef);
 			}
 			throw bt;
 		}
 		
-		int endOffset= calculateEndOffset(body);
-		if (hasFunctionTryBlock) {
+		if (fdef instanceof ICPPASTFunctionWithTryBlock) {
+			ICPPASTFunctionWithTryBlock tryblock= (ICPPASTFunctionWithTryBlock) fdef;
 		    List<ICPPASTCatchHandler> handlers = new ArrayList<ICPPASTCatchHandler>(DEFAULT_CATCH_HANDLER_LIST_SIZE);
 		    catchHandlerSequence(handlers);
-		    if (!handlers.isEmpty() && fdtor instanceof ICPPASTFunctionTryBlockDeclarator) {
-		    	ICPPASTFunctionTryBlockDeclarator tbd= (ICPPASTFunctionTryBlockDeclarator) fdtor;
-		    	for (ICPPASTCatchHandler catchHandler : handlers) {
-					tbd.addCatchHandler(catchHandler);
-				}
-		    	endOffset= calculateEndOffset(handlers.get(handlers.size()-1));
+		    ICPPASTCatchHandler last= null;
+		    for (ICPPASTCatchHandler catchHandler : handlers) {
+		    	tryblock.addCatchHandler(catchHandler);
+		    	last= catchHandler;
+		    }
+		    if (last != null) {
+		    	adjustLength(tryblock, last);
 		    }
 		}
-
-		IASTFunctionDefinition funcDefinition = createFunctionDefinition();
-		funcDefinition.setDeclSpecifier(declSpec);
-		funcDefinition.setDeclarator(fdtor);
-		funcDefinition.setBody(body);
-		
-		((ASTNode) funcDefinition).setOffsetAndLength(firstOffset, endOffset-firstOffset);
-		return funcDefinition;
+		return fdef;
 	}
 
 
     @Override
-	protected IASTFunctionDefinition createFunctionDefinition() {
+	protected ICPPASTFunctionDefinition createFunctionDefinition() {
         return new CPPASTFunctionDefinition();
     }
 
+	protected ICPPASTFunctionWithTryBlock createFunctionTryBlock() {
+        return new CPPASTFunctionWithTryBlock();
+    }
 
     @Override
 	protected IASTSimpleDeclaration createSimpleDeclaration() {
@@ -2455,7 +2447,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void ctorInitializer(List<ICPPASTConstructorChainInitializer> collection) throws EndOfFileException,
+    protected void ctorInitializer(ICPPASTFunctionDefinition fdef) throws EndOfFileException,
             BacktrackException {
         consume();
         ctorLoop: for (;;) {
@@ -2494,7 +2486,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (expressionList != null) {
                 ctorInitializer.setInitializerValue(expressionList);
             }
-            collection.add(ctorInitializer);
+            fdef.addMemberInitializer(ctorInitializer);
 
             switch (LT(1)) {
             case IToken.tCOMMA:
@@ -3477,82 +3469,77 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// Consume any number of __attribute__ tokens after the parameters
 		__attribute_decl_seq(supportAttributeSpecifiers, false);
 
-		boolean isTryCatch= false;
 		boolean isConst= false;
 		boolean isVolatile= false;
 		boolean isPureVirtual= false;
 		ArrayList<IASTTypeId> exceptionSpecIds= null;
 
-		if (LT(1) == IToken.t_try) {
-			isTryCatch= true;
-		} else {
-			// cv-qualifiers
-			cvloop: while(true) {
-				switch(LT(1)) {
-				case IToken.t_const:
-					isConst= true;
-					endOffset= consume().getEndOffset();
-					break;
-				case IToken.t_volatile:
-					isVolatile= true;
-					endOffset= consume().getEndOffset();
-					break;
-				default:
-					break cvloop;
-				}
-			}
-
-			// throws clause
-			if (LT(1) == IToken.t_throw) {
-				exceptionSpecIds = new ArrayList<IASTTypeId>(DEFAULT_SIZE_EXCEPTIONS_LIST);
-				consume(); // throw
-				consume(IToken.tLPAREN); 
-
-				thloop: while(true) {
-					switch (LT(1)) {
-					case IToken.tRPAREN:
-					case IToken.tEOC:
-						endOffset= consume().getEndOffset();
-						break thloop;
-					case IToken.tCOMMA:
-						consume();
-						break;
-					default:
-						int thoffset= LA(1).getOffset();
-						IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
-						if (typeId != null) {
-							exceptionSpecIds.add(typeId);
-						} else {
-							int thendoffset= LA(1).getOffset();
-							if (thoffset == thendoffset) {
-								thendoffset= consume().getEndOffset();
-							}
-							IASTProblem p= createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset-thoffset);
-							IASTProblemTypeId typeIdProblem = createTypeIDProblem();
-							typeIdProblem.setProblem(p);
-							((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
-							exceptionSpecIds.add(typeIdProblem);
-						}
-						break;
-					}
-				}
-
-				// more __attribute__ after throws
-				__attribute_decl_seq(supportAttributeSpecifiers, false);
-			}
-		
-			// pure virtual
-			if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER) {
-				char[] image = LA(2).getCharImage();
-				if (image.length == 1 && image[0] == '0') {
-					consume(); // tASSIGN
-					endOffset= consume().getEndOffset(); // tINTEGER
-					isPureVirtual= true;
-				}
+		// cv-qualifiers
+		cvloop: while(true) {
+			switch(LT(1)) {
+			case IToken.t_const:
+				isConst= true;
+				endOffset= consume().getEndOffset();
+				break;
+			case IToken.t_volatile:
+				isVolatile= true;
+				endOffset= consume().getEndOffset();
+				break;
+			default:
+				break cvloop;
 			}
 		}
 
-		final ICPPASTFunctionDeclarator fc= isTryCatch ? createTryBlockDeclarator() : createFunctionDeclarator();
+		// throws clause
+		if (LT(1) == IToken.t_throw) {
+			exceptionSpecIds = new ArrayList<IASTTypeId>(DEFAULT_SIZE_EXCEPTIONS_LIST);
+			consume(); // throw
+			consume(IToken.tLPAREN); 
+
+			thloop: while(true) {
+				switch (LT(1)) {
+				case IToken.tRPAREN:
+				case IToken.tEOC:
+					endOffset= consume().getEndOffset();
+					break thloop;
+				case IToken.tCOMMA:
+					consume();
+					break;
+				default:
+					int thoffset= LA(1).getOffset();
+				IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
+				if (typeId != null) {
+					exceptionSpecIds.add(typeId);
+				} else {
+					int thendoffset= LA(1).getOffset();
+					if (thoffset == thendoffset) {
+						thendoffset= consume().getEndOffset();
+					}
+					IASTProblem p= createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset-thoffset);
+					IASTProblemTypeId typeIdProblem = createTypeIDProblem();
+					typeIdProblem.setProblem(p);
+					((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
+					exceptionSpecIds.add(typeIdProblem);
+				}
+				break;
+				}
+			}
+
+			// more __attribute__ after throws
+			__attribute_decl_seq(supportAttributeSpecifiers, false);
+		}
+
+		// pure virtual
+		if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER) {
+			char[] image = LA(2).getCharImage();
+			if (image.length == 1 && image[0] == '0') {
+				consume(); // tASSIGN
+				endOffset= consume().getEndOffset(); // tINTEGER
+				isPureVirtual= true;
+			}
+		}
+
+		final ICPPASTFunctionDeclarator fc= createFunctionDeclarator();
 		fc.setVarArgs(encounteredVarArgs);
 	    fc.setConst(isConst);
 	    fc.setVolatile(isVolatile);
@@ -3610,12 +3597,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTProblemTypeId createTypeIDProblem() {
         return new CPPASTProblemTypeId();
     }
-
-
-    protected ICPPASTFunctionTryBlockDeclarator createTryBlockDeclarator() {
-        return new CPPASTFunctionTryBlockDeclarator();
-    }
-
 
     protected ICPPASTFunctionDeclarator createFunctionDeclarator() {
         return new CPPASTFunctionDeclarator();
@@ -4001,14 +3982,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             
             collection.add(handler);
-			
-			try {
-				lt1 = LT(1);
-			} catch (EndOfFileException eofe) {
-				// if EOF is reached, then return here and let it be encountered elsewhere 
-				// (i.e. try/catch won't be added to the declaration if the exception is thrown here)
-				return; 
-			}
+            lt1 = LTcatchEOF(1);
         }
     }
 

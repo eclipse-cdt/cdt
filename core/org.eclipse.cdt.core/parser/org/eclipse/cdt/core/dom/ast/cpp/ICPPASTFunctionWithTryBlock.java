@@ -1,44 +1,43 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *******************************************************************************/
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
- * @deprecated, use {@link ICPPASTFunctionWithTryBlock}, instead.
+ * Models a function defined with a try block, which is a function definition:
+ * <pre> void func() try { 
+ * } catch (...) {
+ * }
+ * @since 5.1
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-@Deprecated
-public interface ICPPASTFunctionTryBlockDeclarator extends
-		ICPPASTFunctionDeclarator {
+public interface ICPPASTFunctionWithTryBlock extends ICPPASTFunctionDefinition {
 
 	/**
 	 * A <code>CATCH_HANDLER</code> is the role of an ICPPASTCatchHandler in
 	 * this interface.
 	 */
 	public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty(
-			"ICPPASTFunctionTryBlockDeclarator.CATCH_HANDLER - role of an ICPPASTCatchHandler"); //$NON-NLS-1$
+			"ICPPASTFunctionWithTryBlock.CATCH_HANDLER - role of an ICPPASTCatchHandler"); //$NON-NLS-1$
 
 	/**
-	 * Add a catch handler.
-	 * 
-	 * @param statement
-	 *            <code>ICPPASTCatchHandler</code>
+	 * Adds a catch handler.
 	 */
 	public void addCatchHandler(ICPPASTCatchHandler statement);
 
 	/**
-	 * Get catch handlers.
-	 * 
-	 * @return <code>ICPPASTCatchHandler</code>
+	 * Returns an array of catch handlers.
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
+
 }

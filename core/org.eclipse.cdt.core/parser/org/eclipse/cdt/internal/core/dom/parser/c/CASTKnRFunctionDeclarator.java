@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -72,19 +73,21 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	}
 
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        IASTName [] ns = getParameterNames();
-        for ( int i = 0; i < ns.length; i++ ) {
-            if( !ns[i].accept( action ) ) return false;
-        }
-        
-        IASTDeclaration [] params = getParameterDeclarations();
-        for ( int i = 0; i < params.length; i++ ) {
-            if( !params[i].accept( action ) ) return false;
-        }
+	protected boolean postAccept(ASTVisitor action) {
+		IASTName[] ns = getParameterNames();
+		for (int i = 0; i < ns.length; i++) {
+			if (!ns[i].accept(action))
+				return false;
+		}
 
-        return true;
-    }
+		IASTDeclaration[] params = getParameterDeclarations();
+		for (int i = 0; i < params.length; i++) {
+			if (!params[i].accept(action))
+				return false;
+		}
+
+		return super.postAccept(action);
+	}
 	
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
 		boolean found=false;

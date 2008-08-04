@@ -1,34 +1,35 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- *******************************************************************************/
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
- * @author jcamelon
+ * Represents a function definition contained in a try block.
+ * @see ICPPASTFunctionWithTryBlock
  */
-public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
-        implements ICPPASTFunctionTryBlockDeclarator {
+public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition implements ICPPASTFunctionWithTryBlock {
 
-	
-
-    public CPPASTFunctionTryBlockDeclarator() {
+    public CPPASTFunctionWithTryBlock() {
 	}
 
-	public CPPASTFunctionTryBlockDeclarator(IASTName name) {
-		super(name);
+	public CPPASTFunctionWithTryBlock(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+		super(declSpecifier, declarator, bodyStatement);
 	}
 
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
@@ -48,15 +49,14 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
 
     private ICPPASTCatchHandler [] catchHandlers = null;
     private int catchHandlersPos=-1;
+    
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        if( !super.postAccept( action ) ) return false;
-        
-        ICPPASTCatchHandler [] handlers = getCatchHandlers();
-        for ( int i = 0; i < handlers.length; i++ ) {
-            if( !handlers[i].accept( action ) ) return false;
+	protected boolean acceptCatchHandlers( ASTVisitor action ){
+    	final ICPPASTCatchHandler [] handlers = getCatchHandlers();
+        for (int i=0; i<handlers.length; i++) {
+            if (!handlers[i].accept(action)) 
+            	return false;
         }
         return true;
     }
-    
 }

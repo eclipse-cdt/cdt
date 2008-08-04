@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -304,9 +303,6 @@ public class ASTStringUtil {
 							}
 							appendTypeIdString(buffer, exceptionTypeIds[i]);
 						}
-					}
-					if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-						assert false : "TODO: handle "+ declarator.getClass().getName(); //$NON-NLS-1$
 					}
 				}
 			} else if (declarator instanceof IASTFieldDeclarator) {

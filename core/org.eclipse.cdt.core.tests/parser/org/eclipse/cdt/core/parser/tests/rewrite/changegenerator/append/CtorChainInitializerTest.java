@@ -13,12 +13,12 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
@@ -45,17 +45,17 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 			final ASTModificationStore modStore) {
 		return new CPPASTVisitor() {
 			{
-				shouldVisitDeclarators = true;
+				shouldVisitDeclarations = true;
 			}
 			
 			@Override
-			public int visit(IASTDeclarator declarator) {
-				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+			public int visit(IASTDeclaration decl) {
+				if (decl instanceof CPPASTFunctionDefinition) {
+					CPPASTFunctionDefinition fdef = (CPPASTFunctionDefinition)decl;
 					CPPASTIdExpression initExpr = new CPPASTIdExpression(new CPPASTName("a".toCharArray())); //$NON-NLS-1$
 					CPPASTName initName = new CPPASTName("alpha".toCharArray()); //$NON-NLS-1$
 					ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(initName, initExpr);
-					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, functionDeclarator, newInitializer, null);
+					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, fdef, newInitializer, null);
 					modStore.storeModification(null, modification);
 					
 				}

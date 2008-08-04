@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.DeclaratorWriter;
@@ -55,14 +55,6 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	}
 	
 	
-
-	@Override
-	protected void writeCtorChainInitializer(ICPPASTFunctionDeclarator funcDec,
-			ICPPASTConstructorChainInitializer[] ctorInitChain) {
-		ICPPASTConstructorChainInitializer[] modifiedChainInitializer = modificationHelper.createModifiedChildArray(funcDec, ctorInitChain, ICPPASTConstructorChainInitializer.class);
-		super.writeCtorChainInitializer(funcDec, modifiedChainInitializer);
-	}
-
 	@Override
 	protected void writeArrayModifiers(IASTArrayDeclarator arrDecl,
 			IASTArrayModifier[] arrMods) {

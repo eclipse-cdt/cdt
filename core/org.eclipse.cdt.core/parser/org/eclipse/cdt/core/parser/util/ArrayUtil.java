@@ -96,6 +96,15 @@ public class ArrayUtil {
     	return temp;
     }
 
+    /**
+     * Type safe version of {@link #append(Class, Object[], int, Object)}
+     * @since 5.1
+     */
+    @SuppressWarnings("unchecked")
+	static public <T> T[] appendAt(Class<T> c, T[] array, int currentLength, T obj) {
+    	return (T[]) append(c, array, currentLength, obj);
+    }
+
     static public Object [] append( Object[] array, Object obj ){
         return append( Object.class, array, obj );
     }
@@ -273,7 +282,6 @@ public class ArrayUtil {
 	 * all of the non-null elements in the array are grouped together at the beginning of the array
 	 * and all of the nulls are at the end of the array.  
 	 * The position of the last non-null element in the array must also be known. 
-     *
 	 */
 	public static Object[] removeNullsAfter(Class<?> c, Object[] array, int index) {
         if( array == null || index < 0)
@@ -288,6 +296,14 @@ public class ArrayUtil {
 		return newArray;
 	}
 
+	/**
+	 * Type safe version of {@link #removeNullsAfter(Class, Object[], int)}
+	 * @since 5.1
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] trimAt(Class<T> c, T[] array, int index) {
+		return (T[]) removeNullsAfter(c, array, index);
+	}
 
 	/**
 	 * Insert the obj at the beginning of the array, shifting the whole thing one index

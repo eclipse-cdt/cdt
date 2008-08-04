@@ -27,10 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -52,7 +50,6 @@ public class DeclaratorWriter extends NodeWriter {
 
 	private static final String AMPERSAND_SPACE = "& "; //$NON-NLS-1$
 	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
-	private static final String TRY = "try"; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " =0"; //$NON-NLS-1$
 	
 	public DeclaratorWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
@@ -146,29 +143,6 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.print(PURE_VIRTUAL);
 		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification());
-		if (funcDec instanceof ICPPASTFunctionTryBlockDeclarator) {
-			scribe.newLine();
-			scribe.print(TRY);
-		}
-		writeCtorChainInitializer(funcDec, funcDec.getConstructorChain());
-	}
-
-	protected void writeCtorChainInitializer(
-			ICPPASTFunctionDeclarator funcDec, ICPPASTConstructorChainInitializer[] ctorInitChain) {
-		if(ctorInitChain.length != 0) {
-			scribe.newLine();
-			scribe.print(':');
-		}
-		for(int i = 0; i < ctorInitChain.length; ++i) {
-			ICPPASTConstructorChainInitializer initializer = ctorInitChain[i];
-			initializer.getMemberInitializerId().accept(visitor);
-			scribe.print('(');
-			initializer.getInitializerValue().accept(visitor);
-			scribe.print(')');
-			if(i+1 < ctorInitChain.length) {
-				scribe.print(COMMA_SPACE);
-			}
-		}
 	}
 
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions) {

@@ -13,33 +13,32 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author jcamelon
+ * Represents a function declarator.
  */
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
     private IASTParameterDeclaration[] parameters = null;
     private int parametersPos = -1;
-    private ICPPFunctionScope scope = null;
+    private IASTTypeId[] typeIds = null;
+    private int typeIdsPos = -1;
+    
     private boolean varArgs;
     private boolean pureVirtual;
     private boolean isVolatile;
     private boolean isConst;
-    private IASTTypeId[] typeIds = null;
-    private int typeIdsPos = -1;
-    private ICPPASTConstructorChainInitializer[] constructorChain = null;
-    private int constructorChainPos = -1;
-
+    
+    private ICPPFunctionScope scope = null;
+    
     public CPPASTFunctionDeclarator() {
 	}
 
@@ -48,9 +47,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	}
 
 	public IASTParameterDeclaration[] getParameters() {
-        if (parameters == null) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter(IASTParameterDeclaration.class, parameters, parametersPos);
-        return parameters;
+        if (parameters == null) 
+        	return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
+        
+        return parameters= ArrayUtil.trimAt(IASTParameterDeclaration.class, parameters, parametersPos);
     }
 
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
@@ -86,9 +86,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public IASTTypeId[] getExceptionSpecification() {
-        if (typeIds == null) return IASTTypeId.EMPTY_TYPEID_ARRAY;
-        typeIds = (IASTTypeId[]) ArrayUtil.removeNullsAfter(IASTTypeId.class, typeIds, typeIdsPos);
-        return typeIds;
+        if (typeIds == null) 
+        	return IASTTypeId.EMPTY_TYPEID_ARRAY;
+        
+        return typeIds= ArrayUtil.trimAt(IASTTypeId.class, typeIds, typeIdsPos);
     }
 
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
@@ -107,20 +108,24 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         this.pureVirtual = isPureVirtual;
     }
 
-    public ICPPASTConstructorChainInitializer[] getConstructorChain() {
-        if (constructorChain == null) return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
-        constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.removeNullsAfter(
-        		ICPPASTConstructorChainInitializer.class, constructorChain, constructorChainPos);
-        return constructorChain;
+    @Deprecated
+    public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
+    	if (CPPVisitor.findTypeRelevantDeclarator(this) == this) {
+    		IASTNode parent= getParent();
+    		while(!(parent instanceof IASTDeclaration)) {
+    			if (parent == null)
+    				break;
+    			parent= parent.getParent();
+    		}
+    		if (parent instanceof ICPPASTFunctionDefinition) {
+    			return ((ICPPASTFunctionDefinition) parent).getMemberInitializers();
+    		}
+    	}
+    	return org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
     }
 
-    public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer) {
-    	if (initializer != null) {
-    		constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append(
-    				ICPPASTConstructorChainInitializer.class, constructorChain, ++constructorChainPos, initializer);
-    		initializer.setParent(this);
-			initializer.setPropertyInParent(CONSTRUCTOR_CHAIN_MEMBER);
-    	}
+    @Deprecated
+    public void addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer initializer) {
     }
 
     public ICPPFunctionScope getFunctionScope() {
@@ -145,24 +150,18 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     
     @Override
 	protected boolean postAccept(ASTVisitor action) {
-        IASTParameterDeclaration[] params = getParameters();
-        for (int i = 0; i < params.length; i++) {
-            if (!params[i].accept(action)) return false;
-        }
+		IASTParameterDeclaration[] params = getParameters();
+		for (int i = 0; i < params.length; i++) {
+			if (!params[i].accept(action))
+				return false;
+		}
 
-        IASTTypeId[] ids = getExceptionSpecification();
-        for (int i = 0; i < ids.length; i++) {
-            if (!ids[i].accept(action)) return false;
-        }
+		IASTTypeId[] ids = getExceptionSpecification();
+		for (int i = 0; i < ids.length; i++) {
+			if (!ids[i].accept(action))
+				return false;
+		}
 
-        IASTInitializer initializer = getInitializer();
-        if (initializer != null && !initializer.accept(action)) return false;
-
-        ICPPASTConstructorChainInitializer[] chain = getConstructorChain();
-        for (int i = 0; i < chain.length; i++) {
-            if (!chain[i].accept(action)) return false;
-        }
-
-        return true;
-    }
+		return super.postAccept(action);
+	}
 }

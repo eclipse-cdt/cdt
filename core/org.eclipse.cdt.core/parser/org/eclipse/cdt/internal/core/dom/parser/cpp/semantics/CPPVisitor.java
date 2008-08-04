@@ -820,7 +820,7 @@ public class CPPVisitor {
 			    } else if (parent instanceof IASTCompoundStatement) {
 			        return ((IASTCompoundStatement)parent).getScope();
 			    } else if (parent instanceof ICPPASTConstructorChainInitializer) {
-			    	IASTNode temp = getContainingBlockItem(parent.getParent());
+			    	IASTNode temp = getContainingBlockItem(parent);
 			    	if (temp instanceof IASTFunctionDefinition) {
 			    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
 			    		return body.getScope();

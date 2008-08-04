@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
@@ -61,7 +60,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -1710,39 +1710,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			setOffsetAndLength(declSpec, parser.getLeftIToken().getStartOffset(), 0);
 		}
  		
- 		if(isTryBlockDeclarator) {
- 		    // perform a shallow copy 
- 			ICPPASTFunctionTryBlockDeclarator tryBlockDeclarator = nodeFactory.newFunctionTryBlockDeclarator(declarator.getName());
- 			tryBlockDeclarator.setConst(declarator.isConst());
- 			tryBlockDeclarator.setVolatile(declarator.isVolatile());
- 			tryBlockDeclarator.setPureVirtual(declarator.isPureVirtual());
- 			tryBlockDeclarator.setVarArgs(declarator.takesVarArgs());
- 			for(IASTParameterDeclaration parameter : declarator.getParameters()) {
- 				tryBlockDeclarator.addParameterDeclaration(parameter);
- 			}
- 			for(IASTTypeId exception : declarator.getExceptionSpecification()) {
- 				tryBlockDeclarator.addExceptionSpecificationTypeId(exception);
- 			}
+ 		ICPPASTFunctionDefinition definition;
+ 		if (isTryBlockDeclarator) {
+ 			ICPPASTFunctionWithTryBlock tryblock= nodeFactory.newFunctionTryBlock(declSpec, declarator, body);
  			for(Object handler : handlers) {
- 				tryBlockDeclarator.addCatchHandler((ICPPASTCatchHandler)handler);
+ 				tryblock.addCatchHandler((ICPPASTCatchHandler)handler);
  	 		}
- 			
- 			declarator = tryBlockDeclarator;
+ 			definition= tryblock;
+ 		} else {
+ 			definition= (ICPPASTFunctionDefinition) nodeFactory.newFunctionDefinition(declSpec, declarator, body);
  		}
  		
  		
  		if(initializers != null && !initializers.isEmpty()) {
  			for(Object initializer : initializers)
- 	 			declarator.addConstructorToChain((ICPPASTConstructorChainInitializer)initializer);
- 			
- 			// recalculate the length of the declarator to include the initializers
- 			IASTNode lastInitializer = (IASTNode)initializers.get(initializers.size()-1);
- 			int offset = offset(declarator);
- 			int length = endOffset(lastInitializer) - offset;
- 			setOffsetAndLength(declarator, offset, length);
+ 	 			definition.addMemberInitializer((ICPPASTConstructorChainInitializer)initializer);
  		}
-
- 		IASTFunctionDefinition definition = nodeFactory.newFunctionDefinition(declSpec, declarator, body);
  		
  		setOffsetAndLength(definition);
 		astStack.push(definition);

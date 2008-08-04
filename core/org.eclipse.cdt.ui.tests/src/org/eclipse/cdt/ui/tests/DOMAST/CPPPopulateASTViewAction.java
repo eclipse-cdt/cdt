@@ -12,8 +12,6 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -33,10 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -140,6 +134,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
+	@Override
 	public int visit(IASTDeclaration declaration) {
 		DOMASTNodeLeaf temp = addRoot(declaration);
 		if (temp == null)
@@ -153,33 +148,14 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
+	@Override
 	public int visit(IASTDeclarator declarator) {
 		DOMASTNodeLeaf temp =  addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
 		for(int i=0; i<ops.length; i++)
 			addRoot(ops[i]);
-		
-		if (declarator instanceof IASTArrayDeclarator) {
-			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
-			for(int i=0; i<mods.length; i++)
-				addRoot(mods[i]);	
-		}
-		
-		if (declarator instanceof ICPPASTFunctionDeclarator) {
-			ICPPASTConstructorChainInitializer[] chainInit = ((ICPPASTFunctionDeclarator)declarator).getConstructorChain();
-			for(int i=0; i<chainInit.length; i++) {
-				addRoot(chainInit[i]);
-			}
-			
-			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
-				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
-				for( int i = 0; i < catchHandlers.length; i++ ){
-					addRoot(catchHandlers[i]);
-				}
-			}	
-		}
-		
+				
 		if (temp == null)
 			return PROCESS_ABORT;
 		else if (temp instanceof DOMASTNodeLeafContinue)
@@ -191,6 +167,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
+	@Override
 	public int visit(ICPPASTBaseSpecifier specifier) {
 		DOMASTNodeLeaf temp = addRoot(specifier);
 		if (temp == null)
@@ -204,6 +181,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
+	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		DOMASTNodeLeaf temp = addRoot(declSpec);
 		if (temp == null)
@@ -217,6 +195,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
+	@Override
 	public int visit(IASTEnumerator enumerator) {
 		DOMASTNodeLeaf temp = addRoot(enumerator);
 		if (temp == null)
@@ -230,6 +209,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
+	@Override
 	public int visit(IASTExpression expression) {
 		DOMASTNodeLeaf temp = addRoot(expression);
 		if (temp == null)
@@ -243,6 +223,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
+	@Override
 	public int visit(IASTInitializer initializer) {
 		DOMASTNodeLeaf temp = addRoot(initializer);
 		if (temp == null)
@@ -256,6 +237,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
+	@Override
 	public int visit(IASTName name) {
 		DOMASTNodeLeaf temp = null;
 		if (name.toString() != null)
@@ -274,6 +256,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processNamespace(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
+	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
 		DOMASTNodeLeaf temp = addRoot(namespace);
 		if (temp == null)
@@ -287,6 +270,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 	 */
+	@Override
 	public int visit(
 			IASTParameterDeclaration parameterDeclaration) {
 		DOMASTNodeLeaf temp = addRoot(parameterDeclaration);
@@ -301,6 +285,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
+	@Override
 	public int visit(IASTStatement statement) {
 		DOMASTNodeLeaf temp = addRoot(statement);
 		if (temp == null)
@@ -314,6 +299,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
+	@Override
 	public int visit(IASTTypeId typeId) {
 		DOMASTNodeLeaf temp = addRoot(typeId);
 		if (temp == null)
@@ -328,6 +314,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
      * (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
      */
+	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
     	DOMASTNodeLeaf temp = addRoot(templateParameter);
 		if (temp == null)

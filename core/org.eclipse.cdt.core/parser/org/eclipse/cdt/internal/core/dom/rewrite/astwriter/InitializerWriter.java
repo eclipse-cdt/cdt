@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -49,7 +51,19 @@ public class InitializerWriter extends NodeWriter{
 			writeConstructorInitializer((ICPPASTConstructorInitializer) initializer);
 		}else if (initializer instanceof ICASTDesignatedInitializer) {
 			writeDesignatedInitializer((ICASTDesignatedInitializer) initializer);
+		}else if (initializer instanceof ICPPASTConstructorChainInitializer) {
+			writeConstructorChainInitializer((ICPPASTConstructorChainInitializer) initializer);
 		}
+		if (hasTrailingComments(initializer))
+			writeTrailingComments(initializer, false);
+	}
+
+	
+	private void writeConstructorChainInitializer(ICPPASTConstructorChainInitializer initializer) {
+		initializer.getMemberInitializerId().accept(visitor);
+		scribe.print('(');
+		initializer.getInitializerValue().accept(visitor);
+		scribe.print(')');
 	}
 
 	private void writeInitializerList(IASTInitializerList initList) {

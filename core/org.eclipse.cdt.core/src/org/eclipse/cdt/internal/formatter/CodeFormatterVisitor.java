@@ -105,7 +105,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -483,9 +484,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.printNextToken(Token.tRPAREN, false);
 			}
 	
-			if (node instanceof ICPPASTFunctionTryBlockDeclarator) {
-				visit((ICPPASTFunctionTryBlockDeclarator)node);
-			} else if (node instanceof ICPPASTFunctionDeclarator) {
+			if (node instanceof ICPPASTFunctionDeclarator) {
 				return visit((ICPPASTFunctionDeclarator)node);
 			} else if (node instanceof IASTStandardFunctionDeclarator) {
 				visit((IASTStandardFunctionDeclarator)node);
@@ -993,6 +992,27 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 		declarator.accept(this);
+
+		// tletodo
+		if (node instanceof ICPPASTFunctionWithTryBlock) {
+			scribe.startNewLine();
+			scribe.printNextToken(Token.t_try, false);
+			scribe.printTrailingComment();
+		}
+			
+		if (node instanceof ICPPASTFunctionDefinition) {
+			final ICPPASTConstructorChainInitializer[] constructorChain= ((ICPPASTFunctionDefinition) node).getMemberInitializers();
+			if (constructorChain != null && constructorChain.length > 0) {
+				// TLETODO [formatter] need special constructor chain alignment
+				scribe.printNextToken(Token.tCOLON, true);
+				scribe.printTrailingComment();
+				scribe.startNewLine();
+				scribe.indent();
+				final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+				formatList(Arrays.asList(constructorChain), align, false, false);
+				scribe.unIndent();
+			}
+		}
 		
 		// body
 		IASTStatement bodyStmt= node.getBody();
@@ -1013,9 +1033,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.printTrailingComment();
 		scribe.startNewLine();
 
-		// hack: catch handlers are part of declarator
-		if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-			ICPPASTCatchHandler[] catchHandlers= ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
+		if (node instanceof ICPPASTFunctionWithTryBlock) {
+			ICPPASTCatchHandler[] catchHandlers= ((ICPPASTFunctionWithTryBlock)node).getCatchHandlers();
 			for (int i= 0; i < catchHandlers.length; i++) {
 				catchHandlers[i].accept(this);
 				scribe.printTrailingComment();
@@ -1043,27 +1062,28 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 		}
 
-		if (node instanceof ICPPASTFunctionTryBlockDeclarator) {
-			scribe.startNewLine();
-			scribe.printNextToken(Token.t_try, false);
-			scribe.printTrailingComment();
-			// for catch handlers @see #visit(IASTFunctionDefinition)
-		}
-		
-		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
-		if (constructorChain != null && constructorChain.length > 0) {
-			// TLETODO [formatter] need special constructor chain alignment
-			scribe.printNextToken(Token.tCOLON, true);
-			scribe.printTrailingComment();
-			scribe.startNewLine();
-			scribe.indent();
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-			formatList(Arrays.asList(constructorChain), align, false, false);
-			scribe.unIndent();
-		} else {
+// tletodo		
+//		if (node instanceof ICPPASTFunctionTryBlockDeclarator) {
+//			scribe.startNewLine();
+//			scribe.printNextToken(Token.t_try, false);
+//			scribe.printTrailingComment();
+//			// for catch handlers @see #visit(IASTFunctionDefinition)
+//		}
+//		
+//		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
+//		if (constructorChain != null && constructorChain.length > 0) {
+//			// TLETODO [formatter] need special constructor chain alignment
+//			scribe.printNextToken(Token.tCOLON, true);
+//			scribe.printTrailingComment();
+//			scribe.startNewLine();
+//			scribe.indent();
+//			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+//			formatList(Arrays.asList(constructorChain), align, false, false);
+//			scribe.unIndent();
+//		} else {
 			// skip the rest (=0)
 			skipNode(node);
-		}
+//		}
 
 		return PROCESS_SKIP;
 	}

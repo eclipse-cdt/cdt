@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -42,8 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -77,7 +74,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitDeclarators= true;
 			shouldVisitNamespaces= true;
 		}
-		private boolean shouldVisitCatchHandlers= true;
+//	tletodo
+//		private boolean shouldVisitCatchHandlers= true;
 		
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
@@ -136,15 +134,15 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		@Override
 		public int leave(IASTDeclaration declaration) {
-			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
-				shouldVisitCatchHandlers= true;
-				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
-				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
-				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
-				for (ICPPASTCatchHandler catchHandler : catchHandlers) {
-					catchHandler.accept(this);
-				}
-			}
+//			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
+//				shouldVisitCatchHandlers= true;
+//				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
+//				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
+//				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
+//				for (ICPPASTCatchHandler catchHandler : catchHandlers) {
+//					catchHandler.accept(this);
+//				}
+//			}
 			return PROCESS_CONTINUE;
 		}
 		
@@ -164,9 +162,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		@Override
 		public int visit(IASTDeclarator declarator) {
-			if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-				shouldVisitCatchHandlers= false;
-			}
+//			if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
+//				shouldVisitCatchHandlers= false;
+//			}
 			return PROCESS_CONTINUE;
 		}
 
@@ -175,9 +173,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		@Override
 		public int visit(IASTStatement statement) {
-			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
-				return PROCESS_SKIP;
-			}
+//			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
+//				return PROCESS_SKIP;
+//			}
 			return PROCESS_CONTINUE;
 		}
 

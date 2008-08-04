@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
@@ -46,13 +45,12 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
     }
 
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        if( bitFieldSize != null ) if( !bitFieldSize.accept( action ) ) return false;
-        
-        IASTInitializer initializer = getInitializer();
-        if( initializer != null ) if( !initializer.accept( action ) ) return false;
-        return true;
-    }
+	protected boolean postAccept(ASTVisitor action) {
+		if (bitFieldSize != null && !bitFieldSize.accept(action))
+			return false;
+		
+		return super.postAccept(action);
+	}
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {

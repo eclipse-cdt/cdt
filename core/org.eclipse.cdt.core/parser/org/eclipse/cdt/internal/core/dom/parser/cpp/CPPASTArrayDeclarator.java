@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -54,13 +55,12 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     }
     
     @Override
-	protected boolean postAccept( ASTVisitor action ){
-        IASTArrayModifier [] mods = getArrayModifiers();
-        for ( int i = 0; i < mods.length; i++ ) {
-            if( !mods[i].accept( action ) ) return false;
-        }
-        IASTInitializer initializer = getInitializer();
-        if( initializer != null ) if( !initializer.accept( action ) ) return false;
-        return true;
-    }
+	protected boolean postAccept(ASTVisitor action) {
+		IASTArrayModifier[] mods = getArrayModifiers();
+		for (int i = 0; i < mods.length; i++) {
+			if (!mods[i].accept(action))
+				return false;
+		}
+		return super.postAccept(action);
+	}
 }

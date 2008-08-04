@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -34,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -281,13 +284,40 @@ public class DeclarationWriter extends NodeWriter{
 		}
 		IASTDeclarator declarator = CPPVisitor.findOutermostDeclarator(funcDef.getDeclarator());
 		declarator.accept(visitor);
+		
+		if (funcDef instanceof ICPPASTFunctionWithTryBlock) {
+			scribe.newLine();
+			scribe.print(Keywords.TRY);
+		}
+		
+		if (funcDef instanceof ICPPASTFunctionDefinition) {
+			ICPPASTFunctionDefinition cppFuncDef= (ICPPASTFunctionDefinition) funcDef;
+			writeCtorChainInitializer(cppFuncDef, cppFuncDef.getMemberInitializers());
+		}
 		scribe.newLine();
+
 		funcDef.getBody().accept(visitor);
-		if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
-			ICPPASTFunctionTryBlockDeclarator tryDeclSpec = (ICPPASTFunctionTryBlockDeclarator) declarator;
-			ICPPASTCatchHandler[] catches = tryDeclSpec.getCatchHandlers();
+		
+		if (funcDef instanceof ICPPASTFunctionWithTryBlock) {
+			ICPPASTFunctionWithTryBlock tryblock = (ICPPASTFunctionWithTryBlock) funcDef;
+			ICPPASTCatchHandler[] catches = tryblock.getCatchHandlers();
 			for (ICPPASTCatchHandler handler : catches) {
 				handler.accept(visitor);
+			}
+		}
+	}
+	
+	protected void writeCtorChainInitializer(
+			ICPPASTFunctionDefinition funcDec, ICPPASTConstructorChainInitializer[] ctorInitChain) {
+		if(ctorInitChain.length != 0) {
+			scribe.newLine();
+			scribe.print(':');
+		}
+		for(int i = 0; i < ctorInitChain.length; ++i) {
+			ICPPASTConstructorChainInitializer initializer = ctorInitChain[i];
+			initializer.accept(visitor);
+			if(i+1 < ctorInitChain.length) {
+				scribe.print(COMMA_SPACE);
 			}
 		}
 	}

@@ -665,7 +665,6 @@ public class CPPSemantics {
 			nextTmplScope= enclosingTemplateScope(data.astName);
 		}
 		
-		
 		while (nextScope != null || nextTmplScope != null) {
 			// when the non-template scope is no longer contained within the first template scope,
 			// we use the template scope for the next iteration.
@@ -2040,7 +2039,7 @@ public class CPPSemantics {
 			final IType[] targetParameters = getTargetParameterTypes(currFn);
 			final int useImplicitObj = (currFn instanceof ICPPMethod && !(currFn instanceof ICPPConstructor)) ? 1 : 0;
 			final int sourceLen= Math.max(sourceParameters.length + useImplicitObj, 1);
-			final int numTargetParams= Math.max(targetParameters.length, 1+useImplicitObj);
+			final int numTargetParams= Math.max(targetParameters.length, 1 + useImplicitObj);
 			
 			if (currFnCost == null || currFnCost.length != sourceLen) {
 				currFnCost= new Cost[sourceLen];	
@@ -2051,13 +2050,13 @@ public class CPPSemantics {
 			boolean isImpliedObject= false;
 			for (int j = 0; j < sourceLen; j++) {
 			    if (useImplicitObj > 0) {
-			    	isImpliedObject= j==0;
+			    	isImpliedObject= (j == 0);
 			        source= isImpliedObject ? impliedObjectType : sourceParameters[j - 1];
-			        Object se= isImpliedObject || data.functionParameters.length==0 ? null : data.functionParameters[j - 1];
-			        sourceExp=  se instanceof IASTExpression ? (IASTExpression) se : null;
+			        Object se= isImpliedObject || data.functionParameters.length == 0 ? null : data.functionParameters[j - 1];
+			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
 			    } else { 
 			        source = sourceParameters[j];
-			        Object se= data.functionParameters.length==0 ? null : data.functionParameters[j];
+			        Object se= data.functionParameters.length == 0 ? null : data.functionParameters[j];
 			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
 			    }
 		    

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
@@ -30,7 +31,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointerToMemberType {
-    private ICPPASTPointerToMember operator;
+	private ICPPASTPointerToMember operator;
 	private IType classType;  // Can be either ICPPClassType or ICPPTemplateTypeParameter
 
 	/**
@@ -75,7 +76,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 			ICPPASTPointerToMember pm = operator;
 			IASTName name = pm.getName();
 			if (name instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+				IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
 				if (ns.length > 1)
 					name = ns[ns.length - 2];
 				else 
@@ -90,5 +91,15 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 			}
 		}
 		return classType;
+	}
+
+	@Override
+	public boolean isConst() {
+		return super.isConst() || (getType() instanceof ICPPFunctionType && ((ICPPFunctionType) getType()).isConst()); 
+	}
+
+	@Override
+	public boolean isVolatile() {
+		return super.isVolatile() || (getType() instanceof ICPPFunctionType && ((ICPPFunctionType) getType()).isVolatile()); 
 	}
 }

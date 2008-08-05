@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -505,6 +506,10 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				buffer.append(trimObjectToString(obj.toString()));
 			} else if (obj instanceof ASTNodeProperty) {
 				buffer.append(((ASTNodeProperty)obj).getName());
+			} else if (obj instanceof IASTProblemHolder) {
+				IASTProblemHolder ph= (IASTProblemHolder) obj;
+				IASTProblem problem= ph.getProblem();
+				buffer.append(problem.getMessage());
 			} else if (obj instanceof IASTName) {
 				final String toString = ((IASTName)obj).toString();
                 if( toString != null )
@@ -602,6 +607,8 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				return false;
             if (method.equals(FLUSH_CACHE_METHOD_NAME)) 
                 return false;
+            if (method.startsWith("set"))
+            	return false;
 			
 			return true;
 		}

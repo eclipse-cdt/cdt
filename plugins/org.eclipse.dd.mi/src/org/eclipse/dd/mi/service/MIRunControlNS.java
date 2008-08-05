@@ -35,6 +35,7 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -48,7 +49,6 @@ import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIErrorEvent;
 import org.eclipse.dd.mi.service.command.events.MIEvent;
-import org.eclipse.dd.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.dd.mi.service.command.events.MIRunningEvent;
 import org.eclipse.dd.mi.service.command.events.MISharedLibEvent;
 import org.eclipse.dd.mi.service.command.events.MISignalEvent;
@@ -850,7 +850,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@DsfServiceEventHandler
-	public void eventDispatched(MIGDBExitEvent e) {
+	public void eventDispatched(BackendExitedEvent e) {
 		fTerminated = true;
 	}
 

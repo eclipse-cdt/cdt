@@ -38,7 +38,6 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
-import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -73,23 +72,6 @@ import org.osgi.framework.BundleContext;
  */
 public class GDBControl extends AbstractMIControl {
 
-    /**
-     * Event indicating that the back end process process has started.
-     */
-    public static class GDBStartedEvent extends AbstractDMEvent<GDBControlDMContext> {
-        public GDBStartedEvent(GDBControlDMContext context) {
-            super(context);
-        }
-    }
-    
-    /**
-     * Event indicating that the back end process has terminated.
-     */
-    public static class GDBExitedEvent extends AbstractDMEvent<GDBControlDMContext> {
-        public GDBExitedEvent(GDBControlDMContext context) {
-            super(context);
-        }
-    }
 
     private static int fgInstanceCounter = 0;
     private final GDBControlDMContext fControlDmc;
@@ -436,7 +418,7 @@ public class GDBControl extends AbstractMIControl {
     }
         
     @DsfServiceEventHandler 
-    public void eventDispatched(GDBExitedEvent e) {
+    public void eventDispatched(BackendExitedEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.
         stopCommandProcessing();
     }
@@ -463,7 +445,7 @@ public class GDBControl extends AbstractMIControl {
                         Thread.interrupted();
                     } finally {
                         fExited = true;
-                        getSession().dispatchEvent(new GDBExitedEvent(fControlDmc) {}, getProperties());
+                        getSession().dispatchEvent(new BackendExitedEvent(fControlDmc) {}, getProperties());
                     }
                 }
             }
@@ -735,7 +717,7 @@ public class GDBControl extends AbstractMIControl {
         public void initialize(final RequestMonitor requestMonitor) {
             getSession().addServiceEventListener(GDBControl.this, null);
             register(new String[]{ ICommandControl.class.getName(), AbstractMIControl.class.getName() }, new Hashtable<String,String>());
-            getSession().dispatchEvent(new GDBStartedEvent(getGDBDMContext()), getProperties());
+            getSession().dispatchEvent(new BackendStartedEvent(getGDBDMContext()), getProperties());
             requestMonitor.done();
         }
 

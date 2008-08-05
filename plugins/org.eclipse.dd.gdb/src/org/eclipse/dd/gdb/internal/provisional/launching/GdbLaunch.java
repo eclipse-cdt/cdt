@@ -39,6 +39,7 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -184,7 +185,7 @@ public class GdbLaunch extends Launch
     
     ///////////////////////////////////////////////////////////////////////////
     // IServiceEventListener
-    @DsfServiceEventHandler public void eventDispatched(GDBControl.GDBExitedEvent event) {
+    @DsfServiceEventHandler public void eventDispatched(BackendExitedEvent event) {
         shutdownSession(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     }
 

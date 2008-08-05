@@ -72,6 +72,7 @@ import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointRemovedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.dd.mi.service.breakpoint.actions.BreakpointActionAdapter;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
@@ -1227,8 +1228,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Session exit
     //-------------------------------------------------------------------------
 
+	// Not used, kept for API compatibility.  BackendExitedEvent is used instead
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
+        terminated();
+    }
+
+    @DsfServiceEventHandler
+    public void eventDispatched(BackendExitedEvent e) {
         terminated();
     }
 

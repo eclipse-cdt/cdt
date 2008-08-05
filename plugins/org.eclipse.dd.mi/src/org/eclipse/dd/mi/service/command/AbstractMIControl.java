@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -68,6 +69,24 @@ public abstract class AbstractMIControl extends AbstractDsfService
 {
     final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
  
+    /**
+     * Event indicating that the back end process has started.
+     */
+    public static class BackendStartedEvent extends AbstractDMEvent<MIControlDMContext> {
+        public BackendStartedEvent(MIControlDMContext context) {
+            super(context);
+        }
+    }
+    
+    /**
+     * Event indicating that the back end process has terminated.
+     */
+    public static class BackendExitedEvent extends AbstractDMEvent<MIControlDMContext> {
+        public BackendExitedEvent(MIControlDMContext context) {
+            super(context);
+        }
+    }
+
     /*
 	 *  Thread control variables for the transmit and receive threads.
 	 */

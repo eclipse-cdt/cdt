@@ -31,6 +31,8 @@ import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendStartedEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -125,9 +127,9 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	@Override
 	public int getDeltaFlags(Object e) {
-		if (e instanceof GDBControl.GDBExitedEvent) {
+		if (e instanceof BackendExitedEvent) {
 	        return IModelDelta.CONTENT;
-	    } else if (e instanceof GDBControl.GDBStartedEvent) {
+	    } else if (e instanceof BackendStartedEvent) {
 	        return IModelDelta.EXPAND;
 	    }
 	    return super.getDeltaFlags(e);
@@ -135,9 +137,9 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-		if (e instanceof GDBControl.GDBExitedEvent) {
+		if (e instanceof BackendExitedEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-	    } else if (e instanceof GDBControl.GDBStartedEvent) {
+	    } else if (e instanceof BackendStartedEvent) {
 	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
 	    } else {
 	    	super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);

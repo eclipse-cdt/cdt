@@ -29,6 +29,7 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
+import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -403,9 +404,14 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         fStepping = false;
     }
     
-    
+	// Not used, kept for API compatibility.  BackendExitedEvent is used instead
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
+        fTerminated = true;
+    }
+    
+    @DsfServiceEventHandler
+    public void eventDispatched(BackendExitedEvent e) {
         fTerminated = true;
 	}
 

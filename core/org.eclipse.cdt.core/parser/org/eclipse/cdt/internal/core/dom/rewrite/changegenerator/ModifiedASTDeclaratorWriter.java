@@ -65,6 +65,13 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 	@Override
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions ) {	
 		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec, exceptions, IASTTypeId.class);
+		// it makes a difference whether the exception array is identical to 
+		// ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION
+		if (modifiedExceptions.length == 0 &&
+				exceptions == ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
+			modifiedExceptions= ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION;
+		}
+		
 		super.writeExceptionSpecification(funcDec, modifiedExceptions);
 	}
 	

@@ -170,9 +170,7 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
-    private static final int DEFAULT_SIZE_EXCEPTIONS_LIST = 2;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE= 4;
-    private static final int DEFAULT_PARAMETER_LIST_SIZE= 4;
     private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {};
     private static enum DtorStrategy {PREFER_FUNCTION, PREFER_NESTED}
 
@@ -3434,10 +3432,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IToken last = consume(IToken.tLPAREN);
 		int startOffset= last.getOffset();
 		boolean seenParameter= false;
-		boolean encounteredVarArgs= false;
-		List<IASTParameterDeclaration> parameters= null;
 		int endOffset= last.getEndOffset();
 		
+		final ICPPASTFunctionDeclarator fc= createFunctionDeclarator();
 		paramLoop: while(true) {
 			switch (LT(1)) {
 			case IToken.tRPAREN:
@@ -3446,7 +3443,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				break paramLoop;
 			case IToken.tELLIPSIS:
 				endOffset= consume().getEndOffset();
-				encounteredVarArgs = true;
+				fc.setVarArgs(true);
 				break;
 			case IToken.tCOMMA:
 				endOffset= consume().getEndOffset();
@@ -3457,10 +3454,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					throwBacktrack(startOffset, endOffset - startOffset);
 			
 				IASTParameterDeclaration pd = parameterDeclaration();
+				fc.addParameterDeclaration(pd);
 				endOffset = calculateEndOffset(pd);
-				if (parameters == null)
-					parameters = new ArrayList<IASTParameterDeclaration>(DEFAULT_PARAMETER_LIST_SIZE);
-				parameters.add(pd);
 				seenParameter = true;
 				break;
 			}
@@ -3469,20 +3464,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// Consume any number of __attribute__ tokens after the parameters
 		__attribute_decl_seq(supportAttributeSpecifiers, false);
 
-		boolean isConst= false;
-		boolean isVolatile= false;
-		boolean isPureVirtual= false;
-		ArrayList<IASTTypeId> exceptionSpecIds= null;
-
 		// cv-qualifiers
 		cvloop: while(true) {
 			switch(LT(1)) {
 			case IToken.t_const:
-				isConst= true;
+			    fc.setConst(true);
 				endOffset= consume().getEndOffset();
 				break;
 			case IToken.t_volatile:
-				isVolatile= true;
+			    fc.setVolatile(true);
 				endOffset= consume().getEndOffset();
 				break;
 			default:
@@ -3492,7 +3482,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// throws clause
 		if (LT(1) == IToken.t_throw) {
-			exceptionSpecIds = new ArrayList<IASTTypeId>(DEFAULT_SIZE_EXCEPTIONS_LIST);
+			fc.setEmptyExceptionSpecification();
 			consume(); // throw
 			consume(IToken.tLPAREN); 
 
@@ -3509,7 +3499,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					int thoffset= LA(1).getOffset();
 				IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
 				if (typeId != null) {
-					exceptionSpecIds.add(typeId);
+					fc.addExceptionSpecificationTypeId(typeId);
 				} else {
 					int thendoffset= LA(1).getOffset();
 					if (thoffset == thendoffset) {
@@ -3519,7 +3509,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					IASTProblemTypeId typeIdProblem = createTypeIDProblem();
 					typeIdProblem.setProblem(p);
 					((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
-					exceptionSpecIds.add(typeIdProblem);
+					fc.addExceptionSpecificationTypeId(typeIdProblem);
 				}
 				break;
 				}
@@ -3535,24 +3525,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (image.length == 1 && image[0] == '0') {
 				consume(); // tASSIGN
 				endOffset= consume().getEndOffset(); // tINTEGER
-				isPureVirtual= true;
+			    fc.setPureVirtual(true);
 			}
 		}
 
-		final ICPPASTFunctionDeclarator fc= createFunctionDeclarator();
-		fc.setVarArgs(encounteredVarArgs);
-	    fc.setConst(isConst);
-	    fc.setVolatile(isVolatile);
-	    fc.setPureVirtual(isPureVirtual);
-	    if (parameters != null) {
-	    	for (IASTParameterDeclaration param : parameters) {
-	    		fc.addParameterDeclaration(param);
-	    	}
-	    }
-	    if (exceptionSpecIds != null)
-		for (IASTTypeId exception : exceptionSpecIds) {
-	        fc.addExceptionSpecificationTypeId(exception);
-		}
         ((ASTNode) fc).setOffsetAndLength(startOffset, endOffset-startOffset);
         return fc;
 	}

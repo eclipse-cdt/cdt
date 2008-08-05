@@ -23,6 +23,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
 
 	/**
+	 * Used as return value for {@link #getExceptionSpecification()}.
+	 * @since 5.1
+	 */
+	public static final IASTTypeId[] NO_EXCEPTION_SPECIFICATION = {};
+
+	/**
 	 * <code>EXCEPTION_TYPEID</code> represents the type IDs throws in the
 	 * exception specification.
 	 */
@@ -60,7 +66,9 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void setPureVirtual(boolean isPureVirtual);
 
 	/**
-	 * Get the exception specification.
+	 * Returns an array of type-ids representing the exception specification. The return value
+	 * {@link #NO_EXCEPTION_SPECIFICATION} indicates that no exceptions are specified, whereas
+	 * {@link IASTTypeId#EMPTY_TYPEID_ARRAY} is used for an empty exception specification.
 	 */
 	public IASTTypeId[] getExceptionSpecification();
 
@@ -69,6 +77,13 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	public void addExceptionSpecificationTypeId(IASTTypeId typeId);
 
+	/**
+	 * Configures the declarator with an empty exception specification (as opposed to having none). 
+	 * 
+	 * @since 5.1
+	 */
+	public void setEmptyExceptionSpecification();
+	
 	/**
 	 * Get function scope this node represents. Returns <code>null</code>, if this declarator does not
 	 * declare a function-prototype or function-definition.
@@ -79,7 +94,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	@Deprecated
 	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
-
+	
 	/**
 	 * @deprecated  use {@link ICPPASTFunctionDefinition#getMemberInitializers}, instead.
 	 */

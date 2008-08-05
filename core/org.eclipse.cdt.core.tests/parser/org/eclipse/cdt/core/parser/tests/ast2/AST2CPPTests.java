@@ -5962,4 +5962,28 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testTypeIdForPtrToMember_Bug242197() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
+	
+	// void test1();
+	// void test2() throw ();
+	// void test3() throw (int);
+	public void testEmptyExceptionSpecification_Bug86943() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+
+		IASTSimpleDeclaration d= getDeclaration(tu, 0);
+		ICPPASTFunctionDeclarator fdtor= (ICPPASTFunctionDeclarator) d.getDeclarators()[0];
+		IASTTypeId[] specs= fdtor.getExceptionSpecification();
+		assertEquals(0, specs.length);
+		assertSame(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION, specs);
+
+		d= getDeclaration(tu, 1);
+		fdtor= (ICPPASTFunctionDeclarator) d.getDeclarators()[0];
+		specs= fdtor.getExceptionSpecification();
+		assertEquals(0, specs.length);
+		assertNotSame(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION, specs);
+
+		d= getDeclaration(tu, 2);
+		fdtor= (ICPPASTFunctionDeclarator) d.getDeclarators()[0];
+		specs= fdtor.getExceptionSpecification();
+		assertEquals(1, specs.length);
+	}
 }

@@ -295,14 +295,15 @@ public class ASTStringUtil {
 						buffer.append("=0 "); //$NON-NLS-1$
 					}
 					final IASTTypeId[] exceptionTypeIds= cppFunctionDecl.getExceptionSpecification();
-					if (exceptionTypeIds.length > 0) {
-						buffer.append(Keywords.THROW).append(' ');
+					if (exceptionTypeIds != ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
+						buffer.append(Keywords.THROW).append(" ("); //$NON-NLS-1$
 						for (int i= 0; i < exceptionTypeIds.length; i++) {
 							if (i > 0) {
 								buffer.append(COMMA_SPACE);
 							}
 							appendTypeIdString(buffer, exceptionTypeIds[i]);
 						}
+						buffer.append(')');
 					}
 				}
 			} else if (declarator instanceof IASTFieldDeclarator) {

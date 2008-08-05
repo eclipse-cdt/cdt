@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
     private IASTParameterDeclaration[] parameters = null;
     private int parametersPos = -1;
-    private IASTTypeId[] typeIds = null;
+    private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
     private int typeIdsPos = -1;
     
     private boolean varArgs;
@@ -86,10 +86,11 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public IASTTypeId[] getExceptionSpecification() {
-        if (typeIds == null) 
-        	return IASTTypeId.EMPTY_TYPEID_ARRAY;
-        
         return typeIds= ArrayUtil.trimAt(IASTTypeId.class, typeIds, typeIdsPos);
+    }
+    
+    public void setEmptyExceptionSpecification() {
+    	typeIds= IASTTypeId.EMPTY_TYPEID_ARRAY;
     }
 
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {

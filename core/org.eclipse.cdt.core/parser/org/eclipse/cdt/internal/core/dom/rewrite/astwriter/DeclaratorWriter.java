@@ -146,7 +146,7 @@ public class DeclaratorWriter extends NodeWriter {
 	}
 
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions) {
-		if(exceptions.length != 0) {
+		if (exceptions != ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
 			scribe.printSpace();
 			scribe.print(THROW);
 			scribe.print('(');

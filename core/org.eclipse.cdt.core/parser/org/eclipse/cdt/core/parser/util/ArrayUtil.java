@@ -284,15 +284,13 @@ public class ArrayUtil {
 	 * The position of the last non-null element in the array must also be known. 
 	 */
 	public static Object[] removeNullsAfter(Class<?> c, Object[] array, int index) {
-        if( array == null || index < 0)
-            return (Object[]) Array.newInstance( c, 0 );
-        
         final int newLen= index+1;
-        if( array.length == newLen)
-        	return array;
+        if (array != null && array.length == newLen)
+			return array;
         
         Object[] newArray = (Object[]) Array.newInstance(c, newLen);
-        System.arraycopy(array, 0, newArray, 0, newLen);
+        if (array != null && newLen > 0)
+        	System.arraycopy(array, 0, newArray, 0, newLen);
 		return newArray;
 	}
 

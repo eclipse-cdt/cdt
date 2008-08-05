@@ -14,6 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - [226561] add API markup to javadoc
  * David McKnight(IBM) - [239257] Tooltip for Filter Pool label is incorrect
+ * Kevin Doyle (IBM) - [235223] Duplicate Filter Strings
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -796,8 +797,10 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	    	{
 				getMessageLine().clearMessage();
 				
+				applyPressed();
+				
 				// if error, do not change selection and we keep pending changes state
-	    		if (getFilterStringEditPane(getShell()).verify() != null)
+	    		if (getMessageLine().getErrorMessage() != null)
 	    		{
 	    			e.doit = false; // dang, this doesn't work!
 	    			sm.setChangesMade();
@@ -807,15 +810,11 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	    	        applyButton.setEnabled(false); // d45795
 	    			return;	    			
 	    		}
-	    		
-	    		// no errors
-	    		saveFilterString(getFilterStringEditPane(getShell()).getFilterString(), 
-	    							getFilterStringEditPane(getShell()).getCurrentSelectionIndex());
 	    	}
             else {
 				getMessageLine().clearMessage();
             }
-				            
+	    	
 	    	// proceed with selection change request...
 	    	processListSelect();
 	    	

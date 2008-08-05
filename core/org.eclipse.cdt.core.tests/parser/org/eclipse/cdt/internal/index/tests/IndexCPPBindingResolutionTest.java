@@ -1008,7 +1008,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 func(&C::m1);
 	//	 func(&C::m2);
 	// }
-    public void _testAddressOfConstMethod_233889() throws Exception {
+    public void testAddressOfConstMethod_233889() throws Exception {
 		IBinding fn1= getBindingFromASTName("func(&C::m1", 4, ICPPFunction.class);
 		IBinding fn2= getBindingFromASTName("func(&C::m2", 4, ICPPFunction.class);
 		assertNotSame(fn1, fn2);

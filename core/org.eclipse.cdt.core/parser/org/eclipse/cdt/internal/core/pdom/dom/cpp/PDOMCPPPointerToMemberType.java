@@ -87,7 +87,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		}
 		@Override
 		public Object clone() {
-			return new PDOMCPPPointerToMemberTypeClone(this);
+			return new PDOMCPPPointerToMemberTypeClone((ICPPPointerToMemberType) delegate);
 		}
 	}
 	

@@ -459,6 +459,8 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			name = getScopeName();
 		} catch (DOMException e) {
 		}
-		return name != null ? name.toString() : "<unnamed scope>"; //$NON-NLS-1$
+		
+		final String n= name != null ? name.toString() : "<unnamed scope>"; //$NON-NLS-1$
+		return getKind().toString() + ' ' + n + ' ' + '(' + super.toString() + ')';
 	}
 }

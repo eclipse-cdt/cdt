@@ -5986,4 +5986,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		specs= fdtor.getExceptionSpecification();
 		assertEquals(1, specs.length);
 	}
+	
+	//	int test() {
+	//		try {
+	//		} catch (const int &ex) {
+	//		} catch (const char &ex) {
+	//		}
+	//	}
+	public void testScopeOfCatchHandler_Bug209579() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
 }

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -25,6 +27,7 @@ public class CPPASTCatchHandler extends CPPASTNode implements ICPPASTCatchHandle
     private boolean isCatchAll;
     private IASTStatement body;
     private IASTDeclaration declaration;
+	private IScope scope;
     
     public CPPASTCatchHandler() {
 	}
@@ -103,4 +106,11 @@ public class CPPASTCatchHandler extends CPPASTNode implements ICPPASTCatchHandle
         }
 
     }
+
+	public IScope getScope() {
+		if (scope == null) {
+			scope = new CPPBlockScope(this);
+		}
+		return scope;
+	}
 }

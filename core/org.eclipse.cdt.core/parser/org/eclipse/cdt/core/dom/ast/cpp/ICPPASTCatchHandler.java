@@ -13,22 +13,21 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
- * Catch handler serves as a standalone stage.
+ * Catch handler used for try block statements or for functions with try block.
+ * @see ICPPASTFunctionWithTryBlock
+ * @see ICPPASTTryBlockStatement
  * 
- * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTCatchHandler extends IASTStatement {
 
-	/**
-	 * Constant
-	 */
 	public static final ICPPASTCatchHandler[] EMPTY_CATCHHANDLER_ARRAY = new ICPPASTCatchHandler[0];
 
 	/**
-	 * <code>DECLARATION</code> represnts the nested declaration within the
-	 * catch handler.
+	 * <code>DECLARATION</code> represents the nested declaration within the catch handler.
 	 */
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
 			"ICPPASTCatchHandler.DECLARATION - Nested declaration within catch handler"); //$NON-NLS-1$
@@ -41,47 +40,37 @@ public interface ICPPASTCatchHandler extends IASTStatement {
 
 	/**
 	 * Set is catch all handler.
-	 * 
-	 * @param isEllipsis
-	 *            boolean
 	 */
 	public void setIsCatchAll(boolean isEllipsis);
 
 	/**
 	 * Is this catch handler for all exceptions?
-	 * 
-	 * @return boolean
 	 */
 	public boolean isCatchAll();
 
 	/**
 	 * Set the catch body.
-	 * 
-	 * @param compoundStatement
-	 *            <code>IASTStatement</code>
 	 */
 	public void setCatchBody(IASTStatement compoundStatement);
 
 	/**
-	 * Get the cathc body.
-	 * 
-	 * @return <code>IASTStatement</code>
+	 * Get the catch body.
 	 */
 	public IASTStatement getCatchBody();
 
 	/**
 	 * Set the declaration.
-	 * 
-	 * @param decl
-	 *            <code>IASTDeclaration</code>
 	 */
 	public void setDeclaration(IASTDeclaration decl);
 
 	/**
 	 * Get the declaration.
-	 * 
-	 * @return <code>IASTDeclaration</code>
 	 */
 	public IASTDeclaration getDeclaration();
 
+	/**
+	 * Get the scope represented by this catch handler.
+	 * @since 5.1
+	 */
+	public IScope getScope();
 }

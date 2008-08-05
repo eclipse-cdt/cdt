@@ -86,6 +86,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -770,6 +771,8 @@ public class CPPVisitor {
 					return ((ICPPASTWhileStatement)parent).getScope();
 				} else if (parent instanceof ICPPASTTemplateDeclaration) {
 					return ((ICPPASTTemplateDeclaration)parent).getScope();
+				} else if (parent instanceof ICPPASTCatchHandler) {
+					return ((ICPPASTCatchHandler)parent).getScope();
 				}
 			} else if (node instanceof IASTStatement) {
 		        return getContainingScope((IASTStatement) node); 

@@ -3486,32 +3486,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			consume(); // throw
 			consume(IToken.tLPAREN); 
 
-			thloop: while(true) {
+			thloop: while (true) {
 				switch (LT(1)) {
 				case IToken.tRPAREN:
 				case IToken.tEOC:
-					endOffset= consume().getEndOffset();
+					endOffset = consume().getEndOffset();
 					break thloop;
 				case IToken.tCOMMA:
 					consume();
 					break;
 				default:
-					int thoffset= LA(1).getOffset();
-				IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
-				if (typeId != null) {
-					fc.addExceptionSpecificationTypeId(typeId);
-				} else {
-					int thendoffset= LA(1).getOffset();
-					if (thoffset == thendoffset) {
-						thendoffset= consume().getEndOffset();
+					int thoffset = LA(1).getOffset();
+					IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
+					if (typeId != null) {
+						fc.addExceptionSpecificationTypeId(typeId);
+					} else {
+						int thendoffset = LA(1).getOffset();
+						if (thoffset == thendoffset) {
+							thendoffset = consume().getEndOffset();
+						}
+						IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset-thoffset);
+						IASTProblemTypeId typeIdProblem = createTypeIDProblem();
+						typeIdProblem.setProblem(p);
+						((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
+						fc.addExceptionSpecificationTypeId(typeIdProblem);
 					}
-					IASTProblem p= createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset-thoffset);
-					IASTProblemTypeId typeIdProblem = createTypeIDProblem();
-					typeIdProblem.setProblem(p);
-					((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
-					fc.addExceptionSpecificationTypeId(typeIdProblem);
-				}
-				break;
+					break;
 				}
 			}
 

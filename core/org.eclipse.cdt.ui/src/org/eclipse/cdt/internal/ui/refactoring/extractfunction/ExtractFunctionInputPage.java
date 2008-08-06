@@ -13,10 +13,10 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -44,11 +44,9 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		
 		setPageComplete(false);
 		
-		comp.getMethodNameText().addKeyListener(new KeyListener(){
+		comp.getMethodNameText().addModifyListener(new ModifyListener() {
 
-			public void keyPressed(KeyEvent e) {}
-
-			public void keyReleased(KeyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				info.setMethodName(comp.getMethodName());	
 				checkName();
 			}
@@ -57,12 +55,9 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		
 		
 		for (Control buttons : comp.getVisibiltyGroup().getChildren()) {
-			buttons.addMouseListener(new MouseListener() {
-	
-				public void mouseDoubleClick(MouseEvent e) {}
-	
-				public void mouseDown(MouseEvent e) {}
-	
+			buttons.addMouseListener(new MouseAdapter() {
+
+				@Override
 				public void mouseUp(MouseEvent e) {
 					String text = ((Button)e.getSource()).getText();
 					visibilityChange(text);

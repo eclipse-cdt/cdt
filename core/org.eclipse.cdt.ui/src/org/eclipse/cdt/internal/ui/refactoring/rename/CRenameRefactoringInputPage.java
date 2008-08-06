@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Markus Schorn - initial API and implementation 
+ * Emanuel Graf (Institute for Software, HSR Hochschule fuer Technik)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -16,8 +17,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -218,13 +219,12 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     }
 
     private void hookSelectionListeners() {
-        fNewName.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
-            }
-            public void keyReleased(KeyEvent e) {
-                onKeyReleaseInNameField();
-            }
-        });
+    	fNewName.addModifyListener(new ModifyListener() {
+    		
+			public void modifyText(ModifyEvent e) {
+				onKeyReleaseInNameField();
+			}
+		});
 
         registerScopeListener(fWorkspace, TextSearchWrapper.SCOPE_WORKSPACE);
         registerScopeListener(fDependent, TextSearchWrapper.SCOPE_RELATED_PROJECTS);

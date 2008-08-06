@@ -14,8 +14,8 @@ package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
@@ -50,10 +50,9 @@ public abstract class ExtractInputPage extends UserInputWizardPage {
 		control = new NameAndVisibilityComposite(parent, label, info.getName());
 		setTitle(getName());
 		setPageComplete(false);
-		control.getConstantNameText().addKeyListener(new KeyAdapter(){
+		control.getConstantNameText().addModifyListener(new ModifyListener() {
 	
-			@Override
-			public void keyReleased(KeyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				info.setName(control.getConstantNameText().getText());
 				checkName();
 			}
@@ -82,6 +81,7 @@ public abstract class ExtractInputPage extends UserInputWizardPage {
 		if(result.isCorrect()){
 			setErrorMessage(null);
 			setPageComplete(true);
+			verifyName(methodName);
 		}
 		else{
 			setErrorMessage(NLS.bind(Messages.ExtractInputPage_CheckName, result.getMessage())); 

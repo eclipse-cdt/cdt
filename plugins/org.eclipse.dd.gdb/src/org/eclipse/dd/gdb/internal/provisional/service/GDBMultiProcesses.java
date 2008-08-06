@@ -8,7 +8,11 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.mi.service;
+package org.eclipse.dd.gdb.internal.provisional.service;
+
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,6 +23,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -30,21 +35,27 @@ import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
+import org.eclipse.dd.mi.service.IMIProcessDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
-import org.eclipse.dd.mi.service.command.commands.CLIAttach;
-import org.eclipse.dd.mi.service.command.commands.CLIDetach;
-import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;
-import org.eclipse.dd.mi.service.command.commands.MIThreadListIds;
-import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
+import org.eclipse.dd.mi.service.command.commands.MIListThreadGroups;
+import org.eclipse.dd.mi.service.command.commands.MITargetAttach;
+import org.eclipse.dd.mi.service.command.commands.MITargetDetach;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
-import org.eclipse.dd.mi.service.command.output.MIThreadListIdsInfo;
+import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
+import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo.IThreadInfo;
 import org.osgi.framework.BundleContext;
 
 
-public class MIProcesses extends AbstractDsfService implements IMIProcesses {
-	
+public class GDBMultiProcesses extends AbstractDsfService implements IMIProcesses {
+
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
 	// implementation of DSF:
@@ -293,13 +304,17 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
         }
     }        
 
-    private AbstractMIControl fCommandControl;
+    private GDBControl fCommandControl;
 	private CommandCache fCommandCache;
 
-	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
-	private static final String UNIQUE_GROUP_ID = "0"; //$NON-NLS-1$
+    // A map of process id to process names.  It is filled when we get all the processes that are running
+    private Map<String, String> fProcessNames = new HashMap<String, String>();
+    // A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
+    private Map<String, String> fGroupIdMap   = new HashMap<String, String>();
+	
+    private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
-    public MIProcesses(DsfSession session) {
+    public GDBMultiProcesses(DsfSession session) {
     	super(session);
     }
 
@@ -329,18 +344,20 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
         
-//		// Register this service.
-//		register(new String[] { IProcesses.class.getName(),
-//				MIProcesses.class.getName() },
-//				new Hashtable<String, String>());
-		
-		fCommandControl = getServicesTracker().getService(AbstractMIControl.class);
+		fCommandControl = getServicesTracker().getService(GDBControl.class);
         fCommandCache = new CommandCache(getSession(), fCommandControl);
         fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         getSession().addServiceEventListener(this, null);
-
+        
+		// Register this service.
+		register(new String[] { IProcesses.class.getName(),
+				IMIProcesses.class.getName(),
+				GDBMultiProcesses.class.getName() },
+				new Hashtable<String, String>());
+        
 		requestMonitor.done();
 	}
+
 
 	/**
 	 * This method shuts down this service. It unregisters the service, stops
@@ -351,7 +368,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	 */
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
-//		unregister();
+		unregister();
         getSession().removeServiceEventListener(this);
 		super.shutdown(requestMonitor);
 	}
@@ -361,7 +378,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	 */
 	@Override
 	protected BundleContext getBundleContext() {
-		return MIPlugin.getBundleContext();
+		return GdbPlugin.getBundleContext();
 	}
 	
    public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
@@ -398,27 +415,31 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 			getExecutionData((IThreadDMContext) dmc, 
 					(DataRequestMonitor<IThreadDMData>) rm);
 		} else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
             rm.done();
 		}
 	}
 
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
-		if (dmc instanceof MIProcessDMC) {
-			rm.setData(new MIThreadDMData("", ((MIProcessDMC)dmc).getProcId())); //$NON-NLS-1$
+		if (dmc instanceof IMIProcessDMContext) {
+			String id = ((IMIProcessDMContext)dmc).getProcId();
+			String name = fProcessNames.get(id);
+			if (name == null) name = "Unknown name"; //$NON-NLS-1$
+			rm.setData(new MIThreadDMData(name, id));
 			rm.done();
 		} else if (dmc instanceof MIThreadDMC) {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			
-			IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IProcessDMContext.class);
-	        fCommandCache.execute(new CLIInfoThreads(procDmc),
-	        		new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
+			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
+	        fCommandCache.execute(new MIListThreadGroups(controlDmc, procDmc.getProcId()),
+	        		new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 	        	@Override
 	        	protected void handleSuccess() {
 	        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	        		for (CLIInfoThreadsInfo.ThreadInfo thread : getData().getThreadInfo()) {
-	        			if (thread.getId().equals(threadDmc.getId())) {
-	        				threadData = new MIThreadDMData(thread.getName(), thread.getOsId());     
+	        		for (IThreadInfo thread : getData().getThreadList()) {
+	        			if (thread.getThreadId().equals(threadDmc.getId())) {
+	        				threadData = new MIThreadDMData("", thread.getOSId());      //$NON-NLS-1$
 	        				break;
 	        			}
 	        		}
@@ -427,72 +448,67 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	        	}
 	        });
 		} else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
 			rm.done();
 		}
 	}
 	
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(false);
+    	rm.setData(fCommandControl.getIsAttachSession());
     	rm.done();
     }
 
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
-
 			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
 			fCommandControl.queueCommand(
-					new CLIAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+					new MITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procCtx, 
-									                                             ((IMIProcessDMContext)procCtx).getProcId());
-			                getSession().dispatchEvent(new ExecutionGroupStartedDMEvent(groupDmc), 
-			                                           getProperties());
+							fCommandControl.setConnected(true);
+
+							IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procCtx,
+									                                         ((IMIProcessDMContext)procCtx).getProcId());
 			                rm.setData(groupDmc);
 							rm.done();
 						}
 					});
 
 	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
             rm.done();
 	    }
 	}
 	
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(false);
+    	rm.setData(fCommandControl.getIsAttachSession() && fCommandControl.isConnected());
     	rm.done();
     }
 
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
     	MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+    	IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
 
-    	if (controlDmc != null) {
-    		// This service version cannot use -target-detach because it didn't exist
-    		// in versions of GDB up to and including GDB 6.8
+    	if (controlDmc != null && procDmc != null) {
     		fCommandControl.queueCommand(
-    				new CLIDetach(controlDmc),
+    				new MITargetDetach(controlDmc, procDmc.getProcId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     					@Override
     					protected void handleSuccess() {
-    				    	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
-    				    	if (containerDmc != null) {
-    				    		getSession().dispatchEvent(new ExecutionGroupExitedDMEvent(containerDmc), 
-    				    				getProperties());
-    				    	}
+    						// only if it is the last detach
+    						fCommandControl.setConnected(false);
     						rm.done();
     					}
     				});
     	} else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
 	    }
 	}
@@ -508,38 +524,50 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	}
 
 	public void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
     
-	public void getProcessesBeingDebugged(IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
-		final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
-		if (groupDmc != null) {
-			fCommandCache.execute(
-					new MIThreadListIds(groupDmc),
-					new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
-						@Override
-						protected void handleSuccess() {
-							rm.setData(makeExecutionDMCs(groupDmc, getData()));
-							rm.done();
-						}
-					});
-		} else {
-			// This service version only handles a single process to debug, therefore, we can simply
-			// create the context describing this process ourselves.
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
-			IProcessDMContext procDmc = createProcessContext(controlDmc, UNIQUE_GROUP_ID);
-			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, UNIQUE_GROUP_ID);
-			rm.setData(new IContainerDMContext[] {newGroupDmc});
-			rm.done();
-		}
+	public void getProcessesBeingDebugged(final IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
+//		MIInferiorProcess inferiorProcess = fCommandControl.getInferiorProcess();
+//		if (fCommandControl.isConnected() &&
+//			inferiorProcess != null && 
+//			inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
+		
+			final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
+			if (groupDmc != null) {
+				fCommandCache.execute(
+						new MIListThreadGroups(controlDmc, groupDmc.getGroupId()),
+						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.setData(makeExecutionDMCs(groupDmc, getData().getThreadList()));
+								rm.done();
+							}
+						});
+			} else {
+				fCommandCache.execute(
+						new MIListThreadGroups(controlDmc),
+						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.setData(makeExecutionGroupDMCs(controlDmc, getData().getGroupList()));
+								rm.done();
+							}
+						});
+			}
+//		} else {
+//			rm.setData(new IDMContext[0]);
+//			rm.done();
+//		}
 	}
 
-	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, MIThreadListIdsInfo info) {
+	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, IThreadInfo[] threadInfos) {
 		final IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
 
-		if (info.getStrThreadIds().length == 0) {
+		if (threadInfos.length == 0) {
 			// Main thread always exist even if it is not reported by GDB.
 			// So create thread-id = 0 when no thread is reported.
 			// This hack is necessary to prevent AbstractMIControl from issuing a thread-select
@@ -548,9 +576,9 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 					                                                  createThreadContext(procDmc, FAKE_THREAD_ID),
 					                                                  FAKE_THREAD_ID)};
 		} else {
-			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getStrThreadIds().length];
-			for (int i = 0; i < info.getStrThreadIds().length; i++) {
-				String threadId = info.getStrThreadIds()[i];
+			IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[threadInfos.length];
+			for (int i = 0; i < threadInfos.length; i++) {
+				String threadId = threadInfos[i].getThreadId();
 				executionDmcs[i] = createExecutionContext(containerDmc, 
 						                                  createThreadContext(procDmc, threadId),
 						                                  threadId);
@@ -559,10 +587,51 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 		}
 	}
 	
+	private IMIExecutionGroupDMContext[] makeExecutionGroupDMCs(MIControlDMContext controlDmc, IThreadGroupInfo[] groups) {
+		IProcessDMContext[] procDmcs = makeProcessDMCs(controlDmc, groups);
+		
+		IMIExecutionGroupDMContext[] groupDmcs = new IMIExecutionGroupDMContext[groups.length];
+		for (int i = 0; i < procDmcs.length; i++) {
+			String groupId = groups[i].getGroupId();
+			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
+			groupDmcs[i] = createExecutionGroupContext(procDmc, groupId);
+		}
+		return groupDmcs;
+	}
+
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
-		rm.done();
+		final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+
+		if (controlDmc != null) {
+			fCommandCache.execute(
+				new MIListThreadGroups(controlDmc, true),
+				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
+								fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
+							}
+							rm.setData(makeProcessDMCs(controlDmc, getData().getGroupList()));
+						} else {
+							rm.setData(new IProcessDMContext[0]);
+						}
+						rm.done();
+					}
+				});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
+			rm.done();
+		}
+
+	}
+
+	private IProcessDMContext[] makeProcessDMCs(MIControlDMContext controlDmc, IThreadGroupInfo[] processes) {
+		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
+		for (int i=0; i<procDmcs.length; i++) {
+			procDmcs[i] = createProcessContext(controlDmc, processes[i].getGroupId()); 
+		}
+		return procDmcs;
 	}
 
 	public void isRunNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -570,19 +639,24 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 		rm.done();			
 	}
 	public void runNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
 	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
-		rm.done();
+		if (thread instanceof IMIProcessDMContext) {
+			fCommandControl.terminate(rm);
+	    } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            rm.done();
+	    }
 	}
 	
     public String getExecutionGroupIdFromThread(String threadId) {
-    	return UNIQUE_GROUP_ID;
+    	String groupId = fGroupIdMap.get(threadId);
+    	if (groupId == null) return "162"; //$NON-NLS-1$
+    	else return groupId;
     }
 
     @DsfServiceEventHandler
@@ -605,5 +679,20 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
         fCommandCache.setContextAvailable(e.getDMContext(), true);
         fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         fCommandCache.reset();
+    }
+    
+    @DsfServiceEventHandler
+    public void eventDispatched(final MIThreadGroupCreatedEvent e) {
+    	IProcessDMContext procDmc = e.getDMContext();
+        IMIExecutionGroupDMContext groupDmc = e.getGroupId() != null ? createExecutionGroupContext(procDmc, e.getGroupId()) : null;
+        getSession().dispatchEvent(new ExecutionGroupStartedDMEvent(groupDmc), getProperties());
+    }
+
+    @DsfServiceEventHandler
+    public void eventDispatched(final MIThreadGroupExitedEvent e) {
+    	IProcessDMContext procDmc = e.getDMContext();
+        IMIExecutionGroupDMContext groupDmc = e.getGroupId() != null ? createExecutionGroupContext(procDmc, e.getGroupId()) : null;
+		getSession().dispatchEvent(new ExecutionGroupExitedDMEvent(groupDmc), getProperties());
+
     }
 }

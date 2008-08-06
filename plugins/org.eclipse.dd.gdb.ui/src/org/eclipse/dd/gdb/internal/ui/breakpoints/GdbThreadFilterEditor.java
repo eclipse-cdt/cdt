@@ -501,7 +501,6 @@ public class GdbThreadFilterEditor {
                 if (procService != null) {
                     IThreadDMContext threadDmc = DMContexts.getAncestorOfType(thread, IThreadDMContext.class);
                 	procService.getExecutionData(threadDmc, new DataRequestMonitor<IThreadDMData>(
-              			// Is it ok to use the ImmediateExecutor here?
                         ImmediateExecutor.getInstance(), rm) {
                         @Override
                         protected void handleSuccess() {

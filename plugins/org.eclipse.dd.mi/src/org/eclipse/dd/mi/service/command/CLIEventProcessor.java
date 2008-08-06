@@ -123,10 +123,14 @@ public class CLIEventProcessor
             	Pattern pattern = Pattern.compile("(^\\[New Thread.*LWP\\s*)(\\d*)", Pattern.MULTILINE); //$NON-NLS-1$
             	Matcher matcher = pattern.matcher(exec.getCString());
             	if (matcher.find()) {
+            		String threadId = Integer.toString(++fLastThreadId);
+            		
                     IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
-            		MIEvent<?> e =  new MIThreadCreatedEvent(processContainerDmc, Integer.toString(++fLastThreadId));
+		    		String groupId = procService.getExecutionGroupIdFromThread(threadId);
+
+                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+            		MIEvent<?> e =  new MIThreadCreatedEvent(processContainerDmc, threadId);
             		fCommandControl.getSession().dispatchEvent(e, fCommandControl.getProperties());
             	}
             	
@@ -147,8 +151,10 @@ public class CLIEventProcessor
                 if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
                     fInferior.setState(MIInferiorProcess.State.STOPPED);
                     IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
+		    		String groupId = procService.getExecutionGroupIdFromThread(null);
+
+                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
                     fCommandControl.getSession().dispatchEvent(
                         MIErrorEvent.parse(processContainerDmc, rr.getToken(), rr.getMIResults(), null),
                         fCommandControl.getProperties());
@@ -191,8 +197,10 @@ public class CLIEventProcessor
         if (type != -1) {
             // if it was a step instruction set state running
             IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-            IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
-            IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
+    		String groupId = procService.getExecutionGroupIdFromThread(null);
+
+            IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+            IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
             MIEvent<?> event = new MIRunningEvent(processContainerDmc, token, type);
             fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         }

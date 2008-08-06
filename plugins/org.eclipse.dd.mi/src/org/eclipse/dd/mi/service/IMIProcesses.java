@@ -53,5 +53,7 @@ public interface IMIProcesses extends IProcesses
      */
     IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
     												       String groupId);
+    
+    String getExecutionGroupIdFromThread(String threadId);
 }
 

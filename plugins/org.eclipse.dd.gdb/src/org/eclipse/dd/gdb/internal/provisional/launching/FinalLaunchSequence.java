@@ -37,10 +37,10 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBProcesses;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
 import org.eclipse.dd.mi.service.CSourceLookup;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
@@ -73,7 +73,7 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fCommandControl = fTracker.getService(GDBControl.class);
-            fProcService = fTracker.getService(GDBProcesses.class);
+            fProcService = fTracker.getService(IMIProcesses.class);
             if (fCommandControl == null || fProcService == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
             }
@@ -464,7 +464,7 @@ public class FinalLaunchSequence extends Sequence {
     boolean fAttach;
 
     GDBControl fCommandControl;
-    GDBProcesses fProcService;
+    IMIProcesses fProcService;
     DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach) {

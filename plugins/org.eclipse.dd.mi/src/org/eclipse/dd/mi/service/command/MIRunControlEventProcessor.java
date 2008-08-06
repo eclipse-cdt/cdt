@@ -47,6 +47,8 @@ import org.eclipse.dd.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.dd.mi.service.command.output.MIConst;
@@ -157,9 +159,8 @@ public class MIRunControlEventProcessor
     			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
     			String miEvent = exec.getAsyncClass();
     			if ("thread-created".equals(miEvent) || "thread-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
-    				
-    				// For now, since GDB does not support thread-groups, fake an empty one
-    				String groupId = "";//null; //$NON-NLS-1$
+    				String threadId = null;
+    				String groupId = null;
 
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
@@ -169,22 +170,65 @@ public class MIRunControlEventProcessor
     						if (val instanceof MIConst) {
     							groupId = ((MIConst) val).getString();
     						}
-    					}
+    					} else if (var.equals("id")) { //$NON-NLS-1$
+    		    			if (val instanceof MIConst) {
+    							threadId = ((MIConst) val).getString();
+    		    			}
+    		    		}
     				}
 
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-    		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+    		    	
+    		    	if (groupId == null) {
+    		    		groupId = procService.getExecutionGroupIdFromThread(threadId);
+    		    	}
+    		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     		    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
     		    	MIEvent<?> event = null;
     				if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
-    					 event = MIThreadCreatedEvent.parse(processContainerDmc, exec.getToken(), exec.getMIResults());
+    					 event = new MIThreadCreatedEvent(processContainerDmc, exec.getToken(), threadId);
     				} else if ("thread-exited".equals(miEvent)) { //$NON-NLS-1$
-        				event = MIThreadExitEvent.parse(processContainerDmc, exec.getToken(), exec.getMIResults());
+        				event = new MIThreadExitEvent(processContainerDmc, exec.getToken(), threadId);
     				}
     				
     				if (event != null) {
     					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    				}
+    			}
+    		} else if (oobr instanceof MINotifyAsyncOutput) {
+    			// Parse the string and dispatch the corresponding event
+    			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
+    			String miEvent = exec.getAsyncClass();
+    			if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+
+    				if (groupId != null) {
+    					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+
+    					MIEvent<?> event = null;
+    					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
+    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
+    					}
+
+    					if (event != null) {
+    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    					}
     				}
     			}
     		}
@@ -193,9 +237,7 @@ public class MIRunControlEventProcessor
     
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
     	String threadId = null; 
-
-    	// For now, since GDB does not support thread-groups, fake an empty one
-    	String groupId = "";//null; //$NON-NLS-1$
+    	String groupId = null;
 
     	MIResult[] results = exec.getMIResults();
     	for (int i = 0; i < results.length; i++) {
@@ -215,7 +257,10 @@ public class MIRunControlEventProcessor
 
     	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
-    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
+    	if (groupId == null) {
+    		groupId = procService.getExecutionGroupIdFromThread(threadId);
+    	}
+    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
     	IExecutionDMContext execDmc = processContainerDmc;
@@ -291,8 +336,9 @@ public class MIRunControlEventProcessor
                 else                                           { type = MIRunningEvent.CONTINUE; }
 
                 IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-                IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, ""); //$NON-NLS-1$
-                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, ""); //$NON-NLS-1$
+        		String groupId = procService.getExecutionGroupIdFromThread(null);
+                IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
                 fCommandControl.getSession().dispatchEvent(
                 		new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
+import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -21,7 +22,15 @@ public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 	public GdbDebugServicesFactoryNS(String version) {
 		super(version);
 	}
-		
+
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+//		if (getVersion().startsWith("6.8.50.20080730")) { //$NON-NLS-1$
+//			return new GDBMultiProcesses(session);
+//		}
+		return new GDBProcesses(session);
+	}
+
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStackNS(session);

@@ -11,75 +11,105 @@
 
 package org.eclipse.dd.mi.service.command.output;
 
-import org.eclipse.cdt.core.IProcessInfo;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
  * GDB/MI thread group parsing.
  * 
- * ^done,groups=[{id="p133",type="process",pid="133"},{id="p162",type="process",pid="162"}]
- * or
- * ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1275938023 3473",frame={level="0",addr="0x00000000",func="??",args=[]}}]
+ *  The description field can be different depending on the target we are connected to.
+ *
+ *  This output is from -list-thread-groups --available:
+ *  ^done,groups=[{id="160",description="name: JIM_InstallerProcess, type 555481, locked: N, system: N, state: Idle"},
+ *               {id="161",description="name: JIM_TcpSetupHandlerProcess, type 555505, locked: N, system: N, state: Idle"},
+ *               {id="162",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
+ *               
+ *  This output is from -list-thread-groups: 
+ *  ^done,groups=[{id="162",type="process",pid="162"}]
+ *
+ *  This output is from -list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
+ *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
+ *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
  */
 public class MIListThreadGroupsInfo extends MIInfo {
 	
-	public class ThreadGroupInfo implements IProcessInfo {
-		int pid;
-		String name;
+	public interface IThreadGroupInfo {
+		String getGroupId();
+		String getPid();
+		String getName();
+		String getDesciption();
+	}
+	
+	@Immutable
+	private static class ThreadGroupInfo implements IThreadGroupInfo {
+		final String fGroupId;
+		final String fDescription;
+		final String fName;
 		
-		public ThreadGroupInfo(String name, String pidStr) {
-			try {
-				this.pid = Integer.parseInt(pidStr);
-			} catch (NumberFormatException e) {
-			}
-			this.name = name;
+		public ThreadGroupInfo(String id, String description) {
+			fGroupId = id;
+			fDescription = description;
+
+			fName = parseName(fDescription);
 		}
 		
-		public ThreadGroupInfo(String name, int pid) {
-			this.pid = pid;
-			this.name = name;
-		}
-		
-		/**
-		 * @see org.eclipse.cdt.core.IProcessInfo#getName()
-		 */
-		public String getName() {
+		private static String parseName(String desc) {
+			String name = ""; //$NON-NLS-1$
+
+			// Find the string "name: " followed by the smallest set of characters that
+			// is followed by a comma, or by the end of the line.
+			Pattern pattern = Pattern.compile("name: (.*?)(, |$)", Pattern.MULTILINE); //$NON-NLS-1$
+        	Matcher matcher = pattern.matcher(desc);
+        	if (matcher.find()) {
+        		name = matcher.group(1);
+        	}
+
 			return name;
 		}
-
-		/**
-		 * @see org.eclipse.cdt.core.IProcessInfo#getPid()
-		 */
-		public int getPid() {
-			return pid;
-		}
-	}
-	
-	public class ThreadId {
-		String fId;
 		
-		public ThreadId(String id) {
-			fId = id;
-		}
-		public String getId() {
-			return fId;
-		}
+		public String getGroupId() { return fGroupId; }
+		public String getPid() { return fGroupId; }
+
+		public String getName() { return fName;	}
+
+		public String getDesciption() { return fDescription; }
 	}
 	
-	IProcessInfo[] fProcessList;
-	ThreadId[] fThreadList;
+	public interface IThreadInfo {
+		String getThreadId();
+		String getOSId();
+		String getState();
+	}
+	
+	@Immutable
+	private static class ThreadInfo implements IThreadInfo {
+		final String fThreadId;
+		final String fOSId;
+		final String fState;
+		
+		public ThreadInfo(String id, String osId, String state) {
+			fThreadId = id;
+			fOSId = osId;
+			fState = state;
+		}
+		
+		public String getThreadId() { return fThreadId; }
+		public String getOSId() { return fOSId; }
+		public String getState() { return fState; }
+	}
+	
+	IThreadGroupInfo[] fGroupList;
+	IThreadInfo[] fThreadList;
 	
     public MIListThreadGroupsInfo(MIOutput out) {
         super(out);
         parse();
 	}
 	
-	public IProcessInfo[] getGroupList() {
-		return fProcessList;
-	}
-
-	public ThreadId[] getThreadList() {
-		return fThreadList;
-	}
+	public IThreadGroupInfo[] getGroupList() { return fGroupList; }
+	public IThreadInfo[] getThreadList() { return fThreadList; }
 	
 	private void parse() {
 		if (isDone()) {
@@ -104,20 +134,20 @@ public class MIListThreadGroupsInfo extends MIInfo {
 				}
 			}
 		}
-		if (fProcessList == null) {
-			fProcessList = new ThreadGroupInfo[0];
+		if (fGroupList == null) {
+			fGroupList = new IThreadGroupInfo[0];
 		}
 		if (fThreadList == null) {
-			fThreadList = new ThreadId[0];
+			fThreadList = new IThreadInfo[0];
 		}
 	}
 
 	private void parseGroups(MIList list) {
 		MIValue[] values = list.getMIValues();
-		fProcessList = new ThreadGroupInfo[values.length];
+		fGroupList = new ThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
-			String name = "", pid = "";//$NON-NLS-1$//$NON-NLS-2$
+			String id = "", desc = "";//$NON-NLS-1$//$NON-NLS-2$
 			
 			for (MIResult result : results) {
 				String var = result.getVariable();
@@ -125,27 +155,27 @@ public class MIListThreadGroupsInfo extends MIInfo {
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getCString();
-						name = str.trim();
-
+						id = str.trim();
 					}
-				} else if (var.equals("pid")) { //$NON-NLS-1$
+				} else if (var.equals("description")) { //$NON-NLS-1$
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getCString();
-						pid = str.trim();
+						desc = str.trim();
 
 					}
 				}
 			}
-			fProcessList[i] = new ThreadGroupInfo(name, pid);
+			fGroupList[i] = new ThreadGroupInfo(id, desc);
 		}
 	}
 	
 	private void parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
-		fThreadList = new ThreadId[values.length];
+		fThreadList = new ThreadInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
+			String id = "", osId = "", state = "";//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			
 			for (MIResult result : results) {
 				String var = result.getVariable();
@@ -153,11 +183,26 @@ public class MIListThreadGroupsInfo extends MIInfo {
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getCString();
-						fThreadList[i] = new ThreadId(str.trim());
-						break;
+						id = str.trim();
+					}
+				} else if (var.equals("target-id")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						osId = str.trim();
+
+					}
+				} else if (var.equals("state")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						state = str.trim();
+
 					}
 				}
 			}
+			fThreadList[i] = new ThreadInfo(id, osId, state);
+
 		}
 	}
 }

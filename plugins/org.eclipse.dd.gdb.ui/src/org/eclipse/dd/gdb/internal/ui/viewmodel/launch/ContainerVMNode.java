@@ -86,7 +86,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	protected void updateLabelInSessionThread(final ILabelUpdate update) {
 		IProcesses processService = getServicesTracker().getService(IProcesses.class);
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-		if (processService == null) {
+		if (processService == null || runControl == null) {
 			handleFailedUpdate(update);
 			return;
 		}

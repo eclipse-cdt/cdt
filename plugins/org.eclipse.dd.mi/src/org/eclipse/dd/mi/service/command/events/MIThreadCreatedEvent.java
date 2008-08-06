@@ -14,13 +14,10 @@ package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.mi.service.command.output.MIConst;
-import org.eclipse.dd.mi.service.command.output.MIResult;
-import org.eclipse.dd.mi.service.command.output.MIValue;
 
 
 /**
- * This can not be detected yet by gdb/mi.
+ * This can only be detected by gdb/mi after GDB 6.8.
  *
  */
 @Immutable
@@ -57,20 +54,5 @@ public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
     
     public String getStrId() {
         return fThreadId;
-    }
-
-    public static MIThreadCreatedEvent parse(IContainerDMContext ctx, int token, MIResult[] results)
-    {
-    	for (int i = 0; i < results.length; i++) {
-    		String var = results[i].getVariable();
-    		MIValue val = results[i].getMIValue();
-    		if (var.equals("id")) { //$NON-NLS-1$
-    			if (val instanceof MIConst) {
-   					return new MIThreadCreatedEvent(ctx, token, ((MIConst) val).getString().trim());
-    			}
-    		}
-    	}
-
-    	return null;
     }
 }

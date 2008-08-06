@@ -44,7 +44,6 @@ import org.eclipse.dd.mi.service.command.commands.MIExecNextInstruction;
 import org.eclipse.dd.mi.service.command.commands.MIExecStep;
 import org.eclipse.dd.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.dd.mi.service.command.commands.MIExecUntil;
-import org.eclipse.dd.mi.service.command.commands.MIThreadListIds;
 import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIErrorEvent;
@@ -58,7 +57,6 @@ import org.eclipse.dd.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
-import org.eclipse.dd.mi.service.command.output.MIThreadListIdsInfo;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -286,7 +284,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	public void shutdown(final RequestMonitor rm) {
         unregister();
 		getSession().removeServiceEventListener(this);
-        fMICommandCache.reset();
 		super.shutdown(rm);
 	}
 
@@ -647,22 +644,20 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	// ------------------------------------------------------------------------
 
 	public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
-		fMICommandCache.execute(new MIThreadListIds(containerDmc),
-				new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
+        IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+		procService.getProcessesBeingDebugged(
+				containerDmc,
+				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
-						rm.setData(makeExecutionDMCs(containerDmc, getData()));
+						if (getData() instanceof IExecutionDMContext[]) {
+							rm.setData((IExecutionDMContext[])getData());
+						} else {
+							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid contexts", null)); //$NON-NLS-1$
+						}
 						rm.done();
 					}
 				});
-	}
-
-	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerCtx, MIThreadListIdsInfo info) {
-		IExecutionDMContext[] executionDmcs = new IMIExecutionDMContext[info.getStrThreadIds().length];
-		for (int i = 0; i < info.getStrThreadIds().length; i++) {
-			executionDmcs[i] = createMIExecutionContext(containerCtx, info.getStrThreadIds()[i]);
-		}
-		return executionDmcs;
 	}
 
 	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm) {

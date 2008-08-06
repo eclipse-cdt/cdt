@@ -10,15 +10,18 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
+import org.eclipse.core.runtime.CoreException;
 
 public class CompositeInstanceCache {
 	
@@ -26,43 +29,38 @@ public class CompositeInstanceCache {
 		final IIndexFragment frag= fb.getFragment();
 		final Object key = CPPCompositesFactory.createInstanceCacheKey(cf, fb);
 		Object cache= frag.getCachedResult(key);
-		if (cache instanceof CompositeInstanceCache) {
+		if (cache != null) {
 			return (CompositeInstanceCache) cache;
 		}
 		
 		CompositeInstanceCache newCache= new CompositeInstanceCache();
 		newCache.populate(cf, fb);
-		
-		cache= frag.getCachedResult(key);
-		if (cache instanceof CompositeInstanceCache) {
-			return (CompositeInstanceCache) cache;
-		}
-		frag.putCachedResult(key, newCache);
-		return newCache;
+		return (CompositeInstanceCache) frag.putCachedResult(key, newCache, false);
 	}
 	
-	private final ArrayList<Object> fList;
+	private final HashMap<String, ICPPTemplateInstance> fMap;
 
 	public CompositeInstanceCache() {
-		fList= new ArrayList<Object>();
+		fMap= new HashMap<String, ICPPTemplateInstance>();
 	}
 	
 	synchronized public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
-		fList.add(arguments);
-		fList.add(instance);
+		try {
+			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
+			fMap.put(key, instance);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
+		}
 	}
 
 	synchronized public final ICPPTemplateInstance getInstance(IType[] arguments) {
-		loop: for (int i=0; i < fList.size(); i+=2) {
-			final IType[] args = (IType[]) fList.get(i);
-			if (args.length == arguments.length) {
-				for (int j=0; j < args.length; j++) {
-					if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
-						continue loop;
-					}
-				}
-				return (ICPPTemplateInstance) fList.get(i+1);
-			}
+		try {
+			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
+			return fMap.get(key);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
 		}
 		return null;
 	}
@@ -73,18 +71,14 @@ public class CompositeInstanceCache {
 			for (ICPPTemplateInstance ti : insts) {
 				if (ti instanceof IIndexFragmentBinding) {
 					ICPPTemplateInstance comp= (ICPPTemplateInstance) cf.getCompositeBinding((IIndexFragmentBinding) ti);
-					fList.add(comp.getArguments());
-					fList.add(comp);
+					IType[] args= comp.getArguments();
+					addInstance(args, comp);
 				}
 			}
 		}
 	}
 
 	synchronized public ICPPTemplateInstance[] getAllInstances() {
-		ICPPTemplateInstance[] result= new ICPPTemplateInstance[fList.size()/2];
-		for (int i=0; i < fList.size(); i+=2) {
-			result[i/2]= (ICPPTemplateInstance) fList.get(i+1);
-		}
-		return result;
+		return fMap.values().toArray(new ICPPTemplateInstance[fMap.size()]);
 	}
 }

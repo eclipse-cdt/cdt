@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
- * Internal interface for exposing internal methods to ClassTypeMixin
+ * Internal interface for exposing internal methods to {@link ClassTypeHelper}
  */
 interface ICPPInternalClassTypeMixinHost extends ICPPClassType, ICPPInternalBinding {
 	/**

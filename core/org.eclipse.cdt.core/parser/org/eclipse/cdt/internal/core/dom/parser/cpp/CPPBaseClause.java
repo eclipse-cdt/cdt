@@ -6,13 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *	   Bryan Wilkinson (QNX)
+ *    IBM Corporation - initial API and implementation
+ *	  Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Dec 15, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -58,8 +55,12 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 			return (IName) node;
 		}
 
-		public void setBaseClass(IBinding binding) throws DOMException {
-			throw new DOMException(this);
+		public void setBaseClass(IBinding binding) {
+		}
+		
+		@Override
+		public ICPPBase clone() {
+			return this;
 		}
     }
 
@@ -123,7 +124,7 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
 	}
 
     @Override
-	public Object clone() {
+	public ICPPBase clone() {
         ICPPBase t = null;
    		try {
             t = (ICPPBase) super.clone();

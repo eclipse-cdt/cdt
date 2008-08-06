@@ -35,14 +35,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -99,20 +96,39 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		if (specializationMap == null) {
 			final Integer key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
 			Object cached= pdom.getCachedResult(key);
-			if (cached instanceof ObjectMap) { 
+			if (cached != null) {
 				specializationMap= (ObjectMap) cached;
 			} else {
 				final ObjectMap newMap= new ObjectMap(2);
-				pdom.putCachedResult(key, newMap);
-				specializationMap= newMap;
+				try {
+					PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
+					PDOMCPPClassScope.acceptViaCache(this, visitor, false);
+					final ICPPClassType[] nested= visitor.getNestedClasses();
+					for (ICPPClassType classType : nested) {
+						if (classType instanceof ICPPSpecialization) {
+							newMap.put(((ICPPSpecialization) classType).getSpecializedBinding(), classType);
+						}
+					}
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+				specializationMap= (ObjectMap) pdom.putCachedResult(key, newMap, false);
 			}
 		}
-		IBinding result= (IBinding) specializationMap.get(original);
-		if (result == null) {
-			result= CPPTemplates.createSpecialization(this, original, getArgumentMap());
-			specializationMap.put(original, result);
+		synchronized (specializationMap) {
+			IBinding result= (IBinding) specializationMap.get(original);
+			if (result != null) 
+				return result;
 		}
-		return result;
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, getArgumentMap());
+		synchronized (specializationMap) {
+			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
+			if (oldSpec != null) {
+				specializationMap.put(original, oldSpec);
+				return oldSpec;
+			}
+		}
+		return newSpec;
 	}
 
 	public IScope getCompositeScope() throws DOMException {
@@ -129,34 +145,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return fScope;
 	}
 	
-	public ICPPConstructor[] getConstructors() throws DOMException {
-		IScope scope= getCompositeScope();
-		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getConstructors();
-		}
-		try {
-			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
-			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
-			return visitor.getConstructors();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-		}
-	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		IScope scope= getCompositeScope();
-		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
-		}
-		try {
-			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
-			PDOMCPPClassScope.acceptViaCache(this, methods, false);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			return new ICPPMethod[0];
-		}
-	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRSTBASE);
@@ -197,72 +186,112 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 	
-	public IField findField(String name) throws DOMException { fail(); return null; }
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException { fail(); return null; }
-
+	// implementation of class type
 	public ICPPBase[] getBases() throws DOMException {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			// this is an implicit specialization
-			final ICPPBase[] pdomBases = (getSpecializedBinding()).getBases();
-			if (pdomBases != null) {
-				ICPPBase[] result = null;
-				for (ICPPBase origBase : pdomBases) {
-					ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
-					IBinding origClass = origBase.getBaseClass();
-					if (origClass instanceof IType) {
-						IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap(), this);
-						specClass = SemanticUtil.getUltimateType(specClass, true);
-						if (specClass instanceof IBinding) {
-							((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);
-						}
-						result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
-					}
-				}
-				
-				return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
-			}
-		} else {
-			// this is an explicit specialization
-			Integer key= record + PDOMCPPLinkage.CACHE_BASES;
-			ICPPBase[] bases= (ICPPBase[]) pdom.getCachedResult(key);
-			if (bases != null) 
-				return bases;
-			
-			try {
-				List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
-				for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
-					list.add(base);
-				Collections.reverse(list);
-				bases = list.toArray(new ICPPBase[list.size()]);
-				pdom.putCachedResult(key, bases);
-				return bases;
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		}
+			return ((ICPPClassSpecializationScope) scope).getBases();
+		} 
 		
+		// this is an explicit specialization
+		Integer key= record + PDOMCPPLinkage.CACHE_BASES;
+		ICPPBase[] bases= (ICPPBase[]) pdom.getCachedResult(key);
+		if (bases != null) 
+			return bases;
+
+		try {
+			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
+			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
+				list.add(base);
+			Collections.reverse(list);
+			bases = list.toArray(new ICPPBase[list.size()]);
+			pdom.putCachedResult(key, bases);
+			return bases;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 	
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getConstructors();
+		}
+		try {
+			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
+			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
+			return visitor.getConstructors();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		}
+	}
+
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
+		}
+		try {
+			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
+			PDOMCPPClassScope.acceptViaCache(this, methods, false);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		}
+	}
+
 	public ICPPField[] getDeclaredFields() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
+		} 
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
-			accept(visitor);
+			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 			return visitor.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new ICPPField[0];
+			return ICPPField.EMPTY_CPPFIELD_ARRAY;
 		}
 	}
 	
-	//ICPPClassType unimplemented	
-	public IField[] getFields() throws DOMException { fail(); return null; }
-	public IBinding[] getFriends() throws DOMException { fail(); return null; }
-	public ICPPClassType[] getNestedClasses() throws DOMException { fail(); return null; }
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
+		} 
+		try {
+			PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
+			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
+			return visitor.getNestedClasses();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPClassType.EMPTY_CLASS_ARRAY;
+		}
+	}
+
+	public IBinding[] getFriends() throws DOMException {
+		// not yet supported.
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
 
 	public ICPPMethod[] getMethods() throws DOMException { 
-		return CPPClassType.getMethods(this);
+		return ClassTypeHelper.getMethods(this);
+	}
+
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		return ClassTypeHelper.getAllDeclaredMethods(this);
+	}
+	
+	public IField[] getFields() throws DOMException {
+		return ClassTypeHelper.getFields(this);
+	}
+	
+	public IField findField(String name) throws DOMException {
+		return ClassTypeHelper.findField(this, name);
 	}
 
 	public int getKey() throws DOMException {
@@ -316,7 +345,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 	
 	@Override
-	public Object clone() {fail();return null;}
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+		}
+		return null;
+	}
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {

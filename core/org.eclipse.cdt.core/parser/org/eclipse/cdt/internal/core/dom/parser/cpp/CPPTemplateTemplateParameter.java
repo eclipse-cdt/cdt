@@ -121,37 +121,32 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
-
 	public IField[] getFields() throws DOMException {
-		return null;
+		return IField.EMPTY_FIELD_ARRAY;
 	}
-
 	public IField findField(String name) throws DOMException {
 		return null;
 	}
-
 	public ICPPField[] getDeclaredFields() throws DOMException {
-		return null;
+		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
-
 	public ICPPMethod[] getMethods() throws DOMException {
-		return null;
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		return null;
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		return null;
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
-
 	public IBinding[] getFriends() throws DOMException {
-		return null;
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+	public ICPPClassType[] getNestedClasses() {
+		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
 	public int getKey() throws DOMException {
@@ -214,10 +209,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 			return result;
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
-	}
-
-	public ICPPClassType[] getNestedClasses() {
-		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
 	public IASTName getUnknownName() {

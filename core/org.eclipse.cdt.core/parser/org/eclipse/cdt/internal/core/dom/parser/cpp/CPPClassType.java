@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -63,83 +62,60 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
 	
-	public static ICPPMethod[] getMethods(ICPPClassType ct) throws DOMException {
-		ObjectSet<ICPPMethod> set = new ObjectSet<ICPPMethod>(4);
-		set.addAll(ct.getDeclaredMethods());
-		ICPPClassScope scope = (ICPPClassScope) ct.getCompositeScope();
-		set.addAll( scope.getImplicitMethods() );
-		ICPPBase [] bases = ct.getBases();
-		for (ICPPBase base : bases) {
-			IBinding b = base.getBaseClass();
-			if( b instanceof ICPPClassType )
-				set.addAll( ((ICPPClassType)b).getMethods() );
+	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType {
+		public CPPClassTypeProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
 		}
-		return set.keyArray(ICPPMethod.class);
-	}
-	
-	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
-		public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
-			super( node, id, arg );
-		}
-
 		public ICPPBase[] getBases() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IField[] getFields() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPField[] getDeclaredFields() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPMethod[] getMethods() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPMethod[] getDeclaredMethods() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPConstructor[] getConstructors() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPMethod[] getDeclaredConversionOperators() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public int getKey() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IField findField(String name) throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IScope getCompositeScope() throws DOMException {
-			throw new DOMException( this );
-		}
-		@Override
-		public IScope getParent() throws DOMException {
-			throw new DOMException( this );
-		}
-		@Override
-		public IBinding[] find(String name) throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IBinding[] getFriends() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public String[] getQualifiedName() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public char[][] getQualifiedNameCharArray() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public boolean isGloballyQualified() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public ICPPClassType[] getNestedClasses() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public boolean isAnonymous() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 	}
 
@@ -203,7 +179,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	private IASTName [] declarations;
 	private boolean checked = false;
 	private ICPPClassType typeInIndex;
-	private ClassTypeMixin mixin;
 
 	public CPPClassType( IASTName name, IBinding indexBinding ){
 		if( name instanceof ICPPASTQualifiedName ){
@@ -222,7 +197,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		if (indexBinding instanceof ICPPClassType && indexBinding instanceof IIndexBinding) {
 			typeInIndex= (ICPPClassType) indexBinding;
 		}
-		mixin= new ClassTypeMixin(this);
 	}
 
 	public IASTNode[] getDeclarations() {
@@ -406,43 +380,43 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 	
 	public ICPPBase [] getBases() {
-		return mixin.getBases();
+		return ClassTypeHelper.getBases(this);
 	}
 
 	public IField[] getFields() throws DOMException {
-		return mixin.getFields();
+		return ClassTypeHelper.getFields(this);
 	}
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
-		return mixin.getDeclaredFields();
+		return ClassTypeHelper.getDeclaredFields(this);
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		return getMethods(this);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		return mixin.getAllDeclaredMethods();
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		return mixin.getDeclaredMethods();
+		return ClassTypeHelper.getDeclaredMethods(this);
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		return mixin.getConstructors();
+		return ClassTypeHelper.getConstructors(this);
 	}
 
 	public IBinding[] getFriends() {
-		return mixin.getFriends();
+		return ClassTypeHelper.getFriends(this);
 	}
 	
 	public ICPPClassType[] getNestedClasses() {
-		return mixin.getNestedClasses();
+		return ClassTypeHelper.getNestedClasses(this);
 	}
 
 	public IField findField(String name) throws DOMException {
-		return mixin.findField(name);
+		return ClassTypeHelper.findField(this, name);
 	}
 	
 	@Override

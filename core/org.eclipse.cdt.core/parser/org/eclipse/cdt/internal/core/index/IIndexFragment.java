@@ -257,9 +257,11 @@ public interface IIndexFragment {
 
 	/**
 	 * Caches an object with the key, the cache must be cleared at latest when the fragment no
-	 * longer holds a locks. 
+	 * longer holds a locks.
+	 * @param replace if <code>false</code> an existing entry will not be replaced.
+	 * @return the value that is actually stored. 
 	 */
-	void putCachedResult(Object key, Object value);
+	Object putCachedResult(Object key, Object value, boolean replace);
 
 	/**
 	 * Returns a previously cached object, the cache is cleared at latest when the fragment no

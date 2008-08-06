@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -14,9 +15,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -89,5 +92,25 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		createDelegate();
 		return fDelegate.getDeclaredMethods();
+	}
+
+	public ICPPBase[] getBases() throws DOMException {
+		createDelegate();
+		return fDelegate.getBases();
+	}
+
+	public ICPPField[] getDeclaredFields() throws DOMException {
+		createDelegate();
+		return fDelegate.getDeclaredFields();
+	}
+
+	public IBinding[] getFriends() throws DOMException {
+		createDelegate();
+		return fDelegate.getFriends();
+	}
+
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		createDelegate();
+		return fDelegate.getNestedClasses();
 	}
 }

@@ -11,10 +11,13 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 /**
@@ -35,12 +38,32 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	ICPPClassSpecialization getClassType();
 
 	/**
-	 * Computes constructors off specialized class.
+	 * Computes the bases via the original class.
+	 */
+	ICPPBase[] getBases() throws DOMException;
+
+	/**
+	 * Computes the constructors via the original class.
 	 */
 	ICPPConstructor[] getConstructors() throws DOMException;
 
 	/**
-	 * Computes the declared methods off the specialized class.
+	 * Computes the methods via the original class.
 	 */
 	ICPPMethod[] getDeclaredMethods() throws DOMException;
+
+	/**
+	 * Computes the fields via the original class.
+	 */
+	ICPPField[] getDeclaredFields() throws DOMException;
+
+	/**
+	 * Computes the friends via the original class.
+	 */
+	IBinding[] getFriends() throws DOMException;
+
+	/**
+	 * Computes the nested classes via the original class.
+	 */
+	ICPPClassType[] getNestedClasses() throws DOMException;
 }

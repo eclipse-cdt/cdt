@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -50,7 +49,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
-	private class CPPBaseDelegate implements ICPPBase, ICPPInternalBase {
+	private class CPPBaseDelegate implements ICPPBase {
 		private ICPPBase base;
 		private IBinding baseClass;
 		private boolean writable;
@@ -84,16 +83,16 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			return base.isVirtual();
 		}
 
-		public void setBaseClass(IBinding binding) throws DOMException {
+		public void setBaseClass(IBinding binding) {
 			if(writable) {
 				baseClass= binding;
 			} else {
-				((ICPPInternalBase)base).setBaseClass(binding);
+				base.setBaseClass(binding);
 			}
 		}
 		
 	    @Override
-		public Object clone(){
+		public ICPPBase clone(){
 	    	return new CPPBaseDelegate(base, true);
 	    }
 	}

@@ -53,14 +53,16 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	public static class SingleProject extends IndexCPPBindingResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
+		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
 	public static class ProjectWithDepProj extends IndexCPPBindingResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
+		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
 	
 	public static void addTests(TestSuite suite) {		
-		suite.addTest(suite(SingleProject.class));
-		suite.addTest(suite(ProjectWithDepProj.class));
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ProjectWithDepProj.suite());
 	}
 	
 	//	namespace ns { class A; enum E {E1}; typedef int T; }

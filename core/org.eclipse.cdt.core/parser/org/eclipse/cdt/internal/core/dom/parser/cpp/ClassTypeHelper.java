@@ -48,20 +48,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Holds common implementation of methods for ICPPClassType implementations that have
- * a corresponding textual definition in the source code. This functionality is then
- * accessed via a delegate.
+ * a corresponding textual definition in the source code. 
  * 
  *  @see CPPClassType
  *  @see CPPClassTemplate
  */
-class ClassTypeMixin {
-	private ICPPInternalClassTypeMixinHost host;
-
-	public ClassTypeMixin(ICPPInternalClassTypeMixinHost host) {
-		this.host= host;
-	}
-	
-	public IBinding[] getFriends() {
+public class ClassTypeHelper {
+	public static IBinding[] getFriends(ICPPInternalClassTypeMixinHost host) {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if(  host.getDefinition() == null ){
@@ -103,7 +96,7 @@ class ClassTypeMixin {
 		return resultSet.keyArray(IBinding.class);
 	}
 
-	public ICPPBase [] getBases() {
+	public static ICPPBase[] getBases(ICPPInternalClassTypeMixinHost host) {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if(  host.getDefinition() == null ){
@@ -124,7 +117,7 @@ class ClassTypeMixin {
 		return bindings; 
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public static ICPPField[] getDeclaredFields(ICPPInternalClassTypeMixinHost host) throws DOMException {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if(  host.getDefinition() == null ){
@@ -161,19 +154,10 @@ class ClassTypeMixin {
 		}
 		return (ICPPField[]) ArrayUtil.trim( ICPPField.class, result );
 	}
-
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		if( host.getDefinition() == null ){
-			host.checkForDefinition();
-			if( host.getDefinition() == null ){
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPMethod [] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
-			}
-		}
-
-		ICPPMethod[] methods = getDeclaredMethods();
-		ICPPBase [] bases = getBases();
+	
+	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) throws DOMException {
+		ICPPMethod[] methods = ct.getDeclaredMethods();
+		ICPPBase [] bases = ct.getBases();
 		for (ICPPBase base : bases) {
 			IBinding b = base.getBaseClass();
 			if( b instanceof ICPPClassType )
@@ -181,8 +165,22 @@ class ClassTypeMixin {
 		}
 		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, methods );
 	}
-
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	
+	public static ICPPMethod[] getMethods(ICPPClassType ct) throws DOMException {
+		ObjectSet<ICPPMethod> set = new ObjectSet<ICPPMethod>(4);
+		set.addAll(ct.getDeclaredMethods());
+		ICPPClassScope scope = (ICPPClassScope) ct.getCompositeScope();
+		set.addAll(scope.getImplicitMethods());
+		ICPPBase[] bases = ct.getBases();
+		for (ICPPBase base : bases) {
+			IBinding b = base.getBaseClass();
+			if (b instanceof ICPPClassType)
+				set.addAll(((ICPPClassType) b).getMethods());
+		}
+		return set.keyArray(ICPPMethod.class);
+	}
+	
+	public static ICPPMethod[] getDeclaredMethods(ICPPInternalClassTypeMixinHost host) throws DOMException {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if( host.getDefinition() == null ){
@@ -232,7 +230,7 @@ class ClassTypeMixin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) throws DOMException {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if( host.getDefinition() == null ){
@@ -267,7 +265,7 @@ class ClassTypeMixin {
 		return ((CPPClassScope)scope).getConstructors( true );
 	}
 
-	public ICPPClassType[] getNestedClasses() {
+	public static ICPPClassType[] getNestedClasses(ICPPInternalClassTypeMixinHost host) {
 		if( host.getDefinition() == null ){
 			host.checkForDefinition();
 			if( host.getDefinition() == null ){
@@ -300,18 +298,9 @@ class ClassTypeMixin {
 		return (ICPPClassType[]) ArrayUtil.trim( ICPPClassType.class, result );
 	}
 
-	public IField[] getFields() throws DOMException {
-		if( host.getDefinition() == null ){
-			host.checkForDefinition();
-			if( host.getDefinition() == null ){
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new IField [] { new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
-			}
-		}
-
-		IField[] fields = getDeclaredFields();
-		ICPPBase [] bases = getBases();
+	public static IField[] getFields(ICPPClassType ct) throws DOMException {
+		IField[] fields = ct.getDeclaredFields();
+		ICPPBase [] bases = ct.getBases();
 		for (ICPPBase base : bases) {
 			IBinding b = base.getBaseClass();
 			if( b instanceof ICPPClassType )
@@ -320,17 +309,17 @@ class ClassTypeMixin {
 		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
 
-	public IField findField(String name) throws DOMException {
-		IBinding [] bindings = CPPSemantics.findBindings( host.getCompositeScope(), name, true );
+	public static IField findField(ICPPClassType ct, String name) throws DOMException {
+		IBinding[] bindings = CPPSemantics.findBindings(ct.getCompositeScope(), name, true);
 		IField field = null;
 		for (IBinding binding : bindings) {
-			if( binding instanceof IField ){
-				if( field == null )
+			if (binding instanceof IField) {
+				if (field == null) {
 					field = (IField) binding;
-				else {
-					IASTNode[] declarations= host.getDeclarations();
-					IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-					return new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray() );
+				} else {
+					IASTNode[] decls= ASTInternal.getDeclarationsOfBinding(ct);
+					IASTNode node= (decls != null && decls.length > 0) ? decls[0] : null;
+					return new CPPField.CPPFieldProblem(node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray());
 				}
 			}
 		}

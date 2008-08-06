@@ -6,18 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization implements ICPPTemplateInstance {
@@ -26,15 +23,11 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 		super(cf, rbinding);
 	}
 
-	@Override
-	public IScope getCompositeScope() throws DOMException {
-		return cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
+	public IType[] getArguments() {
+		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
-	
-	@Override
-	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
-	@Override
-	public ICPPClassType getSpecializedBinding() { return (ICPPClassType) TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
-	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding); }
-	public ICPPTemplateDefinition getTemplateDefinition() {	return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding); }
+
+	public ICPPTemplateDefinition getTemplateDefinition() {
+		return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding);
+	}
 }

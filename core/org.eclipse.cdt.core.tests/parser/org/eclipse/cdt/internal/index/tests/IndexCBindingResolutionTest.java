@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,14 +37,16 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 
 	public static class SingleProject extends IndexCBindingResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(false));}
+		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
 	public static class ProjectWithDepProj extends IndexCBindingResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
+		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
 	
 	public static void addTests(TestSuite suite) {		
-		suite.addTest(suite(SingleProject.class));
-		suite.addTest(suite(ProjectWithDepProj.class));
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ProjectWithDepProj.suite());
 	}
 	
 	public IndexCBindingResolutionTest() {

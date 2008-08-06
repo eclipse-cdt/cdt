@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -90,6 +91,20 @@ class PDOMClassUtil {
 		}
 		public ICPPMethod[] getMethods() {
 			return methods.toArray(new ICPPMethod[methods.size()]); 
+		}
+	}
+	
+	static class NestedClassCollector implements IPDOMVisitor {
+		private List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPClassType)
+				nestedClasses.add(node);
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public ICPPClassType[] getNestedClasses() {
+			return nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
 		}
 	}
 }

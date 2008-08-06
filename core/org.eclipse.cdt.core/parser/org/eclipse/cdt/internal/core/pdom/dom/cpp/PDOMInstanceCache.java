@@ -42,11 +42,7 @@ public class PDOMInstanceCache {
 			CCorePlugin.log(e);
 		}
 		
-		cache= pdom.getCachedResult(key);
-		if (cache instanceof PDOMInstanceCache) {
-			return (PDOMInstanceCache) cache;
-		}
-		pdom.putCachedResult(key, newCache);
+		newCache= (PDOMInstanceCache) pdom.putCachedResult(key, newCache, false);
 		return newCache;
 	}
 	

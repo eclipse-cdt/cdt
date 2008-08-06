@@ -1,31 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
@@ -34,6 +37,11 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
+	}
+
+	@Override
+	public IScope getCompositeScope() throws DOMException {
+		return cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 
 	public ObjectMap getArgumentMap() {
@@ -49,46 +57,56 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 			final Object key= CPPCompositesFactory.createSpecializationKey(cf, rbinding);
 			final IIndexFragment frag= rbinding.getFragment();
 			Object cached= frag.getCachedResult(key);
-			if (cached instanceof ObjectMap) { 
+			if (cached != null) { 
 				specializationMap= (ObjectMap) cached;
 			} else {
 				final ObjectMap newMap= new ObjectMap(2);
-				frag.putCachedResult(key, newMap);
-				specializationMap= newMap;
+				try {
+					// in any fragment explicit specializations may be defined.
+					IIndexFragmentBinding[] frags= cf.findEquivalentBindings(rbinding);
+					for (IIndexFragmentBinding fb : frags) {
+						if (fb instanceof ICPPClassType) {
+							final ICPPClassType[] nested = ((ICPPClassType)fb).getNestedClasses();
+							if (nested.length > 0) {
+								for (ICPPClassType ct : nested) {
+									if (ct instanceof ICPPClassSpecialization && 
+											!(ct.getCompositeScope() instanceof ICPPClassSpecializationScope)) {
+										ICPPClassSpecialization cspec= (ICPPClassSpecialization) cf.getCompositeBinding((IIndexFragmentBinding) ct);
+										newMap.put(cspec.getSpecializedBinding(), cspec);
+									}
+								}
+								if (!newMap.isEmpty())
+									break;
+							}
+						}
+					}
+				} catch (DOMException e) {
+					CCorePlugin.log(e);
+				}
+				specializationMap= (ObjectMap) frag.putCachedResult(key, newMap, false);
 			}
 		}
-		IBinding result= (IBinding) specializationMap.get(original);
-		if (result == null) {
-			result= CPPTemplates.createSpecialization(this, original, getArgumentMap());
-			specializationMap.put(original, result);
+		synchronized (specializationMap) {
+			IBinding result= (IBinding) specializationMap.get(original);
+			if (result != null) 
+				return result;
 		}
-		return result;
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, getArgumentMap());
+		synchronized (specializationMap) {
+			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
+			if (oldSpec != null) {
+				specializationMap.put(original, oldSpec);
+				return oldSpec;
+			}
+		}
+		return newSpec;
 	}
 
 	@Override
 	public ICPPBase[] getBases() throws DOMException {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			// this is an implicit specialization
-			final ICPPBase[] pdomBases = (getSpecializedBinding()).getBases();
-			if (pdomBases != null) {
-				ICPPBase[] result = null;
-				for (ICPPBase origBase : pdomBases) {
-					ICPPBase specBase = (ICPPBase) ((ICPPInternalBase)origBase).clone();
-					IBinding origClass = origBase.getBaseClass();
-					if (origClass instanceof IType) {
-						IType specClass = CPPTemplates.instantiateType((IType) origClass, getArgumentMap(), this);
-						specClass = SemanticUtil.getUltimateType(specClass, true);
-						if (specClass instanceof IBinding) {
-							((ICPPInternalBase)specBase).setBaseClass((IBinding) specClass);
-						}
-						result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
-					}
-				}
-
-				return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
-			}
-			return ICPPBase.EMPTY_BASE_ARRAY;
+			return ((ICPPClassSpecializationScope) scope).getBases();
 		}
 		return super.getBases();
 	}
@@ -109,5 +127,52 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
 		}
 		return super.getDeclaredMethods();
+	}
+
+	@Override
+	public ICPPField[] getDeclaredFields() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
+		}
+		return super.getDeclaredFields();
+	}
+
+	@Override
+	public IBinding[] getFriends() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getFriends();
+		}
+		return super.getFriends();
+	}
+
+	@Override
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		IScope scope= getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
+		}
+		return super.getNestedClasses();
+	}
+	
+	@Override
+	public IField findField(String name) throws DOMException {
+		return ClassTypeHelper.findField(this, name);
+	}
+	
+	@Override
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		return ClassTypeHelper.getAllDeclaredMethods(this);
+	}
+
+	@Override
+	public IField[] getFields() throws DOMException {
+		return ClassTypeHelper.getFields(this);
+	}
+
+	@Override
+	public ICPPMethod[] getMethods() throws DOMException {
+		return ClassTypeHelper.getMethods(this);
 	}
 }

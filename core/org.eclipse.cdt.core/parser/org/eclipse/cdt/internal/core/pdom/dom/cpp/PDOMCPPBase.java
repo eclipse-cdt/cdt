@@ -134,7 +134,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 	
 	@Override
-	public Object clone() {
+	public ICPPBase clone() {
 		return new PDOMCPPBaseClone(this);
 	}
 	
@@ -164,7 +164,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 			baseClass = binding;
 		}
 		@Override
-		public Object clone() {
+		public ICPPBase clone() {
 			return new PDOMCPPBaseClone(this);
 		}
 	}

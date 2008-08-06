@@ -113,8 +113,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	/*
 	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(Class, String, int)
 	 */
-	protected IBinding getBindingFromASTName(String section, int len) {
-		return getBindingFromASTName(section, len, IBinding.class);
+	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
+		IASTName name= findName(section, len);
+		assertNotNull("name not found for \""+section+"\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
+		
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for "+name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		return (T) binding;
 	}
 
 	/**

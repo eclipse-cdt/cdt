@@ -256,6 +256,7 @@ public class PDOMProxy implements IPDOM {
 		return null;
 	}
 
-	public void putCachedResult(Object key, Object value) {
+	public Object putCachedResult(Object key, Object value, boolean replace) {
+		return value;
 	}
 }

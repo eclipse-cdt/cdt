@@ -36,14 +36,16 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 
 	public static class SingleProject extends IndexCBindingResolutionBugs {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(false));}
+		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
 	public static class ProjectWithDepProj extends IndexCBindingResolutionBugs {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
+		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
 	
 	public static void addTests(TestSuite suite) {		
-		suite.addTest(suite(SingleProject.class));
-		suite.addTest(suite(ProjectWithDepProj.class));
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ProjectWithDepProj.suite());
 	}
 	
 	

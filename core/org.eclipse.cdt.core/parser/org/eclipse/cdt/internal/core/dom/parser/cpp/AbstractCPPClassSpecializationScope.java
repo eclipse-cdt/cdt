@@ -18,16 +18,24 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Base class for all specialization scopes
@@ -100,43 +108,77 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	public ICPPClassSpecialization getClassType() {
 		return specialClass;
 	}
+	
+	public ICPPBase[] getBases() throws DOMException {
+		ICPPBase[] result = null;
+		ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
+		final ObjectMap argmap = specialClass.getArgumentMap();
+		for (ICPPBase base : bases) {
+			ICPPBase specBase = base.clone();
+			IBinding origClass = base.getBaseClass();
+			if (origClass instanceof IType) {
+				IType specClass= CPPTemplates.instantiateType((IType) origClass, argmap, specialClass);
+				specClass = SemanticUtil.getUltimateType(specClass, false);
+				if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
+					specBase.setBaseClass((IBinding) specClass);
+				}
+				result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
+			}
+		}
+		return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends IBinding> T[] specializeMembers(T[] array) {
+		if (array == null || array.length == 0) 
+			return array;
 
+		T[] newArray= array.clone();
+		for (int i = 0; i < newArray.length; i++) {
+			newArray[i]= (T) specialClass.specializeMember(array[i]);
+		}
+		return newArray;
+	}
+
+	public ICPPField[] getDeclaredFields() throws DOMException {
+		ICPPField[] fields= specialClass.getSpecializedBinding().getDeclaredFields();
+		return specializeMembers(fields);
+	}
+	
 	public ICPPMethod[] getImplicitMethods() {
-		// Implicit methods shouldn't have implicit specializations
-		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		try {
+			ICPPClassScope origClassType= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
+			ICPPMethod[] methods= origClassType.getImplicitMethods();
+			return specializeMembers(methods);
+		} catch (DOMException e) {
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		}
 	}
 
 	public IName getScopeName() {
 		if (specialClass instanceof ICPPInternalBinding)
 			return (IASTName) ((ICPPInternalBinding) specialClass).getDefinition();
-		//TODO: get the scope name for non-internal bindings
 		return null;
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		ICPPClassType specialized = specialClass.getSpecializedBinding();
-		ICPPConstructor[] bindings = specialized.getConstructors();
-		
-		if (bindings == null) return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
-		
-    	ICPPConstructor[] specs = new ICPPConstructor[0];
-		for (ICPPConstructor binding : bindings) {
-			specs = (ICPPConstructor[]) ArrayUtil.append(ICPPConstructor.class, specs, specialClass.specializeMember(binding));
-		}
-		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, specs);
+		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
+		return specializeMembers(ctors);
 	}
-	
+		
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		ICPPClassType specialized = specialClass.getSpecializedBinding();
-		ICPPMethod[] bindings = specialized.getDeclaredMethods();
-		
-		if (bindings == null) return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		
-		ICPPMethod[] specs = new ICPPMethod[0];
-		for (ICPPMethod binding : bindings) {
-			specs = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, specs, specialClass.specializeMember(binding));
-		}
-		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, specs);
+		ICPPMethod[] bindings = specialClass.getSpecializedBinding().getDeclaredMethods();
+		return specializeMembers(bindings);
+	}
+
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		ICPPClassType[] bindings = specialClass.getSpecializedBinding().getNestedClasses();
+		return specializeMembers(bindings);
+	}
+
+	public IBinding[] getFriends() throws DOMException {
+		// not yet supported
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	public IScope getParent() throws DOMException {

@@ -6,13 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- *
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Apr 29, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -41,7 +37,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	private IBinding owner;
 	private IBinding specialized;
 	protected ObjectMap argumentMap;
-	private IASTNode definition;
+	protected IASTNode definition;
 	private IASTNode[] declarations;
 	
 	public CPPSpecialization(IBinding specialized, IBinding owner, ObjectMap argumentMap) {
@@ -50,7 +46,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		this.argumentMap = argumentMap;
 	}
 
-	protected IType specializeType(IType type) throws DOMException {
+	public IType specializeType(IType type) throws DOMException {
 		if (owner instanceof ICPPClassSpecialization) {
 			return CPPTemplates.instantiateType(type, argumentMap, (ICPPClassSpecialization) owner);
 		} else {

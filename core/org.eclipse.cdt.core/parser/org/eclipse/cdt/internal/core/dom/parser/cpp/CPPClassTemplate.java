@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -106,11 +106,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
-	private ClassTypeMixin mixin;
 
 	 public CPPClassTemplate(IASTName name) {
 		super(name);
-		this.mixin= new ClassTypeMixin(this);
 	}
 
 	public void checkForDefinition() {
@@ -197,43 +195,43 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 	
 	public ICPPBase[] getBases() {
-		return mixin.getBases();
+		return ClassTypeHelper.getBases(this);
 	}
 
 	public IField[] getFields() throws DOMException {
-		return mixin.getFields();
+		return ClassTypeHelper.getFields(this);
 	}
 
 	public ICPPField[] getDeclaredFields() throws DOMException {
-		return mixin.getDeclaredFields();
+		return ClassTypeHelper.getDeclaredFields(this);
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		return CPPClassType.getMethods(this);
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		return mixin.getAllDeclaredMethods();
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		return mixin.getDeclaredMethods();
+		return ClassTypeHelper.getDeclaredMethods(this);
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		return mixin.getConstructors();
+		return ClassTypeHelper.getConstructors(this);
 	}
 
 	public IBinding[] getFriends() {
-		return mixin.getFriends();
+		return ClassTypeHelper.getFriends(this);
 	}
 	
 	public ICPPClassType[] getNestedClasses() {
-		return mixin.getNestedClasses();
+		return ClassTypeHelper.getNestedClasses(this);
 	}
 
 	public IField findField(String name) throws DOMException {
-		return mixin.findField(name);
+		return ClassTypeHelper.findField(this, name);
 	}
 	
 	@Override

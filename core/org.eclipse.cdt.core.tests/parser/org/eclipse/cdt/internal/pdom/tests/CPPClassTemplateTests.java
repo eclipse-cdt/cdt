@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,7 +231,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// void bar() {
 	//    foo->f(*new A());
 	// }
-	public void _testFunctionPointer() throws Exception {
+	public void testFunctionPointer() throws Exception {
 		IIndexFragmentBinding[] bs= pdom.findBindings(new char[][] {"foo".toCharArray()}, IndexFilter.ALL, NPM);
 		assertEquals(1, bs.length);
 		assertInstance(bs[0], ICPPVariable.class);

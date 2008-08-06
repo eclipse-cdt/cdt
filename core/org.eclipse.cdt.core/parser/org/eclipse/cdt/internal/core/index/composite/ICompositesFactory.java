@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -40,4 +41,9 @@ public interface ICompositesFactory {
 	 * Identifies common bindings, calls getCompositeBindings
 	 */
 	public IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] bindings);
+
+	/**
+	 * Selects all equivalent bindings from the available fragments
+	 */
+	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding);
 }

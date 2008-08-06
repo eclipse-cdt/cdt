@@ -136,6 +136,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return null;
 	}
 
-	public void putCachedResult(Object key, Object newMap) {
+	public Object putCachedResult(Object key, Object value, boolean replace) {
+		return value;
 	}
 }

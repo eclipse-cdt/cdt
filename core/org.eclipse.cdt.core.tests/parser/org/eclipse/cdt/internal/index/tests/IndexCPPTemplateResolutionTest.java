@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -62,15 +63,17 @@ import org.eclipse.core.runtime.CoreException;
 public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBase {
 	public static class SingleProject extends IndexCPPTemplateResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
+		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
 	
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
+		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
 	
 	public static void addTests(TestSuite suite) {		
-		suite.addTest(suite(SingleProject.class));
-		suite.addTest(suite(ProjectWithDepProj.class));
+		suite.addTest(SingleProject.suite());
+		suite.addTest(ProjectWithDepProj.suite());
 	}
 
 	public IndexCPPTemplateResolutionTest() {

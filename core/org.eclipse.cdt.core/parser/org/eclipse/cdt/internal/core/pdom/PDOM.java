@@ -960,8 +960,17 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public void putCachedResult(Object key, Object result) {
+		putCachedResult(key, result, true);
+	}
+	
+	public Object putCachedResult(Object key, Object result, boolean replace) {
 		synchronized(fResultCache) {
-			fResultCache.put(key, result);
+			Object old= fResultCache.put(key, result);
+			if (old != null && !replace) {
+				fResultCache.put(key, old);
+				return old;
+			}
+			return result;
 		}
 	}		
 

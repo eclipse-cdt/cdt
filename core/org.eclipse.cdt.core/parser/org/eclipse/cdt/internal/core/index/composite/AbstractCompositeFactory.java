@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -57,6 +58,16 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] fragmentBindings) {
 		return getCompositeBindings(mergeBindingArrays(fragmentBindings));
 	}
+	
+	public final IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) {
+		CIndex cindex= (CIndex) index;
+		try {
+			return cindex.findEquivalentBindings(binding);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+		}
+	}
  
 	/**
 	 * Convenience method for taking a group of binding arrays, and returning a single array
@@ -84,8 +95,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 */
 	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
 		try{
-			CIndex cindex= (CIndex) index;
-			IIndexFragmentBinding[] ibs= cindex.findEquivalentBindings(binding);
+			IIndexFragmentBinding[] ibs= findEquivalentBindings(binding);
 			IBinding def= null;
 			IBinding dec= ibs.length>0 ? ibs[0] : null;
 			for(int i=0; i<ibs.length; i++) {

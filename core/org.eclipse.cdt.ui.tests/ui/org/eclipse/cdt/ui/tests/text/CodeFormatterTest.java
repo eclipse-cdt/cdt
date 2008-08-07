@@ -846,4 +846,11 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//char *b, * const a;
+	
+	//char *b, * const a;
+	public void testPreserveSpaceBetweenPointerModifierAndIdentifier_Bug243056() throws Exception {
+		assertFormatterResult();
+	}
+
 }

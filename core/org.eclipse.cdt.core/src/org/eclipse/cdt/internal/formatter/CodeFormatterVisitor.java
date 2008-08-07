@@ -91,7 +91,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -1034,7 +1033,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(ICPPASTFunctionDeclarator node) {
 		visit((IASTStandardFunctionDeclarator)node);
 
-		skipConstVolatile();
+		skipConstVolatileRestrict();
 
 		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
 		if (exceptionSpecification != null) {
@@ -1113,12 +1112,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 	}
 
-	private void skipConstVolatile() {
+	private boolean skipConstVolatileRestrict() {
+		boolean skipped= false;
 		int token= peekNextToken();
-		while (token == Token.t_const || token == Token.t_volatile) {
+		while (token == Token.t_const || token == Token.t_volatile || token == Token.t_restrict) {
 			scribe.printNextToken(token, true);
 			token= peekNextToken();
+			skipped= true;
 		}
+		return skipped;
 	}
 
 	private int visit(IASTStandardFunctionDeclarator node) {
@@ -1146,9 +1148,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				scribe.printNextToken(Token.tAMPER, false);
-			} else if (pointer instanceof ICASTPointer) {
-				scribe.printNextToken(Token.tSTAR, false);
-				skipConstVolatile();
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember= (ICPPASTPointerToMember)pointer;
 				final IASTName name= ptrToMember.getName();
@@ -1156,9 +1155,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					name.accept(this);
 				}
 				scribe.printNextToken(Token.tSTAR, false);
-				skipConstVolatile();
+				if (skipConstVolatileRestrict()) {
+					scribe.space();
+				}
 			} else {
-				formatRaw(pointer);
+				scribe.printNextToken(Token.tSTAR, false);
+				if (skipConstVolatileRestrict()) {
+					scribe.space();
+				}
 			}
 		}
 	}

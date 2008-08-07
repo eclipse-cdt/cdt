@@ -20,12 +20,13 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
@@ -296,7 +297,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
     }        
 
     private AbstractMIControl fCommandControl;
-	private CommandCache fCommandCache;
+	private CommandCache fContainerCommandCache;
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 	private static final String UNIQUE_GROUP_ID = "0"; //$NON-NLS-1$
@@ -337,8 +338,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 //				new Hashtable<String, String>());
 		
 		fCommandControl = getServicesTracker().getService(AbstractMIControl.class);
-        fCommandCache = new CommandCache(getSession(), fCommandControl);
-        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
+        fContainerCommandCache = new CommandCache(getSession(), fCommandControl);
+        fContainerCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
         getSession().addServiceEventListener(this, null);
 
 		requestMonitor.done();
@@ -413,31 +414,50 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			
 			IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IProcessDMContext.class);
-	        fCommandCache.execute(new CLIInfoThreads(procDmc),
-	        		new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
-	        	@Override
-	        	protected void handleSuccess() {
-	        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	        		for (CLIInfoThreadsInfo.ThreadInfo thread : getData().getThreadInfo()) {
-	        			if (thread.getId().equals(threadDmc.getId())) {
-	        				threadData = new MIThreadDMData(thread.getName(), thread.getOsId());     
-	        				break;
-	        			}
-	        		}
-	        		rm.setData(threadData);
-	        		rm.done();
-	        	}
-	        });
-		} else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
-			rm.done();
+			getDebuggingContext(procDmc,
+					new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
+				        @Override
+				        protected void handleSuccess() {
+				        	if (getData() instanceof IMIExecutionGroupDMContext) {
+				        		IMIExecutionGroupDMContext contDmc = (IMIExecutionGroupDMContext)getData();
+				        		fContainerCommandCache.execute(new CLIInfoThreads(contDmc),
+				        				new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
+				        		        	@Override
+				        		        	protected void handleSuccess() {
+				        		        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				        		        		for (CLIInfoThreadsInfo.ThreadInfo thread : getData().getThreadInfo()) {
+				        		        			if (thread.getId().equals(threadDmc.getId())) {
+				        		        				threadData = new MIThreadDMData(thread.getName(), thread.getOsId());     
+				        		        				break;
+				        		        			}
+				        		        		}
+				        		        		rm.setData(threadData);
+				        		        		rm.done();
+				        		        	}
+				        		});
+				        	} else {
+				    			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
+				    			rm.done();
+				        	}
+				        }
+			});
 		}
 	}
 	
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
-		rm.done();
+    	if (dmc instanceof MIProcessDMC) {
+    		MIProcessDMC procDmc = (MIProcessDMC)dmc;
+    		rm.setData(createExecutionGroupContext(procDmc, procDmc.getProcId()));
+    	} else if (dmc instanceof MIThreadDMC) {
+    		MIThreadDMC threadDmc = (MIThreadDMC)dmc;
+    		IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
+    		IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procDmc, procDmc.getProcId()); 
+    		rm.setData(createExecutionContext(groupDmc, threadDmc, threadDmc.getId()));
+    	} else {
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
+    	}
+
+    	rm.done();
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -518,7 +538,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	public void getProcessesBeingDebugged(IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
 		final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
 		if (groupDmc != null) {
-			fCommandCache.execute(
+			fContainerCommandCache.execute(
 					new MIThreadListIds(groupDmc),
 					new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
 						@Override
@@ -589,23 +609,36 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
-        fCommandCache.setContextAvailable(e.getDMContext(), false);
-        // I need to put this so that in non-stop mode, we can send the CLIInfo 
-        // command while some threads are running.
-        // However, in all-stop, this line breaks a thread exiting, and threads running
-        // because it allows us to send the thread-list-ids although we don't have a prompt
-        // We need to find a proper solution for the cache.
-//        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
-        if (e.getReason() != StateChangeReason.STEP) {
-            fCommandCache.reset();
-        }
+    	if (e instanceof IContainerResumedDMEvent) {
+    		// This will happen in all-stop mode
+    		fContainerCommandCache.setContextAvailable(e.getDMContext(), false);
+    	} else {
+       		// This will happen in non-stop mode
+    		// Keep target available for Container commands
+       	}
     }
 
 
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
-        fCommandCache.setContextAvailable(e.getDMContext(), true);
-        fCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
-        fCommandCache.reset();
+       	if (e instanceof IContainerSuspendedDMEvent) {
+    		// This will happen in all-stop mode
+       		fContainerCommandCache.setContextAvailable(e.getDMContext(), true);
+       	} else {
+       		// This will happen in non-stop mode
+       	}
     }
+
+    // Event handler when a thread starts
+    @DsfServiceEventHandler
+    public void eventDispatched(IStartedDMEvent e) {
+        fContainerCommandCache.reset();
+	}
+
+    // Event handler when a thread exits
+    @DsfServiceEventHandler
+    public void eventDispatched(IExitedDMEvent e) {
+        fContainerCommandCache.reset();
+    }
+
 }

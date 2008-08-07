@@ -14,7 +14,6 @@ package org.eclipse.dd.mi.service.command.commands;
 
 
 
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -28,10 +27,6 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
 public class CLIInfoThreads extends CLICommand<CLIInfoThreadsInfo> {
 
     public CLIInfoThreads(IContainerDMContext ctx) {
-		super(ctx, "info threads"); //$NON-NLS-1$
-	}
-
-    public CLIInfoThreads(IProcessDMContext ctx) {
 		super(ctx, "info threads"); //$NON-NLS-1$
 	}
 

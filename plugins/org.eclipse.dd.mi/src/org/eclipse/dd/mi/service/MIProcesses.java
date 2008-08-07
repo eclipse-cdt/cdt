@@ -173,6 +173,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
     {
     	/**
     	 * ID used by GDB to refer to threads.
+    	 * We use the same id as the one used in {@link MIProcesses#MIExecutionDMC}
     	 */
     	private final String fId;
 
@@ -216,6 +217,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
     {
       	/**
     	 * ID given by the OS.
+     	 * For practicality, we use the same id as the one used in {@link MIProcesses#MIExecutionGroupDMC}
     	 */
     	private final String fId;
 

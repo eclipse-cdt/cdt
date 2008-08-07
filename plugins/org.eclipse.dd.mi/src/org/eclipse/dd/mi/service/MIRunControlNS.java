@@ -73,7 +73,7 @@ import org.osgi.framework.BundleContext;
 public class MIRunControlNS extends AbstractDsfService implements IRunControl
 {
 	@Immutable
-	static class ExecutionData implements IExecutionDMData {
+	private static class ExecutionData implements IExecutionDMData {
 		private final StateChangeReason fReason;
 		ExecutionData(StateChangeReason reason) {
 			fReason = reason;
@@ -91,7 +91,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	 * @see MIRunControl
 	 */
 	@Immutable
-	static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
+	private static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
 	implements IDMEvent<V>, IMIDMEvent
 	{
 		final private T fMIInfo;
@@ -107,7 +107,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	 * Indicates that the given thread has been suspended.
 	 */
 	@Immutable
-	static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
+	private static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
 	implements ISuspendedDMEvent
 	{
 		SuspendedEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo) {
@@ -134,7 +134,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@Immutable
-	static class ContainerSuspendedEvent extends SuspendedEvent
+	private static class ContainerSuspendedEvent extends SuspendedEvent
 	implements IContainerSuspendedDMEvent
 	{
 		final IExecutionDMContext[] triggeringDmcs;
@@ -150,15 +150,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@Immutable
-	static class ThreadSuspendedEvent extends SuspendedEvent
-	{
-		ThreadSuspendedEvent(IExecutionDMContext executionDmc, MIStoppedEvent miInfo) {
-			super(executionDmc, miInfo);
-		}
-	}
-
-	@Immutable
-	static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
+	private static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
 	implements IResumedDMEvent
 	{
 		ResumedEvent(IExecutionDMContext ctx, MIRunningEvent miInfo) {
@@ -186,7 +178,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@Immutable
-	static class ContainerResumedEvent extends ResumedEvent
+	private static class ContainerResumedEvent extends ResumedEvent
 	implements IContainerResumedDMEvent
 	{
 		final IExecutionDMContext[] triggeringDmcs;
@@ -203,15 +195,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@Immutable
-	static class ThreadResumedEvent extends ResumedEvent
-	{
-		ThreadResumedEvent(IExecutionDMContext executionDmc, MIRunningEvent miInfo) {
-			super(executionDmc, miInfo);
-		}
-	}
-
-	@Immutable
-	static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
+	private static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
 	implements IStartedDMEvent
 	{
 		StartedDMEvent(IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) {
@@ -220,7 +204,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@Immutable
-	static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
+	private static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
 	implements IExitedDMEvent
 	{
 		ExitedDMEvent(IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) {
@@ -719,21 +703,13 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		}
 
 		// It's a thread execution context (since we are in non-stop mode)
-		event = new ThreadResumedEvent(e.getDMContext(), e);
-		updateThreadState(executionDmc, (ThreadResumedEvent) event);
+		event = new ResumedEvent(e.getDMContext(), e);
+		updateThreadState(executionDmc, (ResumedEvent) event);
 		getSession().dispatchEvent(event, getProperties());
 		fMICommandCache.reset();
-
-        // Find the container context, which is used in multi-threaded debugging.
-        IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
-        if (containerDmc != null) {
-        	IExecutionDMContext triggeringCtx = !e.getDMContext().equals(containerDmc) ? e.getDMContext() : null;
-            event = new ContainerResumedEvent(containerDmc, e, triggeringCtx);
-            getSession().dispatchEvent(event, getProperties());
-        }
 	}
 
-	private void updateThreadState(IMIExecutionDMContext context, ThreadResumedEvent event) {
+	private void updateThreadState(IMIExecutionDMContext context, ResumedEvent event) {
 		StateChangeReason reason = event.getReason();
 		boolean isStepping = reason.equals(StateChangeReason.STEP);
 		MIThreadRunState threadState = fThreadRunStates.get(context);
@@ -761,21 +737,13 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		}
 
 		// It's a thread execution context (since we are in non-stop mode)
-		event = new ThreadSuspendedEvent(e.getDMContext(), e);
-		updateThreadState(executionDmc, (ThreadSuspendedEvent) event);
+		event = new SuspendedEvent(e.getDMContext(), e);
+		updateThreadState(executionDmc, (SuspendedEvent) event);
 		getSession().dispatchEvent(event, getProperties());
 		fMICommandCache.reset();
-
-		// Find the container context, which is used in multi-threaded debugging.
-        IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
-        if (containerDmc != null) {
-        	IExecutionDMContext triggeringCtx = !e.getDMContext().equals(containerDmc) ? e.getDMContext() : null;
-            event = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx);
-            getSession().dispatchEvent(event, getProperties());
-        }
 	}
 
-	private void updateThreadState(IMIExecutionDMContext context, ThreadSuspendedEvent event) {
+	private void updateThreadState(IMIExecutionDMContext context, SuspendedEvent event) {
 		StateChangeReason reason = event.getReason();
 		MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
@@ -813,35 +781,19 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	@DsfServiceEventHandler
-	public void eventDispatched(ThreadResumedEvent e) {
-		IMIExecutionDMContext context = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (context == null) {
-			return;
-		}
+	public void eventDispatched(ResumedEvent e) {
 	}
 
 	@DsfServiceEventHandler
-	public void eventDispatched(ThreadSuspendedEvent e) {
-		IMIExecutionDMContext context = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (context == null) {
-			return;
-		}
+	public void eventDispatched(SuspendedEvent e) {
 	}
 
 	@DsfServiceEventHandler
 	public void eventDispatched(ContainerResumedEvent e) {
-		IMIExecutionDMContext context = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (context == null) {
-			return;
-		}
 	}
 
 	@DsfServiceEventHandler
 	public void eventDispatched(ContainerSuspendedEvent e) {
-		IMIExecutionDMContext context = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (context == null) {
-			return;
-		}
 	}
 
 	@DsfServiceEventHandler

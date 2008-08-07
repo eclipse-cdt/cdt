@@ -733,9 +733,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		IMIExecutionDMContext executionCtx = null;
 		if (e.getStrId() != null) {
 			executionCtx = createMIExecutionContext(containerDmc, e.getStrId());
-			if (fThreadRunStates.get(executionCtx) == null) {
-				fThreadRunStates.put(executionCtx, new MIThreadRunState());
-			}
 		}
 		getSession().dispatchEvent(new StartedDMEvent(executionCtx, e),	getProperties());
 	}
@@ -746,7 +743,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		IMIExecutionDMContext executionCtx = null;
 		if (e.getStrId() != null) {
 			executionCtx = createMIExecutionContext(containerDmc, e.getStrId());
-			fThreadRunStates.remove(executionCtx);
 		}
 		getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());
 	}
@@ -769,6 +765,21 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		}
 	}
 
+	@DsfServiceEventHandler
+	public void eventDispatched(StartedDMEvent e) {
+		IExecutionDMContext executionCtx = e.getDMContext();
+		if (executionCtx instanceof IMIExecutionDMContext) {			
+			if (fThreadRunStates.get(executionCtx) == null) {
+				fThreadRunStates.put((IMIExecutionDMContext)executionCtx, new MIThreadRunState());
+			}
+		}
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(ExitedDMEvent e) {
+		fThreadRunStates.remove(e.getDMContext());
+	}
+	
 	@DsfServiceEventHandler
 	public void eventDispatched(BackendExitedEvent e) {
 		fTerminated = true;

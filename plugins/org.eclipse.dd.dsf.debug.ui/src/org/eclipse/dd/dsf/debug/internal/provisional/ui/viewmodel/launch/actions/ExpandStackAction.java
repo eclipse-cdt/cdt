@@ -21,12 +21,14 @@ import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Increment the (temporary) stack limit for the selected stack.
  */
-public class ExpandStackAction extends AbstractVMProviderActionDelegate {
+public class ExpandStackAction extends AbstractVMProviderActionDelegate implements IObjectActionDelegate {
 
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -75,5 +77,11 @@ public class ExpandStackAction extends AbstractVMProviderActionDelegate {
 			enabled = element instanceof IncompleteStackVMContext;
 		}
 		getAction().setEnabled(enabled);
+	}
+
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		if (targetPart instanceof IViewPart) {
+			init((IViewPart) targetPart);
+		}
 	}
 }

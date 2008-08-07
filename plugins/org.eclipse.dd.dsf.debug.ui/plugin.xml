@@ -531,28 +531,17 @@
 
    <!-- Debug view context menu contributions -->
    <extension point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.eclipse.dd.dsf.debug.ui.DebugView.context"
-            targetID="org.eclipse.debug.ui.DebugView">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.dd.dsf.debug.ui.objectContribution.incompleteStack"
+            objectClass="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode$IncompleteStackVMContext">
          <action
                class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.actions.ExpandStackAction"
-               id="org.eclipse.dd.dsf.debug.ui.retrieveMoreFrames"
+               id="org.eclipse.dd.dsf.debug.ui.action.expandStack"
                label="%action.expandStack.label"
                menubarPath="renderGroup">
-            <enablement>
-               <pluginState
-                     id="org.eclipse.dd.dsf.debug.ui"
-                     value="activated">
-               </pluginState>
-            </enablement>
          </action>
-         <visibility>
-            <pluginState
-                  id="org.eclipse.dd.dsf.debug.ui"
-                  value="activated">
-            </pluginState>
-         </visibility>
-      </viewerContribution>
+      </objectContribution>
    </extension>
 
 </plugin>

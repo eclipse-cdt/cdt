@@ -537,10 +537,11 @@ public class CommandCache implements ICommandListener
 	public void reset(IDMContext dmc) {
 	    if (dmc == null) {
 	        fCachedContexts.clear();
+	        return;
 	    }
-	    for (Iterator<IDMContext> itr = fCachedContexts.keySet().iterator();	itr.hasNext();) {
+	    for (Iterator<IDMContext> itr = fCachedContexts.keySet().iterator(); itr.hasNext();) {
 	        IDMContext keyDmc = itr.next();
-	        if (keyDmc != null && DMContexts.isAncestorOf(keyDmc, dmc)) {
+	        if (keyDmc != null && (dmc.equals(keyDmc) || DMContexts.isAncestorOf(keyDmc, dmc))) {
 	           itr.remove();
 	        }
 	    }

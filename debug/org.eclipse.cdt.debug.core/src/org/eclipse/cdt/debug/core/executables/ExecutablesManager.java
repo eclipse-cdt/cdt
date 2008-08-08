@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.core.executables;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -37,6 +38,7 @@ public class ExecutablesManager extends PlatformObject {
 	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<ISourceFileRemapping> sourceFileRemappings = Collections.synchronizedList(new ArrayList<ISourceFileRemapping>());
 	private List<IExecutableProvider> executableProviders = Collections.synchronizedList(new ArrayList<IExecutableProvider>());
+	private List<ISourceFilesProvider> sourceFileProviders = Collections.synchronizedList(new ArrayList<ISourceFilesProvider>());
 	private List<IExecutableImporter> executableImporters = Collections.synchronizedList(new ArrayList<IExecutableImporter>());
 	private boolean refreshNeeded = true;
 	private boolean tempDisableRefresh = false;
@@ -62,6 +64,7 @@ public class ExecutablesManager extends PlatformObject {
 		addSourceFileRemapping(new StandardSourceFileRemapping());
 		addExecutableImporter(new StandardExecutableImporter());
 		addExecutablesProvider(new StandardExecutableProvider());
+		addSourceFilesProvider(new StandardSourceFilesProvider());
 	}
 
 	public void addExecutablesChangeListener(IExecutablesChangeListener listener) {
@@ -90,6 +93,14 @@ public class ExecutablesManager extends PlatformObject {
 
 	public void addExecutablesProvider(IExecutableProvider provider) {
 		executableProviders.add(provider);
+	}
+
+	public void addSourceFilesProvider(ISourceFilesProvider provider) {
+		sourceFileProviders.add(provider);
+	}
+
+	public void removeSourceFilesProvider(ISourceFilesProvider provider) {
+		sourceFileProviders.remove(provider);
 	}
 
 	public void removeExecutablesProvider(IExecutableProvider provider) {
@@ -177,6 +188,10 @@ public class ExecutablesManager extends PlatformObject {
 		return executableProviders.toArray(new IExecutableProvider[executableProviders.size()]);
 	}
 
+	public ISourceFilesProvider[] getSourceFileProviders() {
+		return sourceFileProviders.toArray(new ISourceFilesProvider[sourceFileProviders.size()]);
+	}
+
 	public IExecutableImporter[] getExecutableImporters() {
 		return executableImporters.toArray(new IExecutableImporter[executableImporters.size()]);
 	}
@@ -196,6 +211,36 @@ public class ExecutablesManager extends PlatformObject {
 				return true;
 		}
 		return false;
+	}
+
+	public String[] getSourceFiles(final Executable executable,
+			IProgressMonitor monitor) {
+		String[] result = new String[0];
+		synchronized (sourceFileProviders) {
+			Collections.sort(sourceFileProviders, new Comparator<ISourceFilesProvider>() {
+
+				public int compare(ISourceFilesProvider arg0, ISourceFilesProvider arg1) {
+					int p0 = arg0.getPriority(executable);
+					int p1 = arg1.getPriority(executable);
+					if (p0 < p1)
+						return 1;
+					if (p0 > p1)
+						return -1;
+					return 0;
+				}});
+			
+			monitor.beginTask("Finding source files in " + executable.getName(), sourceFileProviders.size());
+			for (ISourceFilesProvider provider : sourceFileProviders) {
+				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1));
+				if (sourceFiles.length > 0)
+				{
+					result = sourceFiles;
+					break;
+				}
+			}
+			monitor.done();
+		}
+		return result;
 	}
 
 }

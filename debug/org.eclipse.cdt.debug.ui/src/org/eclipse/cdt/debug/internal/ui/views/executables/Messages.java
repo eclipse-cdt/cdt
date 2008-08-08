@@ -23,11 +23,13 @@ public class Messages extends NLS {
 	public static String ExecutablesView_ExeProject;
 	public static String ExecutablesView_ExeSize;
 	public static String ExecutablesView_ExeType;
+	public static String ExecutablesView_Finding_Sources_Job_Name;
 	public static String ExecutablesView_Import;
 	public static String ExecutablesView_ImportExe;
 	public static String ExecutablesView_ImportExecutables;
 	public static String ExecutablesView_Refresh;
 	public static String ExecutablesView_RefreshList;
+	public static String ExecutablesView_Select_Executable;
 	public static String ExecutablesView_SelectColumns;
 	public static String ExecutablesView_SelectExeFile;
 	public static String ExecutablesView_SrcDate;

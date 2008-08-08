@@ -22,7 +22,9 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -114,18 +116,32 @@ public class StandardExecutableImporter implements IExecutableImporter {
 		monitor.done();
 	}
 
-	private void importExecutable(IProject exeProject, String path) {
+	   private IContainer createFromRoot(IProject exeProject, IPath path) throws CoreException {
+		int segmentCount = path.segmentCount() - 1;
+		IContainer currentFolder = exeProject;
 
-		IPath location = Path.fromOSString(path);
-		String executableName = location.toFile().getName();
-		IFile exeFile = exeProject.getProject().getFile(executableName);
-		if (!exeFile.exists() && validateBinaryParsers(exeProject, new File(path))) {
-			try {
-				exeFile.createLink(location, 0, null);
-			} catch (Exception e) {
+		for (int i = 0; i < segmentCount; i++) {
+			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
+			if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(false, true, new NullProgressMonitor());
 			}
 		}
 
+		return currentFolder;
+	}
+
+	private void importExecutable(IProject exeProject, String path) {
+		IPath location = Path.fromOSString(path);
+		String executableName = location.toFile().getName();
+		try {
+			IContainer fileContainer = createFromRoot(exeProject, location);
+			IFile exeFile = fileContainer.getFile(new Path(executableName));
+			if (!exeFile.exists() && validateBinaryParsers(exeProject, new File(path))) {
+				exeFile.createLink(location, 0, null);
+			}
+		} catch (CoreException e) {
+			CDebugCorePlugin.log(e);
+		}
 	}
 
 	private boolean isExtensionVisible(IExtension ext) {

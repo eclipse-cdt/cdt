@@ -148,7 +148,7 @@ abstract class BaseViewer extends TreeViewer {
 		}
 		String[] columns = visibleColumns.split(","); //$NON-NLS-1$
 		for (int i=0; i<columns.length; i++) {
-			if (columns[i].equals("0")) {
+			if (columns[i].equals("0")) { //$NON-NLS-1$
 				tree.getColumn(i).setWidth(0);
 			}
 		}

@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Sergey Prigogin, Google
  *     Andrew Ferguson (Symbian)
+ *     Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -42,7 +43,8 @@ public class AbstractAutoEditTest extends BaseTestCase {
 	 */
 	protected static class AutoEditTester {
 
-		private Map fStrategyMap = new HashMap();
+		private IAutoEditStrategy tabsToSpacesConverter=null;
+		private Map<String, IAutoEditStrategy> fStrategyMap = new HashMap<String, IAutoEditStrategy>();
 		IDocument fDoc;
 		private String fPartitioning;
 		private int fCaretOffset;
@@ -53,12 +55,16 @@ public class AbstractAutoEditTest extends BaseTestCase {
 			fPartitioning = partitioning;
 		}
 
+		public void setTabsToSpacesConverter(IAutoEditStrategy converter) {
+			tabsToSpacesConverter = converter;
+		}
+
 		public void setAutoEditStrategy(String contentType, IAutoEditStrategy aes) {
 			fStrategyMap.put(contentType, aes);
 		}
 
 		public IAutoEditStrategy getAutoEditStrategy(String contentType) {
-			return (IAutoEditStrategy)fStrategyMap.get(contentType);
+			return fStrategyMap.get(contentType);
 		}
 
 		/**
@@ -88,6 +94,9 @@ public class AbstractAutoEditTest extends BaseTestCase {
 		}
 
 		private void customizeDocumentCommand(TestDocumentCommand command) throws BadLocationException {
+			if (tabsToSpacesConverter != null) {
+				tabsToSpacesConverter.customizeDocumentCommand(fDoc, command);
+			}
 			IAutoEditStrategy aes = getAutoEditStrategy(getContentType(command.offset));
 			if (aes != null) {
 				aes.customizeDocumentCommand(fDoc, command);

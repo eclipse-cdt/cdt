@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Sergey Prigogin, Google
  *     Andrew Ferguson (Symbian)
+ *     Andrew Gvozdev
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
@@ -26,10 +27,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -45,8 +49,8 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
  */
 public class CAutoIndentTest extends AbstractAutoEditTest {
 
-	private HashMap fOptions;
-	private List fStatusLog;
+	private HashMap<String, String> fOptions;
+	private List<IStatus> fStatusLog;
 	private ILogListener fLogListener;
 
 	
@@ -68,7 +72,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 //		shell.forceFocus();
 		fOptions= CCorePlugin.getOptions();
 
-		fStatusLog= Collections.synchronizedList(new ArrayList());
+		fStatusLog= Collections.synchronizedList(new ArrayList<IStatus>());
 		fLogListener= new ILogListener() {
 			public void logging(IStatus status, String plugin) {
 				if(!status.isOK()) {
@@ -348,7 +352,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	public void testBracketIndentForConstructorDefinition_Bug183814() throws BadLocationException {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
-		CCorePlugin.setOptions(new HashMap(whitesmiths.getMap()));
+		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		
 		tester.type("Foo::Foo()\n{");
@@ -357,7 +361,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	
 	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
-		CCorePlugin.setOptions(new HashMap(whitesmiths.getMap()));
+		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		
 		tester.type("A::~A()\n{");
@@ -381,7 +385,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		
 		DefaultCodeFormatterOptions defaultOptions= DefaultCodeFormatterOptions.getDefaultSettings();
 		defaultOptions.indent_body_declarations_compare_to_namespace_header= true;
-		CCorePlugin.setOptions(new HashMap(defaultOptions.getMap()));
+		CCorePlugin.setOptions(new HashMap<String, String>(defaultOptions.getMap()));
 		tester = createAutoEditTester();
 		
 		tester.type("namespace ns {\n");
@@ -435,6 +439,67 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		}
 	}
 
+	public void testTabsAsSpaces_SmartIndentDisabled_Bug242707() throws Exception  {
+		HashMap<String, String> options = new HashMap<String, String>();
+		options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "3");
+		options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "3");
+		DefaultCodeFormatterOptions defaultOptions= DefaultCodeFormatterOptions.getDefaultSettings();
+		defaultOptions.set(options);
+		CCorePlugin.setOptions(new HashMap<String, String>(defaultOptions.getMap()));
+		
+		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
+		store.setValue(PreferenceConstants.EDITOR_SMART_TAB, false);
+		
+		AutoEditTester tester = createAutoEditTester();
+		
+		TabsToSpacesConverter tabToSpacesConverter = new TabsToSpacesConverter();
+		tabToSpacesConverter.setNumberOfSpacesPerTab(3);
+		tabToSpacesConverter.setLineTracker(new DefaultLineTracker());
+		tester.setTabsToSpacesConverter(tabToSpacesConverter);
+		
+		
+		try {
+			tester.type("void main() {\n"); //$NON-NLS-1$
+			assertEquals(1, tester.getCaretLine());
+			// Nested statement is indented
+			assertEquals(3, tester.getCaretColumn());
+			assertEquals("   ", tester.getLine(0)); //$NON-NLS-1$
+			// The brace was closed automatically.
+			assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+			tester.type('\t');
+			// Indent from previous line + expanded tab
+			assertEquals("      ", tester.getLine(0)); //$NON-NLS-1$
+			// Return normal indentation 
+			tester.backspace(3);
+			assertEquals("   ", tester.getLine(0)); //$NON-NLS-1$
+			tester.type("for (;;)\n");
+			// Check indentation under "for" operator
+			assertEquals("      ", tester.getLine(0)); //$NON-NLS-1$
+			// Remove all symbols on the line
+			tester.backspace(6);
+			assertEquals("", tester.getLine(0)); //$NON-NLS-1$
+			// Tabulation should not trigger autoindent, just 1 tab filled with spaces
+			tester.type("\t");
+			assertEquals("   ", tester.getLine(0)); //$NON-NLS-1$
+			tester.type("\t");
+			// Check one more tab
+			assertEquals("      ", tester.getLine(0)); //$NON-NLS-1$
+			// Clean the line to repeat 2 last entries but with spaces
+			tester.backspace(6);
+			assertEquals("", tester.getLine(0)); //$NON-NLS-1$
+			// 1-st sequence of spaces
+			tester.type("     ");
+			assertEquals("     ", tester.getLine(0)); //$NON-NLS-1$
+			// 2-nd sequence of spaces
+			tester.type("     ");
+			assertEquals("          ", tester.getLine(0)); //$NON-NLS-1$
+			
+		} finally {
+			store.setToDefault(PreferenceConstants.EDITOR_SMART_TAB);
+		}
+	}
+	
 	private void assertNoError() {
 		if (!fStatusLog.isEmpty()) {
 			fail(fStatusLog.get(0).toString());

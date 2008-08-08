@@ -25,14 +25,14 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendStartedEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -127,9 +127,9 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	@Override
 	public int getDeltaFlags(Object e) {
-		if (e instanceof BackendExitedEvent) {
+		if (e instanceof ICommandControlShutdownDMEvent) {
 	        return IModelDelta.CONTENT;
-	    } else if (e instanceof BackendStartedEvent) {
+	    } else if (e instanceof ICommandControlInitializedDMEvent) {
 	        return IModelDelta.EXPAND;
 	    }
 	    return super.getDeltaFlags(e);
@@ -137,9 +137,9 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-		if (e instanceof BackendExitedEvent) {
+		if (e instanceof ICommandControlShutdownDMEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-	    } else if (e instanceof BackendStartedEvent) {
+	    } else if (e instanceof ICommandControlInitializedDMEvent) {
 	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
 	    } else {
 	    	super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);

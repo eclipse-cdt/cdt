@@ -14,14 +14,16 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.osgi.framework.Constants;
 
 /**
  * 
  */
-public class MIControlDMContext extends AbstractDMContext {
-
+public class MIControlDMContext extends AbstractDMContext 
+    implements ICommandControlDMContext
+{
     private final String fCommandControlFilter;
     private final String fCommandControlId;
     
@@ -44,15 +46,19 @@ public class MIControlDMContext extends AbstractDMContext {
     public String getCommandControlFilter() { 
         return fCommandControlFilter;
     }
+
+    public String getCommandControlId() {
+        return fCommandControlId;
+    }
     
     @Override
     public boolean equals(Object obj) {
-        return baseEquals(obj) && fCommandControlFilter.equals(((MIControlDMContext)obj).fCommandControlFilter);
+        return baseEquals(obj) && fCommandControlId.equals(((MIControlDMContext)obj).fCommandControlId);
     }
 
     @Override
     public int hashCode() {
-        return baseHashCode() + fCommandControlFilter.hashCode(); 
+        return baseHashCode() + fCommandControlId.hashCode(); 
     }
     
     @Override

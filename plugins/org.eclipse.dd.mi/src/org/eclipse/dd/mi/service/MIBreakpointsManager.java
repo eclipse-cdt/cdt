@@ -63,6 +63,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -72,7 +73,6 @@ import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointRemovedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
 import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.dd.mi.service.breakpoint.actions.BreakpointActionAdapter;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.dd.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
@@ -1228,14 +1228,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Session exit
     //-------------------------------------------------------------------------
 
-	// Not used, kept for API compatibility.  BackendExitedEvent is used instead
+	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
         terminated();
     }
 
     @DsfServiceEventHandler
-    public void eventDispatched(BackendExitedEvent e) {
+    public void eventDispatched(ICommandControlShutdownDMEvent e) {
         terminated();
     }
 

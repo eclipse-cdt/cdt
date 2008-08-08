@@ -30,13 +30,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
-import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
@@ -65,28 +64,10 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
  * Extending classes need to implement the initialize() and shutdown() methods.
  */
 public abstract class AbstractMIControl extends AbstractDsfService
-    implements ICommandControl
+    implements ICommandControlService
 {
     final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
  
-    /**
-     * Event indicating that the back end process has started.
-     */
-    public static class BackendStartedEvent extends AbstractDMEvent<MIControlDMContext> {
-        public BackendStartedEvent(MIControlDMContext context) {
-            super(context);
-        }
-    }
-    
-    /**
-     * Event indicating that the back end process has terminated.
-     */
-    public static class BackendExitedEvent extends AbstractDMEvent<MIControlDMContext> {
-        public BackendExitedEvent(MIControlDMContext context) {
-            super(context);
-        }
-    }
-
     /*
 	 *  Thread control variables for the transmit and receive threads.
 	 */
@@ -126,12 +107,16 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
     private boolean fStoppedCommandProcessing = false;
 
-    /*
-     *  Public constructor.
-     */
+    private String fId;
     
     public AbstractMIControl(DsfSession session) {
         super(session);
+        fId = "<no id>"; //$NON-NLS-1$
+    }
+
+    public AbstractMIControl(DsfSession session, String id) {
+        super(session);
+        fId = id;
     }
 
     /**
@@ -362,6 +347,14 @@ public abstract class AbstractMIControl extends AbstractDsfService
     public void removeEventListener(IEventListener processor) { fEventProcessors.remove(processor); }
     
     abstract public MIControlDMContext getControlDMContext();
+    
+    public boolean isActive() {
+        return !fStoppedCommandProcessing;
+    }
+    
+    public String getId() {
+        return fId;
+    }
     
     /*
      *  These are the service routines which perform the various callouts back to the listeners.

@@ -16,12 +16,12 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.Abstrac
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendStartedEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -75,8 +75,8 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         // Never skip the process lifecycle events.
         if (eventToSkip instanceof InferiorExitedDMEvent || 
             eventToSkip instanceof InferiorStartedDMEvent ||
-            eventToSkip instanceof BackendStartedEvent ||
-            eventToSkip instanceof BackendExitedEvent) 
+            eventToSkip instanceof ICommandControlInitializedDMEvent ||
+            eventToSkip instanceof ICommandControlShutdownDMEvent) 
         {
             return false;
         }

@@ -14,7 +14,10 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 
 /**
  * API for sending commands to the debugger and for receiving command results
- * and asynchronous events.
+ * and asynchronous events.  The command control may be implemented by a service
+ * or a non-service object.
+ * 
+ * @see ICommandControlService
  */
 public interface ICommandControl {
 

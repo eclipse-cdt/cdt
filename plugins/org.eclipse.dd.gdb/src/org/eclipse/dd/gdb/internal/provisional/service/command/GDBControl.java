@@ -38,6 +38,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
+import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -72,6 +73,27 @@ import org.osgi.framework.BundleContext;
  */
 public class GDBControl extends AbstractMIControl {
 
+    /**
+     * Event indicating that the back end process has started.
+     */
+    public static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
+        implements ICommandControlInitializedDMEvent
+    {
+        public GDBControlInitializedDMEvent(GDBControlDMContext context) {
+            super(context);
+        }
+    }
+    
+    /**
+     * Event indicating that the back end process has terminated.
+     */
+    public static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
+        implements ICommandControlShutdownDMEvent
+    {
+        public GDBControlShutdownDMEvent(GDBControlDMContext context) {
+            super(context);
+        }
+    }
 
     private static int fgInstanceCounter = 0;
     private final GDBControlDMContext fControlDmc;
@@ -98,7 +120,7 @@ public class GDBControl extends AbstractMIControl {
     private PTY fPty;
 
     public GDBControl(DsfSession session, ILaunchConfiguration config) { 
-        super(session);
+        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         fSessionType = LaunchUtils.getSessionType(config);
         fAttach = LaunchUtils.getIsAttach(config);
         fGdbPath = LaunchUtils.getGDBPath(config);
@@ -107,18 +129,18 @@ public class GDBControl extends AbstractMIControl {
 		} catch (CoreException e) {
 			fExecPath = new Path(""); //$NON-NLS-1$
 		}
-        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
     }
 
     @Deprecated
     public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType sessionType, boolean attach, int gdbLaunchTimeout) {
-        super(session);
+        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         fSessionType = sessionType;
         fAttach = attach;
         fGdbPath = gdbPath;
         fExecPath = execPath;
         fGDBLaunchTimeout = gdbLaunchTimeout;
-        fControlDmc = new GDBControlDMContext(session.getId(), "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
     }
 
     @Override
@@ -171,6 +193,10 @@ public class GDBControl extends AbstractMIControl {
 
     @Override
     public MIControlDMContext getControlDMContext() {
+        return fControlDmc;
+    }
+    
+    public ICommandControlDMContext getContext() {
         return fControlDmc;
     }
     
@@ -418,7 +444,7 @@ public class GDBControl extends AbstractMIControl {
     }
         
     @DsfServiceEventHandler 
-    public void eventDispatched(BackendExitedEvent e) {
+    public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.
         stopCommandProcessing();
     }
@@ -445,7 +471,7 @@ public class GDBControl extends AbstractMIControl {
                         Thread.interrupted();
                     } finally {
                         fExited = true;
-                        getSession().dispatchEvent(new BackendExitedEvent(fControlDmc) {}, getProperties());
+                        getSession().dispatchEvent(new GDBControlShutdownDMEvent(fControlDmc) {}, getProperties());
                     }
                 }
             }
@@ -717,7 +743,7 @@ public class GDBControl extends AbstractMIControl {
         public void initialize(final RequestMonitor requestMonitor) {
             getSession().addServiceEventListener(GDBControl.this, null);
             register(new String[]{ ICommandControl.class.getName(), AbstractMIControl.class.getName() }, new Hashtable<String,String>());
-            getSession().dispatchEvent(new BackendStartedEvent(getGDBDMContext()), getProperties());
+            getSession().dispatchEvent(new GDBControlInitializedDMEvent(getGDBDMContext()), getProperties());
             requestMonitor.done();
         }
 

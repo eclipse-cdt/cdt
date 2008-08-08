@@ -27,11 +27,11 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.dd.mi.service.command.commands.MIBreakCondition;
 import org.eclipse.dd.mi.service.command.commands.MIBreakDelete;
@@ -271,13 +271,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	    }
 	}
 
-	// Not used, kept for API compatibility.  BackendExitedEvent is used instead
+	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
     }
 
     @DsfServiceEventHandler
-    public void eventDispatched(BackendExitedEvent e) {
+    public void eventDispatched(ICommandControlShutdownDMEvent e) {
     }
 
 	///////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -39,7 +40,6 @@ import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -185,7 +185,7 @@ public class GdbLaunch extends Launch
     
     ///////////////////////////////////////////////////////////////////////////
     // IServiceEventListener
-    @DsfServiceEventHandler public void eventDispatched(BackendExitedEvent event) {
+    @DsfServiceEventHandler public void eventDispatched(ICommandControlShutdownDMEvent event) {
         shutdownSession(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     }
 

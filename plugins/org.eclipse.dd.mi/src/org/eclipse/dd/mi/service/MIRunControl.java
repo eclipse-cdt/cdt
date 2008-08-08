@@ -24,12 +24,12 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
-import org.eclipse.dd.mi.service.command.AbstractMIControl.BackendExitedEvent;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -404,14 +404,14 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
         fStepping = false;
     }
     
-	// Not used, kept for API compatibility.  BackendExitedEvent is used instead
+	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
         fTerminated = true;
     }
     
     @DsfServiceEventHandler
-    public void eventDispatched(BackendExitedEvent e) {
+    public void eventDispatched(ICommandControlShutdownDMEvent e) {
         fTerminated = true;
 	}
 

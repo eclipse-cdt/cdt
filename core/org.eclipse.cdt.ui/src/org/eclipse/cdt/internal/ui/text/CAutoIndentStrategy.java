@@ -11,6 +11,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
+ *     Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -1130,7 +1131,9 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			smartIndentAfterNewLine(d, c);
 		} else if (c.text.length() == 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_AUTO_INDENT)) {
 			smartIndentOnKeypress(d, c);
-		} else if (c.text.length() > 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)) {
+		} else if (c.text.length() > 1
+				&& getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)
+				&& c.text.trim().length() != 0) {
 			smartPaste(d, c); // no smart backspace for paste
 		}
 	}

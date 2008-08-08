@@ -14,9 +14,9 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.4RC4-200806091311/eclipse-SDK-3.4RC4-linux-gtk-ppc.tar.gz"/>
-		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.I20080526-0000-e3.4.zip"/>
-		<property name="branchVersion" value="5.0.0"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.4-200806172000/eclipse-SDK-3.4-linux-gtk-ppc.tar.gz"/>
+		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.v20080619-1900-e3.4.zip"/>
+		<property name="branchVersion" value="5.0.1"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -37,7 +37,7 @@
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
-		<property name="tagbranch" value=""/>
+		<property name="tagbranch" value="-r cdt_5_0post"/>
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>

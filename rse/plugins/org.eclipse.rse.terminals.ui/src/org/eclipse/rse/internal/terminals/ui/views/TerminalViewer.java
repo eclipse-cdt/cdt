@@ -24,6 +24,7 @@
  * Yu-Fen Kuo       (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  * Anna Dushistova  (MontaVista) - [238257] Request a help text when no tab is open in "Remote Shell", "Remote Monitor" and "Terminals" views
+ * Anna Dushistova  (MontaVista) - [235097] [rseterminal] Cannot activate RSE Terminals View with the keyboard  
  *********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -94,8 +95,7 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
     }
 
     public void setFocus() {
-        // TODO Auto-generated method stub
-
+    	tabFolder.setFocus();
     }
 
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {

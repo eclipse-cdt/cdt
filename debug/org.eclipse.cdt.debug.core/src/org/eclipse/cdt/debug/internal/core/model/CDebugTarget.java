@@ -1068,7 +1068,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		disposePreferences();
 		
 		ICDITarget cdiTarget = getCDITarget();
-		setCDITarget(null);
+		// TODO: apparently we're not really done with the ICDITarget. The
+		// arrival of a terminate event from gdb requires access to this (see
+		// SessionManager.handleDebugEvent()). Reported by Mikhail. Need to
+		// revisit this.
+		// setCDITarget(null); 
 		if (cdiTarget instanceof ICDIDisposable) {
 			((ICDIDisposable)cdiTarget).dispose();
 		}		

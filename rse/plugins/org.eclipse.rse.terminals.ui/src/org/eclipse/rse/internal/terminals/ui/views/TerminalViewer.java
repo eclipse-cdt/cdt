@@ -23,7 +23,8 @@
  * Anna Dushistova  (MontaVista) - Adapted from SystemCommandsViewPart
  * Yu-Fen Kuo       (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
- ********************************************************************************/
+ * Anna Dushistova  (MontaVista) - [238257] Request a help text when no tab is open in "Remote Shell", "Remote Monitor" and "Terminals" views
+ *********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -37,18 +38,22 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.terminals.ui.TerminalUIResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalViewer extends ViewPart implements ISelectionListener,
@@ -56,14 +61,26 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
         ISystemResourceChangeListener, ISystemShellProvider, IRSEViewPart,
         IMenuListener, ISystemMessageLine {
 
-    private TerminalViewTab tabFolder;
+	private TerminalViewTab tabFolder;
+
+	private PageBook pagebook;
+
+	private Label noTabShownLabel;
 
     public static String VIEW_ID = "org.eclipse.rse.terminals.ui.view.TerminalView"; //$NON-NLS-1$
 
     public void createPartControl(Composite parent) {
-        tabFolder = new TerminalViewTab(parent, this);
+    	pagebook = new PageBook(parent, SWT.NONE);
+    	
+        tabFolder = new TerminalViewTab(pagebook, this);
         tabFolder.getFolder().addSelectionListener(this);
 
+        // Page 2: Nothing selected
+        noTabShownLabel = new Label(pagebook, SWT.TOP + SWT.LEFT + SWT.WRAP);
+        noTabShownLabel.setText(TerminalUIResources.TerminalViewer_text);   
+        showEmptyPage();
+        
+        
         ISelectionService selectionService = getSite().getWorkbenchWindow()
                 .getSelectionService();
         selectionService.addSelectionListener(this);
@@ -107,6 +124,11 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
             if (source instanceof TerminalElement) {
                 tabFolder.disposePageFor(((TerminalElement) source).getName());
             }
+        }else if(event.getType() == ISystemResourceChangeEvents.EVENT_REFRESH){
+        	if(tabFolder.getSelectedTab()==null)
+            	showEmptyPage();
+        	else
+        		showTabsPage();
         }
     }
 
@@ -197,6 +219,14 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
 
     public TerminalViewTab getTabFolder() {
         return tabFolder;
+    }
+    
+    private void showEmptyPage() {
+            pagebook.showPage(noTabShownLabel);
+    }
+    
+    private void showTabsPage(){
+        pagebook.showPage(tabFolder);
     }
 
 }

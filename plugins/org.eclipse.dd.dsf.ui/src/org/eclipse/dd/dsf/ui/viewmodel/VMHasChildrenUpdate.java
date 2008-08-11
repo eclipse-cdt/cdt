@@ -47,6 +47,11 @@ public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenU
     }
 
     @Override
+    public String toString() {
+        return "VMHasChildrenUpdate: " + getElement(); //$NON-NLS-1$
+    }
+    
+    @Override
     public void done() {
         assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
         super.done();            

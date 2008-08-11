@@ -46,6 +46,11 @@ public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCo
     }
     
     @Override
+    public String toString() {
+        return "VMChildrenCountUpdate: " + getElement(); //$NON-NLS-1$
+    }
+    
+    @Override
     public void done() {
         assert isCanceled() || fCountRequestMonitor.getData() != null || !fCountRequestMonitor.isSuccess();
         super.done();

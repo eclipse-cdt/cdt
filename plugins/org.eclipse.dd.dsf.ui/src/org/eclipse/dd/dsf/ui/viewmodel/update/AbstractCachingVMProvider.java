@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
@@ -27,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
+import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -52,6 +54,14 @@ import org.eclipse.jface.viewers.TreePath;
  */
 @SuppressWarnings("restriction")
 public class AbstractCachingVMProvider extends AbstractVMProvider implements ICachingVMProvider {
+
+    // debug flags
+    public static boolean DEBUG_CACHE = false;
+
+    static {
+        DEBUG_CACHE = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+         Platform.getDebugOption("org.eclipse.dd.dsf.ui/debug/vm/cache")); //$NON-NLS-1$
+    }   
 
     private static final int MAX_CACHE_SIZE = 1000;
 
@@ -139,13 +149,59 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             super(key);
         }
         
+        /**
+         * Counter of flush operations performed on this entry.  It is used
+         * by caching update operations to make sure that an update which
+         * was issued for a given entry is still valid for that entry when
+         * it is completed by the node. 
+         */
+        int fFlushCounter = 0;
+        
+        /**
+         * Indicates that the data in this cache entry is out of date with
+         * the data on the target.
+         */
         Boolean fDirty = false;
+        
+        /** 
+         * Cached {@link IHasChildrenUpdate} result. 
+         */
         Boolean fHasChildren = null;
+
+        /** 
+         * Cached {@link IChildrenCountUpdate} result. 
+         */
         Integer fChildrenCount = null;
+        
+        /**
+         * Flag indicating that all the children of the given element are 
+         * alredy cached.
+         */
         boolean fAllChildrenKnown = false;
+        
+        /**
+         * Map containing children of this element, keyed by child index.
+         */
         Map<Integer,Object> fChildren = null;
+        
+        /**
+         * Map of IDMData objects, keyed by the DM context.
+         */
         Map<IDMContext,Object> fDataOrStatus = new HashMap<IDMContext,Object>(1);
+        
+        /**
+         * Previous known value of the DM data objects.
+         */
         Map<IDMContext,IDMData> fArchiveData = new HashMap<IDMContext,IDMData>(1);;
+        
+        void ensureChildrenMap() {
+            if (fChildren == null) {
+                Integer childrenCount = fChildrenCount;
+                childrenCount = childrenCount != null ? childrenCount : 0;
+                int capacity = Math.max((childrenCount.intValue() * 4)/3, 32);
+                fChildren = new HashMap<Integer,Object>(capacity);
+            }
+        }
         
         @Override
         public String toString() {
@@ -315,23 +371,38 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     @Override
-    public void updateNode(IVMNode node, IHasChildrenUpdate[] updates) {
+    public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         LinkedList <IHasChildrenUpdate> missUpdates = new LinkedList<IHasChildrenUpdate>();
         for(final IHasChildrenUpdate update : updates) {
+            // Find or create the cache entry for the element of this update.
             ElementDataKey key = makeEntryKey(node, update);
             final ElementDataEntry entry = getElementDataEntry(key);
+            
             if (entry.fHasChildren != null) {
+                // Cache Hit!  Just return the value.
+                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    DsfUIPlugin.debug("cacheHitHasChildren(node = " + node + ", update = " + update + ", " + entry.fHasChildren + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
                 update.setHasChilren(entry.fHasChildren.booleanValue());
                 update.done();
             } else {
+                // Cache miss!  Save the flush counter of the entry and create a proxy update.
+                final int flushCounter = entry.fFlushCounter;
                 missUpdates.add( 
                     new VMHasChildrenUpdate(
                         update, 
                         new ViewerDataRequestMonitor<Boolean>(getExecutor(), update) {
                             @Override
                             protected void handleCompleted() {
+                                // Update completed.  Write value to cache only if update successed 
+                                // and the cache entry wasn't flushed in the mean time. 
                                 if(isSuccess()) {
-                                    entry.fHasChildren = this.getData();
+                                    if (flushCounter == entry.fFlushCounter) {
+                                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                                            DsfUIPlugin.debug("cacheSavedHasChildren(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                        }
+                                        entry.fHasChildren = this.getData();
+                                    }
                                     update.setHasChilren(getData());
                                 } else {
                                     update.setStatus(getStatus());
@@ -342,26 +413,42 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             }
         }
         
+        // Issue all the update proxies with one call.
         if (!missUpdates.isEmpty()) {
             super.updateNode(node, missUpdates.toArray(new IHasChildrenUpdate[missUpdates.size()]));
         }
     }
     
     @Override
-    public void updateNode(IVMNode node, final IChildrenCountUpdate update) {
+    public void updateNode(final IVMNode node, final IChildrenCountUpdate update) {
+        // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
         final ElementDataEntry entry = getElementDataEntry(key);
+        
         if(entry.fChildrenCount != null) {
+            // Cache Hit!  Just return the value.
+            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                DsfUIPlugin.debug("cacheHitChildrenCount(node = " + node + ", update = " + update + ", " + entry.fChildrenCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            }
             update.setChildCount(entry.fChildrenCount.intValue());
             update.done();
         } else {
+            // Cache miss!  Save the flush counter of the entry and create a proxy update.
+            final int flushCounter = entry.fFlushCounter;
             IChildrenCountUpdate updateProxy = new VMChildrenCountUpdate(
                 update, 
                 new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
                     @Override
                     protected void handleCompleted() {
+                        // Update completed.  Write value to cache only if update successed 
+                        // and the cache entry wasn't flushed in the mean time. 
                         if(isSuccess()) {
-                            entry.fChildrenCount = this.getData();
+                            if (flushCounter == entry.fFlushCounter) {
+                                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                                    DsfUIPlugin.debug("cacheSavedChildrenCount(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                }
+                                entry.fChildrenCount = this.getData();
+                            }
                             update.setChildCount(getData());
                         } else {
                             update.setStatus(getStatus());
@@ -374,61 +461,70 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     @Override
-    public void updateNode(IVMNode node, final IChildrenUpdate update) {
-        
+    public void updateNode(final IVMNode node, final IChildrenUpdate update) {
+        // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
-        
         final ElementDataEntry entry = getElementDataEntry(key);
+        
+        final int flushCounter = entry.fFlushCounter;
         if (entry.fChildren == null || (update.getOffset() < 0 && !entry.fAllChildrenKnown)) {
-            // We need to retrieve all the children if we don't have any children information.
-            // Or if the client requested all children (offset = -1, length -1) and we have not
-            // retrieved that before.
+            // Need to retrieve all the children if there is no children information yet.
+            // Or if the client requested all children (offset = -1, length -1) and all 
+            // the children are not yet known.
             IChildrenUpdate updateProxy = new VMChildrenUpdate(
                 update, update.getOffset(), update.getLength(),
                 new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update){
                     @Override
-                    protected void handleCompleted()
-                    {
-                        // Workaround for a bug caused by an optimization in the viewer:
-                        // The viewer may request more children then there are at a given level.  
-                        // This causes the update to return with an error.
-                        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-                        // Instead of checking isSuccess(), check getData() != null.
-                        if(getData() != null && !isCanceled()) {
-                            // Check if the udpate retrieved all children by specifying "offset = -1, length = -1"
-                            int updateOffset = update.getOffset();
-                            if (updateOffset < 0) {
-                                updateOffset = 0;
+                    protected void handleSuccess() {
+                        // Check if the update retrieved all children by specifying "offset = -1, length = -1"
+                        int updateOffset = update.getOffset();
+                        if (updateOffset < 0) 
+                        {
+                            updateOffset = 0;
+                            if (entry.fFlushCounter == flushCounter) {
                                 entry.fAllChildrenKnown = true;
                             }
-                            
-                            // Estimate size of children map.
-                            Integer childrenCount = entry.fChildrenCount;
-                            childrenCount = childrenCount != null ? childrenCount : 0;
-                            int capacity = Math.max((childrenCount.intValue() * 4)/3, 32);
-                            // Create a new map, but only if it hasn't been created yet by another update.
-                            if (entry.fChildren == null) {
-                                entry.fChildren = new HashMap<Integer,Object>(capacity);
-                            }
-                            
-                            // Set the children to map and update.
-                            for(int j = 0; j < getData().size(); j++) {
-                                int offset = updateOffset + j;
-                                Object child = getData().get(j);
-                                if (child != null) {
+                        }
+
+                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                            DsfUIPlugin.debug("cacheSavedChildren(node = " + node + ", update = " + update + ", children = {" + updateOffset + "->" + (updateOffset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                        }
+
+                        if (flushCounter == entry.fFlushCounter) {
+                            entry.ensureChildrenMap();
+                        }
+                        
+                        // Set the children to map and update.
+                        for(int j = 0; j < getData().size(); j++) {
+                            int offset = updateOffset + j;
+                            Object child = getData().get(j);
+                            if (child != null) {
+                                if (flushCounter == entry.fFlushCounter) {
                                     entry.fChildren.put(offset, child);
-                                    update.setChild(child, offset);
                                 }
+                                update.setChild(child, offset);
                             }
                         }
                         update.done();
+                    }
+                    
+                    @Override
+                    protected void handleCancel() {
+                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                            DsfUIPlugin.debug("cacheCanceledChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+                        }
+                        super.handleCancel();
                     }
                 });
             super.updateNode(node, updateProxy);
         } else if (update.getOffset() < 0 ) {
             // The update requested all children.  Fill in all children assuming that 
             // the children array is complete.
-            
+
+            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                DsfUIPlugin.debug("cacheHitChildren(node = " + node + ", update = " + update + ", children = " + entry.fChildren.keySet() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+            }
+
             // The following assert should never fail given the first if statement. 
             assert entry.fAllChildrenKnown;
             
@@ -438,13 +534,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             }
             update.done();
         } else {
-            // Make the list of missing children.  If we've retrieved the 
+            // Update for a partial list of children was requested.
+            // Iterate through the known children and make a list of missing 
+            // indexes.   
             List<Integer> childrenMissingFromCache = new LinkedList<Integer>();
             for (int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++) {
                 childrenMissingFromCache.add(i);
             }
 
-            // Fill in the known children from cache.
+            // Write known children from cache into the update.
             for(Integer position = update.getOffset(); position < update.getOffset() + update.getLength(); position++) {
                 Object child = entry.fChildren.get(position);
                 if (child != null) {
@@ -453,13 +551,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 }
             }
             
+            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                DsfUIPlugin.debug("cachePartialHitChildren(node = " + node + ", update = " + update + ", missing = " + childrenMissingFromCache + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+            }
+            
             if (childrenMissingFromCache.size() > 0) {
-                // perform a partial update; we only have some of the children of the update request
-
+                // Some children were not found in the cache, create separate 
+                // proxy updates for the continuous ranges of missing children.
                 List<IChildrenUpdate> partialUpdates = new ArrayList<IChildrenUpdate>(2);
-
                 final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getExecutor(), update);
-                
                 while(childrenMissingFromCache.size() > 0)
                 {
                     final int offset = childrenMissingFromCache.get(0);
@@ -475,10 +575,22 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         update, offset, length,
                         new DataRequestMonitor<List<Object>>(getExecutor(), multiRm) {
                             @Override
-                            protected void handleCompleted() {
-                                if (getData() != null) {
-                                    for (int i = 0; i < getData().size(); i++) {
+                            protected void handleSuccess() {
+                                // Only save the children to the cahce if the entry wasn't flushed.
+                                if (flushCounter == entry.fFlushCounter) {
+                                    if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                                        DsfUIPlugin.debug("cachePartialSaveChildren(node = " + node + ", update = " + update + ", saved = {" + offset + "->" + (offset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+                                    }
+                                    entry.ensureChildrenMap();
+                                }
+                                
+                                for (int i = 0; i < getData().size(); i++) {
+                                    if (getData().get(i) != null) {
                                         update.setChild(getData().get(i), offset + i);
+                                        if (flushCounter == entry.fFlushCounter) {
+                                            // Only save the children to the cahce if the entry wasn't flushed.
+                                            entry.fChildren.put(offset + i, getData().get(i));
+                                        }
                                     }
                                 }
                                 multiRm.done();
@@ -491,7 +603,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 }
                 multiRm.setDoneCount(partialUpdates.size());
             } else {
-                // we have all of the children in cache; return from cache
+                // All children were found in cache.  Compelte the update.
                 update.done();
             }
         }
@@ -506,6 +618,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
      * @param archive
      */
     private void flush(FlushMarkerKey flushKey) {
+        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+            DsfUIPlugin.debug("cacheFlushing(" + flushKey + ")"); //$NON-NLS-1$ //$NON-NLS-2$  
+        }
         // For each entry that has the given context as a parent, perform the flush.
         // Iterate through the cache entries backwards.  This means that we will be
         // iterating in order of most-recently-used to least-recently-used.
@@ -528,6 +643,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 // now.
                 if (entryFlushKey.includes(flushKey)) {
                     break;
+
                 }
             }
             else if (entry instanceof ElementDataEntry) {
@@ -561,9 +677,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                             entry.remove();
                         }
                     }
+                    elementDataEntry.fFlushCounter++;                    
                     elementDataEntry.fHasChildren = null;
                     elementDataEntry.fChildrenCount = null;
                     elementDataEntry.fChildren = null;
+                    elementDataEntry.fAllChildrenKnown = false;
                     elementDataEntry.fDirty = false;
                 } else if ((updateFlags & IVMUpdatePolicy.DIRTY) != 0) {
                     elementDataEntry.fDirty = true;
@@ -754,7 +872,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 	                						entry.fDataOrStatus.put(dmc, getData());
 	                						rm.setData(getData());
 	                					} else {
-	                						entry.fDataOrStatus.put(dmc, getStatus());
+	                					    if (!isCanceled()) {
+	                					        entry.fDataOrStatus.put(dmc, getStatus());
+	                					    }
 	                						rm.setStatus(getStatus());
 	                					}
 	                					rm.done();

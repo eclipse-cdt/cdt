@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
@@ -63,16 +62,6 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     private ListenerList fListeners = new ListenerList();
 	private IDoubleClickListener fDoubleClickListener;
     
-    /**
-     * Debug flag indicating whether the deltas should be traced in stdout. 
-     */
-    private static boolean DEBUG_DELTAS = false;
-    
-    static {
-        DEBUG_DELTAS = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-         Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/deltas")); //$NON-NLS-1$
-    }   
-
     /**
      * Creates this model proxy strategy for the given provider. 
      */
@@ -122,9 +111,6 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     public void fireModelChanged(IModelDelta delta) {
         final IModelDelta root = getRootDelta(delta);
         Object[] listeners = getListeners();
-        if (DEBUG_DELTAS) {
-            DebugUIPlugin.debug("FIRE DELTA: " + delta.toString()); //$NON-NLS-1$
-        }
         for (int i = 0; i < listeners.length; i++) {
             final IModelChangedListener listener = (IModelChangedListener) listeners[i];
             ISafeRunnable safeRunnable = new ISafeRunnable() {
@@ -353,6 +339,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         // super-class to resort to the default behavior which may add a 
                         // delta for every element in this node.
                         buildChildDeltasForAllContexts(node, event, parentDelta, nodeOffset, rm);
+                    } else {
+                        super.handleCompleted();
                     }
                 }
             });
@@ -388,13 +376,13 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 node, 
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), null) {
+                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), requestMonitor) {
                         @Override
-                        protected void handleCompleted() {
+                        protected void handleSuccess() {
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
-                            if (!isSuccess() || getData().isEmpty()) {
+                            if (getData().isEmpty()) {
                                 requestMonitor.done();
                                 return;
                             }
@@ -490,13 +478,12 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
                     new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), requestMonitor) {
                         @Override
-                        protected void handleCompleted() {
+                        protected void handleSuccess() {
                             if (fDisposed) return;
                             
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
-                            // No need to propagate error, there's no means or need to display it.
-                            if (!isSuccess() || getData().size() == 0) {
+                            if (getData().size() == 0) {
                                 requestMonitor.done();
                                 return;
                             }
@@ -556,7 +543,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             node, delta, calculateOffsets, 
             new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), requestMonitor) {
                 @Override
-                protected void handleCompleted() {
+                protected void handleSuccess() {
                     final CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
                     int multiRmCount = 0;
                     

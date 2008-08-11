@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.internal.ui;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -26,6 +27,8 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	
     private static BundleContext fgBundleContext; 
 
+    public static boolean DEBUG = false;
+
 	/**
 	 * The constructor
 	 */
@@ -41,6 +44,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
+	    DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/*
@@ -66,5 +70,16 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public static BundleContext getBundleContext() {
         return fgBundleContext;
     }
+    
+    /**
+     * If the debug flag is set the specified message is printed to the console
+     * @param message
+     */
+    public static void debug(String message) {
+        if (DEBUG) {
+            System.out.println(message);
+        }
+    }
+
 
 }

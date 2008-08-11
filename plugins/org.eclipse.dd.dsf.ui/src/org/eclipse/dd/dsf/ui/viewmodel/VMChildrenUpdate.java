@@ -13,11 +13,7 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -92,7 +88,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
         
     @Override
     public String toString() {
-        return "VMElementsUpdate for elements under parent = " + getElement() + ", in range " + getOffset() + " -> " + (getOffset() + getLength());  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+        return "VMChildrenUpdate:" + getElement() + " {"+ getOffset() + "->" + (getOffset() + getLength()) + "}";  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
     }
 
     @Override
@@ -105,32 +101,21 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
          * A flexible hierarchy bug/optimization causes query with incorrect
          * IChildrenUpdate[] array length.
          *
-         * We found this while deleting a register node. Example:
-         * 
-         *  the register view displays:
+         * The problem manifests itself while deleting a register node. 
+         * For example, if the register view displays:
          *     PC
          *     EAX
          *     EBX
          *     ECX
          *     EDX
-         * 
-         *   we delete EBX and force a context refresh.
-         * 
-         *   flexible hierarchy queries for IChildrenUpdate[5] and IChildrenCountUpdate at
-         * the same time.
-         * 
-         *   VMElementsUpdate, used by VMCache to wrap the IChildrenUpdate, generates an
-         * IStatus.ERROR with message "Incomplete elements of updates" when fElements
-         * count (provided by service) does not match the length provided by the original
-         * update query.
-         * 
-         * Workaround, always set the elements array in the request monitor, but still set 
-         * the error status. 
+         *  And EBX is deleted, forcing a refresh, the viewer will query 
+         *  for IChildrenUpdate[5] and IChildrenCountUpdate at the same time.
+         *  
+         *  To avoid this problem do not generate an error if the list of 
+         *  children is smaller than the list of requested indexes.  Also,
+         *  do not check if any of the elements are null.
          */        
         rm.setData(fElements);
-        if (rm.isSuccess() && fLength != -1 && fElements.size() != fLength) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
-        }
         super.done();
     }
     

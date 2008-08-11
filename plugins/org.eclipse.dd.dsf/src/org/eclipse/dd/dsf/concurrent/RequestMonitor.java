@@ -136,7 +136,10 @@ public class RequestMonitor {
      * Sets the status of the result of the request.  If status is OK, this 
      * method does not need to be called. 
      */
-    public synchronized void setStatus(IStatus status) { fStatus = status; }
+    public synchronized void setStatus(IStatus status) { 
+        assert isCanceled() || status.getSeverity() != IStatus.CANCEL; 
+        fStatus = status; 
+    }
     
     /** Returns the status of the completed method. */
     public synchronized IStatus getStatus() {

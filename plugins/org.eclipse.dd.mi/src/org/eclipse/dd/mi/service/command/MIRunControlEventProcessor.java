@@ -195,12 +195,7 @@ public class MIRunControlEventProcessor
     				if (event != null) {
     					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     				}
-    			}
-    		} else if (oobr instanceof MINotifyAsyncOutput) {
-    			// Parse the string and dispatch the corresponding event
-    			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
-    			String miEvent = exec.getAsyncClass();
-    			if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     				
     				String groupId = null;
 

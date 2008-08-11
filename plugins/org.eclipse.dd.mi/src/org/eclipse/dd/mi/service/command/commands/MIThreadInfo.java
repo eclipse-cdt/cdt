@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
 
@@ -26,12 +26,12 @@ import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
  */
 public class MIThreadInfo extends MICommand<MIThreadInfoInfo> {
 	
-	public MIThreadInfo(IContainerDMContext dmc) {
+	public MIThreadInfo(MIControlDMContext dmc) {
 		super(dmc, "-thread-info"); //$NON-NLS-1$
 	}
 
-	public MIThreadInfo(IContainerDMContext dmc, int threadId) {
-		super(dmc, "-thread-info", new String[]{ Integer.toString(threadId) }); //$NON-NLS-1$
+	public MIThreadInfo(MIControlDMContext dmc, String threadId) {
+		super(dmc, "-thread-info", new String[]{ threadId }); //$NON-NLS-1$
 	}
 
     @Override

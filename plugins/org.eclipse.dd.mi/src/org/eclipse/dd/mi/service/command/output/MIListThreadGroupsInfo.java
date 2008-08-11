@@ -21,15 +21,15 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
  * 
  *  The description field can be different depending on the target we are connected to.
  *
- *  This output is from -list-thread-groups --available:
+ *  -list-thread-groups --available:
  *  ^done,groups=[{id="160",description="name: JIM_InstallerProcess, type 555481, locked: N, system: N, state: Idle"},
  *               {id="161",description="name: JIM_TcpSetupHandlerProcess, type 555505, locked: N, system: N, state: Idle"},
  *               {id="162",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
  *               
- *  This output is from -list-thread-groups: 
+ *  -list-thread-groups: 
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *
- *  This output is from -list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
+ *  list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
  */
@@ -77,31 +77,9 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		public String getDesciption() { return fDescription; }
 	}
 	
-	public interface IThreadInfo {
-		String getThreadId();
-		String getOSId();
-		String getState();
-	}
 	
-	@Immutable
-	private static class ThreadInfo implements IThreadInfo {
-		final String fThreadId;
-		final String fOSId;
-		final String fState;
-		
-		public ThreadInfo(String id, String osId, String state) {
-			fThreadId = id;
-			fOSId = osId;
-			fState = state;
-		}
-		
-		public String getThreadId() { return fThreadId; }
-		public String getOSId() { return fOSId; }
-		public String getState() { return fState; }
-	}
-	
-	IThreadGroupInfo[] fGroupList;
-	IThreadInfo[] fThreadList;
+	private IThreadGroupInfo[] fGroupList;
+	private MIThreadInfoInfo fThreadInfo;
 	
     public MIListThreadGroupsInfo(MIOutput out) {
         super(out);
@@ -109,7 +87,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 	}
 	
 	public IThreadGroupInfo[] getGroupList() { return fGroupList; }
-	public IThreadInfo[] getThreadList() { return fThreadList; }
+	public MIThreadInfoInfo getThreadInfo() { return fThreadInfo; }
 	
 	private void parse() {
 		if (isDone()) {
@@ -125,26 +103,23 @@ public class MIListThreadGroupsInfo extends MIInfo {
 							parseGroups((MIList)val);
 						}
 					} else if (var.equals("threads")) { //$NON-NLS-1$
-						MIValue val = results[i].getMIValue();
-						if (val instanceof MIList) {
-							parseThreads((MIList)val);
-						}
+						// Re-use the MIThreadInfoInfo parsing
+						fThreadInfo = new MIThreadInfoInfo(out);
 					}
-
 				}
 			}
 		}
 		if (fGroupList == null) {
 			fGroupList = new IThreadGroupInfo[0];
 		}
-		if (fThreadList == null) {
-			fThreadList = new IThreadInfo[0];
+		if (fThreadInfo == null) {
+			fThreadInfo = new MIThreadInfoInfo(null);
 		}
 	}
 
 	private void parseGroups(MIList list) {
 		MIValue[] values = list.getMIValues();
-		fGroupList = new ThreadGroupInfo[values.length];
+		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
 			String id = "", desc = "";//$NON-NLS-1$//$NON-NLS-2$
@@ -167,42 +142,6 @@ public class MIListThreadGroupsInfo extends MIInfo {
 				}
 			}
 			fGroupList[i] = new ThreadGroupInfo(id, desc);
-		}
-	}
-	
-	private void parseThreads(MIList list) {
-		MIValue[] values = list.getMIValues();
-		fThreadList = new ThreadInfo[values.length];
-		for (int i = 0; i < values.length; i++) {
-			MIResult[] results = ((MITuple)values[i]).getMIResults();
-			String id = "", osId = "", state = "";//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			
-			for (MIResult result : results) {
-				String var = result.getVariable();
-				if (var.equals("id")) { //$NON-NLS-1$
-					MIValue value = result.getMIValue();
-					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
-						id = str.trim();
-					}
-				} else if (var.equals("target-id")) { //$NON-NLS-1$
-					MIValue value = result.getMIValue();
-					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
-						osId = str.trim();
-
-					}
-				} else if (var.equals("state")) { //$NON-NLS-1$
-					MIValue value = result.getMIValue();
-					if (value instanceof MIConst) {
-						String str = ((MIConst)value).getCString();
-						state = str.trim();
-
-					}
-				}
-			}
-			fThreadList[i] = new ThreadInfo(id, osId, state);
-
 		}
 	}
 }

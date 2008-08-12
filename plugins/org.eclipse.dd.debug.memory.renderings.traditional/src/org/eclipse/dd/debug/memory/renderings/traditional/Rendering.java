@@ -521,8 +521,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	if(this.isDisposed())
     		return;
     	
+    	boolean isChangeOnly = false;
+    	boolean isSuspend = false;
+    	
     	for(int i = 0; i < events.length; i++)
-        {
+        {	
             if(events[0].getSource() instanceof IDebugElement)
             {
                 final int kind = events[i].getKind();
@@ -530,46 +533,44 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 final IDebugElement source = (IDebugElement) events[i]
                     .getSource();
                 
-                // TODO allow extensible customization of event handling;
-                // integration with user configurable update policies should happen here.
                 if(source.getDebugTarget() == getMemoryBlock()
                         .getDebugTarget())
                 {
                 	if(kind == DebugEvent.SUSPEND)
                 	{
                 		handleSuspendEvent(detail);
+                		isSuspend = true;
                 	}
                 	else if(kind == DebugEvent.CHANGE)
                 	{
                 		handleChangeEvent();
+                		isChangeOnly = true;
                 	}
-//                	else if(kind == DebugEvent.RESUME)
-//                	{
-//                		handleResumeEvent();
-//                	}
                 }
             }
         }
-    }
-
-    protected void handleSuspendEvent(int detail)
-    {
-    	if(detail == 0)
-    	{
-	        Display.getDefault().asyncExec(new Runnable()
-	        {
-	            public void run()
-	            {
-	            	archiveDeltas();
-	                refresh();
-	            }
-	        });
-    	}
+    	
+    	if(isSuspend)
+    		handleSuspend();
+    	else if(isChangeOnly)
+    		handleChange();
     }
     
-    protected void handleChangeEvent()
+    protected void handleSuspend()
     {
-        Display.getDefault().asyncExec(new Runnable()
+    	Display.getDefault().asyncExec(new Runnable()
+        {
+            public void run()
+            {
+            	archiveDeltas();
+                refresh();
+            }
+        });
+    }
+    
+    protected void handleChange()
+    {
+    	Display.getDefault().asyncExec(new Runnable()
         {
             public void run()
             {
@@ -577,16 +578,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         });
     }
-    
-    protected void handleResumeEvent()
+
+    protected void handleSuspendEvent(int detail)
     {
-        Display.getDefault().asyncExec(new Runnable()
-        {
-            public void run()
-            {
-//                archiveDeltas();
-            }
-        });    	
+    }
+    
+    protected void handleChangeEvent()
+    {
     }
     
     // return true to enable development debug print statements

@@ -1236,7 +1236,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
     @DsfServiceEventHandler
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
-        terminated();
+        // bug 243899: The call to terminate results in an exception,  
+        // need to investigate.
+        //terminated();
     }
 
     private void terminated() {

@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David Dykstal (IBM) - [197027] Can lose data if closing eclipse before profile is saved
+ * Kevin Doyle	 (IBM) - [243821] Save occurring on Main Thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -81,7 +82,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 		 */
 		public void doneSaving(ISaveContext context) {
-			// do nothing
+			canScheduleSave = true;
 		}
 
 		/* (non-Javadoc)

@@ -352,6 +352,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_CORRECTION_CHANGE = createManaged(T_OBJ, IMG_CORRECTION_CHANGE);
 	public static final String IMG_CORRECTION_RENAME= NAME_PREFIX + "correction_rename.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CORRECTION_RENAME = createManaged(T_OBJ, IMG_CORRECTION_RENAME);
+	public static final String IMG_CORRECTION_LINKED_RENAME= NAME_PREFIX + "correction_linked_rename.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CORRECTION_LINKED_RENAME = createManaged(T_OBJ, IMG_CORRECTION_LINKED_RENAME);
 
 	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE= NAME_PREFIX + "never_translate.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_NLS_NEVER_TRANSLATE = createManaged(T_OBJ, IMG_OBJS_NLS_NEVER_TRANSLATE);

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems and others.
+ * Copyright (c) 2006, 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn (Wind River Systems) - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems) - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring;
 
@@ -33,21 +34,28 @@ import org.eclipse.cdt.internal.ui.refactoring.UndoCTextFileChange;
  * A TextFileChange that uses a working copy in order to generate CModel events.
  */
 public class CTextFileChange extends TextFileChange {
-    private ITranslationUnit fTranslationUnit = null;
+    // "c2" is the extension which the CContentViewerCreator is registered
+    // with the extension point "org.eclipse.compare.contentMergeViewers"
+    private static final String TEXT_TYPE = "c2"; //$NON-NLS-1$
+	private ITranslationUnit fTranslationUnit;
     private IWorkingCopy fWorkingCopy;
-    private int fAquireCount= 0;
+    private int fAquireCount;
     
     public CTextFileChange(String name, IFile file) {
         super(name, file);
         ICElement element = CoreModel.getDefault().create(file);
-        if(element instanceof ITranslationUnit) {
-            fTranslationUnit = (ITranslationUnit)element;
-            // "c2" is the extension which the CContentViewerCreator is registered
-            // with the extension point "org.eclipse.compare.contentMergeViewers"
-            setTextType("c2"); //$NON-NLS-1$
+        if (element instanceof ITranslationUnit) {
+            fTranslationUnit = (ITranslationUnit) element;
+            setTextType(TEXT_TYPE);
         }
     }
     
+    public CTextFileChange(String name, ITranslationUnit tu) {
+        super(name, getFile(tu));
+        fTranslationUnit = tu;
+        setTextType(TEXT_TYPE);
+    }
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.ltk.core.refactoring.TextFileChange#acquireDocument(org.eclipse.core.runtime.IProgressMonitor)
@@ -99,4 +107,8 @@ public class CTextFileChange extends TextFileChange {
 	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
         return new UndoCTextFileChange(getName(), getFile(), edit, stampToRestore, getSaveMode());
     }
+
+	private static IFile getFile(ITranslationUnit tu) {
+		return (IFile) tu.getResource();
+	}
 }

@@ -89,7 +89,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			super.setUp();
 			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		}
-		protected void tearDown () throws Exception {
+		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
 			
@@ -132,9 +132,9 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	
 			private synchronized void countOccurrences() {
 				fOccurrences= 0;
-				Iterator iter= fAnnotationModel.getAnnotationIterator();
+				Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
-					Annotation annotation= (Annotation)iter.next();
+					Annotation annotation= iter.next();
 					if (OCCURRENCE_ANNOTATION.equals(annotation.getType()))
 						fOccurrences++;
 				}
@@ -158,7 +158,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		assertTrue(file != null && file.exists());
 		try {
-			return (CEditor)EditorTestHelper.openInEditor(file, true);
+			return (CEditor) EditorTestHelper.openInEditor(file, true);
 		} catch (PartInitException e) {
 			fail();
 			return null;
@@ -308,6 +308,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
+	
 	public void testMarkMethodOccurrences2() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "getNumber", true, true, true, false);
@@ -321,6 +322,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
+	
 	public void testMarkFieldOccurrences() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "pubField", true, true, true, false);
@@ -334,6 +336,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
+	
 	public void testMarkFieldOccurrences2() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "tArg1", true, true, true, false);
@@ -362,7 +365,6 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(2);
 		assertOccurrencesInWidget();
 	}
-	
 
 	public void testMarkDestructorOccurrences() {
 		try {
@@ -496,9 +498,9 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	private void assertOccurrencesInWidget() {
 		EditorTestHelper.runEventQueue(500);
 
-		Iterator iter= fAnnotationModel.getAnnotationIterator();
+		Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Annotation annotation= (Annotation)iter.next();
+			Annotation annotation= iter.next();
 			if (OCCURRENCE_ANNOTATION.equals(annotation.getType()))
 				assertOccurrenceInWidget(fAnnotationModel.getPosition(annotation));
 		}
@@ -514,8 +516,8 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			}
 		}
 		fail();
-		
 	}
+	
 	/**
 	 * Returns the occurrence annotation color.
 	 * 
@@ -529,7 +531,6 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		
 		return null;
 	}
-	
 
 	private void assertOccurrences(final int expected) {
 		DisplayHelper helper= new DisplayHelper() {
@@ -541,5 +542,4 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			assertEquals(expected, fOccurrences);
 		}
 	}
-	
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Completion Proposal Computer</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">Completion Proposal Computer</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.ui.completionProposalComputer<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>This extension point allows to contribute completion proposal computers to participate in the content assist process of the C/C++ editor.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.completionProposalComputer">completionProposalComputer</a> | <a href="#e.proposalCategory">proposalCategory</a>)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>point</b> - The fully qualified identifier of the target extension point</li>
+<li><b>id</b> - The identifier of the extension instance, unique within the declaring plug-in (the plug-in's identifier will be prepended to form a platform-wide unique id)</li>
+<li><b>name</b> - The optional name of the extension instance</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.completionProposalComputer">completionProposalComputer</a> (<a href="#e.partition">partition</a>)*&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST completionProposalComputer</p>
+<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">activate&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">categoryId&nbsp;CDATA "org.eclipse.cdt.ui.defaultProposalCategory"&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A proposal computer contribution. If no partition types are specified, the computer is added to all partition types.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - The name of the class that implements the contributed computer. The
+class must be public and implement
+<samp>org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer</samp>
+and must have a public 0-argument constructor.</li>
+<li><b>activate</b> - If the attribute is set to "true" it will force this plug-in to be loaded on content assist invocation.</li>
+<li><b>categoryId</b> - The id of a <tt>proposalCategory</tt></li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.partition">partition</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST partition</p>
+<p class="code SchemaDtdAttlist">type&nbsp;(__dftl_partition_content_type|__c_multiline_comment|__c_singleline_comment|__c_string|__c_character|__c_preprocessor|__c_multiline_doc_comment|__c_singleline_doc_comment) &gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>type</b> - A C/C++ partition type for which the specified computer can provide completion proposals. See <code>IDocument.DEFAULT_CONTENT_TYPE</code> and <code>ICPartitions</code> for valid values.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.proposalCategory">proposalCategory</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST proposalCategory</p>
+<p class="code SchemaDtdAttlist">icon&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A proposal category contribution defines categories of proposals used to group them in the UI.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>icon</b> - The optional icon of the category, which can be displayed in the user preferences.</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6>The following is an example of a completion proposal computer contribution:
+
+<p>
+<pre class="Example"><span class="code SchemaTag">
+ &lt;extension point=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.ui.completionProposalComputer&quot;</span><span class="code SchemaTag">
+   id=</span><span class="code SchemaCstring">&quot;textual_proposals&quot;</span><span class="code SchemaTag">
+   name=</span><span class="code SchemaCstring">&quot;Text Proposals&quot;</span><span class="code SchemaTag">&gt;
+   &lt;proposalCategory icon=</span><span class="code SchemaCstring">&quot;icons/wordcompletions.png&quot;</span><span class="code SchemaTag">/&gt;
+ &lt;/extension&gt;
+ &lt;extension point=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.ui.completionProposalComputer&quot;</span><span class="code SchemaTag">
+   id=</span><span class="code SchemaCstring">&quot;WordCompletionProposalComputer&quot;</span><span class="code SchemaTag">
+   name=</span><span class="code SchemaCstring">&quot;Word Completion Proposal Computer&quot;</span><span class="code SchemaTag">&gt;
+   &lt;completionProposalComputer
+      class=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer&quot;</span><span class="code SchemaTag">
+      categoryId=</span><span class="code SchemaCstring">&quot;org.eclipse.ui.texteditor.textual_proposals&quot;</span><span class="code SchemaTag">&gt;
+      &lt;partition type=</span><span class="code SchemaCstring">&quot;__c_multiline_comment&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;/completionProposalComputer&gt;
+ &lt;/extension&gt;
+</span></pre>
+</p>
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>see <code>org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer</code> for an example.
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2006, 2007 IBM Corporation and others.<br>
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>
+
+</p>
+</BODY>
+</HTML>

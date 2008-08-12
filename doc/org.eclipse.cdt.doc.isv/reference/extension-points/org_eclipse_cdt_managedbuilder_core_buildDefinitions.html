@@ -1,0 +1,630 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Managed Build Definitions</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">Managed Build Definitions</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.managedbuilder.core.buildDefinitions<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>This extension point was added in CDT 2.1
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>The managed build object model describes project-types, configurations, tool-chains, etc. for the managed build system.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.projectType">projectType</a>* , <a href="#e.configuration">configuration</a>* , <a href="#e.toolChain">toolChain</a>* , <a href="#e.tool">tool</a>* , <a href="#e.targetPlatform">targetPlatform</a>* , <a href="#e.builder">builder</a>* , <a href="#e.dynamicElementProvider">dynamicElementProvider</a>* , <a href="#e.managedBuildRevision">managedBuildRevision</a>? , <a href="#e.buildDefinitionStartup">buildDefinitionStartup</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.projectType">projectType</a> (<a href="#e.configuration">configuration</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST projectType</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isTest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">projectEnvironmentSupplier&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">projectMacroSupplier&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">configurationNameProvider&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">convertToId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildProperties&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildArtefactType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents a class of project which acts as a template for the projects that the user will create, for example, a Linux static library. A project type contains a sequence of configurations. Project types are arranged in an inheritance hierarchy where a project type inherits the list of configurations from it's parent and can add to or override configurations in this list.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - Used by the build model to uniquely identify the project type.</li>
+<li><b>name</b> - A human-readable project type name, such as 'Executable'. This will be the name the user sees displayed in the UI.</li>
+<li><b>superClass</b> - The id of a projectType that this projectType is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags a project type as abstract.  If true, the project type will not appear in the UI.  The project type is used by other project types as their "superclass".  The default value is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><b>isTest</b> - An optional field that flags a project type as test-only. If true, the project type will not appear in the UI.  The project type can be manipulated programmatically in JUnit tests, for example.  The default value is false.</li>
+<li><b>projectEnvironmentSupplier</b> - Specifies the name of the class that implements IProjectEnvironmentVariableSupplier in order to provide project level environment variables.</li>
+<li><b>projectMacroSupplier</b> - Specifies the name of the class that implements IProjectBuildMacroSupplier in order to provide project level build macros.</li>
+<li><b>configurationNameProvider</b> - Contains the name of a class that implements an interface with a method for returning a default name for a configuration.  The configuration names in a user's project must be unique.  A projectType can contain configuration children with the same name.  In this case, a configurationNameProvider must be specified to make the names unique before they are displayed to the user in the New Project and New Configuration dialog boxes.</li>
+<li><b>convertToId</b> - The identifier of a projectType, that project types loaded using this definition should be converted to. MBS will invoke a proper converter.</li>
+<li><b>buildProperties</b> - Specifies the comma-separated list of build property type - value pairs to be applied for all configurations of this project type.
+property type-value pairs are specified in the type_id=value_id format.</li>
+<li><b>buildArtefactType</b> - the attribute specified the Build Artefact Type. can contain the value id of the "org.eclipse.cdt.build.core.buildArtefactType" build property. Default values contributed with the build system are 
+"org.eclipse.cdt.build.core.buildArtefactType.exe" - represents executable,
+"org.eclipse.cdt.build.core.buildArtefactType.staticLib" - represents static library,
+"org.eclipse.cdt.build.core.buildArtefactType.sharedLib" - represents dynamic library
+Custom values can be contributed via the "org.eclipse.cdt.managedbuilder.core.buildProperties" extension point. See the description of that extension point for more detail. 
+
+Specifying this attribute is fully equivalent to specifying the "org.eclipse.cdt.build.core.buildArtefactType" via tne buildProperties attribute. The buildArtefactType attribute, the "buildArtefactType" attribute value takes precedence over the artefact type specified via the "buildProperties" attribute</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.project">project</a> (<a href="#e.configuration">configuration</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST project</p>
+<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">projectType&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+The project element is an instance of a projectType element.  It appears in the .cdtbuild file, not in an extension definition.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - The name of the project that the user sees displayed in the UI.  This is the name that the user entered in the New Project wizard.</li>
+<li><b>projectType</b> - The id of the projectType that this project is an instance of.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.configuration">configuration</a> (<a href="#e.toolChain">toolChain</a>? , <a href="#e.resourceConfiguration">resourceConfiguration</a>* , <a href="#e.enablement">enablement</a>* , <a href="#e.folderInfo">folderInfo</a>* , <a href="#e.fileInfo">fileInfo</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST configuration</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">artifactName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">artifactExtension&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">cleanCommand&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">errorParsers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">prebuildStep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">postbuildStep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">preannouncebuildStep&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">postannouncebuildStep&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildProperties&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildArtefactType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A configuration is used to gather together certain default tools and options to build project a certain way. For example, a "Debug" configuration might supply tools with the options set to build with debugging symbols, whereas a "Release" configuration would supply tools with options set to create the best performance.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - Unique identifier for the configuration.</li>
+<li><b>name</b> - A descriptive name for the configuration to be used in the UI.</li>
+<li><b>parent</b> - The configuration that this configuration was cloned from.</li>
+<li><b>artifactName</b> - This is the name of the final build artifact associated with the configuration. The user will specify this is the UI, so there is no need to supply a default value.</li>
+<li><b>artifactExtension</b> - This is the extension that will be applied (if necessary) to any build artifact created by the configuration.</li>
+<li><b>cleanCommand</b> - This attribute maintains the command that removes the intermediate and output files for a particular configuration. For example, on POSIX platforms like Linuc, Solaris, or Cygwin, the command would be <code>rm -rf</code> whereas on Win32 platforms it would be <code>del /F /S /Q</code></li>
+<li><b>errorParsers</b> - The semi-colon separated list of the default error parsers to be used with this configuration. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  The list of error parsers to be used may be changed by the user on a per-configuration basis.  When specified, this overrides the tool-chain errorParsers attribute.</li>
+<li><b>prebuildStep</b> - Specifies the pre-build command, which runs prior to the standard MBS build.</li>
+<li><b>postbuildStep</b> - Specifies the post-build command, which runs after the standard MBS build.</li>
+<li><b>preannouncebuildStep</b> - Specifies the string to be displayed when the pre-build command step is run.</li>
+<li><b>postannouncebuildStep</b> - Specifies the string to be displayed when the post-build command step is run.</li>
+<li><b>description</b> - Specifies the description of the configuration that will be displayed to the user while creating a project and managing configurations.  The description is only displayed in the UI - it is not considered to be part of the configuration name.</li>
+<li><b>buildProperties</b> - Specifies the comma-separated list of build property type - value pairs defined for this configuration.
+property type-value pairs are specified in the type_id=value_id format.</li>
+<li><b>buildArtefactType</b> - the attribute specified the Build Artefact Type. can contain the value id of the "org.eclipse.cdt.build.core.buildArtefactType" build property. Default values contributed with the build system are 
+"org.eclipse.cdt.build.core.buildArtefactType.exe" - represents executable,
+"org.eclipse.cdt.build.core.buildArtefactType.staticLib" - represents static library,
+"org.eclipse.cdt.build.core.buildArtefactType.sharedLib" - represents dynamic library
+Custom values can be contributed via the "org.eclipse.cdt.managedbuilder.core.buildProperties" extension point. See the description of that extension point for more detail. 
+
+Specifying this attribute is fully equivalent to specifying the "org.eclipse.cdt.build.core.buildArtefactType" via tne buildProperties attribute. The buildArtefactType attribute, the "buildArtefactType" attribute value takes precedence over the artefact type specified via the "buildProperties" attribute</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.toolChain">toolChain</a> (<a href="#e.tool">tool</a>* , <a href="#e.targetPlatform">targetPlatform</a>? , <a href="#e.builder">builder</a>? , <a href="#e.optionCategory">optionCategory</a>* , <a href="#e.option">option</a>* , <a href="#e.supportedProperties">supportedProperties</a>?)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST toolChain</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">osList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">archList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">errorParsers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">scannerConfigDiscoveryProfileId&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">targetTool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">secondaryOutputs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isToolChainSupported&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">configurationEnvironmentSupplier&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">configurationMacroSupplier&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">versionsSupported&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">convertToId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">optionPathConverter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">supportsManagedBuild&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">isSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A tool-integrator-defined, ordered set of tools that tranform the project's resources into the project's outputs.  A tool-chain can be defined as part of a configuration, or as an independent specification that is referenced from a separate configuration via the tool-chain superClass attribute.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - Unique identifier for the tool-chain.</li>
+<li><b>name</b> - A descriptive name for the tool-chain to be used in the UI.</li>
+<li><b>superClass</b> - The id of a toolChain that this toolChain is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags a tool-chain as abstract.  An abstract tool-chain must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but tool-chains derived from this tool-chain will inherit its attributes and children.  The default is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><b>osList</b> - This field lists the host operating systems on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOS() and include strings like "win32", "linux", "solaris", "hpux", "aix".  Do not specify this attribute or specify "all" to allow all host operating systems.</li>
+<li><b>archList</b> - This field lists the host architectures on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOSArch() and include strings like "ia32".  Do not specify this attribute or specify "all" to allow all host architectures.</li>
+<li><b>errorParsers</b> - The semi-colon separated list of the default error parsers to be used with this tool-chain. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  When specified, this overrides the tool errorParsers attributes of the tool children of the tool-chain and the builder child of the tool-chain.</li>
+<li><b>scannerConfigDiscoveryProfileId</b> - Specifies an id of scanner configuration discovery profile for gathering the built-in compiler settings for a toolchain.</li>
+<li><b>targetTool</b> - Specifies a semi-colon separated list of the Tool(s) that can create the final build artifact (the end target of the build).  The first tool found in the configuration is used.  A list is needed, for example, when a tool-chain has different tools for different project natures.</li>
+<li><b>secondaryOutputs</b> - A semi-colon separated list of IDs of other outputTypes, besides the primary outputType of the targetTool, that are also considered to be build artifacts.  The build file generator will ensure that the outputs get built.</li>
+<li><b>isToolChainSupported</b> - Specifies the name of the class that implements IManagedIsToolChainSupported.  This provides a method to be called to determine if support for the tool-chain is currently installed on the system.  MBS uses this information in order to filter the choices presented to the CDT user and to inform the user when support needed by their project is not installed. If the isToolChainSupported callback is not provided by the tool-chain definition, the tool-chain is treated as supported.  If all configurations defined for the given project type are not supported the project type is treated as unsupported.</li>
+<li><b>configurationEnvironmentSupplier</b> - Specifies the name of the class that implements IConfigurationEnvironmentVariableSupplier in order to provide configuration level environment variables.</li>
+<li><b>configurationMacroSupplier</b> - Specifies the name of the class that implements IConfigurationBuildMacroSupplier in order to provide configuration level build macros.</li>
+<li><b>versionsSupported</b> - Specifies a comma delimited list of versions of this tool-chain that can be loaded without invoking a converter.</li>
+<li><b>convertToId</b> - The identifier of a tool-chain, that tool-chains loaded using this definition should be converted to. MBS will invoke a proper converter.</li>
+<li><b>optionPathConverter</b> - Toolchains like Cygwin based Gnu tools can accept paths which are not valid for the OS platform. E.g. "/usr/include" is well difined for a Cygwin gcc compiler while it is not a meaningful path for a java.io.File. Therefore toolchains can specify a pathConverter which will be applied to include and library paths configured in the Managed Build System.
+
+The pathConverter of a toolchain applies for all tools of the toolchain except if a tool defines it's own pathConverter. In this case the pathConverter supplied by the toolchain is ignored.</li>
+<li><b>supportsManagedBuild</b> - Specifies whether or not the tool-chain supports managed build. Default value is true.</li>
+<li><b>isSystem</b> - the system elements are used by the system for specific needs and are not displayed in UI</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.resourceConfiguration">resourceConfiguration</a> (<a href="#e.tool">tool</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST resourceConfiguration</p>
+<p class="code SchemaDtdAttlist">resourcePath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">exclude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">rcbsApplicability&nbsp;(before|after|override|disable) <p class="code SchemaDtdAttlist">toolsToInvoke&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A place to store build attributes of individual resources that are different from the configuration as a whole.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>resourcePath</b> - The path of the project resource to which this element applies.</li>
+<li><b>exclude</b> - Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.</li>
+<li><b>rcbsApplicability</b> - Identifies how the user desires to apply a resource custom build step:
+     1.  Apply rcbs tool before any other tools defined for the resource.
+     2.  Apply rcbs tool after any other tools defined for the resource.
+     3.  Apply rcbs tool overriding any other tools defined for the resource.
+     4.  Disable (don't apply) the rcbs tool.</li>
+<li><b>toolsToInvoke</b> - Identifies which tools to invoke by a semicolon separated list of child tool ids.  Applies as follows:
+     1.  Defaults to all tools in the order found
+     2.  Use specified ordered list of children to invoke
+     3.  If empty string, treat as if no resource configuration existed, i.e., use project level tool.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.tool">tool</a> (<a href="#e.option">option</a>* , <a href="#e.optionCategory">optionCategory</a>* , <a href="#e.inputType">inputType</a>* , <a href="#e.outputType">outputType</a>* , <a href="#e.envVarBuildPath">envVarBuildPath</a>* , <a href="#e.enablement">enablement</a>* , <a href="#e.supportedProperties">supportedProperties</a>?)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST tool</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">sources&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">headerExtensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputFlag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputPrefix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">natureFilter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cnature|ccnature|both) <p class="code SchemaDtdAttlist">command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">commandLinePattern&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">commandLineGenerator&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">dependencyCalculator&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">errorParsers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">advancedInputCategory&nbsp;(true | false) <p class="code SchemaDtdAttlist">customBuildStep&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">announcement&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">versionsSupported&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">convertToId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">optionPathConverter&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">supportsManagedBuild&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">isSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Defines a tool used in the build process.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the tool that will be used by the build model.</li>
+<li><b>name</b> - Human-readable name for the tool to be used in the UI.</li>
+<li><b>superClass</b> - The id of a tool that this tool is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags a tool as abstract.  An abstract tool must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but tools derived from this tool will inherit its attributes and children.  The default is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><i style="color: red;">Deprecated</i> <b>sources</b> - Deprecated - use the InputType element.</li>
+<li><i style="color: red;">Deprecated</i> <b>headerExtensions</b> - Deprecated - use the InputType element.</li>
+<li><i style="color: red;">Deprecated</i> <b>outputs</b> - Deprecated - use the OutputType element.</li>
+<li><b>outputFlag</b> - An optional flag for tools that allow users to specify a name for the artifact of the tool. For example, the GCC compiler and linker tools typically allow the user to specify the name of the output with the '-o' flag, whereas the archiver that creates libraries does not.</li>
+<li><i style="color: red;">Deprecated</i> <b>outputPrefix</b> - Deprecated - use the OutputType element.</li>
+<li><b>natureFilter</b> - Filters the display (and use) of the tool by the nature of the project. Selecting a value of 'cnature' insures that the tool will be displayed IFF there is a cnature associated with the project. A ccnature will filter this tool out. If 'ccnature' is selected, the tool will only be available for C++ projects. If 'both' is selected, the tool will be displayed when either nature is present.  This attribute is required if it is not inherited from its superClass.  The default value is "both".</li>
+<li><b>command</b> - The command that invokes the tool. For example, gcc for the Gnu C compiler, or g++ for the Gnu C++ compiler.  This attribute supports MBS file context macros.</li>
+<li><b>commandLinePattern</b> - Specifies the command "pattern" that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables COMMAND, FLAGS, OUTPUT_FLAG, OUTPUT_PREFIX, OUTPUT and INPUTS.  The default command line pattern is ${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}, except when customBuildStep is true, where the default is $(COMMAND). White space and other characters are significant and are copied to the generated command.  This attribute supports MBS file context macros.</li>
+<li><b>commandLineGenerator</b> - Specifies the name of the class that implements IManagedCommandLineGenerator in order to provide custom command line generation logic.</li>
+<li><i style="color: red;">Deprecated</i> <b>dependencyCalculator</b> - Deprecated - use the InputType element.</li>
+<li><b>errorParsers</b> - Specifies the default list of error parsers used by the tool.  Error parsers specified by the tool are added to this list specified by the tool-chain when a project resource is defined to use the tool.  It is automatically removed when there are no more project resources using the tool.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.</li>
+<li><b>advancedInputCategory</b> - Specifies whether the Tool wants the MBS to display the Advanced Input category with the Tool's property categories.  This allows the user to specify input order and additional inputs.  The default is false.  Note:  This attribute is not yet implemented</li>
+<li><b>customBuildStep</b> - Specifies whether this Tool represents a user-define custom build step.  The default is false.  When True, the default value of the commandLinePattern attribute changes to “$(command)”.</li>
+<li><b>announcement</b> - Specifies a string that is written to the build output prior to each invocation of the tool.  The default value is “Invoking tool-name (tool-id)…”</li>
+<li><b>icon</b> - Path to a 16x16 pixel big icon that is to be displayed instead of the default icon. The path is relative to the plug-in directory which defines .buildDefinitions.</li>
+<li><b>versionsSupported</b> - Specifies a comma delimited list of versions of this tool that can be loaded without invoking a converter.</li>
+<li><b>convertToId</b> - The identifier of a tool, that tools loaded using this definition should be converted to. MBS will invoke a proper converter.</li>
+<li><b>optionPathConverter</b> - Tools like Cygwin based Gnu tools can accept paths which are not valid for the OS platform. E.g. "/usr/include" is well difined for a Cygwin gcc compiler while it is not a meaningful path for a java.io.File. Therefore tools can specify a pathConverter which will be applied to include and library paths configured in the Managed Build System.</li>
+<li><b>supportsManagedBuild</b> - Specifies whether or not the tool supports managed build. Default value is true.</li>
+<li><b>isSystem</b> - the system elements are used by the system for specific needs and are not displayed in UI</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.inputType">inputType</a> (<a href="#e.inputOrder">inputOrder</a>* , <a href="#e.additionalInput">additionalInput</a>* , <a href="#e.enablement">enablement</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST inputType</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">sourceContentType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">sources&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">dependencyContentType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">dependencyExtensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">assignToOption&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">multipleOfType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">primaryInput&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">dependencyCalculator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildVariable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">scannerConfigDiscoveryProfileId&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">languageId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">languageInfoCalculator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Defines a type of input for the tool.  Note that the calculated dependencies of an input type are not described by a separate input type, but are described by attributes of this element.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the input-type that will be used by the build model.</li>
+<li><b>name</b> - The name of the input type that is displayed to the user in the UI.</li>
+<li><b>superClass</b> - The id of an input-type that this input-type is derived from.</li>
+<li><b>sourceContentType</b> - The id of an Eclipse content type that describes this type of input.  Either this attribute or the sources attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the sources attribute is not used.</li>
+<li><b>sources</b> - A comma-separated list of file extensions that identify files of this input type. Note that the user will not be able to modify the set of file extensions as they can when sourceContentType is specified.</li>
+<li><b>dependencyContentType</b> - The id of an Eclipse content type that describes the calculated dependencies for this type of input.  If dependencyExtensions is also specified, and the content type specified here is defined by Eclipse, the dependencyExtensions attribute is not used.</li>
+<li><b>dependencyExtensions</b> - A comma-separated list of file extensions that are used for calculated dependencies of this input-type. Note that the user will not be able to modify the set of file extensions as they can when dependencyContentType is specified.</li>
+<li><b>option</b> - The id of an Option element that is used on the command line to identify inputs of this type.  If specified, the name(s) of the input files for this input type are taken from the value specified for the option.</li>
+<li><b>assignToOption</b> - The id of an Option element whose value is to be assigned to the file(s) calculated for this input type.  The default is not to assign the input file(s) to a command line option but to assign the files to the ${Inputs} part of the command line.  Note that the option value is only updated during build file generation and therefore could be out of sync with the project until build file generation occurs.</li>
+<li><b>multipleOfType</b> - Specifies whether all inputs of this type are used in one invocation of the tool. The inputs can be project resources, and the outputs of other Tools in the Tool-chain. The default is false.</li>
+<li><b>primaryInput</b> - Specifies whether this is considered the primary input of the tool. The default is false.</li>
+<li><b>dependencyCalculator</b> - Specifies the class that provides the source file dependency calculation for this input-type. You can replace the default calculator with a class that implements the <code>IManagedDependencyGenerator</code> interface.</li>
+<li><b>buildVariable</b> - A variable used in the build file to represent the input files.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool's input.  This attribute is ignored when multipleOfType is false and this is the primary input of the tool.  The default name is chosen by MBS.</li>
+<li><b>scannerConfigDiscoveryProfileId</b> - Specifies an id of scanner configuration discovery profile for gathering the built-in compiler settings for resource type presented with this input type.</li>
+<li><b>languageId</b> - Represents the language id, i.e. the id of language defined via the org.eclipse.cdt.core.language extension point
+
+The value of this attribute is used only in case languageInfoCalculator is not specified</li>
+<li><b>languageInfoCalculator</b> - Specifies the name of the class that implements org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator for dinamic providing the language id info.
+Overrides language id specified with the languageId attribute.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.inputOrder">inputOrder</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST inputOrder</p>
+<p class="code SchemaDtdAttlist">path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">order&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">excluded&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Describes optional, ordering, information regarding the inputs of an inputType.  Note:  This element is not yet implemented</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>path</b> - Defines the relative or absolute path of the resource to which this element applies.  The resource must be a member of the project, or the output from another tool in the tool-chain.</li>
+<li><b>order</b> - A comma-separated list of integer values that specify the input order of this resource.  In most cases, a single value is used.  A list is used if the same input resource appears multiple times in the input list.  The order number begins at 1.  All unordered input resources fill the first gap in the specified order values.</li>
+<li><b>excluded</b> - If True, this input resource is not used as an input to the tool.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.additionalInput">additionalInput</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST additionalInput</p>
+<p class="code SchemaDtdAttlist">paths&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">kind&nbsp;&nbsp;(additionalinput|additionalinputdependency|additionaldependency) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Describes optional information regarding additional inputs and/or dependencies.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>paths</b> - Defines a semi-colon delimited list of relative or absolute paths of the resource to which this element applies.  The resources must be a member of the project, the output from another tool in the tool-chain, or an external file.  The file name of the path can use GNU Make pattern rule syntax in order to generate the name from the filename of the input file.</li>
+<li><b>kind</b> - Defines the type of additional input, whether the resource is added to the dependency list, the inputs on the command line, or both.  The default is to add the inputs to both.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.outputType">outputType</a> (<a href="#e.enablement">enablement</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST outputType</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputContentType&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">multipleOfType&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">primaryInputType&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">primaryOutput&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">outputPrefix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">outputNames&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">namePattern&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">nameProvider&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildVariable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Defines a type of output for the tool.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the output-type that will be used by the build model.</li>
+<li><b>name</b> - The name of the output type that is displayed to the user in the UI.</li>
+<li><b>superClass</b> - The id of an output-type that this output-type is derived from.</li>
+<li><b>outputContentType</b> - The id of an Eclipse content type that describes this type of output.  Either this attribute or the outputs attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the outputs attribute is not used.</li>
+<li><b>outputs</b> - A comma-separated list of file extensions that identify files of this output type. Note that the user will not be able to modify the set of file extensions as they can when outputContentType is specified.</li>
+<li><b>option</b> - The id of an Option element that is used on the command line to specify this output. The default is to use the Tool outputFlag attribute if primaryOutput is True. If option is not specified, and primaryOutput is False, then the output file(s) of this outputType are not added to the command line.  If specified, the nameProvider, namePattern and outputNames are ignored.</li>
+<li><b>multipleOfType</b> - Specifies whether multiple outputs of this type are created by one invocation of the tool. The default is False. If True, the nameProvider attribute or outputNames attribute must be specified.</li>
+<li><b>primaryInputType</b> - The id of the input type that is used in determining the build “rules” for the output type and for the default name of the output file.  The default is the input type with primaryInput == true.</li>
+<li><b>primaryOutput</b> - Specifies whether this is the primary output of the tool. The default is False.</li>
+<li><b>outputPrefix</b> - Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so 'lib' would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports MBS configuration context macros.</li>
+<li><b>outputNames</b> - A semi-colon delimited list of the complete set of output file names generated for this outputType. If specified, the namePattern is ignored.  This attribute supports MBS file context macros.</li>
+<li><b>namePattern</b> - Specifies a pattern, using the Gnu Make pattern rule syntax, for deriving the output resource name from the input resource name. The default, "%" is to use the input resource base name with the first output extension.</li>
+<li><b>nameProvider</b> - The name of the class that implements the <code>IManagedOutputNameProvider</code> interface.  If specified, the outputNames and namePattern are ignored.  When multipleOfType is true, this attribute, or the outputNames attribute, is required in order for MBS to know the names of the output files.</li>
+<li><b>buildVariable</b> - A variable used in the build file to represent the output file(s).  The same variable name can be used in an inputType element to identify a set of output files that contribute to a tool's input.  The default name is chosen by MBS.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.optionCategory">optionCategory</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST optionCategory</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">owner&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">icon&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+An optional, but useful, mechanism for grouping options together.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - Used by the build model to uniquely identify the option category.</li>
+<li><b>name</b> - A human-readable category name, such as 'Preprocessor Options'. This will be the name the user sees displayed in the UI.</li>
+<li><b>owner</b> - Option categories can belong to a tool, a toolChain or be nested inside other option categories. This is the ID of the owner of the category.  The default owner if the parent tool or tool-chain.</li>
+<li><b>icon</b> - Path to a 16x16 pixel big icon that is to be displayed instead of the default icon.
+The path is relative to the plug-in directory which defines .buildDefinitions.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.option">option</a> ((<a href="#e.listOptionValue">listOptionValue</a>* | <a href="#e.enumeratedOptionValue">enumeratedOptionValue</a>*) , <a href="#e.enablement">enablement</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST option</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">resourceFilter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(project|file|all) "all"<p class="code SchemaDtdAttlist">valueType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string|stringList|boolean|enumerated|includePath|definedSymbols|libs|userObjs|symbolFiles|includeFiles|libPaths|libFiles|undefIncludePath|undefDefinedSymbols|undefLibPaths|undefLibFiles|undefIncludeFiles|undefSymbolFiles) "string"<p class="code SchemaDtdAttlist">browseType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(none|file|directory) <p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">defaultValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">commandFalse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">helpSupplier&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">tip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">valueHandler&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">valueHandlerExtraArgument&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">applicabilityCalculator&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+An option is associated with a tool. Options can contain boolean values, a simple text string, a selection from an enumerated list, or a list of values. Options also map the value they contain to a command-line flag, such as '-g' in the case of debugging symbol information for compilers.
+Options can also be associated with a toolchain. However in such a case the option must be contained in a optionCategory.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the option.</li>
+<li><b>name</b> - A descriptive name for the option.</li>
+<li><b>superClass</b> - The id of an option that this option is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags an option as abstract.  An abstract option must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but options derived from this option will inherit its attributes and children.  The default is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><b>category</b> - The id of the option category for this option. The id can be the id of the tool which is also a category.  The default category is the parent tool.  Note that an optionCategory id must be supplied as the value for an option that is a child of a toolChain.</li>
+<li><b>resourceFilter</b> - Filters the display (and use) of the option by the type of the resource (currently Project or File). The value 'project' causes the option to be used when applied to a project.  The value 'file' causes the option to be used when applied to a file. If 'all' is selected, the option applies to all types of resources.  The default is "all".</li>
+<li><b>valueType</b> - General options can be one of the following types; 'string' for catch-all entries for options that cannot be easily defined any other way, 'string list' for entries that consist of a list of values such as defined symbols or paths, 'boolean' for options that have two values, and 'enumerated' for options that are one-of a list of values.
+
+Additional special types exist to flag options of special relevance to the build model; 'include', 'libs', 'userObjs' and 'definedSymbols'. You can pre-populate with optionValues, and they will display in the UI the same way the 'stringList' options do. The build model will look specifically for these value types when clients query for include paths and preprocessor defines. The makefile generator treats the libs and userObjs entries differently than other stringLists.</li>
+<li><b>browseType</b> - This value is used for string and stringlist (and related) options only. If you need a list option to prompt the user to browse for a file or directory when adding a new value, set the value of the attribute accordingly. By default the value is treated as no browsing needed.</li>
+<li><b>value</b> - Specifies the value assigned to the option by the end user or in a default configuration.  For boolean values, specify truth using the string 'true'. All other strings will be treated as false.</li>
+<li><b>defaultValue</b> - Specifies the default value for the option if the 'value' attribute is blank. For enumerated options the optionEnums will be searched for the default. For string list options, all defined optionValues will be treated as defaults. For boolean values, specify truth using the string 'true'. All other strings will be treated as false.</li>
+<li><b>command</b> - An optional value that specifies the actual command that will be passed to the tool on the command line.  The attribute value provides a "pattern" for specifying where the option "value" should be placed for options of type string and stringlist.  If no ${value} is specified in the command, the option value is appended to the end of the specified command.</li>
+<li><b>commandFalse</b> - An optional value, used only with options of type Boolean, that specifies the actual command that will be passed to the tool on the command line when the value of the Boolean option is False.</li>
+<li><b>helpSupplier</b> - This field is unused in 2.0</li>
+<li><b>tip</b> - Specifies a "tip" that can be displayed in hover help or on the property page.</li>
+<li><b>contextId</b> - specify a fully qualified context id for supplying context sensitive help for an option.</li>
+<li><b>valueHandler</b> - The id of a class that implements the IManagedOptionValueHandler interface.  This interface is used to dynamically manage the value of an option.</li>
+<li><b>valueHandlerExtraArgument</b> - An optional extra text string that is passed into the valueHandler.</li>
+<li><b>applicabilityCalculator</b> - Optional class which is used to determine dynamically at runtime whether the option is visible, enabled, and used in command line generation.  This class must impelment the IOptionApplicability interface.  If no calculator is specified then the option is always visible, enabled, and used in command line generation.</li>
+<li><b>contextId</b> - specify a fully qualified context id for supplying context sensitive help for an option.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.enumeratedOptionValue">enumeratedOptionValue</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST enumeratedOptionValue</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">isDefault&nbsp;(true | false) <p class="code SchemaDtdAttlist">command&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Defines a single value of an enumerated option.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - Unique identifier for the option enumeration.</li>
+<li><b>name</b> - A descriptive name for the enumeration.</li>
+<li><b>isDefault</b> - Flags this enumerated value as the default to apply to the option if the user has not changed the setting.</li>
+<li><b>command</b> - The command that the enumerated value translates to on the command line.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.listOptionValue">listOptionValue</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST listOptionValue</p>
+<p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">builtIn&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A value for defining individual elements of a list option.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>value</b> - The contents of the list item.  The build model will apply the command defined in the option to each value in the list.</li>
+<li><b>builtIn</b> - This attribute flags the list value as a built-in value as opposed to something the user has entered. Built-ins will not be passed to clients that generate command lines (like the makefile generator). However, clients that need to take these settings into account (like the indexing service), will receive these settings. These values will appear grey in the UI.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.builder">builder</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST builder</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildfileGenerator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">errorParsers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">variableFormat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isVariableCaseSensitive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">reservedMacroNames&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">reservedMacroNameSupplier&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroInputFileNameValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroInputFileExtValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroInputFileBaseNameValue&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroInputFileRelPathValue&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroInputDirRelPathValue&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroOutputFileNameValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroOutputFileExtValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroOutputFileBaseNameValue&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroOutputFileRelPathValue&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">macroOutputDirRelPathValue&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">versionsSupported&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">convertToId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">supportsManagedBuild&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">autoBuildTarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">incrementalBuildTarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">cleanBuildTarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">ignoreErrCmd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">parallelBuildCmd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents the utility that drives the build process (typically, but not necessarily, a variant of "make").</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the builder that will be used by the build model.</li>
+<li><b>name</b> - Human-readable name for the builder to be used in the UI.</li>
+<li><b>superClass</b> - The id of a builder that this builder is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags a builder as abstract.  An abstract builder must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but builders derived from this builder will inherit its attributes and children.  The default is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><b>command</b> - Specifies the default command to start the build utility for your toolchain. If the user changes this through the UI, the overriden value will be stored in the project build file. The build model will default to this value if the user ever resets a change.  The default is 'make'.</li>
+<li><b>arguments</b> - Specifies the additional, default arguments that will be passed to the build utility when it is called by the builder. If the user changes the flags through the UI, the overriden value will be stored in the project build settings file. The build model will default to this value if the user ever resets a change.  The default is '-k'.</li>
+<li><b>buildfileGenerator</b> - Allows you to supply a custom build file generator that conforms to the <code>IManagedBuilderMakefileGenerator</code> interface.</li>
+<li><b>errorParsers</b> - Specifies the default list of error parsers used by the builder.  These error parsers are added to this list specified by the parent tool-chain.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.</li>
+<li><b>variableFormat</b> - The value of this attribute should be set to the expression representing the builder variable format. For example, to generate macros with the ${macro} format, the attribute would contain ${=}.  To generate macros with the @macro format, the attribute would contain @=.
+This information would be used wile buildfile generation to keep the environment build macros unresolved in the makefile.
+If the attribute is not specified or contains the empty string, this would mean that the builder can not treat environment variables as its own variables. In this case, the build macros that contain environment variables are resolved by MBS to their actual value.</li>
+<li><b>isVariableCaseSensitive</b> - Specifies whether the builder variables are case sensitive or not. Can be set to either "true" or "false". The default is "true". If the builder does not support case-sensitive variables and there are some build environment variables that differ only in case (Environment variables on Unix-like operating systems are case sensitive), then those macros will always get resolved in the buildfile.</li>
+<li><b>reservedMacroNames</b> - Comma-separated list of reserved macro names. The macro name could contain either the exact name or the java regular expression. The latter could be used to supply the pattern of variable names that are generated by MBS in case the "buildVariable" attribute of the "InputType" element is not specified, etc. 
+If this attribute is specified and the reservedMacroNameSupplier is not specified, the following macro names will be treated as reserved:
+1. a macro name that is equal to one of the names specified in the reservedMacroNames value
+2. a macro name that matches one of the regexp patterns specified in the reservedMacroNames value
+3. a macro name that is equal to one of the build variable names specified InputType elements of the tools used in the tool-chain
+If this attribute is not specified, MBS will assume that there are no reserved macro names that could conflict with the build environment variable macros, except names specified in the "buildVariable" attribute of the "InputType" elements: these names will always be treated as reserved</li>
+<li><b>reservedMacroNameSupplier</b> - Should be set to the name of the class that implements the IReservedMacroNameSupplier interface. If this attribute is specified the reservedMacroNames attribute is ignored, and the following macro names will be treated as reserved:
+1. macro names that the IReservedMacroNamesSupplier specifies as reserved
+2. a macro name that is equal to one of the build variable names specified int the InputType elements of the tools used in the tool-chain</li>
+<li><b>macroInputFileNameValue</b> - Represents the InputFileName macro value. The macro specifies the input file name. The input file has the following meaning:
+1. If a tool does not accept building multiple files of the primary input type with one tool invocation, the input file is the file of the primary input type being built.
+2. If a tool accepts building multiple files of the primary input type with one tool invocation the input file is undefined and the macros representing the input file contain information about one of the inputs of the primary input type being built.</li>
+<li><b>macroInputFileExtValue</b> - Represents the InputFileExt macro value. The macro specifies the extension of the input file.</li>
+<li><b>macroInputFileBaseNameValue</b> - Represents the InputFileBaseName macro value. The macro specifies the base name of the input file. That is the file name with an extension stripped.</li>
+<li><b>macroInputFileRelPathValue</b> - Represents the InputFileRelPath macro value. The macro specifies the input file path relative to the builder current directory.</li>
+<li><b>macroInputDirRelPathValue</b> - Represents the InputDirRelPath macro value. The macro specifies the input file directory path relative to the builder current directory.</li>
+<li><b>macroOutputFileNameValue</b> - Represents the OutputFileName macro value. The macro specifies the output file name. The output file has the following meaning:
+1. If a tool is not capable of producing multiple files of the primary output type with one tool invocation the output file is the file of the primary output type that is built with a given tool invocation.
+2. If a tool is capable of producing multiple files of the primary output type with one tool invocation the output file is undefined and the macros representing the output file contain information about one of the files of the primary output type that are built with a given tool invocation.</li>
+<li><b>macroOutputFileExtValue</b> - Represents the OutputFileExt macro value. The macro specifies the output file extension.</li>
+<li><b>macroOutputFileBaseNameValue</b> - Represents the OutputFileBaseName macro value. The macro specifies the output file base name. That is the output file name with an extension stripped.</li>
+<li><b>macroOutputFileRelPathValue</b> - Represents the OutputFileRelPath macro value. The macro specifies the output file path relative to the current builder directory.</li>
+<li><b>macroOutputDirRelPathValue</b> - Represents the OutputDirRelPath macro value. The macro specifies the output file directory path relative to the current builder directory.</li>
+<li><b>versionsSupported</b> - Specifies a comma delimited list of versions of this builder that can be loaded without invoking a converter.</li>
+<li><b>convertToId</b> - The identifier of a builder, that builders loaded using this definition should be converted to. MBS will invoke a proper converter.</li>
+<li><b>supportsManagedBuild</b> - Specifies whether the duilder supports managed build. Default value is true.</li>
+<li><b>autoBuildTarget</b> - represents the build target to be used for auto build</li>
+<li><b>incrementalBuildTarget</b> - represents the build target to be used for incremental build</li>
+<li><b>cleanBuildTarget</b> - represents the build target to be used for clean build</li>
+<li><b>ignoreErrCmd</b> - specifies the "ignore error" builder option.</li>
+<li><b>parallelBuildCmd</b> - specifies the "parallel build" builder option. 
+If the builder supports specifying custom number of parallel jobs, the option definition may contain "*" the Build System sill substitute the "*" with the number of parallel threads to be used.</li>
+<li><b>isSystem</b> - the system elements are used by the system for specific needs and are not displayed in UI</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.targetPlatform">targetPlatform</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST targetPlatform</p>
+<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">superClass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isAbstract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">unusedChildren&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">osList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">archList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">binaryParser&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents the os/architecture combination(s) upon which the outputs of a tool-chain can be deployed.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - A unique identifier for the target platform that will be used by the build model.</li>
+<li><b>name</b> - Human-readable name for the target platform to be used in the UI.</li>
+<li><b>superClass</b> - The id of a target platform that this target platform is derived from.</li>
+<li><b>isAbstract</b> - An optional field that flags a target platform as abstract.  An abstract target platform must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but target platforms derived from this targetPlatform will inherit its attributes and children.  The default is false.</li>
+<li><b>unusedChildren</b> - A semi-colon separated list of child IDs of the superclass' children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.</li>
+<li><b>osList</b> - This field lists the target operating systems on which the outputs of a tool-chain runs.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOS() and include strings like "win32", "linux", "solaris", "hpux", "aix".  Do not specify this attribute or specify "all" to allow all target operating systems.</li>
+<li><b>archList</b> - This field lists the target architectures on which the outputs of a tool-chain runs.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOSArch() and include strings like "ia32".  Do not specify this attribute or specify "all" to allow all target architectures.</li>
+<li><b>binaryParser</b> - Set this to the ID of the binary parser for the output format of your configuration.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.dynamicElementProvider">dynamicElementProvider</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST dynamicElementProvider</p>
+<p class="code SchemaDtdAttlist">class&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+An optional element that allows a tool implementor to supply a class that creates one or more dynamic toolchain elements. For example, the class might create a new tool reference based on the contents of a special file, and a new target that uses that reference.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - The class that implements the <code>IManagedConfigElementProvider</code> interface. The logic of determining the elements is left to the implementer, but they must be correctly formed or the build model will have trouble loading.</li>
+<li><b>name</b> - A meaningful name for the type of element being provided.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.buildDefinitionStartup">buildDefinitionStartup</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST buildDefinitionStartup</p>
+<p class="code SchemaDtdAttlist">class&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+An optional element that allows a tool implementor to supply a class that insures a plugin that modifies any build configruation attributes (e.g. the build config id) will get loaded before initial project information is created.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - The class that implements the <code>IManagedBuildDefinitionsStartup</code> interface. This class may not actually do anything, but additional initialization can be done here is desired.</li>
+<li><b>name</b> - A meaningful name for the type of element being provided.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.managedBuildRevision">managedBuildRevision</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST managedBuildRevision</p>
+<p class="code SchemaDtdAttlist">fileVersion&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<div class="ConfigMarkupElementDesc">
+<p>
+Version identifier for the managed build extension point. It is a string representation, consisting of three (3) tokens separated by a decimal point. The 3 tokens are positive integer numbers. For example, the following are valid version identifiers:
+ <ul>
+  <li><code>0.0.0</code></li>
+  <li><code>1.0.1234</code></li>
+  <li><code>1.9</code> (interpreted as <code>1.9.0</code>)</li>
+  <li><code>3</code> (interpreted as <code>3.0.0</code>)</li>
+ </ul>
+</p></div>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>fileVersion</b> - The actual string containing the three version tokens.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.envVarBuildPath">envVarBuildPath</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST envVarBuildPath</p>
+<p class="code SchemaDtdAttlist">pathType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(buildpathInclude|buildpathLibrary) <p class="code SchemaDtdAttlist">variableList&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">pathDelimiter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">buildPathResolver&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Defines a set of environment variables used by a tool to represent the build paths (include paths or library paths).</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>pathType</b> - The build path type. Can be one of the following: "buildpathInclude", "buildpathLibrary"</li>
+<li><b>variableList</b> - comma-separated list of the environment variable names used to store the include paths</li>
+<li><b>pathDelimiter</b> - Represent the delimiter used to separate the paths. If omitted the default system delimiter will be used. That is the ":" for Unix-like systems and the ";" for Win32 systems.
+If the "buildPathResolver" attribute is specified, the "pathDelimiter" is ignored</li>
+<li><b>buildPathResolver</b> - Should be set to the IBuildPathResolver interface that the tool-integrator can supply in order to provide his/her own logic of resolving the variable values to the build paths</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.enablement">enablement</a> (<a href="#e.and">and</a>* | <a href="#e.or">or</a>* | <a href="#e.not">not</a>* | <a href="#e.checkOption">checkOption</a>* | <a href="#e.checkString">checkString</a>* | <a href="#e.false">false</a>* | <a href="#e.checkHolder">checkHolder</a>* | <a href="#e.checkBuildProperty">checkBuildProperty</a>* | <a href="#e.hasNature">hasNature</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST enablement</p>
+<p class="code SchemaDtdAttlist">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA "ALL"<p class="code SchemaDtdAttlist">attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(command|commandFalse|defaultValue|value|artifactExtension) <p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">extensionAdjustment&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Contains boolean expression that specifies option applicability</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>type</b> - Represents the applicability type for this enablement.
+Can contain the following values:
+UI_VISIBILITY – the given enablement expression specifies whether the option is to be visible in UI,
+UI_ENABLEMENT – the given enablement expression specifies the enable state of the controls that represent the option in UI,
+CMD_USAGE – the given enablement expression specifies whether the option is to be used in command line
+CONTAINER_ATTRIBUTE - the given enablement expressions specifies thecontainer attribute value
+ALL – this value means the combination of all the above values.
+
+Several types could be specified simultaneously using the "|" as a delimiter, e.g.:
+type="UI_VISIBILITY|CMD_USAGE"</li>
+<li><b>attribute</b> - This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the name of the attribute for which this enablement applies. Currently the following option attributes are supported:
+"command"
+"commandFalse"
+"defaultValue"
+"value"
+"artifactExtension"</li>
+<li><b>value</b> - This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the value of the attribute specified in the "attribute" for which this enablement applies</li>
+<li><b>extensionAdjustment</b> - The attribute is valid for the CONTAINER_ATTRIBUTE enablement type.
+true specifies that the enablement is defined for adjusting extension elements (extension elements are adjusted on tool-chain definition load)
+false specifies that the enablement is defined for non-extension elements adjustment. This adjustment is performed, e.g. when the Build properties set is chenged for configuration
+Default value is true.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.and">and</a> (<a href="#e.and">and</a>* , <a href="#e.or">or</a>* , <a href="#e.not">not</a>* , <a href="#e.checkOption">checkOption</a>* , <a href="#e.checkString">checkString</a>* , <a href="#e.checkHolder">checkHolder</a>* , <a href="#e.checkBuildProperty">checkBuildProperty</a>*)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents boolean "and" operation</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.or">or</a> (<a href="#e.and">and</a>* , <a href="#e.or">or</a>* , <a href="#e.not">not</a>* , <a href="#e.checkOption">checkOption</a>* , <a href="#e.checkString">checkString</a>* , <a href="#e.checkHolder">checkHolder</a>* , <a href="#e.checkBuildProperty">checkBuildProperty</a>*)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents boolean "or" operation</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.not">not</a> (<a href="#e.and">and</a>* | <a href="#e.or">or</a>* | <a href="#e.not">not</a>* | <a href="#e.checkOption">checkOption</a>* | <a href="#e.checkString">checkString</a>* | <a href="#e.checkHolder">checkHolder</a>* | <a href="#e.checkBuildProperty">checkBuildProperty</a>*)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents boolean "not" operation</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.checkOption">checkOption</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST checkOption</p>
+<p class="code SchemaDtdAttlist">optionId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">holderId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">isRegex&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA "false"<p class="code SchemaDtdAttlist">otherOptionId&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">otherHolderId&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Performs an option value check. The option value can be checked either agains some pre-defined value or against the value of another option</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>optionId</b> - The option id. The default is the id of the option that holds this expression. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.</li>
+<li><b>holderId</b> - The option holder id that holds the option. The default is the id of the holder that holds the container of this expression. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.</li>
+<li><b>value</b> - Specifies the expected value. If the current option value matches the value specified in this attribute, the checkOption element is treated as true, otherwise – as false.
+The expected value could be specified either as a string that may contain build macros or as a regular expression. During the comparison, the build macros are resolved and the option value is checked to match the resulting string or regular expression. The way the expected value is specified and treated depends on the value of the isRegex attribute</li>
+<li><b>isRegex</b> - Specifies whether the string specified in the "value" attribute should be treated as a regular eexpression. The default is false</li>
+<li><b>otherOptionId</b> - The id of the option which is to be compared with the option specified with the “optionId” attribute. The default is the id of the option that holds this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ignored. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.</li>
+<li><b>otherHolderId</b> - The option holder id that holds the option specified with the “otherOptionId” attribute. The default is the id of the holder that holds the container of this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ingnored. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.checkString">checkString</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST checkString</p>
+<p class="code SchemaDtdAttlist">string&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">isRegex&nbsp;CDATA "false"&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Performs a string check.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>string</b> - Represents the string to be checked. The string will typically  contain the build macros.</li>
+<li><b>value</b> - Specifies the expected value. If the current string specified in the “string” attribute matches the value specified in this attribute, the checkString element is treated as true, otherwise – as false.
+The expected value could be specified either as a string that might contain the build macros or as a regular expression.
+The way the value is specified and treated depends on the value of the isRegex attribute.</li>
+<li><b>isRegex</b> - Specifies whether the string specified in the "value" attribute should be treated as a regular eexpression. The default is false</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.false">false</a> (#PCDATA)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents the "false" value. This element can be used as a direct child of the "enablement" element to represent that the given option applicability is disabled. E.g. to specify that the option is never displayed in UI or never used in the command line.</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.checkHolder">checkHolder</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST checkHolder</p>
+<p class="code SchemaDtdAttlist">holderId&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Performs the holder check.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>holderId</b> - Specifies the holder id to be checked. The checkHolder is treated as true if the id specified in this attribute matches with the option's holder id or the id of some holder's super-class. Otherwise the checkHolder is treated as false.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.checkBuildProperty">checkBuildProperty</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST checkBuildProperty</p>
+<p class="code SchemaDtdAttlist">property&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">value&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Performs the Build Property check</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>property</b> - specifies the id of the Build Property to be checked</li>
+<li><b>value</b> - Specifies the Build Property Value id to be checked</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.supportedProperties">supportedProperties</a> (<a href="#e.property">property</a>)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+contains the list of supported properties</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.property">property</a> (<a href="#e.value">value</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST property</p>
+<p class="code SchemaDtdAttlist">id&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+contains the supported values for the property</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - the property type id</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.value">value</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST value</p>
+<p class="code SchemaDtdAttlist">id&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+represents the property value</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - represents the property value id</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.folderInfo">folderInfo</a> (<a href="#e.toolChain">toolChain</a>)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST folderInfo</p>
+<p class="code SchemaDtdAttlist">resourcePath&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">exclude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents per-folder settings.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>resourcePath</b> - Project-relative resource path</li>
+<li><b>exclude</b> - Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.fileInfo">fileInfo</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST fileInfo</p>
+<p class="code SchemaDtdAttlist">resourcePath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">exclude&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) <p class="code SchemaDtdAttlist">rcbsApplicability&nbsp;(before|after|override|disable) <p class="code SchemaDtdAttlist">toolsToInvoke&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Represents per-file settings.
+This element has the same meaning as resourceConfiguration.
+It is added for consistency with the folderInfo element.
+The only difference between this element and the resourceConfiguration is that resourceConfiguration specifies the resource full path, while the fileInfo specifies project-relative resource path in the same way as the folderInfo does.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>resourcePath</b> - Project-relative resource path</li>
+<li><b>exclude</b> - Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.</li>
+<li><b>rcbsApplicability</b> - Identifies how the user desires to apply a resource custom build step:
+     1.  Apply rcbs tool before any other tools defined for the resource.
+     2.  Apply rcbs tool after any other tools defined for the resource.
+     3.  Apply rcbs tool overriding any other tools defined for the resource.
+     4.  Disable (don't apply) the rcbs tool.</li>
+<li><b>toolsToInvoke</b> - Identifies which tools to invoke by a semicolon separated list of child tool ids.  Applies as follows:
+     1.  Defaults to all tools in the order found
+     2.  Use specified ordered list of children to invoke
+     3.  If empty string, treat as if no resource configuration existed, i.e., use project level tool.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.hasNature">hasNature</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST hasNature</p>
+<p class="code SchemaDtdAttlist">natureId&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Checks whether the project containing the resource has a given nature</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>natureId</b> - The id of the nature</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6>[Enter examples here.]
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>An implementation of this extension point is supplied in <samp>org.eclipse.cdt.ui</samp>
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2003, 2006 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available on the <a href="http://www.eclipse.org/legal/epl-v10.html"> Eclipse</a> website.
+
+</p>
+</BODY>
+</HTML>

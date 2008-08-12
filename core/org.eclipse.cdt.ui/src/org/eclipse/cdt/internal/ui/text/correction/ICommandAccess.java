@@ -20,8 +20,7 @@ public interface ICommandAccess {
 	/**
 	 * Returns the id of the command that should invoke this correction proposal
 	 * @return the id of the command. This id must start with {@link CorrectionCommandInstaller#COMMAND_PREFIX}
-	 * to be recognixes as correction command.
+	 * to be recognizes as correction command.
 	 */
 	String getCommandId();
-	
 }

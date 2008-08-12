@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Processes Extension point</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">Processes Extension point</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.core.templateProcessTypes<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>This extension point was added in CDT 4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>This extension point is to be extended to define new processes to be used in template descriptors by template writers.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.processType">processType</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+One or more elements of processType should be added as children to this element.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.processType">processType</a> ((<a href="#e.simple">simple</a> | <a href="#e.simpleArray">simpleArray</a> | <a href="#e.complex">complex</a> | <a href="#e.complexArray">complexArray</a>)*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST processType</p>
+<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">processRunner&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+This element defines a single process. A process is analogous to a procedure with a set of parameters. In similar terms, one can say that this element defines the prototype of this process procedure. One needs to specify all the parameters expected by this process. In the eventual template xml, one needs to specify arguments for the process matching the types and order of these parameters.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - The value of this attribute is used (fully qualified with the namespace in which the extension is declared), to uniquely identify this processType. e.g. a value such as AddFiles will mean that the usage in the template.xml should be something like &lt;process type="&lt;plugin_id&gt;.AddFiles&gt;</li>
+<li><b>processRunner</b> - A class that extends org.eclipse.cdt.core.templateengine.process.ProcessRunner abstract class and implements all its abstract methods. This is the code that actually processes.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.simple">simple</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST simple</p>
+<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">external&nbsp;(true | false) <p class="code SchemaDtdAttlist">nullable&nbsp;(true | false) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A simple string parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple argument alongwith the corresponding value attribute.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - Name of the parameter. This should be used exactly as is in the name attribute of a simple argument in the template xml.</li>
+<li><b>external</b> - This is an optional attribute. If specified with a true value, it implies that the template xml need not mention this argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
+
+Another thing to note is that arguments corresponding to external=true type params, if not mentioned in the template xml, should be supplied directly through the ValueStore with the key as the param's name.
+
+If not mentioned, this attribute's is treated as false.</li>
+<li><b>nullable</b> - This is an optional attribute. If specified with a true value, it implies that the template xml need not mention the value attribute of the argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
+
+If not mentioned, this attribute's is treated as false.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.simpleArray">simpleArray</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST simpleArray</p>
+<p class="code SchemaDtdAttlist">name&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A simple string array parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple-array argument alongwith the corresponding element children, one child per array element with the corresponding value attribute.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - Name of the parameter. This should be used exactly as is in the name attribute of a simple-array argument in the template xml.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.complex">complex</a> ((<a href="#e.simple">simple</a> | <a href="#e.simpleArray">simpleArray</a> | <a href="#e.complex">complex</a> | <a href="#e.complexArray">complexArray</a>))+&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST complex</p>
+<p class="code SchemaDtdAttlist">name&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A complex parameter that groups together any number of simple, simpleArray, complex, complexArray parameters. This is equivalent of an object parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple argument alongwith the corresponding children, each child matching the type of the corresponding child of this element.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - Name of the parameter. This should be used exactly as is in the name attribute of a complex argument in the template xml.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.complexArray">complexArray</a> (<a href="#e.baseType">baseType</a>)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST complexArray</p>
+<p class="code SchemaDtdAttlist">name&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+A complex array parameter. Each element of this parameter is of the same base complex type as specified by the baseType child of this element. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a complex-array argument alongwith the corresponding element children, one child per array element with the corresponding complex type arguments (based on baseType definition).</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>name</b> - Name of the parameter. This should be used exactly as is in the name attribute of a complex-array argument in the template xml.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.baseType">baseType</a> ((<a href="#e.simple">simple</a> | <a href="#e.simpleArray">simpleArray</a> | <a href="#e.complex">complex</a> | <a href="#e.complexArray">complexArray</a>))+&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+This is not a direct parameter of a process. This simply acts as a complex grouping of parameters to be used as the base type of complexArray parameters.</p>
+<br><br>
+<h6 class="CaptionFigColumn SchemaHeader">Examples: </h6>The following is an example of the extension point usage:
+<p>
+<pre class="Example"><span class="code SchemaTag">
+   &lt;extension
+         id=</span><span class="code SchemaCstring">&quot;processExample&quot;</span><span class="code SchemaTag">
+         name=</span><span class="code SchemaCstring">&quot;Process Example&quot;</span><span class="code SchemaTag">
+         point=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateengine.processTypes&quot;</span><span class="code SchemaTag">&gt;
+
+        &lt;processType
+            name=</span><span class="code SchemaCstring">&quot;NewManagedProject&quot;</span><span class="code SchemaTag">
+            processRunner=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateengine.process.processes.NewManagedProject&quot;</span><span class="code SchemaTag">&gt;
+         &lt;simple name=</span><span class="code SchemaCstring">&quot;name&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;simple
+               external=</span><span class="code SchemaCstring">&quot;true&quot;</span><span class="code SchemaTag">
+               name=</span><span class="code SchemaCstring">&quot;projectType&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;simple
+               external=</span><span class="code SchemaCstring">&quot;true&quot;</span><span class="code SchemaTag">
+               name=</span><span class="code SchemaCstring">&quot;location&quot;</span><span class="code SchemaTag">
+               nullable=</span><span class="code SchemaCstring">&quot;true&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;simple name=</span><span class="code SchemaCstring">&quot;targetType&quot;</span><span class="code SchemaTag">/&gt;
+        &lt;/processType&gt;
+
+        &lt;processType
+            name=</span><span class="code SchemaCstring">&quot;SetMBSBooleanOptionValue&quot;</span><span class="code SchemaTag">
+            processRunner=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateengine.process.processes.SetMBSBooleanOptionValue&quot;</span><span class="code SchemaTag">&gt;
+         &lt;simple name=</span><span class="code SchemaCstring">&quot;projectName&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;complexArray name=</span><span class="code SchemaCstring">&quot;resourcePaths&quot;</span><span class="code SchemaTag">&gt;
+            &lt;baseType&gt;
+               &lt;simple name=</span><span class="code SchemaCstring">&quot;id&quot;</span><span class="code SchemaTag">/&gt;
+               &lt;simple name=</span><span class="code SchemaCstring">&quot;value&quot;</span><span class="code SchemaTag">/&gt;
+               &lt;simple name=</span><span class="code SchemaCstring">&quot;path&quot;</span><span class="code SchemaTag">/&gt;
+            &lt;/baseType&gt;
+         &lt;/complexArray&gt;
+        &lt;/processType&gt;
+
+        &lt;processType
+            name=</span><span class="code SchemaCstring">&quot;AddFile&quot;</span><span class="code SchemaTag">
+            processRunner=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateengine.process.processes.AddFile&quot;</span><span class="code SchemaTag">&gt;
+         &lt;simple name=</span><span class="code SchemaCstring">&quot;projectName&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;complex name=</span><span class="code SchemaCstring">&quot;file&quot;</span><span class="code SchemaTag">&gt;
+            &lt;simple name=</span><span class="code SchemaCstring">&quot;source&quot;</span><span class="code SchemaTag">/&gt;
+            &lt;simple name=</span><span class="code SchemaCstring">&quot;target&quot;</span><span class="code SchemaTag">/&gt;
+            &lt;simple name=</span><span class="code SchemaCstring">&quot;replaceable&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;/complex&gt;
+        &lt;/processType&gt;
+
+        &lt;processType
+            name=</span><span class="code SchemaCstring">&quot;AppendToMBSStringListOptionValues&quot;</span><span class="code SchemaTag">
+            processRunner=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateengine.process.processes.AppendToMBSStringListOptionValues&quot;</span><span class="code SchemaTag">&gt;
+         &lt;simple name=</span><span class="code SchemaCstring">&quot;projectName&quot;</span><span class="code SchemaTag">/&gt;
+         &lt;complexArray name=</span><span class="code SchemaCstring">&quot;resourcePaths&quot;</span><span class="code SchemaTag">&gt;
+            &lt;baseType&gt;
+               &lt;simple name=</span><span class="code SchemaCstring">&quot;id&quot;</span><span class="code SchemaTag">/&gt;
+               &lt;simpleArray name=</span><span class="code SchemaCstring">&quot;values&quot;</span><span class="code SchemaTag">/&gt;
+               &lt;simple name=</span><span class="code SchemaCstring">&quot;path&quot;</span><span class="code SchemaTag">/&gt;
+            &lt;/baseType&gt;
+         &lt;/complexArray&gt;
+        &lt;/processType&gt;
+
+    &lt;/extension&gt;
+</span></pre>
+
+For more details on how to define your own templates, please check examples provided under
+<samp>org.eclipse.cdt.gnu.templates</samp>
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>An implementation of this extension point is supplied in <samp>org.eclipse.cdt.core.templateengine</samp>
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2007 Symbian Software Limited and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+Bala Torati (Symbian) - Initial API and implementation
+
+</p>
+</BODY>
+</HTML>

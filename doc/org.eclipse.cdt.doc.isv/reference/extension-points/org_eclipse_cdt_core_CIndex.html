@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>CIndex</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">CIndex</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.core.CIndex<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>This extension point groups extensions to the index functionality in CDT<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.ExportProjectProvider">ExportProjectProvider</a> | <a href="#e.ReadOnlyPDOMProvider">ReadOnlyPDOMProvider</a>)+&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.ExportProjectProvider">ExportProjectProvider</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST ExportProjectProvider</p>
+<p class="code SchemaDtdAttlist">class&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<div class="ConfigMarkupElementDesc">
+<h2>ExportProjectProvider</h2>
+<p>
+This subelement of CIndex allows contribution of alternate IExportProjectProvider implementations. These can then be referenced by fully qualified class name in the command line tool (see option -pprovider).
+<p>
+<b>Invoking the application as a headless application</b>
+
+This example ant file shows how to invoke the tool headlessly, the same approach would work from a shell or batch file.
+
+<pre class="Example"><span class="code SchemaTag">
+&lt;project name=</span><span class="code SchemaCstring">&quot;Generate PDOM&quot;</span><span class="code SchemaTag"> default=</span><span class="code SchemaCstring">&quot;generate&quot;</span><span class="code SchemaTag">&gt;
+ &lt;target name=</span><span class="code SchemaCstring">&quot;generate&quot;</span><span class="code SchemaTag">&gt;
+  &lt;!-- This script shows how to invoke the default project provider (ExternalExportProjectProvider) --&gt;
+  &lt;property name=</span><span class="code SchemaCstring">&quot;pprovider&quot;</span><span class="code SchemaTag"> value=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.index.export.ExternalExportProjectProvider&quot;</span><span class="code SchemaTag">/&gt;
+  &lt;property name=</span><span class="code SchemaCstring">&quot;target&quot;</span><span class="code SchemaTag"> value=</span><span class="code SchemaCstring">&quot;C:\ExportedPDOMs\acmeSDK_2_5.pdom&quot;</span><span class="code SchemaTag">/&gt; &lt;!-- Where the output pdom is to go --&gt;
+  &lt;property name=</span><span class="code SchemaCstring">&quot;source&quot;</span><span class="code SchemaTag"> value=</span><span class="code SchemaCstring">&quot;E:\AcmeSDK\v2.5\inc&quot;</span><span class="code SchemaTag">/&gt; &lt;!-- e.g. the directory to source content from --&gt;
+  &lt;property name=</span><span class="code SchemaCstring">&quot;id&quot;</span><span class="code SchemaTag"> value=</span><span class="code SchemaCstring">&quot;com.acme.mysdk.v2.5&quot;</span><span class="code SchemaTag">/&gt; &lt;!-- the id to store in the generate pdom --&gt;
+  
+  &lt;property name=</span><span class="code SchemaCstring">&quot;eclipse.home&quot;</span><span class="code SchemaTag"> value=</span><span class="code SchemaCstring">&quot;C:\eclipse&quot;</span><span class="code SchemaTag">/&gt; &lt;!-- e.g. The eclipse installation to use. This installation must contain CDT 4.0+ plugins --&gt;
+  
+  &lt;java classname=</span><span class="code SchemaCstring">&quot;org.eclipse.equinox.launcher.Main&quot;</span><span class="code SchemaTag">&gt;
+   &lt;classpath&gt;
+    &lt;fileset dir=</span><span class="code SchemaCstring">&quot;${eclipse.home}/plugins&quot;</span><span class="code SchemaTag">&gt;
+     &lt;include name=</span><span class="code SchemaCstring">&quot;*equinox.launcher*.jar&quot;</span><span class="code SchemaTag">/&gt;
+    &lt;/fileset&gt;
+   &lt;/classpath&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-nosplash&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-exitdata&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-application&quot;</span><span class="code SchemaTag">/&gt;&lt;arg value=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.GeneratePDOM&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-pprovider&quot;</span><span class="code SchemaTag">/&gt;&lt;arg value=</span><span class="code SchemaCstring">&quot;${pprovider}&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-source&quot;</span><span class="code SchemaTag">/&gt;&lt;arg value=</span><span class="code SchemaCstring">&quot;${source}&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-target&quot;</span><span class="code SchemaTag">/&gt;&lt;arg value=</span><span class="code SchemaCstring">&quot;${target}&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;arg value=</span><span class="code SchemaCstring">&quot;-id&quot;</span><span class="code SchemaTag">/&gt;&lt;arg value=</span><span class="code SchemaCstring">&quot;${id}&quot;</span><span class="code SchemaTag">/&gt;
+  &lt;/java&gt;
+ &lt;/target&gt;
+&lt;/project&gt;
+</span></pre>
+<p>
+<b>Invoking the tool via an Eclipse Launch Configuration</b>
+<p>
+Specify "org.eclipse.cdt.core.GeneratePDOM" as the application to launch
+<p>
+In the Argument tabs provide (for example)
+ -target C:\ExportedPDOMs\acmeSDK_2_5.pdom -source E:\AcmeSDK\v2.5\inc -include E:\this.h -id com.acme.mysdk.v2.5
+<p></div>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - the fully qualified name of the IExportProjectProvider implementation to register</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.ReadOnlyPDOMProvider">ReadOnlyPDOMProvider</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST ReadOnlyPDOMProvider</p>
+<p class="code SchemaDtdAttlist">class&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<div class="ConfigMarkupElementDesc">
+<h2>ReadOnlyPDOMProvider</h2>
+<p>
+This subelement of CIndex allows ISVs to contribute read-only prebuilt PDOM files to the CDT Index. The only information needed is the fully qualified class name of an implementatin of org.eclipse.cdt.core.index.IOfflinePDOMProvider. This implementation will be consulted during the eclipse session for the appropriate read-only content to make add to the logical index. The logical index is accessible via the org.eclipse.core.index.IIndex API.
+ 
+        An example of contributing a prebuilt read-only pdom:
+<pre class="Example"><span class="code SchemaTag">
+&lt;CIndex&gt;
+   &lt;ReadOnlyPDOMProvider class=</span><span class="code SchemaCstring">&quot;com.acme.ide.index.AcmeSDKProvider&quot;</span><span class="code SchemaTag">/&gt;
+&lt;/CIndex&gt;
+</span></pre>
+
+and the corresponding implementation
+
+<pre class="Example"><span class="code SchemaTag">
+package com.acme.ide.index.sdk;
+
+import org.eclipse.core.index.provider.IReadOnlyPDOMProvider;
+import org.eclipse.core.index.provider.IPDOMDescriptor;
+import org.eclipse.core.index.IIndexLocationConverter;
+import org.eclipse.core.index.URIRelativeLocationConverter;
+
+public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
+    public boolean providesFor(ICProject project) {
+        // e.g. decide by looking for acme project nature
+        return AcmeNature.isAcmeProject(project);
+    }
+
+    public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
+        final IPath sdkBase = AcmeSDKAPI.getSDKBase(config);
+        return new IPDOMDescriptor[] { new IPDOMDescriptor() {
+            public IIndexLocationConverter getIndexLocationConverter() {
+                return new URIRelativeLocationConverter(URIUtil.toURI(sdkBase));
+            }
+            public IPath getLocation() {
+                IPath path = sdkBase.append(AcmeSDKAPI.getPrebuiltPDOMFilename(config));
+                return path;
+            }
+        }};
+    }
+}
+</span></pre></div>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - the fully qualified name of the IReadOnlyPDOMProvider implementation to register</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6>See subelement documentation
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>[Enter information about supplied implementation of this extension point.]
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2007 Symbian Software Systems and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+</p>
+</BODY>
+</HTML>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>ToolChain Modification Info</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">ToolChain Modification Info</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.managedbuilder.core.tcModificationInfo<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6><p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.conflictDefinition">conflictDefinition</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.matchObject">matchObject</a> (<a href="#e.pattern">pattern</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST matchObject</p>
+<p class="code SchemaDtdAttlist">objectIds&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">objectType&nbsp;&nbsp;&nbsp;&nbsp;(toolChain|tool|builder|configuration) <p class="code SchemaDtdAttlist">searchScope&nbsp;&nbsp;&nbsp;(ALL_EXTENSION_SUPERCLASSES|EXTENSION_OBJECT) "EXTENSION_SUPERCLASSES"<p class="code SchemaDtdAttlist">objectIdsType&nbsp;(REGEXP|EXACT_MATCH) "EXACT_MATCH"&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+specifies the buildObject pattern to be matched.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>objectIds</b> - Required if no "pattern" objects are specified.
+<br>represents one or more buils object ID [patterns] separated with ";"
+<br>Note that specifying several IDs with one matchObject has exactly the same meaning as specifying those IDs in separate matchObjects combined with the "select" element.
+<br>When both "pattern" objects and "objectIds" are defined, patterns defined in both of them are treated as valid patterns.</li>
+<li><b>objectType</b> - Specifies the type of build objects presented with this element.
+<br>Can have one of the following values:
+<br>TOOL - to represent a tool
+<br>TOOLCHAIN - to represent a tool-chain
+<br>BUILDER - to represent a builder</li>
+<li><b>searchScope</b> - specifies how the object is to be searched.
+Can contain one of the following values:
+<br>1. EXTENSION_OBJECT - the direct extension superclass is to be checked
+<br>2. ALL_EXTENSION_SUPERCLASSES - object's extension supet-classes are to be checked.
+<br>The default value is "EXTENSION_OBJECT"</li>
+<li><b>objectIdsType</b> - </li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.conflictDefinition">conflictDefinition</a> (<a href="#e.matchObject">matchObject</a>)&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+represents templates for objects conflicting with each other.
+<br> See the "Calculating Tool-chain modification info from the “objects-set” info" section for more information
+<br>the "status" object for this element represents the status information to be applied in case the given conflictingSet information is not fulfilled.</p>
+<br><br>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.pattern">pattern</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST pattern</p>
+<p class="code SchemaDtdAttlist">objectIds&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(EXACT_MATCH|REGEXP) "EXACT_MATCH"<p class="code SchemaDtdAttlist">searchScope&nbsp;&nbsp;&nbsp;(ALL_EXTENSION_SUPERCLASSES|EXTENSION_OBJECT) "EXTENSION_SUPERCLASSES"<p class="code SchemaDtdAttlist">objectIdsType&nbsp;(REGEXP|EXACT_MATCH) &gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+specifies a string pattern</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>objectIds</b> - pattern value</li>
+<li><b>type</b> - specifies the value type. 
+<br>May contain the following values:
+<br> EXACT_MATCH - value is exact string representation
+<br> REGEXP - value is a regular expressions
+<br>The default is "EXACT_MATCH".</li>
+<li><b>searchScope</b> - specifies how the object is to be searched.
+Can contain one of the following values:
+<br>1. EXTENSION_OBJECT - the direct extension superclass is to be checked
+<br>2. ALL_EXTENSION_SUPERCLASSES - object's extension supet-classes are to be checked.
+
+<br>If undefined, the parent search scope will be used, i.e. when used with the matchObject, search scope defined for that matchObject will be used</li>
+<li><b>objectIdsType</b> - </li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>[Enter information about supplied implementation of this extension point.]
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+</p>
+</BODY>
+</HTML>

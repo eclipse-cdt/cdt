@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Template Associations</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">Template Associations</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.core.templateAssociations<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>This extension point was added in CDT 4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>This extension-point allows developers to specify toolchains that should be enabled for selection for use with a pre-existing template. This solves the problem over how ISV's can have templates defined and shipped with CDT support their own toolchains, without having to modify CDT itself.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.template">template</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+Each extension consists of a sequence of template elements, each of which define child elements for the new toolchains that should be enabled for selection during new project creation.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - The unique identifier for this extension</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.toolChain">toolChain</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST toolChain</p>
+<p class="code SchemaDtdAttlist">id&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+This element is used to reference an existing toolchain by its unique identifier.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - The unique identifier of a toolchain contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point.</li>
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.template">template</a> (<a href="#e.toolChain">toolChain</a>*)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST template</p>
+<p class="code SchemaDtdAttlist">id&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+This element references an existing template contribution's unique identifier in order that toolchains contributed separately to the template can be made selectable on project creation.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>id</b> - The unique identifier of the template-contribution (the id in plugin.xml rather than the template.xml) that should have the specified additional toolchains enabled for selection during new project creation.</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6>If you developed toolchain's with ids "com.foobar.toolchain1.base" and "com.foobar.toolchain2.base", which you wanted enabled for the empty project type built into the cdt core, you could use the following to achieve this:
+
+<pre class="Example"><span class="code SchemaTag">
+&lt;extension point=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.core.templateAssociations&quot;</span><span class="code SchemaTag">&gt;
+   &lt;template id=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.build.core.templates.EmptyProject&quot;</span><span class="code SchemaTag">&gt;
+      &lt;toolChain id=</span><span class="code SchemaCstring">&quot;com.foobar.toolchain1.base&quot;</span><span class="code SchemaTag">/&gt;
+      &lt;toolChain id=</span><span class="code SchemaCstring">&quot;com.foobar.toolchain2.base&quot;</span><span class="code SchemaTag">/&gt;
+   &lt;/template&gt;
+&lt;/extension&gt;
+</span></pre>
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2007 Symbian Software Limited and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+Symbian - Initial API and implementation
+
+</p>
+</BODY>
+</HTML>

@@ -23,6 +23,7 @@
    <extension-point id="ConfigManager" name="%ConfigManager" schema="schema/ConfigManager.exsd"/>
    <extension-point id="HelpInfo" name="%HelpInfo" schema="schema/HelpInfo.exsd"/>
    <extension-point id="quickFixProcessors" name="%quickFixProcessorExtensionPoint" schema="schema/quickFixProcessors.exsd"/>
+   <extension-point id="quickAssistProcessors" name="%quickAssistProcessorExtensionPoint" schema="schema/quickAssistProcessors.exsd"/>
    <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
 
    <extension
@@ -2510,11 +2511,19 @@
       <quickFixProcessor
             name="%spellingQuickFixProcessor"
             class="org.eclipse.cdt.internal.ui.text.spelling.WordQuickFixProcessor"
-            id= "org.eclipse.cdt.ui.text.correction.spelling.QuickFixProcessor">
+            id="org.eclipse.cdt.ui.text.correction.spelling.QuickFixProcessor">
             <handledMarkerTypes>
                 <markerType id="org.eclipse.cdt.internal.spelling"/>
 	        </handledMarkerTypes>
       </quickFixProcessor>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.quickAssistProcessors">
+      <quickAssistProcessor
+            name="%defaultQuickAssistProcessor"
+            class="org.eclipse.cdt.internal.ui.text.correction.QuickAssistProcessor"
+            id="org.eclipse.cdt.ui.text.correction.QuickAssistProcessor">
+      </quickAssistProcessor>
    </extension>
 
 <!--- Common Navigator extensions -->

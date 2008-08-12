@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
 
 public class BaseUITestCase extends BaseTestCase {
 	
@@ -347,18 +348,20 @@ public class BaseUITestCase extends BaseTestCase {
 						return item;
 					}
 				}
-			} 
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				if (label != null) {
 					fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
 				}
 				return null;
-			}
-			catch (SWTException e) {
+			} catch (SWTException e) {
 				// widget was disposed, try again.
 			}
 		}
 		assertEquals("Timeout expired waiting for tree node {" + i0 + "," + i1 + "}", label, itemText);
 		return null;
+	}
+	
+	public static void assertEqualString(String actual, String expected) {
+		StringAsserts.assertEqualString(actual, expected);
 	}
 }

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>cPropertyTab</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">cPropertyTab</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.managedbuilder.ui.cPropertyTab<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>Implementation of property/preference UI element.
+
+There're 2 ways to display property/preference data:
+either on pages with tabs, or on simple pages.
+
+In first case, each cPropertyTab extending class
+represents single tab in tabfolder. 
+In second case, cPropertyTab extending class 
+represents whole page contents (except header
+elements which are common for all pages).
+
+Note that cPropertyTab extending class ("tabs" below) do not
+distinguish these 2 cases, moreover, they may be shown both 
+in multi-tab and single-tab mode. It's up to page to select 
+displaying mode.
+
+In multi-tab page, tabs are displayed in order defined by 
+their weights.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.tab">tab</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.tab">tab</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST tab</p>
+<p class="code SchemaDtdAttlist">icon&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">parent&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">tooltip&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">weight&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">helpId&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>icon</b> - Icon to be displayed for corresponding tab in tabfolder.
+Ignored for single-tab pages</li>
+<li><b>class</b> - Class implementing org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab</li>
+<li><b>name</b> - Name of tab in tabfolder. 
+Ignored for single-tab pages.</li>
+<li><b>parent</b> - Class name for container page.
+Usually pages are to be derived from 
+org.eclipse.cdt.ui.newui.AbstractPage,
+but it is not obligatory.</li>
+<li><b>tooltip</b> - Text of tooltip shown over the tab.</li>
+<li><b>weight</b> - Abstract value to be used for sorting tabs inside of tab folder.
+Ignored for single-tab page.</li>
+<li><b>helpId</b> - Help context Id for given tab.</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6><extension
+           point="org.eclipse.cdt.ui.cPropertyTab">
+     <tab
+           class="org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab"
+           icon="icons/elcl16/discovery.gif"
+           name="Discovery options"
+           weight="100" 
+           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
+  </extension>
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>Implementors in org.eclipse.cdt.ui.newui:
+BinaryParsTab      
+CLocationOutputTab 
+CLocationSourceTab 
+CLocationTab       
+EnvironmentTab     
+ErrorParsTab       
+ExpIncludeTab      
+ExpLibraryPathTab  
+ExpLibraryTab      
+ExpSymbolTab       
+ICPropertyTab      
+IncludeTab         
+LanguagesTab       
+LibraryPathTab     
+LibraryTab         
+RefsTab            
+SDKsTab            
+SymbolTab          
+
+Implementors in org.eclipse.cdt.managedbuilder.ui.newui:
+ArtifactTab            
+BuilderSettingsTab     
+BuildStepsTab          
+CBuildLocationOutputTab
+CPropertyVarsTab       
+DiscoveryTab           
+ToolChainEditTab       
+ToolSettingsTab
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+/*******************************************************************************
+ * Copyright (c) 2007 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
+
+</p>
+</BODY>
+</HTML>

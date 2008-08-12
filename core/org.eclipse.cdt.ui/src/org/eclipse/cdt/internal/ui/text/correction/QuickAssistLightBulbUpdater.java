@@ -203,12 +203,12 @@ public class QuickAssistLightBulbUpdater {
 
 	private void doSelectionChanged(int offset, int length, IASTTranslationUnit astRoot) {
 		final IAnnotationModel model= getAnnotationModel();
-		final ITranslationUnit cu= getTranslationUnit();
-		if (model == null || cu == null) {
+		final ITranslationUnit tu= getTranslationUnit();
+		if (model == null || tu == null) {
 			return;
 		}
 
-		final CorrectionContext context= new CorrectionContext(cu, offset, length);
+		final CorrectionContext context= new CorrectionContext(tu, offset, length);
 
 		boolean hasQuickFix= hasQuickFixLightBulb(model, context.getSelectionOffset());
 		if (hasQuickFix) {

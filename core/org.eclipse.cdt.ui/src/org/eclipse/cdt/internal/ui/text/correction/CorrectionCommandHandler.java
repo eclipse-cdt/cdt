@@ -19,10 +19,11 @@ import java.util.Iterator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.viewers.ISelection;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -32,15 +33,25 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
 
 /**
  * Handler to be used to run a quick fix or assist by keyboard shortcut
@@ -61,10 +72,10 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection= fEditor.getSelectionProvider().getSelection();
-		ITranslationUnit cu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 		IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
-		if (selection instanceof ITextSelection && cu != null && model != null) {
-			ICompletionProposal proposal= findCorrection(fId, fIsAssist, (ITextSelection) selection, cu, model);
+		if (selection instanceof ITextSelection && tu != null && model != null) {
+			ICompletionProposal proposal= findCorrection(fId, fIsAssist, (ITextSelection) selection, tu, model);
 			if (proposal != null) {
 				invokeProposal(proposal, ((ITextSelection) selection).getOffset());
 			}
@@ -72,10 +83,13 @@ public class CorrectionCommandHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection, ITranslationUnit cu, IAnnotationModel model) {
-		CorrectionContext context= new CorrectionContext(cu, selection.getOffset(), selection.getLength());
+	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection, ITranslationUnit tu, IAnnotationModel model) {
+		CorrectionContext context= new CorrectionContext(tu, selection.getOffset(), selection.getLength());
 		Collection<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>(10);
 		if (isAssist) {
+			if (id.equals(LinkedNamesAssistProposal.ASSIST_ID)) {
+				return getLocalRenameProposal(context); // shortcut for local rename
+			}
 			CCorrectionProcessor.collectAssists(context, new ProblemLocation[0], proposals);
 		} else {
 			try {
@@ -103,6 +117,29 @@ public class CorrectionCommandHandler extends AbstractHandler {
 		return resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 	}
 	
+	private ICompletionProposal getLocalRenameProposal(final IInvocationContext context) {
+		final ICCompletionProposal[] proposals= new ICCompletionProposal[1];
+
+		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_YES,
+				new NullProgressMonitor(), new ASTRunnable() {
+
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+				IASTNodeSelector selector= astRoot.getNodeSelector(null);
+				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
+
+				// Activate the proposal only if a simple name is selected.
+				if (name != null && name == name.getLastName()) {
+					IBinding binding= name.resolveBinding();
+					if (binding != null) {
+						proposals[0]= new LinkedNamesAssistProposal(context.getTranslationUnit());
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		});
+		return proposals[0];
+	}
+
 	private IDocument getDocument() {
 		return CUIPlugin.getDefault().getDocumentProvider().getDocument(fEditor.getEditorInput());
 	}
@@ -139,5 +176,4 @@ public class CorrectionCommandHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
 }

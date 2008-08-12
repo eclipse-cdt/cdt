@@ -32,4 +32,12 @@ public final class CorrectionMessages extends NLS {
 	public static String CCorrectionProcessor_error_status;
 	public static String MarkerResolutionProposal_additionaldesc;
 	public static String NoCorrectionProposal_description;
+	
+	public static String ChangeCorrectionProposal_error_title;
+	public static String ChangeCorrectionProposal_error_message;
+	public static String ChangeCorrectionProposal_name_with_shortcut;
+	public static String TUCorrectionProposal_error_title;
+	public static String TUCorrectionProposal_error_message;
+	public static String LinkedNamesAssistProposal_proposalinfo;
+	public static String LinkedNamesAssistProposal_description;
 }

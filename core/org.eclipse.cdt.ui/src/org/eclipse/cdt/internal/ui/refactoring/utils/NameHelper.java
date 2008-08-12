@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -59,8 +60,10 @@ public class NameHelper {
 	 * @param insertFile the target file in which the definition is inserted
 	 * @param insertLocation 
 	 * @return the correct name for the target
+	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, IFile declarationFile, int selectionOffset, IFile insertFile, int insertLocation) {
+	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, IFile declarationFile, int selectionOffset, IFile insertFile, int insertLocation) 
+		throws CoreException {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		
 		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationFile, selectionOffset).getNames();

@@ -41,7 +41,7 @@ public class DeclarationFinder {
 		}
 		
 		String filename2 = pdomref[0].getFileLocation().getFileName();
-		IASTTranslationUnit transUnit = TranslationUnitHelper.loadTranslationUnit(filename2);
+		IASTTranslationUnit transUnit = TranslationUnitHelper.loadTranslationUnit(filename2, false);
 		IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(transUnit, pdomref[0]);
 		
 		return new DeclarationFinderDO(allNamesPDom, transUnit, filename2, declName);

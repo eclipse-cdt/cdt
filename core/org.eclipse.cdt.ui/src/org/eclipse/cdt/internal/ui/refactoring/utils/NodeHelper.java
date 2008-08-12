@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -27,6 +28,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -96,25 +100,36 @@ public class NodeHelper {
 		return null;
 	}
 	
-	public static MethodContext findMethodContext(IASTNode node) {
+	public static MethodContext findMethodContext(IASTNode node, IIndex index) throws CoreException{
 		IASTTranslationUnit translationUnit = node.getTranslationUnit();
 		boolean found = false;
 		MethodContext context = new MethodContext();
 		context.setType(MethodContext.ContextType.NONE);
-		 IASTName name = null;
-		 while(node != null && !found){
-			 node = node.getParent();
-			 if(node instanceof IASTFunctionDeclarator){
-				 name=((IASTFunctionDeclarator)node).getName();
-				 found = true;
-				 context.setType(MethodContext.ContextType.FUNCTION);
-			 } else if (node instanceof IASTFunctionDefinition){
-				 name=CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition)node).getDeclarator()).getName();
-				 found = true;
-				 context.setType(MethodContext.ContextType.FUNCTION);
-			 } 
-		 }
-		 if(name instanceof ICPPASTQualifiedName){
+		IASTName name = null;
+		while(node != null && !found){
+			node = node.getParent();
+			if(node instanceof IASTFunctionDeclarator){
+				name=((IASTFunctionDeclarator)node).getName();
+				found = true;
+				context.setType(MethodContext.ContextType.FUNCTION);
+			} else if (node instanceof IASTFunctionDefinition){
+				name=CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition)node).getDeclarator()).getName();
+				found = true;
+				context.setType(MethodContext.ContextType.FUNCTION);
+			} 
+		}
+		if(index != null) {
+			getMethodContexWithIndex(index, translationUnit, context, name);
+		}else {
+			getMethodContex(translationUnit, context, name);
+		}
+		return context;
+	}
+
+
+	private static void getMethodContex(IASTTranslationUnit translationUnit,
+			MethodContext context, IASTName name) {
+		if(name instanceof ICPPASTQualifiedName){
 			 ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
 			 context.setMethodQName(qname);
 			 IBinding bind = qname.resolveBinding();
@@ -128,7 +143,36 @@ public class NodeHelper {
 			 }
 
 		 }
-		 return context;
+	}
+
+
+	private static void getMethodContexWithIndex(IIndex index,
+			IASTTranslationUnit translationUnit, MethodContext context,
+			IASTName name) throws CoreException {
+		if(name instanceof ICPPASTQualifiedName){
+			ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
+			context.setMethodQName(qname);
+			IBinding bind = qname.resolveBinding();
+			if (bind instanceof ICPPMethod) {
+				context.setType(MethodContext.ContextType.METHOD);
+				IIndexName[] decl;
+				decl = index.findDeclarations(bind);
+				String tuFileLoc = translationUnit.getFileLocation().getFileName(); 
+				for (IIndexName tmpname : decl) {
+					IASTTranslationUnit locTu = translationUnit;
+					if(!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
+						locTu = TranslationUnitHelper.loadTranslationUnit(tmpname.getFileLocation().getFileName(), false);
+					}
+					IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
+					if(declName != null) {
+						IASTNode methoddefinition = declName.getParent().getParent();
+						if (methoddefinition instanceof IASTSimpleDeclaration) {
+							context.setMethodDeclarationName(declName);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {

@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  */
 public class DefinitionFinder {
 
-	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration, IFile file) throws CoreException {
+	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration, IFile file) throws CoreException{
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		IBinding resolveBinding = declarator.getName().resolveBinding();
 		return DefinitionFinder.getDefinition(declarator.getName(), resolveBinding, file);
@@ -74,7 +74,7 @@ public class DefinitionFinder {
 		IASTTranslationUnit transUnit;
 		if (!parsedFiles.containsKey(pdomref[0].getFileLocation().getFileName())) {
 			String filename = pdomref[0].getFileLocation().getFileName();
-			transUnit = TranslationUnitHelper.loadTranslationUnit(filename);
+			transUnit = TranslationUnitHelper.loadTranslationUnit(filename, false);
 		} else {
 			transUnit = parsedFiles.get(pdomref[0].getFileLocation().getFileName());
 		}

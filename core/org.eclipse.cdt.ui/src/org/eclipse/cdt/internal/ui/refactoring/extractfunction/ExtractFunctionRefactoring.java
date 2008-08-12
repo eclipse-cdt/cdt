@@ -180,7 +180,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 
 		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 		info.setMethodContext(context);
 		sm.done();
 		return status;
@@ -237,7 +237,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		final IASTName astMethodName = new CPPASTName(info.getMethodName()
 				.toCharArray());
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
 		if (context.getType() == ContextType.METHOD) {
 			ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
@@ -266,7 +266,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		final IASTName astMethodName = new CPPASTName(info.getMethodName()
 				.toCharArray());
 
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0));
+		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
 		// Create Declaration in Class
 		if (context.getType() == ContextType.METHOD) {

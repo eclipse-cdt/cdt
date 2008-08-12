@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -19,12 +22,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
-import org.eclipse.core.resources.IFile;
 
 /**
  * Helper class to find Namespace informations.
@@ -39,12 +42,13 @@ public class NamespaceHelper {
 	 * @param insertFile
 	 * @param offset
 	 * @return ICPPASTQualifiedName with the names of all namespaces
+	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName getSurroundingNamespace(final IFile insertFile, final int offset) {
+	public static ICPPASTQualifiedName getSurroundingNamespace(final IFile insertFile, final int offset) throws CoreException {
 		
 		final CPPASTQualifiedName qualifiedName = new CPPASTQualifiedName();
 	
-		TranslationUnitHelper.loadTranslationUnit(insertFile).accept(new CPPASTAllVisitor() {
+		TranslationUnitHelper.loadTranslationUnit(insertFile, false).accept(new CPPASTAllVisitor() {
 			
 				@Override
 				public int visit(IASTDeclSpecifier declSpec) {

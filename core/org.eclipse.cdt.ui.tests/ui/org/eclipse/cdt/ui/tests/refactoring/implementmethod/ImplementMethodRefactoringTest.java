@@ -43,8 +43,9 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 		IFile refFile = project.getFile(fileName);
 		
 		CRefactoring refactoring = new ImplementMethodRefactoring(refFile, selection, null);
-		refactoring.lockIndex();
+		
 		try {
+			refactoring.lockIndex();
 			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 
 			if(initialWarnings == 0) {

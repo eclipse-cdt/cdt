@@ -21,6 +21,7 @@
  * Noriaki Takatsu  (IBM) - [226074] process for getStatus() API
  * Noriaki Takatsu  (IBM) - [226237] [dstore] Move the place where the ServerLogger instance is made
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * Noriaki Takatsu  (IBM) - [242968] [multithread] serverSocket must be closed when an exception happens in Accept
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -262,6 +263,15 @@ public class ConnectionEstablisher
 			{
 				System.err.println(ServerReturnCodes.RC_CONNECTION_ERROR);
 				System.err.println("Server: error initializing socket: " + ioe); //$NON-NLS-1$
+				_msg = ioe.toString();
+				try
+				{
+					_serverSocket.close();
+				}
+				catch (Throwable e)
+				{
+					
+				}
 				_continue = false;
 			}
 		}
@@ -438,6 +448,7 @@ public class ConnectionEstablisher
 
 				System.err.println(ServerReturnCodes.RC_SUCCESS);
 				System.err.println(_serverSocket.getLocalPort());
+				_msg = ServerReturnCodes.RC_SUCCESS;
 				try
 				{
 					System.err.println("Server running on: " + InetAddress.getLocalHost().getHostName()); //$NON-NLS-1$

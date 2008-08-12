@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.core.model; 
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
@@ -272,16 +274,23 @@ public class CModule extends CDebugElement implements ICModule {
 		return fCElement;
 	}
 
-	private void loadSymbolsFromFile( IPath path ) throws DebugException {
-		if ( path == null || path.isEmpty() ) {
-			requestFailed( CoreModelMessages.getString( "CModule.2" ), null ); //$NON-NLS-1$
-		}
-		else if ( fCDIObject instanceof ICDISharedLibrary && path.equals( getSymbolsFileName() )) {
-			try {
-				((ICDISharedLibrary)fCDIObject).loadSymbols();
-			}
-			catch( CDIException e ) {
-				targetRequestFailed( e.getMessage(), null );
+	private void loadSymbolsFromFile(IPath path) throws DebugException {
+		if (fCDIObject instanceof ICDISharedLibrary) {
+			if (path == null || path.isEmpty()) {
+				requestFailed(CoreModelMessages.getString("CModule.2"), null); //$NON-NLS-1$
+			} else {
+				if (path.equals(getSymbolsFileName())) {
+					try {
+						((ICDISharedLibrary) fCDIObject).loadSymbols();
+					} catch (CDIException e) {
+						targetRequestFailed(e.getMessage(), null);
+					}
+				} else {
+					String message = MessageFormat.format( //
+							CoreModelMessages.getString("CModule.5"), //$NON-NLS-1$ 
+							new Object[] { path.toString() });
+					targetRequestFailed(message, null);
+				}
 			}
 		}
 	}

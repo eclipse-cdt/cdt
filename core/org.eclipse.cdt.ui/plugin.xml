@@ -2841,6 +2841,10 @@
   </extension>
   <extension
         point="org.eclipse.ui.exportWizards">
+     <category
+           id="org.eclipse.cdt.ui.exportWizardCategory"
+           name="%exportWizard.CDTCategory.name">
+     </category>
      <wizard
            category="org.eclipse.cdt.ui.exportWizardCategory"
            class="org.eclipse.cdt.internal.ui.wizards.indexwizards.TeamProjectIndexExportWizard"
@@ -2854,10 +2858,16 @@
            %teamProjectIndexExportWizard.description
         </description>
      </wizard>
-     <category
-           id="org.eclipse.cdt.ui.exportWizardCategory"
-           name="%exportWizard.CDTCategory.name">
-     </category>
+     <wizard
+           category="org.eclipse.cdt.ui.exportWizardCategory"
+           class="org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportWizard"
+           icon="icons/obj16/hfolder_obj.gif"
+           id="org.eclipse.cdt.ui.projectSettingsExportWizard"
+           name="%projectSettingsIndexExportWizard.name">
+        <selection
+              class="org.eclipse.core.resources.IProject">
+        </selection>
+     </wizard>
   </extension>
    <extension
             id="TemplateEngineWizard"
@@ -2969,6 +2979,23 @@
             name="%cElementHyperlinkDetector"
             targetId="org.eclipse.cdt.ui.cCode">
       </hyperlinkDetector>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="org.eclipse.cdt.ui.importWizardCategory"
+            name="%importWizard.CDTCategory.name">
+      </category>
+      <wizard
+            category="org.eclipse.cdt.ui.importWizardCategory"
+            class="org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportWizard"
+            icon="icons/obj16/hfolder_obj.gif"
+            id="org.eclipse.cdt.ui.projectSettingsImportWizard"
+            name="%projectSettingsIndexExportWizard.name">
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
+      </wizard>
    </extension>
 
 </plugin>

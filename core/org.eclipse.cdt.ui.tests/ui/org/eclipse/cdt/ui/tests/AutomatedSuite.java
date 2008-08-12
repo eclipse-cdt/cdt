@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite;
 import org.eclipse.cdt.ui.tests.text.selection.SelectionTestSuite;
 import org.eclipse.cdt.ui.tests.typehierarchy.TypeHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
+import org.eclipse.cdt.ui.tests.wizards.settingswizards.SettingsWizardTestSuite;
 
 /**
  * Test all areas of the UI.
@@ -85,6 +86,9 @@ public class AutomatedSuite extends TestSuite {
 		
 		// tests from package org.eclipse.cdt.ui.tests.chelp
 		addTest(CHelpTest.suite());
+		
+		// tests from package org.eclipse.cdt.ui.tests.wizards.settingswizards
+		addTest(SettingsWizardTestSuite.suite());
 	}
 	
 }

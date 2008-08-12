@@ -1501,7 +1501,7 @@
   <extension
          point="org.eclipse.ui.importWizards">
       <wizard
-            category="org.eclipse.cdt.ui.import"
+            category="org.eclipse.cdt.ui.importWizardCategory"
             icon="icons/obj16/c_app.gif"
             name="%importExecutableWizard.name"
             class="org.eclipse.cdt.debug.ui.importexecutable.ImportExecutableWizard"
@@ -1510,9 +1510,6 @@
  				%importExecutableWizard.description
  	        </description>
       </wizard>
-      <category
-            id="org.eclipse.cdt.ui.import"
-            name="%importCPPCategory.name"/>
    </extension>
  <!-- Source Not Found Editor -->
    <extension

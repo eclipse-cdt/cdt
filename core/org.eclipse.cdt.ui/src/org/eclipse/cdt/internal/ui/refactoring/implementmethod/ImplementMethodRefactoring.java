@@ -145,19 +145,20 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		}
 	}
 
-	private void createFunctionDefinition(IASTTranslationUnit unit) {
+	private void createFunctionDefinition(IASTTranslationUnit unit) throws CoreException {
 		createFunctionDefinition(
 				methodDeclaration.getDeclSpecifier(), 
 				(ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0], 
 				methodDeclaration.getParent(), unit);
 	}
 	
-	public IASTDeclaration createFunctionDefinition() {
+	public IASTDeclaration createFunctionDefinition() throws CoreException {
 		createFunctionDefinition(unit);
 		return createdMethodDefinition;		
 	}
 
-	private void createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, IASTNode declarationParent, IASTTranslationUnit unit) {
+	private void createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, 
+			IASTNode declarationParent, IASTTranslationUnit unit) throws CoreException {
 		
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(unit);
@@ -204,7 +205,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		createdMethodDefinition = func;
 	}
 
-	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) {
+	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) 
+		throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, region.getOffset(), insertLocation.getInsertFile(), insertOffset);
 	}

@@ -38,7 +38,7 @@ public class TranslationUnitHelperTest extends RefactoringTest {
 	@Override
 	protected void runTest() throws Throwable {
 		IFile file = project.getFile(fileName);
-		IASTTranslationUnit unit = TranslationUnitHelper.loadTranslationUnit(file);
+		IASTTranslationUnit unit = TranslationUnitHelper.loadTranslationUnit(file, false);
 		IASTNode firstNode = TranslationUnitHelper.getFirstNode(unit);
 		assertEquals(offset, firstNode.getNodeLocations()[0].getNodeOffset());
 	}

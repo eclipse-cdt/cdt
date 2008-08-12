@@ -185,7 +185,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				}
 			}			
 			
-			IASTTranslationUnit transUtmp = TranslationUnitHelper.loadTranslationUnit(declData.filename);
+			IASTTranslationUnit transUtmp = TranslationUnitHelper.loadTranslationUnit(declData.filename, false);
 			IASTName expName = ExpressionFinder.findExpressionInTranslationUnit(transUtmp, pdomref);
 			
 			IASTFunctionDeclarator funcDec = findEnclosingFunction(expName);

@@ -14,9 +14,11 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -25,6 +27,11 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 
@@ -35,34 +42,60 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  *
  */
 public class TranslationUnitHelper {
+	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 
 	/**
 	 * @param filename to load the translation unit from
 	 * @return the translation unit for the file or null
+	 * @throws CoreException 
 	 */
-	public static IASTTranslationUnit loadTranslationUnit(String filename) {
+	public static IASTTranslationUnit loadTranslationUnit(String filename, boolean useIndex) throws CoreException{
 
 		if (filename != null) {
 			IPath path = new Path(filename);
 			IFile tmpFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			return loadTranslationUnit(tmpFile);
+			return loadTranslationUnit(tmpFile, useIndex);
 		}
 
 		return null;
 	}
 	
 	/**
-	 * @param tmpFile to load the translation unit from
+	 * @param file to load the translation unit from
 	 * @return the translation unit for the file or null
+	 * @throws CoreException 
 	 */
-	public static IASTTranslationUnit loadTranslationUnit(IFile tmpFile) {
-		if (tmpFile != null) {
-			try {
-				IASTTranslationUnit fileUnit = CDOM.getInstance().getTranslationUnit(tmpFile, CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES), true);
-				return fileUnit;
-			} catch (UnsupportedDialectException e) {
-				return null;
-			}
+	public static IASTTranslationUnit loadTranslationUnit(IFile file, boolean useIndex) throws CoreException {
+		if (file == null) {
+			return null;
+		}
+		if(useIndex) {
+			return loadIndexBasedTranslationUnit(file);
+		}else {
+			return loadFileBasedTranslationUnit(file);
+		}
+	}
+
+	private static IASTTranslationUnit loadFileBasedTranslationUnit(IFile file) {
+		try {
+			IASTTranslationUnit fileUnit = CDOM.getInstance().getTranslationUnit(file, CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES), true);
+			return fileUnit;
+		} catch (UnsupportedDialectException e) {
+			return null;
+		}
+	}
+
+	private static IASTTranslationUnit loadIndexBasedTranslationUnit(IFile file)
+			throws CoreException {
+		IIndex index = null;
+		try {
+			index = lockIndex();
+			ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+			return tu.getAST(index, AST_STYLE);
+		} catch (InterruptedException e) {
+			CUIPlugin.log(e);
+		} finally {
+			unlockIndex(index);
 		}
 		return null;
 	}
@@ -110,5 +143,19 @@ public class TranslationUnitHelper {
 			}
 		}
 		return firstNode;
+	}
+	
+	private static IIndex lockIndex() throws CoreException, InterruptedException {
+		IIndex index;
+		ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
+		index= CCorePlugin.getIndexManager().getIndex(projects);
+		index.acquireReadLock();
+		return index;
+	}
+	
+	private static void unlockIndex(IIndex index) {
+		if (index != null) {
+			index.releaseReadLock();
+		}
 	}
 }

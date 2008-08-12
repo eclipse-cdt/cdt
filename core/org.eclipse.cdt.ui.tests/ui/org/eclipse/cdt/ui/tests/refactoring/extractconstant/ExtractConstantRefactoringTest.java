@@ -42,15 +42,19 @@ public class ExtractConstantRefactoringTest extends RefactoringTest {
 		IFile refFile = project.getFile(fileName);
 		NameNVisibilityInformation info = new NameNVisibilityInformation();
 		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring( refFile, selection, info);
-		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(checkInitialConditions);
-		info.setName("theAnswer"); //$NON-NLS-1$
-		info.setVisibility(visibility);
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(finalConditions);
-		createChange.perform(NULL_PROGRESS_MONITOR);
-
+		try {
+			refactoring.lockIndex();
+			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+			assertConditionsOk(checkInitialConditions);
+			info.setName("theAnswer"); //$NON-NLS-1$
+			info.setVisibility(visibility);
+			Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+			RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			assertConditionsOk(finalConditions);
+			createChange.perform(NULL_PROGRESS_MONITOR);
+		}finally {
+			refactoring.unlockIndex();
+		}
 		compareFiles(fileMap);
 
 	}

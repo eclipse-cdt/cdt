@@ -90,9 +90,9 @@ public class MethodContext {
 	}
 	
 	public static boolean isSameClass(ICPPASTQualifiedName qname1, ICPPASTQualifiedName qname2) {
-		ICPPInternalBinding bind1 = getClassBinding(qname1);
-		ICPPInternalBinding bind2 = getClassBinding(qname2);
-		return isSameClass(bind1,bind2);
+		ICPPClassType bind1 = getClassBinding(qname1);
+		ICPPClassType bind2 = getClassBinding(qname2);
+		return bind1.equals(bind2);
 	}
 	
 	public static boolean isSameOrSubClass(MethodContext context1, MethodContext contextOfSameOrSubclass) {
@@ -194,9 +194,9 @@ public class MethodContext {
 		return null;
 	}
 	
-	private static ICPPInternalBinding getClassBinding(ICPPASTQualifiedName qname){
+	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname){
 		IASTName classname = qname.getNames()[qname.getNames().length - 2];
-		ICPPInternalBinding bind = (ICPPInternalBinding)classname.resolveBinding(); 
+		ICPPClassType bind = (ICPPClassType)classname.resolveBinding(); 
 		return bind;
 	}
 }

@@ -245,15 +245,15 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
-		throws CoreException, OperationCanceledException {
+		throws CoreException, OperationCanceledException{
 		
-		MethodContext context = NodeHelper.findMethodContext(target);
+		MethodContext context = NodeHelper.findMethodContext(target, getIndex());
 		Collection<IASTExpression> locLiteralsToReplace = new ArrayList<IASTExpression>();
 
 		if(context.getType() == MethodContext.ContextType.METHOD){
 			
 			for (IASTExpression expression : literalsToReplace) {
-				MethodContext exprContext = NodeHelper.findMethodContext(expression);
+				MethodContext exprContext = NodeHelper.findMethodContext(expression, getIndex());
 				if(exprContext.getType() == MethodContext.ContextType.METHOD){
 					if( MethodContext.isSameClass(exprContext.getMethodQName(), context.getMethodQName())){
 						locLiteralsToReplace.add(expression);

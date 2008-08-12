@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -40,7 +41,7 @@ public class InsertLocation {
 		return nodeToInsertBefore;
 	}
 	
-	public IASTNode getPartenOfNodeToInsertBefore() {
+	public IASTNode getPartenOfNodeToInsertBefore() throws CoreException{
 		IASTNode affectedNode = getAffectedNode();
 		return (affectedNode != null) ? affectedNode.getParent() : getTargetTranslationUnit();
 	}
@@ -70,7 +71,7 @@ public class InsertLocation {
 		return insertFile != null;
 	}
 	
-	public IASTTranslationUnit getTargetTranslationUnit() {
+	public IASTTranslationUnit getTargetTranslationUnit() throws CoreException{
 		if(targetTranslationUnit == null) {
 			loadTargetTranslationUnit();
 		}
@@ -78,12 +79,12 @@ public class InsertLocation {
 		
 	}
 
-	private void loadTargetTranslationUnit() {
+	private void loadTargetTranslationUnit() throws CoreException{
 		IASTNode affectedNode = getAffectedNode();
 		if(affectedNode != null) {
 			targetTranslationUnit = affectedNode.getTranslationUnit();
 		} else if(hasFile()) {
-			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile);
+			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile, false);
 		}
 	}
 	

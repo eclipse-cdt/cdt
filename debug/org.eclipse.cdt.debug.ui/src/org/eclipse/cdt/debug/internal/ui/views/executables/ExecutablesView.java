@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -101,7 +102,11 @@ public class ExecutablesView extends ViewPart {
 	public static final ImageDescriptor DESC_IMPORT_DISABLED = create(PATH_LCL_DISABLED, "import.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLUMNS = create(PATH_LCL, "columns.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLUMNS_DISABLED = create(PATH_LCL_DISABLED, "columns.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REMOVE = create(PATH_LCL, "rem_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REMOVE_DISABLED = create(PATH_LCL_DISABLED, "rem_co.gif"); //$NON-NLS-1$
 	public static final int COLUMN_WIDTH_PADDING = 24;
+
+	private static final String SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeIconURL(prefix, name));
@@ -216,6 +221,7 @@ public class ExecutablesView extends ViewPart {
 	 */
 	Action refreshAction;
 	Action importAction;
+	Action removeAction;
 	private Action configureColumnsAction;
 
 	private IMemento memento;
@@ -233,7 +239,7 @@ public class ExecutablesView extends ViewPart {
 		final SashForm sashForm = new SashForm(container, SWT.NONE);
 
 		// Create the two sub viewers.
-		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION + SWT.BORDER);
+		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION + SWT.BORDER + SWT.MULTI);
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(executablesViewer);
 		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER);
 
@@ -343,10 +349,63 @@ public class ExecutablesView extends ViewPart {
 
 		importAction = createImportAction();
 		toolBarManager.add(importAction);
+		
+		removeAction = createRemoveAction();
+		toolBarManager.add(removeAction);
 
 		configureColumnsAction = createConfigureColumnsAction();
 		toolBarManager.add(configureColumnsAction);
 
+	}
+
+	private Action createRemoveAction() {
+		Action action = new Action("Remove") {
+			public void run() {				
+				ISelection selection = getExecutablesViewer().getSelection();
+				if (selection instanceof IStructuredSelection)
+				{
+					Object[] selectedObjects = ((IStructuredSelection)selection).toArray();
+					ArrayList<Executable> selectedExes = new ArrayList<Executable>();
+					for (Object object : selectedObjects) {
+						if (object instanceof Executable)
+							selectedExes.add((Executable) object);						
+					}
+					final Executable[] selectedExesArray = selectedExes.toArray(new Executable[selectedExes.size()]);
+					
+					boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "Confirm Remove Executables", "Are you sure you want to remove the selected executables?");
+					
+					if (confirm)
+					{
+						Job removeJob = new UIJob("Remove Executables") {
+
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+								IStatus result = ExecutablesManager.getExecutablesManager().removeExecutables(selectedExesArray, monitor);					
+								if (result.getSeverity() != IStatus.OK)
+								{
+									StringBuffer message = new StringBuffer(result.getMessage());
+									if (result.isMultiStatus()) {
+										IStatus[] children = result.getChildren();
+										for (int i = 0; i < children.length && i < 6; i++) {
+											message.append(SEPARATOR);
+											message.append(children[i].getMessage()); 
+										}
+									}
+									MessageDialog.openWarning(getSite().getShell(), "Remove Executables", message.toString());
+								}
+								return result;
+							}
+						};
+						removeJob.schedule();						
+					}
+				}
+				
+			}
+		};
+		action.setToolTipText("Remove the selected executables");
+		action.setImageDescriptor(ExecutablesView.DESC_REMOVE);
+		action.setDisabledImageDescriptor(ExecutablesView.DESC_REMOVE_DISABLED);
+		action.setEnabled(true);
+		return action;
 	}
 
 	private Action createConfigureColumnsAction() {

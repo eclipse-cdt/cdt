@@ -12,7 +12,6 @@
 package org.eclipse.cdt.debug.core.executables;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -21,6 +20,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,6 +33,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 
 public class StandardExecutableProvider implements IResourceChangeListener, ICProjectDescriptionListener, IExecutableProvider {
 
@@ -122,7 +125,7 @@ public class StandardExecutableProvider implements IResourceChangeListener, ICPr
 		}
 	}
 
-	public Collection<Executable> getExecutables(IProgressMonitor monitor) {
+	public Executable[] getExecutables(IProgressMonitor monitor) {
 		synchronized (executables) {
 			executables.clear();
 
@@ -155,13 +158,34 @@ public class StandardExecutableProvider implements IResourceChangeListener, ICPr
 						}
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					DebugPlugin.log( e );
 				}
 				monitor.worked(1);
 			}
 			monitor.done();
 		}
-		return executables;
+		return executables.toArray(new Executable[executables.size()]);
+	}
+
+	public int getPriority() {
+		return NORMAL_PRIORITY;
+	}
+
+	public IStatus removeExecutable(Executable executable, IProgressMonitor monitor) {
+		IResource exeResource = executable.getResource();
+		if (exeResource != null)
+		{
+			if (exeResource.isLinked())
+			{
+				try {
+					exeResource.delete(true, monitor);
+				} catch (CoreException e) {
+					DebugPlugin.log( e );
+				}				
+			}
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.WARNING, CDebugCorePlugin.PLUGIN_ID, "Can't remove " + executable.getName() + ": it is built by project \"" + executable.getProject().getName() + "\"");
 	}
 
 }

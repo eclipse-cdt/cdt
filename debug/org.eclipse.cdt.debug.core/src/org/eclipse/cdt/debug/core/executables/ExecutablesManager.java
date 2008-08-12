@@ -12,17 +12,23 @@
 package org.eclipse.cdt.debug.core.executables;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * The Executables Manager maintains a collection of executables built by all of
@@ -34,7 +40,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class ExecutablesManager extends PlatformObject {
 
-	private ArrayList<Executable> executables = new ArrayList<Executable>();
+	private HashMap<String, Executable> executables = new HashMap<String, Executable>();
 	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<ISourceFileRemapping> sourceFileRemappings = Collections.synchronizedList(new ArrayList<ISourceFileRemapping>());
 	private List<IExecutableProvider> executableProviders = Collections.synchronizedList(new ArrayList<IExecutableProvider>());
@@ -142,10 +148,11 @@ public class ExecutablesManager extends PlatformObject {
 				refreshJob.schedule();
 				refreshJob.join();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				DebugPlugin.log( e );
 			}
 		}
-		return executables.toArray(new Executable[executables.size()]);
+		Collection<Executable> exes = executables.values();
+		return exes.toArray(new Executable[exes.size()]);
 	}
 
 	public String remapSourceFile(String filePath) {
@@ -206,11 +213,7 @@ public class ExecutablesManager extends PlatformObject {
 	}
 	
 	public boolean executableExists(IPath exePath) {
-		for (Executable executable : executables) {
-			if (executable.getPath().equals(exePath))
-				return true;
-		}
-		return false;
+		return executables.containsKey(exePath.toOSString());
 	}
 
 	public String[] getSourceFiles(final Executable executable,
@@ -240,6 +243,48 @@ public class ExecutablesManager extends PlatformObject {
 			}
 			monitor.done();
 		}
+		return result;
+	}
+
+	public IStatus removeExecutables(Executable[] executables, IProgressMonitor monitor) {
+		IExecutableProvider[] exeProviders = getExecutableProviders();
+
+		IStatus result = Status.OK_STATUS;
+		
+		Arrays.sort(exeProviders, new Comparator<IExecutableProvider>() {
+
+			public int compare(IExecutableProvider arg0, IExecutableProvider arg1) {
+				int p0 = arg0.getPriority();
+				int p1 = arg1.getPriority();
+				if (p0 > p1)
+					return 1;
+				if (p0 < p1)
+					return -1;
+				return 0;
+			}
+		});
+
+		MultiStatus combinedStatus = new MultiStatus(CDebugCorePlugin.PLUGIN_ID, IStatus.WARNING, "Couldn't remove all of the selected executables", null);
+		refreshNeeded = false;
+		monitor.beginTask("Remove Executables", exeProviders.length);
+		for (Executable executable : executables) {
+			boolean handled = false;
+			IStatus rmvStatus = Status.OK_STATUS;;
+			for (IExecutableProvider provider : exeProviders) {
+				if (!handled)
+				{
+					rmvStatus = provider.removeExecutable(executable, new SubProgressMonitor(monitor, 1));
+					handled = rmvStatus.getSeverity() == IStatus.OK;
+				}				
+			}
+			if (!handled)
+			{
+				combinedStatus.add(rmvStatus);
+				result = combinedStatus;
+			}
+		}
+		monitor.done();
+		
 		return result;
 	}
 

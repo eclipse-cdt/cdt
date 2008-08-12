@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.executables;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * IExecutablesProvider supplies a list of executables to the Executables
@@ -23,6 +22,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public interface IExecutableProvider {
 
-	Collection<Executable> getExecutables(IProgressMonitor monitor);
+	static int LOW_PRIORITY = 25;
+	static int NORMAL_PRIORITY = 50;
+	static int HIGH_PRIORITY = 75;
+	
+	/**
+	 * Gets the priority to be used when providing a list of executables.
+	 * The priority is used by the Executables Manager when multiple IExecutableProvider are available.
+	 * IExecutableImporter.importExecutables will be called for each one in priority order.
+	 * 
+	 * @param executable
+	 * @return the priority level to be used for this ISourceFilesProvider
+	 */
+	int getPriority();
+
+	Executable[] getExecutables(IProgressMonitor monitor);
+
+	IStatus removeExecutable(Executable executable, IProgressMonitor monitor);
 
 }

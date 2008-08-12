@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.executables;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.PlatformObject;
 
 public class ExecutablesChangeEvent extends PlatformObject implements IExecutablesChangeEvent {
@@ -19,9 +17,9 @@ public class ExecutablesChangeEvent extends PlatformObject implements IExecutabl
 	private Executable[] oldExecutables;
 	private Executable[] newExecutables;
 
-	public ExecutablesChangeEvent(ArrayList<Executable> oldList, ArrayList<Executable> newList) {
-		oldExecutables = oldList.toArray(new Executable[oldList.size()]);
-		newExecutables = newList.toArray(new Executable[newList.size()]);
+	public ExecutablesChangeEvent(Executable[] oldList, Executable[] newList) {
+		oldExecutables = oldList;
+		newExecutables = newList;
 	}
 
 	public Executable[] getCurrentExecutables() {

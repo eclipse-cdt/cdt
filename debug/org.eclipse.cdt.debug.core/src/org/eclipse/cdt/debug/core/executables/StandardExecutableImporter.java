@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 
 public class StandardExecutableImporter implements IExecutableImporter {
 
@@ -98,9 +99,9 @@ public class StandardExecutableImporter implements IExecutableImporter {
 							}
 							exeProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null, DEBUG_PROJECT_ID);
 						} catch (OperationCanceledException e) {
-							e.printStackTrace();
+							DebugPlugin.log( e );
 						} catch (CoreException e) {
-							e.printStackTrace();
+							DebugPlugin.log( e );
 						}
 					}
 					checkProject = true;

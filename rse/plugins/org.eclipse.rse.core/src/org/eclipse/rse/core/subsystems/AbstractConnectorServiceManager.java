@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David McKnight   (IBM)        - [198802] Incorrect logic for getting dummy host	
+ * David McKnight   (IBM)        - [243382] [dstore] Server launcher settings are shared by multiple connections
  *******************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -128,7 +129,11 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
     		if (key instanceof DummyHost)
     		{
     			IHost host = (IHost)key;
-    			if (host.getHostName().equals(newHost.getHostName()))
+    			// A previous host of the same hostName should not be used since it causes bug 243382. 
+    			// A remaining problem here is that we shouldn't keep a host around in 
+    			// systemConnectionRegistry after it's corresponding connection has been created
+    			// but at the moment there's no API to do that outside of this class
+    			if (host.equals(newHost))	
     			{
     				Hashtable table = (Hashtable)systemConnectionRegistry.remove(host);
     				systemConnectionRegistry.put(newHost, table);    	

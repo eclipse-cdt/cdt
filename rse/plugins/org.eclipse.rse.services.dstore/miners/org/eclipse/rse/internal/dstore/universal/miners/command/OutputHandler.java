@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [243699] [dstore] Loop in OutputHandler
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -205,13 +206,19 @@ public class OutputHandler extends Handler {
 
 					// if output is not null, we assume the encoding was correct
 					// and process the output
-					if (fullOutput != null /* && fullOutput.length() == numRead */) {
+					if (fullOutput != null) {
 						// tokenize the output so that we can get each line of
 						// output
 						// the delimiters are therefore set to "\n\r"
 						StringTokenizer tokenizer = new StringTokenizer(
 								fullOutput, "\n\r"); //$NON-NLS-1$
 						int numTokens = tokenizer.countTokens();
+						if (numTokens == 0){
+							output = new String[1];
+							output[0] = fullOutput;
+							return output;
+						}
+						
 						output = new String[numTokens];
 						int index = 0;
 						while (tokenizer.hasMoreTokens()) {
@@ -220,6 +227,8 @@ public class OutputHandler extends Handler {
 						}
 
 						String lastLine = output[index - 1];
+	
+						
 						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
 						{
 							// our last line may be cut off		

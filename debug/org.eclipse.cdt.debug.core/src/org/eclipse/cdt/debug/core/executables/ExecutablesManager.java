@@ -117,24 +117,43 @@ public class ExecutablesManager extends PlatformObject {
 		if (tempDisableRefresh) {
 			return Status.OK_STATUS;
 		}
+
 		
 		synchronized (executables) {
-			ArrayList<Executable> oldList = new ArrayList<Executable>(executables);
+			HashMap<String, Executable> oldList = new HashMap<String, Executable>(executables);
 			executables.clear();
 
-			synchronized (executableProviders) {
-				monitor.beginTask("Refresh Executables", executableProviders.size());
-				for (IExecutableProvider provider : executableProviders) {
-					executables.addAll(provider.getExecutables(new SubProgressMonitor(monitor, 1)));
-				}
-				monitor.done();
-			}
+			IExecutableProvider[] exeProviders = getExecutableProviders();
+
+			Arrays.sort(exeProviders, new Comparator<IExecutableProvider>() {
+
+				public int compare(IExecutableProvider arg0, IExecutableProvider arg1) {
+					int p0 = arg0.getPriority();
+					int p1 = arg1.getPriority();
+					if (p0 > p1)
+						return 1;
+					if (p0 < p1)
+						return -1;
+					return 0;
+				}});
+
 			refreshNeeded = false;
+			monitor.beginTask("Refresh Executables", exeProviders.length);
+			for (IExecutableProvider provider : exeProviders) {
+				Executable[] exes = provider.getExecutables(new SubProgressMonitor(monitor, 1));
+				for (Executable executable : exes) {
+					executables.put(executable.getPath().toOSString(), executable);
+				}
+			}
+			monitor.done();
 
 			synchronized (changeListeners) {
+				Collection<Executable> newExes = executables.values();
+				Executable[] exeArray = newExes.toArray(new Executable[newExes.size()]);
+				Collection<Executable> oldExes = oldList.values();
+				Executable[] oldArray = oldExes.toArray(new Executable[oldExes.size()]);				
 				for (IExecutablesChangeListener listener : changeListeners) {
-					listener.executablesChanged(new ExecutablesChangeEvent(oldList, executables) {
-					});
+					listener.executablesChanged(new ExecutablesChangeEvent(oldArray, exeArray));
 				}
 			}
 		}
@@ -166,19 +185,32 @@ public class ExecutablesManager extends PlatformObject {
 		return filePath;
 	}
 
-	public void importExecutables(String[] fileNames, IProgressMonitor monitor) {
+	public void importExecutables(final String[] fileNames, IProgressMonitor monitor) {
 		try {
+			
+			tempDisableRefresh = true;
+			monitor.beginTask("Import Executables", executableImporters.size());
 			synchronized (executableImporters) {
-				tempDisableRefresh = true;
+				Collections.sort(executableImporters, new Comparator<IExecutableImporter>() {
 
-				monitor.beginTask("Import Executables", executableImporters.size());
+					public int compare(IExecutableImporter arg0, IExecutableImporter arg1) {
+						int p0 = arg0.getPriority(fileNames);
+						int p1 = arg1.getPriority(fileNames);
+						if (p0 < p1)
+							return 1;
+						if (p0 > p1)
+							return -1;
+						return 0;
+					}});
+
 				for (IExecutableImporter importer : executableImporters) {
-					importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
-					if (monitor.isCanceled()) {
+					boolean handled = importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+					if (handled || monitor.isCanceled()) {
 						break;
 					}
 				}
 			}
+
 		} finally {
 			tempDisableRefresh = false;
 		}

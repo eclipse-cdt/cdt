@@ -51,7 +51,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutableImporter#importExecutables(java.lang.String[],
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void importExecutables(String[] fileNames, IProgressMonitor monitor) {
+	public boolean importExecutables(String[] fileNames, IProgressMonitor monitor) {
 		monitor.beginTask("Import Executables", fileNames.length);
 
 		IProject exeProject = null;
@@ -63,7 +63,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 				path = new File(path).getCanonicalPath();
 			} catch (IOException e1) {
 			}
-			if (!ExecutablesManager.getExecutablesManager().executableExists(Path.fromOSString(path))) {
+			if (AllowImport(Path.fromOSString(path))) {
 				if (!checkProject) {
 					// See if the default project exists
 					String defaultProjectName = "Executables";
@@ -115,9 +115,14 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			}
 		}
 		monitor.done();
+		return true;
 	}
 
-	   private IContainer createFromRoot(IProject exeProject, IPath path) throws CoreException {
+	public boolean AllowImport(IPath path) {
+		 return (!ExecutablesManager.getExecutablesManager().executableExists(path));
+	}
+
+	private IContainer createFromRoot(IProject exeProject, IPath path) throws CoreException {
 		int segmentCount = path.segmentCount() - 1;
 		IContainer currentFolder = exeProject;
 
@@ -222,6 +227,10 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			}
 		} else
 			return false;
+	}
+
+	public int getPriority(String[] fileNames) {
+		return NORMAL_PRIORITY;
 	}
 
 }

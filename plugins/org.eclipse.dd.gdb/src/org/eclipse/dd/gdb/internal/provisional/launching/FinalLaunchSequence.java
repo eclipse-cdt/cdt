@@ -227,28 +227,42 @@ public class FinalLaunchSequence extends Sequence {
         	// We really should set it to false when GDB supports it though.
         	// Something to fix later.
         	if (isNonStop) {
-        		// The two raw commands should not be necessary in the official GDB release
+        		// The raw commands should not be necessary in the official GDB release
         		fCommandControl.queueCommand(
-        				new RawCommand(fCommandControl.getControlDMContext(), "maint set linux-async 1"), //$NON-NLS-1$
+        				new RawCommand(fCommandControl.getControlDMContext(), "set breakpoint always-inserted"), //$NON-NLS-1$
         				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         					@Override
         					protected void handleSuccess() {
+        						String asyncCommandStr;
+        						if (fSessionType == SessionType.REMOTE) {
+        							asyncCommandStr = "maint set remote-async 1"; //$NON-NLS-1$
+        						} else {
+        							asyncCommandStr = "maint set linux-async 1"; //$NON-NLS-1$
+        						}
+
         						fCommandControl.queueCommand(
-        								new RawCommand(fCommandControl.getControlDMContext(), "set breakpoint always-inserted 1"),  //$NON-NLS-1$ 
+        								new RawCommand(fCommandControl.getControlDMContext(), asyncCommandStr),
         								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         									@Override
         									protected void handleSuccess() {
         										fCommandControl.queueCommand(
-        												new MIGDBSetNonStop(fCommandControl.getControlDMContext(), true), 
-        												new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        												new RawCommand(fCommandControl.getControlDMContext(), "set pagination off"),  //$NON-NLS-1$ 
+        												new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+        													@Override
+        													protected void handleSuccess() {
+        														fCommandControl.queueCommand(
+        																new MIGDBSetNonStop(fCommandControl.getControlDMContext(), true), 
+        																new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        													}
+        												});
         									}
         								});
         					}
-        				});
+        								});
         	} else {
         		requestMonitor.done();
         	}
-        }},        
+        }},
         /*
          * Tell GDB to automatically load or not the shared library symbols
          */

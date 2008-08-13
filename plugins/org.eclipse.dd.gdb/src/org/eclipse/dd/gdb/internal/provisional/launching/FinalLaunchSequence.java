@@ -47,6 +47,7 @@ import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
+import org.eclipse.dd.mi.service.command.commands.MIGDBSetBreakpointApply;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
@@ -210,6 +211,22 @@ public class FinalLaunchSequence extends Sequence {
         	} else {
         		requestMonitor.done();
         	}
+        }},
+        /*
+         * Tell GDB to have breakpoint affect all processes being debugged.
+         * The user should actually make this decision.  See bug 244053
+         */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+            fCommandControl.queueCommand(
+                    // This command will fail for GDBs without multi-process support, and that is ok
+                    new MIGDBSetBreakpointApply(fCommandControl.getControlDMContext(), true),
+                    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+                        @Override
+                        protected void handleCompleted() {
+                            requestMonitor.done();
+                        }
+                    });
         }},
     	/*
     	 * Enable non-stop mode if necessary

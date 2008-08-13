@@ -40,6 +40,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
@@ -239,8 +240,9 @@ public class GDBControl extends AbstractMIControl {
         final Future<?> quitTimeoutFuture = getExecutor().schedule(
             new DsfRunnable() {
                 public void run() {
-                    if (!isGDBExited())
-                    destroy();
+                    if (!isGDBExited()) {
+                        destroy();
+                    }
                     rm.done();
                 }
                 
@@ -258,11 +260,12 @@ public class GDBControl extends AbstractMIControl {
                 @Override
                 public void handleCompleted() {
                     // Cancel the time out runnable (if it hasn't run yet).
-                    quitTimeoutFuture.cancel(false);
-                    if (!isSuccess() && !isGDBExited()) {
-                        destroy();
+                    if (quitTimeoutFuture.cancel(false)) {
+                        if (!isSuccess() && !isGDBExited()) {
+                            destroy();
+                        }
+                        rm.done();
                     }
-                    rm.done();
                 }
             }
         );
@@ -742,7 +745,11 @@ public class GDBControl extends AbstractMIControl {
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
             getSession().addServiceEventListener(GDBControl.this, null);
-            register(new String[]{ ICommandControl.class.getName(), AbstractMIControl.class.getName() }, new Hashtable<String,String>());
+            register(
+                new String[]{ ICommandControl.class.getName(), 
+                              ICommandControlService.class.getName(), 
+                              AbstractMIControl.class.getName() }, 
+                new Hashtable<String,String>());
             getSession().dispatchEvent(new GDBControlInitializedDMEvent(getGDBDMContext()), getProperties());
             requestMonitor.done();
         }

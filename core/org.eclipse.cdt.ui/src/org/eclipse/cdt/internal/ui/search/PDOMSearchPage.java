@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *   QNX - Initial API and implementation
+ *   IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -39,8 +40,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -378,11 +381,36 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		layout.numColumns = 2;
 		result.setLayout( layout );
 
+		Listener limitToListener = new Listener() {
+			public void handleEvent(Event event) {
+				Button me = (Button)event.widget;
+				if (me == limitToButtons[limitToAllButtonIndex]) {
+					if (me.getSelection()) {
+						for (int i = 0; i < limitToButtons.length; ++i) {
+							if (i != limitToAllButtonIndex) {
+								limitToButtons[i].setSelection(true);
+								limitToButtons[i].setEnabled(false);
+							}
+						}
+					} else {
+						for (int i = 0; i < limitToButtons.length; ++i) {
+							if (i != limitToAllButtonIndex) {
+								limitToButtons[i].setSelection(false);
+								limitToButtons[i].setEnabled(true);
+							}
+						}
+					}
+				}
+				setPerformActionEnabled();
+			}
+		};
+		
 		limitToButtons = new Button[limitToText.length];
 		for( int i = 0; i < limitToText.length; i++ ){
-			Button button = new Button(result, SWT.RADIO);
+			Button button = new Button(result, SWT.CHECK);
 			button.setText( limitToText[i] );
 			button.setData( limitToData[i] );
+			button.addListener(SWT.Selection, limitToListener);
 			limitToButtons[i] = button;
 		}
 
@@ -568,9 +596,15 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				
 				if ((searchFlags & PDOMSearchQuery.FIND_ALL_OCCURANCES) == PDOMSearchQuery.FIND_ALL_OCCURANCES) {
 					limitToButtons[limitToAllButtonIndex].setSelection(true);
+					for (int i = 0; i < limitToButtons.length; ++i) {
+						if (i != limitToAllButtonIndex) {
+							limitToButtons[i].setSelection(true);
+							limitToButtons[i].setEnabled(false);
+						}
+					}
 				} else {
 					limitToButtons[limitToAllButtonIndex].setSelection(false);
-					for (int i = 0; i < limitToButtons.length - 2; ++i) {
+					for (int i = 0; i < limitToButtons.length - 1; ++i) {
 						limitToButtons[i].setSelection(
 								(searchFlags & ((Integer)limitToButtons[i].getData()).intValue()) != 0);
 					}

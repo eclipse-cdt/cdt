@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Kevin Doyle		(IBM)	 - [240725] Add Null Pointer checking when there are no default user actions
+ * Kevin Doyle 		(IBM)	 - [222829] MoveUp/Down Broken in Work with User Actions Dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.swt.graphics.Image;
 
@@ -204,6 +206,24 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 		setAttribute(ISystemUDAConstants.NAME_ATTR, s);
 		setUserChanged(true);
 	}
+	
+	/**
+	 * Return the value of this node's "order" attribute
+	 */
+	public int getOrder() {
+		IProperty orderProperty = elm.getProperty(ISystemUDAConstants.ORDER_ATTR);
+		int order = -1;
+		
+		if (orderProperty != null)
+		{
+			order = Integer.valueOf(orderProperty.getValue()).intValue();
+		}
+		return order;
+	}
+	
+	public void setOrder(int order) {
+		elm.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(order));
+	}
 
 	/**
 	 * For IBM-supplied elements that have been edited, returns the original IBM-supplied name
@@ -283,7 +303,25 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	public void deleteElement() {
 		// Not intended for root.  Only for Actions
 		//elm.getParentNode().removeChild(elm);
+		int elmOrder = getOrder();
 		elm.getContainer().removePropertySet(elm.getName());
+		IPropertySetContainer parentElement = elm.getContainer();
+		IPropertySet[] allChildren = parentElement.getPropertySets();
+		for (int i = 0; i < allChildren.length; i++) {
+			IProperty orderProperty = allChildren[i].getProperty(ISystemUDAConstants.ORDER_ATTR);
+			int order = -1;
+			if (orderProperty != null)
+			{
+				order = Integer.valueOf(orderProperty.getValue()).intValue();
+			}
+			
+			// Decrease the order of all elements greater then elmOrder
+			if (order > elmOrder) {
+				allChildren[i].addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(order - 1));
+			}
+		}
+		
+		
 	}
 	
 	/**
@@ -426,6 +464,7 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 	 */
 	public static Vector getChildren(Vector children, IPropertySet parentElement, IPropertySet xdoc, ISystemProfile profile, ISystemXMLElementWrapperFactory factory, int domain) {
 		if (children == null) children = new Vector();
+		Vector ordered = new Vector();
 		String tagName = factory.getTagName();
 		
 		IPropertySet[] subList = null;
@@ -434,15 +473,42 @@ public abstract class SystemXMLElementWrapper implements IAdaptable {
 		else if (xdoc != null)
 			subList = xdoc.getPropertySets();
 		if (subList != null) {
+			Vector unordered = new Vector();
 			for (int idx = 0; idx < subList.length; idx++) {
 				IPropertySet sn = subList[idx];
 				if (sn.getPropertyValue(ISystemUDAConstants.TYPE_ATTR).equals(tagName))
 				{
-					SystemXMLElementWrapper thisWrapper = factory.createElementWrapper(sn, profile, domain);
-					children.add(thisWrapper);
+					unordered.add(sn);
 				}
 			} // end for all subnodes
+			ordered.setSize(unordered.size());
+			for (int i = 0; i < unordered.size(); i++) {
+				int order = i;
+				// get the ordering
+				IPropertySet sn = ((IPropertySet) unordered.get(i));
+				IProperty orderProperty = sn.getProperty(ISystemUDAConstants.ORDER_ATTR);
+				if (orderProperty != null) {
+					order = Integer.valueOf(orderProperty.getValue()).intValue();
+				}
+				
+				SystemXMLElementWrapper thisWrapper = factory.createElementWrapper(sn, profile, domain);
+				try { 
+					ordered.remove(order);
+					ordered.add(order, thisWrapper);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		} // end if sublist != null		
+		// Set the order position of all attributes to handle 3.0 where we didn't have the order attribute
+		for (int i = 0; i < ordered.size(); i++) {
+			if (ordered.get(i) instanceof SystemXMLElementWrapper) {
+				SystemXMLElementWrapper element = (SystemXMLElementWrapper) ordered.get(i);
+				if (element != null)
+					element.setOrder(i);
+			}
+			children.add(ordered.get(i));
+		}
 		return children;
 	}
 

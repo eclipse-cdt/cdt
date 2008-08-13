@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
  * Kevin Doyle (IBM)   - [240725] Add Null Pointer checking when there are no default user actions
  * Kevin Doyle (IBM)   - [239702] Copy/Paste doesn't work with User Defined Actions and Named Types
+ * Kevin Doyle 		(IBM)	 - [222829] MoveUp/Down Broken in Work with User Actions Dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
+import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -666,19 +668,31 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		IPropertySet element = elementWrapper.getElement();
 		IPropertySetContainer parentElement = element.getContainer();
 		IPropertySet[] allChildren = parentElement.getPropertySets();
-		for (int i = 0; i < allChildren.length; ++i)
+		
+		IPropertySet elementBelow = null;
+		int elementOrder = getOrder(element);
+		// Find the element whose order index is 1 more then the current element
+		for (int i = 0; i < allChildren.length && elementBelow == null; ++i)
 		{
-			if (allChildren[i] == element)
-			{
-				if (i < allChildren.length - 1) //not the last one
-				{
-					allChildren[i] = allChildren[i+1];
-					allChildren[i+1] = element;
-				}
-			}
+			// Get the order attribute of the current property set
+			int order = getOrder(allChildren[i]);
+			
+			// Compare to the current elements order attribute
+			if (order != -1 && (elementOrder + 1) == order)
+				elementBelow = allChildren[i];
 		}
-		saveUserData(elementWrapper.getProfile());
-		return true;
+		
+		// Swap the order for the 2 elements
+		if (elementBelow != null) {		
+			elementBelow.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder));
+			element.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder + 1));
+			
+			// Save User Data	
+			setProfileIndexedInstanceVariable_hasChanged(elementWrapper.getProfile(), true);
+			saveUserData(elementWrapper.getProfile());
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -690,19 +704,30 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		IPropertySet element = elementWrapper.getElement();
 		IPropertySetContainer parentElement = element.getContainer();
 		IPropertySet[] allChildren = parentElement.getPropertySets();
-		for (int i = 0; i < allChildren.length; ++i)
+		
+		IPropertySet elementAbove = null;
+		int elementOrder = getOrder(element);
+		for (int i = 0; i < allChildren.length && elementAbove == null; ++i)
 		{
-			if (allChildren[i] == element)
-			{
-				if (i > 0) //not the first one
-				{
-					allChildren[i] = allChildren[i-1];
-					allChildren[i-1] = element;
-				}
-			}
+			// Get the order attribute of the current property set
+			int order = getOrder(allChildren[i]);
+			
+			// Compare to the current elements order attribute
+			if (order != -1 && (elementOrder - 1) == order)
+				elementAbove = allChildren[i];
 		}
-		saveUserData(elementWrapper.getProfile());
-		return true;
+		
+		// Swap the order for the 2 elements
+		if (elementAbove != null) {		
+			elementAbove.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder));
+			element.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder - 1));
+			
+			// Save User Data	
+			setProfileIndexedInstanceVariable_hasChanged(elementWrapper.getProfile(), true);
+			saveUserData(elementWrapper.getProfile());
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -760,11 +785,28 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 			
 			if (selectedElementWrapper.isDomain()) {
 				parentElement = selectedElement;
+				IPropertySet[] allChildren = parentElement.getPropertySets();
+				currentNodeClone.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(allChildren.length));		
+				
 				parentElement.addPropertySet(currentNodeClone);
 				pastedElement = currentNodeClone;
 			} else {
 				parentElement = selectedElement.getContainer();
-				//TODO - Xuan: need to take care of order here.
+				IPropertySet[] allChildren = parentElement.getPropertySets();
+				IPropertySet elementBelow = null;
+				int elementOrder = getOrder(selectedElement);
+				for (int i = 0; i < allChildren.length && elementBelow == null; ++i)
+				{
+					// Get the order attribute of the current property set
+					int order = getOrder(allChildren[i]);
+					
+					// Increment the order value for each property set greater then the current element's as we
+					// insert the new pasted element right below the selected
+					if (order > elementOrder) {
+						allChildren[i].addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(order + 1));
+					}
+				}
+				currentNodeClone.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder + 1));
 				parentElement.addPropertySet(currentNodeClone);
 				pastedElement = currentNodeClone;
 			}
@@ -1014,6 +1056,12 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		}
 		child.addProperty(ISystemUDAConstants.NAME_ATTR, uppercaseName() ? name.toUpperCase() : name);
 		child.addProperty(ISystemUDAConstants.TYPE_ATTR, getTagName());
+		
+		// Set the Order
+		IPropertySetContainer parentElement = child.getContainer();
+		IPropertySet[] allChildren = parentElement.getPropertySets();
+		child.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(allChildren.length - 1)); // -1 the length because we are already part of the child list
+		
 		SystemXMLElementWrapper newElementWrapper = null;
 		
 		newElementWrapper = createElementWrapper(child, profile, domain);
@@ -1286,5 +1334,16 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 			}
 		}
 		return false;
+	}
+	
+	private int getOrder(IPropertySet elm) {
+		IProperty orderProperty = elm.getProperty(ISystemUDAConstants.ORDER_ATTR);
+		int order = -1;
+		
+		if (orderProperty != null)
+		{
+			order = Integer.valueOf(orderProperty.getValue()).intValue();
+		}
+		return order;
 	}
 }

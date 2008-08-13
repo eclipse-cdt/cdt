@@ -10,6 +10,7 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
+ * Kevin Doyle 		(IBM)	 - [222829] MoveUp/Down Broken in Work with User Actions Dialog
  *******************************************************************************/
 /**
  * @author coulthar
@@ -34,22 +35,26 @@ public interface ISystemUDAConstants {
 	 *   or for iSeries "Object" and "Member" domains
 	 */
 	public static final String XE_DOMAIN = "Domain"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the xml attribute of domain tags which
 	 *  identifies the domain type. Its values will be
 	 *  an untranslated name like "Object" or "Folder".
 	 */
 	public static final String XE_DOMTYPE = "DomainType"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the xml attribute of domain tags which
 	 *  identifies the domain name. Its values will be
 	 *  a translated name like "Object" or "Folder".
 	 */
 	public static final String XE_DOMNAME = "name"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the attribute we consistently use to store an element's name
 	 */
 	public static final String NAME_ATTR = "name"; //$NON-NLS-1$
+	
 	/**
 	 * The type of the attribute we consistently use to store an element's name
 	 */
@@ -59,6 +64,12 @@ public interface ISystemUDAConstants {
 	 * The name of the attribute we consistently use to store an element's original IBM-supplied name
 	 */
 	public static final String ORIGINAL_NAME_ATTR = "OriginalName"; //$NON-NLS-1$
+	
+	/**
+	 * The position in the list of other user actions a user action should show up in
+	 */
+	public static final String ORDER_ATTR = "Order"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the attribute we consistently use to store a release number
 	 */

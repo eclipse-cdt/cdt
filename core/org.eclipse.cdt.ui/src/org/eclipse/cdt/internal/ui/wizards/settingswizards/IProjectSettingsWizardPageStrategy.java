@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.ui.wizards.settingswizards;
  * the behavior that is specific to import and export.
  * 
  * @author Mike Kucera
- *
+ * @since 5.1
  */
 public interface IProjectSettingsWizardPageStrategy {
 	

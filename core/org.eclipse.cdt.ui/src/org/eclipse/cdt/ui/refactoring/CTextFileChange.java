@@ -50,6 +50,9 @@ public class CTextFileChange extends TextFileChange {
         }
     }
     
+    /**
+	 * @since 5.1
+	 */
     public CTextFileChange(String name, ITranslationUnit tu) {
         super(name, getFile(tu));
         fTranslationUnit = tu;

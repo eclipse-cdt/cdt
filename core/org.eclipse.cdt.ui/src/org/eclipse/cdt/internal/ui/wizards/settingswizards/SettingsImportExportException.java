@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 
+/**
+ * An exception that represents a problem with importing or exporting
+ * settings.
+ * 
+ * @since 5.1
+ */
 public class SettingsImportExportException extends Exception {
 
 	public SettingsImportExportException() {

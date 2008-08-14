@@ -33,10 +33,12 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+
 /**
  * Custom behavior for the Export wizard.
  * 
  * @author Mike Kucera
+ * @since 5.1
  *
  */
 public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPageStrategy {

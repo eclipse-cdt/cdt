@@ -15,6 +15,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 
+/**
+ * @since 5.1
+ */
 public abstract class ProjectSettingsWizard extends Wizard {
 
 	private ProjectSettingsWizardPage mainPage;

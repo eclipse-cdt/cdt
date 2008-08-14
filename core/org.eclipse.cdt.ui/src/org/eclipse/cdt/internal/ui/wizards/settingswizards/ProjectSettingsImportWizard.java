@@ -14,6 +14,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
+/**
+ * @since 5.1
+ */
 public class ProjectSettingsImportWizard extends ProjectSettingsWizard implements IImportWizard {
 
 

@@ -22,12 +22,14 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 /**
  * Base class implementing standard import and export functionality
  * for a section of the file.
  * 
  * @author Mike Kucera
+ * @since 5.1
  */
 public abstract class SettingsProcessor implements ISettingsProcessor {
 
@@ -39,11 +41,14 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	
 	
 	/**
+	 * Returns a constant from the ICSettingEntry interface.
 	 */
 	protected abstract int getSettingsType();
 	
+	
 	protected abstract void writeSettings(ContentHandler content, ICLanguageSettingEntry setting)
 		throws SettingsImportExportException;
+	
 	
 	protected abstract void readSettings(ICLanguageSetting setting, Element language) 
 		throws SettingsImportExportException;

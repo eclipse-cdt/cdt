@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICFolderDescription;
  *  
  * 
  * @author Mike Kucera
+ * @since 5.1
  */
 public interface ISettingsProcessor {
 

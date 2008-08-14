@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * A settings processor that imports and exports include paths.
  * 
  * @author Mike Kucera
+ * @since 5.1
  * 
  */
 public class IncludePathsSettingsProcessor extends SettingsProcessor {

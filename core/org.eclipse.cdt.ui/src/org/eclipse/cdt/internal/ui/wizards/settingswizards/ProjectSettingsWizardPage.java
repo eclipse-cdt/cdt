@@ -56,7 +56,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPageStrategy.MessageType;
 
 /**
- *
+ * @since 5.1
  */
 abstract public class ProjectSettingsWizardPage extends WizardPage implements IProjectSettingsWizardPage {
 

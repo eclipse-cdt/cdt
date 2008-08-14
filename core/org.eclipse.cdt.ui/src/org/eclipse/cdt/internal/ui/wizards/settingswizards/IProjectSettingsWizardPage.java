@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  * mock object, which makes testing the strategies easy.
  * 
  * @author Mike Kucera
+ * @since 5.1
  */
 public interface IProjectSettingsWizardPage {
 

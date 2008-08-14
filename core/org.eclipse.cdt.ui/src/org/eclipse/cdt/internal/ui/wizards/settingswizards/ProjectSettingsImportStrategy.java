@@ -42,6 +42,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Custom behavior for the Import wizard.
  * 
  * @author Mike Kucera
+ * @since 5.1
  *
  */
 public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPageStrategy {

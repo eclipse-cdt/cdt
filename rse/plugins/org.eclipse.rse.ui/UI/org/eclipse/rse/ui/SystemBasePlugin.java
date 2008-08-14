@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [243263] NPE on expanding a filter
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -115,14 +116,21 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			// otherwise, get a list of all the windows, and simply return the first one
 			// KM: why do we need this??
 			else {
-				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				final IWorkbench workbench = wb;
 				
-				if (windows != null && windows.length > 0) {
-					return windows[0];
+				// do this in a runnable so we can get the right window on the main thread
+				class GetActiveWindow implements Runnable {
+					public IWorkbenchWindow _activeWindow = null;
+					public void run()
+					{
+						_activeWindow = workbench.getActiveWorkbenchWindow();
+					}					
 				}
+				GetActiveWindow runnable = new GetActiveWindow();
+				wb.getDisplay().syncExec(runnable);
+				return runnable._activeWindow;
 			}
 			
-			return null;
 		}
 		else {
 			return null;

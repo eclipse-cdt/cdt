@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -322,6 +323,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				String filePath = tuPath.toOSString();
 				try {
 					Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);
+					if (foundElements.length == 1 && foundElements[0] instanceof IFile)
+					{
+						EditorUtility.openInEditor(foundElements[0]);
+						return true;						
+					}
+					else
 					if (foundElements.length == 1 && foundElements[0] instanceof LocalFileStorage)
 					{
 						LocalFileStorage newLocation = (LocalFileStorage) foundElements[0];

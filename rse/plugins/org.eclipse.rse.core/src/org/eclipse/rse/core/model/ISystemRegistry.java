@@ -274,10 +274,10 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Resolve a subsystem from it's absolute name
-	 * 
+	 * The absolute name of a subsystem
+	 * is denoted by <I>profileName</I>.<I>connectionName</I>:<I>subsystemConfigurationId</I>
 	 * @param absoluteSubSystemName the name of the subsystem
-	 * 
-	 * @return the subsystem
+	 * @return the subsystem or null if the profile, connection, or subsystem configuration cannot be found.
 	 */
 	public ISubSystem getSubSystem(String absoluteSubSystemName);
 

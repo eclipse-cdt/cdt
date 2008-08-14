@@ -785,16 +785,12 @@ public class SystemRegistry implements ISystemRegistry
 		return result;
 	}
 
-	/**
-	 * Resolve a subsystem from it's absolute name.  The absolute name of a subsystem
-	 * is denoted by <I>profileName</I>.<I>connectionName</I>:<I>subsystemConfigurationId</I>
-	 *
-	 * @param absoluteSubSystemName the name of the subsystem
-	 *
-	 * @return the subsystem
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystem(java.lang.String)
 	 */
 	public ISubSystem getSubSystem(String absoluteSubSystemName)
 	{
+		ISubSystem result = null;
 		// first extract subsystem id
 		int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
 		int connectionDelim = absoluteSubSystemName.indexOf(":", profileDelim + 1); //$NON-NLS-1$
@@ -806,10 +802,12 @@ public class SystemRegistry implements ISystemRegistry
 			String srcSubSystemConfigurationId = absoluteSubSystemName.substring(connectionDelim + 1, absoluteSubSystemName.length());
 
 			ISystemProfile profile = getSystemProfile(srcProfileName);
-			return getSubSystem(profile, srcConnectionName, srcSubSystemConfigurationId);
+			if (profile != null) {
+				result = getSubSystem(profile, srcConnectionName, srcSubSystemConfigurationId);
+			}
 		}
 
-		return null;
+		return result;
 	}
 
 	/**

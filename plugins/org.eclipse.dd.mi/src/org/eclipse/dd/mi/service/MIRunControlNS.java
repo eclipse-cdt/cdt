@@ -480,7 +480,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	}
 
 	private void doResumeContainer(IContainerDMContext context, final RequestMonitor rm) {
-		MIExecContinue cmd = new MIExecContinue(context, false);
+		MIExecContinue cmd = new MIExecContinue(context, true);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 

@@ -32,6 +32,7 @@
  * David McKnight   (IBM)        - [227406] [dstore] DStoreFileService must listen to buffer size preference changes
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
  * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
+ * David McKnight   (IBM)        - [244116] [dstore][daemon][ssl]  Connecting to RSE server doesn't complete when the connection is SSL
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -681,7 +682,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 							_isConnecting = false;
 							if (provider.importCertificates(certs, getHostName()))
 							{
-								connect(monitor);
+								internalConnect(monitor);
 								return;
 							}
 							else
@@ -795,7 +796,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 								
 								if (provider.importCertificates(certs, getHostName()))
 								{
-									connect(monitor);
+									internalConnect(monitor);
 									return;
 								}
 								else

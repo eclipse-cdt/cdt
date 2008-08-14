@@ -111,13 +111,13 @@ public class ServerLogger implements IServerLogger
 	public void logInfo(String minerName, String message) {
 		if (!initialized)
 			initialize();
-		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
 			} 
 			catch (NumberFormatException e){				
-				// leaving level as it was
+				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
 			}
 		}
 		if (log_level >= LOG_INFO) {
@@ -144,13 +144,13 @@ public class ServerLogger implements IServerLogger
 	public void logWarning(String minerName, String message) {
 		if (!initialized)
 			initialize();
-		String loggerLogLevel = System.getProperty("LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
 			}
 			catch (NumberFormatException e){
-				// leaving level as it was
+				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
 			}
 		}
 		if (log_level >= LOG_WARNING) {

@@ -301,7 +301,7 @@ public class MakeBuilder extends ACBuilder {
 	}
 
 	// Turn the string into an array.
-	String[] makeArray(String string) {
+	private String[] makeArray(String string) {
 		string.trim();
 		char[] array = string.toCharArray();
 		ArrayList aList = new ArrayList();

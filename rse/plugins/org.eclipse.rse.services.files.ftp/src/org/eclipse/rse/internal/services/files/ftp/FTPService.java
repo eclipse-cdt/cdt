@@ -79,6 +79,7 @@
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * Martin Oberhuber (Wind River) - [240738][ftp] Incorrect behavior on getFile for non-existing folder
+ * David McKnight   (IBM)        - [243921] FTP subsystem timeout causes error when expanding folders
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -102,6 +103,7 @@ import java.util.Map;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -678,8 +680,19 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	{
 		boolean isConnected = false;
 
-		if(_ftpClient!=null) {
+		if(_ftpClient!=null) {			
 			isConnected =  _ftpClient.isConnected();
+			if (isConnected){ // make sure that there hasn't been a timeout
+				try {
+					_ftpClient.noop();
+				}
+				catch (FTPConnectionClosedException e){
+					return false;
+				}
+				catch (IOException e2){
+					return false;
+				}
+			}
 		}
 
 		return isConnected;

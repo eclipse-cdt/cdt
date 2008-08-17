@@ -300,7 +300,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
 	private CommandCache fContainerCommandCache;
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
-	private static final String UNIQUE_GROUP_ID = "0"; //$NON-NLS-1$
+	// The unique id should be an empty string so that the views know not to display the fake id
+	private static final String UNIQUE_GROUP_ID = ""; //$NON-NLS-1$
 
     public MIProcesses(DsfSession session) {
     	super(session);

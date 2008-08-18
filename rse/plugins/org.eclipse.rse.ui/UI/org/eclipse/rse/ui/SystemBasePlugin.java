@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [243263] NPE on expanding a filter
+ * David McKnight   (IBM)        - [244454] SystemBasePlugin.getWorkBench() incorrectly returns null when called during Eclipse startup
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -62,8 +63,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     
 	// instance variables
     private Hashtable imageDescriptorRegistry = null;	
-    private boolean headless;
-    private boolean headlessSet;
 
     /**
      * Returns the singleton object representing the base plugin.
@@ -496,9 +495,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	    if (baseInst == null) {
 	        baseInst = this;
 	    }
-	    
-		headless = false;
-		headlessSet = false;
 	}
 	
 	// ------------------------
@@ -571,31 +567,13 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	public IWorkbench getWorkbench() 
 	{
 		IWorkbench wb = null;
-		if (headlessSet && headless) // already been here?
-		 	return wb;
 		try {
-			wb = PlatformUI.getWorkbench();
-			
-			//wb = super.getWorkbench();
-			headless = false;			
+			wb = PlatformUI.getWorkbench();			
 		} 
 		catch (Exception exc)
 		{
-			/*
-			IDEWorkbenchAdvisor advisor = new IDEWorkbenchAdvisor();
-			PlatformUI.createAndRunWorkbench(Display.getDefault(), advisor);
-			try
-			{
-				wb = super.getWorkbench();			
-			}
-			catch (Exception e)
-			{
-				headless = true;
-			}
-			*/
-			headless = true;
+			// workbench not created yet
 		}
-		headlessSet = true;
 		return wb;
 	}
 
@@ -733,11 +711,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	/**
 	 * Return true if we are running in a headless environment. We equate this
 	 *  to mean that the workbench is not running.
+	 *  
+	 *  @deprecated this method is useless right now because SystemBasePlugin is part of
+	 *  the rse.ui plugin which depends on workbench and therefore we can never load this
+	 *  class while actually being in headless mode.  Normally this should return false 
+	 *  however, because the javadoc says we "equate this to mean that the workbench is not running",
+	 *  it's possible early on that the method may return true if the workbench has not 
+	 *  yet been instantiated - although it will later return false.
 	 */
 	public boolean isHeadless()
 	{
-		if (!headlessSet)
-			getWorkbench();
-		return headless;
+		if (getWorkbench() == null){
+			return true;
+		}
+		return false;
 	}
 }

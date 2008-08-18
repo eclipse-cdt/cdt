@@ -26,6 +26,7 @@
  * Xuan Chen        (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
  * David McKnight (IBM)          - [239368] Expand to action ignores the filter string
+ * David McKnight (IBM)          - [243263] NPE on expanding a filter - null pointer checks
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -85,7 +86,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
@@ -2319,7 +2322,14 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 */
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{
-		IWorkbenchPart currentPart = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage().getActivePart();
+		IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+		IWorkbenchPart currentPart = null;
+		if (win != null){
+			IWorkbenchPage page = win.getActivePage();
+			if (page != null){
+				currentPart = page.getActivePart();
+			}
+		}
 	    return new SystemFetchOperation(currentPart, o, this, collector);
 	}
 

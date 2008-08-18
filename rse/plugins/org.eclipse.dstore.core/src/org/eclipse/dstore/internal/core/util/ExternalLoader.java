@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
+ * {Name} (company) - description of contribution.
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;

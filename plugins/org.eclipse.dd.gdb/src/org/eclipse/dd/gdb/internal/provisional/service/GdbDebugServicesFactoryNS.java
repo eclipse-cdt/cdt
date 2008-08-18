@@ -12,10 +12,8 @@ package org.eclipse.dd.gdb.internal.provisional.service;
 
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
-import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.service.MIRunControlNS;
-import org.eclipse.dd.mi.service.MIStackNS;
 
 public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 
@@ -29,11 +27,6 @@ public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 //			return new GDBMultiProcesses(session);
 //		}
 		return new GDBProcesses(session);
-	}
-
-	@Override
-	protected IStack createStackService(DsfSession session) {
-		return new MIStackNS(session);
 	}
 	
 	@Override

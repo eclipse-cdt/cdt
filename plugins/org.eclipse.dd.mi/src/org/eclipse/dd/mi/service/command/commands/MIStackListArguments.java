@@ -20,7 +20,7 @@ import org.eclipse.dd.mi.service.command.output.MIStackListArgumentsInfo;
 
 /**
  * 
- *    -stack-list-arguments [--thread <tid>] SHOW-VALUES
+ *    -stack-list-arguments SHOW-VALUES
  *        [ LOW-FRAME HIGH-FRAME ]
  *
  *  Display a list of the arguments for the frames between LOW-FRAME and
@@ -35,16 +35,7 @@ import org.eclipse.dd.mi.service.command.output.MIStackListArgumentsInfo;
 public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo> 
 {
     public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues) {
-        this(execDmc, false, showValues);
-    }
-
-    public MIStackListArguments(IMIExecutionDMContext execDmc, boolean setThread, boolean showValues) {
-        super(execDmc, "-stack-list-arguments"); //$NON-NLS-1$
-        if (setThread) {
-        	setParameters(new String[] { "--thread", Integer.toString(execDmc.getThreadId()), showValues ? "1" : "0" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        } else {
-        	setParameters(new String[] { showValues ? "1" : "0" } );  //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        super(execDmc, "-stack-list-arguments", new String[] { showValues ? "1" : "0" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     public MIStackListArguments(IFrameDMContext frameDmc, boolean showValues) {
@@ -52,18 +43,8 @@ public class MIStackListArguments extends MICommand<MIStackListArgumentsInfo>
     }
     
     public MIStackListArguments(IMIExecutionDMContext execDmc, boolean showValues, int low, int high) {
-        this(execDmc, false, showValues, low, high);
-    }
-    
-    public MIStackListArguments(IMIExecutionDMContext execDmc, boolean setThread, boolean showValues, int low, int high) {
-        super(execDmc, "-stack-list-arguments"); //$NON-NLS-1$
-        if (setThread) {
-        	setParameters(new String[] { "--thread", Integer.toString(execDmc.getThreadId()),  //$NON-NLS-1$
-        			showValues ? "1" : "0", Integer.toString(low), Integer.toString(high) } ); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-        	setParameters(new String[] {
-        			showValues ? "1" : "0", Integer.toString(low), Integer.toString(high) } );  //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        super(execDmc, "-stack-list-arguments",  //$NON-NLS-1$
+        		new String[] {showValues ? "1" : "0", Integer.toString(low), Integer.toString(high)}); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     @Override

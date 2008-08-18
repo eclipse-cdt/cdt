@@ -43,18 +43,10 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     /*
      * Constructors.
      */
-    
-    /*public DsfMICommand(String operation) {
-        this(operation, empty, empty);
-    }*/
-    
+
     public MICommand(IDMContext ctx, String operation) {
         this(ctx, operation, empty, empty);
     }
-    
-    /*public DsfMICommand(String operation, String[] options) {
-        this(operation, options, empty);
-    }*/
     
     public MICommand(IDMContext ctx, String operation, String[] options) {
         this(ctx, operation, options, empty);
@@ -137,10 +129,27 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 	}
     
     /*
-     * Returns the constructed command.
+     * Returns the constructed command without using the --thread/--frame options.
      */
     public String constructCommand() {
+    	return constructCommand(null, -1);
+    }
+    /*
+     * Returns the constructed command potentially using the --thread/--frame options.
+     */
+    public String constructCommand(String threadId, int frameId) {
         StringBuffer command = new StringBuffer(getOperation());
+        
+        // Add the --thread option
+        if (threadId != null) {
+        	command.append(" --thread " + threadId); //$NON-NLS-1$
+
+        	// Add the --frame option, but only if we are using the --thread option
+        	if (frameId >= 0) {
+        		command.append(" --frame " + frameId); //$NON-NLS-1$
+        	}
+        }
+
         String opt = optionsToString();
         if (opt.length() > 0) {
             command.append(' ').append(opt);
@@ -225,6 +234,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
         return false;
     }
     
+    public boolean supportsThreadAndFrameOptions() { return true; }
     
     /**
      * Compare commands based on the MI command string that they generate, 

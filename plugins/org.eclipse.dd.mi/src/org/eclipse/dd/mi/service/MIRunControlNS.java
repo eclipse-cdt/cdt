@@ -389,11 +389,11 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 			return;
 		}
 
-		MIExecInterrupt cmd = new MIExecInterrupt(context, true);
+		MIExecInterrupt cmd = new MIExecInterrupt(context);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
-	private void doSuspendContainer(IExecutionDMContext context, final RequestMonitor rm) {
+	private void doSuspendContainer(IContainerDMContext context, final RequestMonitor rm) {
 		MIExecInterrupt cmd = new MIExecInterrupt(context, true);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
@@ -475,7 +475,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		}
 		threadState.fResumePending = true;
 
-		MIExecContinue cmd = new MIExecContinue(context, context.getThreadId());
+		MIExecContinue cmd = new MIExecContinue(context);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
@@ -545,11 +545,11 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 
 		switch (stepType) {
 		case STEP_INTO:
-			fConnection.queueCommand(new MIExecStep(dmc, true),
+			fConnection.queueCommand(new MIExecStep(dmc),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			break;
 		case STEP_OVER:
-			fConnection.queueCommand(new MIExecNext(dmc, true),
+			fConnection.queueCommand(new MIExecNext(dmc),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			break;
 		case STEP_RETURN:
@@ -571,11 +571,11 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 			}
 			break;
 		case INSTRUCTION_STEP_INTO:
-			fConnection.queueCommand(new MIExecStepInstruction(dmc, true),
+			fConnection.queueCommand(new MIExecStepInstruction(dmc),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			break;
 		case INSTRUCTION_STEP_OVER:
-			fConnection.queueCommand(new MIExecNextInstruction(dmc, true),
+			fConnection.queueCommand(new MIExecNextInstruction(dmc),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			break;
 		default:

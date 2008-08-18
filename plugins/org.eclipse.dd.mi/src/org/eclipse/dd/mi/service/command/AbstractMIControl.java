@@ -75,8 +75,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
 	private TxThread fTxThread;
     private RxThread fRxThread;
     
-    private int fCurrentStackLevel = -1;
-    private int fCurrentThreadId   = -1;
+    // MI did not always support the --thread/--frame options
+    // This boolean is used to know if we should use -thread-select and -stack-select-frame instead
+    private boolean fUseThreadAndFrameOptions;
+    // currentStackLevel and currentThreadId are only necessary when
+    // we must use -thread-select and -stack-select-frame
+    private int fCurrentStackLevel  = -1;
+    private String fCurrentThreadId = null;
     
     
     private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
@@ -112,11 +117,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
     public AbstractMIControl(DsfSession session) {
         super(session);
         fId = "<no id>"; //$NON-NLS-1$
+        fUseThreadAndFrameOptions = false;
     }
 
-    public AbstractMIControl(DsfSession session, String id) {
+    public AbstractMIControl(DsfSession session, String id, boolean useThreadAndFrameOptions) {
         super(session);
         fId = id;
+        fUseThreadAndFrameOptions = useThreadAndFrameOptions;
     }
 
     /**
@@ -250,36 +257,42 @@ public abstract class AbstractMIControl extends AbstractDsfService
 			if (handle != null) {
 				processCommandSent(handle);
 
-				// Identify target thread/frame (we might have to update them at the target)
-				final IDMContext targetContext = handle.fCommand.getContext();
-				final int targetThread = (handle.getThreadId()     != null) ? handle.getThreadId().intValue()     : -1;
-				final int targetFrame  = (handle.getStackFrameId() != null) ? handle.getStackFrameId().intValue() : -1;
+				// Older debuggers didn't support the --thread/--frame options
+				// Also, not all commands support those options (e.g., CLI commands)
+				if (!fUseThreadAndFrameOptions || !handle.getCommand().supportsThreadAndFrameOptions()) {
+					// Without the --thread/--frame, we need to send the proper 
+					// -thread-select and -stack-frame-select before sending the command
+					
+					final IDMContext targetContext = handle.fCommand.getContext();
+					final String targetThread = handle.getThreadId();
+					final int targetFrame = handle.getStackFrameId();
 
-			    // The thread-select and frame-select make sense only if the thread is stopped.
-				// Some non-stop commands don't require the thread to be stopped so we send the
-				// command anyway.
-			    IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-				IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(targetContext, IMIExecutionDMContext.class);
-				if (runControl != null && execDmc != null && runControl.isSuspended(execDmc)) {
-			    	// Before the command is sent, Check the Thread Id and send it to 
-			    	// the queue only if the id has been changed.
-			    	if (targetThread > 0 && targetThread != fCurrentThreadId) {
-			    		fCurrentThreadId = targetThread;
-			    		resetCurrentStackLevel();
-			    		CommandHandle cmdHandle = new CommandHandle(new MIThreadSelect(execDmc), null);
-			    		cmdHandle.generateTokenId();
-			    		fTxCommands.add(cmdHandle);
-			    	}
+					// The thread-select and frame-select make sense only if the thread is stopped.
+					IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(targetContext, IMIExecutionDMContext.class);
+					if (runControl != null && execDmc != null && runControl.isSuspended(execDmc)) {
+						// Before the command is sent, Check the Thread Id and send it to 
+						// the queue only if the id has been changed. Also, don't send a threadId of 0,
+						// because that id is only used internally for single-threaded programs
+						if (targetThread != null && !targetThread.equals("0") && !targetThread.equals(fCurrentThreadId)) { //$NON-NLS-1$
+							fCurrentThreadId = targetThread;
+							resetCurrentStackLevel();
+							CommandHandle cmdHandle = new CommandHandle(new MIThreadSelect(targetContext, targetThread), null);
+							cmdHandle.generateTokenId();
+							fTxCommands.add(cmdHandle);
+						}
 
-			    	// Before the command is sent, Check the Stack level and send it to 
-			    	// the queue only if the level has been changed. 
-			    	if (targetFrame != -1 && targetFrame != fCurrentStackLevel) {
-			    		fCurrentStackLevel = targetFrame;
-			    		CommandHandle cmdHandle = new CommandHandle(new MIStackSelectFrame(execDmc, targetFrame), null);
-			    		cmdHandle.generateTokenId();
-			    		fTxCommands.add(cmdHandle);
-			    	}
+						// Before the command is sent, Check the Stack level and send it to 
+						// the queue only if the level has been changed. 
+						if (targetFrame >= 0 && targetFrame != fCurrentStackLevel) {
+							fCurrentStackLevel = targetFrame;
+							CommandHandle cmdHandle = new CommandHandle(new MIStackSelectFrame(targetContext, targetFrame), null);
+							cmdHandle.generateTokenId();
+							fTxCommands.add(cmdHandle);
+						}
+					}
 				}
+
 		    	handle.generateTokenId();
 		    	fTxCommands.add(handle);
 			}
@@ -449,18 +462,17 @@ public abstract class AbstractMIControl extends AbstractDsfService
         public void generateTokenId() { fTokenId = getNewTokenId(); }
         public Integer getTokenId() { return fTokenId; }
         
-        //public String getThreadId() { return null; } 
-        public Integer getStackFrameId() {
+        public int getStackFrameId() {
         	IFrameDMContext frameCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IFrameDMContext.class);
         	if(frameCtx != null)
         		return frameCtx.getLevel();
-        	return null;
+        	return -1;
         } 
 
-        public Integer getThreadId() {
+        public String getThreadId() {
         	IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IMIExecutionDMContext.class);
         	if(execCtx != null)
-        		return execCtx.getThreadId();
+        		return Integer.toString(execCtx.getThreadId());
         	return null;
         } 
         
@@ -516,8 +528,15 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 /*
                  *   Construct the new command and push this command out the pipeline.
                  */
-                
-                final String str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
+
+                final String str;
+				// Not all commands support the --thread/--frame options (e.g., CLI commands)
+                if (fUseThreadAndFrameOptions && commandHandle.getCommand().supportsThreadAndFrameOptions()) {
+                	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand(commandHandle.getThreadId(),
+                			                                                                       commandHandle.getStackFrameId());
+                } else {
+                	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
+                }
                 
                 try {
                     if (fOutputStream != null) {
@@ -763,8 +782,10 @@ public abstract class AbstractMIControl extends AbstractDsfService
         }
     }
 
+    // we keep track of currentStackLevel and currentThreadId because in
+    // some cases we must use -thread-select and -stack-select-frame
     public void resetCurrentThreadLevel(){
-    	fCurrentThreadId = -1; 
+    	fCurrentThreadId = null; 
     }
     
     public void resetCurrentStackLevel(){

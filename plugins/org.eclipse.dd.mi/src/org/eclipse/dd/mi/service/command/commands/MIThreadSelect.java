@@ -13,7 +13,6 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -28,12 +27,12 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 public class MIThreadSelect extends MICommand<MIInfo>
 {
-	@Deprecated
 	public MIThreadSelect(IDMContext ctx, int threadNum) {
 		super(ctx, "-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
 	}
-
-	public MIThreadSelect(IMIExecutionDMContext ctx) {
-		super(ctx, "-thread-select", new String[]{Integer.toString(ctx.getThreadId())}); //$NON-NLS-1$
+	
+	public MIThreadSelect(IDMContext ctx, String threadNum) {
+		super(ctx, "-thread-select", new String[]{threadNum}); //$NON-NLS-1$
 	}
+
 }

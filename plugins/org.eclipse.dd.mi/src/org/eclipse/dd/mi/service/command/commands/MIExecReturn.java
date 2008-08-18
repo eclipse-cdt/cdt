@@ -17,7 +17,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *  -exec-return [args]
+ *  -exec-return [arg]
  *
  *  <p>
  *  Makes current function return immediately.  Doesn't execute the

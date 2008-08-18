@@ -120,8 +120,8 @@ public class GDBControl extends AbstractMIControl {
     
     private PTY fPty;
 
-    public GDBControl(DsfSession session, ILaunchConfiguration config) { 
-        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+    public GDBControl(DsfSession session, ILaunchConfiguration config, boolean useThreadAndFrameOptions) { 
+        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]", useThreadAndFrameOptions); //$NON-NLS-1$ //$NON-NLS-2$
         fSessionType = LaunchUtils.getSessionType(config);
         fAttach = LaunchUtils.getIsAttach(config);
         fGdbPath = LaunchUtils.getGDBPath(config);
@@ -130,17 +130,6 @@ public class GDBControl extends AbstractMIControl {
 		} catch (CoreException e) {
 			fExecPath = new Path(""); //$NON-NLS-1$
 		}
-        fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
-    }
-
-    @Deprecated
-    public GDBControl(DsfSession session, IPath gdbPath, IPath execPath, SessionType sessionType, boolean attach, int gdbLaunchTimeout) {
-        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        fSessionType = sessionType;
-        fAttach = attach;
-        fGdbPath = gdbPath;
-        fExecPath = execPath;
-        fGDBLaunchTimeout = gdbLaunchTimeout;
         fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
     }
 

@@ -13,9 +13,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIStackListLocalsInfo;
 
@@ -32,19 +30,9 @@ public class MIStackListLocals extends MICommand<MIStackListLocalsInfo>
 {
 	
     public MIStackListLocals(IFrameDMContext frameCtx, boolean printValues) {
-        this(frameCtx, false, printValues);
+        super(frameCtx, "-stack-list-locals", new String[] { printValues ? "1" : "0" } );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    public MIStackListLocals(IFrameDMContext frameCtx, boolean setThread, boolean printValues) {
-      super(frameCtx, "-stack-list-locals"); //$NON-NLS-1$
-      IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameCtx, IMIExecutionDMContext.class);
-      if (setThread && execDmc != null) {
-      	 setParameters(new String[] { "--thread", Integer.toString(execDmc.getThreadId()), printValues ? "1" : "0" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      } else {
-      	 setParameters(new String[] { printValues ? "1" : "0" } );  //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    }
-    
     @Override
     public MIStackListLocalsInfo getResult(MIOutput out) {
         return new MIStackListLocalsInfo(out);

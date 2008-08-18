@@ -23,4 +23,8 @@ public class CLICommand<V extends MIInfo> extends MICommand<V>
     public CLICommand(IDMContext ctx, String oper) {
         super(ctx, oper);
     }
+    
+    @Override
+	public boolean supportsThreadAndFrameOptions() { return false; }
+
 }

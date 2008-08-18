@@ -72,8 +72,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new MIBreakpoints(session);
 	}
 	
-	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {	
-		return new GDBControl(session, config);
+	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		boolean useThreadAndFrameOptions = false;
+		if ("6.8".compareTo(fVersion) < 0) { //$NON-NLS-1$
+			useThreadAndFrameOptions = true;
+		}
+
+		return new GDBControl(session, config, useThreadAndFrameOptions);
 	}
 
 	@Override

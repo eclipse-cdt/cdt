@@ -27,6 +27,9 @@ public class RawCommand extends MICommand<MIInfo> {
         fRaw = operation;
     }
 
+    @Override
+	public boolean supportsThreadAndFrameOptions() { return false; }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.mi.core.command.Command#getMIOutput()
      */

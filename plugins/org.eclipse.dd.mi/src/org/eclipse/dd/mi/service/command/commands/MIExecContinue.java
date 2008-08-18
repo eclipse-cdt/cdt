@@ -17,7 +17,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-continue [--thread <tid>]
+ *      -exec-continue [--all]
  * 
  *   Asynchronous command.  Resumes the execution of the inferior program
  *   until a breakpoint is encountered, or until the inferior exits.
@@ -34,9 +34,5 @@ public class MIExecContinue extends MICommand<MIInfo>
         if (allThreads) {
         	setParameters(new String[] { "--all" }); //$NON-NLS-1$
         }
-    }
-
-    public MIExecContinue(IExecutionDMContext dmc, int threadId) {
-        super(dmc, "-exec-continue", new String[] { "--thread", Integer.toString(threadId) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -14,12 +14,11 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-interrupt [ --thread <tid> | --all ]
+ *      -exec-interrupt [--all]
  *
  *  Asynchronous command.  Interrupts the background execution of the
  *  target.  Note how the token associated with the stop message is the one
@@ -39,13 +38,6 @@ public class MIExecInterrupt extends MICommand<MIInfo>
         super(dmc, "-exec-interrupt"); //$NON-NLS-1$
         if (allThreads) {
         	setParameters(new String[] { "--all" }); //$NON-NLS-1$
-        }
-    }
-
-    public MIExecInterrupt(IMIExecutionDMContext dmc, boolean setThread) {
-        super(dmc, "-exec-interrupt"); //$NON-NLS-1$
-        if (setThread) {
-        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()) }); //$NON-NLS-1$
         }
     }
 }

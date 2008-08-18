@@ -13,12 +13,11 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-step-instruction [--thread <tid>] [count]
+ *      -exec-step-instruction [count]
 
  *  Asynchronous command.  Resumes the inferior which executes one
  * machine instruction.  The output, once GDB has stopped, will vary
@@ -35,18 +34,5 @@ public class MIExecStepInstruction extends MICommand<MIInfo>
 
     public MIExecStepInstruction(IExecutionDMContext dmc, int count) {
         super(dmc, "-exec-step-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
-    }
-
-    public MIExecStepInstruction(IMIExecutionDMContext dmc, boolean setThread) {
-        this(dmc, setThread, 1);
-    }
-
-    public MIExecStepInstruction(IMIExecutionDMContext dmc, boolean setThread, int count) {
-        super(dmc, "-exec-step-instruction");	//$NON-NLS-1$
-        if (setThread) {
-        	setParameters(new String[] { "--thread", Integer.toString(dmc.getThreadId()), Integer.toString(count) }); //$NON-NLS-1$
-        } else {
-        	setParameters(new String[] { Integer.toString(count) });
-        }
     }
 }

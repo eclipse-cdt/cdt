@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack2;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -123,6 +124,7 @@ public class MIStack extends AbstractDsfService
     
 	private CommandCache fMICommandCache;
     private MIStoppedEvent fCachedStoppedEvent;
+    private IRunControl fRunControl;
 
 	public MIStack(DsfSession session) 
 	{
@@ -150,7 +152,8 @@ public class MIStack extends AbstractDsfService
         AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
         fMICommandCache = new CommandCache(getSession(), miControl);
         fMICommandCache.setContextAvailable(miControl.getControlDMContext(), true);
-        
+        fRunControl = getServicesTracker().getService(IRunControl.class);
+
         getSession().addServiceEventListener(this, null);
         register(new String[]{IStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
         rm.done();
@@ -214,6 +217,13 @@ public class MIStack extends AbstractDsfService
             rm.done();
             return;
         }
+
+	    // Make sure the thread is stopped
+	    if (!fRunControl.isSuspended(execDmc)) {
+	    	rm.setData(new IFrameDMContext[0]);
+	    	rm.done();
+	    	return;
+	    }
 
 	    if (startIndex == 0 && endIndex == 0) {
 	        // Try to retrieve the top stack frame from the cached stopped event.
@@ -604,19 +614,26 @@ public class MIStack extends AbstractDsfService
     public void getStackDepth(IDMContext dmc, final int maxDepth, final DataRequestMonitor<Integer> rm) {
         IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 	    if (execDmc != null) {
-                MIStackInfoDepth depthCommand = null;
-        	    if (maxDepth > 0) depthCommand = new MIStackInfoDepth(execDmc, maxDepth);
-        	    else depthCommand = new MIStackInfoDepth(execDmc);
-        	    
-        	    fMICommandCache.execute(
-                        depthCommand,
-                        new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
-                            @Override
-                            protected void handleSuccess() {
-                            	rm.setData(getData().getDepth());
-                                rm.done();
-                            }
-                        }); 
+	    	// Make sure the thread is stopped
+	    	if (!fRunControl.isSuspended(execDmc)) {
+	    		rm.setData(0);
+	    		rm.done();
+	    		return;
+	    	}
+
+	    	MIStackInfoDepth depthCommand = null;
+	    	if (maxDepth > 0) depthCommand = new MIStackInfoDepth(execDmc, maxDepth);
+	    	else depthCommand = new MIStackInfoDepth(execDmc);
+
+	    	fMICommandCache.execute(
+	    			depthCommand,
+	    			new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
+	    				@Override
+	    				protected void handleSuccess() {
+	    					rm.setData(getData().getDepth());
+	    					rm.done();
+	    				}
+	    			});
         } else {
             rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             rm.done();

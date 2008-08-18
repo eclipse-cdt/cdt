@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -206,6 +206,9 @@ public class MinerLoader implements ISchemaRegistry
 						miner.setExternalLoader(loader);
 						_minerList.add(name);
 					}
+					else {
+						System.out.println("miner is null");
+					}
 				}
 			}
 			catch (NoClassDefFoundError e)
@@ -239,7 +242,9 @@ public class MinerLoader implements ISchemaRegistry
 	
 	private void handleNoClassFound(String name)
 	{
-		_remoteLoader.loadClassInThread(name);			
+		if (_remoteLoader != null){
+			_remoteLoader.loadClassInThread(name);			
+		}
 	}
 
 	private void connectMiners(ArrayList unconnectedMiners)

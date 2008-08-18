@@ -13,6 +13,7 @@
  * 
  * Contributors:
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ *  David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -312,7 +313,13 @@ public class ServerCommandHandler extends CommandHandler
 				DataElement minerId = command.get(0);
 				String minerName = minerId.getName();
 				Miner miner = loadMiner(minerName);		
-				miner.initMiner(status);
+				if (miner != null){
+					miner.initMiner(status);
+				}
+				else { // failed to load miner
+					status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
+					status.setAttribute(DE.A_VALUE, DataStoreResources.model_failed);
+				}
 				//System.out.println("finished initing "+miner.getMinerName());
 				//status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}

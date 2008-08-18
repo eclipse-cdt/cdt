@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -98,7 +98,7 @@ public class ExternalLoader implements IExternalLoader
 	public Class loadClass(String source) throws ClassNotFoundException
 	{
 		try
-		{
+		{	
 			return _classLoader.loadClass(source);
 		}
 		catch (NoClassDefFoundError e)

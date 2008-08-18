@@ -116,19 +116,24 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			// otherwise, get a list of all the windows, and simply return the first one
 			// KM: why do we need this??
 			else {
-				final IWorkbench workbench = wb;
+				// for bug 244454, this ends up returning the wrong window
+				// the correct solution involves: 
+				//   - returning null when called from a non-UI thread
+				//   - making sure that callers handle and understand that
+				//   - null may be returned
+				//
+				// but for now (in 3.0.1) we're leaving this because
+				// there are several callers that don't expect null and
+				// will fail if we make the change now
+				// 
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 				
-				// do this in a runnable so we can get the right window on the main thread
-				class GetActiveWindow implements Runnable {
-					public IWorkbenchWindow _activeWindow = null;
-					public void run()
-					{
-						_activeWindow = workbench.getActiveWorkbenchWindow();
-					}					
+				if (windows != null && windows.length > 0) {
+					return windows[0];
 				}
-				GetActiveWindow runnable = new GetActiveWindow();
-				wb.getDisplay().syncExec(runnable);
-				return runnable._activeWindow;
+				else {
+					return null;
+				}
 			}
 			
 		}

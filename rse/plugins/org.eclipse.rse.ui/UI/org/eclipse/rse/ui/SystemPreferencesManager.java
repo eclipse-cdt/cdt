@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David McKnight   (IBM)        - [237300] Problem with setDefaultHistory for SystemHistoryCombo.
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
+ * David McKnight   (IBM)        - [240991] Avoiding calling SystemBasePluging.getWorkbench()
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -39,6 +40,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A utility class that encapsulates all global preferences for the remote system framework
@@ -495,14 +497,15 @@ public class SystemPreferencesManager {
 			// should send events via the IRSEInteractionProvider
 			Job addListenerJob = new Job("Add Listener"){ //$NON-NLS-1$
 				public IStatus run(IProgressMonitor monitor){
-					IWorkbench wb = RSEUIPlugin.getDefault().getWorkbench();
-					while (wb.getDisplay() == null && !wb.isClosing()) {
+					while (!PlatformUI.isWorkbenchRunning()){
 						try {
 							//Checks in the loop are fast enough so we can poll often
 							Thread.sleep(100);
 						}
 						catch (InterruptedException e){}
 					}
+						
+					IWorkbench wb = PlatformUI.getWorkbench();
 					if (!wb.isClosing()) {
 						fModelChangeListener = new ModelChangeListener();
 						RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);

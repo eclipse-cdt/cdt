@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
@@ -165,9 +166,17 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		return MessageFormat.format( format, new String[]{ label, timestamp } );
 	}
 
-	protected IPath getGDBPath( ILaunch launch ) throws CoreException {
+   protected IPath getGDBPath(ILaunch launch) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		return new Path( config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT ) );
+		String command = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME,
+				IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		try {
+			command = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(command, false);
+		} catch (Exception e) {
+			MIPlugin.log(e);
+			// take value of command as it
+		}
+		return new Path(command);
 	}
 
 	protected ICDISessionConfiguration getSessionConfiguration( ICDISession session ) {

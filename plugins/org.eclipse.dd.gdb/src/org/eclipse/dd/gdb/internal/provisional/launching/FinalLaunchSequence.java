@@ -118,8 +118,18 @@ public class FinalLaunchSequence extends Sequence {
     	 */
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
+    		boolean noFileCommand = IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT;
+    		try {
+    			noFileCommand = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP,
+    			                                                              IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT);
+    		} catch (CoreException e) {
+    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot read use solib symbols for app options", e)); //$NON-NLS-1$
+    			requestMonitor.done();
+    			return;
+    		}
+
         	final IPath execPath = fCommandControl.getExecutablePath();
-        	if (execPath != null && !execPath.isEmpty()) {
+        	if (!noFileCommand && execPath != null && !execPath.isEmpty()) {
         		fCommandControl.queueCommand(
        				new MIFileExecAndSymbols(fCommandControl.getControlDMContext(), 
        						                 execPath.toOSString()), 

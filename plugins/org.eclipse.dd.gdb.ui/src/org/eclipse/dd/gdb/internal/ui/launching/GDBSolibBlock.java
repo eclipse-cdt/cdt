@@ -38,12 +38,16 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	private Button fAutoSoLibButton;
 
 	private Button fStopOnSolibEventsButton;
+
+	private Button fUseSolibForAppButton;
 	
 	private Composite fControl;
 	
 	private boolean fAutoSolib = false;
 
 	private boolean fStopOnSolibEvents = false;
+	
+	private boolean fUseSolibForApp = true;
 
 	public GDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, boolean autoSolib, boolean stopOnSolibEvents ) {
 		super();
@@ -84,6 +88,17 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 				}
 			} );
 		}
+		if ( fUseSolibForApp ) {
+			fUseSolibForAppButton = ControlFactory.createCheckBox( subComp, LaunchUIMessages.getString( "GDBSolibBlock.2" ) ); //$NON-NLS-1$
+			fUseSolibForAppButton.addSelectionListener( new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected( SelectionEvent e ) {
+					updateButtons();
+					changed();
+				}
+			} );
+		}
 		fControl = subComp;
 	}
 
@@ -95,6 +110,8 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 				fAutoSoLibButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT ) );
 			if ( fStopOnSolibEventsButton != null )
 				fStopOnSolibEventsButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IGDBLaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT ) );
+			if ( fUseSolibForAppButton != null )
+				fUseSolibForAppButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP, IGDBLaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT ) );
 			initializeButtons( configuration );
 			updateButtons();
 		}
@@ -113,6 +130,8 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, Boolean.valueOf( fAutoSoLibButton.getSelection() ) );
 			if ( fStopOnSolibEventsButton != null )
 				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, Boolean.valueOf( fStopOnSolibEventsButton.getSelection() ) );
+			if ( fUseSolibForAppButton != null )
+				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP, Boolean.valueOf( fUseSolibForAppButton.getSelection() ) );
 			configuration.setAttributes( attrs );
 		}
 		catch( CoreException e ) {
@@ -154,6 +173,8 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 				fAutoSoLibButton.setEnabled( enable );
 			if ( fStopOnSolibEventsButton != null )
 				fStopOnSolibEventsButton.setEnabled( enable );
+			if ( fUseSolibForAppButton != null )
+				fUseSolibForAppButton.setEnabled( enable );
 		}
 		catch( CoreException e ) {
 		}

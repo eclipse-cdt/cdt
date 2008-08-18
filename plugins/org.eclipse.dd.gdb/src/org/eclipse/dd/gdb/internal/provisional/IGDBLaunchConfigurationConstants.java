@@ -65,6 +65,11 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS = GdbPlugin.PLUGIN_ID + ".STOP_ON_SOLIB_EVENTS"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. Boolean value to set the 'use shared library symbols for application' flag of the debugger.
+	 */
+	public static final String ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP = GdbPlugin.PLUGIN_ID + ".USE_SOLIB_SYMBOLS_FOR_APP"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is a List (array of String) of directories for the search path of shared libraries.
 	 */
 	public static final String ATTR_DEBUGGER_SOLIB_PATH = GdbPlugin.PLUGIN_ID + ".SOLIB_PATH"; //$NON-NLS-1$
@@ -98,6 +103,11 @@ public class IGDBLaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS.
 	 */
 	public static final boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP.
+	 */
+	public static final boolean DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT = false;
 
 //	/**
 //	 * Launch configuration attribute key.  The value is a string specifying the identifier of the command factory to use.

@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
+import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 
 public class GCCErrorParser extends AbstractErrorParser {
 	

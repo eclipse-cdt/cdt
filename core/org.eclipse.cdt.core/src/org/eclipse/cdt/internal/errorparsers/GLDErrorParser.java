@@ -13,6 +13,8 @@
 package org.eclipse.cdt.internal.errorparsers;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
+import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 
 public class GLDErrorParser extends AbstractErrorParser {
 

@@ -17,18 +17,18 @@ import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
  * Retrieves data stack information 
  * 
  * <pre>
- *    C: data {thread_id}
- *    R: {value 1}|{value 2}|{value 3}|...|
+ *    C: children {thread_id} {frame_id} {variable_name}
+ *    R: {child variable 1}|{child variable 2}|{child variable 3}|...|
  *    
  * Errors:
  *    error: invalid thread
  * </pre>
  */
 @Immutable
-public class PDADataCommand extends AbstractPDACommand<PDAListResult> {
+public class PDAChildrenCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDADataCommand(PDAThreadDMContext thread) {
-        super(thread, "data " + thread.getID());
+    public PDAChildrenCommand(PDAThreadDMContext thread, int frameId, String name  ) {
+        super(thread, "children " + thread.getID() + " " + frameId + " " + name);
     }
     
     @Override

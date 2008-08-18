@@ -10,36 +10,35 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.service.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
-
 /**
- * @see PDADataCommand
+ * Object representing a bit field in the stack command results.
+ * 
+ * @see PDARegistersCommand 
  */
 @Immutable
-public class PDADataCommandResult extends PDACommandResult {
+public class PDABitField {
+
+    final public String fName;
+    final public int fOffset;
+    final public int fCount;
+    final public Map<String, String> fMnemonics;
     
-    final public String[] fValues;
-    
-    PDADataCommandResult(String response) {
-        super(response);
-        StringTokenizer st = new StringTokenizer(response, "|");
-        List<String> valuesList = new ArrayList<String>();
+    PDABitField(String bitFieldString) {
+        StringTokenizer st = new StringTokenizer(bitFieldString, "   ");
         
+        fName = st.nextToken();
+        fOffset = Integer.parseInt(st.nextToken());
+        fCount = Integer.parseInt(st.nextToken());
+        
+        fMnemonics = new LinkedHashMap<String, String>(0);
         while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            if (token.length() != 0) {
-                valuesList.add(st.nextToken());
-            }
-        }
-        
-        fValues = new String[valuesList.size()];
-        for (int i = 0; i < valuesList.size(); i++) {
-            fValues[i] = valuesList.get(i);
+            fMnemonics.put(st.nextToken(), st.nextToken());
         }
     }
 }

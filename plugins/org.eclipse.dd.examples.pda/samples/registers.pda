@@ -1,0 +1,72 @@
+def register $pc General true
+def register $sp General true
+def register $status General true
+def bitfield $status.BITS_00_07 0 8
+def bitfield $status.BITS_08_15 8 8
+def bitfield $status.BITS_16_23 16 8
+def bitfield $status.BITS_24_31 24 8
+def mnemonic $status.BITS_24_31 three 3 
+def mnemonic $status.BITS_24_31 twelve 12 
+def mnemonic $status.BITS_24_31 fourty_eight 48 
+def mnemonic $status.BITS_24_31 one_nighty_two 192 
+def register $stackdepth General true
+def register $stack[0] General true
+def register $stack[1] General true
+def register $stack[2] General true
+def register $stack[3] General true
+def register $stack[4] General true
+push 103
+pop $$pc
+push 306
+push 2
+pop $$sp
+push 400
+pop $$status
+push 5
+pop $$stackdepth
+push 12
+pop $$stack[0]
+push 45
+pop $$stack[1]
+push 146
+pop $$stack[2]
+push 215
+pop $$stack[3]
+push 251
+pop $$stack[4]
+push 306
+pop $$stack[5]
+def register $total-instructions Analysis false
+def register $add-instructions Analysis false
+def register $call-instructions Analysis false
+def register $dec-instructions Analysis false
+def register $dup-instructions Analysis false
+def register $halt-instructions Analysis false
+def register $output-instructions Analysis false
+def register $pop-instructions Analysis false
+def register $push-instructions Analysis false
+def register $return-instructions Analysis false
+def register $var-instructions Analysis false
+push 1046
+pop $$total-instructions
+push 12
+pop $$add-instructions
+push 24
+pop $$call-instructions
+push 36
+pop $$dec-instructions
+push 50
+pop $$dup-instructions
+push 62
+pop $$halt-instructions
+push 74
+pop $$output-instructions
+push 106
+pop $$pop-instructions
+push 120
+pop $$push-instructions
+push 132
+pop $$return-instructions
+push 144
+pop $$var-instructions
+halt

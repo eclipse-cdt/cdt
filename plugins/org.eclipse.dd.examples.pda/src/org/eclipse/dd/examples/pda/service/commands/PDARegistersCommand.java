@@ -14,25 +14,22 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
 
 /**
- * Retrieves data stack information 
+ * Retrieves registers definition information 
  * 
  * <pre>
- *    C: data {thread_id}
- *    R: {value 1}|{value 2}|{value 3}|...|
- *    
- * Errors:
- *    error: invalid thread
+ *    C: registers {group name}
+ *    R: {register name} {true|false}|{bit field name} {start bit} {bit count} {mnemonic 1} {mnemonic 2} ...#{register name} ...
  * </pre>
  */
 @Immutable
-public class PDADataCommand extends AbstractPDACommand<PDAListResult> {
+public class PDARegistersCommand extends AbstractPDACommand<PDARegistersCommandResult> {
 
-    public PDADataCommand(PDAThreadDMContext thread) {
-        super(thread, "data " + thread.getID());
+    public PDARegistersCommand(PDAThreadDMContext context, String group) {
+        super(context, "registers " + group);
     }
     
     @Override
-    public PDAListResult createResult(String resultText) {
-        return new PDAListResult(resultText);
+    public PDARegistersCommandResult createResult(String resultText) {
+        return new PDARegistersCommandResult(resultText);
     }
 }

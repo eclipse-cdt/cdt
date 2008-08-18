@@ -11,24 +11,21 @@
 package org.eclipse.dd.examples.pda.service.commands;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.examples.pda.service.PDAThreadDMContext;
+import org.eclipse.dd.examples.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Retrieves data stack information 
+ * Retrieves register groups information 
  * 
  * <pre>
- *    C: data {thread_id}
- *    R: {value 1}|{value 2}|{value 3}|...|
- *    
- * Errors:
- *    error: invalid thread
+ *    C: groups
+ *    R: {group 1}|{group 2}|{group 3}|...|
  * </pre>
  */
 @Immutable
-public class PDADataCommand extends AbstractPDACommand<PDAListResult> {
+public class PDAGroupsCommand extends AbstractPDACommand<PDAListResult> {
 
-    public PDADataCommand(PDAThreadDMContext thread) {
-        super(thread, "data " + thread.getID());
+    public PDAGroupsCommand(PDAVirtualMachineDMContext context) {
+        super(context, "groups");
     }
     
     @Override

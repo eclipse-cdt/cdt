@@ -445,6 +445,13 @@ public class PDAStack extends AbstractDsfService implements IStack2 {
             PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Unknown context type");
         }
     }
+    
+    /**
+     * Returns a frame context for the given thread and level;
+     */
+    public IFrameDMContext getFrameDMContext(PDAThreadDMContext thread, int level) {
+        return new FrameDMContext(getSession().getId(), thread, level);
+    }
 
     @DsfServiceEventHandler 
     public void eventDispatched(IResumedDMEvent e) {
@@ -452,7 +459,7 @@ public class PDAStack extends AbstractDsfService implements IStack2 {
         // fail.  Also reset the cache unless it was a step command.
         fCommandCache.setContextAvailable(e.getDMContext(), false);
         if (!e.getReason().equals(StateChangeReason.STEP)) {
-            fCommandCache.reset();
+            fCommandCache.reset(e.getDMContext());
         }
     }    
 
@@ -461,6 +468,6 @@ public class PDAStack extends AbstractDsfService implements IStack2 {
     public void eventDispatched(ISuspendedDMEvent e) {
         // Enable sending commands to target and clear the cache.
         fCommandCache.setContextAvailable(e.getDMContext(), true);
-        fCommandCache.reset();
+        fCommandCache.reset(e.getDMContext());
     }
 }

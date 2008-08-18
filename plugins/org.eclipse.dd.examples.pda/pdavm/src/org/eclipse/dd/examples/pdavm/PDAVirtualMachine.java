@@ -19,12 +19,14 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,16 +36,41 @@ import java.util.regex.Pattern;
 @SuppressWarnings("serial")
 public class PDAVirtualMachine {
 
-    class Stack extends LinkedList<Object> {
+    static class Stack extends LinkedList<Object> {
+        @Override
         public Object pop() {
             return isEmpty() ? 0 : remove(size() - 1);
         }
 
+        @Override
         public void push(Object value) {
             add(value);
         }
     }
+    
+    static class Register {
+        Register(String name) { 
+            fName = name; 
+        }
+        String fName;
+        String fGroup = "<no_group>";
+        boolean fIsWriteable = true;
+        Map<String, BitField> fBitFields = new LinkedHashMap<String, BitField>(0);
+        int fValue;
+    }
 
+    static class BitField {
+        BitField(String name) { 
+            fName = name; 
+        }
+        String fName;
+        int fBitOffset;
+        int fBitCount;
+        Map<String, Integer> fMnemonics = new LinkedHashMap<String, Integer>(0);
+    }
+
+    Map<String,Register> fRegisters = new LinkedHashMap<String,Register>(0);
+    
     class Args {
         final String[] fArgs;
 
@@ -67,6 +94,15 @@ public class PDAVirtualMachine {
             } catch (NumberFormatException e) {
             }
             return 0;
+        }
+
+        boolean getNextBooleanArg() {
+            String arg = getNextStringArg();
+            try {
+                return Boolean.parseBoolean(arg);
+            } catch (NumberFormatException e) {
+            }
+            return false;
         }
 
         Object getNextIntOrStringArg() {
@@ -133,7 +169,7 @@ public class PDAVirtualMachine {
 
     int fNextThreadId = 1;
 
-    private boolean fStarted = true;
+    boolean fStarted = true;
     /**
      * The code is stored as an array of strings, each line of the source file
      * being one entry in the array.
@@ -144,7 +180,9 @@ public class PDAVirtualMachine {
     final Map<String, Integer> fLabels;
 
     /** Each stack frame is a mapping of variable names to values. */
-    class Frame extends LinkedHashMap<String, Object> {
+    class Frame {
+        final Map<String, Object> fLocalVariables = new LinkedHashMap<String, Object>();
+        
         /**
          * The name of the function in this frame
          */
@@ -160,8 +198,63 @@ public class PDAVirtualMachine {
             fFunction = function;
             fPC = pc;
         }
+        
+        void set(String name, Object value) {
+            if (name.startsWith("$")) {
+                setRegisterValue(name, value);
+            } else {
+                fLocalVariables.put(name, value);
+            }
+        }
+        
+        Object get(String name) {
+            if (name.startsWith("$")) {
+                return getRegisterValue(name);
+            } else { 
+                return fLocalVariables.get(name);
+            }
+        }
     }
 
+    void setRegisterValue(String name, Object value) {
+        Register reg = fRegisters.get(getRegisterPartOfName(name));
+        if (reg == null) return;
+        String bitFieldName = getBitFieldPartOfName(name);
+        if (bitFieldName != null) {
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) return;
+            Integer intValue = null;
+            if (value instanceof Integer) {
+                intValue = (Integer)value;
+            } else if (value instanceof String) {
+                intValue = bitField.fMnemonics.get(value);
+            }
+            if (intValue != null) {
+                int bitFieldMask = 2^(bitField.fBitCount - 1);           
+                int registerMask = ~(bitFieldMask << bitField.fBitOffset);
+                int bitFieldValue = intValue & bitFieldMask;
+                reg.fValue = (reg.fValue & registerMask) | (bitFieldValue << bitField.fBitOffset);
+            }
+        } else if (value instanceof Integer) {
+            reg.fValue = ((Integer)value).intValue();
+        }
+    }
+
+    Object getRegisterValue(String name) {
+        Register reg = fRegisters.get(getRegisterPartOfName(name));
+        if (reg == null) return null;
+        String bitFieldName = getBitFieldPartOfName(name);
+        if (bitFieldName != null) {
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) return null;
+            int bitFieldMask = 2^(bitField.fBitCount - 1);           
+            int registerMask = bitFieldMask << bitField.fBitOffset;
+            return (reg.fValue & registerMask) >> bitField.fBitOffset;
+        } else {
+            return reg.fValue;
+        }
+    }
+    
     /**
      * Breakpoints are stored per each each line of code.  The boolean indicates
      * whether the whole VM should suspend or just the triggering thread.
@@ -385,7 +478,7 @@ public class PDAVirtualMachine {
                     String instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
                     thread.fCurrentFrame.fPC++;
                     doOneInstruction(thread, instruction);
-                    if (thread.fCurrentFrame.fPC > thread.fThreadCode.length) {
+                    if (thread.fCurrentFrame.fPC >= thread.fThreadCode.length) {
                         // Thread reached end of code, exit from the thread.
                         thread.fRun = false;
                     } else if (thread.fStepReturn) {
@@ -446,6 +539,7 @@ public class PDAVirtualMachine {
         else if (op.equals("branch_not_zero")) iBranchNotZero(thread, args);
         else if (op.equals("call")) iCall(thread, args);
         else if (op.equals("dec")) iDec(thread, args);
+        else if (op.equals("def")) iDef(thread, args);
         else if (op.equals("dup")) iDup(thread, args);
         else if (op.equals("exec")) iExec(thread, args);            
         else if (op.equals("halt")) iHalt(thread, args);
@@ -571,15 +665,18 @@ public class PDAVirtualMachine {
         }
         Args args = new Args(tokens.toArray(new String[tokens.size()]));
 
-        if ("clear".equals(command)) debugClearBreakpoint(args);
+        if ("children".equals(command)) debugChildren(args);
+        else if ("clear".equals(command)) debugClearBreakpoint(args);
         else if ("data".equals(command)) debugData(args);
         else if ("drop".equals(command)) debugDropFrame(args);
         else if ("eval".equals(command)) debugEval(args);
         else if ("eventstop".equals(command)) debugEventStop(args);
         else if ("exit".equals(command)) debugExit();
         else if ("frame".equals(command)) debugFrame(args);
+        else if ("groups".equals(command)) debugGroups(args);
         else if ("popdata".equals(command)) debugPop(args);
         else if ("pushdata".equals(command)) debugPush(args);
+        else if ("registers".equals(command)) debugRegisters(args);
         else if ("resume".equals(command)) debugResume(args);
         else if ("set".equals(command)) debugSetBreakpoint(args);
         else if ("setdata".equals(command)) debugSetData(args);
@@ -600,6 +697,37 @@ public class PDAVirtualMachine {
         }
     }
 
+    void debugChildren(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
+        int sfnumber = args.getNextIntArg();
+        String var = args.getNextStringArg();
+        
+        Frame frame = sfnumber >= thread.fFrames.size()    
+            ? thread.fCurrentFrame : thread.fFrames.get(sfnumber);
+
+        String varDot = var + ".";
+        List<String> children = new ArrayList<String>();
+        for (String localVar : frame.fLocalVariables.keySet()) {
+            if (localVar.startsWith(varDot) && localVar.indexOf('.', varDot.length() + 1) == -1) {
+                children.add(localVar);
+            }
+        }
+
+        StringBuffer result = new StringBuffer();
+        for (String child : children) {
+            result.append(child);
+            result.append('|');
+        }
+        result.append('\n');
+
+        sendCommandResponse(result.toString());
+    }
+    
     void debugClearBreakpoint(Args args) {
         int line = args.getNextIntArg();
 
@@ -608,6 +736,43 @@ public class PDAVirtualMachine {
     }
 
     private static Pattern fPackPattern = Pattern.compile("%([a-fA-F0-9][a-fA-F0-9])");
+
+    void debugData(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
+        StringBuffer result = new StringBuffer();
+        for (Object val : thread.fStack) {
+            result.append(val);
+            result.append('|');
+        }
+        result.append('\n');
+        sendCommandResponse(result.toString());
+    }
+
+    void debugDropFrame(Args args) {
+        PDAThread thread = args.getThreadArg();
+        if (thread == null) {
+            sendCommandResponse("error: invalid thread\n");
+            return;
+        }
+
+        if (!thread.fFrames.isEmpty()) {
+            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
+        }
+        thread.fCurrentFrame.fPC--;
+        sendCommandResponse("ok\n");
+        if (fSuspendVM != null) {
+            sendDebugEvent("vmresumed drop", false);
+            sendDebugEvent("vmsuspended " + thread.fID + " drop", false);
+        } else {
+            sendDebugEvent("resumed " + thread.fID + " drop", false);
+            sendDebugEvent("suspended " + thread.fID + " drop", false);
+        }
+    }
 
     void debugEval(Args args) {
         if (fSuspendVM != null) {
@@ -665,43 +830,6 @@ public class PDAVirtualMachine {
         sendDebugEvent("resumed " + thread.fID + " eval", false);
     }
 
-    void debugData(Args args) {
-        PDAThread thread = args.getThreadArg();
-        if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
-            return;
-        }
-
-        StringBuffer result = new StringBuffer();
-        for (Object val : thread.fStack) {
-            result.append(val);
-            result.append('|');
-        }
-        result.append('\n');
-        sendCommandResponse(result.toString());
-    }
-
-    void debugDropFrame(Args args) {
-        PDAThread thread = args.getThreadArg();
-        if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
-            return;
-        }
-
-        if (!thread.fFrames.isEmpty()) {
-            thread.fCurrentFrame = thread.fFrames.remove(thread.fFrames.size() - 1);
-        }
-        thread.fCurrentFrame.fPC--;
-        sendCommandResponse("ok\n");
-        if (fSuspendVM != null) {
-            sendDebugEvent("vmresumed drop", false);
-            sendDebugEvent("vmsuspended " + thread.fID + " drop", false);
-        } else {
-            sendDebugEvent("resumed " + thread.fID + " drop", false);
-            sendDebugEvent("suspended " + thread.fID + " drop", false);
-        }
-    }
-
     void debugEventStop(Args args) {
         String event = args.getNextStringArg();
         int stop = args.getNextIntArg();
@@ -732,6 +860,20 @@ public class PDAVirtualMachine {
         sendCommandResponse(printFrame(frame) + "\n");
     }
 
+    void debugGroups(Args args) {
+        TreeSet<String> groups = new TreeSet<String>();
+        for (Register reg : fRegisters.values()) {
+            groups.add(reg.fGroup);
+        }
+        StringBuffer response = new StringBuffer();
+        for (String group : groups) {
+            response.append(group);
+            response.append('|');
+        }
+        response.append('\n');
+        sendCommandResponse(response.toString());
+    }
+
     void debugPop(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
@@ -755,6 +897,38 @@ public class PDAVirtualMachine {
         sendCommandResponse("ok\n");
     }
 
+    void debugRegisters(Args args) {
+        String group = args.getNextStringArg();
+        
+        StringBuffer response = new StringBuffer();
+        for (Register reg : fRegisters.values()) {
+            if (group.equals(reg.fGroup)) {
+                response.append(reg.fName);
+                response.append(' ');
+                response.append(reg.fIsWriteable);
+                for (BitField bitField : reg.fBitFields.values()) {
+                    response.append('|');
+                    response.append(bitField.fName);
+                    response.append(' ');
+                    response.append(bitField.fBitOffset);
+                    response.append(' ');
+                    response.append(bitField.fBitCount);
+                    response.append(' ');
+                    for (Map.Entry<String, Integer> mnemonicEntry : bitField.fMnemonics.entrySet()) {
+                        response.append(mnemonicEntry.getKey());
+                        response.append(' ');
+                        response.append(mnemonicEntry.getValue());
+                        response.append(' ');
+                    }
+                }
+                
+                response.append('#');
+            }
+        }
+        response.append('\n');
+        sendCommandResponse(response.toString());
+    }
+    
     void debugResume(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
@@ -814,9 +988,9 @@ public class PDAVirtualMachine {
         Object val = args.getNextIntOrStringArg();
 
         if (sfnumber >= thread.fFrames.size()) {
-            thread.fCurrentFrame.put(var, val);
+            thread.fCurrentFrame.set(var, val);
         } else {
-            thread.fFrames.get(sfnumber).put(var, val);
+            thread.fFrames.get(sfnumber).set(var, val);
         }
         sendCommandResponse("ok\n");
     }
@@ -859,9 +1033,11 @@ public class PDAVirtualMachine {
         buf.append(frame.fPC);
         buf.append('|');
         buf.append(frame.fFunction);
-        for (String var : frame.keySet()) {
-            buf.append('|');
-            buf.append(var);
+        for (String var : frame.fLocalVariables.keySet()) {
+            if (var.indexOf('.') == -1) {
+                buf.append('|');
+                buf.append(var);
+            }
         }
         return buf.toString();
     }
@@ -1062,6 +1238,52 @@ public class PDAVirtualMachine {
         thread.fStack.push(val);
     }
 
+    void iDef(PDAThread thread, Args args) {
+        String type = args.getNextStringArg();
+
+        String name = args.getNextStringArg();
+        String regName = getRegisterPartOfName(name);
+        String bitFieldName = getBitFieldPartOfName(name);
+
+        if ("register".equals(type)) {
+            Register reg = new Register(regName); 
+            reg.fGroup = args.getNextStringArg();
+            fRegisters.put(regName, reg);
+            reg.fIsWriteable = args.getNextBooleanArg();
+        } else if ("bitfield".equals(type)) {
+            Register reg = fRegisters.get(regName);
+            if (reg == null) return;
+            BitField bitField = new BitField(bitFieldName);
+            bitField.fBitOffset = args.getNextIntArg();
+            bitField.fBitCount = args.getNextIntArg();
+            reg.fBitFields.put(bitFieldName, bitField);
+        } else if ("mnemonic".equals(type)) {
+            Register reg = fRegisters.get(regName);
+            if (reg == null) return;
+            BitField bitField = reg.fBitFields.get(bitFieldName);
+            if (bitField == null) return;
+            bitField.fMnemonics.put(args.getNextStringArg(), args.getNextIntArg());
+        }
+        sendDebugEvent("registers", false);
+    }
+
+    private String getRegisterPartOfName(String name) {
+        if (name.startsWith("$")) {
+            int end = name.indexOf('.');
+            end = end != -1 ? end : name.length();
+            return name.substring(1, end);
+        }
+        return null;
+    }
+
+    private String getBitFieldPartOfName(String name) {
+        int start = name.indexOf('.');
+        if (name.startsWith("$") && start != -1) {
+            return name.substring(start + 1, name.length());
+        }
+        return null;        
+    }
+
     void iDup(PDAThread thread, Args args) {
         Object val = thread.fStack.pop();
         thread.fStack.push(val);
@@ -1095,7 +1317,7 @@ public class PDAVirtualMachine {
         String arg = args.getNextStringArg();
         if (arg.startsWith("$")) {
             String var = arg.substring(1);
-            thread.fCurrentFrame.put(var, thread.fStack.pop());
+            thread.fCurrentFrame.set(var, thread.fStack.pop());
             String key = thread.fCurrentFrame.fFunction + "::" + var;
             if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key) & 2) != 0) {
                 fSuspendVM = thread.fID + " watch write " + key;
@@ -1107,21 +1329,26 @@ public class PDAVirtualMachine {
 
     void iPush(PDAThread thread, Args args) {
         String arg = args.getNextStringArg();
-        if (arg.startsWith("$")) {
-            String var = arg.substring(1);
-            Object val = thread.fCurrentFrame.containsKey(var) ? thread.fCurrentFrame.get(var) : "<undefined>";
-            thread.fStack.push(val);
-            String key = thread.fCurrentFrame.fFunction + "::" + var;
-            if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key) & 1) != 0) {
-                fSuspendVM = thread.fID + " watch read " + key;
+        while (arg.length() != 0) {
+            if (arg.startsWith("$")) {
+                String var = arg.substring(1);
+                Object val = thread.fCurrentFrame.get(var);
+                if (val == null) val = "<undefined>";
+                thread.fStack.push(val);
+                String key = thread.fCurrentFrame.fFunction + "::" + var;
+                if (fWatchpoints.containsKey(key) && (fWatchpoints.get(key) & 1) != 0) {
+                    fSuspendVM = thread.fID + " watch read " + key;
+                }
+            } else {
+                Object val = arg;
+                try {
+                    val = Integer.parseInt(arg);
+                } catch (NumberFormatException e) {
+                }
+                thread.fStack.push(val);
             }
-        } else {
-            Object val = arg;
-            try {
-                val = Integer.parseInt(arg);
-            } catch (NumberFormatException e) {
-            }
-            thread.fStack.push(val);
+            
+            arg = args.getNextStringArg();
         }
     }
 
@@ -1137,7 +1364,7 @@ public class PDAVirtualMachine {
 
     void iVar(PDAThread thread, Args args) {
         String var = args.getNextStringArg();
-        thread.fCurrentFrame.put(var, 0);
+        thread.fCurrentFrame.set(var, 0);
     }
 
     void iInternalEndEval(PDAThread thread, Args args) {

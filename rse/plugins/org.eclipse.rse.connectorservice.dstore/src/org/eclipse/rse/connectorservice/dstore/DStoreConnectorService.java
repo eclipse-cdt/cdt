@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short
  * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
  * David McKnight   (IBM)        - [244116] [dstore][daemon][ssl]  Connecting to RSE server doesn't complete when the connection is SSL
+ * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -530,6 +531,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	    }
 	    
 	    _isConnecting = true;
+	    boolean alertedNONSSL = false;
 
 		// set A_PLUGIN_PATH so that dstore picks up the property
 		setPluginPathProperty();
@@ -697,7 +699,32 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				if (setSSLProperties(false))
 				{
 					usedSSL = false;
-					launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
+
+					boolean allowNonSSL = true;
+					// warning before launch without SSL
+					IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+					if (store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
+					{
+						String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
+						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
+
+						DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
+						Display.getDefault().syncExec(msgAction);
+						if (msgAction.getReturnCode() != IDialogConstants.YES_ID){
+							allowNonSSL = false;
+						} else {
+							alertedNONSSL = true;
+						}						
+					}
+					if (allowNonSSL){
+						launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
+					}
+					else {
+						_isConnecting = false;
+						clientConnection = null;
+						
+						throw new OperationCanceledException();
+					}
 				}
 			}
 
@@ -896,16 +923,18 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			}
 			else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 			{
-				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
-				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
-
-				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
-				Display.getDefault().syncExec(msgAction);
-				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
-				{
-					internalDisconnect(monitor);
-					_isConnecting = false;
-					throw new InterruptedException();
+				if (!alertedNONSSL){ // only alert if we haven't already
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
+					
+					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
+					Display.getDefault().syncExec(msgAction);
+					if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
+					{
+						internalDisconnect(monitor);
+						_isConnecting = false;
+						throw new InterruptedException();
+					}
 				}
 			}
 

@@ -20,6 +20,8 @@
  * David McKnight (IBM)          - [231964] [ssh] SSH login dialog appears twice after cancel, when doing Refresh on a node
  * David McKnight (IBM)          - [235164] SystemView should allow to create filter in disconnected mode
  * David McKnight (IBM)          - [239368] Expand to action ignores the filter string
+ * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
+ * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -245,9 +247,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		{
 			ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
 		}
-		if (ss.isOffline() ){
-			return;
-		}
+
 		
 		boolean isPromptable = false;
 
@@ -260,7 +260,8 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		
 		synchronized (ss.getConnectorService())
 		{
-		if (!ss.isConnected() && !isPromptable)
+		if (!ss.isConnected() && !isPromptable && 
+				!ss.isOffline()) // skip the connect if offline, but still follow through because we need to follow through in the subsystem
 		{
 
 			Display dis = Display.getDefault();
@@ -283,10 +284,12 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			catch (InvocationTargetException exc)
 			{
           	  	showOperationErrorMessage(null, exc, ss);
+          	  	return;
 			}
 			catch (Exception e)
 			{
 				showOperationErrorMessage(null, e, ss);
+				return;
 			}
 
 			dis.asyncExec(new UpdateRegistry(ss));

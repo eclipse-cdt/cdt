@@ -59,8 +59,14 @@ import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.osgi.framework.BundleContext;
 
-
-public class GDBMultiProcesses extends AbstractDsfService implements IMIProcesses {
+/**
+ * This class implements the IProcesses interface for GDB 7.0
+ * Actually, I'm not sure what the next version of GDB will be, so technically,
+ * it is the one after GDB 6.8, as long as it contains multi-process support,
+ * which really mean it supports the new -list-thread-groups command.
+ * 
+ */
+public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses {
 
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -325,7 +331,7 @@ public class GDBMultiProcesses extends AbstractDsfService implements IMIProcesse
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
-    public GDBMultiProcesses(DsfSession session) {
+    public GDBProcesses_7_0(DsfSession session) {
     	super(session);
     }
 
@@ -366,7 +372,7 @@ public class GDBMultiProcesses extends AbstractDsfService implements IMIProcesse
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),
 				IMIProcesses.class.getName(),
-				GDBMultiProcesses.class.getName() },
+				GDBProcesses_7_0.class.getName() },
 				new Hashtable<String, String>());
         
 		requestMonitor.done();

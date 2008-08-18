@@ -22,6 +22,7 @@
  * David McKnight (IBM)          - [239368] Expand to action ignores the filter string
  * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
+ * David McKnight   (IBM)        - [243263] NPE on expanding a filter
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -57,8 +58,10 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.IElementCollector;
 
 
@@ -300,21 +303,35 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		Object[] children = null;
   	  	// we first test to see if this is an expand-to filter in effect for this
   	  	//  object, and if so use it...
-  	  	if (_part instanceof SystemViewPart && _adapter instanceof ISystemRemoteElementAdapter)
+  	  	if (_adapter instanceof ISystemRemoteElementAdapter)
   	  	{
-  	  		final SystemView viewer = ((SystemViewPart)_part).getSystemView();
-  	  		
   	  		class GetExpandToFilter implements Runnable
   	  		{
-  	  			private String expandToFilter;
+  	  			private String expandToFilter = null;
   	  			public void run()
   	  			{
-  	  				
-  	  				if (_remoteObject instanceof IContextObject){
-  	  					expandToFilter = viewer.getExpandToFilter(((IContextObject)_remoteObject).getModelObject());
+  	  				// fetching part here ourselves, because right now there's no guarantee that _part will be the correct one
+  	  				// see bug 244454 for details
+  	  				IWorkbenchPart activePart = null;
+  	  				IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+  	  				if (win != null){
+  	  					IWorkbenchPage page = win.getActivePage();
+  	  					if (page != null){
+  	  						activePart = page.getActivePart();
+  	  						if (activePart != null){
+  	  							_part = activePart;
+  	  						}
+  	  					}
   	  				}
-  	  				else {
-  	  					expandToFilter = viewer.getExpandToFilter(_remoteObject);
+  	  				
+  	  				if (activePart instanceof SystemViewPart){
+  	  					SystemView viewer = ((SystemViewPart)activePart).getSystemView();
+  	  					if (_remoteObject instanceof IContextObject){
+  	  						expandToFilter = viewer.getExpandToFilter(((IContextObject)_remoteObject).getModelObject());
+  	  					}
+  	  					else {
+  	  						expandToFilter = viewer.getExpandToFilter(_remoteObject);
+  	  					}
   	  				}
   	  			}
   	  			

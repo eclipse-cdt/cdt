@@ -80,7 +80,7 @@ public class GDBControl extends AbstractMIControl {
     public static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
         implements ICommandControlInitializedDMEvent
     {
-        public GDBControlInitializedDMEvent(GDBControlDMContext context) {
+        public GDBControlInitializedDMEvent(ICommandControlDMContext context) {
             super(context);
         }
     }
@@ -91,7 +91,7 @@ public class GDBControl extends AbstractMIControl {
     public static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
         implements ICommandControlShutdownDMEvent
     {
-        public GDBControlShutdownDMEvent(GDBControlDMContext context) {
+        public GDBControlShutdownDMEvent(ICommandControlDMContext context) {
             super(context);
         }
     }

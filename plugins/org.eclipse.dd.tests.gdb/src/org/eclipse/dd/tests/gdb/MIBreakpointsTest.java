@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -44,6 +45,7 @@ import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
+import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -333,13 +335,13 @@ public class MIBreakpointsTest extends BaseTestCase {
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */
-    private BigInteger evaluateExpression(String expression) throws Throwable {
+    private BigInteger evaluateExpression(IDMContext ctx, String expression) throws Throwable {
 
         final IExpressions fExpressionService = fServicesTracker.getService(IExpressions.class);
         assert (fExpressionService != null);
 
         // Get a stack context (temporary - should be an MIcontainerDMC)
-		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(fGdbControlDmc, expression);
+		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService,
 				expressionDMC, IFormattedValues.DECIMAL_FORMAT);
 
@@ -2302,7 +2304,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2316,7 +2319,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == 128);
 	}
 
@@ -2362,7 +2365,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2376,7 +2380,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == 128);
 	}
 
@@ -2409,7 +2413,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2423,7 +2428,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == IGNORE_COUNT_2);
 	}
 
@@ -2469,7 +2474,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2483,7 +2489,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == IGNORE_COUNT_2);
 	}
 
@@ -2514,7 +2520,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2528,7 +2535,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == IGNORE_COUNT_2);
 	}
 
@@ -2559,7 +2566,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2573,7 +2581,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == IGNORE_COUNT_2);
 	}
 
@@ -2605,7 +2613,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2619,7 +2628,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int i = evaluateExpression("i").intValue();
+		int i = evaluateExpression(frameDmc, "i").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", i == IGNORE_COUNT_2);
 	}
 
@@ -2670,7 +2679,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2684,7 +2694,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int j = evaluateExpression("j").intValue();
+		int j = evaluateExpression(frameDmc, "j").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", j == IGNORE_COUNT_2);
 	}
 
@@ -2736,7 +2746,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent();
@@ -2750,7 +2761,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int j = evaluateExpression("j").intValue();
+		int j = evaluateExpression(frameDmc, "j").intValue();
 		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", j == IGNORE_COUNT_2);
 	}
 

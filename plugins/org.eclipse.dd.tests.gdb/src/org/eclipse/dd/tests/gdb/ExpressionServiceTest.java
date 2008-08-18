@@ -126,6 +126,8 @@ public class ExpressionServiceTest extends BaseTestCase {
      */
     @Test
     public void testLiteralIntegerExpressions() throws Throwable {
+        MIStoppedEvent stoppedEvent = SyncUtil.SyncRunToLocation("testLocals");
+
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
@@ -139,7 +141,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         tests.put("10 + -15", new String[] { "0xFFFFFFFB", "037777777773", "11111111111111111111111111111011", "-5",
             "-5" });
 
-        executeExpressionSubTests(tests, fGdbControl.getControlDMContext());
+        executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
     }
 
     /**
@@ -147,6 +149,8 @@ public class ExpressionServiceTest extends BaseTestCase {
      */
     @Test
     public void testLiteralFloatingPointExpressions() throws Throwable {
+        MIStoppedEvent stoppedEvent = SyncUtil.SyncRunToLocation("testLocals");
+
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
@@ -157,7 +161,7 @@ public class ExpressionServiceTest extends BaseTestCase {
         tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336" });
         tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200" });
 
-        executeExpressionSubTests(tests, fGdbControl.getControlDMContext());
+        executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
     }
 
     /**

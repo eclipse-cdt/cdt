@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IMemory;
@@ -27,12 +28,14 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
+import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;
 import org.eclipse.dd.tests.gdb.framework.BaseTestCase;
@@ -202,10 +205,10 @@ public class MIMemoryTest extends BaseTestCase {
 	 * @throws InterruptedException
 	 * ------------------------------------------------------------------------
 	 */
-	private IAddress evaluateExpression(String expression) throws Throwable
+	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable
 	{
 		// Create the expression and format contexts 
-		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(fGdbControlDmc, expression);
+		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(ctx, expression);
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
 
 		// Create the DataRequestMonitor which will store the operation result in the wait object
@@ -438,14 +441,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		IMemoryDMContext dmc = null;
 		long offset = 0;
 		int word_size = 1;
 		int count = 1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Unknown context type";
@@ -503,12 +507,13 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int count = -1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
@@ -540,13 +545,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = -1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Invalid word count (< 0)";
@@ -571,13 +577,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = 1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Verify that all bytes are '0'
 		for (int i = 0; i < BLOCK_SIZE; i++) {
@@ -622,12 +629,13 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the array is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int word_size = 1;
 		int count = 1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Verify that all bytes are '0'
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
@@ -670,13 +678,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = BLOCK_SIZE;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Get the memory block
 		fWait.waitReset();
@@ -727,14 +736,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = 1;
 		byte[] buffer = new byte[count];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Unknown context type";
@@ -791,13 +801,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int count = -1;
 		byte[] buffer = new byte[1];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
@@ -829,14 +840,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = -1;
 		byte[] buffer = new byte[1];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Invalid word count (< 0)";
@@ -861,14 +873,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = 10;
 		byte[] buffer = new byte[count - 1];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Buffer too short";
@@ -893,14 +906,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = BLOCK_SIZE;
 		byte[] buffer = new byte[count];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		for (int i = 0; i < count; i++) {
@@ -956,12 +970,13 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		int word_size = 1;
 		int count = BLOCK_SIZE;
 		byte[] buffer = new byte[count];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		for (int offset = 0; offset < count; offset++) {
@@ -1015,13 +1030,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = BLOCK_SIZE;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Make sure that the memory block is zeroed
 		fWait.waitReset();
@@ -1076,14 +1092,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = 1;
 		byte[] pattern = new byte[count];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Unknown context type";
@@ -1140,13 +1157,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int count = 1;
 		byte[] pattern = new byte[1];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
@@ -1178,14 +1196,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = -1;
 		byte[] pattern = new byte[1];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Invalid repeat count (< 0)";
@@ -1210,14 +1229,15 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = 1;
 		byte[] pattern = new byte[0];
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		String expected = "Empty pattern";
@@ -1242,7 +1262,8 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -1251,7 +1272,7 @@ public class MIMemoryTest extends BaseTestCase {
 		int length = 4;
 		byte[] pattern = new byte[length];
 		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
@@ -1302,7 +1323,8 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -1311,7 +1333,7 @@ public class MIMemoryTest extends BaseTestCase {
 		int length = 4;
 		byte[] pattern = new byte[length];
 		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
@@ -1362,7 +1384,8 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
@@ -1371,7 +1394,7 @@ public class MIMemoryTest extends BaseTestCase {
 		int length = 4;
 		byte[] pattern = new byte[length];
 		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
@@ -1419,12 +1442,13 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the array is zeroed
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		int word_size = 1;
 		int count = 1;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Verify asynchronously that all bytes are '0'
 		fWait.waitReset();
@@ -1481,13 +1505,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.SyncAddBreakpoint("MemoryTestApp.cc:setBlocks", true);
 		SyncUtil.SyncResumeUntilStopped();
-		SyncUtil.SyncStep(StepType.STEP_RETURN);
+		MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
 		long offset = 0;
 		int word_size = 1;
 		int count = BLOCK_SIZE;
-		fBaseAddress = evaluateExpression("&charBlock");
+		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Get the 'reference' memory block
 		fWait.waitReset();

@@ -400,7 +400,6 @@ public class ExpressionService extends AbstractDsfService implements IExpression
         }
     }
 
-	// This field holds a reference to to the data model context for this service.
 	private CommandCache fExpressionCache;
 	private MIVariableManager varManager;
 

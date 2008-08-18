@@ -28,11 +28,13 @@ import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIDisassembly;
+import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;
 import org.eclipse.dd.tests.gdb.framework.BaseTestCase;
@@ -136,8 +138,11 @@ public class MIDisassemblyTest extends BaseTestCase {
      */
     private IAddress evaluateExpression(String expression) throws Throwable
     {
+    	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+
         // Create the expression and format contexts 
-        final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(fGdbControlDmc, expression);
+        final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(frameDmc, expression);
         final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
 
         // Create the DataRequestMonitor which will store the operation result in the wait object

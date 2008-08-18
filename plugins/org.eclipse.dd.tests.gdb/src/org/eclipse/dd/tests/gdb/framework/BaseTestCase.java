@@ -43,11 +43,15 @@ public class BaseTestCase {
     private static GdbLaunch fLaunch;
 	private static Map<String, Object> attrs = new HashMap<String, Object>();
     
+	private MIStoppedEvent fInitialStoppedEvent = null;
+	
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
     public static void setLaunchAttribute(String key, Object value) { 
     	attrs.put(key, value);
     }
+    
+    public MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
     
     @BeforeClass
     public static void baseBeforeClassMethod() {
@@ -93,7 +97,7 @@ public class BaseTestCase {
 				new ServiceEventWaitor<MIStoppedEvent>(
 						fLaunch.getSession(),
 						MIStoppedEvent.class);
-			eventWaitor.waitForEvent(10000);
+			fInitialStoppedEvent = eventWaitor.waitForEvent(10000);
 		} catch (Exception e) {}
 
 	}

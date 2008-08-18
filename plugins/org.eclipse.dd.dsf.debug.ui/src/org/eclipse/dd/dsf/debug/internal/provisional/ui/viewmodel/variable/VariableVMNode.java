@@ -34,13 +34,14 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.I
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.debug.service.IMemory;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMData;
@@ -77,49 +78,6 @@ import org.eclipse.ui.IMemento;
 public class VariableVMNode extends AbstractExpressionVMNode 
     implements IElementEditor, IElementLabelProvider, IElementMementoProvider 
 {
-    
-    //private final static int MAX_STRING_VALUE_LENGTH = 40;
-    
-    public int getDeltaFlags(Object e) {
-        /*
-         * @see buildDelta()
-         */
-        
-        // When an expression changes or memory, we must do a full refresh
-        // see Bug 213061 and Bug 214550
-        if (e instanceof IRunControl.ISuspendedDMEvent ||
-            e instanceof IExpressions.IExpressionChangedDMEvent ||
-            e instanceof IMemory.IMemoryChangedEvent) {
-            return IModelDelta.CONTENT;
-        }
-
-        if (e instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            return IModelDelta.CONTENT;            
-        }
-
-        return IModelDelta.NO_CHANGE;
-    }
-
-    public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-
-        // When an expression changes or memory, we must do a full refresh
-        // see Bug 213061 and Bug 214550
-        if (event instanceof IRunControl.ISuspendedDMEvent ||
-            event instanceof IExpressions.IExpressionChangedDMEvent ||
-            event instanceof IMemory.IMemoryChangedEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
-        
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        
-        requestMonitor.done();
-    }
     
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
     
@@ -519,49 +477,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
         }
     }
 
-    public int getDeltaFlagsForExpression(IExpression expression, Object event) {
-        // When an expression changes or memory, we must do a full refresh
-        // see Bug 213061 and Bug 214550
-        if (event instanceof IRunControl.ISuspendedDMEvent ||
-            event instanceof IExpressions.IExpressionChangedDMEvent ||
-            event instanceof IMemory.IMemoryChangedEvent) {
-            return IModelDelta.CONTENT;
-        } 
-        
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            return IModelDelta.CONTENT;            
-        }
-        return IModelDelta.NO_CHANGE;
-    }
-    
-    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
-        TreePath path, RequestMonitor rm) 
-    {
-        rm.done();
-    }
-    
-    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
-        RequestMonitor rm) 
-    {
-        // When an expression changes or memory, we must do a full refresh
-        // see Bug 213061 and Bug 214550
-        if (event instanceof IRunControl.ISuspendedDMEvent ||
-            event instanceof IExpressions.IExpressionChangedDMEvent ||
-            event instanceof IMemory.IMemoryChangedEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
-        
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        }
-
-        rm.done();
-    }
-    
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         // Get the data model context object for the current node in the hierarchy.
@@ -729,6 +644,85 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
         stackFrameService.getLocals(frameDmc, rm);
     }
+    
+    //private final static int MAX_STRING_VALUE_LENGTH = 40;
+    
+    public int getDeltaFlags(Object e) {
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IExpressionChangedDMEvent ||
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
+        {
+            // Create a delta that the whole register group has changed.
+            return IModelDelta.CONTENT;
+        } 
+
+        return IModelDelta.NO_CHANGE;
+    }
+
+    public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+
+        // The following events can affect any expression's values, 
+        // refresh the contents of the parent element (i.e. all the expressions). 
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IExpressionChangedDMEvent ||
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
+        {
+            // Create a delta that the whole register group has changed.
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        } 
+
+        requestMonitor.done();
+    }
+    
+    public int getDeltaFlagsForExpression(IExpression expression, Object event) {
+        if ( event instanceof IExpressionChangedDMEvent ||
+             event instanceof IMemoryChangedEvent ||
+             (event instanceof PropertyChangeEvent && 
+              ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
+        {
+            return IModelDelta.STATE;
+        } 
+
+        if (event instanceof ISuspendedDMEvent)
+        {
+            return IModelDelta.CONTENT;
+        }
+
+        return IModelDelta.NO_CHANGE;
+    }
+    
+    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
+        TreePath path, RequestMonitor rm) 
+    {
+        // Always refresh the contents of the view upon suspended event.
+        if (event instanceof ISuspendedDMEvent) {
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }         
+
+        rm.done();
+    }
+    
+    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
+        RequestMonitor rm) 
+    {
+        // The following events can affect expression values, refresh the state 
+        // of the expression. 
+        if ( event instanceof IExpressionChangedDMEvent ||
+             event instanceof IMemoryChangedEvent ||
+             (event instanceof PropertyChangeEvent && 
+                ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
+        {
+            parentDelta.addNode(element, IModelDelta.STATE);
+        } 
+
+        rm.done();
+    }
+    
+
     
     /*
      * (non-Javadoc)

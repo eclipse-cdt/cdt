@@ -29,15 +29,15 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.I
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier.BitFieldEditorStyle;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
@@ -154,7 +154,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
     
     public RegisterBitFieldVMNode(IFormattedValuePreferenceStore prefStore, AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess access) {
-        super(provider, session, IRegisters.IBitFieldDMContext.class);
+        super(provider, session, IBitFieldDMContext.class);
         fSyncRegisterDataAccess = access;
         fFormattedPrefStore = prefStore;
     }
@@ -324,7 +324,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 continue;
             }
             
-            final IBitFieldDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisters.IBitFieldDMContext.class);
+            final IBitFieldDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IBitFieldDMContext.class);
             
             getDMVMProvider().getModelData(
                 this, 
@@ -507,24 +507,19 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
     public int getDeltaFlags(Object e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IRegisterChangedDMEvent || 
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
+        {
             return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
+        } 
+
+        if (e instanceof IBitFieldChangedDMEvent) {
             return IModelDelta.STATE;
         }
 
-        if (e instanceof IMemory.IMemoryChangedEvent) {
-            return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            return IModelDelta.CONTENT;            
-        }
-        
         return IModelDelta.NO_CHANGE;
     }
 
@@ -533,28 +528,22 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
      */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            // Create a delta that the whole register group has changed.
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
-
-        if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
-            /*
-             *  Create a delta indicating the bit field has changed.
-             */
-            parentDelta.addNode( createVMContext(((IRegisters.IBitFieldChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
-        } 
-
-        if (e instanceof IMemory.IMemoryChangedEvent) {
-        	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        
-        if (e instanceof PropertyChangeEvent &&
-            ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
+        // The following events can affect any bit field's values, 
+        // refresh the contents of the parent element (i.e. all the registers). 
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IRegisterChangedDMEvent || 
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
         {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        
+        } 
+
+        if (e instanceof IBitFieldChangedDMEvent) {
+            // Create a delta indicating that the value of bit field has changed.
+            parentDelta.addNode( createVMContext(((IBitFieldChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+        } 
+
         rm.done();
     }
 
@@ -761,7 +750,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+        if (event instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
         }
 
@@ -770,7 +759,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             return IModelDelta.CONTENT;            
         }
 
-        if (event instanceof IMemory.IMemoryChangedEvent) {
+        if (event instanceof IMemoryChangedEvent) {
             return IModelDelta.CONTENT;
         }
         
@@ -783,16 +772,11 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      */
     public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
+        // Always refresh the contents of the view upon suspended event.
         if (event instanceof ISuspendedDMEvent) {
-            // Mark the parent delta indicating that elements were added and/or removed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        else if (event instanceof IRegisters.IRegisterChangedDMEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
-        else if (event instanceof IMemory.IMemoryChangedEvent) {
-        	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
+        }         
+
         rm.done();
     }
 
@@ -802,19 +786,15 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
-    	if (event instanceof IMemory.IMemoryChangedEvent) {
-    		parentDelta.addNode(element, IModelDelta.STATE);
-        }
-    	
-        if (event instanceof IBitFieldChangedDMEvent) {
+        // The following events can affect register values, refresh the state 
+        // of the expression. 
+        if ( event instanceof IRegisterChangedDMEvent ||
+             event instanceof IMemoryChangedEvent ||
+             (event instanceof PropertyChangeEvent && 
+                ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
+        {
             parentDelta.addNode(element, IModelDelta.STATE);
         } 
-        
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        }
 
         rm.done();
     }

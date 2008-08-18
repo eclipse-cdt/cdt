@@ -27,10 +27,11 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.Abs
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupChangedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupsChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -130,7 +131,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
 
     public RegisterGroupVMNode(AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
-        super(provider, session, IRegisters.IRegisterGroupDMContext.class);
+        super(provider, session, IRegisterGroupDMContext.class);
         fSyncRegisterDataAccess = syncDataAccess;
     }
 
@@ -303,13 +304,13 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
     public int getDeltaFlags(Object e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
         } 
-        else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
+        else if (e instanceof IGroupsChangedDMEvent) {
             return IModelDelta.CONTENT;
         }
-        else if (e instanceof IRegisters.IGroupChangedDMEvent) {
+        else if (e instanceof IGroupChangedDMEvent) {
             return IModelDelta.STATE;
         }
         return IModelDelta.NO_CHANGE;
@@ -320,15 +321,18 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
      */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        // Although the register groups themselves are not affected by the 
+        // suspended event, typically all the registers are.  Add a CONTENT changed
+        // flag to the parent to repaint all the groups and their registers.
+        if (e instanceof ISuspendedDMEvent) {
             // Create a delta that indicates all groups have changed
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
-        else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
+        else if (e instanceof IGroupsChangedDMEvent) {
             // Create a delta that indicates all groups have changed
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
-        else if (e instanceof IRegisters.IGroupChangedDMEvent) {
+        else if (e instanceof IGroupChangedDMEvent) {
             // Create a delta that indicates that specific group changed
             parentDelta.addNode( createVMContext(((IGroupChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         }
@@ -365,8 +369,15 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+
+        if (event instanceof ISuspendedDMEvent ||
+            event instanceof IGroupsChangedDMEvent) 
+        {
             return IModelDelta.CONTENT;
+        }
+
+        if (event instanceof IGroupChangedDMEvent) {
+            return IModelDelta.STATE;
         }
 
         return IModelDelta.NO_CHANGE;
@@ -379,10 +390,19 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
+        if (event instanceof ISuspendedDMEvent) {
             // Mark the parent delta indicating that elements were added and/or removed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
+
+        // If the group definitions have changed, refresh the whole expressions
+        // view contents since previously invalid expressions may now evaluate 
+        // to valid groups 
+        if (event instanceof IGroupsChangedDMEvent) {
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        } 
+        
+
         rm.done();
     }
 
@@ -392,10 +412,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
-        if (event instanceof IRegisters.IGroupsChangedDMEvent) {
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        } 
-        if (event instanceof IRegisters.IGroupChangedDMEvent) {
+        if (event instanceof IGroupChangedDMEvent) {
             parentDelta.addNode(element, IModelDelta.STATE);
         }
         rm.done();

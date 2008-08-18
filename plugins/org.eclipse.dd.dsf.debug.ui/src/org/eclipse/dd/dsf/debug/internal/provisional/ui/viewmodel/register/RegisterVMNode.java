@@ -28,15 +28,16 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.I
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegistersChangedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -53,6 +54,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -146,7 +148,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
 
     public RegisterVMNode(IFormattedValuePreferenceStore prefStore, AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
-        super(provider, session, IRegisters.IRegisterDMContext.class);
+        super(provider, session, IRegisterDMContext.class);
         fSyncRegisterDataAccess = syncDataAccess;
         fFormattedPrefStore = prefStore;
     }
@@ -306,7 +308,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
         	
-            final IRegisterDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisters.IRegisterDMContext.class);
+            final IRegisterDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterDMContext.class);
             if ( dmc == null ) {
             	handleFailedUpdate(update);
                 continue;
@@ -455,6 +457,16 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
+    @Override
+    public void update(IHasChildrenUpdate[] updates) {
+        // As an optimization, always indicate that register groups have 
+        // children.
+        for (IHasChildrenUpdate update : updates) {
+            update.setHasChilren(true);
+            update.done();
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
@@ -498,32 +510,19 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
     public int getDeltaFlags(Object e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof IMemory.IMemoryChangedEvent) {
-            return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            /*
-             *  Logically one would think that STATE should be specified here.  But we specify  CONTENT
-             *  as well so that if there are sub-registers ( BIT FIELDS ) they will be forced to update
-             *  and show new values when the total register changes.
-             */
-            return IModelDelta.CONTENT;
-        }
-        
-        if (e instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IRegistersChangedDMEvent ||
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
         {
-            return IModelDelta.CONTENT;            
+            return IModelDelta.CONTENT;
+        } 
+        
+        if (e instanceof IRegisterChangedDMEvent) {
+            return IModelDelta.STATE;
         }
+        
         return IModelDelta.NO_CHANGE;
     }
 
@@ -532,29 +531,21 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.dd.dsf.ui.viewmodel.VMDelta, int, org.eclipse.dd.dsf.concurrent.RequestMonitor)
      */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        // The following events can affect any register's values, 
+        // refresh the contents of the parent element (i.e. all the registers). 
+        if ( e instanceof ISuspendedDMEvent || 
+             e instanceof IMemoryChangedEvent ||
+             e instanceof IRegistersChangedDMEvent ||
+             (e instanceof PropertyChangeEvent &&
+              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) ) 
+        {
             // Create a delta that the whole register group has changed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
         
-        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);;
+        if (e instanceof IRegisterChangedDMEvent) {
+            parentDelta.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
-        
-        if (e instanceof IMemory.IMemoryChangedEvent) {
-            // Mark the parent delta indicating that elements were added and/or removed.
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-
-        if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            parentDelta.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
-        } 
-
-        if (e instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
-        {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
         
         rm.done();
     }
@@ -563,7 +554,6 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * Expected format: GRP( GroupName ).REG( RegisterName )
      *              or: $RegisterName
      */
- 
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForRegisterName(expression.getExpressionText()) != null;
     }
@@ -670,19 +660,20 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
+        if ( event instanceof IRegisterChangedDMEvent ||
+             event instanceof IMemoryChangedEvent ||
+             (event instanceof PropertyChangeEvent && 
+               ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
         {
-            return IModelDelta.CONTENT;            
-        }
-
-        if (event instanceof IMemory.IMemoryChangedEvent) {
-        	return IModelDelta.CONTENT;
+            return IModelDelta.STATE;
         }
         
+        if (event instanceof IRegistersChangedDMEvent ||
+            event instanceof ISuspendedDMEvent)
+        {
+            return IModelDelta.CONTENT;
+        }
+
         return IModelDelta.NO_CHANGE;
     }
     
@@ -693,15 +684,19 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
-            // Mark the parent delta indicating that elements were added and/or removed.
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
-        
-        if (event instanceof IMemory.IMemoryChangedEvent) {
+        // If the register definition has changed, refresh all the 
+        // expressions in the expression manager.  This is because some 
+        // expressions that were previously invalid, may now represent new 
+        // registers.
+        if (event instanceof IRegistersChangedDMEvent) {
         	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }
-        
+
+        // Always refresh the contents of the view upon suspended event.
+        if (event instanceof ISuspendedDMEvent) {
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        }         
+
         rm.done();
     }
 
@@ -711,23 +706,15 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
-        if (event instanceof IRegisters.IRegisterChangedDMEvent) {
-            parentDelta.addNode(element, IModelDelta.STATE);
-        } 
-        
-        if (event instanceof IRegisters.IRegistersChangedDMEvent) {
-            parentDelta.addNode(element, IModelDelta.STATE);
-        } 
-        
-        if (event instanceof IMemory.IMemoryChangedEvent) {
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        }
-        
-        if (event instanceof PropertyChangeEvent && 
-            ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) 
+        // The following events can affect register values, refresh the state 
+        // of the expression. 
+        if ( event instanceof IRegisterChangedDMEvent ||
+             event instanceof IMemoryChangedEvent ||
+             (event instanceof PropertyChangeEvent && 
+                ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
         {
-            parentDelta.addNode(element, IModelDelta.CONTENT);
-        }
+            parentDelta.addNode(element, IModelDelta.STATE);
+        } 
 
         rm.done();
     }

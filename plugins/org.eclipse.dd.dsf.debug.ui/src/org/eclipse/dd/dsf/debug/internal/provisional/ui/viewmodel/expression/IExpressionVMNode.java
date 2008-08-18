@@ -45,15 +45,19 @@ public interface IExpressionVMNode extends IVMNode {
     public int getDeltaFlagsForExpression(IExpression expression, Object event);
     
     /**
-     * Adds delta flags to the given parent delta based on the expression object 
-     * given.  
+     * Adds delta flags to the given parent delta based on the expression 
+     * object given.  The nodes add flags to the expression view's root 
+     * delta using this method, regardless of whether the node is directly 
+     * below the expression manager or not.
+     * 
      */
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm);
     
     /**
-     * Adds delta to the given parent delta based on the given element which was created base on 
-     * an expression parsed by this node.
+     * Adds delta to the given parent delta based on the given element that 
+     * was created base on an expression parsed by this node.  The VM nodes can
+     * add a new delta node to the parentDela by implementing this method.
      */
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm);
 }

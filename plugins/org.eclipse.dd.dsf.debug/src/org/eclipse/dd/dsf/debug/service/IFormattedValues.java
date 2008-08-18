@@ -97,7 +97,7 @@ public interface IFormattedValues extends IDMService {
         
         @Override
         public String toString() {
-            return super.toString() + ".format(" + getFormatID() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            return baseToString() + ".format(" + getFormatID() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -112,5 +112,7 @@ public interface IFormattedValues extends IDMService {
         public String getFormattedValue() {
             return fValue;
         }
+        
+        
     }
 }

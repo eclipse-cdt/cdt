@@ -14,6 +14,8 @@ package org.eclipse.cdt.launch.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -475,7 +478,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
-		ArrayList list = new ArrayList(cproject.length);
+		List<ICProject> list = new ArrayList<ICProject>(cproject.length);
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
@@ -495,7 +498,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				list.add(cproject[i]);
 			}
 		}
-		return (ICProject[])list.toArray(new ICProject[list.size()]);
+		return list.toArray(new ICProject[list.size()]);
 	}
 
 	/**
@@ -549,11 +552,20 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 		IPath exePath = new Path(name);
 		if (!exePath.isAbsolute()) {
-			if (!project.getFile(name).exists()) {
+			IFile projFile = null;
+			try {
+				projFile = project.getFile(name);
+			}
+			catch (Exception exc) {
+				// throws an exception if it's a relative path pointing outside project
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_invalid_proj_path")); //$NON-NLS-1$
+				return false;
+			} 
+			if (projFile == null || !projFile.exists()) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			exePath = project.getFile(name).getLocation();
+			exePath = projFile.getLocation();
 		} else {
 			if (!exePath.toFile().exists()) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$

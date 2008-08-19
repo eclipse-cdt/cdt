@@ -26,9 +26,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * Context objects are created transiently and are only used to aid in providing filter information
  * during a query.
  * 
- * @noimplement - Extending or implementing this interface in client code is
-  strongly discouraged, may break your code in a future major release,
-  and will likely lead to degradation of RSE behavior.
+ * noimplement - Extending or implementing this interface in client code is
+ * strongly discouraged, may break your code in a future major release,
+ * and will likely lead to degradation of RSE behavior.
  *
  */
 public interface IContextObject 

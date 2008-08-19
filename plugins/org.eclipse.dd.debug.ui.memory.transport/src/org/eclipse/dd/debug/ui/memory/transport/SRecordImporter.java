@@ -92,6 +92,7 @@ public class SRecordImporter implements IMemoryImporter {
 		// restore to file address
 		
 		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
+		fComboRestoreToFileAddress.setSelection(true);
 		fComboRestoreToFileAddress.setText("Restore to address specified in the file");
 		//comboRestoreToFileAddress.setLayoutData(data);
 		
@@ -217,6 +218,13 @@ public class SRecordImporter implements IMemoryImporter {
 		composite.pack();
 		parent.pack();
 
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run()
+			{
+				validate();
+			}
+		});
+
 		return composite;
 	}
 	
@@ -227,6 +235,8 @@ public class SRecordImporter implements IMemoryImporter {
 		try
 		{
 			getStartAddress();
+			if(!getFile().exists())
+				isValid = false;
 		}
 		catch(Exception e)
 		{

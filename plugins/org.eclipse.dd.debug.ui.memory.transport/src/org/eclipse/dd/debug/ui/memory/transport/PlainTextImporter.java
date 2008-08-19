@@ -219,6 +219,13 @@ public class PlainTextImporter implements IMemoryImporter {
 		
 		composite.pack();
 		parent.pack();
+		
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run()
+			{
+				validate();
+			}
+		});
 
 		return composite;
 	}
@@ -230,6 +237,8 @@ public class PlainTextImporter implements IMemoryImporter {
 		try
 		{
 			getStartAddress();
+			if(!getFile().exists())
+				isValid = false;
 		}
 		catch(Exception e)
 		{

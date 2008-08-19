@@ -303,25 +303,27 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		Object[] children = null;
   	  	// we first test to see if this is an expand-to filter in effect for this
   	  	//  object, and if so use it...
-  	  	if (_adapter instanceof ISystemRemoteElementAdapter)
+  	  	if ((_part==null || _part instanceof SystemViewPart) && _adapter instanceof ISystemRemoteElementAdapter)
   	  	{
   	  		class GetExpandToFilter implements Runnable
   	  		{
   	  			private String expandToFilter = null;
   	  			public void run()
   	  			{
-  	  				// fetching part here ourselves, because right now there's no guarantee that _part will be the correct one
+  	  				// fetching part here ourselves, because the correct part can not always be determined from a background Thread
   	  				// see bug 244454 for details
-  	  				IWorkbenchPart activePart = null;
-  	  				IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
-  	  				if (win != null){
-  	  					IWorkbenchPage page = win.getActivePage();
-  	  					if (page != null){
-  	  						activePart = page.getActivePart();
-  	  						if (activePart != null){
-  	  							_part = activePart;
-  	  						}
-  	  					}
+  	  				IWorkbenchPart activePart = _part;
+  	  				if (activePart==null) {
+  	  					IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+  		  				if (win != null){
+	  	  					IWorkbenchPage page = win.getActivePage();
+  	  						if (page != null){
+  	  							activePart = page.getActivePart();
+  	  							if (activePart != null){
+  	  								_part = activePart;
+  	  							}
+  		  					}
+	  	  				}
   	  				}
   	  				
   	  				if (activePart instanceof SystemViewPart){

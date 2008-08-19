@@ -1,15 +1,15 @@
 /********************************************************************************
  * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
@@ -40,6 +40,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -50,7 +51,7 @@ import org.osgi.framework.BundleContext;
 /**
  * A base plugin class offering common operations.
  */
-public abstract class SystemBasePlugin extends AbstractUIPlugin 
+public abstract class SystemBasePlugin extends AbstractUIPlugin
 {
 
 	// static variables
@@ -59,10 +60,17 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     /**
      * Logger object for logging messages for servicing purposes.
      */
-	protected static Logger log = null;		
-    
+	protected static Logger log = null;
+
+	/**
+	 * Active workbench window
+	 */
+	private static volatile IWorkbenchWindow activeWindow = null;
+	private static volatile IWorkbenchWindow previousActiveWindow = null;
+	private static IWindowListener windowListener = null;
+
 	// instance variables
-    private Hashtable imageDescriptorRegistry = null;	
+    private Hashtable imageDescriptorRegistry = null;
 
     /**
      * Returns the singleton object representing the base plugin.
@@ -71,13 +79,13 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     public static SystemBasePlugin getBaseDefault() {
 	    return baseInst;
     }
-    
+
 	/**
 	 * Returns the active workbench shell.
 	 * @return the active workbench shell.
 	 */
 	public static Shell getActiveWorkbenchShell() {
-	    
+
 	    IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getShell();
@@ -91,12 +99,12 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
 	/**
 	 * Returns the active workbench window.
-	 * @return the active workbench window. 
+	 * @return the active workbench window.
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-	    
+
 		IWorkbench wb = null;
-		
+
 		try {
 		    wb = getBaseDefault().getWorkbench();
 		}
@@ -104,19 +112,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		    // in headless mode
 		    wb = null;
 		}
-		
+
 		// if we are not in headless mode
 		if (wb != null) {
-		    
+
 		    // if in user interface thread, return the workbench active window
 			if (Display.getCurrent() != null) {
 				return wb.getActiveWorkbenchWindow();
 			}
-			// otherwise, get a list of all the windows, and simply return the first one
+			// otherwise, get a list of all the windows, and try to guess which one is right
 			// KM: why do we need this??
 			else {
 				// for bug 244454, this ends up returning the wrong window
-				// the correct solution involves: 
+				// the correct solution involves:
 				//   - returning null when called from a non-UI thread
 				//   - making sure that callers handle and understand that
 				//   - null may be returned
@@ -124,20 +132,82 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 				// but for now (in 3.0.1) we're leaving this because
 				// there are several callers that don't expect null and
 				// will fail if we make the change now
-				// 
+				//
 				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-				
 				if (windows != null && windows.length > 0) {
-					return windows[0];
-				}
-				else {
-					return null;
+					if (windows.length == 1) {
+						return windows[0];
+					} else {
+						IWorkbenchWindow bestCandidate = windows[0];
+						int candidateRank = 0;
+						for (int i = 0; i < windows.length; i++) {
+							if (windows[i] == activeWindow) {
+								return activeWindow;
+							} else if (windows[i] == previousActiveWindow) {
+								//Windows get deactivated when a sub-dialog is opened or user switches
+								//to another application. Such action still makes the previous window
+								//the best candidate for the active one.
+								bestCandidate = previousActiveWindow;
+								candidateRank=10;
+							} else if (windows[i].getActivePage()!= null && candidateRank==0) {
+								bestCandidate = windows[i];
+								candidateRank = 1;
+							}
+						}
+						return bestCandidate;
+					}
 				}
 			}
-			
 		}
-		else {
-			return null;
+		return null;
+	}
+
+	private static class WindowListener implements IWindowListener {
+		public void windowActivated(IWorkbenchWindow window) {
+			activeWindow = window;
+			previousActiveWindow = null; // not needed any more, allow gc
+		}
+
+		public void windowDeactivated(IWorkbenchWindow window) {
+			if (window == activeWindow) {
+				previousActiveWindow = activeWindow;
+				activeWindow = null;
+			}
+		}
+
+		public void windowClosed(IWorkbenchWindow window) {
+			windowDeactivated(window);
+		}
+
+		public void windowOpened(IWorkbenchWindow window) {
+		}
+	}
+
+	private static void addWindowListener() {
+		synchronized (WindowListener.class) {
+			if (windowListener == null) {
+				try {
+					IWorkbench wb = PlatformUI.getWorkbench();
+					windowListener = new WindowListener();
+					wb.addWindowListener(windowListener);
+				} catch (IllegalStateException e) {
+					/* will try again later when workbench becomes available */
+					System.out.println("Workbench not yet available"); //$NON-NLS-1$
+				}
+			}
+		}
+	}
+
+	private static void removeWindowListener() {
+		synchronized (WindowListener.class) {
+			if (windowListener != null) {
+				try {
+					IWorkbench wb = PlatformUI.getWorkbench();
+					wb.removeWindowListener(windowListener);
+				} finally {
+					windowListener = null;
+				}
+			}
 		}
 	}
 
@@ -175,10 +245,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	   return descriptor;
 	}
 
-	// ------------------    
+	// ------------------
 	// MESSAGE METHODS...
 	// ------------------
-	
+
 	/**
 	 * Resolves the bundle relative name to its URL inside a bundle if the resource
 	 * named by that name exists. Returns null if the resources does not exist.
@@ -206,11 +276,11 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Parse the given message file into memory, into a SystemMessageFile
 	 * object.
-	 * 
+	 *
 	 * @param bundle -
 	 *            the descriptor for this plugin
 	 * @param fileName -
@@ -254,7 +324,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	/**
 	 * Parse the given message file into memory, into a SystemMessageFile
 	 * object.
-	 * 
+	 *
 	 * @param bundle -
 	 *            the descriptor for this plugin
 	 * @param fileName -
@@ -313,7 +383,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
 	/**
 	 * Retrieve a message from a message file.
-	 * 
+	 *
 	 * @param msgFile -
 	 *            the system message file containing the message.
 	 * @param msgId -
@@ -329,10 +399,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	   	 msg = msgFile.getMessage(msgId);
 	   else
 	     logWarning("No message file set."); //$NON-NLS-1$
-	
+
 	   if ( msg == null )
 	     logWarning("Unable to find message ID: " + msgId); //$NON-NLS-1$
-	   return msg;  	
+	   return msg;
 	}
 
 	/**
@@ -358,16 +428,16 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		return msgFile.printHTML(fullyQualifiedTargetFile);
 	}
 
-	// -----------------    
+	// -----------------
 	// LOGGER METHODS...
 	// -----------------
-	      
+
 	/**
 	 * Helper method for logging information to the RSE-style logging file.
 	 * This file is located in the .metadata subfolder for this plugin.
-	 * 
+	 *
 	 * @param message - System message to be written to the log file
-	 */               	        
+	 */
 	public static void logMessage(SystemMessage message)
 	{
 		logMessage(message, null);
@@ -376,19 +446,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	/**
 	 * Helper method for logging information to the RSE-style logging file.
 	 * This file is located in the .metadata subfolder for this plugin.
-	 * 
+	 *
 	 * @param message - System message to be written to the log file
 	 * @param ex - Exception to log.  If not applicable, this can be null.
-	 */               	        
+	 */
 	public static void logMessage(SystemMessage message, Throwable ex)
 	{
 		char type = message.getIndicator();
 		switch (type)
 		{
 			case SystemMessage.ERROR:
-				log.logError(message.toString(), ex);	
+				log.logError(message.toString(), ex);
 				break;
-			case SystemMessage.WARNING: 
+			case SystemMessage.WARNING:
 				log.logWarning(message.toString(), ex);
 				break;
 			case SystemMessage.INFORMATION:
@@ -399,8 +469,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			case SystemMessage.UNEXPECTED:
 			default:
 				log.logInfo(message.toString(), ex);
-				break;							
-		}                       	       
+				break;
+		}
 	}
 
 	/**
@@ -410,18 +480,18 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Because this is an information message, it will only actually be logged if the
 	 * user has enabled logging of information messages via the Logging preferences page
 	 * within the Remote Systems preference pages tree.
-	 * 
+	 *
 	 * @param message - Message to be written to the log file
 	 */
-	public static void logInfo(String message) 
+	public static void logInfo(String message)
 	{
 		log.logInfo(message);
 	}
 
-	// -----------------    
+	// -----------------
 	// LOGGER METHODS...
 	// -----------------
-	      
+
 	/**
 	 * Helper method for logging warnings to the RSE-style logging file.
 	 * This file is located in the .metadata subfolder for this plugin.
@@ -429,60 +499,60 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Because this is a warning message, it will only actually be logged if the
 	 * user has enabled logging of warning messages via the Logging preferences page
 	 * within the Remote Systems preference pages tree.
-	 * 
+	 *
 	 * @param message - Message to be written to the log file
 	 * Because these messages are only used for servicing purposes, the message typically is not translated.
 	 */
-	public static void logWarning(String message) 
+	public static void logWarning(String message)
 	{
 		log.logWarning(message);
 	}
 
 	/**
 	 * Helper method for logging errors (but not exceptions) to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
+	 * This file is located in the .metadata subfolder for this plugin.
 	 * <p>
 	 * Because this is an error message, it is always logged, no matter what the preferences settings for
 	 * the logger.
-	 * 
+	 *
 	 * @param message - Message to be written to the log file
 	 * Because these messages are only used for servicing purposes, the message typically is not translated.
 	 */
-	public static void logError(String message) 
+	public static void logError(String message)
 	{
 		log.logError(message, null);
 	}
 
 	/**
 	 * Helper method for logging errors (exceptions) to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
+	 * This file is located in the .metadata subfolder for this plugin.
 	 * <p>
 	 * Because this is an error message, it is always logged, no matter what the preferences settings for
 	 * the logger.
-	 * 
-	 * @param message - Message to be written to the log file. 
+	 *
+	 * @param message - Message to be written to the log file.
 	 * Because these messages are only used for servicing purposes, the message typically is not translated.
-	 * 
+	 *
 	 * @param exception - Any exception that generated the error condition. Used to print a stack trace in the log file.
 	 * If you pass null, it is the same as calling {@link #logError(String)}
 	 */
-	public static void logError(String message, Throwable exception) 
+	public static void logError(String message, Throwable exception)
 	{
 		log.logError(message, exception);
 	}
 
 	/**
 	 * Helper method for logging debug messages to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
+	 * This file is located in the .metadata subfolder for this plugin.
 	 * <p>
 	 * Debug messages are only logged when running this plugin in the workbench,
 	 * and when Logger.DEBUG has been set to true.
-	 * 
+	 *
 	 * @param prefix - Class issuing the debug message. Typically you pass getClass().getName()
 	 * @param message - Message to be written to the log file
 	 */
-	public static void logDebugMessage(String prefix, String message) 
-	{		
+	public static void logDebugMessage(String prefix, String message)
+	{
 		log.logDebugMessage(prefix, message);
 	}
 
@@ -491,12 +561,12 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public SystemBasePlugin() {
 	    super();
-	    
+
 	    if (baseInst == null) {
 	        baseInst = this;
 	    }
 	}
-	
+
 	// ------------------------
 	// STATIC HELPER METHODS...
 	// ------------------------
@@ -504,11 +574,11 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     /**
      * Returns the symbolic name of the bundle.
      * @return the symbolic name of the bundle.
-     */   
+     */
 	public String getSymbolicName() {
 		return getBundle().getSymbolicName();
 	}
-	
+
     /**
 	 * Return the fully qualified install directory for this plugin.
 	 */
@@ -524,8 +594,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 //            prefix = new Path(getBundle().getEntry("/").getFile());
 //        }
 // 	   return prefix;
-//    }    
-	
+//    }
+
 	// -------------------------------------
 	// ABSTRACTUIPLUGIN LIFECYCLE METHODS...
 	// -------------------------------------
@@ -533,43 +603,48 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start(BundleContext context) throws Exception {
-        
+
         super.start(context);
-        
+
 		// logger
 	    if (log == null) {
 	    	log = LoggerFactory.getLogger(this);
 	    	log.logInfo("Loading " + this.getClass()); //$NON-NLS-1$
 	    }
+
+	    addWindowListener();
     }
-    
+
     /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
+    	removeWindowListener();
     	logDebugMessage(this.getClass().getName(), "SHUTDOWN"); //$NON-NLS-1$
    	    LoggerFactory.freeLogger(this);
         super.stop(context);
     }
-    
+
 	/**
-	 * Returns the Platform UI workbench.  
-	 * <p> 
+	 * Returns the Platform UI workbench.
+	 * <p>
 	 * This method exists as a convenience for plugin implementors.  The
 	 * workbench can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
 	 * </p>
 	 * <p>
 	 * This is an intercept of the AbstractUIPlugin method, so we can do a try/catch around
-	 *  it, as it will throw an exception if we are running headless, in which case the 
+	 *  it, as it will throw an exception if we are running headless, in which case the
 	 *  workbench has not even been started.
 	 * </p>
 	 */
-	public IWorkbench getWorkbench() 
+	public IWorkbench getWorkbench()
 	{
 		IWorkbench wb = null;
 		try {
-			wb = PlatformUI.getWorkbench();			
-		} 
+			wb = PlatformUI.getWorkbench();
+			if (windowListener == null)
+				addWindowListener();
+		}
 		catch (Exception exc)
 		{
 			// workbench not created yet
@@ -586,7 +661,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	protected abstract void initializeImageRegistry();
 
 	/**
-     * Construct an image descriptor from a file name and place it in the 
+     * Construct an image descriptor from a file name and place it in the
      * image descriptor registry. Actual image construction is delayed until first use.
      * @param id - an arbitrary ID to assign to this image. Used later when retrieving it.
      * @param fileName - the name of the icon file, with extension, relative to this plugin's folder.
@@ -599,10 +674,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	   t.put(id, fid);
 	   return fid;
     }
-    
+
     /**
 	 * Retrieve an image descriptor in this plugin's directory tree given its file name. The
-	 * file name should be qualified relative to this plugin's bundle. 
+	 * file name should be qualified relative to this plugin's bundle.
 	 * For example "icons/myicon.gif"
 	 * @param imagePath the path name to the image relative to this bundle
 	 * @return the image descriptor
@@ -616,7 +691,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * in the image registry if it is created so that it may be retrieved again.
 	 * Thus, image resources retrieved in this way need not be disposed by the
 	 * caller.
-	 * 
+	 *
 	 * @param key the id of the image to retrieve.
 	 * @return the Image resource for this id.
 	 */
@@ -636,7 +711,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		}
 		return image;
     }
-    
+
     /**
 	 * Returns the image descriptor that has been registered to this id.
 	 * @param key the id of the image descriptor to retrieve
@@ -646,8 +721,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		Hashtable t = getImageDescriptorRegistry();
 		ImageDescriptor descriptor = (ImageDescriptor) t.get(key);
 		return descriptor;
-	}  
-	
+	}
+
 	/**
 	 * Gets the hashtable that is the image descriptor registry. Creates and populates
 	 * it if necessary.
@@ -663,10 +738,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
 	/**
 	 * Returns an image descriptor from the base IDE. Looks only in the "icons/full/" directories.
-	 * 
+	 *
 	 * @see org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String)
 	 */
-	public ImageDescriptor getImageDescriptorFromIDE(String relativePath) 
+	public ImageDescriptor getImageDescriptorFromIDE(String relativePath)
 	{
 		Hashtable registry = getImageDescriptorRegistry();
 		ImageDescriptor descriptor = (ImageDescriptor)registry.get(relativePath);
@@ -688,35 +763,35 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			registry.put(relativePath, descriptor);
 		}
 		return descriptor;
-	}    
-            
-    // -----------------    
+	}
+
+    // -----------------
     // LOGGER METHODS...
     // -----------------
-          
+
 	/**
      * Get the logger for this plugin. You should not have to directly access
      * the logger, since helper methods are already provided in this class.
      * Use with care.
      */
-    public Logger getLogger() 
+    public Logger getLogger()
     {
     	return log;
-    }        
+    }
 
-	// -------------------------    
+	// -------------------------
 	// MISCELLANEOUS METHODS...
 	// -------------------------
-	
+
 	/**
 	 * Return true if we are running in a headless environment. We equate this
 	 *  to mean that the workbench is not running.
-	 *  
+	 *
 	 *  @deprecated this method is useless right now because SystemBasePlugin is part of
 	 *  the rse.ui plugin which depends on workbench and therefore we can never load this
-	 *  class while actually being in headless mode.  Normally this should return false 
+	 *  class while actually being in headless mode.  Normally this should return false
 	 *  however, because the javadoc says we "equate this to mean that the workbench is not running",
-	 *  it's possible early on that the method may return true if the workbench has not 
+	 *  it's possible early on that the method may return true if the workbench has not
 	 *  yet been instantiated - although it will later return false.
 	 */
 	public boolean isHeadless()

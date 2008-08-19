@@ -31,6 +31,7 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -549,11 +550,20 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 		IPath exePath = new Path(name);
 		if (!exePath.isAbsolute()) {
-			if (!project.getFile(name).exists()) {
+			IFile projFile = null;
+			try {
+				projFile = project.getFile(name);
+			}
+			catch (Exception exc) {
+				// throws an exception if it's a relative path pointing outside project
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_invalid_proj_path")); //$NON-NLS-1$
+				return false;
+			} 
+			if (projFile == null || !projFile.exists()) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			exePath = project.getFile(name).getLocation();
+			exePath = projFile.getLocation();
 		} else {
 			if (!exePath.toFile().exists()) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$

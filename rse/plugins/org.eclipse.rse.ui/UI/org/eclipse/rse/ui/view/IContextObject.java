@@ -10,7 +10,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
  *******************************************************************************/
 package org.eclipse.rse.ui.view;
 
@@ -25,6 +25,10 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * 
  * Context objects are created transiently and are only used to aid in providing filter information
  * during a query.
+ * 
+ * @noimplement - Extending or implementing this interface in client code is
+  strongly discouraged, may break your code in a future major release,
+  and will likely lead to degradation of RSE behavior.
  *
  */
 public interface IContextObject 

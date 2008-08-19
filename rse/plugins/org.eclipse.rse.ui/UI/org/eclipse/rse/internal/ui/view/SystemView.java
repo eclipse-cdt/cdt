@@ -61,6 +61,7 @@
  * David McKnight   (IBM)        - [236874] NPE upon selecting an item that is not associated with subsystem
  * David McKnight   (IBM)        - [238363] Performance improvement for refresh in system view.
  * David McKnight   (IBM)        - [241722] New -> File doesn't select the newly created file
+ * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -130,6 +131,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -173,7 +175,6 @@ import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.model.SystemResourceChangeEventUI;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemSelectAllTarget;
@@ -232,6 +233,88 @@ public class SystemView extends SafeTreeViewer
 		ISelectionChangedListener,  ITreeViewerListener
 {
 
+	// for deferred queries
+	class ExpandRemoteObjects implements IRSECallback {
+		private List _toExpand;
+
+		public ExpandRemoteObjects(List toExpand){
+			_toExpand = toExpand;
+		}						
+		
+		public void done(IStatus status, Object result) {
+			
+			if (Display.getCurrent() != null){ // on main thread
+				execute();
+			}
+			else {
+				// need to run this code on main thread
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable()
+				{
+					public void run() {
+						execute();
+					}
+				});
+			}
+		}
+		
+		private void execute()
+		{
+			// expand each previously expanded sub-node, recursively
+			for (int idx = 0; idx < _toExpand.size(); idx++) {
+				ExpandedItem itemToExpand = (ExpandedItem) _toExpand.get(idx);
+				if (itemToExpand.isRemote()) {
+					// find remote item based on its original name and unchanged root parent
+					Item item = null;
+					item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
+
+					// if found, re-expand it
+					if (item != null) {
+						IRSECallback callback = getCallbackForSubChildren(itemToExpand, _toExpand);								
+						createChildren(item, callback);
+						((TreeItem) item).setExpanded(true);
+					} 
+				} else if (itemToExpand.data!=null) {
+					setExpandedState(itemToExpand.data, true);
+				}
+			}
+		}
+		
+		private IRSECallback getCallbackForSubChildren(ExpandedItem remoteParent, List itemsToExpand){
+			List subChildren = new ArrayList();
+			
+			
+			String parentName = remoteParent.remoteName;
+			Object parent = remoteParent.data;
+			String absoluteParentName = remoteParent.remoteAdapter.getAbsoluteName(parent);
+			
+			for (int i = 0; i < itemsToExpand.size(); i++){
+				ExpandedItem itemToExpand = (ExpandedItem) itemsToExpand.get(i);
+				if (parentName.equals(itemToExpand.remoteName)){
+					// same item
+				}
+				else if (itemToExpand.remoteName.startsWith(parentName)){
+					// child item
+					subChildren.add(itemToExpand);
+				}					
+				else {
+					// some objects might need explicit comparison					
+					Object object = itemToExpand.data;
+					ISystemRemoteElementAdapter adapter = itemToExpand.remoteAdapter;
+					String childParentName = adapter.getAbsoluteParentName(object);					
+					if (absoluteParentName.equals(childParentName)){
+						subChildren.add(itemToExpand);
+					}
+				}
+			}
+			
+			if (subChildren.size() > 0){
+				return new ExpandRemoteObjects(subChildren);
+			}
+			else {
+				return null;
+			}
+		}
+	}
 	protected Shell shell; // shell hosting this viewer: TODO can be removed
 	protected ISystemViewInputProvider inputProvider; // who is supplying our tree root elements?
 	protected ISystemViewInputProvider previousInputProvider; // who is supplying our tree root elements?
@@ -3177,6 +3260,9 @@ public class SystemView extends SafeTreeViewer
 				TreeItem matchedItem = (TreeItem)match;
 				Object data = matchedItem.getData();
 				boolean wasExpanded = matchedItem.getExpanded();
+				
+
+				
 				smartRefresh(new TreeItem[] { matchedItem }); // refresh the remote object
 				if (firstSelection && // for now, we just select the first binary occurrence we find
 						(data == remoteObject)) // same binary object as given?
@@ -3190,10 +3276,11 @@ public class SystemView extends SafeTreeViewer
 							allowExpand = rmtAdapter.hasChildren((IAdaptable)data);
 						}
 						if (allowExpand && wasExpanded && !getExpanded(matchedItem)) // assume if callers wants to select kids that they want to expand parent
-						{
-							createChildren(matchedItem);
+						{							
+							createChildren(matchedItem);														
 							setExpanded(matchedItem, true);
 						}
+
 						// todo: handle cumulative selections.
 						// STEP 4: If requested, select the kids in the newly refreshed object.
 						// If the same binary object appears multiple times, select the kids in the first occurrence.
@@ -3329,8 +3416,21 @@ public class SystemView extends SafeTreeViewer
 	 */
 	protected void internalRefreshStruct(Widget widget, Object element, boolean updateLabels) {
 		if (widget instanceof TreeItem)
-		{
-				IContextObject contextObject = getContextObject((TreeItem)widget);
+		{								
+				ContextObjectWithViewer contextObject = (ContextObjectWithViewer)getContextObject((TreeItem)widget);				
+				IRSECallback callback = null;
+				
+				ArrayList expandedChildren = new ArrayList();
+				if (widget instanceof TreeItem){
+					TreeItem currItem = (TreeItem)widget;
+					gatherExpandedChildren(currItem, currItem, expandedChildren);
+				}
+								
+				if (expandedChildren.size() > 0){
+					callback = new ExpandRemoteObjects(expandedChildren);
+					contextObject.setCallback(callback);
+				}
+
 				internalRSERefreshStruct(widget, contextObject, updateLabels);
 		}
 		else
@@ -3649,7 +3749,12 @@ public class SystemView extends SafeTreeViewer
 			ourInternalRefresh(currItem, currItem.getData(), true, true); // dispose of children, update plus
 
 			if (wasExpanded[idx]) {
-				createChildren(currItem); // re-expand
+				
+				
+				
+				IRSECallback callback = new ExpandRemoteObjects(expandedChildren);				
+				
+				createChildren(currItem, callback); // re-expand
 				currItem.setExpanded(true);
 			} else // hmm, item was not expanded so just flush its memory
 			{
@@ -3657,24 +3762,18 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 
-
+		// for non-deferred queries
+		
 		// 2. expand each previously expanded sub-node, recursively
 		for (int idx = 0; idx < expandedChildren.size(); idx++) {
 			ExpandedItem itemToExpand = (ExpandedItem) expandedChildren.get(idx);
 			if (itemToExpand.isRemote()) {
 				// find remote item based on its original name and unchanged root parent
 				Item item = null;
-				//if (itemToExpand.parentItem != null)
-				//item = (Item)recursiveFindRemoteItem(itemToExpand.parentItem, itemToExpand.remoteName, itemToExpand.subsystem);
-				//else
-				//item = (Item)findRemoteItem(itemToExpand.remoteName, itemToExpand.subsystem);
 
-				//************************************************************///
-				// FIXME!!
-				// TODO
-				// DKM - problem here is that if a query is in progress, then we won't find it until the deferred query completes
+				// for deferred queries, we handle this via a callback
 				item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
-				//************************************************************///
+
 				// if found, re-expand it
 				if (item != null) {
 					//setExpanded(item, true);
@@ -3696,6 +3795,27 @@ public class SystemView extends SafeTreeViewer
 		smartRefresh(element, true);
 	}
 
+	
+	
+	protected ArrayList getExpandedChildren(TreeItem[] roots){
+		ArrayList expandedChildren = new ArrayList();
+		for (int idx = 0; idx < roots.length; idx++) {
+			TreeItem currItem = roots[idx];
+			if (currItem.getExpanded()) {
+				Object data = currItem.getData();
+				ISystemViewElementAdapter adapter = null;
+				if (data != null) adapter = getViewAdapter(data);
+				if(adapter != null && adapter.isPromptable(data)) {
+					setExpandedState(data, false);
+				}
+				else {
+					expandedChildren.add(new ExpandedItem(null, currItem));
+				}
+			}
+		}
+		return expandedChildren;
+	}
+	
 	/**
 	 * Do an intelligent refresh of the given element. Can be null for full refresh
 	 */
@@ -3706,24 +3826,10 @@ public class SystemView extends SafeTreeViewer
 			TreeItem[] roots = tree.getItems();
 			boolean anyExpanded = false;
 			areAnyRemote = false; // set in ExpandedItem constructor
-			ArrayList expandedChildren = new ArrayList();
-			for (int idx = 0; idx < roots.length; idx++) {
-				TreeItem currItem = roots[idx];
-				if (currItem.getExpanded()) {
-					Object data = currItem.getData();
-					ISystemViewElementAdapter adapter = null;
-					if (data != null) adapter = getViewAdapter(data);
-					if(adapter != null && adapter.isPromptable(data)) {
-						setExpandedState(data, false);
-					}
-					else {
-						//setExpanded(roots[idx], false);
-						expandedChildren.add(new ExpandedItem(null, currItem));
-						anyExpanded = true;
-						//gatherExpandedChildren(currItem, currItem, expandedChildren);
-					}
-				}
-			}
+			ArrayList expandedChildren = getExpandedChildren(roots);
+			if (expandedChildren.size() > 0)
+				anyExpanded = true;
+											
 			if (!anyExpanded)
 				super.refresh();
 			else {
@@ -6105,13 +6211,14 @@ public class SystemView extends SafeTreeViewer
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 
 		assertElementsNotNull(childElements);
-
+		IContextObject contextObject = null;
 		ISystemFilterReference originalFilter = null;
 		if (parentElementOrTreePath instanceof IContextObject)
 		{
-			IContextObject context = (IContextObject)parentElementOrTreePath;
-			originalFilter = context.getFilterReference();
-			parentElementOrTreePath = context.getModelObject();
+			contextObject = (IContextObject)parentElementOrTreePath;
+			originalFilter = contextObject.getFilterReference();
+			parentElementOrTreePath = contextObject.getModelObject();
+									
 		}
 
 		List matches = new Vector();
@@ -6178,8 +6285,8 @@ public class SystemView extends SafeTreeViewer
 				Object[] newChildren = null;
 				if (match instanceof TreeItem)
 				{
-					IContextObject contextObject = getContextObject((TreeItem)match);
-					newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
+					IContextObject context = getContextObject((TreeItem)match);
+					newChildren = adapter.getChildren(context, new NullProgressMonitor());
 					internalAdd(match, parentElementOrTreePath, newChildren);
 				}
 			}
@@ -6236,7 +6343,14 @@ public class SystemView extends SafeTreeViewer
 			}
 		}
 
-
+		// for bug 187739
+		if (contextObject instanceof ContextObjectWithViewer) {
+   	       ContextObjectWithViewer ctx = (ContextObjectWithViewer)contextObject;
+   	       IRSECallback cb = ctx.getCallback();
+   	       if (cb!=null) {
+   	          cb.done(Status.OK_STATUS, childElements);
+   	       }
+   	   }
 	}
 
 
@@ -6320,18 +6434,18 @@ public class SystemView extends SafeTreeViewer
 		ISystemFilterReference filterReference = getContainingFilterReference(item);
 		if (filterReference != null)
 		{
-			return new ContextObject(data, filterReference.getSubSystem(), filterReference);
+			return new ContextObjectWithViewer(data, filterReference.getSubSystem(), filterReference, this);
 		}
 		else
 		{
 			ISubSystem subSystem = getContainingSubSystem(item);
 			if (subSystem != null)
 			{
-				return new ContextObject(data, subSystem);
+				return new ContextObjectWithViewer(data, subSystem, this);
 			}
 			else
 			{
-				return new ContextObject(data);
+				return new ContextObjectWithViewer(data, this);
 			}
 		}
 	}
@@ -6365,10 +6479,9 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead
-	 * of the model object, itself
+	 * For bug 187739
 	 */
-	protected void createChildren(final Widget widget)
+	protected void createChildren(final Widget widget, IRSECallback callback)
 	{
 		if (widget instanceof TreeItem)
 		{
@@ -6379,6 +6492,7 @@ public class SystemView extends SafeTreeViewer
 				return; // children already there!
 			}
 		}
+		final IRSECallback cb = callback;
 
 		BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
 			public void run() {
@@ -6399,6 +6513,10 @@ public class SystemView extends SafeTreeViewer
 				if (d != null)
 				{
 					Object parentElement = getContextObject((TreeItem)widget);
+					if (cb != null && parentElement instanceof ContextObjectWithViewer){
+						((ContextObjectWithViewer)parentElement).setCallback(cb);
+					}
+					
 					Object[] children = getSortedChildren(parentElement);
 					if (children != null)
 					{
@@ -6416,6 +6534,15 @@ public class SystemView extends SafeTreeViewer
 		{
 			super.createChildren(widget);
 		}
+	}
+	
+	/**
+	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead
+	 * of the model object, itself
+	 */
+	protected void createChildren(final Widget widget)
+	{
+		createChildren(widget, null);
 	}
 
 	/**

@@ -42,6 +42,7 @@
  * David Dykstal (IBM) - [233876] filters lost after restart
  * David McKnight (IBM)          - [238609] Substitution value missing for disconnect failed message
  * David McKnight   (IBM)        - [237970]  Subsystem.connect( ) fails for substituting host name when isOffline( ) is true
+ * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -551,7 +552,8 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException
 	{
-		if (!isConnected())
+		if (!isConnected() && 
+				!isOffline()) // for 244270, don't connect when offline
 		{
 			try
 			{

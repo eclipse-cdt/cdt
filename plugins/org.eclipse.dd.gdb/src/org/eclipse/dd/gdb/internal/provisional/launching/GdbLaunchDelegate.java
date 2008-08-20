@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
@@ -98,12 +99,30 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
             monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
         }
         
+        IPath exePath = new Path(""); //$NON-NLS-1$
+        // An attach session does not need to necessarily have an
+        // executable specified.  This is because:
+        // - In remote multi-process attach, there will be more than one executable
+        //   In this case executables need to be specified differently.
+        //   The current solution is to use the solib-search-path to specify
+        //   the path of any executable we can attach to.
+        // - In local single process, GDB has the ability to find the executable
+        //   automatically.
+        //
+        // An attach session also does not need to necessarily have a project
+        // specified.  This is because we can perform source lookup towards
+        // code that is outside the workspace.
+        // However, the Platform does not support this, so for now, we check
+        // See bug 244567
+
         // First verify we are dealing with a proper project.
-        ICProject project = LaunchUtils.verifyCProject(config);
-        // Now verify we know the program to debug.
-		IPath exePath = LaunchUtils.verifyProgramPath(config, project);
-		// Finally, make sure the program is a proper binary.
-		LaunchUtils.verifyBinary(config, exePath);
+      	ICProject project = LaunchUtils.verifyCProject(config);
+        if (!attach) {
+        	// Now verify we know the program to debug.
+        	exePath = LaunchUtils.verifyProgramPath(config, project);
+        	// Finally, make sure the program is a proper binary.
+        	LaunchUtils.verifyBinary(config, exePath);
+        }
     	
         monitor.worked( 1 );
 

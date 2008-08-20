@@ -55,9 +55,10 @@ public class LaunchUtils {
 		if (name == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+			return null;
 		}
 		ICProject cproject = getCProject(configuration);
-		if (cproject == null) {
+		if (cproject == null && name.length() > 0) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
 				abort(

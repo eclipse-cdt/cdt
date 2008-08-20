@@ -527,9 +527,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 
-		if (dontCheckProgram)
-			return true;
-
 		String name = fProjText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LaunchMessages.getString("CMainTab.Project_not_specified")); //$NON-NLS-1$
@@ -544,6 +541,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
 			return false;
 		}
+
+		if (dontCheckProgram)
+			return true;
 
 		name = fProgText.getText().trim();
 		if (name.length() == 0) {

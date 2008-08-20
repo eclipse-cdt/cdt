@@ -24,7 +24,7 @@ public class GdbAttachLaunchConfigurationTabGroup extends AbstractLaunchConfigur
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-				new CMainTab(),
+				new CMainTab(2), // In some case, we don't need to specify an executable
 				// We don't know yet if we are going to do a remote or local session
 				new CDebuggerTab(null, true),
 				new SourceLookupTab(),

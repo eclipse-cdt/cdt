@@ -35,6 +35,7 @@
  * David McKnight     (IBM)   [225507] [api][breaking] RSE dstore API leaks non-API types
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight  (IBM)  - [244277] [dstore] NPE on file save from old client
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -51,6 +52,7 @@ import java.util.StringTokenizer;
 import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ArchiveQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ClassFileParser;
@@ -1270,11 +1272,45 @@ public class UniversalFileSystemMiner extends Miner {
 
 		UniversalByteStreamHandler universalHandler = new UniversalByteStreamHandler(_dataStore, deUFSuploadlog);
 
-		//_dataStore.setByteStreamHandler(new UniversalByteStreamHandler(_dataStore, deUFSuploadlog));
 		_dataStore.registerByteStreamHandler(universalHandler);
 
 		_dataStore.refresh(_minerData);
 		_dataStore.refresh(deUFSuploadlog);
+		
+		
+		// for bug 244277
+		// need backward compatibility with RSE 7.1.*
+		// 1) create a miner element
+		DataElement minerRoot = _dataStore.getMinerRoot();
+		String oldName = "com.ibm.etools.systems.universal.miners.UniversalFileSystemMiner"; //$NON-NLS-1$
+		DataElement oldMinerElement   = _dataStore.createObject(minerRoot, DataStoreResources.model_miner, oldName, oldName);
+		oldMinerElement.setAttribute(DE.A_VALUE, "UniveralFileSystemMiner"); //$NON-NLS-1$
+		oldMinerElement.setAttribute(DE.A_SOURCE, "7.1.0"); //$NON-NLS-1$
+		
+		DataElement oldMinerData      = _dataStore.createObject(oldMinerElement, DataStoreResources.model_data, DataStoreResources.model_Data, oldName);
+		
+		// 2) create a miner data
+		DataElement oldDeUFSnode = _dataStore.createObject(oldMinerData, IUniversalDataStoreConstants.UNIVERSAL_NODE_DESCRIPTOR, "universal.node"); //$NON-NLS-1$
+
+		DataElement oldDeUFSuploadlog = _dataStore.createObject(oldDeUFSnode, IUniversalDataStoreConstants.UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog"); //$NON-NLS-1$
+
+		class OldUniversalByteStreamHandler extends UniversalByteStreamHandler
+		{
+			public OldUniversalByteStreamHandler(DataStore dataStore, DataElement log){
+				super(dataStore, log);
+			}
+			public String getId(){
+				return "com.ibm.etools.systems.universal.miners.UniversalByteStreamHandler"; //$NON-NLS-1$
+			}
+		}
+		
+		OldUniversalByteStreamHandler olduniversalHandler = new OldUniversalByteStreamHandler(_dataStore, oldDeUFSuploadlog);
+		
+		_dataStore.registerByteStreamHandler(olduniversalHandler);
+		
+		_dataStore.refresh(minerRoot);
+		_dataStore.refresh(oldMinerData);
+		
 	}
 
 	public void finish() {

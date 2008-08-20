@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [243332] Removing wizard page caused subsystem to be removed
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -41,6 +42,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -63,6 +65,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 	private RSEDefaultNewConnectionWizardMainPage mainPage;
 	private ISystemNewConnectionWizardPage[] subsystemConfigurationSuppliedWizardPages;
+
 	private Map ssfWizardPagesPerSystemType = new Hashtable();
 	private String defaultUserId;
 	private String defaultConnectionName;
@@ -287,6 +290,51 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				((WizardPage)currentPage).setErrorMessage(msg.getLevelOneText());
 		}
 	}
+	
+	private ISubSystemConfigurator[] getSubSystemConfigurators()
+	{		
+		// what kind of subsystems do we have here?
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		IRSESystemType systemType = getSystemType();
+		ISubSystemConfiguration[] configurations = sr.getSubSystemConfigurationsBySystemType(systemType, true);
+		
+		// should be one configuration per configurator
+		if (configurations.length <= subsystemConfigurationSuppliedWizardPages.length)
+			return subsystemConfigurationSuppliedWizardPages;
+		else { // missing pages for configurations
+			ArrayList configList = new ArrayList();
+			for (int i = 0; i < configurations.length; i++){
+				ISubSystemConfiguration configuration = configurations[i];
+				boolean foundMatch = false;
+				for (int j = 0; j < subsystemConfigurationSuppliedWizardPages.length && !foundMatch; j++){
+					ISystemNewConnectionWizardPage page = subsystemConfigurationSuppliedWizardPages[j];
+					ISubSystemConfiguration pageConfiguration = page.getSubSystemConfiguration();
+					if (configuration == pageConfiguration){ // found a match
+						configList.add(page);
+						foundMatch = true;
+					}
+				}
+				if (!foundMatch){ // no match found so need to provide alternative
+					class DefaultConfigurator implements ISubSystemConfigurator {
+						private ISubSystemConfiguration _configuration;
+						public DefaultConfigurator(ISubSystemConfiguration configuration){
+							_configuration = configuration;
+						}
+						
+						public boolean applyValues(ISubSystem ss) {
+							return true;
+						}
+
+						public ISubSystemConfiguration getSubSystemConfiguration() {
+							return _configuration;
+						}						
+					}
+					configList.add(new DefaultConfigurator(configuration));
+				}				
+			}	
+			return (ISubSystemConfigurator[])configList.toArray(new ISubSystemConfigurator[configList.size()]);
+		}
+	}
 
 	/**
 	 * Completes processing of the wizard. If this
@@ -334,11 +382,14 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 			if (ok) {
 				try {
+					
+					ISubSystemConfigurator[] configurators = getSubSystemConfigurators();
+					
 					IRSESystemType systemType = getSystemType();
 					SystemConnectionForm form = mainPage.getSystemConnectionForm();
 					createdHost = sr.createHost(form.getProfileName(), systemType, form.getConnectionName(), form.getHostName(),
 																			form.getConnectionDescription(), form.getDefaultUserId(), form.getUserIdLocation(),
-																			subsystemConfigurationSuppliedWizardPages);
+																			configurators);
 
 					setBusyCursor(false);
 					cursorSet = false;
@@ -414,14 +465,17 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				ISystemNewConnectionWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], this);
 				if (pages != null) {
 					for (int widx = 0; widx < pages.length; widx++) {
-						if (pages[widx] instanceof IWizardPage) ((IWizardPage)pages[widx]).setWizard(this);
+						if (pages[widx] instanceof IWizardPage){
+							((IWizardPage)pages[widx]).setWizard(this);
+						}
+						
 						additionalPages.addElement(pages[widx]);
 					}
 				}
 			}
-			subsystemConfigurationSuppliedWizardPages = new ISystemNewConnectionWizardPage[additionalPages.size()];
-			for (int idx = 0; idx < subsystemConfigurationSuppliedWizardPages.length; idx++)
-				subsystemConfigurationSuppliedWizardPages[idx] = (ISystemNewConnectionWizardPage)additionalPages.elementAt(idx);
+			
+			subsystemConfigurationSuppliedWizardPages = (ISystemNewConnectionWizardPage[])additionalPages.toArray(new ISystemNewConnectionWizardPage[additionalPages.size()]);
+			
 			ssfWizardPagesPerSystemType.put(systemType, subsystemConfigurationSuppliedWizardPages);
 		}
 		return subsystemConfigurationSuppliedWizardPages;

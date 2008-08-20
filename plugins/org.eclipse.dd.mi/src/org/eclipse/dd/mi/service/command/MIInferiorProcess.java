@@ -129,7 +129,7 @@ public class MIInferiorProcess extends Process
 
     private State fState = State.RUNNING;
     
-    int inferiorPID;
+    private String fInferiorPid = null;
 
     /**
      * Creates an inferior process object which uses the given output stream 
@@ -421,6 +421,14 @@ public class MIInferiorProcess extends Process
 
     public PTY getPTY() {
         return fPty;
+    }
+    
+    public String getPid() { 
+    	return fInferiorPid;
+    }
+    
+    public void setPid(String pid) { 
+    	fInferiorPid = pid;
     }
     
     public void eventReceived(Object output) {

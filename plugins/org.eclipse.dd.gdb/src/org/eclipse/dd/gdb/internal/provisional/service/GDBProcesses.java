@@ -25,10 +25,12 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses;
@@ -125,13 +127,19 @@ public class GDBProcesses extends MIProcesses {
 	}
 
 	@Override
-    public void attachDebuggerToProcess(IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		super.attachDebuggerToProcess(
 			procCtx, 
 			new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
 					fGdb.setConnected(true);
+
+					MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+				    if (inferiorProcess != null) {
+				    	inferiorProcess.setPid(((IMIProcessDMContext)procCtx).getProcId());
+				    }
+
 					rm.setData(getData());
 					rm.done();
 				}
@@ -152,6 +160,12 @@ public class GDBProcesses extends MIProcesses {
 				@Override
 				protected void handleSuccess() {
 					fGdb.setConnected(false);
+					
+					MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+				    if (inferiorProcess != null) {
+				    	inferiorProcess.setPid(null);
+				    }
+
 					rm.done();
 				}
 			});
@@ -163,7 +177,20 @@ public class GDBProcesses extends MIProcesses {
 	    if (fGdb.isConnected() &&
 	    	inferiorProcess != null && 
 	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
-	    	super.getProcessesBeingDebugged(dmc, rm);
+
+	    	final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
+			if (groupDmc == null) {
+				// This service version only handles a single process to debug, therefore, we can simply
+				// create the context describing this process ourselves.
+				MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+				IProcessDMContext procDmc = createProcessContext(controlDmc, inferiorProcess.getPid());
+				IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, inferiorProcess.getPid());
+				rm.setData(new IContainerDMContext[] {newGroupDmc});
+				rm.done();
+			} else {
+				// List of threads
+    	    	super.getProcessesBeingDebugged(dmc, rm);
+			}
 	    } else {
 	    	rm.setData(new IDMContext[0]);
 	    	rm.done();
@@ -234,4 +261,14 @@ public class GDBProcesses extends MIProcesses {
             rm.done();
 	    }
 	}
+	
+    @Override
+	public String getExecutionGroupIdFromThread(String threadId) {
+		MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+	    if (inferiorProcess != null) {
+	    	return inferiorProcess.getPid();
+	    }
+	    return null;
+    }
+
 }

@@ -374,8 +374,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		if (!programPath.isAbsolute()) {
-			IFile wsProgramPath = cproject.getProject().getFile(programPath);
-			programPath = wsProgramPath.getLocation();
+			IPath location = project.getLocation();
+			if (location != null) {
+				programPath = location.append(programPath);
+			}
 		}
 		if (!programPath.toFile().exists()) {
 			abort(

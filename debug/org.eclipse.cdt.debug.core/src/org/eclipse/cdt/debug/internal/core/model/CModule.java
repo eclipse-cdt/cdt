@@ -65,12 +65,12 @@ public class CModule extends CDebugElement implements ICModule {
 	}
 
 	/** 
-	 * Constructor for CModule. 
+	 * Constructor for CModule. Used for the program.
 	 */
 	private CModule( int type, CDebugTarget target, IPath path ) {
 		super( target );
 		fType = type;
-		fCElement = CoreModel.getDefault().create( path );
+		fCElement = createBinary(path);
 		fCDIObject = null;
 		fImageName = path;
 		fSymbolsFileName = path;
@@ -83,58 +83,60 @@ public class CModule extends CDebugElement implements ICModule {
 		super( target );
 		fType = type;
 		if ( cdiObject instanceof ICDISharedLibrary ) {
-			
-			if ( cdiObject instanceof ICDISharedLibrary ) {
-				// We used to ask the CoreModel to create the Binary (ICElement) for
-				// us but it will do so only for binary files that are in a project 
-				// output directory (for performance reasons). So, we do all the 
-				// leg work ourselves, duplicating much of the code, unfortunately.
-				//
-				// THE OLD WAY...
-				// fCElement = CoreModel.getDefault().create( new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) );
-				
-				ICDISharedLibrary cdiSharedLib = (ICDISharedLibrary)cdiObject;
-				IPath path = new Path(cdiSharedLib.getFileName());
-				
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IFile file = root.getFileForLocation(path); 
-				if (file != null && !file.exists()) {
-					file = null;
-				}
-
-				// In case this is an external resource see if we can find
-				// a file for it.
-				if (file == null) {
-					IFile[] files = root.findFilesForLocation(path);
-					if (files.length > 0) {
-						file = files[0];
-					}
-				}
-
-				if (file != null) {
-					ICProject cproject = CoreModel.getDefault().create(file.getProject());
-					IPath resourcePath = file.getParent().getFullPath();
-					
-					try {
-						ICElement cfolder = cproject.findElement(resourcePath);
-						
-						// Check if folder is a source root and use that instead
-						ISourceRoot sourceRoot = cproject.findSourceRoot(resourcePath);
-						if (sourceRoot != null)
-							cfolder = sourceRoot;
-						
-						IBinaryFile bin = CModelManager.getDefault().createBinaryFile(file);
-						fCElement = new Binary(cfolder, file, (IBinaryObject)bin);
-					} catch (CModelException e) {
-						CDebugCorePlugin.log(e);
-					}
-				}
-			}
-
+			ICDISharedLibrary cdiSharedLib = (ICDISharedLibrary)cdiObject;
+			fCElement = createBinary(new Path(cdiSharedLib.getFileName()));
 		}
 		fCDIObject = cdiObject;
 		fImageName = ( ( cdiObject instanceof ICDISharedLibrary ) ) ? new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) : new Path( CoreModelMessages.getString( "CModule.0" ) ); //$NON-NLS-1$
 		fSymbolsFileName = fImageName;
+	}
+
+	/**
+	 * We used to ask the CoreModel to create the Binary (ICElement) for us but
+	 * it will do so only for binary files that are in a project output
+	 * directory (for performance reasons). So, we do all the leg work
+	 * ourselves, duplicating much of the code, unfortunately.
+	 * 
+	 * THE OLD WAY... 
+	 * 		fCElement = CoreModel.getDefault().create(path);
+	 */
+	private Binary createBinary(IPath path) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IFile file = root.getFileForLocation(path); 
+		if (file != null && !file.exists()) {
+			file = null;
+		}
+
+		// In case this is an external resource see if we can find
+		// a file for it.
+		if (file == null) {
+			IFile[] files = root.findFilesForLocation(path);
+			if (files.length > 0) {
+				file = files[0];
+			}
+		}
+
+		if (file != null) {
+			ICProject cproject = CoreModel.getDefault().create(file.getProject());
+			IPath resourcePath = file.getParent().getFullPath();
+			
+			try {
+				ICElement cfolder = cproject.findElement(resourcePath);
+				
+				// Check if folder is a source root and use that instead
+				ISourceRoot sourceRoot = cproject.findSourceRoot(resourcePath);
+				if (sourceRoot != null)
+					cfolder = sourceRoot;
+				
+				IBinaryFile bin = CModelManager.getDefault().createBinaryFile(file);
+				if (bin != null) {
+					return new Binary(cfolder, file, (IBinaryObject)bin);
+				}
+			} catch (CModelException e) {
+				CDebugCorePlugin.log(e);
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

@@ -559,15 +559,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 
 			exePath = location.append(name);
-			if (!exePath.toFile().exists()) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-				return false;
-			}
-		} else {
-			if (!exePath.toFile().exists()) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-				return false;
-			}
+		} 
+		if (!exePath.toFile().exists()) {
+			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+			return false;
 		}
 		try {
 			if (!isBinary(project, exePath)) {

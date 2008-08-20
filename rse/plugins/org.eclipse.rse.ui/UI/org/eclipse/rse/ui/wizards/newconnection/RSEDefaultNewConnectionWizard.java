@@ -298,42 +298,40 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		IRSESystemType systemType = getSystemType();
 		ISubSystemConfiguration[] configurations = sr.getSubSystemConfigurationsBySystemType(systemType, true);
 		
-		// should be one configuration per configurator
-		if (configurations.length <= subsystemConfigurationSuppliedWizardPages.length)
-			return subsystemConfigurationSuppliedWizardPages;
-		else { // missing pages for configurations
-			ArrayList configList = new ArrayList();
-			for (int i = 0; i < configurations.length; i++){
-				ISubSystemConfiguration configuration = configurations[i];
-				boolean foundMatch = false;
-				for (int j = 0; j < subsystemConfigurationSuppliedWizardPages.length && !foundMatch; j++){
-					ISystemNewConnectionWizardPage page = subsystemConfigurationSuppliedWizardPages[j];
-					ISubSystemConfiguration pageConfiguration = page.getSubSystemConfiguration();
-					if (configuration == pageConfiguration){ // found a match
-						configList.add(page);
-						foundMatch = true;
+		ArrayList configList = new ArrayList();
+		for (int i = 0; i < configurations.length; i++){
+			ISubSystemConfiguration configuration = configurations[i];
+			ISubSystemConfigurator firstMatch = null;
+			for (int j = 0; j < subsystemConfigurationSuppliedWizardPages.length; j++){
+				ISystemNewConnectionWizardPage page = subsystemConfigurationSuppliedWizardPages[j];
+				ISubSystemConfiguration pageConfiguration = page.getSubSystemConfiguration();
+				if (configuration == pageConfiguration){ // found a match
+					configList.add(page);  // could be more than one
+					if (firstMatch == null){
+						firstMatch = page;
 					}
 				}
-				if (!foundMatch){ // no match found so need to provide alternative
-					class DefaultConfigurator implements ISubSystemConfigurator {
-						private ISubSystemConfiguration _configuration;
-						public DefaultConfigurator(ISubSystemConfiguration configuration){
-							_configuration = configuration;
-						}
-						
-						public boolean applyValues(ISubSystem ss) {
-							return true;
-						}
-
-						public ISubSystemConfiguration getSubSystemConfiguration() {
-							return _configuration;
-						}						
+			}
+			if (firstMatch == null){ // no match found so need to provide alternative
+				class DefaultConfigurator implements ISubSystemConfigurator {
+					private ISubSystemConfiguration _configuration;
+					public DefaultConfigurator(ISubSystemConfiguration configuration){
+						_configuration = configuration;
 					}
-					configList.add(new DefaultConfigurator(configuration));
-				}				
-			}	
-			return (ISubSystemConfigurator[])configList.toArray(new ISubSystemConfigurator[configList.size()]);
-		}
+					
+					public boolean applyValues(ISubSystem ss) {
+						return true;
+					}
+
+					public ISubSystemConfiguration getSubSystemConfiguration() {
+						return _configuration;
+					}						
+				}
+				configList.add(new DefaultConfigurator(configuration));
+			}				
+		}	
+		return (ISubSystemConfigurator[])configList.toArray(new ISubSystemConfigurator[configList.size()]);
+
 	}
 
 	/**

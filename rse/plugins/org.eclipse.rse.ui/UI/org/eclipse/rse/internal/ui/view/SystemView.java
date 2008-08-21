@@ -196,6 +196,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -640,11 +641,15 @@ public class SystemView extends SafeTreeViewer
 		if (isExpandable(elementPath)) {
 			boolean expandedState = getExpandedState(elementPath);
 			setExpandedState(elementPath, !expandedState);
-			// DY:  fire collapse / expand event
+			// DWD:  fire collapse / expand event
+			Event baseEvent = new Event();
+			baseEvent.item = findItem(element);
+			baseEvent.widget = baseEvent.item;
+			TreeEvent treeEvent = new TreeEvent(baseEvent);
 			if (expandedState) {
-				fireTreeCollapsed(new TreeExpansionEvent(this, element));
+				handleTreeCollapse(treeEvent);
 			} else {
-				fireTreeExpanded(new TreeExpansionEvent(this, element));
+				handleTreeExpand(treeEvent);
 			}
 			return;
 		}
@@ -1379,7 +1384,7 @@ public class SystemView extends SafeTreeViewer
 		// we always allow adapters opportunity to show a different icon depending on collapsed state
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				String[] allProps = {IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE};
+				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
 				update(element, allProps); // for refreshing non-structural properties in viewer when model changes
 			}
 		});

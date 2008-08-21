@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [232130] meaningless label provided for filter references
+ * David McKnight   (IBM)        - [244430] [regression] Incorrect behaviour for SystemSelectRemoteFolderAction
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -338,7 +339,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 			IHost connection = ss.getHost();
 			if (_inputProvider.allowMultipleConnections())
 			{
-				if (_connectionCombo.getHost()!= connection)
+				if (_connectionCombo.getHost()!= connection || _inputProvider.getSystemConnection() != connection)
 		 		{
 		 			_connectionCombo.select(connection);
 		 		}

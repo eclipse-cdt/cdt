@@ -39,7 +39,7 @@ public class BadInitializer implements IRSEModelInitializer {
 	 * @see org.eclipse.rse.core.IRSEModelInitializer#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		IStatus result = new Status(IStatus.WARNING, "org.eclipse.rse.tests", "bwaahahaha");
+		IStatus result = new Status(IStatus.WARNING, "org.eclipse.rse.tests", "testing warnings generated during RSE initialization");
 		wasRun = true;
 		return result;
 	}

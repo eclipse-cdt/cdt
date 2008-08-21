@@ -112,12 +112,10 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         // An attach session also does not need to necessarily have a project
         // specified.  This is because we can perform source lookup towards
         // code that is outside the workspace.
-        // However, the Platform does not support this, so for now, we check
         // See bug 244567
-
-        // First verify we are dealing with a proper project.
-      	ICProject project = LaunchUtils.verifyCProject(config);
         if (!attach) {
+        	// First verify we are dealing with a proper project.
+        	ICProject project = LaunchUtils.verifyCProject(config);
         	// Now verify we know the program to debug.
         	exePath = LaunchUtils.verifyProgramPath(config, project);
         	// Finally, make sure the program is a proper binary.

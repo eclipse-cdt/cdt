@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.sourcelookup;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,6 +54,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
@@ -200,6 +202,11 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                     editorInput = new CommonSourceNotFoundEditorInput(dmc);
                     editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
             	}
+            } else if (sourceElement instanceof LocalFileStorage) {
+            	File file = ((LocalFileStorage)sourceElement).getFile();
+            	IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(file);
+        		editorInput = new FileStoreEditorInput(fileStore);
+        		editorId = getEditorIdForFilename(file.getPath());
             }
             result.setEditorInput(editorInput);
             result.setEditorId(editorId);

@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
+ * David Dykstal (IBM) - [235581] Initialize RSE should be a daemon job
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -137,6 +138,7 @@ public final class RSEInitJob extends Job {
 
 	private RSEInitJob() {
 		super(NAME);
+		setSystem(true);
 		addJobChangeListener(myJobChangeListener);
 	}
 

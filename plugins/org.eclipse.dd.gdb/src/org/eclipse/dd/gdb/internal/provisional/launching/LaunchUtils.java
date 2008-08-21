@@ -214,7 +214,13 @@ public class LaunchUtils {
         	InputStream stream = process.getInputStream();
         	Reader r = new InputStreamReader(stream);
         	BufferedReader reader = new BufferedReader(r);
-        	Pattern pattern = Pattern.compile(" gdb( \\(GDB\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+        	
+        	// These are the GDB version patterns I have seen up to now
+        	// The pattern works for all of them extracting the version of 6.8.50.20080730
+        	// GNU gdb 6.8.50.20080730
+        	// GNU gdb (GDB) 6.8.50.20080730-cvs
+        	// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
+        	Pattern pattern = Pattern.compile(" gdb( \\(.*\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
         	while ((line = reader.readLine()) != null) {
         		Matcher matcher = pattern.matcher(line);

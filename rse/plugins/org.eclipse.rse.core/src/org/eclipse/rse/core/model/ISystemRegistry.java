@@ -29,6 +29,7 @@
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
+ * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -571,6 +572,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Creates subsystems for a given host and subsystem configurations.
+	 * If a subsystem cannot be created then null is returned in its corresponding place in the returned array.
 	 * @param host the host.
 	 * @param configurations the subsystem configurations.
 	 * @return the array of subsystems corresponding to the array of given configurations.

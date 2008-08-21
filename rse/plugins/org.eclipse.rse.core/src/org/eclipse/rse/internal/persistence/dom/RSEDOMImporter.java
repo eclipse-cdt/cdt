@@ -22,6 +22,7 @@
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [232126] retrieve persisted filter type attribute
  * David Dykstal (IBM) - [233876] filters lost after restart
+ * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -282,34 +283,36 @@ public class RSEDOMImporter {
 				ISubSystem[] createdSystems = _registry.createSubSystems(host, new ISubSystemConfiguration[]{factory});
 				subSystem = createdSystems[0];
 			}
-			subSystem.setHidden(isHidden);
-			subSystem.setHost(host);
-			subSystem.setSubSystemConfiguration(factory);
-			subSystem.setName(factory.getName());
-			subSystem.setConfigurationId(factory.getId());
+			if (subSystem != null) {
+				subSystem.setHidden(isHidden);
+				subSystem.setHost(host);
+				subSystem.setSubSystemConfiguration(factory);
+				subSystem.setName(factory.getName());
+				subSystem.setConfigurationId(factory.getId());
 
-			if (factory.supportsFilters()) {
-				ISystemFilterStartHere startHere = _registry.getSystemFilterStartHere();
-				ISystemFilterPoolReferenceManager fprMgr = startHere.createSystemFilterPoolReferenceManager(subSystem, factory, name);
-				subSystem.setFilterPoolReferenceManager(fprMgr);
-				ISystemFilterPoolManager defaultFilterPoolManager = factory.getFilterPoolManager(host.getSystemProfile());
-				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
-			}
+				if (factory.supportsFilters()) {
+					ISystemFilterStartHere startHere = _registry.getSystemFilterStartHere();
+					ISystemFilterPoolReferenceManager fprMgr = startHere.createSystemFilterPoolReferenceManager(subSystem, factory, name);
+					subSystem.setFilterPoolReferenceManager(fprMgr);
+					ISystemFilterPoolManager defaultFilterPoolManager = factory.getFilterPoolManager(host.getSystemProfile());
+					fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
+				}
 
-			// restore filter pool references
-			RSEDOMNode[] filterPoolReferenceChildren = subSystemNode.getChildren(IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE);
-			for (int i = 0; i < filterPoolReferenceChildren.length; i++) {
-				RSEDOMNode fprChild = filterPoolReferenceChildren[i];
-				restoreFilterPoolReference(subSystem, fprChild);
-			}
+				// restore filter pool references
+				RSEDOMNode[] filterPoolReferenceChildren = subSystemNode.getChildren(IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE);
+				for (int i = 0; i < filterPoolReferenceChildren.length; i++) {
+					RSEDOMNode fprChild = filterPoolReferenceChildren[i];
+					restoreFilterPoolReference(subSystem, fprChild);
+				}
 
-			// restore all property sets
-			RSEDOMNode[] psChildren = subSystemNode.getChildren(IRSEDOMConstants.TYPE_PROPERTY_SET);
-			for (int p = 0; p < psChildren.length; p++) {
-				RSEDOMNode psChild = psChildren[p];
-				restorePropertySet(subSystem, psChild);
+				// restore all property sets
+				RSEDOMNode[] psChildren = subSystemNode.getChildren(IRSEDOMConstants.TYPE_PROPERTY_SET);
+				for (int p = 0; p < psChildren.length; p++) {
+					RSEDOMNode psChild = psChildren[p];
+					restorePropertySet(subSystem, psChild);
+				}
+				subSystem.wasRestored();
 			}
-			subSystem.wasRestored();
 		}
 		return subSystem;
 	}

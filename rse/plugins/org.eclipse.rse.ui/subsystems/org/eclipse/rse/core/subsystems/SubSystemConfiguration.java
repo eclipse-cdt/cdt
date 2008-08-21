@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -961,10 +962,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	/**
 	 * Creates a new subsystem instance that is associated with the given
-	 * connection object. SystemRegistryImpl calls this when a new connection is
+	 * connection object. SystemRegistry calls this when a new connection is
 	 * created, and appliesToSystemType returns true.
 	 * <p>
-	 * This method doe sthe following:
+	 * This method does the following:
 	 * <ul>
 	 * <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem
 	 * <li>does initialization of common attributes
@@ -986,6 +987,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * @param configurators configurators that inject properties into this new
 	 * 		subsystem or null if there are none. Used to take
 	 * 		ISystemNewConnectionWizardPage[] before RSE 3.0.
+	 * @return the created subsystem or null if none has been created.
 	 * @since 3.0
 	 */
 	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISubSystemConfigurator[] configurators)
@@ -997,7 +999,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				reset();
 			subSystemsRestoredFlags.put(conn, Boolean.TRUE); // do not try to restore subsequently. Nothing to restore!
 		}
-		ISubSystem subsys = createSubSystemInternal(conn);
+		ISubSystem subsys = null;
+		try {
+			subsys = createSubSystemInternal(conn);
+		} catch (RuntimeException e) {
+			RSECorePlugin.getDefault().getLogger().logError("Error creating subsystem", e); //$NON-NLS-1$
+		}
 		if (subsys != null)
 		{
 			internalInitializeNewSubSystem(subsys, conn);

@@ -55,6 +55,7 @@
  * David Dykstal (IBM) - [227750] do not fire events if there are no listeners
  * David McKnight   (IBM)        - [238673] Expansion icon (plus sign) disappears from Work With Libraries entry
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
+ * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -1642,7 +1643,9 @@ public class SystemRegistry implements ISystemRegistry
 		}
 
 		for (int j = 0; j < subsystems.length; j++) {
-			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystems[j], null);
+			if (subsystems[j] != null) {
+				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystems[j], null);
+			}
 		}
 
 		host.commit();

@@ -23,9 +23,9 @@ public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
-//		if (getVersion().startsWith("6.8.50.20080730")) { //$NON-NLS-1$
-//			return new GDBProcesses_7_0(session);
-//		}
+		if (getVersion().startsWith("6.8.50.20080730")) { //$NON-NLS-1$
+			return new GDBProcesses_7_0(session);
+		}
 		return new GDBProcesses(session);
 	}
 	

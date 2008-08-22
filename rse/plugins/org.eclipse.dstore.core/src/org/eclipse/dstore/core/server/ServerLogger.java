@@ -16,6 +16,7 @@
  * Jacob Garcowski (IBM)  - [232738] [dstore] Delay creation of log file until written to
  * Noriaki Takatsu (IBM)  - [232443] [multithread] A single rsecomm.log for all clients
  * Noriaki Takatsu (IBM)  - [239419] [multithread] Dynamically change the level of logging
+ * David McKnight  (IBM)  - [244876] [dstore] make DEBUG a non-final variable of the ServerLogger class
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -50,7 +51,9 @@ public class ServerLogger implements IServerLogger
 	private Object writeLock = new Object();
 	private PrintWriter _logFileStream = null;
 
-	public static final boolean DEBUG = false;
+	// note that, in 3.0, this variable was final but, as of 3.0.1, it's not
+	public static boolean DEBUG = false;
+	
 	private int log_level = 0;
 
 	private boolean initialized = false;

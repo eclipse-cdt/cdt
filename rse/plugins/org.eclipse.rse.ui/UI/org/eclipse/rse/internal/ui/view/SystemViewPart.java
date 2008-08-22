@@ -32,6 +32,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
+ * David McKnight (IBM)  - [244807] System view does not handle restore from cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1598,10 +1599,14 @@ public class SystemViewPart
 				}
 				else if (object instanceof ISystemFilterReference)
 				{
+			
 					ISystemFilterReference fref = (ISystemFilterReference)object;
 					ISubSystem ss = fref.getSubSystem();
+					
+					boolean isRestoringCache = ss.getCacheManager() != null && ss.getCacheManager().isRestoreFromMemento();
+					
 					if (!ss.isOffline()){
-						if (!ss.isConnected()){
+						if (!ss.isConnected() && !isRestoringCache){
 							try
 							{
 								ss.connect(monitor, false);
@@ -1610,7 +1615,7 @@ public class SystemViewPart
 								return Status.CANCEL_STATUS;
 							}
 						}
-						if (ss.isConnected())
+						if (ss.isConnected() || isRestoringCache)
 						{
 							// get the adapter
 							ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)object).getAdapter(ISystemViewElementAdapter.class);

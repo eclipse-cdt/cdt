@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [232148] Invalid thread access exception from SystemViewFilterReferenceAdapter.internalGetChildren()
  * David McKnight    (IBM)  - [233494] Show in Table Action should be removed from promptable filters
  * David McKnight   (IBM)        - [238507] Promptable Filters refreshed after modifying filter strings
+ * David McKnight   (IBM)        - [244824] filter not refreshed if child is "empty list" or system message node
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -421,18 +422,30 @@ public class SystemViewFilterReferenceAdapter
 					    children = fRef.getContents(SystemChildrenContentsType.getInstance());
 					    if (children != null)
 					    {
-					    	// check for stale children
-					    	for (int i = 0; i < children.length && !doQuery; i++)
-					    	{
-					    		Object child = children[i];
-					    		if (child instanceof ISystemContainer)
-					    		{
-					    			if (((ISystemContainer)child).isStale())
-					    			{
-					    				doQuery = true;
-					    				fRef.markStale(true);
-					    			}
-					    		}
+					    	if (children.length == 0){
+					    		doQuery = true;
+					    		fRef.markStale(true);
+					    	}
+					    	else {
+						    	// check for stale children
+						    	for (int i = 0; i < children.length && !doQuery; i++)
+						    	{
+						    		Object child = children[i];
+						    		if (child instanceof ISystemContainer)
+						    		{
+						    			if (((ISystemContainer)child).isStale())
+						    			{
+						    				doQuery = true;
+						    				fRef.markStale(true);
+						    			}
+						    		}
+						    		else if (child instanceof ISystemMessageObject){
+						    			if (((ISystemMessageObject)child).isTransient()){
+						    				doQuery = true;
+						    				fRef.markStale(true);
+						    			}
+						    		}
+						    	}
 					    	}
 					    }
 					}

@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+ * David McKnight   (IBM)        - [244898] [dstore] IRemoteCmdSubSystem.getHostEnvironmentVariables() call does not always work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -107,6 +108,9 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 			List envVars = new ArrayList();
 			DataStore ds = getDataStore();
 			DataElement envMinerData = ds.findMinerInformation(getEnvSystemMinerId());
+			if (envMinerData == null){ // could be using an old server
+				envMinerData = ds.findMinerInformation("com.ibm.etools.systems.dstore.miners.environment.EnvironmentMiner"); //$NON-NLS-1$
+			}
 			if (envMinerData != null)
 			{
 				DataElement systemEnvironment = ds.find(envMinerData, DE.A_NAME, "System Environment", 1); //$NON-NLS-1$
@@ -118,7 +122,8 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 						envVars.add(var.getValue());
 					}
 				}
-			}
+			}			
+			
 			_envVars = (String[])envVars.toArray(new String[envVars.size()]);
 		}
 		return _envVars;
@@ -174,6 +179,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	{
 		_envMinerElement = null;
 		_envMinerStatus = null;
+		_envVars = null;
 		super.uninitService(monitor);
 	}
 

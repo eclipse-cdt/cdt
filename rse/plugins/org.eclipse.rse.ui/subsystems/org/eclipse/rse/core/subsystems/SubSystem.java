@@ -43,6 +43,7 @@
  * David McKnight (IBM)          - [238609] Substitution value missing for disconnect failed message
  * David McKnight   (IBM)        - [237970]  Subsystem.connect( ) fails for substituting host name when isOffline( ) is true
  * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
+ * Don Yantzi       (IBM)        - [244807] Delay connecting if resolving filters while restoring from cache
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -552,8 +553,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 */
 	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException
 	{
-		if (!isConnected() && 
-				!isOffline()) // for 244270, don't connect when offline
+		// for 244270, don't connect when offline
+		// or when restoring from memento
+		if (!isConnected() && !isOffline()  && (!(getCacheManager() != null) && !getCacheManager().isRestoreFromMemento())) 
 		{
 			try
 			{
@@ -2195,7 +2197,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		// for bug 233435, implicit connect if the connection is not connected
 		checkIsConnected(monitor);
 
-		if (isConnected())
+		if (isConnected() || isOffline() || (getCacheManager() != null && getCacheManager().isRestoreFromMemento()))
 		{
 			if (!supportsConnecting && !_isInitialized) {
 				// Lazy Loading: Load adapters (e.g. Local Subsystem)
@@ -2239,7 +2241,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
 			return null;
 		}
-		if (isConnected())
+		if (isConnected() || isOffline() || (getCacheManager() != null && getCacheManager().isRestoreFromMemento()))
 		{
 			if (!supportsConnecting && !_isInitialized) {
 				// Lazy Loading: Load adapters (e.g. Local Subsystem)
@@ -2298,7 +2300,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 			checkIsConnected(monitor);
 		}
 		
-		if (isConnected())
+		if (isConnected() || isOffline() || (getCacheManager() != null && getCacheManager().isRestoreFromMemento()))
 		{
 			if (!supportsConnecting && !_isInitialized) {
 				// Lazy Loading: Load adapters (e.g. Local Subsystem)
@@ -2527,11 +2529,6 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		if (isOffline())
 		{
 			// offline so don't bother prompting
-			doConnection = true;	// this gets handled later when it comes time to connect
-			return true;
-		}
-		else if (supportsCaching() && getCacheManager().isRestoreFromMemento())
-		{
 			doConnection = true;	// this gets handled later when it comes time to connect
 			return true;
 		}

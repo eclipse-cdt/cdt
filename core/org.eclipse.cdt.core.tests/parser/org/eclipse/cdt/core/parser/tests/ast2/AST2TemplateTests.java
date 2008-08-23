@@ -3119,4 +3119,54 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPTemplateTypeParameter t= ba.assertNonProblem("T)", 1, ICPPTemplateTypeParameter.class);
 	}
+	
+	//	template<class T1, T1 v1>
+	//	struct integral_constant {
+	//	  static const T1 value = v1;
+	//	  typedef T1 value_type;
+	//	  typedef integral_constant<T1, v1> type;
+	//	};
+	//	template <class T2, T2 v2> const T2 integral_constant<T2, v2>::value;
+	//	typedef integral_constant<bool, true>  true_type;
+	//	typedef integral_constant<bool, false> false_type;
+	//
+	//	template<bool cond, typename A1, typename B1>
+	//	struct if_{
+	//	  typedef A1 type;
+	//	};
+	//	template<typename A2, typename B2>
+	//	struct if_<false, A2, B2> {
+	//	  typedef B2 type;
+	//	};
+	//
+	//	struct AA {
+	//	  int a;
+	//	  void method() {}
+	//	};
+	//	void func(AA oa) {}
+	//
+	//	struct BB {
+	//	  int b;
+	//	  void method() {}
+	//	};
+	//	void func(BB ob) {}
+	//
+	//	template<class T>
+	//	struct CC : public if_<T::value, AA, BB>::type {};
+	//
+	//	void test() {
+	//	  CC<true_type> ca;
+	//	  CC<false_type> cb;
+	//	  ca.method();
+	//	  ca.a = 5;
+	//	  cb.b = 6;
+	//	  func(cb);
+	//	}
+	public void _testTemplateMetaProgramming_245027() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPMethod method= ba.assertNonProblem("method();", 6, ICPPMethod.class);
+		ICPPVariable a= ba.assertNonProblem("a =", 1, ICPPVariable.class);
+		ICPPVariable b= ba.assertNonProblem("b =", 1, ICPPVariable.class);
+		ICPPFunction func= ba.assertNonProblem("func(cb)", 4, ICPPFunction.class);
+	}
 }

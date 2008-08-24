@@ -2158,6 +2158,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
 	}
 
+	//	struct A {};
+	//
+	//	template <class T>
+	//	void func(const T& p) {
+	//	}
+	//
+	//	void test() {
+	//	  A a1;
+	//	  const A a2;
+	//	  func(a1);
+	//	  func(a2);
+	//	}
+	public void _testFunctionTemplate_245049() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction b0= bh.assertNonProblem("func(a1)", 4, ICPPFunction.class);
+		assertInstance(b0, ICPPTemplateInstance.class);
+		ICPPFunction b1= bh.assertNonProblem("func(a2)", 4, ICPPFunction.class);
+		assertEquals(b0, b1);
+	}
+	
 	// namespace ns {
 	//
 	// template<class _M1, class _M2>

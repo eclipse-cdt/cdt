@@ -773,8 +773,7 @@ public class CPPTemplates {
 	 * @throws DOMException
 	 */
 	static protected Object[] deduceTemplateFunctionArguments(ICPPFunctionTemplate primaryTemplate,
-			IASTParameterDeclaration[] ps, ICPPASTTemplateId id) throws DOMException
-	{
+			IASTParameterDeclaration[] ps, ICPPASTTemplateId id) throws DOMException {
 		ICPPTemplateParameter[] templateParameters = primaryTemplate.getTemplateParameters();
 		IType[] arguments= createTemplateArgumentArray(id);
 		IType[] result = new IType[templateParameters.length];
@@ -1450,7 +1449,7 @@ public class CPPTemplates {
 		}
 		ObjectMap map= new ObjectMap(specArgs.length);
 		int len= all ? specArgs.length : Math.min(specArgs.length, args.length);
-		for (int j=0; j<len; j++) {
+		for (int j= 0; j < len; j++) {
 			try {
 				if (!deduceTemplateArgument(map, specArgs[j], args[j])) {
 					return null;

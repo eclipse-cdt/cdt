@@ -894,7 +894,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  A a;
 	//	  func(&a, &A::m);
 	//	}
-	public void _testFunctionTemplate_245030() throws Exception {
+	public void testFunctionTemplate_245030() throws Exception {
 		IBinding b0= getBindingFromASTName("func(&a, &A::m)", 4);
 		assertInstance(b0, ICPPTemplateInstance.class);
 		assertInstance(b0, ICPPFunction.class);

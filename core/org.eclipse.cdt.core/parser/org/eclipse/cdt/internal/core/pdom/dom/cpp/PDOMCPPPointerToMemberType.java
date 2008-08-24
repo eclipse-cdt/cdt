@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,13 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
@@ -60,13 +60,10 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		return IIndexCPPBindingConstants.CPP_POINTER_TO_MEMBER_TYPE;
 	}
 
-	public ICPPClassType getMemberOfClass() {
+	public IType getMemberOfClass() {
 		try {
-			int rec;
-			rec = pdom.getDB().getInt(record + TYPE);
-			if (rec != 0) {
-				return new PDOMCPPClassType(pdom, rec);
-			}
+			int rec = pdom.getDB().getInt(record + TYPE);
+			return (IType) getLinkage().getNode(rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

@@ -17,6 +17,7 @@ Kevin Doyle		 (IBM)		  - [212940] Added help for Remote Monitor
 David Dykstal (IBM) - [231630] adding help for services property page
 David Dykstal (IBM) - [232317] adding help for datastore preferences page
 David Dykstal (IBM) - [232585] adding help for service subsystem wizard page
+David Dykstal (IBM) - [244950] fix broken links due to ".htm" extension
 -->
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
@@ -50,54 +51,54 @@ Select the configuration to be used for this subsystem and then edit the propert
 <!-- TEAM VIEW -->
 <context id="teamview">
 <description>Use this view to work with the team-sharable artifacts from the Remote System Explorer: connection, filters, user actions and compile commands. These are contained in profiles. Use this view to see the sharable artifacts by profile, and share those artifacts using the popup menu of the root node. </description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: New Profile action...   -->
 <context id="actn0003">
 <description>Open a wizard to create a new profile for partitioning your connections, filters, user actions and compile commands.</description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>	
 <!-- TEAM VIEW ACTION: Active profile action...   -->
 <context id="actnactp">
 <description>Toggle this profile between active and not active. The Remote Systems view only shows connections, filters, user actions and compile commands from active profiles.
 </description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Make Active profile action...   -->
 <context id="ActionMakeActive">
 <description>Make all the selected profiles active, such that their connections, filters, user actions and compile commands are visible in the Remote Systems view.
 </description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Make Inactive profile action...   -->
 <context id="ActionMakeInactive">
 <description>Make all the selected profiles inactive, such that their  connections, filters, user actions and compile commands are not visible in the Remote Systems view.
 </description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 
 <!-- TEAM VIEW ACTION: Rename profile action...   -->
 <context id="actnrnpr">
 <description>Rename selected profile.
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </description>
 </context>
 <!-- TEAM VIEW ACTION: Delete profiles action...   -->
 <context id="actndlpr">
 <description>Delete selected profiles, including all of their connections, filters, user actions and compile commands.</description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Duplicate profile action...   -->
 <context id="actndupr">
 <description>Copy selected profile, including all its connections, filters, user actions and compile commands.
 </description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 
 <!-- PULLDOWN ACTION: Work with profiles action...-->
 <context id="actnwwpr">
 <description>Switch to the Team view, where you can create, delete, copy, rename and activate profiles</description>
-<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.html" label="Remote System Explorer Profiles" />
 </context>
 <!-- PULLDOWN ACTION: Qualify connections action...-->
 <context id="actn0008">
@@ -678,7 +679,7 @@ The list on the left shows the existing user actions:
 - To <b>edit</b> an existing action, select the action in the list, update the information in the edit pane on the right, and press the <b>Apply</b> button.
 - To copy, paste, delete or re-order existing actions, use the pop-up menu.
 </description>
-<topic label="Working with user actions" href="../org.eclipse.rse.doc.user/tasks/tworkuseract.htm" />
+<topic label="Working with user actions" href="../org.eclipse.rse.doc.user/tasks/tworkuseract.html" />
 </context>
 
 
@@ -729,15 +730,15 @@ The list on the left shows the existing compile commands:
 <!-- Save password dialogs -->
 <context id="pwdi0000">
 <description>Use the password information preference page to add, change, and remove stored passwords for remote systems.  The stored passwords are used whenever a password is required to connect to the remote system.</description>
-<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.html" /> 
 </context>
 <context id="pwdi0001">
 <description>Type the password information for the remote system and click <b>OK</b> to save the information or <b>Cancel</b> to exit without saving.</description>
-<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.html" /> 
 </context>
 <context id="pwdi0002">
 <description>Modify the saved password information for the remote system and click <b>OK</b> to update the saved information or <b>Cancel</b>  to exit without updating.</description>
-<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.html" /> 
 </context>
 
 <!-- SubSystem property page -->
@@ -766,8 +767,8 @@ The list on the left shows the existing compile commands:
 <!-- Server launcher property page -->
 <context id="srln0000">
 <description>Use the server launcher settings property page to specify how to connect to a remote server on the remote system.  To connect to a remote Linux, Unix or Windows host you must first install the Remote System Explorer server on the remote host.</description>
-<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.htm" />
-<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.htm" />
+<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.html" />
+<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.html" />
 </context>
 <context id="srln0001">
 <description>Indicate that a connection should be established with a server on the remote system using the remote daemon to start the server.  To use this option, the remote daemon must be running on the remote system.</description>
@@ -790,8 +791,8 @@ The list on the left shows the existing compile commands:
 <!-- Installing remote server -->
 <context id="rsrv0000">
 <description>To connect to a remote Linux, Unix or Windows host you must first install the Remote System Explorer server on the remote host.</description>
-<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.htm" />
-<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.htm" />
+<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.html" />
+<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.html" />
 </context>
 
 
@@ -803,7 +804,7 @@ The list on the left shows the existing compile commands:
 <!-- Remote Search Dialog -->
 <context id="rsdi0000">
 <description>Specify a search string and optionally limit the search to a subset of files by specifying file name patterns. Leave the search string empty to search for files only.</description>
-<topic label="Search for text and files on remote servers" href="../org.eclipse.rse.doc.user/tasks/tmanagesearch.htm"/>
+<topic label="Search for text and files on remote servers" href="../org.eclipse.rse.doc.user/tasks/tmanagesearch.html"/>
 </context>
 <context id="rsac0000">
 <description>Opens Remote Search dialog page for text and file searching on remote systems.</description>

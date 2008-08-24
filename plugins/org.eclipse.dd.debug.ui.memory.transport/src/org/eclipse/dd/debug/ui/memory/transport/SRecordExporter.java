@@ -441,8 +441,11 @@ public class SRecordExporter implements IMemoryExporter
 								checksum += value.byteValue();
 							}
 							
-							buf.append(BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16));
-							
+							String bString = BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16);
+							if(bString.length() == 1)
+								buf.append("0");
+							buf.append(bString);
+
 							writer.write(buf.toString().toUpperCase());
 							writer.write("\n");
 							

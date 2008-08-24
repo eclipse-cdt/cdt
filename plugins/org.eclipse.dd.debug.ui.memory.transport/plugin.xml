@@ -41,7 +41,6 @@
 	               	icon="icons/export.png"
 	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
 	               	label="%ExportMemoryAction.label"
-	               	state="false"
 	               	style="push"
 	               	toolbarPath="additions"
 	               	tooltip="%ExportMemoryAction.label"/>
@@ -51,7 +50,6 @@
 	               	icon="icons/import.png"
 	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
 	               	label="%ImportMemoryAction.label"
-	               	state="false"
 	               	style="push"
 	               	toolbarPath="additions"
 	               	tooltip="%ImportMemoryAction.label"/>

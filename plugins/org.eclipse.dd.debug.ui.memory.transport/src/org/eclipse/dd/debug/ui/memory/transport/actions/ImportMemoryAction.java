@@ -37,43 +37,48 @@ public class ImportMemoryAction implements IViewActionDelegate {
 		if (view instanceof MemoryView)
 			fView = (MemoryView) view;
 	}
-
-	public void run(IAction action) {
-
-		ISelection selection = fView.getSite().getSelectionProvider()
-				.getSelection();
+	
+	private IMemoryBlock getMemoryBlock(ISelection selection)
+	{
+		IMemoryBlock memBlock = null;
+		
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection strucSel = (IStructuredSelection) selection;
 
 			// return if current selection is empty
 			if (strucSel.isEmpty())
-				return;
+				return null;
 
 			Object obj = strucSel.getFirstElement();
 
 			if (obj == null)
-				return;
-
-			IMemoryBlock memBlock = null;
+				return null;
 
 			if (obj instanceof IMemoryRendering) {
 				memBlock = ((IMemoryRendering) obj).getMemoryBlock();
 			} else if (obj instanceof IMemoryBlock) {
 				memBlock = (IMemoryBlock) obj;
 			}
-			if(memBlock == null)
-				return;
-			
-			ImportMemoryDialog dialog = new ImportMemoryDialog(DebugUIPlugin.getShell(), memBlock);
-			dialog.open();
-			
-			dialog.getResult();
 		}
+		return memBlock;
+	}
 
+	public void run(IAction action) {
+
+		ISelection selection = fView.getSite().getSelectionProvider()
+				.getSelection();
+		IMemoryBlock memBlock = getMemoryBlock(selection);
+		if(memBlock == null)
+			return;
+			
+		ImportMemoryDialog dialog = new ImportMemoryDialog(DebugUIPlugin.getShell(), memBlock);
+		dialog.open();
+		
+		dialog.getResult();
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
-		
+		action.setEnabled(getMemoryBlock(selection) != null);
 	}
 
 }

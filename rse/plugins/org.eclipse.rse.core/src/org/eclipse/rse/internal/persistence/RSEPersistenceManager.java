@@ -22,6 +22,7 @@
  * David Dykstal (IBM) - [226728] NPE during init with clean workspace
  * David Dykstal (IBM) - [197027] Can lose data if closing eclipse before profile is saved
  * Kevin Doyle	 (IBM) - [243821] Save occurring on Main Thread
+ * David Dykstal (IBM) - [243128] Problem during migration - NPE if provider does save without using a job.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -551,8 +552,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				cleanTree(profile);
 				if (dom.needsSave()) {
 					Job job = provider.getSaveJob(dom);
-					job.addJobChangeListener(jobChangeListener);
 					if (job != null && canScheduleSave) {
+						job.addJobChangeListener(jobChangeListener);
 						job.schedule(2000); // two second delay
 					} else {
 						provider.saveRSEDOM(dom, new NullProgressMonitor());

@@ -13,6 +13,7 @@
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Richie Yu (IBM) - [241716] Handle change expired password
+ * Don Yantzi (IBM) - [233970] Handle messages provided by ICredentialsValidator
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -30,7 +31,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.ICredentialsValidator;
 import org.eclipse.rse.ui.dialogs.ISystemPasswordPromptDialog;
@@ -206,20 +206,17 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 			}
 		}
 		ICredentialsValidator validator = getSignonValidator();
-		boolean signonValid = true;
 		ICredentials credentials = getCredentials();
 		if (validator != null) {
 			SystemMessage m = validator.validate(credentials);
 			// update the password in case an expired password was changed in validate - ry
 			password = credentials.getPassword();  
-			signonValid = (m == null);
-			if (!signonValid) { // If we ran into an invalid stored password we need to tell the user.
+			if (m != null) { // If we ran into an invalid stored password we need to tell the user and force reaquire
 				Shell shell = getShell();
 				if (shell != null) {
-					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
-					msg.makeSubstitution(userId, getConnectorService().getHostName());
-					SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
+					SystemMessageDialog dialog = new SystemMessageDialog(shell, m);
 					dialog.open();
+					reacquire = true;
 				}
 			}
 		}
@@ -342,7 +339,7 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 
 	/**
 	 * <i>Optionally overridable, not implemented by default.</i><br>
-	 * Get the credentails validator to use to validate the credentials as entered
+	 * Get the credentials validator to use to validate the credentials as entered
 	 * in the dialog. This should only do a local validation.
 	 * @return null indicating that no signon validator exists.
 	 */

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
+ * Richie Yu (IBM) - [241716] Handle change expired password
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -504,6 +505,8 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 			IRSESystemType systemType = connectorService.getHost().getSystemType();
 			ICredentials credentials = new SystemSignonInformation(hostName, userId, password, systemType);
 			SystemMessage m = signonValidator.validate(credentials);
+			// update the password in case an expired password was changed in validate - ry
+			password = credentials.getPassword();  
 			setErrorMessage(m);
 		}
 		boolean closeDialog = (getErrorMessage() == null); 

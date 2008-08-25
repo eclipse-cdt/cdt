@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * Richie Yu (IBM) - [241716] Handle change expired password
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -206,8 +207,11 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		}
 		ICredentialsValidator validator = getSignonValidator();
 		boolean signonValid = true;
+		ICredentials credentials = getCredentials();
 		if (validator != null) {
-			SystemMessage m = validator.validate(getCredentials());
+			SystemMessage m = validator.validate(credentials);
+			// update the password in case an expired password was changed in validate - ry
+			password = credentials.getPassword();  
 			signonValid = (m == null);
 			if (!signonValid) { // If we ran into an invalid stored password we need to tell the user.
 				Shell shell = getShell();

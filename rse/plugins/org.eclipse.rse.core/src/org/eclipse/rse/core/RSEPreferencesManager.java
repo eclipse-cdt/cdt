@@ -11,6 +11,7 @@
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [233892] Deny password save is not persistent
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -494,6 +495,7 @@ public class RSEPreferencesManager {
 			result = PasswordPersistenceManager.getInstance().remove(systemType, hostAddress);
 			result += PasswordPersistenceManager.getInstance().remove(PasswordPersistenceManager.DEFAULT_SYSTEM_TYPE, hostAddress);
 		}
+		savePreferences();
 		return result;
 	}
 

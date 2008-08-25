@@ -106,10 +106,13 @@ public class PlainTextImporter implements IMemoryImporter {
 //		data.top = new FormAttachment(fComboRestoreToFileAddress);
 //		fComboRestoreToThisAddress.setLayoutData(data);
 		
+		Label labelStartText = new Label(composite, SWT.NONE);
+		labelStartText.setText("Restore to address: ");
+		
 		fStartText = new Text(composite, SWT.NONE);
 		data = new FormData();
 //		data.top = new FormAttachment(fComboRestoreToFileAddress);
-//		data.left = new FormAttachment(fComboRestoreToThisAddress);
+		data.left = new FormAttachment(labelStartText);
 		data.width = 100;
 		fStartText.setLayoutData(data);
 		

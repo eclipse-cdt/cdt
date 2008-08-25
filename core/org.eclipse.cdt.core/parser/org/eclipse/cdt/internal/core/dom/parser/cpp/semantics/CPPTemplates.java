@@ -174,8 +174,8 @@ public class CPPTemplates {
 
 		ICPPTemplateParameter[] params= partialSpec.getTemplateParameters();
 		int numParams = params.length;
-		for( int i = 0; i < numParams; i++ ){
-			if( params[i] instanceof IType && !argMap.containsKey(params[i]))
+		for (int i = 0; i < numParams; i++) {
+			if (params[i] instanceof IType && !argMap.containsKey(params[i]))
 				return null;
 		}
 
@@ -1133,7 +1133,7 @@ public class CPPTemplates {
 					IType[] args = ((ICPPTemplateInstance) binding).getArguments();
 					for (IType arg : args) {
 						if (arg instanceof IBinding) {
-							if(bindings.containsKey((IBinding)arg)) {
+							if (bindings.containsKey((IBinding)arg)) {
 								clear = true;
 								break;
 							}
@@ -1245,17 +1245,17 @@ public class CPPTemplates {
 			return true;
 		
 		// special case treatment for non-type integral parameters
-		if(argA instanceof ICPPBasicType && argB instanceof ICPPBasicType) {
+		if (argA instanceof ICPPBasicType && argB instanceof ICPPBasicType) {
 			try {
 				IASTExpression eA= ((ICPPBasicType) argA).getValue();
 				IASTExpression eB= ((ICPPBasicType) argB).getValue();				
-				if(eA != null && eB != null) {
+				if (eA != null && eB != null) {
 					// TODO - we should normalize template arguments
 					// rather than check their original expressions
 					// are equivalent.
 					return isNonTypeArgumentConvertible(argA, argB) && expressionsEquivalent(eA, eB);
 				}
-			} catch(DOMException de) {
+			} catch (DOMException de) {
 				CCorePlugin.log(de);
 				return false;
 			}
@@ -1271,7 +1271,7 @@ public class CPPTemplates {
 	 */
 	static public IType[] createTemplateArgumentArray(ICPPASTTemplateId id) {
 		IType[] result= IType.EMPTY_TYPE_ARRAY;
-		if(id != null) {
+		if (id != null) {
 			IASTNode[] params= id.getTemplateArguments();
 			result = new IType[params.length];
 			for (int i = 0; i < params.length; i++) {
@@ -1281,7 +1281,7 @@ public class CPPTemplates {
 				 * modeled by the type of the initialized expression (which
 				 * will include its value)
 				 */
-				if(param instanceof IASTIdExpression) {
+				if (param instanceof IASTIdExpression) {
 					param= CPPVisitor.reverseConstantPropogationLookup((IASTIdExpression)param);
 				}
 				
@@ -1454,7 +1454,7 @@ public class CPPTemplates {
 				if (!deduceTemplateArgument(map, specArgs[j], args[j])) {
 					return null;
 				}
-			} catch(DOMException de) {
+			} catch (DOMException de) {
 				return null;
 			}
 		}
@@ -1530,12 +1530,12 @@ public class CPPTemplates {
 			IType t1= e1.getExpressionType();
 			IType t2= e2.getExpressionType();
 			try {
-				if(t1 instanceof ICPPBasicType && t2 instanceof ICPPBasicType) {
+				if (t1 instanceof ICPPBasicType && t2 instanceof ICPPBasicType) {
 					BigInteger i1= CPPVisitor.parseIntegral(e1.toString());
 					BigInteger i2= CPPVisitor.parseIntegral(e2.toString());
 					return i1.equals(i2);
 				}
-			} catch(NumberFormatException nfe) {
+			} catch (NumberFormatException nfe) {
 				/* fall through */
 			}
 			return e1.toString().equals(e2.toString());
@@ -1549,11 +1549,12 @@ public class CPPTemplates {
 		a = getArgumentTypeForDeduction(a, pIsAReferenceType);
 
 		if (p instanceof IBasicType) {
-			if(a instanceof IBasicType) {
-				IBasicType pbt= (IBasicType) p, abt= (IBasicType) a;
+			if (a instanceof IBasicType) {
+				IBasicType pbt= (IBasicType) p;
+				IBasicType abt= (IBasicType) a;
 				
 				// non-type argument comparison
-				if(pbt.getValue() != null && abt.getValue() != null) {
+				if (pbt.getValue() != null && abt.getValue() != null) {
 					return isNonTypeArgumentConvertible(p, a)
 						&& expressionsEquivalent(pbt.getValue(), abt.getValue());
 				}
@@ -1570,10 +1571,10 @@ public class CPPTemplates {
 				} else if (p instanceof ICPPPointerToMemberType) {
 					if (!(a instanceof ICPPPointerToMemberType))
 						return false;
-
-					if (!deduceTemplateArgument(map, ((ICPPPointerToMemberType) p).getMemberOfClass(), ((ICPPPointerToMemberType) a).getMemberOfClass()))
+					if (!deduceTemplateArgument(map, ((ICPPPointerToMemberType) p).getMemberOfClass(),
+							((ICPPPointerToMemberType) a).getMemberOfClass())) {
 						return false;
-
+					}
 					p = ((ICPPPointerToMemberType) p).getType();
 					a = ((ICPPPointerToMemberType) a).getType();
 				} else if (p instanceof IPointerType) {
@@ -1583,15 +1584,17 @@ public class CPPTemplates {
 					p = ((IPointerType) p).getType();
 					a = ((IPointerType) a).getType();
 				} else if (p instanceof IQualifierType) {
-					if (!(a instanceof IQualifierType))
-						return false;
-					a = ((IQualifierType) a).getType(); //TODO a = strip qualifiers from p out of a
+					if (a instanceof IQualifierType) {
+						a = ((IQualifierType) a).getType(); //TODO a = strip qualifiers from p out of a
+					}
 					p = ((IQualifierType) p).getType();
 				} else if (p instanceof IFunctionType) {
 					if (!(a instanceof IFunctionType))
 						return false;
-					if (!deduceTemplateArgument(map, ((IFunctionType) p).getReturnType(), ((IFunctionType) a).getReturnType()))
+					if (!deduceTemplateArgument(map, ((IFunctionType) p).getReturnType(),
+							((IFunctionType) a).getReturnType())) {
 						return false;
+					}
 					IType[] pParams = ((IFunctionType) p).getParameterTypes();
 					IType[] aParams = ((IFunctionType) a).getParameterTypes();
 					if (pParams.length != aParams.length)
@@ -1653,7 +1656,7 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * transform a function template for use in partial ordering, as described in the
+	 * Transforms a function template for use in partial ordering, as described in the
 	 * spec 14.5.5.2-3
 	 * @param template
 	 * @return
@@ -1665,7 +1668,8 @@ public class CPPTemplates {
 	 * for each occurrence of that parameter in the function parameter list
 	 * @throws DOMException
 	 */
-	static private IType[] createArgsForFunctionTemplateOrdering(ICPPFunctionTemplate template) throws DOMException{
+	static private IType[] createArgsForFunctionTemplateOrdering(ICPPFunctionTemplate template)
+			throws DOMException{
 		ICPPTemplateParameter[] paramList = template.getTemplateParameters();
 		int size = paramList.length;
 		IType[] args = new IType[size];
@@ -1687,11 +1691,11 @@ public class CPPTemplates {
 		return args;
 	}
 
-	static protected int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
-		//Using the transformed parameter list, perform argument deduction against the other
-		//function template
+	static protected int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
+			throws DOMException {
+		// Using the transformed parameter list, perform argument deduction against the other
+		// function template
 		ObjectMap m1 = null;
-		ObjectMap m2 = null;
 		if (f1 != null) {
 			IType[] args = createArgsForFunctionTemplateOrdering(f1);
 			IBinding function = instantiate(f1, args);
@@ -1699,6 +1703,7 @@ public class CPPTemplates {
 				m1 = deduceTemplateArguments(f2, ((ICPPFunction) function).getType().getParameterTypes());
 		}
 
+		ObjectMap m2 = null;
 		if (f2 != null) {
 			IType[] args = createArgsForFunctionTemplateOrdering(f2);
 			IBinding function = instantiate(f2, args);
@@ -1706,22 +1711,41 @@ public class CPPTemplates {
 			if (function instanceof ICPPFunction)
 				m2 = deduceTemplateArguments(f1, ((ICPPFunction) function).getType().getParameterTypes());
 		}
-		//The transformed  template is at least as specialized as the other iff the deduction
-		//succeeds and the deduced parameter types are an exact match
-		//A template is more specialized than another iff it is at least as specialized as the
-		//other template and that template is not at least as specialized as the first.
-		boolean d1 = (m1 != null);
-		boolean d2 = (m2 != null);
-
-		if (d1 && d2 || !d1 && !d2)
-			return 0;
-		else if (d1 && !d2)
-			return 1;
-		else
-			return -1;
+		// The transformed template is at least as specialized as the other iff the deduction
+		// succeeds and the deduced parameter types are an exact match.
+		// A template is more specialized than another iff it is at least as specialized as the
+		// other template and that template is not at least as specialized as the first.
+		if (m1 == null) {
+			if (m2 == null) {
+				return 0;
+			} else {
+				return -1;
+			}
+		} else {
+			if (m2 == null) {
+				return 1;
+			} else {
+				// Count the number of cv-qualifications. The function with a lower number
+				// of cv-qualifications is more specialized.
+				int d1 = 0;
+				for (int i = 0; i < m1.size(); i++) {
+					if (m1.getAt(i) instanceof IQualifierType) {
+						d1++;
+					}
+				}
+				int d2 = 0;
+				for (int i = 0; i < m2.size(); i++) {
+					if (m2.getAt(i) instanceof IQualifierType) {
+						d2++;
+					}
+				}
+				return d1 - d2;
+			}
+		}
 	}
 
-	static public ICPPTemplateDefinition selectSpecialization(ICPPClassTemplate template, IType[] args) throws DOMException{
+	static public ICPPTemplateDefinition selectSpecialization(ICPPClassTemplate template, IType[] args)
+			throws DOMException {
 		if (template == null) {
 			return null;
 		}
@@ -1902,7 +1926,7 @@ public class CPPTemplates {
 					pType = (IType) map.get(pType);
 				}
 
-				if(!isNonTypeArgumentConvertible(pType, argument)) {
+				if (!isNonTypeArgumentConvertible(pType, argument)) {
 					return false;
 				}
 			} catch (DOMException e) {
@@ -1943,8 +1967,8 @@ public class CPPTemplates {
 	}
 	
 	public static boolean containsDependentArg(ObjectMap argMap) {
-		for(Object arg : argMap.valueArray()) {
-			if(isDependentType((IType)arg))
+		for (Object arg : argMap.valueArray()) {
+			if (isDependentType((IType)arg))
 				return true;
 		}
 		return false;

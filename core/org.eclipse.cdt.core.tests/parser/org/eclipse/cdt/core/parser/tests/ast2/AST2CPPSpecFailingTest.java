@@ -163,16 +163,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// template<class T> void f(const T*) {}
-	// int *p;
-	// void s()
-	// {
-	// f(p); // f(const int *)
-	// }
-	public void _test14_8_2_4s7() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
 	// template <class T> struct B { };
 	// template <class T> struct D : public B<T> {};
 	// struct D2 : public B<int> {};

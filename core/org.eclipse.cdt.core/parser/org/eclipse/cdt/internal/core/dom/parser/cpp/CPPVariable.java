@@ -39,61 +39,62 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalVariable {
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
-        public CPPVariableProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CPPVariableProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 
         public IType getType() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 
         public boolean isStatic() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public String[] getQualifiedName() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public char[][] getQualifiedNameCharArray() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isGloballyQualified() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isMutable() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isExtern() throws DOMException {
-             throw new DOMException( this );
+             throw new DOMException(this);
         }
         public boolean isExternC() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isAuto() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isRegister() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
     }
+
 	private IASTName declarations[] = null;
 	private IASTName definition = null;
 	private IType type = null;
 	
-	public CPPVariable( IASTName name ){
-	    boolean isDef = isDefinition( name );
-	    if( name instanceof ICPPASTQualifiedName ){
-	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ ns.length - 1 ];
+	public CPPVariable(IASTName name) {
+	    boolean isDef = isDefinition(name);
+	    if (name instanceof ICPPASTQualifiedName) {
+	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ns.length - 1];
 	    }
 	    
-	    if( isDef )
+	    if (isDef)
 	        definition = name;
 	    else 
-	        declarations = new IASTName [] { name };
-	    name.setBinding( this );
+	        declarations = new IASTName[] { name };
+	    name.setBinding(this);
 	}
 	
-	protected boolean isDefinition( IASTName name ){
+	protected boolean isDefinition(IASTName name) {
 	    IASTDeclarator dtor= findDeclarator(name);
 	    if (dtor == null) {
 	    	return false;
@@ -104,12 +105,11 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    
 	    //(3.1-1) A declaration is a definition unless ...
 	    //it contains the extern specifier or a linkage-spec and does not contain an initializer
-	    if( dtor.getInitializer() == null && declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern )
+	    if (dtor.getInitializer() == null && declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern)
 	        return false;
 	    //or it declares a static data member in a class declaration
-	    if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier && 
-	        declSpec.getStorageClass() == IASTDeclSpecifier.sc_static )
-	    {
+	    if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier && 
+	    		declSpec.getStorageClass() == IASTDeclSpecifier.sc_static) {
 	        return false;
 	    }
 	    
@@ -118,39 +118,39 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	
 	private IASTDeclarator findDeclarator(IASTName name) {
 	    IASTNode node = name.getParent();
-	    if( node instanceof ICPPASTQualifiedName )
+	    if (node instanceof ICPPASTQualifiedName)
 	        node = node.getParent();
 	    
-	    if( !( node instanceof IASTDeclarator ) )
+	    if (!(node instanceof IASTDeclarator))
 	        return null;
 	    
 	    IASTDeclarator dtor = (IASTDeclarator) node;
-	    while( dtor.getParent() instanceof IASTDeclarator )
+	    while (dtor.getParent() instanceof IASTDeclarator)
 	        dtor = (IASTDeclarator) dtor.getParent();
 	    
 	    return dtor;
 	}		
 	
-	public void addDeclaration( IASTNode node ) {
-		if( !(node instanceof IASTName) )
+	public void addDeclaration(IASTNode node) {
+		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-	    if( isDefinition( name ) )
+	    if (isDefinition(name)) {
 	        definition = name;
-	    else if( declarations == null )
+	    } else if (declarations == null) {
 	        declarations = new IASTName[] { name };
-	    else {
-	        //keep the lowest offset declaration in [0]
-			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+	    } else {
+	        //keep the lowest offset declaration in[0]
+			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
 	
 	public void removeDeclaration(IASTNode node) {
-		if( node == definition ){
+		if (node == definition) {
 			definition = null;
 			return;
 		}
@@ -175,19 +175,19 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		if( type == null ){
+		if (type == null) {
 			IASTName n = null;
-			if( definition != null )
+			if (definition != null)
 				n = definition;
-			else if( declarations != null && declarations.length > 0 )
+			else if (declarations != null && declarations.length > 0)
 				n = declarations[0];
 			
-			if( n != null ){
-				while( n.getParent() instanceof IASTName )
+			if (n != null) {
+				while (n.getParent() instanceof IASTName)
 					n = (IASTName) n.getParent();
 				IASTNode node = n.getParent();
-				if( node instanceof IASTDeclarator )
-					type = CPPVisitor.createType( (IASTDeclarator)node );
+				if (node instanceof IASTDeclarator)
+					type = CPPVisitor.createType((IASTDeclarator) node);
 			}
 		}
 		return type;
@@ -197,13 +197,13 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    if( declarations != null ){
+	    if (declarations != null) {
 	        return declarations[0].toString();
 	    } 
         IASTName name = definition;
-        if( name instanceof ICPPASTQualifiedName ){
-            IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-            name = ns[ ns.length - 1 ];
+        if (name instanceof ICPPASTQualifiedName) {
+            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+            name = ns[ns.length - 1];
         }
 	        
 	    return name.toString();
@@ -213,13 +213,13 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-	    if( declarations != null ){
+	    if (declarations != null) {
 	        return declarations[0].toCharArray();
 	    } 
         IASTName name = definition;
-        if( name instanceof ICPPASTQualifiedName ){
-            IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-            name = ns[ ns.length - 1 ];
+        if (name instanceof ICPPASTQualifiedName) {
+            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+            name = ns[ns.length - 1];
         }
 	        
 	    return name.toCharArray();
@@ -229,21 +229,21 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( definition != null ? definition : declarations[0] );
+		return CPPVisitor.getContainingScope(definition != null ? definition : declarations[0]);
 	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
@@ -251,8 +251,8 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while (scope != null) {
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -263,7 +263,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		addDeclaration( node );
+		addDeclaration(node);
 	}
 
 	public boolean hasStorageClass(int storage) {
@@ -271,24 +271,24 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         IASTNode[] ns = getDeclarations();
         
         int i = -1;
-        do{
-            if( name != null ){
+        do {
+            if (name != null) {
                 IASTNode parent = name.getParent();
-	            while( !(parent instanceof IASTDeclaration) )
+	            while (!(parent instanceof IASTDeclaration))
 	                parent = parent.getParent();
 	            
-	            if( parent instanceof IASTSimpleDeclaration ){
+	            if (parent instanceof IASTSimpleDeclaration) {
 	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	                if (declSpec.getStorageClass() == storage) {
 	                	return true;
 	                }
 	            }
             }
-            if( ns != null && ++i < ns.length )
+            if (ns != null && ++i < ns.length)
                 name = (IASTName) ns[i];
             else
                 break;
-        } while( name != null );
+        } while (name != null);
         return false;
 	}
 	
@@ -300,7 +300,6 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         return false;
     }
 
-    
     public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
@@ -309,7 +308,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern);
+        return hasStorageClass(IASTDeclSpecifier.sc_extern);
     }
 
 	/* (non-Javadoc)
@@ -334,14 +333,14 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto);
+        return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register);
+        return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
     
 	public ILinkage getLinkage() {
@@ -349,7 +348,12 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 	
 	public IBinding getOwner() throws DOMException {
-		IASTName node= definition != null ? definition : declarations[0];
+		IASTName node = definition != null ? definition : declarations[0];
 		return CPPVisitor.findNameOwner(node, !hasStorageClass(IASTDeclSpecifier.sc_extern)); 
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

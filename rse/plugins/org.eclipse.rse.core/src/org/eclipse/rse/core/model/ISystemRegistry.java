@@ -3,13 +3,13 @@
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
@@ -93,7 +93,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Return all subsystem factories.
-	 * 
+	 *
 	 * Be careful when you call this, as it activates all subsystem configurations.
 	 * @deprecated use {@link #getSubSystemConfigurationProxies()} and filter the
 	 *    list of needed subsystem configurations in order to activate only those
@@ -110,8 +110,8 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * Return all subsystem configurations which support the given system type.
 	 * If the type is null, returns all subsystem configurations. Fully
 	 * equivalent to getSubSystemConfigurationsBySystemType(systemType,
-	 * filterDuplicates, <code>true</code>) which is preferred since we do
-	 * not want to load subsystem configurations unless necessary.
+	 * filterDuplicates, <code>true</code>) which is preferred since we do not
+	 * want to load subsystem configurations unless necessary.
 	 * 
 	 * @param systemType system type to filter
 	 * @param filterDuplicates if true and the subsystem configuration uses
@@ -119,13 +119,18 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 *            supports this service. Which configuration is returned is
 	 *            undefined.
 	 * @return an array of subsystem configurations meeting the criteria
+	 * 
+	 * @deprecated Use
+	 *             {@link #getSubSystemConfigurationsBySystemType(IRSESystemType,boolean,boolean)}
+	 *             instead in order to avoid instantiating subsystem
+	 *             configurations if possible.
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicates);
 
 	/**
 	 * Return all subsystem configurations which support the given system type.
 	 * If the type is null, returns all subsystem configurations.
-	 * 
+	 *
 	 * @param systemType system type to filter
 	 * @param filterDuplicates if true and the subsystem configuration uses
 	 *            services then return only one subsystem configuration that
@@ -302,7 +307,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * <p>
 	 * This looks for a match on the "category" of the subsystem factory's xml declaration
 	 *  in its plugin.xml file.
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 * @deprecated use {@link #getSubSystemConfigurationProxiesByCategory(String)}
 	 *    and instantiate only those subsystem configurations from the proxy
@@ -322,7 +327,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	// ----------------------------
 	/**
 	 * Return the first connection to the local host we can find.
-	 * 
+	 *
 	 * While we always create a default one in the user's profile, it is possible that
 	 * this profile is not active or the connection was deleted. However, since any
 	 * connection to the local host will usually do, we just search all active profiles
@@ -359,7 +364,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * configuration's xml declaration in its plugin.xml file.
 	 * Thus, it is efficient as it need not bring to life a
 	 * subsystem configuration just to test its parent class type.
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 */
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory);
@@ -369,7 +374,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * If the specified system type is null, an empty array is returned.
 	 * In order to get an IRSESystemType, use
 	 * <code>RSECorePlugin.getTheCoreRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
-	 * 
+	 *
 	 * @param systemType The system type instance.
 	 * @return The list of connections or an empty array.
 	 */
@@ -377,7 +382,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Return all connections for all active profiles, for the given system types.
-	 * 
+	 *
 	 * In order to get an IRSESystemType, use
 	 * <code>RSECorePlugin.getTheCoreRegistry().{@link RSECoreRegistry#getSystemTypeById(String) getSystemTypeById(String)}</code>
 	 */
@@ -527,7 +532,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * registered listeners
 	 * </ul>
 	 * <p>
-	 * 
+	 *
 	 * @param profileName Name of the system profile to which the host is to be
 	 *            added.
 	 * @param systemType system type of the new host.
@@ -582,7 +587,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Update the workoffline mode for a connection.
-	 * 
+	 *
 	 * @param conn SystemConnection to change
 	 * @param offline true if connection should be set offline, false if it should be set online
 	 */
@@ -772,7 +777,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Query if the ISystemRemoteChangeListener is already listening for
 	 * SystemRemoteChange events.
-	 * 
+	 *
 	 * @param l the listener instance to check
 	 * @since org.eclipse.rse.core 3.0
 	 */
@@ -787,7 +792,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * 
+	 *
 	 * @param eventType - one of the constants from
 	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the
@@ -809,7 +814,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * 
+	 *
 	 * @param eventType - one of the constants from
 	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
 	 * @param resource - the remote resource object, or absolute name of the
@@ -836,7 +841,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * 
+	 *
 	 * @param operation - the operation for which this event was fired
 	 * @param eventType - one of the constants from
 	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
@@ -859,7 +864,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * This one takes the information needed and creates the event for you.
-	 * 
+	 *
 	 * @param operation - the operation for which this event was fired
 	 * @param eventType - one of the constants from
 	 *            {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
@@ -930,7 +935,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 
 	/**
 	 * Marks all filters for this subsystem as stale to prevent caching
-	 * 
+	 *
 	 * @param subsystem the subsystem to work on
 	 */
 	public void invalidateFiltersFor(ISubSystem subsystem);
@@ -938,7 +943,7 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	/**
 	 * Marks all filters for this subsystem that contain resourceParent as stale
 	 * to prevent caching
-	 * 
+	 *
 	 * @param resourceParent a remote resource object
 	 * @param subsystem the subsystem to work on
 	 */

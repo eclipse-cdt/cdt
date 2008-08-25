@@ -320,9 +320,6 @@ public class SystemRegistry implements ISystemRegistry
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
 	 */
-	/**
-	 * @deprecated Use {@link #getSubSystemConfigurationsBySystemType(IRSESystemType,boolean,boolean)} instead
-	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories)
 	{
 		return getSubSystemConfigurationsBySystemType(systemType, filterDuplicateServiceSubSystemFactories, true);

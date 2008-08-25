@@ -125,6 +125,9 @@ public class AddressPane extends AbstractPane
             
             cellOffset *= fRendering.getAddressableSize();
 
+            if(fRendering.getColumnCount() == 0) // avoid divide by zero
+            	return new Point(0,0);
+            
             int row = cellOffset
                 / (fRendering.getColumnCount() * fRendering.getBytesPerColumn() / fRendering
                     .getBytesPerCharacter());

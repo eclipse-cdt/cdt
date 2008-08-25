@@ -108,8 +108,15 @@ public class GDBProcessesTest extends BaseTestCase {
          */
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), "");
-            	fProcService.getExecutionData(procDmc, rm);
+            	fGdbCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fSession.getExecutor(), rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), pid);
+            	            	fProcService.getExecutionData(procDmc, rm);            					
+            				}
+            			});
             }
         });
         /*
@@ -156,7 +163,8 @@ public class GDBProcessesTest extends BaseTestCase {
          
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), "");
+            	String groupId = fProcService.getExecutionGroupIdFromThread(THREAD_ID);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), groupId);
             	IThreadDMContext threadDmc = fProcService.createThreadContext(procDmc, THREAD_ID);
             	fProcService.getExecutionData(threadDmc, rm);
             }

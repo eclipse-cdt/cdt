@@ -111,9 +111,16 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
-            	fRunCtrl.getExecutionContexts(groupDmc, rm);
+            	fGDBCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	            	fRunCtrl.getExecutionContexts(groupDmc, rm);
+            				}
+            			});
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -184,6 +191,7 @@ public class MIRunControlTest extends BaseTestCase {
         	startedEvent = startedEventWaitor.waitForEvent(1000);
         } catch (Exception e) {
         	Assert.fail("Timeout waiting for Thread create event");
+        	return;
         }
 
 		if (((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId() != 2)
@@ -195,10 +203,16 @@ public class MIRunControlTest extends BaseTestCase {
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
-
-           		fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
+            	fGDBCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rmExecutionCtxts) {
+            				@Override
+            				protected void handleSuccess() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	           		fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
+            				}
+            			});
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -247,10 +261,16 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
-
-            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
+            	fGDBCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
+            				}
+            			});
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -430,16 +450,11 @@ public class MIRunControlTest extends BaseTestCase {
      */
     @Test
     public void cacheAfterContainerSuspendEvent() throws InterruptedException{
-
-       	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-    	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
-
-    	final IExecutionDMContext dmc = fRunCtrl.createMIExecutionContext(groupDmc, 1);
     	/*
     	 * Step to fire ContainerSuspendEvent
     	 */
         try {
-			SyncUtil.SyncStep(dmc, StepType.STEP_OVER);
+			SyncUtil.SyncStep(StepType.STEP_OVER);
 		} catch (Throwable e) {
 			Assert.fail("Exception in SyncUtil.SyncStep: " + e.getMessage());
 		}
@@ -471,10 +486,16 @@ public class MIRunControlTest extends BaseTestCase {
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
-
-           		fRunCtrl.resume(groupDmc, rm);
+               	fGDBCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	           		fRunCtrl.resume(groupDmc, rm);
+            				}
+            			});
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -488,16 +509,23 @@ public class MIRunControlTest extends BaseTestCase {
 		}
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 		
-        wait.waitReset();
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            public void run() {
-               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+		wait.waitReset();
+		fRunCtrl.getExecutor().submit(new Runnable() {
+			public void run() {
+				fGDBCtrl.getInferiorProcessId(
+						new DataRequestMonitor<String>(fRunCtrl.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+            					String pid = getData();
+								IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+								IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
-            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
-                wait.waitFinished();
-            }
-        });
+								wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+								wait.waitFinished();
+							}
+						});
+			}
+		});
 
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
@@ -545,11 +573,18 @@ public class MIRunControlTest extends BaseTestCase {
 		wait.waitReset();
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-               	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), "");
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, "");
+               	fGDBCtrl.getInferiorProcessId(
+            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), null) {
+            				@Override
+            				protected void handleCompleted() {
+            					String pid = getData();
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
-            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
-                wait.waitFinished();
+            	            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+            	                wait.waitFinished();
+            				}
+            			});
             }
         });
 

@@ -432,7 +432,13 @@ public class GDBControl extends AbstractMIControl {
     
     public IPath getExecutablePath() { return fExecPath; }
         
-    public void getInferiorProcessId(DataRequestMonitor<Integer> rm) {
+    public void getInferiorProcessId(DataRequestMonitor<String> rm) {
+		String pid = null;
+		if (fInferiorProcess != null) {
+    		pid = fInferiorProcess.getPid();
+    	}
+		rm.setData(pid);
+    	rm.done();
     }
         
     @DsfServiceEventHandler 

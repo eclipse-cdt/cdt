@@ -97,7 +97,6 @@ public class PlainTextExporter implements IMemoryExporter {
 		
 		fStartText = new Text(composite, SWT.NONE);
 		data = new FormData();
-		data.top = new FormAttachment(startLabel);
 		data.left = new FormAttachment(startLabel);
 		data.width = 100;
 		fStartText.setLayoutData(data);

@@ -65,7 +65,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		db.putShort(record + TYPE_ID, getTypeCode(type));
 		try {
 			if(type.getValue() != null) {
-				IASTExpression e= CPPVisitor.reverseConstantPropogationLookup(type.getValue());
+				IASTExpression e= CPPVisitor.reverseConstantPropagationLookup(type.getValue());
 				if(e != null) {
 					db.putInt(record + INTEGRAL, CPPVisitor.parseIntegral(e.toString()).intValue());
 					db.putByte(record + INTERNAL_FLAGS, (byte)1);

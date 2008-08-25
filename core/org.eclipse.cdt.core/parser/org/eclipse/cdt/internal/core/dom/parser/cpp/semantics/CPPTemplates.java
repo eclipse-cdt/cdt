@@ -189,7 +189,7 @@ public class CPPTemplates {
 	 */
 	private static IBinding instantiateSelectedTemplate(ICPPTemplateDefinition template, IType[] arguments) 
 			throws DOMException {
-		Assert.isTrue(template instanceof ICPPClassTemplatePartialSpecialization == false);
+		Assert.isTrue(!(template instanceof ICPPClassTemplatePartialSpecialization));
 
 		ICPPTemplateParameter[] parameters= template.getTemplateParameters();
 		if (parameters == null || parameters.length == 0) 
@@ -262,7 +262,7 @@ public class CPPTemplates {
 		// we do not correctly distinguish between type and non-type parameters, this works
 		// around getting the wrong instance when providing a value rather than a type.
 		if (instance != null) {
-			if (argsContainDependentType || instance instanceof ICPPDeferredClassInstance == false)  
+			if (argsContainDependentType || !(instance instanceof ICPPDeferredClassInstance))  
 				return instance;
 		}
 
@@ -1007,8 +1007,8 @@ public class CPPTemplates {
 		    parent = parent.getParent();
 		}
 		if (parent instanceof IASTDeclSpecifier) {
-			if (parent instanceof IASTCompositeTypeSpecifier == false 
-					&& parent instanceof IASTElaboratedTypeSpecifier == false) {
+			if (!(parent instanceof IASTCompositeTypeSpecifier) &&
+					!(parent instanceof IASTElaboratedTypeSpecifier)) {
 				return null;
 			}
 			parent = parent.getParent();
@@ -1017,7 +1017,7 @@ public class CPPTemplates {
 			    parent = parent.getParent();
 			}
 		}
-		if (parent instanceof IASTDeclaration == false) {
+		if (!(parent instanceof IASTDeclaration)) {
 			return null;
 		}
 		
@@ -1282,7 +1282,7 @@ public class CPPTemplates {
 				 * will include its value)
 				 */
 				if (param instanceof IASTIdExpression) {
-					param= CPPVisitor.reverseConstantPropogationLookup((IASTIdExpression)param);
+					param= CPPVisitor.reverseConstantPropagationLookup((IASTIdExpression)param);
 				}
 				
 				IType type= CPPVisitor.createType(param);
@@ -1523,8 +1523,8 @@ public class CPPTemplates {
 		if (e1 == null)
 			return true;
 
-		e1= CPPVisitor.reverseConstantPropogationLookup(e1);
-		e2= CPPVisitor.reverseConstantPropogationLookup(e2);		
+		e1= CPPVisitor.reverseConstantPropagationLookup(e1);
+		e2= CPPVisitor.reverseConstantPropagationLookup(e2);		
 		
 		if (e1 instanceof IASTLiteralExpression && e2 instanceof IASTLiteralExpression) {
 			IType t1= e1.getExpressionType();
@@ -1887,7 +1887,8 @@ public class CPPTemplates {
 		return !(argument instanceof IProblemBinding);
 	}
 
-	static protected boolean matchTemplateParameterAndArgument(ICPPTemplateParameter param, IType argument, ObjectMap map) {
+	static protected boolean matchTemplateParameterAndArgument(ICPPTemplateParameter param, IType argument,
+			ObjectMap map) {
 		if (!isValidArgument(param, argument)) {
 			return false;
 		}
@@ -1897,7 +1898,8 @@ public class CPPTemplates {
 			if (!(argument instanceof ICPPTemplateDefinition))
 				return false;
 
-			ICPPTemplateParameter[] pParams = null, aParams = null;
+			ICPPTemplateParameter[] pParams = null;
+			ICPPTemplateParameter[] aParams = null;
 			try {
 				pParams = ((ICPPTemplateTemplateParameter) param).getTemplateParameters();
 				aParams = ((ICPPTemplateDefinition) argument).getTemplateParameters();

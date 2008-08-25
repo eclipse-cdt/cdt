@@ -567,7 +567,7 @@ public class CPPVisitor {
 			if (parent instanceof IASTStandardFunctionDeclarator) {
 				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
 				// if the fdtor does not declare a function we don't create a binding for the parameter.
-				if (findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration == false ||
+				if (!(findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration) ||
 						findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
 				IBinding temp = findInnermostDeclarator(fdtor).getName().resolveBinding();
@@ -779,7 +779,7 @@ public class CPPVisitor {
 			} else if (node instanceof IASTTypeId) {
 				if (node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
 					node= node.getParent(); // template-id
-					while(node instanceof IASTName) { 
+					while (node instanceof IASTName) { 
 						node= node.getParent();
 					}
 					continue;
@@ -1540,9 +1540,9 @@ public class CPPVisitor {
 	    IScope scope = fnDtor.getFunctionScope();
 	    IType thisType= getThisType(scope);
 	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
-	    if(thisType == null && nested != null) {
+	    if (thisType == null && nested != null) {
 	    	IType pts= getPointerTypes(new CPPBasicType(-1,-1), nested);
-	    	if(pts instanceof ICPPPointerToMemberType) {
+	    	if (pts instanceof ICPPPointerToMemberType) {
 	    		thisType= new CPPPointerType(((ICPPPointerToMemberType)pts).getMemberOfClass());
 	    	}
 	    }
@@ -1582,9 +1582,9 @@ public class CPPVisitor {
 	    
 	    // Currently, CPPBasicType objects are also used to represent non-type template argument
 	    // values. We must ensure the initializer expression is attached to the type if available.
-	    if(declarator.getInitializer() instanceof IASTInitializerExpression) {
+	    if (declarator.getInitializer() instanceof IASTInitializerExpression) {
 	    	IType utype= getUltimateTypeUptoPointers(baseType);
-	    	if(utype instanceof CPPBasicType) {
+	    	if (utype instanceof CPPBasicType) {
 	    		((CPPBasicType)utype).setValue(((IASTInitializerExpression) declarator.getInitializer()).getExpression());
 	    	}
 	    }
@@ -1801,11 +1801,11 @@ public class CPPVisitor {
 	    } else if (expression instanceof ICPPASTLiteralExpression) {
 	    	ICPPASTLiteralExpression lit= (ICPPASTLiteralExpression) expression;
 	    	switch(lit.getKind()) {
-	    		case ICPPASTLiteralExpression.lk_this : {
+	    		case ICPPASTLiteralExpression.lk_this: {
 	    			IScope scope = getContainingScope(expression);
 	    			return getThisType(scope);
 	    		}
-	    		case ICPPASTLiteralExpression.lk_true :
+	    		case ICPPASTLiteralExpression.lk_true:
 	    		case ICPPASTLiteralExpression.lk_false:
 	    			return new CPPBasicType(ICPPBasicType.t_bool, 0, expression);
 	    		case IASTLiteralExpression.lk_char_constant:
@@ -1836,7 +1836,7 @@ public class CPPVisitor {
 	        } else if (binding instanceof IFunction) {
 	            IFunctionType fType;
                 try {
-                    fType = ((IFunction)binding).getType();
+                    fType = ((IFunction) binding).getType();
                     if (fType != null)
     	                return fType.getReturnType();
                 } catch (DOMException e) {
@@ -1844,12 +1844,12 @@ public class CPPVisitor {
                 }
 	        } else if (binding instanceof IVariable) {
 	        	try {
-		        	IType t = ((IVariable)binding).getType();
+		        	IType t = ((IVariable) binding).getType();
 		        	while (t instanceof ITypedef) {
 		        		t = ((ITypedef)t).getType();
 		        	}
-		        	if (t instanceof IPointerType && ((IPointerType)t).getType() instanceof IFunctionType) {
-		        		IFunctionType ftype = (IFunctionType) ((IPointerType)t).getType();
+		        	if (t instanceof IPointerType && ((IPointerType) t).getType() instanceof IFunctionType) {
+		        		IFunctionType ftype = (IFunctionType) ((IPointerType) t).getType();
 		        		if (ftype != null)
 		        			return ftype.getReturnType();
 		        	}
@@ -1865,11 +1865,11 @@ public class CPPVisitor {
 	        	} 
 	        } else if (binding instanceof ITypedef) {
 	        	try {
-					IType type = ((ITypedef)binding).getType();
+					IType type = ((ITypedef) binding).getType();
 					while (type instanceof ITypedef)
-						type = ((ITypedef)type).getType();
+						type = ((ITypedef) type).getType();
 					if (type instanceof IFunctionType) {
-						return ((IFunctionType)type).getReturnType();
+						return ((IFunctionType) type).getReturnType();
 					}
 					return type;
 				} catch (DOMException e) {
@@ -2166,7 +2166,6 @@ public class CPPVisitor {
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
 		tu.accept(action);
-		
 		return action.getProblems();
 	}
 
@@ -2182,9 +2181,9 @@ public class CPPVisitor {
 	    
 		IASTName[] found = action.getDeclarations();
 		if (found.length == 0 && binding instanceof ICPPSpecialization && binding instanceof ICPPInternalBinding) {
-			IASTNode node = ((ICPPInternalBinding)binding).getDefinition();
+			IASTNode node = ((ICPPInternalBinding) binding).getDefinition();
 			if (node == null) {
-				IASTNode[] nds = ((ICPPInternalBinding)binding).getDeclarations();
+				IASTNode[] nds = ((ICPPInternalBinding) binding).getDeclarations();
 				if (nds != null && nds.length > 0)
 					node = nds[0]; 
 			}
@@ -2312,7 +2311,7 @@ public class CPPVisitor {
 					IASTIdExpression ide= (IASTIdExpression) fne;
 					IBinding b= ide.getName().resolveBinding();
 					if (b instanceof IFunction) {
-						IFunctionType tp= ((IFunction)b).getType();
+						IFunctionType tp= ((IFunction) b).getType();
 						return !(tp.getReturnType() instanceof ICPPReferenceType);
 					}
 				}
@@ -2333,28 +2332,29 @@ public class CPPVisitor {
 	 */
 	public static BigInteger parseIntegral(String integral) {
 		int radix= 10;
-		if(integral.length() == 3
+		if (integral.length() == 3
 				&& integral.charAt(0) == '\''
 				&& integral.charAt(2) == '\'') {
 			String lo= Long.toString(Character.getNumericValue(integral.charAt(1)));
 			return new BigInteger(lo);
-		} else if(Keywords.TRUE.equals(integral)) {
+		} else if (Keywords.TRUE.equals(integral)) {
 			return BigInteger.ONE;
-		} else if(Keywords.FALSE.equals(integral)) {
+		} else if (Keywords.FALSE.equals(integral)) {
 			return BigInteger.ZERO;
 		}
 		
-		int start=0, end= integral.length();
+		int start=0;
+		int end= integral.length();
 		
-		boolean negate= integral.charAt(start)=='-';
-		if(negate || integral.charAt(start)=='+') {
+		boolean negate= integral.charAt(start) == '-';
+		if (negate || integral.charAt(start) == '+') {
 			start++;
 		}
 		
-		if(start<integral.length() && integral.charAt(start) == '0') {
-			if(start+1<integral.length()) {
-				if(integral.charAt(start+1) == 'x') {
-					start+=2;
+		if (start < integral.length() && integral.charAt(start) == '0') {
+			if (start + 1 < integral.length()) {
+				if (integral.charAt(start + 1) == 'x') {
+					start += 2;
 					radix= 16;
 				} else {
 					radix= 8;
@@ -2362,9 +2362,9 @@ public class CPPVisitor {
 			}
 		}
 		
-		for(end--; end>0; end--) {
+		for (end--; end > 0; end--) {
 			final char c= integral.charAt(end);
-			if(c != 'L' && c!='l' && c!='U' && c!='u') {
+			if (c != 'L' && c!='l' && c!='U' && c!='u') {
 				break;
 			}
 		}
@@ -2379,25 +2379,25 @@ public class CPPVisitor {
 	 * @param e1
 	 * @return the first non id-expression by following values assigned to basic types.
 	 */
-	public static final IASTExpression reverseConstantPropogationLookup(IASTExpression e1) {
+	public static final IASTExpression reverseConstantPropagationLookup(IASTExpression e1) {
 		try {
-			for(int i=0; e1 instanceof IASTIdExpression && i<8; i++) {
+			for(int i= 0; e1 instanceof IASTIdExpression && i < 8; i++) {
 				IBinding b1= ((IASTIdExpression)e1).getName().resolveBinding();
-				if(b1 instanceof ICPPVariable) {
+				if (b1 instanceof ICPPVariable) {
 					ICPPVariable var= (ICPPVariable) b1;
 					IType t1= SemanticUtil.getUltimateTypeViaTypedefs(var.getType());
-					if(t1 instanceof IQualifierType) {
+					if (t1 instanceof IQualifierType) {
 						IQualifierType qt= (IQualifierType) t1;
-						if(qt.isConst()) {
+						if (qt.isConst()) {
 							t1= SemanticUtil.getUltimateTypeViaTypedefs(qt.getType());
-							if(t1 instanceof ICPPBasicType) {
-								e1= ((ICPPBasicType)t1).getValue();
+							if (t1 instanceof ICPPBasicType) {
+								e1= ((ICPPBasicType) t1).getValue();
 							}
 						}
 					}
 				}
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			CCorePlugin.log(de);
 		}
 		return e1;
@@ -2410,7 +2410,7 @@ public class CPPVisitor {
 	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator outermost= null;
 		IASTNode candidate= declarator;
-		while(candidate instanceof IASTDeclarator) {
+		while (candidate instanceof IASTDeclarator) {
 			outermost= (IASTDeclarator) candidate;
 			candidate= outermost.getParent();
 		}
@@ -2423,7 +2423,7 @@ public class CPPVisitor {
 	 */
 	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator innermost= null;
-		while(declarator != null) {
+		while (declarator != null) {
 			innermost= declarator;
 			declarator= declarator.getNestedDeclarator();
 		}
@@ -2436,9 +2436,9 @@ public class CPPVisitor {
 	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
 		IASTDeclarator result= findInnermostDeclarator(declarator);
 		while (result.getPointerOperators().length == 0 
-				&& result instanceof IASTFieldDeclarator == false
-				&& result instanceof IASTFunctionDeclarator == false
-				&& result instanceof IASTArrayModifier == false) {
+				&& !(result instanceof IASTFieldDeclarator)
+				&& !(result instanceof IASTFunctionDeclarator)
+				&& !(result instanceof IASTArrayModifier)) {
 			final IASTNode parent= result.getParent();
 			if (parent instanceof IASTDeclarator) {
 				result= (IASTDeclarator) parent;
@@ -2453,7 +2453,7 @@ public class CPPVisitor {
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {
-		while(node != null && node instanceof IASTFunctionDefinition == false) {
+		while (node != null && !(node instanceof IASTFunctionDefinition)) {
 			node= node.getParent();
 		}
 		if (node == null)
@@ -2490,7 +2490,7 @@ public class CPPVisitor {
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// search for declaration
-		while (node instanceof IASTDeclaration == false) {
+		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
 				return null;
 			

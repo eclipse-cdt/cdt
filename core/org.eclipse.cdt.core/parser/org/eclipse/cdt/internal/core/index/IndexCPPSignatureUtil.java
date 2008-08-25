@@ -117,7 +117,7 @@ public class IndexCPPSignatureUtil {
 	}
 
 	private static String getValueString(IASTExpression e) {
-		e= CPPVisitor.reverseConstantPropogationLookup(e);
+		e= CPPVisitor.reverseConstantPropagationLookup(e);
 		if (e instanceof IASTLiteralExpression) {
 			IType t1= e.getExpressionType();
 			try {

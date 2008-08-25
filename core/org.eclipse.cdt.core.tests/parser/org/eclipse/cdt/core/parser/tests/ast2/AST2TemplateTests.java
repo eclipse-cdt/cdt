@@ -2158,7 +2158,50 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
 	}
 
-	// namespace ns {
+    //  struct A {};
+    //
+    //  template <class T1>
+    //  void func(const T1& p) {
+    //  }
+    //
+    //  void test() {
+    //    A a1;
+    //    const A a2;
+    //    func(a1);
+    //    func(a2);
+    //  }
+    public void testFunctionTemplate_245049_1() throws Exception {
+        BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+        ICPPFunction b0= bh.assertNonProblem("func(a1)", 4, ICPPFunction.class);
+        assertInstance(b0, ICPPTemplateInstance.class);
+        ICPPFunction b1= bh.assertNonProblem("func(a2)", 4, ICPPFunction.class);
+        assertSame(b0, b1);
+    }
+    
+    //  struct A {};
+    //
+    //  template <class T1>
+    //  void func(const T1& p) {
+    //  }
+    //  template <class T2>
+    //  void func(T2& p) {
+    //  }
+    //
+    //  void test() {
+    //    A a1;
+    //    const A a2;
+    //    func(a1);
+    //    func(a2);
+    //  }
+    public void testFunctionTemplate_245049_2() throws Exception {
+        BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+        ICPPFunction b0= bh.assertNonProblem("func(a1)", 4, ICPPFunction.class);
+        assertInstance(b0, ICPPTemplateInstance.class);
+        ICPPFunction b1= bh.assertNonProblem("func(a2)", 4, ICPPFunction.class);
+        assertNotSame(b0, b1);
+    }
+
+    // namespace ns {
 	//
 	// template<class _M1, class _M2>
 	// struct pair {

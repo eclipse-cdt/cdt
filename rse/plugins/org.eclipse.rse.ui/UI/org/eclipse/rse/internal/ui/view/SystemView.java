@@ -62,6 +62,7 @@
  * David McKnight   (IBM)        - [238363] Performance improvement for refresh in system view.
  * David McKnight   (IBM)        - [241722] New -> File doesn't select the newly created file
  * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
+ * David Dykstal (IBM) - [233530] Not Prompted on Promptable Filters after using once by double click
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;

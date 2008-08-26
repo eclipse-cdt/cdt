@@ -15,7 +15,7 @@
 		<tstamp/>
 		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.4RC4-200806091311/eclipse-SDK-3.4RC4-linux-gtk-ppc.tar.gz"/>
 		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.I20080526-0000-e3.4.zip"/>
-		<property name="branchVersion" value="5.0.0"/>
+		<property name="branchVersion" value="5.1.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -392,10 +392,16 @@
 			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.tests"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.tests"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.core"/>

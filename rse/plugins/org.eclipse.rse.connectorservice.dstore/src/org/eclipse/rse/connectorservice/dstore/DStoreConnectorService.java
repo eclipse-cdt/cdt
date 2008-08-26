@@ -34,6 +34,7 @@
  * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
  * David McKnight   (IBM)        - [244116] [dstore][daemon][ssl]  Connecting to RSE server doesn't complete when the connection is SSL
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
+ * David Dykstal (IBM) [235284] Cancel password change causes problem
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -754,7 +755,13 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						}
 
 						SystemMessage message = createSystemMessage(msgId,IStatus.ERROR, pmsg, pmsgDetails);
-						getCredentialsProvider().repairCredentials(message);
+						try {
+							getCredentialsProvider().repairCredentials(message);
+						} catch (OperationCanceledException e) {
+							_isConnecting = false;
+							clientConnection = null;
+							throw e;
+						}
 						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
 						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
 						launchMsg = launchStatus.getMessage();

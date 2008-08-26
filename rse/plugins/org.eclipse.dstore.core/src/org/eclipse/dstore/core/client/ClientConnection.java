@@ -19,6 +19,7 @@
  * David McKnight   (IBM) - [220892][dstore] Backward compatibility: Server and Daemon should support old clients
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) [235284] Cancel password change causes problem
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -121,6 +122,9 @@ public class ClientConnection
 	public final static String CLIENT_OLDER = "Older DataStore Client."; //$NON-NLS-1$
 	public final static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol."; //$NON-NLS-1$
 	public final static String CANNOT_CONNECT = "Cannot connect to server."; //$NON-NLS-1$
+	
+	// TODO: should probably make this a public constant in 3.1
+	private final static String INVALID_DAEMON_PORT_NUMBER = "Invalid daemon port number."; //$NON-NLS-1$
 
 	/**
 	 * Creates a new ClientConnection instance
@@ -782,6 +786,11 @@ public class ClientConnection
 						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
 						return result;
 					}
+					catch (IllegalArgumentException e) {
+						e = new IllegalArgumentException(INVALID_DAEMON_PORT_NUMBER);
+						result = new ConnectionStatus(false, e);
+						return result;
+					}
 					catch (Exception e)
 					{
 						if (_launchSocket != null)
@@ -816,6 +825,10 @@ public class ClientConnection
 		catch (UnknownHostException uhe)
 		{
 			result = new ConnectionStatus(false, uhe);
+		}
+		catch (IllegalArgumentException e) {
+			e = new IllegalArgumentException(INVALID_DAEMON_PORT_NUMBER);
+			result = new ConnectionStatus(false, e);
 		}
 		catch (IOException ioe)
 		{

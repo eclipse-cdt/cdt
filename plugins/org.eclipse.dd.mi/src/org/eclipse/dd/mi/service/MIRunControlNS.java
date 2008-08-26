@@ -29,7 +29,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
@@ -226,12 +225,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 
 	private AbstractMIControl fConnection;
 
-	// The command cache applies only for the thread-info command at the
-	// container (process) level and is *always* available in non-stop mode.
-	// The only thing to do is to reset it every time a thread is created/
-	// terminated.
-	private CommandCache fMICommandCache;
-
 	private boolean fTerminated = false;
 
 	// ThreadStates indexed by the execution context
@@ -258,8 +251,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	private void doInitialize(final RequestMonitor rm) {
         register(new String[]{IRunControl.class.getName()}, new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(AbstractMIControl.class);
-        fMICommandCache = new CommandCache(getSession(), fConnection);
-        fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
 		getSession().addServiceEventListener(this, null);
 		rm.done();
 	}
@@ -677,14 +668,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
         return procService.createExecutionContext(container, threadDmc, threadId);
 	}
 
-	public CommandCache getCache() {
-		 return fMICommandCache;
-	}
-
-	protected AbstractMIControl getConnection() {
-		 return fConnection;
-	}
-
 	private void updateThreadState(IMIExecutionDMContext context, ResumedEvent event) {
 		StateChangeReason reason = event.getReason();
 		boolean isStepping = reason.equals(StateChangeReason.STEP);
@@ -752,7 +735,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		IExecutionDMContext ctx = e.getDMContext();
 		if (ctx instanceof IMIExecutionDMContext) {			
 			updateThreadState((IMIExecutionDMContext)ctx, e);
-			fMICommandCache.reset();
 		}
 	}
 
@@ -761,7 +743,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 		IExecutionDMContext ctx = e.getDMContext();
 		if (ctx instanceof IMIExecutionDMContext) {			
 			updateThreadState((IMIExecutionDMContext)ctx, e);
-			fMICommandCache.reset();
 		}
 	}
 

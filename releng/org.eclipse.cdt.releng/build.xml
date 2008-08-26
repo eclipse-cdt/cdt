@@ -393,10 +393,16 @@
 			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.tests"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.tests"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.core"/>

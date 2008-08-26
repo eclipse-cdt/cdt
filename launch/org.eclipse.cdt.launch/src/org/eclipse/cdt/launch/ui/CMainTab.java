@@ -33,6 +33,7 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -558,6 +559,21 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 
 			exePath = location.append(name);
+			if (!exePath.toFile().exists()) {
+				// Try the old way, which is required to support linked resources.
+				IFile projFile = null;					
+				try {
+					projFile = project.getFile(name);
+				}
+				catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file ("..\somefile")
+				if (projFile == null || !projFile.exists()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+				else {
+					exePath = projFile.getLocation();
+				}
+			}
 		} 
 		if (!exePath.toFile().exists()) {
 			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$

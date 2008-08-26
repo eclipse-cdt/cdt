@@ -377,6 +377,17 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			IPath location = cproject.getProject().getLocation();
 			if (location != null) {
 				programPath = location.append(programPath);
+				if (!programPath.toFile().exists()) {
+					// Try the old way, which is required to support linked resources.
+					IFile projFile = null;
+					try {
+						projFile = project.getFile(getProgramPath(config));
+					}
+					catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file (e.g., "..\somefile")
+					if (projFile != null && projFile.exists()) {
+						programPath = projFile.getLocation();
+					}
+				}
 			}
 		}
 		if (!programPath.toFile().exists()) {

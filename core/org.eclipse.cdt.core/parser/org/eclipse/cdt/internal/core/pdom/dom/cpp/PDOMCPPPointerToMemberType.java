@@ -63,7 +63,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 	public IType getMemberOfClass() {
 		try {
 			int rec = pdom.getDB().getInt(record + TYPE);
-			return (IType) getLinkage().getNode(rec);
+			return (IType) getLinkageImpl().getNode(rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

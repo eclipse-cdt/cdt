@@ -15,6 +15,7 @@
         </enablement>    
     </renderingBindings>          
 </extension>
+
 <extension
       point="org.eclipse.ui.preferencePages">
    <page
@@ -26,6 +27,21 @@
 <extension
       point="org.eclipse.core.runtime.preferences">
    <initializer class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferenceInitializer"/>
+</extension>
+
+<extension point="org.eclipse.ui.viewActions">
+    <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+         <action
+               class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferenceAction"
+               helpContextId="TraditionalRenderingPreferenceAction_context"
+               id="org.eclipse.dd.debug.memory.renderings.traditional.preferenceaction"
+               label="%TraditionalRenderingPreferenceActionName"
+               menubarPath="additions"
+               style="push"
+               tooltip="%TraditionalRenderingPreferenceActionName"/>
+	</viewContribution>
 </extension>
 
 </plugin>

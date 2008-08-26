@@ -40,7 +40,7 @@ public class TraditionalRenderingPreferencePage
 	public TraditionalRenderingPreferencePage() {
 		super(GRID);
 		setPreferenceStore(TraditionalRenderingPlugin.getDefault().getPreferenceStore());
-		//setDescription("Traditional Memory Rendering");
+		setDescription("Traditional Memory Rendering");
 	}
 	
 	/**

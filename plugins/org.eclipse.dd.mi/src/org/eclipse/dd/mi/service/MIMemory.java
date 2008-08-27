@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -51,7 +52,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Memory service implementation
  */
-public class MIMemory extends AbstractDsfService implements IMemory {
+public class MIMemory extends AbstractDsfService implements IMemory, ICachingService {
 
     public class MemoryChangedEvent extends AbstractDMEvent<IMemoryDMContext> 
         implements IMemoryChangedEvent 
@@ -906,4 +907,7 @@ public class MIMemory extends AbstractDsfService implements IMemory {
 
 	}
 
+    public void flushCache(IDMContext context) {
+        fMemoryCache.reset();
+    }
 }

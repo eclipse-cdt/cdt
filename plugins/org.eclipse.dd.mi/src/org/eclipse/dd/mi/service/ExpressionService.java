@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -59,7 +60,7 @@ import org.osgi.framework.BundleContext;
  * This class implements a debugger expression evaluator as a DSF service. The
  * primary interface that clients of this class should use is IExpressions.
  */
-public class ExpressionService extends AbstractDsfService implements IExpressions {
+public class ExpressionService extends AbstractDsfService implements IExpressions, ICachingService {
 
 	/**
 	 * This class represents the two expressions that characterize an Expression Context.
@@ -910,6 +911,10 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     public void eventDispatched(IMemoryChangedEvent e) {
         fExpressionCache.reset();
         // MIVariableManager separately traps this event
+    }
+
+    public void flushCache(IDMContext context) {
+        fExpressionCache.reset();
     }
 
 }

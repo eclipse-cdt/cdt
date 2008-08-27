@@ -20,6 +20,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -41,7 +42,7 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class PDARegisters extends AbstractDsfService 
-    implements IRegisters, IEventListener
+    implements IRegisters, IEventListener, ICachingService
 {
 
     private static class RegisterGroupDMContext extends AbstractDMContext implements IRegisterGroupDMContext {
@@ -547,5 +548,9 @@ public class PDARegisters extends AbstractDsfService
         if ("registers".equals(output)) {
             fNamesCache.reset();
         }
+    }
+    
+    public void flushCache(IDMContext context) {
+        fExpressions.flushCache(context);
     }
 }

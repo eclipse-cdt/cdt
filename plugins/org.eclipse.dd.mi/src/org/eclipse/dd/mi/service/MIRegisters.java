@@ -20,6 +20,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -53,7 +54,7 @@ import org.osgi.framework.BundleContext;
  * always be consistent with the events.
  */
 
-public class MIRegisters extends AbstractDsfService implements IRegisters {
+public class MIRegisters extends AbstractDsfService implements IRegisters, ICachingService {
 	private static final String BLANK_STRING = ""; //$NON-NLS-1$
     /*
      * Support class used to construct Register Group DMCs.
@@ -620,5 +621,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters {
     public void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm) {
         rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register Group context not supported", null)); //$NON-NLS-1$
         rm.done();
+    }
+    
+    public void flushCache(IDMContext context) {
+        fRegisterNameCache.reset(context);
+        fRegisterValueCache.reset(context);
     }
 }

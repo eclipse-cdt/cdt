@@ -20,6 +20,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
@@ -41,7 +42,7 @@ import org.osgi.framework.BundleContext;
 /**
  * 
  */
-public class PDAExpressions extends AbstractDsfService implements IExpressions {
+public class PDAExpressions extends AbstractDsfService implements ICachingService, IExpressions {
 
     @Immutable
     private static class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
@@ -540,4 +541,7 @@ public class PDAExpressions extends AbstractDsfService implements IExpressions {
         fCommandCache.reset(DMContexts.getAncestorOfType(e.getDMContext(), PDAThreadDMContext.class));
     }    
 
+    public void flushCache(IDMContext context) {
+        fCommandCache.reset(context);
+    }
 }

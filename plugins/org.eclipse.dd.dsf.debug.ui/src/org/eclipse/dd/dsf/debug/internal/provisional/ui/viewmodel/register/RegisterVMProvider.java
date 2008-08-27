@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register;
 
+import java.util.concurrent.RejectedExecutionException;
+
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
+import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
@@ -227,4 +234,23 @@ public class RegisterVMProvider extends AbstractDMVMProvider
 			return fDMContext.hashCode();
 		}
 	}
+    
+    @Override
+    public void refresh() {
+        super.refresh();
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), getSession().getId());
+                    IRegisters registerService = tracker.getService(IRegisters.class);
+                    if (registerService instanceof ICachingService) {
+                        ((ICachingService)registerService).flushCache(null);
+                    }
+                    tracker.dispose();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session disposed, ignore.
+        }
+    }
 }

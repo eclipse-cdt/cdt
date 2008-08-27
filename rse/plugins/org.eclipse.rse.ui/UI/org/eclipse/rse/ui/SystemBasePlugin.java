@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -68,6 +69,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	private static volatile IWorkbenchWindow activeWindow = null;
 	private static volatile IWorkbenchWindow previousActiveWindow = null;
 	private static IWindowListener windowListener = null;
+	private static IWorkbenchListener workbenchListener = null;
 
 	// instance variables
     private Hashtable imageDescriptorRegistry = null;
@@ -183,6 +185,22 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		}
 	}
 
+	private static class WorkbenchListener implements IWorkbenchListener {
+		public boolean preShutdown(IWorkbench workbench, boolean forced) {
+			return true;
+		}
+
+		public void postShutdown(IWorkbench workbench) {
+			synchronized (WindowListener.class) {
+				assert windowListener != null;
+				workbench.removeWindowListener(windowListener);
+				workbench.removeWorkbenchListener(workbenchListener);
+				workbenchListener = null;
+				windowListener = null;
+			}
+		}
+	}
+
 	private static void addWindowListener() {
 		synchronized (WindowListener.class) {
 			if (windowListener == null) {
@@ -190,22 +208,11 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 					IWorkbench wb = PlatformUI.getWorkbench();
 					windowListener = new WindowListener();
 					wb.addWindowListener(windowListener);
+					workbenchListener = new WorkbenchListener();
+					wb.addWorkbenchListener(workbenchListener);
 				} catch (IllegalStateException e) {
 					/* will try again later when workbench becomes available */
 					System.out.println("Workbench not yet available"); //$NON-NLS-1$
-				}
-			}
-		}
-	}
-
-	private static void removeWindowListener() {
-		synchronized (WindowListener.class) {
-			if (windowListener != null) {
-				try {
-					IWorkbench wb = PlatformUI.getWorkbench();
-					wb.removeWindowListener(windowListener);
-				} finally {
-					windowListener = null;
 				}
 			}
 		}
@@ -619,7 +626,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
-    	removeWindowListener();
     	logDebugMessage(this.getClass().getName(), "SHUTDOWN"); //$NON-NLS-1$
    	    LoggerFactory.freeLogger(this);
         super.stop(context);

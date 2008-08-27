@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Error Pattern - used by Error Parser to convert build output to problem markers
+ * @since 5.1
  */
 public class ErrorPattern {
 	private final Pattern pattern;

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.IErrorParser;
 
 /**
  * Abstract Error Parser that implements simple line processing using patterns array
+ * @since 5.1
  */
 public class AbstractErrorParser implements IErrorParser {
 

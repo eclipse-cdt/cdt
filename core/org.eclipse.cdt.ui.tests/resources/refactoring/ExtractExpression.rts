@@ -25,7 +25,7 @@ class Test
 
 void Test::test()
 {
-    if(//$5 == 3 + 2$//) {
+    if(/*$*/5 == 3 + 2/*$$*/) {
 		//...
     }
 }
@@ -73,7 +73,7 @@ class Test
 void Test::test()
 {
     int num = 1;
-    if(//$5 != 3 + num$//) {
+    if(/*$*/5 != 3 + num/*$$*/) {
 		//...
     }
 }
@@ -123,7 +123,7 @@ void Test::test()
 {
 	int five = 5;
 	int six = 6;
-    int result = //$five + six$//;
+    int result = /*$*/five + six/*$$*/;
 }
 
 //=
@@ -174,7 +174,7 @@ void Test::test()
 {
 	helper s1 = "a";
 	helper s2 = "b";
-    helper result = //$s1 + s2$//;
+    helper result = /*$*/s1 + s2/*$$*/;
 }
 
 //=
@@ -227,7 +227,7 @@ void Test::test()
 {
 	new_helper s1 = "a";
 	new_helper s2 = "b";
-    new_helper result = //$s1 + s2$//;
+    new_helper result = /*$*/s1 + s2/*$$*/;
 }
 
 //=
@@ -258,7 +258,7 @@ struct helper {};
 
 int main(int argc, char** argv)
 {
-    helper* h = //$new helper$//;
+    helper* h = /*$*/new helper/*$$*/;
 	return 0;
 }
 //=
@@ -293,7 +293,7 @@ string join(string s1, char* s2)
 int main()
 {
   string hello = "Hello";
-  cout << //$join(hello, "World")$// << endl;
+  cout << /*$*/join(hello, "World")/*$$*/ << endl;
 }
 //=
 class string {};
@@ -332,7 +332,7 @@ class Klass
 	void test()
 	{
 	  other o;
-	  this->set(//$o.value()$//);
+	  this->set(/*$*/o.value()/*$$*/);
 	}
 };
 
@@ -372,7 +372,7 @@ Cursor* contains(const Cursor& pos);
 
 int main() {
 	Cursor c;
-	contains(//$contains(c)$//);
+	contains(/*$*/contains(c)/*$$*/);
 }
 
 //=
@@ -407,7 +407,7 @@ Cursor* contains(const Cursor& pos)
 
 int main() {
 	Cursor c;
-	contains(//$contains(c)$//);
+	contains(/*$*/contains(c)/*$$*/);
 }
 
 //=

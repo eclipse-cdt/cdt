@@ -47,9 +47,9 @@ A::~A()
 }
 int A::foo()
 {
-	//$int i = 2;
+	/*$*/int i = 2;
 	++i;
-	help();$//
+	help();/*$$*/
 	return i;
 }
 
@@ -138,8 +138,8 @@ int A::foo()
 {
 	int i = 2;
 	//comment
-	//$++i;
-	help();$//
+	/*$*/++i;
+	help();/*$$*/
 	return i;
 }
 
@@ -191,7 +191,7 @@ int main(){
 	
 	int i;
 	// Comment
-	//$i= 7;$//
+	/*$*/i= 7;/*$$*/
 	return i;
 }
 
@@ -222,7 +222,7 @@ returnparameterindex=0
 int main(){
 	
 	int i;
-	//$i= 7;$// // Comment
+	/*$*/i= 7;/*$$*/ // Comment
 	return i;
 }
 
@@ -280,11 +280,11 @@ A::~A()
 
 int A::foo()
 {
-	//$int o = 1;
+	/*$*/int o = 1;
 	int i = 2;
 	++i;
 	o++;
-	help();$//
+	help();/*$$*/
 	o++;
 	return i;
 }int A::help()
@@ -347,8 +347,8 @@ A::~A()
 }
 void A::foo()
 {
-	//$b = new B();
-	help();$//
+	/*$*/b = new B();
+	help();/*$$*/
 }
 
 int A::help()
@@ -450,8 +450,8 @@ A::~A()
 }
 void A::foo()
 {
-	//$b = new B();
-	help();$//
+	/*$*/b = new B();
+	help();/*$$*/
 }
 
 int A::help()
@@ -550,9 +550,9 @@ A::~A()
 int A::foo()
 {
 	int i = 2;
-	//$++i;
+	/*$*/++i;
 	i += ZWO;
-	help();$//
+	help();/*$$*/
 	return i;
 }
 
@@ -644,9 +644,9 @@ A::~A()
 int A::foo()
 {
 	int i = 2;
-	//$++i;
+	/*$*/++i;
 	i = ADD(i, 42);
-	help();$//
+	help();/*$$*/
 	return i;
 }
 
@@ -736,8 +736,8 @@ A::~A()
 int A::foo()
 {
 	int* i = new int(2);
-	//$++*i;
-	help();$//
+	/*$*/++*i;
+	help();/*$$*/
 	return *i;
 }
 
@@ -824,9 +824,9 @@ A::~A()
 int A::foo()
 {
 	int* i = new int(2);
-	//$++*i;
+	/*$*/++*i;
 	help();
-	//A end-comment$//
+	//A end-comment/*$$*/
 	return *i;
 }
 
@@ -915,8 +915,8 @@ int A::foo()
 {
 	//A beautiful comment
 	int* i = new int(2);
-	//$++*i;
-	help();$//
+	/*$*/++*i;
+	help();/*$$*/
 	return *i;
 }
 
@@ -1007,8 +1007,8 @@ A::~A()
 int A::foo()
 {
 	int i = 2;
-	//$++i;
-	help();$//
+	/*$*/++i;
+	help();/*$$*/
 	return i;
 }
 
@@ -1100,9 +1100,9 @@ int A::foo()
 {
 	int i = 2;
 	int b = i;
-	//$++i;
+	/*$*/++i;
 	i = i + b;
-	help();$//
+	help();/*$$*/
 	++b;
 	return i;
 }
@@ -1200,10 +1200,10 @@ int A::foo()
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-	//$++i;
+	/*$*/++i;
 	b->hello(y);
 	i = i + x;
-	help();$//
+	help();/*$$*/
 	++x;
 	return i;
 }
@@ -1308,10 +1308,10 @@ int A::foo()
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-	//$++i;
+	/*$*/++i;
 	b->hello(y);
 	i = i + x;
-	help();$//
+	help();/*$$*/
 	++x;
 	return i;
 }
@@ -1430,10 +1430,10 @@ int A::foo()
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-	//$++i;
+	/*$*/++i;
 	b->hello(y);
 	i = i + x;
-	help();$//
+	help();/*$$*/
 	b->hello(y);
 	++x;
 	return i;
@@ -1554,10 +1554,10 @@ int A::foo()
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-	//$++i;
+	/*$*/++i;
 	b->hello(y);
 	i = i + x;
-	help();$//
+	help();/*$$*/
 	b->hello(y);
 	++x;
 	return i;
@@ -1669,8 +1669,8 @@ A::~A()
 int A::foo()
 {
 	int i = 2;
-	//$++i;
-	help();$//
+	/*$*/++i;
+	help();/*$$*/
 	return i;
 }
 
@@ -1765,8 +1765,8 @@ A::~A()
 int A::foo()
 {
 	int i = 2;
-	//$++i;
-	help();$//
+	/*$*/++i;
+	help();/*$$*/
 	return i;
 }
 
@@ -1861,8 +1861,8 @@ A::~A()
 int A::foo() const
 {
 	int i = 2;
-	//$++i;
-	help();$//
+	/*$*/++i;
+	help();/*$$*/
 	return i;
 }
 
@@ -1915,10 +1915,10 @@ methodname=loop
 
 void method()
 {
-	//$for (int var = 0; var < 100; ++var) {
+	/*$*/for (int var = 0; var < 100; ++var) {
 		if(var < 50)
 			continue;
-	}$//
+	}/*$$*/
 }
 //=
 
@@ -1944,8 +1944,8 @@ fatalerror=true
 
 void method()
 {
-	//$if(true)
-		return;$//
+	/*$*/if(true)
+		return;/*$$*/
 	//unreachable
 }
 //!test if we don't allow to extract 'continue' Bug #53
@@ -1958,8 +1958,8 @@ filename=A.h
 void function()
 {
 	for (int var = 0; var < 100; ++var) {
-		//$if(var < 50)
-			continue;$//
+		/*$*/if(var < 50)
+			continue;/*$$*/
 	}
 }
 
@@ -1974,11 +1974,11 @@ methodname=runTest
 
 void testFuerRainer(){
         int i=int();
-        //$++i;
+        /*$*/++i;
         //Leading Comment
         ASSERT (i);
         //Trailling Comment
-        --i;$//
+        --i;/*$$*/
 }
 
 //=
@@ -2010,9 +2010,9 @@ methodname=runTest
 
 void testFuerRainer(){
         int i=int();
-        //$++i;
+        /*$*/++i;
         ASSERT (i);
-        --i;$//
+        --i;/*$$*/
 }
 
 //=
@@ -2045,8 +2045,8 @@ int const INITIAL_CAPACITY = 10;
 
 int main(){
 	int m_capacity;
-	//$m_capacity += INITIAL_CAPACITY;
-	string* newElements = new string[m_capacity];$//
+	/*$*/m_capacity += INITIAL_CAPACITY;
+	string* newElements = new string[m_capacity];/*$$*/
 	newElements[0] = "s";
 }
 
@@ -2121,7 +2121,7 @@ int A::foo(int& a)
 {
 	int b = 7;
 	int c = 8;
-	//$a = b + c;$//
+	/*$*/a = b + c;/*$$*/
 	return a;
 }
 //=
@@ -2203,7 +2203,7 @@ Test::~Test() {
 
 void Test::test()
 {
-	RetType v = //$RetType()$//;
+	RetType v = /*$*/RetType()/*$$*/;
 }
 
 //=

@@ -45,7 +45,7 @@ public:
 	
 	void    Print();
 	
-	int     //$SocSecNo$//();
+	int     /*$*/SocSecNo/*$$*/();
 	
 	int     GetUniqueId();
 	
@@ -159,7 +159,7 @@ namespace Personal {
 		
 		void    Print();
 		
-		int     //$SocSecNo$//();
+		int     /*$*/SocSecNo/*$$*/();
 		
 		int     GetUniqueId();
 		
@@ -277,7 +277,7 @@ public:
 	
 	void    Print();
 	
-	int     //$SocSecNo$//();
+	int     /*$*/SocSecNo/*$$*/();
 	
 	int     GetUniqueId();
 	
@@ -393,7 +393,7 @@ public:
 	
 	void    Print();
 	
-	int     //$SocSecNo$//();
+	int     /*$*/SocSecNo/*$$*/();
 	
 	int     GetUniqueId();
 	
@@ -514,7 +514,7 @@ public:
 	
 	void    Print();
 	
-	int     //$SocSecNo$//();
+	int     /*$*/SocSecNo/*$$*/();
 	
 	int     GetUniqueId();
 
@@ -605,7 +605,7 @@ class GaS {
 public:
 	GaS();
 	virtual ~GaS();
-	bool //$isOk$//;
+	bool /*$*/isOk/*$$*/;
 	void methode2();
 
 private:
@@ -662,7 +662,7 @@ setters=id
 
 class Person {
 private:
-  int //$id$//;
+  int /*$*/id/*$$*/;
 };
 
 #endif /*C_H_*/
@@ -706,7 +706,7 @@ setters=i
 //comment1
 class test
 {
-	int //$i$//; //comment2
+	int /*$*/i/*$$*/; //comment2
 	char* b;
 	//comment3
 };
@@ -758,7 +758,7 @@ fatalerror=true
 //comment1
 class test
 {
-	void //$test$//();
+	void /*$*/test/*$$*/();
 	//comment3
 };
 

@@ -46,7 +46,7 @@ A::~A()
 
 int A::foo()
 {
-	return //$42$//; //Hallo
+	return /*$*/42/*$$*/; //Hallo
 }
 
 void A::bar()
@@ -126,7 +126,7 @@ A::~A()
 int A::foo()
 {
 	//Hallo
-	return //$42$//;
+	return /*$*/42/*$$*/;
 }
 
 void A::bar()
@@ -206,7 +206,7 @@ A::~A()
 
 float A::foo()
 {
-	return //$42.0$//;
+	return /*$*/42.0/*$$*/;
 }
 
 void A::bar()
@@ -287,7 +287,7 @@ int A::foo()
 
 int bar()
 {
-	return //$42$//;
+	return /*$*/42/*$$*/;
 }
 
 
@@ -364,7 +364,7 @@ A::~A()
 
 int A::foo()
 {
-	return //$42$//;
+	return /*$*/42/*$$*/;
 }
 
 //=
@@ -430,7 +430,7 @@ A::~A()
 
 int A::foo()
 {
-	return //$42$//;
+	return /*$*/42/*$$*/;
 }
 
 //=

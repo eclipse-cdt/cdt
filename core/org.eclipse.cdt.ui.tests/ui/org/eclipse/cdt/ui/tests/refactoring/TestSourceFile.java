@@ -30,8 +30,8 @@ public class TestSourceFile {
 	private int selectionStart = -1;
 	private int selectionEnd = -1;
 	
-	protected static final String selectionStartRegex = "//\\$"; //$NON-NLS-1$
-	protected static final String selectionEndRegex = "\\$//"; //$NON-NLS-1$
+	protected static final String selectionStartRegex = "/\\*\\$\\*/"; //$NON-NLS-1$
+	protected static final String selectionEndRegex = "/\\*\\$\\$\\*/"; //$NON-NLS-1$
 	protected static final String selectionStartLineRegex = "(.*)(" + selectionStartRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
 	protected static final String selectionEndLineRegex = "(.*)("+ selectionEndRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
 	

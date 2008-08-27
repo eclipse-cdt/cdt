@@ -50,9 +50,9 @@ A::~A()
 int A::foo()
 {
 	int ii = 2;
-	//$++ii;
+	/*$*/++ii;
 	ii = ADD(ii, 42);
-	help();$//
+	help();/*$$*/
 	return ii;
 }
 
@@ -146,9 +146,9 @@ int A::foo()
 {
 	int i = 2;
 	int b = 42;
-	//$++i;
+	/*$*/++i;
     help();
-    ADD(b);$//
+    ADD(b);/*$$*/
 	b += 2;
 	return i;
 }
@@ -248,8 +248,8 @@ int A::foo()
 	int i = 2;
 	int bb = 42;
 	++i;
-    //$ADD(bb);
-    ADD(bb);$//
+    /*$*/ADD(bb);
+    ADD(bb);/*$$*/
 	bb += 2;
 	return i;
 }

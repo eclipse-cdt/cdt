@@ -11,7 +11,7 @@ filename=A.h
 class A{
 public:
     A();
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 private:
 	int i;
@@ -50,7 +50,7 @@ class A{
 public:
     A();
     //Kommentar
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 private:
     int i;
@@ -90,7 +90,7 @@ class A{
 public:
     A();
     /*Kommentar*/
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 
 private:
@@ -130,7 +130,7 @@ filename=A.h
 class A{
 public:
     A();
-    //$void method2();$////Kommentar
+    /*$*/void method2();/*$$*///Kommentar
     std::string toString();
 private:
     int i;
@@ -168,7 +168,7 @@ filename=A.h
 class A{
 public:
     A();
-    //$void method2();$///*Kommentar*/
+    /*$*/void method2();/*$$*//*Kommentar*/
     std::string toString();
 private:
     int i;
@@ -208,7 +208,7 @@ public:
     A();
 		
     //Kommentar
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 private:
     int i;
@@ -249,7 +249,7 @@ public:
     A();
 
     /*Kommentar*/
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 private:
     int i;
@@ -288,7 +288,7 @@ filename=A.h
 class A{
 public:
     A();
-    //$void method2();$////Kommentar
+    /*$*/void method2();/*$$*///Kommentar
     std::string toString();
 private:
     int i;
@@ -326,7 +326,7 @@ filename=A.h
 class A{
 public:
     A();
-    //$void method2();$///*Kommentar*/
+    /*$*/void method2();/*$$*//*Kommentar*/
 
     std::string toString();
 private:
@@ -366,7 +366,7 @@ public:
     /*
          * Kommentar
          */
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
     std::string toString();
 private:
     int i;
@@ -405,7 +405,7 @@ filename=A.h
 class A{
 public:
     A();
-	//$void method2();$//		/*
+	/*$*/void method2();/*$$*/		/*
 							 * Kommentar
 							 */
     std::string toString();
@@ -450,7 +450,7 @@ public:
     /*
      * Davor
      */
-    //$void method2();$//		/*
+    /*$*/void method2();/*$$*/		/*
 							 * Kommentar
 							 */
     std::string toString();
@@ -496,7 +496,7 @@ class A{
 public:
     A();
     /*123*/
-    //$void method2();$////TEST
+    /*$*/void method2();/*$$*///TEST
     std::string toString();
 private:
     int i;
@@ -536,7 +536,7 @@ class A{
 public:
     A();
     /*123*/
-    //$void method2();$///*TEST*/
+    /*$*/void method2();/*$$*//*TEST*/
     std::string toString();
 private:
     int i;
@@ -573,7 +573,7 @@ errors=1
 
 class A{
 private:
-    //$void method2();$//
+    /*$*/void method2();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -603,7 +603,7 @@ filename=A.h
 
 class A{
 public:
-    //$void method1();$//
+    /*$*/void method1();/*$$*/
     void method2();
 };
 
@@ -636,7 +636,7 @@ filename=A.h
 
 class A{
 public:
-    //$void method1();$//void method2();
+    /*$*/void method1();/*$$*/void method2();
 };
 
 #endif /*A_H_*/
@@ -669,7 +669,7 @@ filename=A.h
 class A{
 public:
     //Kommentar
-    //$void method1();$//
+    /*$*/void method1();/*$$*/
     void method2();
 };
 
@@ -704,7 +704,7 @@ filename=A.h
 class A{
 public:
     //Kommentar
-    //$void method1();$//void method2();
+    /*$*/void method1();/*$$*/void method2();
 };
 
 #endif /*A_H_*/
@@ -764,7 +764,7 @@ private:
 //@A.cpp
 #include "A.h"
 
-void A:://$method2$//()
+void A::/*$*/method2/*$$*/()
 {
 }
 
@@ -809,7 +809,7 @@ private:
 //@A.cpp
 #include "A.h"
 
-void A:://$method2$//()
+void A::/*$*/method2/*$$*/()
 {
 }
 
@@ -825,7 +825,7 @@ class HideMethod {
 public:
     HideMethod();
     virtual ~HideMethod();
-    void //$methode2$//();
+    void /*$*/methode2/*$$*/();
     void methode3()
     {
         methode2();
@@ -866,7 +866,7 @@ class HideMethod {
 public:
     HideMethod();
     virtual ~HideMethod();
-    void //$methode2$//();
+    void /*$*/methode2/*$$*/();
     void methode3();
 };
 
@@ -940,7 +940,7 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void //$methode2$//();
+	void /*$*/methode2/*$$*/();
 	void methode3();
 };
 
@@ -990,7 +990,7 @@ class HideMethod {
 public:
     HideMethod();
     virtual ~HideMethod();
-    void //$methode2$//();
+    void /*$*/methode2/*$$*/();
     void methode3();
 };
 
@@ -1106,7 +1106,7 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod:://$methode2$//() {
+void HideMethod::/*$*/methode2/*$$*/() {
 	//do nothing
 }
 
@@ -1147,7 +1147,7 @@ filename=A.h
 
 class A{
 public:
-	//$void method2();$//
+	/*$*/void method2();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -1178,7 +1178,7 @@ errors=1
 #include <iostream>
 
 class A{
-	//$void method2();$//
+	/*$*/void method2();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -1206,7 +1206,7 @@ filename=A.h
 #include <iostream>
 
 struct A{
-	//$void method2();$//
+	/*$*/void method2();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -1237,7 +1237,7 @@ struct other
 class Klass
 {
 public:
-	void //$set$//(bool b){}
+	void /*$*/set/*$$*/(bool b){}
 	void test()
 	{
 	  other o;
@@ -1283,7 +1283,7 @@ public:
 	void test()
 	{
 	  other o;
-	  this->//$set$//(o.value());
+	  this->/*$*/set/*$$*/(o.value());
 	}
 };
 
@@ -1316,7 +1316,7 @@ warnings=1
 //@A.cpp
 struct other
 {
-  bool //$value$//() {return true;}
+  bool /*$*/value/*$$*/() {return true;}
 };
 
 class Klass
@@ -1362,7 +1362,7 @@ class Klass
 {
 public:
 	void set(bool b){}
-	void //$test$//()
+	void /*$*/test/*$$*/()
 	{
 	  other o;
 	  this->set(o.value());
@@ -1394,7 +1394,7 @@ private:
 filename=A.cpp
 fatalerrors=1
 //@A.cpp
-int //$main$//(){
+int /*$*/main/*$$*/(){
 	int i = 2;
 	i++;
 	return 0;
@@ -1415,7 +1415,7 @@ filename=A.h
 class Klass
 {
 public:
-    void //$to_move()$//;
+    void /*$*/to_move()/*$$*/;
 
 private:
     void just_private();
@@ -1438,7 +1438,7 @@ filename=A.h
 class Klass
 {
 public:
-    void //$to_move()$//;
+    void /*$*/to_move()/*$$*/;
 
 private:
     void just_private();

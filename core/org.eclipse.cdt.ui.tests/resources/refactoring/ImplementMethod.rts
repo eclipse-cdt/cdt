@@ -5,7 +5,7 @@ filename=A.h
 //@A.h
 class X {
 public:
-	bool //$a(int = 100)$// const;
+	bool /*$*/a(int = 100)/*$$*/ const;
 };
 
 //=
@@ -27,7 +27,7 @@ filename=A.h
 //@A.h
 class X {
 public:
-	bool //$xy(int, int i)$// const;
+	bool /*$*/xy(int, int i)/*$$*/ const;
 };
 
 //=
@@ -50,7 +50,7 @@ filename=A.h
 template<class T> class A
 {
 public:
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 //=
@@ -81,7 +81,7 @@ initialWarnings=1
 
 struct Test
 {
-	void //$bla$//() {}
+	void /*$*/bla/*$$*/() {}
 };
 
 //!Test Warning when ClassName selected
@@ -91,7 +91,7 @@ filename=A.h
 initialWarnings=1
 //@A.h
 
-struct //$Test$//
+struct /*$*/Test/*$$*/
 {
 	void bla2();
 };
@@ -105,7 +105,7 @@ template<class T> class A
 {
 public:
         A();
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 template<class T> A<T>::A()
@@ -140,7 +140,7 @@ class Demo
 {
 	class SubClass 
 	{
-		//$void test();$//
+		/*$*/void test();/*$$*/
 	};
 };
 
@@ -165,7 +165,7 @@ filename=A.h
 class A
 {
 public:
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 //=
@@ -189,7 +189,7 @@ filename=A.h
 class A
 {
 public:
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 //=
@@ -220,7 +220,7 @@ namespace NameSpace
 	{
 	public:
 		int test();
-		//$void test2();$//
+		/*$*/void test2();/*$$*/
 	};
 }
 
@@ -260,7 +260,7 @@ class A
 {
 public:
 	A();
-	//$virtual void foo();$//
+	/*$*/virtual void foo();/*$$*/
 	~A();
 };
 
@@ -296,7 +296,7 @@ A::~A()
 //@.config
 filename=A.h
 //@A.h
-//$void function();$//
+/*$*/void function();/*$$*/
 void function_with_impl();
 //@A.cpp
 void function_with_impl()
@@ -322,7 +322,7 @@ class A
 {
 public:
 	A();
-	//$void foo();$//
+	/*$*/void foo();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -357,7 +357,7 @@ filename=A.h
 class A
 {
 public:
-	//$void foo() const;$//
+	/*$*/void foo() const;/*$$*/
 	A();
 };
 
@@ -392,7 +392,7 @@ class A
 {
 public:
 	A();
-	//$int foo();$//
+	/*$*/int foo();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -428,7 +428,7 @@ class A
 {
 public:
 	A();
-	//$int foo(int param1, int param2);$//
+	/*$*/int foo(int param1, int param2);/*$$*/
 };
 
 #endif /*A_H_*/
@@ -461,7 +461,7 @@ class A
 {
 public:
         A();
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 A::A()
@@ -492,7 +492,7 @@ inline void A::test()
 filename=A.h
 //@A.h
 void function_with_impl();
-//$void function();$//
+/*$*/void function();/*$$*/
 //@A.cpp
 void function_with_impl()
 {
@@ -518,7 +518,7 @@ namespace NameSpace
 	{
 	public:
 		int other_test();
-		//$void test();$//
+		/*$*/void test();/*$$*/
 	};
 }
 
@@ -547,7 +547,7 @@ namespace OuterSpace {
 	namespace NameSpace 
 	{
 		int test();
-		//$int test2();$//
+		/*$*/int test2();/*$$*/
 	}
 }
 
@@ -578,7 +578,7 @@ namespace OuterSpace {
 	namespace NameSpace
 	{
 		int test();
-		//$int test2();$//
+		/*$*/int test2();/*$$*/
 	}
 }
 
@@ -613,7 +613,7 @@ template<class T, class U> class A
 {
 public:
         A();
-        //$void test();$//
+        /*$*/void test();/*$$*/
 };
 
 template<class T, class U> A<T,U>::A()
@@ -647,7 +647,7 @@ filename=A.h
 class Class
 {
 public:
-	//$void test(int param1, int param2 = 5, int param3 = 10);$//
+	/*$*/void test(int param1, int param2 = 5, int param3 = 10);/*$$*/
 };
 
 
@@ -672,7 +672,7 @@ filename=A.h
 class Class
 {
 public:
-	//$static void test();$//
+	/*$*/static void test();/*$$*/
 };
 
 
@@ -696,7 +696,7 @@ filename=A.h
 
 class TestClass {
 public:
-	//$int* get(char* val);$//
+	/*$*/int* get(char* val);/*$$*/
 };
 
 
@@ -721,7 +721,7 @@ filename=A.h
 class Test
 {
     public:
-	//$void doNothing(void);$//
+	/*$*/void doNothing(void);/*$$*/
 };
 
 

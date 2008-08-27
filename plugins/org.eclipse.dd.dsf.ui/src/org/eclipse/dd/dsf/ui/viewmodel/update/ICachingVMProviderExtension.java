@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel.update;
 
-import org.eclipse.osgi.util.NLS;
 
-public class ViewModelUpdateMessages extends NLS {
+/**
+ * 
+ */
+public interface ICachingVMProviderExtension extends ICachingVMProvider {
 
-	private static final String BUNDLE_NAME = "org.eclipse.dd.dsf.ui.viewmodel.update.ViewModelUpdateMessages";//$NON-NLS-1$
-
-    public static String AutomaticUpdatePolicy_name;
-    public static String ManualUpdatePolicy_name;
-    public static String AllUpdateScope_name;
-    public static String VisibleUpdateScope_name;
 	
-    static {
-        // load message values from bundle file
-        NLS.initializeMessages(BUNDLE_NAME, ViewModelUpdateMessages.class);
-    }
+	public boolean isAtomicUpdate();
+	
+	public void setAtomicUpdate(boolean enable);
+	
 }

@@ -25,6 +25,8 @@ class MessagesForPreferences extends NLS {
 	public static String DsfDebugPreferencePage_performanceGroup_label;
 
 	public static String DsfDebugPreferencePage_syncStepping_label;
+	
+	public static String DsfDebugPreferencePage_atomicUpdate_label;
 
 	static {
 		// initialize resource bundle

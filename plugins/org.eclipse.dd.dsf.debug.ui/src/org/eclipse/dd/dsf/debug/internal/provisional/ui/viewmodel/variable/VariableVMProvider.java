@@ -19,6 +19,8 @@ import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.dd.dsf.debug.ui.DsfDebugUITools;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -32,6 +34,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.ManualUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -65,6 +68,15 @@ public class VariableVMProvider extends AbstractDMVMProvider
         // Configure the sub-expression node to be a child of itself.  This way the content
         // provider will recursively drill-down the variable hierarchy.
         addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
+        
+        final IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+        store.addPropertyChangeListener(new IPropertyChangeListener()
+        {
+			public void propertyChange(PropertyChangeEvent event) {
+				setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
+			}
+        });
+        setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
     }
 	
     @Override

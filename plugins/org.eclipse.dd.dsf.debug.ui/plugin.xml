@@ -114,6 +114,26 @@
                style="radio">
          </action>
          
+         <menu id="updateScope"
+               label="%menu.updateScope"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
+               label="%action.allUpdateScope.label"
+               state="false"
+               menubarPath="updateScope/additions"
+               style="radio">
+         </action>  
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
+               label="%action.visibleUpdateScope.label"
+               menubarPath="updateScope/additions"
+               state="true"
+               style="radio">
+         </action>      
+         
          <menu id="updatePolicy"
                label="%menu.updatePolicy"
                path="additions"/>
@@ -142,6 +162,9 @@
                state="true"
                style="radio">
          </action>         
+         
+         
+ 		 
       </viewContribution>
 
       <!-- Registers View menu contributions -->
@@ -200,6 +223,25 @@
                state="true"
                style="radio">
          </action>
+         
+         <menu id="updateScope"
+               label="%menu.updateScope"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
+               label="%action.allUpdateScope.label"
+               menubarPath="updateScope/additions"
+               style="radio">
+         </action>  
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
+               label="%action.visibleUpdateScope.label"
+               menubarPath="updateScope/additions"
+               state="true"
+               style="radio">
+         </action>      
          
          <menu id="updatePolicy"
                label="%menu.updatePolicy"
@@ -289,6 +331,26 @@
                style="radio">
          </action>
          
+         <menu id="updateScope"
+               label="%menu.updateScope"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
+               label="%action.allUpdateScope.label"
+               state="false"
+               menubarPath="updateScope/additions"
+               style="radio">
+         </action>  
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
+               label="%action.visibleUpdateScope.label"
+               menubarPath="updateScope/additions"
+               state="true"
+               style="radio">
+         </action>  
+         
          <menu id="updatePolicy"
                label="%menu.updatePolicy"
                path="additions"/>
@@ -351,7 +413,29 @@
                menubarPath="updatePolicy/additions"
                state="true"
                style="radio">
-         </action>         
+         </action>    
+         
+         <menu id="updatesAtomic"
+               label="%menu.updatePolicyAtomic"
+               path="additions"/>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AtomicUpdatePolicyAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Atomic"
+               label="%action.updatePolicyAtomic.label"
+               menubarPath="updatesAtomic/additions"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.NonAtomicUpdatePolicyAction"
+               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_NonAtomic"
+               label="%action.updatePolicyNotAtomic.label"
+               menubarPath="updatesAtomic/additions"
+               state="true"
+               style="radio">
+         </action>            
+         
+         
+         
       </viewContribution>
 
    </extension>

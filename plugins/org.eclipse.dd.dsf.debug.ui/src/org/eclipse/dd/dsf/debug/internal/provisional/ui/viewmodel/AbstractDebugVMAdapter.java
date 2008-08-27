@@ -36,8 +36,8 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
     }
 
     private SteppingController fController;
-
-    @Override
+    
+	@Override
     protected IVMProvider createViewModelProvider(IPresentationContext context) {
         return null;
     }

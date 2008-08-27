@@ -94,6 +94,15 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 		minIntervalEditor.setValidRange(0, 10000);
 		minIntervalEditor.fillIntoGrid(performanceGroup, 3);
 		addField(minIntervalEditor);
+		
+		// atomic update
+		BooleanFieldEditor atomicUpdateEditor = new BooleanFieldEditor(
+				IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE,
+				MessagesForPreferences.DsfDebugPreferencePage_atomicUpdate_label,
+				performanceGroup);
+
+		atomicUpdateEditor.fillIntoGrid(performanceGroup, 3);
+		addField(atomicUpdateEditor);
 
 		// need to set layout again
 		performanceGroup.setLayout(groupLayout);

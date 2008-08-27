@@ -88,6 +88,13 @@ public interface IDsfDebugUIConstants {
 	 * @since 1.1
 	 */
 	public static final String PREF_MIN_STEP_INTERVAL= "minStepInterval"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference whether to wait for view update before continuing run control requests
+	 * 
+	 * @since 1.1
+	 */
+	public static final String PREF_ATOMIC_UPDATE_ENABLE = "atomicUpdateEnable"; //$NON-NLS-1$
 
     /**
      * Help prefixes.

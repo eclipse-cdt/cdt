@@ -31,6 +31,8 @@ import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.dd.dsf.debug.ui.DsfDebugUITools;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -51,6 +53,7 @@ import org.eclipse.debug.internal.core.IExpressionsListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreePath;
@@ -95,6 +98,15 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
         
         configureLayout();
+        
+        final IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+        store.addPropertyChangeListener(new IPropertyChangeListener()
+        {
+			public void propertyChange(PropertyChangeEvent event) {
+				setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
+			}
+        });
+        setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
     }
 
     @Override

@@ -61,14 +61,12 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
     
-    
     @Override
     public void dispose() {
         DebugPlugin.getDefault().removeDebugEventListener(this);
         DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
         super.dispose();
     }
-    
     
     @Override
     protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {

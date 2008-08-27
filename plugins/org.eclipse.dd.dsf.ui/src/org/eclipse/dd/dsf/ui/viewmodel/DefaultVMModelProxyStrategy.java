@@ -52,7 +52,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 @ConfinedToDsfExecutor("#getProvider()#getExecutor()")
 @SuppressWarnings("restriction")
-public class DefaultVMModelProxyStrategy implements IVMModelProxy {
+public class DefaultVMModelProxyStrategy implements IVMModelProxy, IVMModelProxyExtension {
 
     private final AbstractVMProvider fProvider;
     private final Object fRootElement;
@@ -101,6 +101,14 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
     public Object getRootElement() {
         return fRootElement;
+    }
+    
+    public Object getViewerInput() {
+        return fRootElement;
+    }
+    
+    public TreePath getRootPath() {
+        return TreePath.EMPTY;
     }
     
     /**
@@ -230,7 +238,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * 
      * @return viewer or <code>null</code> if not installed
      */
-    protected Viewer getViewer() {
+    public Viewer getViewer() {
         return fViewer;
     }
     

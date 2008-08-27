@@ -333,7 +333,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
      */
     @ThreadSafe    
     abstract protected IVMProvider createViewModelProvider(IPresentationContext context);
-
+    
 	/**
 	 * Dispatch given event to VM providers interested in events.
 	 * 

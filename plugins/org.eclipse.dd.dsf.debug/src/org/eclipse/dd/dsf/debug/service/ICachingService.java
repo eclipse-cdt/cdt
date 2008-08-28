@@ -20,7 +20,7 @@ public interface ICachingService {
     
     /**
      * Clears the service cache entries which have the given context in their
-     * hierachy.
+     * hierarchy.
      * @param context Root context to flush.  May be <code>null</code> to flush 
      * the entire cache. 
      */

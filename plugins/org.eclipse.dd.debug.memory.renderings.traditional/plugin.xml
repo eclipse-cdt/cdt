@@ -16,6 +16,14 @@
     </renderingBindings>          
 </extension>
 
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="Traditional Go To Address"
+        id="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalGoToAddressRendering"
+        class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalGoToAddressRenderingTypeDelegate">
+    </renderingType>
+</extension>
+
 <extension
       point="org.eclipse.ui.preferencePages">
    <page

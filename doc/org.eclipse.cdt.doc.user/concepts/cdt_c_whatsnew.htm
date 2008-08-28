@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2007. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2007,2008 This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
 
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -13,232 +13,71 @@ tr {vertical-align: top;}
 </style>
 <title>New and Noteworthy</title>
 </head>
-
 <body>
+<h1>CDT 5.0 - New and Noteworthy</h1>
+<p>CDT 5.0 includes new features in Editor, Call Hierarchy, 
+Refactoring, Indexer, Projects & Build, and Debug.
+<p>
+See <a href="wiki.eclipse.org/CDT/User/NewIn50">What's New in CDT 5.0</a> on the CDT Wiki for more information including screen shots.
+
+<p>Highlights include:
+
+<h3>Editor</h3>
+<ul>
+<li>Code and File Templates - user-definable templates can be used in New Class and New Source/Header File wizards.
+<li>New preference page for Code Templates
+<li>Outline view for assembly files
+<li>Code formatter improvements including new whitespace and line wrapping options, Improved GNU coding style compliance
+<li>Content assist improvements 
+<li>Doxygen editor support - auto-generation of tags and a pluggable framework for other documentation tools is now available.
+<li>Mark Occurrences - highlights where the selected identifier occurs elsewhere in the editor
+<li>Folding of compound statements
+<li>Macro Expansion hover and exploration tool
+<li>Spell checking available and enabled by default
+<li>Scalability mode for working with very large files.
+<li>Visual Studio key bindings
+
+</ul>
+<h3>Navigation and Search</h3>
+<ul>
+<li>Open Declaration for operators, empty macros, element in outline view, etc
+<li>Open Element support for static functions/variables, other improvements
+<li>Search - for Static functions/variables, macros, references of local variables, Search view usability improvements
+</ul>
+<h3>Call Hierarchy</h3>
+<ul>
+<li>Read/write decorators indicate read/write status for variables
+<li>Polymorphic method calls (virtual methods) support
+</ul>
+<h3>Refactoring</h3>
+<ul>
+<li>Refactoring infrastructure much improved, models transformation on the AST
+<li>Generate Getters and Setters
+<li>Hide Method
+<li>Implement Method
+<li>Extract Constant
+<li>Extract Function
+</ul>
+<h3>Indexer</h3>
+<ul>
+<li>Improved accuracy and performance
+<li>Entirely new preprocessor
+<li>Improved infrastructure
+<li>Visual indication of indexer status
+</ul>
+<h3>Projects and Build</h3>
+<ul>
+<li>Project Properties improved usability
+<li>Make target locations - make targets at the project level are built in the project build directory
+</ul>
+<h3>Debug</h3>
+<ul>
+<li>Executables view
+<li>Event breakpoints - added gdb catchpoints support
+</ul>
 
 
-<h1>CDT 4.0 - New and Noteworthy</h1>
-<p>CDT 4.0 includes new features in the editor, 
-  <!-- ****************** START OF N&N TABLE ****************** -->new code navigation tools, debugger enhancements, and other improvements. 
-<table cellpadding="10" cellspacing="0" width="600">
-  <colgroup>
-  <col width="20%">
-  <col width="80%">
-  </colgroup>
-  <tbody>
-<!-- ******************** Editor ********************** -->
-<tr>
-
-<td colspan="2"><a name="Projects"></a>
-<div style="font-size: 20px; font-weight: bold;">Projects</div></td>
-</tr>
-
-<tr>
-    <td>
-      <p align="right"><b>New Project Creation</b></p>    </td>
-    <td><p>Now it's easier to create and configure a new CDT project:  </p>
-	<p><img src="../images/nn_new_project.png">    
- 	  </td>
-  </tr>
-<tr>
-    <td>
-      <p align="right"><b>Project Templates</b></p>    </td>
-    <td><p>Projects can be created from one of the available templates. Project templates include wizard pages that let you configure basic settings for new project code. </p>
-	  <p><img src="../images/nn_basic_settings.png"> </td>
-  </tr>
-<!-- ******************** Views ********************** -->
-<tr>
-
-<td colspan="2"><a name="Editor"></a>
-<div style="font-size: 20px; font-weight: bold;">Editor</div></td>
-</tr>
-
-<tr>
-<tr>
-<tr>
-    <td>
-      <p align="right"><b>Semantic Highlighting</b></p>
-    </td>
-    <td>
-      <p>Identifiers in the source code can now be colored according to their role, e.g. typedefs, functions, variables, fields, etc.</p>
-      <p><img src="../images/nn_codeColoring.png">    </p>
-    </td>
-  </tr>
-
-    <td>
-      <p align="right"><b>Inactive Code Highlighting</b></p>
-    </td>
-    <td>
-      <p>Code being excluded by conditional compilation is marked with grey background.</p>
-      <p><img src="../images/nn_inactiveCode.png">    </p>
-    </td>
-  </tr>
-
-    <td>
-      <p align="right"><b>Code Folding Improvements</b></p>    </td>
-    <td><p>Now you can collapse and expand blocks of comments and preprocessor branches in C and C++ files in addition to functions, structures, etc. </p>
-      <p><img src="../images/nn_codeFolding.png">    </p>
-  </tr>
-
-<tr>
-    <td>
-      <p align="right"><b>Code Formatter</b></p>
-    </td>
-    <td>
-      <p>A configurable code formatter with 4 predefined styles has been added:</p>
-      <p><img src="../images/nn_codeFormatterPrefs.png">    </p>
-    </td>
-  </tr>
-  
-<tr>
-    <td>
-      <p align="right"><b>Smart Typing</b></p>
-    </td>
-    <td>
-      <p>Typing assistance has been greatly improved. Options include automatic closing of brackets, smart paste and more:</p>
-      <p><img src="../images/nn_smartTypingPrefs.png">    </p>
-    </td>
-  </tr>
-
-<!-- ******************** Views ********************** -->
-<tr>
-
-<td colspan="2"><a name="Views"></a>
-<div style="font-size: 20px; font-weight: bold;">Code Navigation Views</div></td>
-</tr>
-
-<tr>
-    <td>
-      <p align="right"><b>Include Browser</b></p>    </td>
-    <td>The Include Browser now lets you see the hierarchy of included headers in a source file.
-      <p><img src="../images/nn_include_browser.png">    </p>
-	 </td>
-	
-  </tr>
-
-  <tr>
-    <td> <p align="right"><b>Call Hierarchy</b></p></td>
-    <td>
-     The	Call Hierarchy view shows you who calls a function.
-	   <p><img src="../images/nn_call_hierarchy.png">    </p></td>
-  </tr>
-
-  <tr> 
-    <td> <p align="right"><b>Type Hierarchy</b></p></td>
-    <td>The Type Hierarchy view shows you how	C/C++ types are related.
-	  <p><img src="../images/nn_type_hierarchy.png">    </p></td>
-  </tr>
-  
-  <tr> 
-    <td> <p align="right"><b>Indexer Improvements</b></p></td>
-    <td><p>The indexer is greatly improved with more features and accuracy:</p>   
-	  <p><img src="../images/nn_indexer_prefs.png">    </p> </td>
-  </tr>
-
-
-<!-- *********************** Debugger *********************** -->
-<tr>
-<td colspan="2"><a name="debugger"></a>
-<div style="font-size: 20px; font-weight: bold;">Debugger</div></td>
-</tr>
-<tr>
-    <td>
-      <p align="right"><b>GDB Hardware Debugging</b></p>
-    </td>
-    <td>
-      <p>The GDB Hardware Debugging feature provides a specialized debug launch configuration
-      that allows you to start up GDB using CDT's GDB integration in a specialized manner that
-      allows for sessions that connect to hardware debugging devices, such as JTAG and BDM,
-      that support an integration with GDB. In particular it allows you to specify commands that
-      are executed when GDB connects to the device, optionally specify an image to load onto the
-      target, and specify commands that set up the target for execution.</p>
-      <p><img src="../images/nn_gdb_hardware_debug.png"></p>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <p align="right"><b>Breakpoint Actions</b></p>    </td>
-    <td><p>You can now attach actions to a breakpoint. These are additional activities performed when a breakpoint is hit. CDT 4.0 comes with four standard actions that: play a sound, log text to an expression to the console, resume execution, or run an external tool. </p>
-	  <p><img src="../images/nn_bpactions.png">
-      <p>&nbsp;</p></td>
-  </tr>
-
-  <tr>
-    <td>
-      <p align="right"><b>Contextual Launch Support</b></p>    </td>
-    <td>
-    <p>CDT 4.0 now takes advantage of the contextual launch support in Eclipse 3.3 to make the run and debug commands just &quot;do the right thing&quot; for C/C++ projects.</p>
-    <p><img src="../images/nn_contextlaunch.png">
-	<p>Just click the Debug button to start a debug session instead of manually creating a launch configuration. </td>
-  </tr>
-  <tr>
-    <td>
-      <p align="right"><b>Locating Source Files</b></p>    </td>
-    <td>
-    <p>When the debugger can't find a source file using the path in the symbol table it now lets you locate it directly instead of having to configure a source lookup path. </p>
-    <p><img src="../images/nn_missing_file.png">
-    
-    <p>&nbsp; </p></td>
-  </tr>
-<!-- *********************** Other Improvements *********************** -->
-<tr>
-<td colspan="2"><a name="other"></a>
-<div style="font-size: 20px; font-weight: bold;">Other Improvements</div></td>
-</tr>
-<tr>
-  <td><p align="right"><b>Project Build Button </b></p></td>
-  <td><p>The toolbar now includes a button that builds the active configuration of the selected project. It's menu lets you quickly build another configuration.</p>
-  <p><img src="../images/nn_buildbtn.png"></p></td>
-</tr>
-<tr>
-  <td>
-    <p align="right"><b>MinGW Toolchain Integration</b></p>
-  </td>
-  <td>
-    <p>Support for the GNU toolchain on Windows now specifies two separate toolchains Cygwin and MinGW.
-    The MinGW toolchain integration automatically detects the location of your MinGW install and sets
-    the paths appropriately.</p>
-    <p>MinGW tool chain for new projects:</p>
-    <p><img src="../images/nn_mingw_project.png"></p>
-    <p>MinGW debugger launch configuration:</p>
-    <p><img src="../images/nn_mingw_debug.png"></p>
-  </td>
-</tr>
-
-  <tr>
-    <td>
-      <p align="right"><b>Task Tags</b></p>    </td>
-    <td><p>The Task View now includes entries based on tags in your C/C++ source files. </p>
-      <p><img src="../images/nn_taskTags2.gif">
-      <p>Task Tag options: </p>
-      <p><img src="../images/nn_taskTags.gif">    </p>
-    <p>&nbsp;</p>    </td>
-  </tr>
-    <tr>
-    <td>
-      <p align="right"><b>IBM XL C/C++ Toolchain Integration</b></p>    </td>
-    <td><p>If you install the optional CDT feature "XL C/C++ Compiler Support," 
-    xlc and xlC toolchain integration is available.  Then when you create a new project, 
-    the XLC project types are available for selection.
-      <p><img src="../images/nn_xlc.gif">      </p>
-      <p>xlC compiler options are available in the project properties:</p>
-       <p><img src="../images/nn_xlcOpt.gif">    </p>      </td>
-  </tr>
-    <tr>
-    <td>
-      <p align="right"><b>UPC Support</b></p>    </td>
-    <td><p>If you install the optional CDT feature "Unified Parallel C Support," the Unified Parallel C programming language 
-    is supported in the editor.  After installing the feature, you can create a source file with extension ".upc" 
-    and the UPC language constructs are recognized. 
-    </p>
-      <p><img src="../images/nn_upc.png">      </p>
-
-  </tr>
-<!-- ****************** END OF N&N TABLE ****************** -->
-  </tbody>
-</table>
-
+ 
 </body>
 </html>
 

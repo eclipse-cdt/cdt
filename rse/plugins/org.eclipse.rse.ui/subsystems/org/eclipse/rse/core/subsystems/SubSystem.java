@@ -555,7 +555,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	{
 		// for 244270, don't connect when offline
 		// or when restoring from memento
-		if (!isConnected() && !isOffline()  && (!(getCacheManager() != null) && !getCacheManager().isRestoreFromMemento())) 
+		if (!isConnected() && !isOffline()  && !((getCacheManager() != null) && getCacheManager().isRestoreFromMemento())) 
 		{
 			try
 			{

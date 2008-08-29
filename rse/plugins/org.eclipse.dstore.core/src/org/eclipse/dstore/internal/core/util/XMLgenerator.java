@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight     (IBM)       - [232233] [dstore] Buffer in DataElement is not retained
+ * David McKnight     (IBM)       - [245481] [dstore] CR/LF not restored for new client/old server
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -439,6 +440,15 @@ public class XMLgenerator
 				case ';' :
 					output.append(XMLparser.STR_SEMI);
 					break;
+				case '\n':
+					output.append(XMLparser.STR_NL);
+					break;
+				case '\r':
+					output.append(XMLparser.STR_CR);
+					break;
+				case '\0':
+					output.append(XMLparser.STR_EOL);
+					break;
 				default :
 					output.append(currChar);
 					break;
@@ -479,6 +489,15 @@ public class XMLgenerator
 				break;
 			case ';' :
 				output.append(XMLparser.STR_SEMI);
+				break;
+			case '\n':
+				output.append(XMLparser.STR_NL);
+				break;
+			case '\r':	
+				output.append(XMLparser.STR_CR);
+				break;
+			case '\0':
+				output.append(XMLparser.STR_EOL);
 				break;
 				default :
 					output.append(currChar);

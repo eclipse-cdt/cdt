@@ -22,6 +22,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IModules;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
@@ -36,7 +37,7 @@ import org.osgi.framework.BundleContext;
 /**
  * 
  */
-public class MIModules extends AbstractDsfService implements IModules {
+public class MIModules extends AbstractDsfService implements IModules, ICachingService {
 	private CommandCache fModulesCache;
 	
     public MIModules(DsfSession session) {
@@ -216,4 +217,8 @@ public class MIModules extends AbstractDsfService implements IModules {
         rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Functionality not supported", null)); //$NON-NLS-1$
         rm.done();
     }
+
+	public void flushCache(IDMContext context) {
+		fModulesCache.reset();		
+	}
 }

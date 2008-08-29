@@ -22,6 +22,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack2;
@@ -51,7 +52,7 @@ import org.osgi.framework.BundleContext;
  * this service is initialized.
  * </p>
  */
-public class PDAStack extends AbstractDsfService implements IStack2 {
+public class PDAStack extends AbstractDsfService implements IStack2, ICachingService {
 
     /**
      * PDA stack frame contains only the stack frame level.  It is only 
@@ -470,4 +471,8 @@ public class PDAStack extends AbstractDsfService implements IStack2 {
         fCommandCache.setContextAvailable(e.getDMContext(), true);
         fCommandCache.reset(e.getDMContext());
     }
+
+	public void flushCache(IDMContext context) {
+        fCommandCache.reset(context);	
+	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -44,7 +45,7 @@ import org.eclipse.dd.mi.service.command.output.MIThreadListIdsInfo;
 import org.osgi.framework.BundleContext;
 
 
-public class MIProcesses extends AbstractDsfService implements IMIProcesses {
+public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICachingService {
 	
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -641,5 +642,9 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses {
     public void eventDispatched(IExitedDMEvent e) {
         fContainerCommandCache.reset();
     }
+
+	public void flushCache(IDMContext context) {
+        fContainerCommandCache.reset(context);
+	}
 
 }

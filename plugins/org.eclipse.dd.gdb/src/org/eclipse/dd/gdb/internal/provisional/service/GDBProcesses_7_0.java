@@ -23,6 +23,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
@@ -66,7 +67,7 @@ import org.osgi.framework.BundleContext;
  * which really mean it supports the new -list-thread-groups command.
  * 
  */
-public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses {
+public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses, ICachingService {
 
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -767,4 +768,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     		fThreadCommandCache.reset();
     	}
     }
+
+	public void flushCache(IDMContext context) {
+		fContainerCommandCache.reset(context);
+		fThreadCommandCache.reset(context);
+	}
+    
 }

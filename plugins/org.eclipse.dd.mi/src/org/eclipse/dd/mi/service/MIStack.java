@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStack2;
@@ -55,7 +56,7 @@ import org.eclipse.dd.mi.service.command.output.MIStackListLocalsInfo;
 import org.osgi.framework.BundleContext;
 
 public class MIStack extends AbstractDsfService
-	implements IStack2
+	implements IStack2, ICachingService
 {
     protected static class MIFrameDMC extends AbstractDMContext 
         implements IFrameDMContext
@@ -665,5 +666,9 @@ public class MIStack extends AbstractDsfService
     		fCachedStoppedEvent = (MIStoppedEvent)miEvent;
     	}
     }
+
+	public void flushCache(IDMContext context) {
+        fMICommandCache.reset(context);
+	}
 
 }

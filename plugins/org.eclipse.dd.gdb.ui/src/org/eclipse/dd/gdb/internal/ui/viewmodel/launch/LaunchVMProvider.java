@@ -11,17 +11,26 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.viewmodel.launch;
 
+import java.util.concurrent.RejectedExecutionException;
+
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractLaunchVMProvider;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
+import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -81,4 +90,30 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         return super.canSkipHandlingEvent(newEvent, eventToSkip);
     }
 
+    @Override
+    public void refresh() {
+        super.refresh();
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), getSession().getId());
+                    IProcesses processesService = tracker.getService(IProcesses.class);
+                    if (processesService instanceof ICachingService) {
+                        ((ICachingService)processesService).flushCache(null);
+                    }
+                    IStack stackService = tracker.getService(IStack.class);
+                    if (stackService instanceof ICachingService) {
+                        ((ICachingService)stackService).flushCache(null);
+                    }
+                    IRunControl runControlService = tracker.getService(IRunControl.class);
+                    if (runControlService instanceof ICachingService) {
+                        ((ICachingService)runControlService).flushCache(null);
+                    }
+                    tracker.dispose();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session disposed, ignore.
+        }
+    }
 }

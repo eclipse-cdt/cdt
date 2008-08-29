@@ -914,7 +914,10 @@ public class ExpressionService extends AbstractDsfService implements IExpression
     }
 
     public void flushCache(IDMContext context) {
-        fExpressionCache.reset();
+        fExpressionCache.reset(context);
+        // We must also mark all variable objects as out-of-date
+        // to refresh them as well
+        varManager.markAllOutOfDate();
     }
 
 }

@@ -25,6 +25,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -69,7 +70,7 @@ import org.osgi.framework.BundleContext;
  * that listen to service events and track service state, to be perfectly in
  * sync with the service state.
  */
-public class MIRunControlNS extends AbstractDsfService implements IRunControl
+public class MIRunControlNS extends AbstractDsfService implements IRunControl, ICachingService
 {
 	@Immutable
 	private static class ExecutionData implements IExecutionDMData {
@@ -764,6 +765,9 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl
 	@DsfServiceEventHandler
 	public void eventDispatched(ICommandControlShutdownDMEvent e) {
 		fTerminated = true;
+	}
+
+	public void flushCache(IDMContext context) {
 	}
 
 }

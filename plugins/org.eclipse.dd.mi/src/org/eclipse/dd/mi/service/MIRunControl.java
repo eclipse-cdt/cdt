@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
@@ -72,7 +73,7 @@ import org.osgi.framework.BundleContext;
  * events and track service state, to be perfectly in sync with the service
  * state.
  */
-public class MIRunControl extends AbstractDsfService implements IRunControl
+public class MIRunControl extends AbstractDsfService implements IRunControl, ICachingService
 {
     @Deprecated
 	protected class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
@@ -675,5 +676,9 @@ public class MIRunControl extends AbstractDsfService implements IRunControl
             		"Cannot resume given DMC.", null)); //$NON-NLS-1$
             rm.done();
         }
+	}
+
+	public void flushCache(IDMContext context) {
+		fMICommandCache.reset(context);		
 	}
 }

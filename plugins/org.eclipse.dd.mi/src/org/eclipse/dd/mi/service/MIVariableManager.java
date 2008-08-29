@@ -941,7 +941,6 @@ public class MIVariableManager implements ICommandControl {
 
 		public boolean isUpdating() { return currentState == STATE_UPDATING; }
 
-		public boolean isOutOfDate() { return outOfDate; }
 		public void markAsOutOfDate() { outOfDate = true; }
 		
 		// Remember that we must add ourself as a modifiable descendant if our value can change
@@ -1679,7 +1678,7 @@ public class MIVariableManager implements ICommandControl {
         }
     }
     
-    private void markAllOutOfDate() {
+    public void markAllOutOfDate() {
     	MIRootVariableObject root;
     	while ((root = updatedRootList.poll()) != null) {
     		root.markAsOutOfDate();

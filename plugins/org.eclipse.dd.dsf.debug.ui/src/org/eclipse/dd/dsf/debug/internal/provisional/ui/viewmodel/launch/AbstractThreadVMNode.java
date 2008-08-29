@@ -24,6 +24,7 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
@@ -32,7 +33,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
-import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -121,7 +121,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
           // The timed out event occured on a container and not on a thread.  Do not
           // return a context for this event, which will force the view model to generate
           // a delta for all the threads.
-          rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+          rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
           rm.done();
           return;
         } else if (e instanceof ISteppingTimedOutEvent && 
@@ -130,7 +130,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
              // The timed out event occured on a container and not on a thread.  Do not
              // return a context for this event, which will force the view model to generate
              // a delta for all the threads.
-             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+             rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
              rm.done();
              return;
         } else if (e instanceof FullStackRefreshEvent &&
@@ -139,7 +139,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
         	// The step sequence end event occured on a container and not on a thread.  Do not
         	// return a context for this event, which will force the view model to generate
         	// a delta for all the threads.
-        	rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+        	rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         	rm.done();
         	return;
         } else if (e instanceof ModelProxyInstalledEvent) {
@@ -205,17 +205,17 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                                     } else if (vmcIdx >= 0) {
                                         rm.setData(new VMContextInfo((IVMContext)getData().get(vmcIdx), vmcIdx, false));
                                     } else {
-                                        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No threads available", null)); //$NON-NLS-1$
+                                        rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No threads available", null)); //$NON-NLS-1$
                                     }
                                     rm.done();
                                 } else {
-                                    rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No threads available", null)); //$NON-NLS-1$
+                                    rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No threads available", null)); //$NON-NLS-1$
                                     rm.done();
                                 }
                             }
                         });
                     } catch (RejectedExecutionException e) {
-                        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+                        rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
                         rm.done();
                     }
                 }

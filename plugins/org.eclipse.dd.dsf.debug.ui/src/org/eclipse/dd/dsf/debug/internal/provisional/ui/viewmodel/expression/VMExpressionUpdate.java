@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -72,7 +72,7 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
         if (fExpressionElement != null) {
             rm.setData(fExpressionElement);
         } else if (rm.isSuccess()) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
         }
         super.done();
     }

@@ -11,6 +11,8 @@
 
 package org.eclipse.dd.debug.ui.memory.search;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -885,7 +887,7 @@ public class FindReplaceDialog extends SelectionDialog
 			public IStatus run(IProgressMonitor monitor)
 					throws OperationCanceledException {
 
-				BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
+				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
 				BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
 				BigInteger currentPosition = start;
 
@@ -918,7 +920,7 @@ public class FindReplaceDialog extends SelectionDialog
 						if(matched)
 						{
 							if(all && !isReplace)
-								((MemorySearchResult) getSearchResult()).addMatch("0x" + currentPosition.toString(16)); //$NON-NLS-1$
+								((MemorySearchResult) getSearchResult()).addMatch(new MemoryMatch(currentPosition, searchPhraseLength));
 						
 							if(isReplace)
 							{
@@ -956,6 +958,17 @@ public class FindReplaceDialog extends SelectionDialog
 													((IRepositionableMemoryRendering) rendering).goToAddress(finalCurrentPosition);
 												} catch (DebugException e) {
 													MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+												}
+											}
+											if(rendering != null)
+											{
+												// Temporary, until platform accepts/adds new interface for setting the selection
+												try {
+													Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } );
+													if(m != null)
+														m.invoke(rendering, finalCurrentPosition, finalCurrentPosition.add(searchPhraseLength));
+												} catch (Exception e) {
+													// do nothing
 												}
 											}
 										}

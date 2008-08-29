@@ -53,15 +53,15 @@ public class MemorySearchResult implements ISearchResult
 		return fLabel;
 	}
 	
-	public String[] getMatches()
+	public MemoryMatch[] getMatches()
 	{
-		String matches[] = new String[fMatches.size()];
+		MemoryMatch matches[] = new MemoryMatch[fMatches.size()];
 		for(int i = 0; i < matches.length; i++)
-			matches[i] = (String) fMatches.elementAt(i);
+			matches[i] = (MemoryMatch) fMatches.elementAt(i);
 		return matches;
 	}
 	
-	public void addMatch(String address)
+	public void addMatch(MemoryMatch address)
 	{
 		fMatches.addElement(address);
 		fireChange();

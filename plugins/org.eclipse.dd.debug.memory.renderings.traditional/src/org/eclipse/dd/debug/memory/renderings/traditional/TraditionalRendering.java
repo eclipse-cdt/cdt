@@ -328,6 +328,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		
 		super.deactivated();
 	}
+	
+	public void setSelection(BigInteger start, BigInteger end)
+	{
+		fRendering.getSelection().setStart(start, start);
+		fRendering.getSelection().setEnd(end, end);
+	}
 
 	public void gotoAddress(final BigInteger address)
     {

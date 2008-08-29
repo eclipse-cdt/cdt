@@ -11,6 +11,7 @@
 
 package org.eclipse.dd.debug.ui.memory.search;
 
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 
 import org.eclipse.dd.debug.ui.memory.search.FindReplaceDialog.IMemorySearchQuery;
@@ -177,15 +178,28 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				if( event.getSelection() instanceof StructuredSelection)
 				{
 					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView().getMemoryRenderingContainers();
+					MemoryMatch match = (MemoryMatch) ((StructuredSelection) event.getSelection()).getFirstElement();
 					for(int i = 0; i < containers.length; i++)
 					{
 						IMemoryRendering rendering = containers[i].getActiveRendering();
 						if(rendering instanceof IRepositionableMemoryRendering)
 						{
 							try {
-								((IRepositionableMemoryRendering) rendering).goToAddress(new BigInteger(((StructuredSelection) event.getSelection()).getFirstElement().toString().substring(2), 16));
+								((IRepositionableMemoryRendering) rendering).goToAddress(match.getStartAddress());
 							} catch (DebugException e) {
 								MemorySearchPlugin.logError(Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+							}
+						}
+						
+						if(rendering != null)
+						{
+							// Temporary, until platform accepts/adds new interface for setting the selection
+							try {
+								Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
+								if(m != null)
+									m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
+							} catch (Exception e) {
+								// do nothing
 							}
 						}
 					}
@@ -201,6 +215,9 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 			}
 
 			public String getText(Object element) {
+				if(element instanceof MemoryMatch)
+					return "0x" + ((MemoryMatch) element).getStartAddress().toString(16); //$NON-NLS-1$
+				
 				return element.toString();
 			}
 

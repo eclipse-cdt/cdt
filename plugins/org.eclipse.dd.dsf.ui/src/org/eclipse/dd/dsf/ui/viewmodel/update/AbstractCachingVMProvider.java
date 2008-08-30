@@ -920,19 +920,24 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     
     private void updateExpanded(final IVMModelProxyExtension proxyStrategy, final Object viewerInput, final TreePath path, final RequestMonitor rm)
     {
+    	final IPresentationContext presentationContext = getPresentationContext();
+    	final String[] columns = presentationContext.getColumns();
+    	
     	this.update(new IChildrenUpdate[] {  new VMChildrenUpdate(
     	    path, viewerInput, 
-	    	getPresentationContext(), -1, -1, new DataRequestMonitor<List<Object>>(getExecutor(), null) {
+	    	presentationContext, -1, -1, new DataRequestMonitor<List<Object>>(getExecutor(), null) {
 	            @Override
 	            protected void handleCompleted() {
-	                if (getData() != null) {
+	            	if (getData() != null) {
                 		TreeViewer viewer = (TreeViewer) proxyStrategy.getViewer();
                 		
                 		int expandedCount = 0;
+                		int elementCount = 0;
                 		
                         final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
                         
-                        for(Object data : getData())
+                        
+                        for(final Object data : getData())
                 		{
                     		if(viewer.getExpandedState(data))
                     		{
@@ -945,9 +950,81 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                     			updateExpanded(proxyStrategy, viewerInput, new TreePath(childPathSegments), multiRm);
                     			expandedCount++;
                     		}
+                    		
+                    		if(data instanceof IAdaptable)
+    	            		{
+                    			elementCount++;
+    	            			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable) data).getAdapter(IElementLabelProvider.class);
+    	            			
+    	            			labelProvider.update(new ILabelUpdate[] {
+    	            				new ILabelUpdate()
+    	            				{
+    	            					public Object getElement() {
+    										return data;
+    									}
+
+    									public TreePath getElementPath() {
+    										return path;
+    									}
+
+    									public IPresentationContext getPresentationContext() {
+    										return presentationContext;
+    									}
+
+    									public Object getViewerInput() {
+    										return viewerInput;
+    									}
+
+    									public void cancel() {
+    										
+    									}
+
+    									public IStatus getStatus() {
+    										return null;
+    									}
+
+    									public boolean isCanceled() {
+    										return false;
+    									}
+
+    									public void setStatus(IStatus status) {
+    										
+    									}
+
+    									public String[] getColumnIds() {
+    	            						return columns;
+    	            					}
+
+    	            					public void setBackground(RGB arg0, int arg1) {
+    	            						
+    	            					}
+
+    	            					public void setFontData(FontData arg0, int arg1) {
+    	            						
+    	            					}
+
+    	            					public void setForeground(RGB arg0, int arg1) {
+    	            						
+    	            					}
+
+    	            					public void setImageDescriptor(ImageDescriptor arg0, int arg1) {
+    	            						
+    	            					}
+
+    	            					public void setLabel(String arg0, int arg1) {
+    	            					}
+
+    	            					public void done() {
+    	            				        
+    	            						multiRm.done();
+    	            				    }
+    	            				}
+    	            			});
+    	            		}
+
                 		}
                         
-                        multiRm.setDoneCount(expandedCount);
+                        multiRm.setDoneCount(expandedCount + elementCount);
 	                }
 	            }
 	        })});

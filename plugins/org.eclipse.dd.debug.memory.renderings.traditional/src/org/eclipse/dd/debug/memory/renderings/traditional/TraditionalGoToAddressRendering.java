@@ -96,116 +96,63 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 				}
 	
 				IMemoryRenderingContainer containers[] = fSite.getMemoryRenderingContainers();
-				IMemoryRenderingContainer firstRenderingViewPane = null;
 				for(int i = 0; i < containers.length; i++)
 				{
 					if(containers[i] instanceof RenderingViewPane)
 					{
-						firstRenderingViewPane = containers[i];
-						break;
-					}
-				}
-				
-				BigInteger absoluteAddress = null;
-				if(fGotoAddress.isGoToAddress())
-					absoluteAddress = address;
-				
-				IMemoryBlock activeMemoryBlock = null;
-				
-				if(address != null && firstRenderingViewPane != null)
-				{
-					IMemoryRendering activeRendering = firstRenderingViewPane.getActiveRendering();
-					if(activeRendering != null)
-					{
-						activeMemoryBlock = activeRendering.getMemoryBlock();
-						IMemoryBlockExtension blockExtension = (IMemoryBlockExtension) activeMemoryBlock.getAdapter(IMemoryBlockExtension.class);
-						if(blockExtension != null)
-						{
-							BigInteger baseAddress = null;
-							BigInteger addressableSize = null;
-							try
-							{
-								baseAddress = blockExtension.getBigBaseAddress();
-								addressableSize = BigInteger.valueOf(blockExtension.getAddressableSize());
-							}
-							catch(DebugException de)
-							{
-								// TODO
-							}
-							
-							if(baseAddress != null)
-							{
-								if(fGotoAddress.isOffset())
-									absoluteAddress = baseAddress.add(address);
-								else if(fGotoAddress.isJump() && addressableSize != null)
-									absoluteAddress = baseAddress.add(address.multiply(addressableSize));
-							}
-						}
+						BigInteger absoluteAddress = null;
+						if(fGotoAddress.isGoToAddress())
+							absoluteAddress = address;
 						
-						// 1) Try to reposition the renderings using the IRepositionableMemoryRendering interface
-						if(absoluteAddress != null && activeRendering instanceof IRepositionableMemoryRendering)
+						IMemoryBlock activeMemoryBlock = null;
+						
+						if(address != null && containers[i] != null)
 						{
-							try
+							IMemoryRendering activeRendering = containers[i].getActiveRendering();
+							if(activeRendering != null)
 							{
-								((IRepositionableMemoryRendering) activeRendering).goToAddress(absoluteAddress);
-								return;
-							}
-							catch(DebugException de)
-							{
-								// TODO ?
+								activeMemoryBlock = activeRendering.getMemoryBlock();
+								IMemoryBlockExtension blockExtension = (IMemoryBlockExtension) activeMemoryBlock.getAdapter(IMemoryBlockExtension.class);
+								if(blockExtension != null)
+								{
+									BigInteger baseAddress = null;
+									BigInteger addressableSize = null;
+									try
+									{
+										baseAddress = blockExtension.getBigBaseAddress();
+										addressableSize = BigInteger.valueOf(blockExtension.getAddressableSize());
+									}
+									catch(DebugException de)
+									{
+										// TODO
+									}
+									
+									if(baseAddress != null)
+									{
+										if(fGotoAddress.isOffset())
+											absoluteAddress = baseAddress.add(address);
+										else if(fGotoAddress.isJump() && addressableSize != null)
+											absoluteAddress = baseAddress.add(address.multiply(addressableSize));
+									}
+								}
+								
+								// 1) Try to reposition the renderings using the IRepositionableMemoryRendering interface
+								if(absoluteAddress != null && activeRendering instanceof IRepositionableMemoryRendering)
+								{
+									try
+									{
+										((IRepositionableMemoryRendering) activeRendering).goToAddress(absoluteAddress);
+									}
+									catch(DebugException de)
+									{
+										// do nothing
+									}
+								}
 							}
 						}
 					}
 				}
-			
-				// 2) Fallback: Remove existing memory block; Add new memory block
-				IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(DebugUITools.getDebugContext());
-				final BigInteger absoluteAddressFinal = absoluteAddress;
-				final IMemoryBlock activeMemoryBlockFinal = activeMemoryBlock;
-				final IMemoryBlockRetrieval retrievalFinal = retrieval;
 				
-				if(retrieval instanceof IMemoryBlockRetrievalExtension)
-				{
-					String absoluteAddressExpression = fGotoAddress.getExpressionText();
-					if(absoluteAddressFinal != null)
-						absoluteAddressExpression = (radix == 16 ? "0x" : "") + absoluteAddressFinal.toString(radix);
-					final String absoluteAddressExpressionFinal = absoluteAddressExpression;
-					
-					new Thread() { // upgrade to Job ?
-						public void run()
-						{
-							try
-							{
-								final IMemoryBlockExtension memBlock = ((IMemoryBlockRetrievalExtension) retrievalFinal)
-										.getExtendedMemoryBlock(absoluteAddressExpressionFinal,  DebugUITools.getDebugContext());
-								
-								if (memBlock != null)
-								{
-									Display.getDefault().asyncExec(new Runnable(){
-										public void run()
-										{
-											IMemoryRenderingContainer container = fSite.getContainer(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
-											IMemoryRendering createRendering = new CreateRendering(container);
-											createRendering.init(container, memBlock);
-											container.addMemoryRendering(createRendering);
-										}
-									});
-								}
-								else
-								{
-									// open error if it failed to retrieve a memory block
-									MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, DebugUIMessages.AddMemoryBlockAction_noMemoryBlock, null);
-								}
-							}
-							catch(DebugException de)
-							{
-								MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, DebugUIMessages.AddMemoryBlockAction_noMemoryBlock, de);
-							}
-						}
-					}.start();
-										
-					
-				}
 			}
 		};
 		

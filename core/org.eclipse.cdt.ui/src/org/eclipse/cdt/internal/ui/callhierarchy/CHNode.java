@@ -33,7 +33,7 @@ public class CHNode implements IAdaptable {
 	private ITranslationUnit fFileOfReferences;
     private List<CHReferenceInfo> fReferences;
     
-    private int fHashCode;
+    protected int fHashCode;
     private long fTimestamp;
     private boolean fIsRecursive;
 	private boolean fIsInitializer;
@@ -54,7 +54,7 @@ public class CHNode implements IAdaptable {
     }
     
 	private int computeHashCode() {
-        int hashCode= 0;
+        int hashCode= 1;
         if (fParent != null) {
             hashCode= fParent.hashCode() * 31;
         }

@@ -279,4 +279,62 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		TreeItem item= checkTreeNode(chTree, 0, 0, "test()");
 		checkTreeNode(chTree, 0, 1, null);
 	}
+	
+	//	class Base {
+	//	public:
+	//	   virtual void First() {}
+	//	   virtual void Second() {}
+	//	};
+	//
+	//	class Derived: public Base {
+	//  public:
+	//	   virtual void First() {}
+	//	   virtual void Second() {}
+	//	};
+	//
+	//	void func(Base *base) {
+	//		base->First();
+	//		base->Second();
+	//	}
+	//
+	//	int main() {
+	//		Derived derived;
+	//		func(&derived);
+	//		return 0;
+	//	}
+	public void testMultiplePolyMorphicMethodCalls_244987() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "SomeClass244987.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+
+		// open editor, check outline
+		CEditor editor= openEditor(file);
+		int idx = content.indexOf("main");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, false);
+
+		Tree chTree= checkTreeNode(ch, 0, "main()").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "func(Base *)");
+		expandTreeItem(ti);
+		checkTreeNode(chTree, 0, 1, null);
+
+		TreeItem ti1= checkTreeNode(ti, 0, "Base::First()");
+		expandTreeItem(ti1);
+		TreeItem ti2= checkTreeNode(ti, 1, "Base::Second()");
+		expandTreeItem(ti2);
+		checkTreeNode(ti, 2, null);
+		
+		checkTreeNode(ti1, 0, "Base::First()");
+		checkTreeNode(ti1, 1, "Derived::First()");
+		checkTreeNode(ti1, 2, null);
+
+		checkTreeNode(ti2, 0, "Base::Second()");
+		checkTreeNode(ti2, 1, "Derived::Second()");
+		checkTreeNode(ti2, 2, null);
+
+	}
+
 }

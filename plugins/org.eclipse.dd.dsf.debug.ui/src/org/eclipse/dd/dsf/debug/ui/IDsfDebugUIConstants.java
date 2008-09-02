@@ -28,8 +28,9 @@ public interface IDsfDebugUIConstants {
 	/** Unloaded Shared library symbols image identifier. */
 	public static final String IMG_OBJS_SHARED_LIBRARY_SYMBOLS_UNLOADED = "icons/library_obj.gif"; //$NON-NLS-1$
 	
-	/**
+	/*
 	 * The orientation of the detail view in the VariablesView
+	 * Note: these constants should be removed from API.  See bug 246005.
 	 */
 	public static final String VARIABLES_DETAIL_PANE_ORIENTATION = "Variables.detail.orientation"; //$NON-NLS-1$
 	public static final String EXPRESSIONS_DETAIL_PANE_ORIENTATION = "Expressions.detail.orientation"; //$NON-NLS-1$

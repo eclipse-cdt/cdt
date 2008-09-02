@@ -52,7 +52,10 @@ import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 public final class RSEInitJob extends Job {
 
 	/**
-	 * The name of this job. This is API. Clients may use this name to find this job by name.
+	 * The name of this job. This is API. Clients may use this name to find this
+	 * job by name.
+	 * 
+	 * @deprecated use {@link RSECorePlugin#isInitComplete(int)}
 	 */
 	public final static String NAME = "Initialize RSE"; //$NON-NLS-1$
 
@@ -217,16 +220,16 @@ public final class RSEInitJob extends Job {
 			}
 			submonitor.done();
 		}
-		
+
 		// set the default encoding provider
 		SystemEncodingUtil encodingUtil = SystemEncodingUtil.getInstance();
 		encodingUtil.setDefaultEncodingProvider(
 				new SystemEncodingUtil.DefaultEncodingProvider(){
 					   public String getLocalDefaultEncoding() {
-						   return ResourcesPlugin.getEncoding();						  
+						   return ResourcesPlugin.getEncoding();
 					   }
 				});
-		
+
 		initializerPhase.done(result);
 		// finish up - propogate cancel if necessary
 		if (monitor.isCanceled()) {
@@ -315,7 +318,7 @@ public final class RSEInitJob extends Job {
 		waitForCompletion(RSECorePlugin.INIT_ALL);
 		return getResult();
 	}
-	
+
 	/**
 	 * Wait for the completion of a particular phase
 	 * @param phase the phase to wait for

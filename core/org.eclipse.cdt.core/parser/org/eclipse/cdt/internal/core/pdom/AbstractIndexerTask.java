@@ -238,6 +238,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				parseFilesUpFront(monitor);
 				parseLinkage(ILinkage.CPP_LINKAGE_ID, files, monitor);
 				parseLinkage(ILinkage.C_LINKAGE_ID, files, monitor);
+				parseLinkage(ILinkage.FORTRAN_LINKAGE_ID, files, monitor);
 			}
 			finally {
 				fIndex.flush();

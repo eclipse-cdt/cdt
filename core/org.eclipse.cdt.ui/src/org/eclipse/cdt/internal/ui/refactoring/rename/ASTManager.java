@@ -822,21 +822,23 @@ public class ASTManager {
         pm.worked(1);
         if (tu != null) {
         	IASTName name= tu.getNodeSelector(tu.getFilePath()).findEnclosingName(fArgument.getOffset(), fArgument.getLength());
-            if (name instanceof ICPPASTQualifiedName) {
-            	IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
-            	name= na[na.length-1];
-            }
-            fArgument.setName(name);
-            IBinding binding= name.resolveBinding();
-            if (binding != null) {
-            	IScope scope= null;
-            	try {
-            		scope = binding.getScope();
-            	} catch (DOMException e) {
-            		handleDOMException(tu, e, status);
-            	}
-            	fArgument.setBinding(name.getTranslationUnit(), binding, scope);
-            }
+        	if (name != null) {
+        		if (name instanceof ICPPASTQualifiedName) {
+        			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
+        			name= na[na.length-1];
+        		}
+        		fArgument.setName(name);
+        		IBinding binding= name.resolveBinding();
+        		if (binding != null) {
+        			IScope scope= null;
+        			try {
+        				scope = binding.getScope();
+        			} catch (DOMException e) {
+        				handleDOMException(tu, e, status);
+        			}
+        			fArgument.setBinding(name.getTranslationUnit(), binding, scope);
+        		}
+        	}
         }
         pm.worked(1);
         pm.done();

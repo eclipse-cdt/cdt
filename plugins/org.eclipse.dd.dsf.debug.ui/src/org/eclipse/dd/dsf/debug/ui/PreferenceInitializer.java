@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 
+// Note: this class should be removed from public API.  See bug 246004
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public PreferenceInitializer() {

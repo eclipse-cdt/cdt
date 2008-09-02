@@ -1696,21 +1696,18 @@ public class CPPTemplates {
 		// Using the transformed parameter list, perform argument deduction against the other
 		// function template
 		ObjectMap m1 = null;
-		if (f1 != null) {
-			IType[] args = createArgsForFunctionTemplateOrdering(f1);
-			IBinding function = instantiate(f1, args);
-			if (function instanceof ICPPFunction)
-				m1 = deduceTemplateArguments(f2, ((ICPPFunction) function).getType().getParameterTypes());
-		}
-
 		ObjectMap m2 = null;
-		if (f2 != null) {
-			IType[] args = createArgsForFunctionTemplateOrdering(f2);
-			IBinding function = instantiate(f2, args);
 
-			if (function instanceof ICPPFunction)
-				m2 = deduceTemplateArguments(f1, ((ICPPFunction) function).getType().getParameterTypes());
-		}
+		IType[] args = createArgsForFunctionTemplateOrdering(f1);
+		IBinding function = instantiate(f1, args);
+		if (function instanceof ICPPFunction)
+			m1 = deduceTemplateArguments(f2, ((ICPPFunction) function).getType().getParameterTypes());
+
+		args = createArgsForFunctionTemplateOrdering(f2);
+		function = instantiate(f2, args);
+		if (function instanceof ICPPFunction)
+			m2 = deduceTemplateArguments(f1, ((ICPPFunction) function).getType().getParameterTypes());
+		
 		// The transformed template is at least as specialized as the other iff the deduction
 		// succeeds and the deduced parameter types are an exact match.
 		// A template is more specialized than another iff it is at least as specialized as the
@@ -1802,17 +1799,16 @@ public class CPPTemplates {
 		}
 
 		//to order class template specializations, we need to transform them into function templates
-		ICPPFunctionTemplate template1 = null, template2 = null;
-
-//		if (spec1 instanceof ICPPClassType) {
-			template1 = classTemplateSpecializationToFunctionTemplate(spec1);
-			template2 = classTemplateSpecializationToFunctionTemplate(spec2);
-//		} 
-//		else if (spec1 instanceof ICPPFunction) {
-//			template1 = (ICPPFunctionTemplate) spec1;
-//			template2 = (ICPPFunctionTemplate) spec2;
-//		}
-
+		ICPPFunctionTemplate template1 = classTemplateSpecializationToFunctionTemplate(spec1);
+		ICPPFunctionTemplate template2 = classTemplateSpecializationToFunctionTemplate(spec2);
+		if (template1 == null) {
+			if (template2 == null)
+				return 0;
+			return 1;
+		}
+		if (template2 == null)
+			return -1;
+		
 		return orderTemplateFunctions(template1, template2);
 	}
 

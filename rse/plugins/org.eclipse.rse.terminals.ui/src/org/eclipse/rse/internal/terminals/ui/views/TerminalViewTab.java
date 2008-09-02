@@ -68,13 +68,13 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 public class TerminalViewTab extends Composite {
 
 	public static String DATA_KEY_CONTROL = "$_control_$"; //$NON-NLS-1$
-	
+
 	private final CTabFolder tabFolder;
-	
+
 	private Menu menu;
-	
+
 	private boolean fMenuAboutToShow;
-	
+
 	private TerminalActionCopy fActionEditCopy;
 
 	private TerminalActionCut fActionEditCut;
@@ -84,8 +84,6 @@ public class TerminalViewTab extends Composite {
 	private TerminalActionClearAll fActionEditClearAll;
 
 	private TerminalActionSelectAll fActionEditSelectAll;
-
-	private ITerminalViewControl fTerminalControl;
 
 	protected class TerminalContextMenuHandler implements MenuListener,
 			IMenuListener {
@@ -187,7 +185,7 @@ public class TerminalViewTab extends Composite {
 
 	public CTabItem createTabItem(IAdaptable root,
 			final String initialWorkingDirCmd) {
-		CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
+		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
 		setTabTitle(root, item);
 
 		item.setData(root);
@@ -196,46 +194,43 @@ public class TerminalViewTab extends Composite {
 
 		tabFolder.getParent().layout(true);
 		if (root instanceof IHost) {
-			IHost host = (IHost) root;
+			final IHost host = (IHost) root;
 
 			ITerminalConnector connector = new RSETerminalConnector(host);
-			fTerminalControl = TerminalViewControlFactory.makeControl(
-					new ITerminalListener() {
+			ITerminalViewControl terminalControl = TerminalViewControlFactory
+					.makeControl(new ITerminalListener() {
 
 						public void setState(final TerminalState state) {
 							if (state == TerminalState.CLOSED
 									|| state == TerminalState.CONNECTED) {
 								Display.getDefault().asyncExec(new Runnable() {
 									public void run() {
-										CTabItem item = tabFolder
-												.getSelection();
-										if (item != null && !item.isDisposed()) {
-											Object data = item.getData();
-											if (data instanceof IHost) {
-												IHost host = (IHost) data;
-												final ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper
-														.getTerminalSubSystem(host);
+										if (!item.isDisposed()) {
+											final ITerminalServiceSubSystem terminalServiceSubSystem = TerminalServiceHelper
+													.getTerminalSubSystem(host);
 
-												if (state == TerminalState.CONNECTED)
-													TerminalServiceHelper
-															.updateTerminalShellForTerminalElement(item);
+											if (state == TerminalState.CONNECTED)
+												TerminalServiceHelper
+														.updateTerminalShellForTerminalElement(item);
 
-												setTabImage(host, item);
-												ISystemRegistry registry = RSECorePlugin
-														.getTheSystemRegistry();
-												registry
-														.fireEvent(new SystemResourceChangeEvent(
-																terminalServiceSubSystem,
-																ISystemResourceChangeEvents.EVENT_REFRESH,
-																terminalServiceSubSystem));
-											}
+											setTabImage(host, item);
+											ISystemRegistry registry = RSECorePlugin
+													.getTheSystemRegistry();
+											registry
+													.fireEvent(new SystemResourceChangeEvent(
+															terminalServiceSubSystem,
+															ISystemResourceChangeEvents.EVENT_REFRESH,
+															terminalServiceSubSystem));
 										}
 										if (state == TerminalState.CONNECTED) {
-											if (initialWorkingDirCmd != null) {
-												fTerminalControl
-														.pasteString(initialWorkingDirCmd);
-											}
 
+											if (initialWorkingDirCmd != null) {
+												Object data = item
+														.getData(DATA_KEY_CONTROL);
+												if (data instanceof ITerminalViewControl)
+													((ITerminalViewControl) data)
+															.pasteString(initialWorkingDirCmd);
+											}
 										}
 									}
 								});
@@ -249,13 +244,13 @@ public class TerminalViewTab extends Composite {
 					}, c, new ITerminalConnector[] { connector });
 			// Specify Encoding for Terminal
 			try {
-				fTerminalControl.setEncoding(host.getDefaultEncoding(true));
+				terminalControl.setEncoding(host.getDefaultEncoding(true));
 			} catch (UnsupportedEncodingException e) {
 				/* ignore and allow fallback to default encoding */
 			}
-			fTerminalControl.setConnector(connector);
-			fTerminalControl.connectTerminal();
-			item.setData(DATA_KEY_CONTROL, fTerminalControl);
+			terminalControl.setConnector(connector);
+			item.setData(DATA_KEY_CONTROL, terminalControl);
+			terminalControl.connectTerminal();
 		}
 		item.setControl(c);
 		tabFolder.setSelection(item);

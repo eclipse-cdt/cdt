@@ -270,7 +270,7 @@ public class SystemView extends SafeTreeViewer
 					item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
 
 					// if found, re-expand it
-					if (item != null) {
+					if (item != null && !item.isDisposed()) {
 						IRSECallback callback = getCallbackForSubChildren(itemToExpand, _toExpand);								
 						createChildren(item, callback);
 						((TreeItem) item).setExpanded(true);

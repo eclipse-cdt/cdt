@@ -294,7 +294,7 @@ public class SystemView extends SafeTreeViewer
 				if (parentName.equals(itemToExpand.remoteName)){
 					// same item
 				}
-				else if (itemToExpand.remoteName.startsWith(parentName)){
+				else if (itemToExpand.remoteName != null && itemToExpand.remoteName.startsWith(parentName)){
 					// child item
 					subChildren.add(itemToExpand);
 				}					

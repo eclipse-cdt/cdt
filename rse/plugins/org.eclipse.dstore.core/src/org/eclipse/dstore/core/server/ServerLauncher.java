@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight (IBM) - [193426] don't display exceptions
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM) - [245714] [dstore] Multiple user ID/password prompts and connect fails
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -207,6 +208,8 @@ public class ServerLauncher extends Thread {
 			String password = null;
 
 			_port = null;
+			
+			boolean problemReadingSocket = false;
 			try
 			{
 				user = _reader.readLine();
@@ -218,15 +221,19 @@ public class ServerLauncher extends Thread {
 				// don't display exceptions 193426
 				//e.printStackTrace();
 				_port = "0"; //$NON-NLS-1$
+				
+				// this is probably an SSL exception
+				_writer.println(IDataStoreConstants.SERVER_FAILURE + e);
+				problemReadingSocket = true;
 			}
 
-			
 			
 			if (_serverPortRange != null && (_port == null || _port.equals("0"))) //$NON-NLS-1$
 			{
 				_port = _serverPortRange;
 			}		
 
+			if (!problemReadingSocket)
 			{
 				boolean isError = false;
 				if (_serverPortRange != null && _port != _serverPortRange)
@@ -241,144 +248,144 @@ public class ServerLauncher extends Thread {
 				}
 				if (!isError)
 				{
-				// start new server
-				try
-				{
-					String launchStatus = null;
-					String ticket = new String("" + System.currentTimeMillis()); //$NON-NLS-1$
-
-					String theOS = System.getProperty("os.name"); //$NON-NLS-1$
-					String timeout = "120000"; //$NON-NLS-1$
-
-							
-					if (!theOS.toLowerCase().startsWith("win")) //$NON-NLS-1$
+					// start new server
+					try
 					{
-						// assuming unix compatable
-                        //
-                        // Get the property which
-                        // contains the authorization
-                        // script path
-                        //
-						String authPath = System.getProperty("RSE.AUTH"); //$NON-NLS-1$
-						File authFile = null;
-						if (authPath != null && authPath.length() > 0)
+						String launchStatus = null;
+						String ticket = new String("" + System.currentTimeMillis()); //$NON-NLS-1$
+	
+						String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+						String timeout = "120000"; //$NON-NLS-1$
+	
+								
+						if (!theOS.toLowerCase().startsWith("win")) //$NON-NLS-1$
 						{
-							authFile = new File(authPath);
-						}
-						if (authFile == null || !authFile.exists())
-						{
-							authPath = "perl " + _path + File.separator + "auth.pl"; //$NON-NLS-1$ //$NON-NLS-2$							
-						}
-
-						String authString =
-								authPath
-								+ " " //$NON-NLS-1$
-								+ user
-								+ " " //$NON-NLS-1$
-								+ _path
-								+ " " //$NON-NLS-1$
-								+ _port
-								+ " " //$NON-NLS-1$
-								+ timeout
-								+ " " //$NON-NLS-1$
-								+ ticket
-								+ " " //$NON-NLS-1$
-								+ System.getProperty("java.home") //$NON-NLS-1$
-								;
-
-						String[] authArray = { "sh", "-c", authString }; //$NON-NLS-1$ //$NON-NLS-2$
-
-						// test password
-						_serverProcess = Runtime.getRuntime().exec(authArray);
-
-						_outReader = new BufferedReader(new InputStreamReader(_serverProcess.getInputStream()));
-						_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
-						BufferedWriter inWriter  = new BufferedWriter(new OutputStreamWriter(_serverProcess.getOutputStream()));
-						// write password
-						if (password != null)
-						{
-							inWriter.write(password);
-							inWriter.newLine();
-							inWriter.flush();
-						
-							launchStatus = _outReader.readLine();
-						}
-					}
-					else
-					{
-			
-						// launch new server
-						String[] cmdArray =
+							// assuming unix compatable
+	                        //
+	                        // Get the property which
+	                        // contains the authorization
+	                        // script path
+	                        //
+							String authPath = System.getProperty("RSE.AUTH"); //$NON-NLS-1$
+							File authFile = null;
+							if (authPath != null && authPath.length() > 0)
 							{
-								"java", //$NON-NLS-1$
-								"-DA_PLUGIN_PATH=" + _path, //$NON-NLS-1$
-								"-DDSTORE_SPIRIT_ON=true", //$NON-NLS-1$
-								"org.eclipse.dstore.core.server.Server", //$NON-NLS-1$
-								_port,
-								timeout,
-								ticket};
-
-						_serverProcess = Runtime.getRuntime().exec(cmdArray);
-						_outReader = new BufferedReader(new InputStreamReader(_serverProcess.getInputStream()));
-						_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
-
-						launchStatus = "success"; //$NON-NLS-1$
-					}
-
-					if ((launchStatus == null) || !launchStatus.equals("success")) //$NON-NLS-1$
-					{
-						_writer.println(IDataStoreConstants.AUTHENTICATION_FAILED);
-					}
-					else
-					{
-						// look for the server startup string, it needs to occur
-						// somewhere in the line.
-						String status = _errReader.readLine();
-						while (status!=null && (status.indexOf(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC) < 0))
-						{
-							status = _errReader.readLine();
-						}
-						// now read the real server status
-						if (status != null)
-						{
-							status = _errReader.readLine();
-						}
-						if ((status != null) && status.equals(ServerReturnCodes.RC_SUCCESS))
-						{
-							_port = _errReader.readLine();
-							_errReader.readLine();
-							_writer.println(IDataStoreConstants.CONNECTED);
-							_writer.println(_port);
-							_writer.println(ticket);
-
-							System.out.println("launched new server on " + _port); //$NON-NLS-1$
-							connected = true;
+								authFile = new File(authPath);
+							}
+							if (authFile == null || !authFile.exists())
+							{
+								authPath = "perl " + _path + File.separator + "auth.pl"; //$NON-NLS-1$ //$NON-NLS-2$							
+							}
+	
+							String authString =
+									authPath
+									+ " " //$NON-NLS-1$
+									+ user
+									+ " " //$NON-NLS-1$
+									+ _path
+									+ " " //$NON-NLS-1$
+									+ _port
+									+ " " //$NON-NLS-1$
+									+ timeout
+									+ " " //$NON-NLS-1$
+									+ ticket
+									+ " " //$NON-NLS-1$
+									+ System.getProperty("java.home") //$NON-NLS-1$
+									;
+	
+							String[] authArray = { "sh", "-c", authString }; //$NON-NLS-1$ //$NON-NLS-2$
+	
+							// test password
+							_serverProcess = Runtime.getRuntime().exec(authArray);
+	
+							_outReader = new BufferedReader(new InputStreamReader(_serverProcess.getInputStream()));
+							_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
+							BufferedWriter inWriter  = new BufferedWriter(new OutputStreamWriter(_serverProcess.getOutputStream()));
+							// write password
+							if (password != null)
+							{
+								inWriter.write(password);
+								inWriter.newLine();
+								inWriter.flush();
+							
+								launchStatus = _outReader.readLine();
+							}
 						}
 						else
 						{
-							if (status == null)
-							{
-								status = new String(IDataStoreConstants.UNKNOWN_PROBLEM);
-							}
-							// TODO Make sure that the client doesnt try
-							// connecting forever
-							_writer.println(status);
-
-							_serverProcess.destroy();
-							_serverProcess = null;
-							_outReader.close();
-							_outReader = null;
-
-							_errReader.close();
-							_errReader = null;
+				
+							// launch new server
+							String[] cmdArray =
+								{
+									"java", //$NON-NLS-1$
+									"-DA_PLUGIN_PATH=" + _path, //$NON-NLS-1$
+									"-DDSTORE_SPIRIT_ON=true", //$NON-NLS-1$
+									"org.eclipse.dstore.core.server.Server", //$NON-NLS-1$
+									_port,
+									timeout,
+									ticket};
+	
+							_serverProcess = Runtime.getRuntime().exec(cmdArray);
+							_outReader = new BufferedReader(new InputStreamReader(_serverProcess.getInputStream()));
+							_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
+	
+							launchStatus = "success"; //$NON-NLS-1$
 						}
+	
+						if ((launchStatus == null) || !launchStatus.equals("success")) //$NON-NLS-1$
+						{
+							_writer.println(IDataStoreConstants.AUTHENTICATION_FAILED);
+						}
+						else
+						{
+							// look for the server startup string, it needs to occur
+							// somewhere in the line.
+							String status = _errReader.readLine();
+							while (status!=null && (status.indexOf(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC) < 0))
+							{
+								status = _errReader.readLine();
+							}
+							// now read the real server status
+							if (status != null)
+							{
+								status = _errReader.readLine();
+							}
+							if ((status != null) && status.equals(ServerReturnCodes.RC_SUCCESS))
+							{
+								_port = _errReader.readLine();
+								_errReader.readLine();
+								_writer.println(IDataStoreConstants.CONNECTED);
+								_writer.println(_port);
+								_writer.println(ticket);
+	
+								System.out.println("launched new server on " + _port); //$NON-NLS-1$
+								connected = true;
+							}
+							else
+							{
+								if (status == null)
+								{
+									status = new String(IDataStoreConstants.UNKNOWN_PROBLEM);
+								}
+								// TODO Make sure that the client doesnt try
+								// connecting forever
+								_writer.println(status);
+	
+								_serverProcess.destroy();
+								_serverProcess = null;
+								_outReader.close();
+								_outReader = null;
+	
+								_errReader.close();
+								_errReader = null;
+							}
+						}
+			
 					}
-		
-				}
-				catch (IOException e)
-				{
-					_writer.println(IDataStoreConstants.SERVER_FAILURE + e);
-				}
+					catch (IOException e)
+					{
+						_writer.println(IDataStoreConstants.SERVER_FAILURE + e);
+					}
 				}
 			}
 

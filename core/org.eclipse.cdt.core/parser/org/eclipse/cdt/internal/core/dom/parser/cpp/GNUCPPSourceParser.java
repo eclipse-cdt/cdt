@@ -3110,16 +3110,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private boolean canHaveConstructorInitializer(IASTDeclSpecifier declspec) {
 		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
-			ICPPASTSimpleDeclSpecifier simpleSpecifier= (ICPPASTSimpleDeclSpecifier) declspec;
-			switch(simpleSpecifier.getType()) {
+			ICPPASTSimpleDeclSpecifier sspec= (ICPPASTSimpleDeclSpecifier) declspec;
+			switch(sspec.getType()) {
 			case IASTSimpleDeclSpecifier.t_unspecified:
+				if (sspec.isLong() || sspec.isShort() || sspec.isSigned() || sspec.isUnsigned())
+					return true;
+				if (sspec instanceof IGPPASTSimpleDeclSpecifier) {
+					final IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) sspec;
+					if (gspec.isLongLong())
+						return true;
+				}
+				return false;
+				
 			case IASTSimpleDeclSpecifier.t_void:
 				return false;
 			}
-			if (simpleSpecifier.isFriend()) {
+			
+			if (sspec.isFriend()) {
 				return false;
 			}
-			if (simpleSpecifier.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
+			if (sspec.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 				return false;
 			}
 		}

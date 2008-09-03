@@ -48,6 +48,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * Kevin Doyle		  (IBM)		 - [227391] Saving file in Eclipse does not update remote file
  * David McKnight     (IBM)      - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
+ * David McKnight     (IBM)      - [236723] UniversalFileTransferUtility..uploadResourcesFromWorkspace should query remote folder encoding
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1584,7 +1585,12 @@ public class UniversalFileTransferUtility
 
 
 						String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
-						targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(),monitor);
+						
+						// for bug 236723, getting remote encoding for target instead of default for target fs
+						String remoteEncoding = targetFolder.getEncoding();
+						String systemEncoding = targetFS.getRemoteEncoding();
+												
+						targetFS.upload(srcFileLocation, srcCharSet, newPath, remoteEncoding,monitor);
 						newFilePathList.add(newPath);
 
 						// should check preference first
@@ -1814,7 +1820,10 @@ public class UniversalFileTransferUtility
 							if (targetFS instanceof FileServiceSubSystem)
 							{
 								IFileService fileService = ((FileServiceSubSystem)targetFS).getFileService();
-								fileService.upload(inStream, targetFolder.getAbsolutePath(), name, !isText, targetFS.getRemoteEncoding(), monitor);
+								
+								// for bug 236723, getting remote encoding for target instead of default for target fs
+								String remoteEncoding = targetFolder.getEncoding();
+								fileService.upload(inStream, targetFolder.getAbsolutePath(), name, !isText, remoteEncoding, monitor);
 							}
 						}
 						catch (Exception e)
@@ -1827,7 +1836,10 @@ public class UniversalFileTransferUtility
 				{
 					// just copy using local location
 					String srcFileLocation = location.toOSString();
-					targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(), monitor);
+					
+					// for bug 236723, getting remote encoding for target instead of default for target fs
+					String remoteEncoding = targetFolder.getEncoding();
+					targetFS.upload(srcFileLocation, srcCharSet, newPath, remoteEncoding, monitor);
 				}
 
 				copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);

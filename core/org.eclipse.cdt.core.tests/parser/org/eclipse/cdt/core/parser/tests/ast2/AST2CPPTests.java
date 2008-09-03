@@ -215,6 +215,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings( getAboveComment() );
 	}
 	
+	// signed int si(0);
+	// unsigned   u(10U);
+	// signed     s(-1);
+	// short      sh(0);
+	// long       l(0L);
+	// long long  ll(0LL);
+	public void testInitializeUnsigned_Bug245070() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+	}
+	
 	public void testBug43579() throws Exception {
 		parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
 		parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$

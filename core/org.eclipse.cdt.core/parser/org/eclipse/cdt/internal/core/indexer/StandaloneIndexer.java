@@ -98,6 +98,7 @@ public abstract class StandaloneIndexer {
 	 * be provided, but not both. If a single IScannerInfo object is provided
 	 * it will always be used. Otherwise the provider will be used.
 	 */
+	@Deprecated
 	protected IScannerInfo fScanner;
 	
 	/**
@@ -158,6 +159,10 @@ public abstract class StandaloneIndexer {
 		}
 	};
 	
+	/**
+	 * @deprecated Its better to provide a scanner info provider instead.
+	 */
+	@Deprecated
 	public StandaloneIndexer(IWritableIndex index, boolean indexAllFiles,  
 			                 ILanguageMapper mapper, IParserLogService log, IScannerInfo scanner) {
 		fIndex = index;
@@ -217,7 +222,10 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the IScannerInfo that provides include paths and defined symbols.
+	 * @deprecated Should probably be using a IStandaloneScannerInfoProvider instead and
+	 * calling getScannerInfo(String).
 	 */
+	@Deprecated
 	public IScannerInfo getScannerInfo() {
 		return fScanner;
 	}
@@ -235,7 +243,14 @@ public abstract class StandaloneIndexer {
 		
 		return fScannerInfoProvider.getScannerInformation(path);
 	}
-	
+
+
+	/**
+	 * Returns the IStandaloneScannerInfoProvider or null if one was not provided.
+	 */
+	public IStandaloneScannerInfoProvider getScannerInfoProvider() {
+		return fScannerInfoProvider;
+	}
 	
 	/**
 	 * Returns the ILanguageMapper that determines the ILanguage for a file.

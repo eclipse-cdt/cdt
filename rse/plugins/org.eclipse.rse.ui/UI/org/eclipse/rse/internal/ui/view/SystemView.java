@@ -3423,7 +3423,7 @@ public class SystemView extends SafeTreeViewer
 	protected void internalRefreshStruct(Widget widget, Object element, boolean updateLabels) {
 		if (widget instanceof TreeItem)
 		{								
-				ContextObjectWithViewer contextObject = (ContextObjectWithViewer)getContextObject((TreeItem)widget);				
+				ContextObjectWithViewer contextObject = getContextObject((TreeItem)widget);				
 				IRSECallback callback = null;
 				
 				ArrayList expandedChildren = new ArrayList();
@@ -6291,7 +6291,7 @@ public class SystemView extends SafeTreeViewer
 				Object[] newChildren = null;
 				if (match instanceof TreeItem)
 				{
-					IContextObject context = getContextObject((TreeItem)match);
+					ContextObjectWithViewer context = getContextObject((TreeItem)match);
 					newChildren = adapter.getChildren(context, new NullProgressMonitor());
 					internalAdd(match, parentElementOrTreePath, newChildren);
 				}
@@ -6319,7 +6319,7 @@ public class SystemView extends SafeTreeViewer
 							TreeItem parentItem = ((TreeItem)match).getParentItem();
 							if (parentItem != null)
 							{
-								IContextObject context = getContextObject(parentItem);
+								ContextObjectWithViewer context = getContextObject(parentItem);
 								if (adapter.supportsDeferredQueries(context.getSubSystem())) {
 									CheckExistenceJob job = new CheckExistenceJob((IAdaptable)parentElementOrTreePath, parentItem, context);
 									job.schedule();
@@ -6434,7 +6434,7 @@ public class SystemView extends SafeTreeViewer
 	 * @param item the item to get the context for
 	 * @return the context object
 	 */
-	public IContextObject getContextObject(TreeItem item)
+	public ContextObjectWithViewer getContextObject(TreeItem item)
 	{
 		Object data = item.getData();
 		ISystemFilterReference filterReference = getContainingFilterReference(item);
@@ -6518,9 +6518,9 @@ public class SystemView extends SafeTreeViewer
 				Object d = widget.getData();
 				if (d != null)
 				{
-					Object parentElement = getContextObject((TreeItem)widget);
-					if (cb != null && parentElement instanceof ContextObjectWithViewer){
-						((ContextObjectWithViewer)parentElement).setCallback(cb);
+					ContextObjectWithViewer parentElement = getContextObject((TreeItem)widget);
+					if (cb != null){
+						parentElement.setCallback(cb);
 					}
 					
 					Object[] children = getSortedChildren(parentElement);
@@ -6586,7 +6586,7 @@ public class SystemView extends SafeTreeViewer
 			ITreeContentProvider tcp = (ITreeContentProvider) cp;
 			if (elementOrTreePath instanceof TreeItem)
 			{
-				IContextObject context = getContextObject((TreeItem)elementOrTreePath);
+				ContextObjectWithViewer context = getContextObject((TreeItem)elementOrTreePath);
 				return tcp.hasChildren(context);
 			}
 			else

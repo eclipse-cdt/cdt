@@ -1970,15 +1970,10 @@ public class UniversalFileSystemMiner extends Miner {
 		String result = simpleShellCommand("chmod " + permAttributes[0], file); //$NON-NLS-1$
 
 		String previousGroup = getFilePermission(file, PERMISSION_GROUP);
-		if (!previousGroup.equals(permAttributes[2])){
-			// set the group
-			simpleShellCommand("chown :" + permAttributes[2], file); //$NON-NLS-1$
-		}
-	
 		String previousUser = getFilePermission(file, PERMISSION_OWNER);
-		if (!previousUser.equals(permAttributes[1])){
-			// set the user
-			simpleShellCommand("chown " + permAttributes[1], file); //$NON-NLS-1$
+		if (!previousUser.equals(permAttributes[1]) || !previousGroup.equals(permAttributes[2])){
+			// set the user and group at once
+			simpleShellCommand("chown " + permAttributes[1] + ":" + permAttributes[2], file); //$NON-NLS-1$
 		}
 		
 

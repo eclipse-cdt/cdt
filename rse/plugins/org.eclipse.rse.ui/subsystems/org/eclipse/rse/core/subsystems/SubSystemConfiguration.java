@@ -2553,7 +2553,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// used in the case where newsubsystems are added after a connection exists
 	public ISubSystem createSubSystemAfterTheFact(IHost conn)
 	{
-		ISubSystem subsys = createSubSystemInternal(conn);
+		ISubSystem subsys = null;
+		try {
+			subsys = createSubSystemInternal(conn);
+		} catch (RuntimeException e) {
+			RSECorePlugin.getDefault().getLogger().logError("Error creating subsystem", e); //$NON-NLS-1$
+		}
 		if (subsys != null)
 		{
 			internalInitializeNewSubSystem(subsys, conn);

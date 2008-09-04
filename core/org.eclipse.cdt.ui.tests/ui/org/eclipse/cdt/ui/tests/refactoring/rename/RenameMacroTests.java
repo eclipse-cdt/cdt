@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2008 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -20,9 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-/**
- * @author markus.schorn@windriver.com
- */
 public class RenameMacroTests extends RenameTests {
 
     public RenameMacroTests(String name) {
@@ -112,6 +108,9 @@ public class RenameMacroTests extends RenameTests {
         writer.write("static int s2();          \n"); //$NON-NLS-1$
         writer.write("void f(int par1){         \n"); //$NON-NLS-1$
         writer.write("     int w1; v1();        \n"); //$NON-NLS-1$
+        writer.write("     extern_var;          \n"); //$NON-NLS-1$
+        writer.write("     var_def;             \n"); //$NON-NLS-1$
+        writer.write("     enum_item;           \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
         IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
@@ -119,11 +118,12 @@ public class RenameMacroTests extends RenameTests {
         writer = new StringWriter();
         writer.write( "static int static_other_file();     \n" ); //$NON-NLS-1$        
         importFile( "other.cpp", writer.toString() ); //$NON-NLS-1$
+        waitForIndexer();
 
 
         int offset1= contents.indexOf("MACRO"); //$NON-NLS-1$
         
-        // conflicting renamings
+        // conflicts after renaming
         RefactoringStatus status= checkConditions(cpp, offset1, "w1");  //$NON-NLS-1$
         assertRefactoringError(status, "A conflict was encountered during refactoring.  \n" +
         		"Type of problem: Name conflict  \n" +

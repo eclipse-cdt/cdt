@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 import junit.framework.Test;
@@ -37,6 +37,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"__STDC__",
 			"__TIME__",
 			"__builtin_constant_p(exp)",
+			"__builtin_types_compatible_p(x, y)",
 			"__builtin_va_arg(ap, type)",
 			"__complex__",
 			"__cplusplus",

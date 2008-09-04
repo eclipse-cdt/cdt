@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems Inc. - ported for new rename implementation
  *******************************************************************************/
-
-/*
- * Created on Nov 10, 2004
- */
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -396,6 +392,7 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "void Foo::aMethod(int x){}   \n" ); //$NON-NLS-1$
         String source = writer.toString();
         IFile cppfile = importFile( "t.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
 
         int hoffset =  header.indexOf( "aMethod" ) ; //$NON-NLS-1$
         int cppoffset =  source.indexOf( "aMethod" ) ; //$NON-NLS-1$
@@ -477,6 +474,8 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "}                                                  \n" ); //$NON-NLS-1$
         String source = writer.toString();
         IFile cpp = importFile( "t.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
+        
         //vp1 const
         int offset = header.indexOf( "method1" ); //$NON-NLS-1$
         Change changes = getRefactorChanges(h, offset, "m1" ); //$NON-NLS-1$
@@ -512,6 +511,8 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "}                                            \n" ); //$NON-NLS-1$
         String source = writer.toString();
         IFile cpp = importFile( "t.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
+
         //vp1 static method declaration
         int offset = header.indexOf( "method1/*vp1*/" ); //$NON-NLS-1$
         Change changes = getRefactorChanges(h, offset, "m1" ); //$NON-NLS-1$
@@ -549,6 +550,8 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "}                                            \n" ); //$NON-NLS-1$
         String source = writer.toString();
         IFile cpp = importFile( "t.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
+
         //vp1 volatile
         int offset =  header.indexOf( "method1/*vp1*/" ) ; //$NON-NLS-1$
         Change changes = getRefactorChanges(h, offset, "m1" ); //$NON-NLS-1$
@@ -577,6 +580,8 @@ public class RenameRegressionTests extends RenameTests {
     writer.write( "}                                            \n" ); //$NON-NLS-1$
     String source = writer.toString();
     IFile cpp = importFile( "t.cpp", source ); //$NON-NLS-1$
+    waitForIndexer();
+
     //vp1 inline
     int offset =  header.indexOf( "method1/*vp1*/" ) ; //$NON-NLS-1$
     Change changes = getRefactorChanges(h, offset, "m1" ); //$NON-NLS-1$
@@ -957,6 +962,8 @@ public class RenameRegressionTests extends RenameTests {
           
         String source = writer.toString();
         IFile cpp=importFile( "Foo.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
+        
         int offset =  header.indexOf( "E1" ) ; //$NON-NLS-1$
         getRefactorChanges(h, offset, "Ooga" ); //$NON-NLS-1$
         Change changes = getRefactorChanges(h, offset, "ooga" ); //$NON-NLS-1$
@@ -980,6 +987,8 @@ public class RenameRegressionTests extends RenameTests {
           
         String source = writer.toString();
         IFile cpp = importFile( "Foo.cpp", source ); //$NON-NLS-1$
+        waitForIndexer();
+        
         int offset =  header.indexOf( "att" ) ; //$NON-NLS-1$
         Change changes = getRefactorChanges(h, offset, "ooga" ); //$NON-NLS-1$
         

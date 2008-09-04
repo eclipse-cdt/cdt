@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 /**
  * Class that facilitates logging for errors, warnings, debug messages and info
  * for DataStore servers.
- * 
+ *
  * @since 3.0 moved from non-API to API
  */
 public class ServerLogger implements IServerLogger
@@ -51,9 +51,12 @@ public class ServerLogger implements IServerLogger
 	private Object writeLock = new Object();
 	private PrintWriter _logFileStream = null;
 
-	// note that, in 3.0, this variable was final but, as of 3.0.1, it's not
+	/**
+	 * Switch to enable debug-level logging. Note that, in 3.0, this variable
+	 * was final but, as of 3.0.1, it's not.
+	 */
 	public static boolean DEBUG = false;
-	
+
 	private int log_level = 0;
 
 	private boolean initialized = false;
@@ -118,8 +121,8 @@ public class ServerLogger implements IServerLogger
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
-			} 
-			catch (NumberFormatException e){				
+			}
+			catch (NumberFormatException e){
 				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
 			}
 		}

@@ -42,6 +42,7 @@
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
+ * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -924,7 +925,39 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 	public IRemoteFile createFolders(IRemoteFile folderToCreate, IProgressMonitor monitor) throws SystemMessageException
 	{
+		try {
+			//As per IFileService#createFolder() API Docs, Services *may* create parent folders.
+			//Therefore, first try this shortcut before actually iterating to create parents.
 			return createFolder(folderToCreate, monitor);
+		} catch (SystemMessageException e) {
+			//Parent did not exist? Need to create parent folders on this Service
+			IFileService service = getFileService();
+			List parents = new ArrayList();
+			IRemoteFile parent = folderToCreate;
+			while (!parent.isRoot()) {
+				parent = parent.getParentRemoteFile();
+				IHostFile parentFile = service.getFile(parent.getParentPath(), parent.getName(), monitor);
+				if (parentFile.exists()) {
+					//Update cache with newest info, since we just got it
+					getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent.getParentRemoteFile(), parentFile);
+					break;
+				} else {
+					parents.add(parent);
+				}
+			}
+			if (parents.size()==0) {
+				//No parents missing -- throw original exception
+				throw e;
+			}
+			for (int i=parents.size()-1; i>=0; i--) {
+				parent = (IRemoteFile)parents.get(i);
+				// Remote side will change due to createFolder, so mark it stale
+				parent.markStale(true, true);
+				// Create new folder and cache the contents
+				createFolder(parent, monitor);
+			}
+			return createFolder(folderToCreate, monitor);
+		}
 	}
 
 	/**

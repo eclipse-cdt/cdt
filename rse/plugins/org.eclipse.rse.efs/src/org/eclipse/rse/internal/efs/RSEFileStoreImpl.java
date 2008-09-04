@@ -30,6 +30,7 @@
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  * Martin Oberhuber (Wind River) - [220300] EFS Size Property not properly updated after saving
+ * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -636,14 +637,6 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException
 	{
-		//TODO bug 234026: Check should be done by IRemoteFileSubSystem.createFolders()
-		if ((options & EFS.SHALLOW) == 0) {
-			IFileStore parent = getParent();
-			if (parent != null) {
-				parent.mkdir(options, monitor);
-			}
-		}
-
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
@@ -656,7 +649,8 @@ public class RSEFileStoreImpl extends FileStore
 		if (!remoteFile.exists()) {
 			try {
 				if ((options & EFS.SHALLOW) != 0) {
-					//TODO following check should be obsolete
+					//MUST NOT create parents, so we need to check ourselves
+					//here according to IRemoteFileSubSystem.createFolder() docs
 					if (!remoteFile.getParentRemoteFile().exists()) {
 						throw new CoreException(new Status(IStatus.ERROR,
 								Activator.getDefault().getBundle().getSymbolicName(),

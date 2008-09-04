@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -327,9 +328,11 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * Create a new folder, given its IRemoteFile object (these do not have to represent existing folders)
 	 * <p>
 	 * <ul>
-	 *    <li>The parent folder must exist for this to succeed.
-	 *    <li>If this folder already exists, this is a no-op.
-	 *    <li>If the given object is a file, not a folder, this is a no-op.
+	 *    <li>The parent folder must exist for this to succeed. If the parent 
+	 *        folder does not yet exist, implementations are free to create
+	 *        missing parents or fail (see also {@link IFileService#createFolder(String, String, IProgressMonitor)}).</li>
+	 *    <li>If this folder already exists, this is a no-op.</li>
+	 *    <li>If the given object is a file, not a folder, this is a no-op.</li>
 	 * </ul>
 	 *
 	 * @see #createFolders(IRemoteFile, IProgressMonitor)

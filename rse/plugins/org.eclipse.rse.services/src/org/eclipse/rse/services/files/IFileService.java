@@ -26,6 +26,7 @@
  * David Dykstal (IBM) - [221211] clarifying javadoc on batch operations
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
+ * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -396,6 +397,12 @@ public interface IFileService extends IService
 	/**
 	 * Create a folder on the host.
 	 *
+	 * Implementations are free to create missing parent folders or fail with a
+	 * SystemMessageException if the parent folder does not yet exist. In
+	 * general, creating missing parent folders is recommended if it doesn't
+	 * require additional client-server round trips. Therefore the "Local" and
+	 * "DStore" services do create missing parent folders.
+	 *
 	 * @param remoteParent the parent directory
 	 * @param folderName the name of the new folder
 	 * @param monitor the progress monitor
@@ -407,14 +414,14 @@ public interface IFileService extends IService
 
 	/**
 	 * Delete a file or folder on the host.
-	 * 
+	 *
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @param monitor the progress monitor
 	 * @throws SystemMessageException if an error occurs or the user canceled
 	 * 		the operation. SystemElementNotFoundException is thrown if the remote
 	 * 		file doesn't exist.
-	 * 
+	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException;

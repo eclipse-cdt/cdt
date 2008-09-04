@@ -105,7 +105,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Called on each subsystem associated with a particular
 	 * {@link IConnectorService} after it disconnects
-	 * 
+	 *
 	 * @param monitor a progress monitor that can be used to show progress
 	 *            during long-running operation. Cancellation is typically not
 	 *            supported since it might leave the system in an inconsistent
@@ -154,14 +154,17 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
 	/**
 	 * Check if the subsystem is connected, and connect if it's not.
-	 *
+	 * 
 	 * This is a convenience method which first checks whether the subsystem is
 	 * already connected. If not, it automatically checks if it's running on the
-	 * dispatch thread or not, and calls the right <code>connect()</code>
-	 * method as appropriate. It also performs some exception parsing,
-	 * converting Exceptions from connect() into SystemMessageException that can
-	 * be displayed to the user by using a method in it.
+	 * dispatch thread or not, and calls the right <code>connect()</code> method
+	 * as appropriate. It also performs some exception parsing, converting
+	 * Exceptions from connect() into SystemMessageException that can be
+	 * displayed to the user by using a method in it.
 	 *
+	 * If the subsystem is marked offline, or supports caching and is currently
+	 * restoring from its memento, no connect will be performed.
+	 * 
 	 * @throws SystemMessageException in case of an error connecting
 	 * @since org.eclipse.rse.core 3.0
 	 */

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.Arrays;
@@ -109,16 +108,23 @@ public class CRefactory {
             return;
         }
         CRefactoringArgument iarg= new CRefactoringArgument((IFile) res, s.getOffset(), s.getLength());
-        CRenameRefactoring r= new CRenameRefactoring(new CRenameProcessor(this, iarg));
-		RefactoringWizardOpenOperation op= 
-		    new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-		try {
-            op.run(shell, Messages.getString("CRefactory.title.rename"));  //$NON-NLS-1$
+        final CRenameProcessor processor = new CRenameProcessor(this, iarg);
+        try {
+        	processor.lockIndex();
+        	try {
+        		CRenameRefactoring r= new CRenameRefactoring(processor);
+        		RefactoringWizardOpenOperation op= 
+        			new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
+        		op.run(shell, Messages.getString("CRefactory.title.rename"));  //$NON-NLS-1$
+        	} finally {
+        		processor.unlockIndex();
+        	}
         } catch (InterruptedException e) {
-            // operation was canceled
-        }
+			Thread.currentThread().interrupt();
+        } catch (CoreException e) {
+        	CCorePlugin.log(e);
+		}
 	}
-
 
     public TextSearchWrapper getTextSearch() {
         if (fTextSearch == null) {

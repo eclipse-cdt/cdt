@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 
 /**
@@ -384,7 +385,12 @@ public class ASTManager {
     public static String getName(IScope s1) {
         String name= null;
         try {
-            name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
+        	if (s1 instanceof IIndexScope) {
+        		IIndexScope indexScope= (IIndexScope) s1;
+        		name= indexScope.getScopeName().toString();
+        	} else {
+        		name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
+        	}
         }
         catch (DOMException e) {
         }
@@ -1115,27 +1121,45 @@ public class ASTManager {
         Integer cmpObj= fKnownBindings.get(binding);
         if (cmpObj != null) {
             cmp= cmpObj.intValue();
-        }
-        else if (binding instanceof IProblemBinding) {
+        } else if (binding instanceof IProblemBinding) {
             cmp= UNKNOWN;
             handleProblemBinding(name.getTranslationUnit(), (IProblemBinding) binding, status);
-        }
-        else {
-            for (IBinding renameBinding : fValidBindings) {
-                try {
-                    int cmp0= isSameBinding(binding, renameBinding);
-                    if (cmp0 != FALSE) {
-                        cmp= cmp0;
-                    }
-                    if (cmp0 == TRUE) {
-                        break;
-                    }
-                }
-                catch (DOMException e) {
-                    handleDOMException(name.getTranslationUnit(), e, status);
-                    cmp= UNKNOWN;
-                }
-            }
+        } else {
+        	// check whether a qualifier has a problem binding
+        	boolean problemInQualifier= false;
+        	IASTNode parent= name.getParent();
+        	if (parent instanceof ICPPASTQualifiedName) {
+        		IASTName[] names= ((ICPPASTQualifiedName) parent).getNames();
+        		for (IASTName n : names) {
+					if (n == name)
+						break;
+					final IBinding b = n.resolveBinding();
+					if (b instanceof IProblemBinding) {
+						handleProblemBinding(name.getTranslationUnit(), (IProblemBinding) b, status);
+						problemInQualifier= true;
+						break;
+					}
+				}
+        	}
+        	if (problemInQualifier) {
+        		cmp= UNKNOWN;
+        	} else {
+        		for (IBinding renameBinding : fValidBindings) {
+        			try {
+        				int cmp0= isSameBinding(binding, renameBinding);
+        				if (cmp0 != FALSE) {
+        					cmp= cmp0;
+        				}
+        				if (cmp0 == TRUE) {
+        					break;
+        				}
+        			}
+        			catch (DOMException e) {
+        				handleDOMException(name.getTranslationUnit(), e, status);
+        				cmp= UNKNOWN;
+        			}
+        		}
+        	}
             fKnownBindings.put(binding, new Integer(cmp));
         }
         switch(cmp) {

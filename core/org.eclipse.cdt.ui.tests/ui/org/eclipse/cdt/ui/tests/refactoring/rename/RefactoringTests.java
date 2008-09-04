@@ -1,20 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2008 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
 
-import org.eclipse.cdt.core.tests.BaseTestFramework;
-import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -27,6 +24,12 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.tests.BaseTestFramework;
+
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 
 
 /**
@@ -42,13 +45,16 @@ public class RefactoringTests extends BaseTestFramework {
         super(name);
     }
 
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
+        CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
         fBufferSize= FileCharSequenceProvider.BUFFER_SIZE;
         FileCharSequenceProvider.BUFFER_SIZE= 1024*4;
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();
         FileCharSequenceProvider.BUFFER_SIZE= fBufferSize;

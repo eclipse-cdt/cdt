@@ -36,6 +36,7 @@
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight  (IBM)  - [244277] [dstore] NPE on file save from old client
+ * David McKnight  (IBM)  - [246234] Change of file permissions changes the file owner
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -104,6 +105,11 @@ public class UniversalFileSystemMiner extends Miner {
 	public static final String CLASSNAME = "UniversalFileSystemMiner"; //$NON-NLS-1$
 
 	protected HashMap _cancellableThreads;
+	
+	private static final int PERMISSION_OWNER = 0;
+	private static final int PERMISSION_GROUP = 1; 
+	private static final int PERMISSION_BITS = 2;
+	private static final int PERMISSION_ALL = 3;
 
 	private boolean _isWindows = false;
 
@@ -1896,7 +1902,15 @@ public class UniversalFileSystemMiner extends Miner {
 	{
 		File file = getFileFor(subject);
 
+		String result = getFilePermission(file, PERMISSION_ALL);
+        status.setAttribute(DE.A_SOURCE, result);
+    	statusDone(status);
 
+		return status;
+	}
+	
+	private String getFilePermission(File file, int permission)
+	{
 		// permissions in form  "drwxrwxrwx ..."
 		String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
 
@@ -1910,13 +1924,33 @@ public class UniversalFileSystemMiner extends Miner {
 		tokenizer.nextToken(); // nothing important
 		String user = tokenizer.nextToken(); // 3rd
 		String group = tokenizer.nextToken(); // 4th
-
-		String result = octalPermissions + '|' + user + '|' + group;
-        status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-
-		return status;
+		
+		String result = null;
+		switch (permission){
+		case PERMISSION_BITS:
+			result = octalPermissions;
+			break;
+			
+		case PERMISSION_OWNER:
+			result = user;
+			break;
+			
+		case PERMISSION_GROUP:
+			result = group;
+			break;
+			
+		case PERMISSION_ALL:
+		default:
+			result =  octalPermissions + '|' + user + '|' + group;
+			break;
+		}
+		
+		return result;
 	}
+	
+	
+	
+	
 
 	/**
 	 * Set file permissions including user and group
@@ -1935,12 +1969,20 @@ public class UniversalFileSystemMiner extends Miner {
 		// set the permissions
 		String result = simpleShellCommand("chmod " + permAttributes[0], file); //$NON-NLS-1$
 
-		// set the user
-		simpleShellCommand("chown " + permAttributes[1], file); //$NON-NLS-1$
+		String previousGroup = getFilePermission(file, PERMISSION_GROUP);
+		if (!previousGroup.equals(permAttributes[2])){
+			// set the group
+			simpleShellCommand("chown :" + permAttributes[2], file); //$NON-NLS-1$
+		}
+	
+		String previousUser = getFilePermission(file, PERMISSION_OWNER);
+		if (!previousUser.equals(permAttributes[1])){
+			// set the user
+			simpleShellCommand("chown " + permAttributes[1], file); //$NON-NLS-1$
+		}
+		
 
-		// set the group
-		simpleShellCommand("chown :" + permAttributes[2], file); //$NON-NLS-1$
-
+		
         status.setAttribute(DE.A_SOURCE, result);
     	statusDone(status);
 

@@ -122,7 +122,7 @@ public class ClientConnection
 	public final static String CLIENT_OLDER = "Older DataStore Client."; //$NON-NLS-1$
 	public final static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol."; //$NON-NLS-1$
 	public final static String CANNOT_CONNECT = "Cannot connect to server."; //$NON-NLS-1$
-	
+
 	// TODO: should probably make this a public constant in 3.1
 	private final static String INVALID_DAEMON_PORT_NUMBER = "Invalid daemon port number."; //$NON-NLS-1$
 
@@ -786,19 +786,17 @@ public class ClientConnection
 						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
 						return result;
 					}
-					catch (IllegalArgumentException e) {
-						e = new IllegalArgumentException(INVALID_DAEMON_PORT_NUMBER);
-						result = new ConnectionStatus(false, e);
-						return result;
-					}
 					catch (Exception e)
 					{
 						if (_launchSocket != null)
 						{
 							_launchSocket.close();
 						}
-
-						result = new ConnectionStatus(false, e);
+						if (daemonPort <= 0 || daemonPort > 65535) {
+							result = new ConnectionStatus(false, INVALID_DAEMON_PORT_NUMBER);
+						} else {
+							result = new ConnectionStatus(false, e);
+						}
 						return result;
 					}
 				}
@@ -827,8 +825,7 @@ public class ClientConnection
 			result = new ConnectionStatus(false, uhe);
 		}
 		catch (IllegalArgumentException e) {
-			e = new IllegalArgumentException(INVALID_DAEMON_PORT_NUMBER);
-			result = new ConnectionStatus(false, e);
+			result = new ConnectionStatus(false, INVALID_DAEMON_PORT_NUMBER);
 		}
 		catch (IOException ioe)
 		{

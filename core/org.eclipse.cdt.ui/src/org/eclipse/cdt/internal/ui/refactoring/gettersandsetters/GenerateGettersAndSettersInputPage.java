@@ -52,13 +52,15 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 			variableSelectionView.setContentProvider(context);
 			variableSelectionView.setAutoExpandLevel(3);
 			variableSelectionView.setInput(""); //$NON-NLS-1$
-			
-			for(Object obj : variableSelectionView.getVisibleExpandedElements()) {
-				System.out.println();
-				if (obj instanceof FieldWrapper){
-					if(obj.toString().contains(context.selectedName.getRawSignature())){
-						variableSelectionView.setSubtreeChecked(obj, true);
-					}					
+			if(context.selectedName != null) {
+				String rawSignature = context.selectedName.getRawSignature();
+				for(Object obj : variableSelectionView.getVisibleExpandedElements()) {
+					if (obj instanceof FieldWrapper){
+
+						if(obj.toString().contains(rawSignature)){
+							variableSelectionView.setSubtreeChecked(obj, true);
+						}					
+					}
 				}
 			}
 			ArrayList<GetterSetterInsertEditProvider> checkedFunctions = new ArrayList<GetterSetterInsertEditProvider>();

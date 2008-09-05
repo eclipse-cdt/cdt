@@ -934,62 +934,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	@Override
 	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
-		//add a newline to the end of the document (if it is not already present)
-		//-----------------------------------------------------------------------
-		//for people who do not want auto-modification of their files,
-		//this flag will prevent addition of a newline unless the user
-		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor
-		//  -> Appearance Tab -> Ensure newline end of file when saving
-		if (PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.ENSURE_NEWLINE_AT_EOF)) {
-			// even if the document is empty, there will be at least one line in
-			// it (the 0th one)
-			int lastLineIndex = document.getNumberOfLines() - 1;
-
-			try {
-				// we have to ensure that the length of the last line is 0.
-				// this will also take care of empty files. empty files have
-				// only one line in them and the length of this one and only
-				// line is 0.
-				// Thus we do not need to append an extra line separator to
-				// empty files.
-				int lastLineLength = document.getLineLength(lastLineIndex);
-				if (lastLineLength != 0) {
-					document.replace(document.getLength(), 0,
-							TextUtilities.getDefaultLineDelimiter(document));
-				}
-			} catch (BadLocationException e) {
-			}
-		}
-		
-		// Remove trailing whitespace when saving. Triggered by the flag
-		// in Preferences -> C/C++ -> Editor
-		if (PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE)) {
-			try {
-				int lineCount= document.getNumberOfLines();
-				for (int i= 0; i < lineCount; i++) {
-					
-					IRegion region= document.getLineInformation(i);
-					if (region.getLength() == 0)
-						continue;
-					
-					int lineStart= region.getOffset();
-					int lineExclusiveEnd= lineStart + region.getLength();
-					
-					// Find the rightmost none-whitespace character
-					int charPos= lineExclusiveEnd - 1;
-					while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
-						charPos--;
-					
-					charPos++;
-					if (charPos < lineExclusiveEnd) {
-						DeleteEdit edit= new DeleteEdit(charPos, lineExclusiveEnd - charPos);
-						edit.apply(document);
-					}
-				}
-			} catch (BadLocationException e) {
-			}
+		try {
+			performSaveActions(document);
+		} catch (Exception exc) {
+			// log any exeption, but perform save anyway
+			CUIPlugin.log(exc);
 		}
 		
 		final FileInfo info= getFileInfo(element);
@@ -1019,6 +968,67 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			};
 		}
 		return null;
+	}
+
+	/**
+	 * Perform configured document manipulations before save.
+	 * 
+	 * @param document
+	 * @throws BadLocationException 
+	 */
+	private void performSaveActions(final IDocument document) throws BadLocationException {
+		//add a newline to the end of the document (if it is not already present)
+		//-----------------------------------------------------------------------
+		//for people who do not want auto-modification of their files,
+		//this flag will prevent addition of a newline unless the user
+		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor
+		//  -> Appearance Tab -> Ensure newline end of file when saving
+		if (PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.ENSURE_NEWLINE_AT_EOF)) {
+			// even if the document is empty, there will be at least one line in
+			// it (the 0th one)
+			int lastLineIndex = document.getNumberOfLines() - 1;
+
+			// we have to ensure that the length of the last line is 0.
+			// this will also take care of empty files. empty files have
+			// only one line in them and the length of this one and only
+			// line is 0.
+			// Thus we do not need to append an extra line separator to
+			// empty files.
+			int lastLineLength = document.getLineLength(lastLineIndex);
+			if (lastLineLength != 0) {
+				document.replace(document.getLength(), 0,
+						TextUtilities.getDefaultLineDelimiter(document));
+			}
+		}
+		
+		// Remove trailing whitespace when saving. Triggered by the flag
+		// in Preferences -> C/C++ -> Editor
+		if (PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.REMOVE_TRAILING_WHITESPACE)) {
+
+			int lineCount= document.getNumberOfLines();
+			for (int i= 0; i < lineCount; i++) {
+
+				IRegion region= document.getLineInformation(i);
+				if (region.getLength() == 0)
+					continue;
+
+				int lineStart= region.getOffset();
+				int lineExclusiveEnd= lineStart + region.getLength();
+
+				// Find the rightmost none-whitespace character
+				int charPos= lineExclusiveEnd - 1;
+				while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
+					charPos--;
+
+				charPos++;
+				if (charPos < lineExclusiveEnd) {
+					DeleteEdit edit= new DeleteEdit(charPos, lineExclusiveEnd - charPos);
+					edit.apply(document);
+				}
+			}
+		}
 	}
 
 	/**

@@ -186,109 +186,126 @@ public class VariableVMNode extends AbstractExpressionVMNode
             
             final IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
             
-            getDMVMProvider().getModelData(
-                this, update, 
-                getServicesTracker().getService(IExpressions.class, null),
-				dmc, 
-                new ViewerDataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), update) { 
-                    @Override
-                    protected void handleCompleted() {
-                        // Check that the request was evaluated and data is still valid.  The request could
-                        // fail if the state of the  service changed during the request, but the view model
-                        // has not been updated yet.
-                        
-                        if (!isSuccess()) {
-                            assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-                            
-                            /*
-                             *  Instead of just failing this outright we are going to attempt to do more here.
-                             *  Failing it outright causes the view to display ... for all columns in the line
-                             *  and this is uninformative about what is happening. It will be very common that
-                             *  one or more variables at that given instance in time are not evaluatable. They
-                             *  may be out of scope and will come back into scope later.
-                             */
-                            String[] localColumns = update.getColumnIds();
-                            if (localColumns == null)
-                                localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
-                            
-                            for (int idx = 0; idx < localColumns.length; idx++) {
-                                if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
-                                    update.setLabel(dmc.getExpression(), idx);
-                                } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
-                                    update.setLabel("", idx);
-                                } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                                    update.setLabel("Error : " + getStatus().getMessage(), idx);
-                                } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
-                                    update.setLabel("", idx);
-                                } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
-                                    update.setLabel(dmc.getExpression(), idx);
-                                }
-                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
-                            }
-                            
-                            
-                            update.done();
-                            return;
-                        }
-                        
-                        // If columns are configured, extract the selected values for each understood column.
-                        // First, we fill all of those columns which can be filled without extra data mining.
-                        // We also note if we  do have to do extra data mining.  Any columns need to set the
-                        // processing flag so we know we have further work to do.  If there are more columns
-                        // which need data extraction they need to be added in both "for" loops.
+            if ( dmc == null ) {
+            	/*
+				 *  For whatever reason we could not find a match. There is one known case where this happens
+				 *  and that is when the Find function is trying construct a list of the items to be searched
+				 *  and it wants to get the value of the "Add new expression" entry which is a pseudo phantom
+				 *  entry that is created by the ExpressionManagerVMNode for nice work flow display purposes.
+				 *  But it not real and has no corresponding DMC. In this case we will just make it blank and
+				 *  this will show OK for the most part. There are other error VMC's which do not have  valid
+				 *  DMC's which can come from the ExpressionManagerVMNode. This will handle both cases.
+				 */
+            	String[] localColumns = update.getColumnIds();
+            	if (localColumns == null)
+            		localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
 
-                        String[] localColumns = update.getColumnIds();
-                        if (localColumns == null)
-                            localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
-                        
-                        boolean weAreExtractingFormattedData = false;
-                        
-                        for (int idx = 0; idx < localColumns.length; idx++) {
-                            if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
-                                update.setLabel(getData().getName(), idx);
-                            } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
-                                update.setLabel(getData().getTypeName(), idx);
-                            } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                                weAreExtractingFormattedData = true;
-                            } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
-                                update.setLabel("", idx);
-                            } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
-                            	IVMContext vmc = (IVMContext)update.getElement();
-                                IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);
-                                if (expression != null) {
-                                    update.setLabel(expression.getExpressionText(), idx);
-                                } else {
-                                    update.setLabel(getData().getName(), idx);
-                                }
-                            }
-                            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
-                        }
-                        
-                        if ( ! weAreExtractingFormattedData ) {
-                            update.done();
-                        } else {
-                        	boolean found = false;
-                            for (int idx = 0; idx < localColumns.length; idx++) {
-                                if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                                	found = true;
-                                	updateFormattedExpressionValue(update, idx, dmc, getData());
-                                	break;
-                                }
-                            }
-                            if (!found) {
-                            	update.done();
-                            }
-                        }
-                    }
-                },
-                getExecutor()
-            );
+            	for (int idx = 0; idx < localColumns.length; idx++) {
+            		update.setLabel("",idx);
+            	}
+            	update.done();
+            }
+            else {
+            	getDMVMProvider().getModelData(
+            		this, update, 
+            		getServicesTracker().getService(IExpressions.class, null),
+            		dmc, 
+            		new ViewerDataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), update) { 
+            			@Override
+            			protected void handleCompleted() {
+            				// Check that the request was evaluated and data is still valid.  The request could
+            				// fail if the state of the  service changed during the request, but the view model
+            				// has not been updated yet.
+           					if (!isSuccess()) {
+           						assert getStatus().isOK() || 
+           						getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
+           						getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
+           						/*
+           						 *  Instead of just failing this outright we are going to attempt to do more here.
+           						 *  Failing it outright causes the view to display ... for all columns in the line
+           						 *  and this is uninformative about what is happening. It will be very common that
+           						 *  one or more variables at that given instance in time are not evaluatable. They
+           						 *  may be out of scope and will come back into scope later.
+           						 */
+           						String[] localColumns = update.getColumnIds();
+           						if (localColumns == null)
+           							localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+
+           						for (int idx = 0; idx < localColumns.length; idx++) {
+           							if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
+       									update.setLabel(dmc.getExpression(), idx);
+           							} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+           								update.setLabel("", idx);
+           							} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+           								update.setLabel("Error : " + getStatus().getMessage(), idx);
+           							} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
+           								update.setLabel("", idx);
+           							} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+       									update.setLabel(dmc.getExpression(), idx);
+           							}
+           							update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+           						}
+
+
+           						update.done();
+           						return;
+           					}
+
+           					// If columns are configured, extract the selected values for each understood column.
+           					// First, we fill all of those columns which can be filled without extra data mining.
+           					// We also note if we  do have to do extra data mining.  Any columns need to set the
+           					// processing flag so we know we have further work to do.  If there are more columns
+           					// which need data extraction they need to be added in both "for" loops.
+           					String[] localColumns = update.getColumnIds();
+           					if (localColumns == null)
+           						localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+
+           					boolean weAreExtractingFormattedData = false;
+
+           					for (int idx = 0; idx < localColumns.length; idx++) {
+           						if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
+           							update.setLabel(getData().getName(), idx);
+           						} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+           							update.setLabel(getData().getTypeName(), idx);
+           						} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+           							weAreExtractingFormattedData = true;
+           						} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
+           							update.setLabel("", idx);
+           						} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+           							IVMContext vmc = (IVMContext)update.getElement();
+           							IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);
+           							if (expression != null) {
+           								update.setLabel(expression.getExpressionText(), idx);
+           							} else {
+           								update.setLabel(getData().getName(), idx);
+           							}
+           						}
+           						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+           					}
+
+           					if ( ! weAreExtractingFormattedData ) {
+           						update.done();
+           					} else {
+           						boolean found = false;
+           						for (int idx = 0; idx < localColumns.length; idx++) {
+           							if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+           								found = true;
+           								updateFormattedExpressionValue(update, idx, dmc, getData());
+           								break;
+           							}
+           						}
+           						if (!found) {
+           							update.done();
+           						}
+           					}
+           				}
+           			},
+           			getExecutor()
+            	);
+            }
         }
     }
 
-    
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.

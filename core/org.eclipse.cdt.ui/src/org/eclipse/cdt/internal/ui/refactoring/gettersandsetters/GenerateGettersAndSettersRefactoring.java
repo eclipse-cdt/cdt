@@ -23,8 +23,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -36,6 +40,7 @@ import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -45,6 +50,33 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * 
  */
 public class GenerateGettersAndSettersRefactoring extends CRefactoring {
+
+	private final class CompositeTypeSpecFinder extends CPPASTVisitor {
+		private final int start;
+		private final Container<IASTCompositeTypeSpecifier> container;
+		{
+			shouldVisitDeclSpecifiers = true;
+		}
+
+		private CompositeTypeSpecFinder(int start, Container<IASTCompositeTypeSpecifier> container) {
+			this.start = start;
+			this.container = container;
+		}
+
+		@Override
+		public int visit(IASTDeclSpecifier declSpec) {
+			
+			if (declSpec instanceof IASTCompositeTypeSpecifier) {
+				IASTFileLocation loc = declSpec.getFileLocation();
+				if(start > loc.getNodeOffset() && start < loc.getNodeOffset()+ loc.getNodeLength()) {
+					container.setObject((IASTCompositeTypeSpecifier) declSpec);
+					return ASTVisitor.PROCESS_ABORT;
+				}
+			}
+			
+			return super.visit(declSpec);
+		}
+	}
 
 	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
 	private final GetterAndSetterContext context = new GetterAndSetterContext();	
@@ -72,9 +104,34 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		loadTranslationUnit(initStatus, pm);
 		context.setUnit(unit);
 		context.selectedName = getSelectedName();
-		findDeclarations();
+		IASTCompositeTypeSpecifier compositeTypeSpecifier = null;
+		if(context.selectedName != null) {
+			compositeTypeSpecifier = getCompositeTypeSpecifier(context.selectedName);
+		}else {
+			compositeTypeSpecifier = findCurrentCompositeTypeSpecifier();
+		}
+		if(compositeTypeSpecifier != null) {
+			findDeclarations(compositeTypeSpecifier);
+		}else {
+			initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoCassDefFound);
+		}
 	}
 	
+	private IASTCompositeTypeSpecifier findCurrentCompositeTypeSpecifier() {
+		final int start = region.getOffset();
+		Container<IASTCompositeTypeSpecifier> container = new Container<IASTCompositeTypeSpecifier>();
+		unit.accept(new CompositeTypeSpecFinder(start, container));
+		return container.getObject();
+	}
+
+	private IASTCompositeTypeSpecifier getCompositeTypeSpecifier(IASTName selectedName) {
+		IASTNode node = selectedName;
+		while(node != null && !(node instanceof IASTCompositeTypeSpecifier)) {
+			node = node.getParent();
+		}
+		return (IASTCompositeTypeSpecifier) node;
+	}
+
 	private IASTName getSelectedName() {
 		ArrayList<IASTName> names = findAllMarkedNames();
 		if (names.size() < 1) {
@@ -83,9 +140,9 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		return names.get(names.size()-1);
 	}
 
-	protected void findDeclarations() {
+	protected void findDeclarations(IASTCompositeTypeSpecifier compositeTypeSpecifier) {
 
-		unit.accept(new CPPASTVisitor() {
+		compositeTypeSpecifier.accept(new CPPASTVisitor() {
 
 			{
 				shouldVisitDeclarations = true;

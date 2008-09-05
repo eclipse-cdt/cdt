@@ -170,7 +170,14 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			if (binding instanceof CPPMethod) {
 								
 				CPPMethod methode = (CPPMethod) binding;
-				IASTNode decl = methode.getDeclarations()[0];
+				IASTNode[] declarations = methode.getDeclarations();
+				
+				IASTNode decl;
+				if(declarations != null) {
+					decl = declarations[0];
+				}else {
+					decl = methode.getDefinition();
+				}
 								
 				IASTNode spec = decl.getParent().getParent();
 				if (spec instanceof ICPPASTCompositeTypeSpecifier) {

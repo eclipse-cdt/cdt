@@ -449,3 +449,25 @@ int A::foo()
 	return theAnswer;
 }
 
+//!Bug 246062 [Refactoring] NPE extracting a constant from an inlined method
+//#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class X {
+	void method() {
+		int a= //$1$//;
+	}
+};
+
+//=
+namespace 
+{
+    const int theAnswer = 1;
+}
+class X {
+	void method() {
+		int a= theAnswer;
+	}
+};
+

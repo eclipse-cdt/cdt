@@ -187,6 +187,12 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		return CModelManager.getDefault().getInfo(this) != null;
 	}
 
+	@Override
+	public boolean isStructureKnown() throws CModelException {
+		CElementInfo info = (CElementInfo) CModelManager.getDefault().getInfo(this);
+		return info != null && info.isStructureKnown();
+	}
+
 	/**
 	 * Returns true if this represents a source element.
 	 * Openable source elements have an associated buffer created

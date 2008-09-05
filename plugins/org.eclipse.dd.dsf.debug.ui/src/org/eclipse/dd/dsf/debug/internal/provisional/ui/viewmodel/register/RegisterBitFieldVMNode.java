@@ -71,7 +71,6 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IMemento;
 
 @SuppressWarnings("restriction")
 public class RegisterBitFieldVMNode extends AbstractExpressionVMNode 
@@ -806,61 +805,41 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     private final String MEMENTO_NAME = "BITFIELD_MEMENTO_NAME"; //$NON-NLS-1$
     
     public void compareElements(IElementCompareRequest[] requests) {
-        
         for ( final IElementCompareRequest request : requests ) {
-        	
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString(MEMENTO_NAME);
+            final String mementoName = request.getMemento().getString(MEMENTO_NAME);
             
-            if (mementoName != null) {
-                if (element instanceof IDMVMContext) {
-                	
-                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
-                    
-                    if ( dmc instanceof IBitFieldDMContext )
-                    {
-                    	final IBitFieldDMContext bitFieldDmc = (IBitFieldDMContext) dmc;
+            final IBitFieldDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IBitFieldDMContext.class);
+            if (regDmc == null || mementoName == null) {
+                request.done();
+                continue;
+            }
+            
+            //  Now go get the model data for the single register group found.
+            try {
+                getSession().getExecutor().execute(new DsfRunnable() {
+                    public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                        
-                    	/*
-                         *  Now make sure the register group is the one we want.
-                         */
-                        
-                        final DataRequestMonitor<IBitFieldDMData> dataDone = new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
-                            @Override
-                            protected void handleCompleted() {
-                                if ( getStatus().isOK() ) {
-                                	request.setEqual( mementoName.equals( "BitField." + getData().getName() ) ); //$NON-NLS-1$
-                                }
-                                request.done();
-                            }
-                        };
-                        
-                        /*
-                    	 *  Now go get the model data for the single register group found.
-                    	 */
-                    	try {
-                            getSession().getExecutor().execute(new DsfRunnable() {
-                                public void run() {
-                                	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                                	if ( regService != null ) {
-                                		regService.getBitFieldData( bitFieldDmc, dataDone );
-                                	}
-                                	else {
-                                		request.done();
-                                	}
-                                }
-                            });
-                        } catch (RejectedExecutionException e) {
+                        if ( regService != null ) {
+                            regService.getBitFieldData(
+                                regDmc, 
+                                new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
+                                    @Override
+                                    protected void handleCompleted() {
+                                        if ( getStatus().isOK() ) {
+                                            // Now make sure the register group is the one we want.
+                                            request.setEqual( mementoName.equals( "BitField." + getData().getName() ) ); //$NON-NLS-1$
+                                        }
+                                        request.done();
+                                    }
+                                });
+                        } else {
                             request.done();
                         }
-
-                    	continue;
                     }
-                }
+                });
+            } catch (RejectedExecutionException e) {
+                request.done();
             }
-            request.done();
         }
     }
     
@@ -869,57 +848,39 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
     public void encodeElements(IElementMementoRequest[] requests) {
-    	
-    	for ( final IElementMementoRequest request : requests ) {
-    		
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            
-            if (element instanceof IDMVMContext) {
-
-            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
-
-            	if ( dmc instanceof IBitFieldDMContext )
-            	{
-            		final IBitFieldDMContext bitFieldDmc = (IBitFieldDMContext) dmc;
-            		final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-
-            		/*
-            		 *  Now make sure the register group is the one we want.
-            		 */
-            		final DataRequestMonitor<IBitFieldDMData> dataDone = new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
-            			@Override
-            			protected void handleCompleted() {
-            				if ( getStatus().isOK() ) {
-            					memento.putString(MEMENTO_NAME, "BitField." + getData().getName()); //$NON-NLS-1$
-            				}
-            				request.done();
-            			}
-            		};
-
-            		/*
-                	 *  Now go get the model data for the single register group found.
-                	 */
-                	try {
-                        getSession().getExecutor().execute(new DsfRunnable() {
-                            public void run() {
-                            	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                            	if ( regService != null ) {
-                            		regService.getBitFieldData( bitFieldDmc, dataDone );
-                            	}
-                            	else {
-                            		request.done();
-                            	}
-                            }
-                        });
-                    } catch (RejectedExecutionException e) {
-                        request.done();
-                    }
-
-                	continue;
-            	}
+        for ( final IElementMementoRequest request : requests ) {
+            final IBitFieldDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IBitFieldDMContext.class);
+            if (regDmc == null) {
+                request.done();
+                continue;
             }
-            request.done();
+            
+            //  Now go get the model data for the single register group found.
+            try {
+                getSession().getExecutor().execute(new DsfRunnable() {
+                    public void run() {
+                        final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+                        if ( regService != null ) {
+                            regService.getBitFieldData(
+                                regDmc, 
+                                new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
+                                    @Override
+                                    protected void handleCompleted() {
+                                        if ( getStatus().isOK() ) {
+                                            // Now make sure the register group is the one we want.
+                                            request.getMemento().putString(MEMENTO_NAME, "BitField." + getData().getName()); //$NON-NLS-1$
+                                        }
+                                        request.done();
+                                    }
+                                });
+                        } else {
+                            request.done();
+                        }
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                request.done();
+            }
         }
     }
 }

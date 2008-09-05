@@ -67,7 +67,6 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IMemento;
 
 @SuppressWarnings("restriction")
 public class RegisterVMNode extends AbstractExpressionVMNode 
@@ -757,61 +756,40 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     private final String MEMENTO_NAME = "REGISTER_MEMENTO_NAME"; //$NON-NLS-1$
     
     public void compareElements(IElementCompareRequest[] requests) {
-        
         for ( final IElementCompareRequest request : requests ) {
-        	
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            final String mementoName = memento.getString(MEMENTO_NAME);
+            final IRegisterDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterDMContext.class);
+            final String mementoName = request.getMemento().getString(MEMENTO_NAME);
+            if (regDmc == null || mementoName == null) {
+                request.done();
+                continue;
+            }
             
-            if (mementoName != null) {
-                if (element instanceof IDMVMContext) {
-                	
-                    IDMContext dmc = ((IDMVMContext)element).getDMContext();
-                    
-                    if ( dmc instanceof IRegisterDMContext )
-                    {
-                    	final IRegisterDMContext regDmc = (IRegisterDMContext) dmc;
+            //  Now go get the model data for the single register group found.
+            try {
+                getSession().getExecutor().execute(new DsfRunnable() {
+                    public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                        
-                    	/*
-                         *  Now make sure the register group is the one we want.
-                         */
-                        
-                        final DataRequestMonitor<IRegisterDMData> dataDone = new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
-                            @Override
-                            protected void handleCompleted() {
-                                if ( getStatus().isOK() ) {
-                                	request.setEqual( mementoName.equals( "Register." + getData().getName() ) ); //$NON-NLS-1$
-                                }
-                                request.done();
-                            }
-                        };
-                        
-                        /*
-                    	 *  Now go get the model data for the single register group found.
-                    	 */
-                    	try {
-                            getSession().getExecutor().execute(new DsfRunnable() {
-                                public void run() {
-                                	IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                                	if ( regService != null ) {
-                                		regService.getRegisterData( regDmc, dataDone );
-                                	}
-                                	else {
-                                		request.done();
-                                	}
-                                }
-                            });
-                        } catch (RejectedExecutionException e) {
+                        if ( regService != null ) {
+                            regService.getRegisterData(
+                                regDmc, 
+                                new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
+                                    @Override
+                                    protected void handleCompleted() {
+                                        if ( getStatus().isOK() ) {
+                                            // Now make sure the register group is the one we want.
+                                            request.setEqual( mementoName.equals( "Register." + getData().getName() ) ); //$NON-NLS-1$
+                                        }
+                                        request.done();
+                                    }
+                                });
+                        } else {
                             request.done();
                         }
-
-                    	continue;
                     }
-                }
+                });
+            } catch (RejectedExecutionException e) {
+                request.done();
             }
-            request.done();
         }
     }
     
@@ -820,57 +798,39 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
     public void encodeElements(IElementMementoRequest[] requests) {
-    	
-    	for ( final IElementMementoRequest request : requests ) {
-    		
-            Object element = request.getElement();
-            final IMemento memento = request.getMemento();
-            
-            if (element instanceof IDMVMContext) {
-
-            	IDMContext dmc = ((IDMVMContext)element).getDMContext();
-
-            	if ( dmc instanceof IRegisterDMContext )
-            	{
-            		final IRegisterDMContext regDmc = (IRegisterDMContext) dmc;
-            		final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-
-            		/*
-            		 *  Now make sure the register group is the one we want.
-            		 */
-            		final DataRequestMonitor<IRegisterDMData> dataDone = new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
-            			@Override
-            			protected void handleCompleted() {
-            				if ( getStatus().isOK() ) {
-            					memento.putString(MEMENTO_NAME, "Register." + getData().getName()); //$NON-NLS-1$
-            				}
-            				request.done();
-            			}
-            		};
-
-            		/*
-                	 *  Now go get the model data for the single register group found.
-                	 */
-                	try {
-                        getSession().getExecutor().execute(new DsfRunnable() {
-                            public void run() {
-                            	IRegisters regService = getServicesTracker().getService(IRegisters.class);
-                            	if ( regService != null ) {
-                            		regService.getRegisterData( regDmc, dataDone );
-                            	}
-                            	else {
-                            		request.done();
-                            	}
-                            }
-                        });
-                    } catch (RejectedExecutionException e) {
-                        request.done();
-                    }
-
-                	continue;
-            	}
+        for ( final IElementMementoRequest request : requests ) {
+            final IRegisterDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterDMContext.class);
+            if (regDmc == null) {
+                request.done();
+                continue;
             }
-            request.done();
+            
+            //  Now go get the model data for the single register group found.
+            try {
+                getSession().getExecutor().execute(new DsfRunnable() {
+                    public void run() {
+                        final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+                        if ( regService != null ) {
+                            regService.getRegisterData(
+                                regDmc, 
+                                new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
+                                    @Override
+                                    protected void handleCompleted() {
+                                        if ( getStatus().isOK() ) {
+                                            // Now make sure the register group is the one we want.
+                                            request.getMemento().putString(MEMENTO_NAME, "Register." + getData().getName()); //$NON-NLS-1$
+                                        }
+                                        request.done();
+                                    }
+                                });
+                        } else {
+                            request.done();
+                        }
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                request.done();
+            }
         }
     }
 }

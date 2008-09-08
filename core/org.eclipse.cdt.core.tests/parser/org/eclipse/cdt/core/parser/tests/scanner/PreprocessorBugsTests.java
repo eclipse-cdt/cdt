@@ -149,4 +149,20 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+
+	// #if if
+	// no
+	// #else
+	// yes
+	// #endif
+	// #if or
+	// no
+	// #endif
+	public void testKeywordsInConditionalExpression_Bug246369() throws Exception {
+		initializeScanner();
+		validateIdentifier("yes");
+		validateEOF();
+		validateProblemCount(1);
+		validateProblem(0, IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+	}
 }

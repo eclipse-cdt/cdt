@@ -257,7 +257,27 @@ class ExpressionEvaluator {
         case IToken.tIDENTIFIER:
         	consume();
         	return 0;
+        // 16.1.4 alternate keywords are not replaced by a 0
+        case IToken.tAND:
+        case IToken.tOR:
+        case IToken.tBITOR:
+        case IToken.tBITORASSIGN:
+        case IToken.tXOR:
+        case IToken.tXORASSIGN:
+        case IToken.tAMPER:
+        case IToken.tAMPERASSIGN:
+        case IToken.tSTRING:
+        case IToken.tLSTRING:
+            throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null); 
+        	
         default:
+            // 16.1.4 keywords are replaced by 0
+        	final char[] image= fTokens.getCharImage();
+        	if (image.length > 0) {
+        		final char c= image[0];
+        		if ((c>='a' && c<='z') || (c>='A' && c<='Z') || c == '_' || c=='$' || c=='@')
+        			return 0;
+        	}
             throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null); 
         }
     }

@@ -856,7 +856,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 									}
 
 									public TreePath getElementPath() {
-										return path;
+										return path.createChildPath(o);
 									}
 
 									public IPresentationContext getPresentationContext() {
@@ -964,7 +964,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     									}
 
     									public TreePath getElementPath() {
-    										return path;
+    										return path.createChildPath(data);
     									}
 
     									public IPresentationContext getPresentationContext() {

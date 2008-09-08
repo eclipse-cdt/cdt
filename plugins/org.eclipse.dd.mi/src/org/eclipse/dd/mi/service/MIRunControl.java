@@ -139,23 +139,23 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 	 * @see MIRunControl
 	 */
 	@Immutable
-	protected static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>> extends AbstractDMEvent<V>
-	implements IDMEvent<V>, IMIDMEvent
+	protected static class RunControlEvent<V extends IDMContext, T extends IDMContext> extends AbstractDMEvent<V>
+	implements IDMEvent<V>, IMIDMEvent<T>
 	{
-		final private T fMIInfo;
-		public RunControlEvent(V dmc, T miInfo) {
+		final private MIEvent<T> fMIInfo;
+		public RunControlEvent(V dmc, MIEvent<T> miInfo) {
 			super(dmc);
 			fMIInfo = miInfo;
 		}
 
-		public T getMIEvent() { return fMIInfo; }
+		public MIEvent<T> getMIEvent() { return fMIInfo; }
 	}
 
 	/**
 	 * Indicates that the given thread has been suspended.
 	 */
 	@Immutable
-	protected static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
+	protected static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, IExecutionDMContext>
 	implements ISuspendedDMEvent
 	{
 		SuspendedEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo) {
@@ -198,7 +198,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 	}
 
 	@Immutable
-	protected static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
+	protected static class ResumedEvent extends RunControlEvent<IExecutionDMContext, IExecutionDMContext>
 	implements IResumedDMEvent
 	{
 		ResumedEvent(IExecutionDMContext ctx, MIRunningEvent miInfo) {
@@ -206,7 +206,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 		}
 
 		public StateChangeReason getReason() {
-			switch(getMIEvent().getType()) {
+			switch(((MIRunningEvent)getMIEvent()).getType()) {
 			case MIRunningEvent.CONTINUE:
 				return StateChangeReason.USER_REQUEST;
 			case MIRunningEvent.NEXT:
@@ -243,7 +243,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 	}
 
 	@Immutable
-	protected static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
+	protected static class StartedDMEvent extends RunControlEvent<IExecutionDMContext, IContainerDMContext>
 	implements IStartedDMEvent
 	{
 		StartedDMEvent(IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) {
@@ -252,7 +252,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 	}
 
 	@Immutable
-	protected static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
+	protected static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext, IContainerDMContext>
 	implements IExitedDMEvent
 	{
 		ExitedDMEvent(IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) {

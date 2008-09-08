@@ -739,8 +739,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     		// HACK figure out the thread and the group ids
     		// I had to HACK GDB for this
     		if (e instanceof IMIDMEvent) {
-        		String threadId = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getStrId();
-        		IContainerDMContext ctx = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getDMContext();
+    		    MIThreadCreatedEvent miEvent = (MIThreadCreatedEvent)((IMIDMEvent<?>)e).getMIEvent();
+        		String threadId = miEvent.getStrId();
+        		IContainerDMContext ctx = miEvent.getDMContext();
         		if (ctx instanceof IMIExecutionGroupDMContext) {
         			String groupId = ((IMIExecutionGroupDMContext)ctx).getGroupId();
               		 fGroupIdMap.put(threadId, groupId);
@@ -760,7 +761,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     		// HACK figure out the thread and the group ids
     		// I had to HACK GDB for this
     		if (e instanceof IMIDMEvent) {
-        		String threadId = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getStrId();
+        		String threadId = ((MIThreadCreatedEvent)((IMIDMEvent<?>)e).getMIEvent()).getStrId();
                 fGroupIdMap.remove(threadId);
     		}
     		// END HACK

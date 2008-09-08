@@ -15,6 +15,6 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 /**
  * Common interface for events that are directly caused by some MI event.
  */
-public interface IMIDMEvent {
-	public MIEvent<? extends IDMContext> getMIEvent();
+public interface IMIDMEvent<V extends IDMContext> {
+	public MIEvent<V> getMIEvent();
 }

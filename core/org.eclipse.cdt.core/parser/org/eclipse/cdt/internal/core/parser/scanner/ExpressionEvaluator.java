@@ -238,6 +238,12 @@ class ExpressionEvaluator {
         	long val= getValue(fTokens);
         	consume();
         	return val;
+        case IToken.t_true:
+        	consume();
+        	return 1;
+        case IToken.t_false:
+        	consume();
+        	return 0;
         case CPreprocessor.tDEFINED:
             return handleDefined();
         case IToken.tLPAREN:

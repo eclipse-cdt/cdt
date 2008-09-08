@@ -131,4 +131,22 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(2);
 	}
+	
+	// #if true
+	// yes
+	// #else
+	// no
+	// #endif
+	// #if false
+	// no
+	// #else
+	// yes
+	// #endif
+	public void testTrueInConditionalExpression_Bug246369() throws Exception {
+		initializeScanner();
+		validateIdentifier("yes");
+		validateIdentifier("yes");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

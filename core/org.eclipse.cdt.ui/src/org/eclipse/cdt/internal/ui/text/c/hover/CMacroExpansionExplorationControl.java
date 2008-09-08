@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -39,6 +40,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -72,6 +74,7 @@ import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Information control for macro expansion exploration.
@@ -248,6 +251,13 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
         String infoText= getInfoText();
         if (infoText != null) {
             setInfoText(infoText);
+            //bug 234952 - truncation in the info label
+            PixelConverter converter = new PixelConverter(getShell());
+            Point pt = getShell().getSize();
+            int stringLengthInPixel = converter.convertWidthInCharsToPixels(infoText.length()+5);
+            if (pt.x < stringLengthInPixel) {
+            	getShell().setSize(new Point(stringLengthInPixel, pt.y));
+            }
         }
 	}
 

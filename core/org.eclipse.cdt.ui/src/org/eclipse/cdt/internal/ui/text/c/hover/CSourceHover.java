@@ -310,6 +310,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				final int sourceStart;
 				final int sourceEnd;
 				IDocument doc= buffer.getDocument();
+				if (nameOffset >= doc.getLength() || nodeLength <= 0) {
+					return null;
+				}
 				if (binding instanceof IMacroBinding) {
 					ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING, nameOffset, false);
 					if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
@@ -800,7 +803,12 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+				try {
+					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+				} catch (Throwable t) {
+					CUIPlugin.log(t);
+				}
+				return Status.CANCEL_STATUS;
 			}
 		};
 		// If the hover thread is interrupted this might have negative

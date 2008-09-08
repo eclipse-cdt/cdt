@@ -39,8 +39,6 @@ import org.eclipse.core.runtime.Path;
  * @since 5.0
  */
 public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
-	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
-
 	private final ICProject fCProject;
 	private final HashMap<String, IIndexFileLocation> fIflCache;
 	private final FileExistsCache fExistsCache;
@@ -89,7 +87,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		IIndexFileLocation result= fIflCache.get(includePath);
 		if (result == null) {
 			result = doResolveASTPath(includePath);
-			if (result.getFullPath() == null && !CASE_SENSITIVE_FILES) {
+			if (result.getFullPath() == null) {
 				try {
 					File location= new File(includePath);
 					String canonicalPath= location.getCanonicalPath();
@@ -202,6 +200,11 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public CodeReader getCodeReader(Object tuo) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
-		return tu.getCodeReader();
+		final CodeReader reader= tu.getCodeReader();
+		if (reader != null) {
+			IIndexFileLocation ifl= IndexLocationFactory.getIFL(tu);
+			fIflCache.put(reader.getPath(), ifl);
+		}
+		return reader;
 	}
 }

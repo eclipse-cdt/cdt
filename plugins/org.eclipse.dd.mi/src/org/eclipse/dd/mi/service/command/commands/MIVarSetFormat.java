@@ -14,7 +14,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarSetFormatInfo;
 
@@ -33,7 +33,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarSetFormatInfo;
  */
 public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo> 
 {
-    public MIVarSetFormat(MIControlDMContext ctx, String name, String fmt) {
+    public MIVarSetFormat(ICommandControlDMContext ctx, String name, String fmt) {
         super(ctx, "-var-set-format"); //$NON-NLS-1$
         setParameters(new String[]{name, getFormat(fmt)});
     }

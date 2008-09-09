@@ -12,7 +12,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 
@@ -26,7 +26,7 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
  */
 public class MIGDBShowExitCode extends MIDataEvaluateExpression<MIGDBShowExitCodeInfo> {
 
-    public MIGDBShowExitCode(MIControlDMContext ctx) {
+    public MIGDBShowExitCode(ICommandControlDMContext ctx) {
         super(ctx, "$_exitcode"); //$NON-NLS-1$
     }
     

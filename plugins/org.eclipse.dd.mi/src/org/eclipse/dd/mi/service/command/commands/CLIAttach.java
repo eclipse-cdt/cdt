@@ -11,7 +11,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -23,7 +23,7 @@ public class CLIAttach extends CLICommand<MIInfo> {
 		super(ctx, "attach " + Integer.toString(pid)); //$NON-NLS-1$
 	}
 	
-	public CLIAttach(MIControlDMContext ctx, String pid) {
+	public CLIAttach(ICommandControlDMContext ctx, String pid) {
 		super(ctx, "attach " + pid); //$NON-NLS-1$
 	}
 }

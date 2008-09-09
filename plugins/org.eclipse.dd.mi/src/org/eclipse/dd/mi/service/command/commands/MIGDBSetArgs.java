@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * 
@@ -22,11 +22,11 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class MIGDBSetArgs extends MIGDBSet 
 {
-    public MIGDBSetArgs(MIControlDMContext dmc) {
+    public MIGDBSetArgs(ICommandControlDMContext dmc) {
         super(dmc, new String[] {"args"}); //$NON-NLS-1$
     }
     
-    public MIGDBSetArgs(MIControlDMContext dmc, String arguments) {
+    public MIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {
         super(dmc, null);
 
     	// We do not want to quote the arguments of this command so we must

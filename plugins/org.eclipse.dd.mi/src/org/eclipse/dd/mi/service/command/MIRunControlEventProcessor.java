@@ -24,6 +24,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
@@ -81,7 +82,7 @@ public class MIRunControlEventProcessor
      * Container context used as the context for the run control events generated
      * by this processor.
      */
-    private final MIControlDMContext fControlDmc; 
+    private final ICommandControlDMContext fControlDmc; 
     
     private final DsfServicesTracker fServicesTracker;
     
@@ -93,7 +94,7 @@ public class MIRunControlEventProcessor
      */
     public MIRunControlEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc) {
         fCommandControl = connection;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, MIControlDMContext.class);
+        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addEventListener(this);
         connection.addCommandListener(this);

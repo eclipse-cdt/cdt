@@ -13,7 +13,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarUpdateInfo;
 
@@ -31,7 +31,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarUpdateInfo;
  */
 public class MIVarUpdate extends MICommand<MIVarUpdateInfo> {
 
-	public MIVarUpdate(MIControlDMContext dmc, String name) {
+	public MIVarUpdate(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-update", new String[] { "1", name }); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	

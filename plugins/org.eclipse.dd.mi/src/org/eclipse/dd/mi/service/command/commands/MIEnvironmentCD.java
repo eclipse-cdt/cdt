@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MIEnvironmentCD extends MICommand <MIInfo> 
 {
-	public MIEnvironmentCD(MIControlDMContext ctx, String path) {
+	public MIEnvironmentCD(ICommandControlDMContext ctx, String path) {
 		super(ctx, "-environment-cd", new String[]{path}); //$NON-NLS-1$
 	}
 }

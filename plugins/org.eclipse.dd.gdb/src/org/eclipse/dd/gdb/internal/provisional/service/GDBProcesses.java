@@ -26,6 +26,7 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
@@ -34,7 +35,6 @@ import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.commands.CLIMonitorListProcesses;
 import org.eclipse.dd.mi.service.command.output.CLIMonitorListProcessesInfo;
@@ -182,7 +182,7 @@ public class GDBProcesses extends MIProcesses {
 			if (groupDmc == null) {
 				// This service version only handles a single process to debug, therefore, we can simply
 				// create the context describing this process ourselves.
-				MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 				IProcessDMContext procDmc = createProcessContext(controlDmc, inferiorProcess.getPid());
 				IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, inferiorProcess.getPid());
 				rm.setData(new IContainerDMContext[] {newGroupDmc});
@@ -199,7 +199,7 @@ public class GDBProcesses extends MIProcesses {
 	
 	@Override
 	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
-		final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 		if (fGdb.getSessionType() == SessionType.LOCAL) {
 			IProcessList list = null;
 			try {
@@ -244,7 +244,7 @@ public class GDBProcesses extends MIProcesses {
 		}
 	}
 
-	private IProcessDMContext[] makeProcessDMCs(MIControlDMContext controlDmc, IProcessInfo[] processes) {
+	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
 		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
 			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 

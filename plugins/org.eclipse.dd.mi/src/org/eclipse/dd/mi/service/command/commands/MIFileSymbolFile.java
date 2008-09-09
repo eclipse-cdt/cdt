@@ -12,7 +12,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -25,11 +25,11 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MIFileSymbolFile extends MICommand<MIInfo>
 {
-    public MIFileSymbolFile(MIControlDMContext dmc, String file) {
+    public MIFileSymbolFile(ICommandControlDMContext dmc, String file) {
         super(dmc, "-file-symbol-file", null, new String[] {file}); //$NON-NLS-1$
     }
     
-    public MIFileSymbolFile(MIControlDMContext dmc) {
+    public MIFileSymbolFile(ICommandControlDMContext dmc) {
         super(dmc, "-file-symbol-file"); //$NON-NLS-1$
     }
 }

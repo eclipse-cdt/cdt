@@ -43,13 +43,13 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.ExpressionService.ExpressionInfo;
 import org.eclipse.dd.mi.service.ExpressionService.MIExpressionDMC;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetAttributes;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetChildCount;
 import org.eclipse.dd.mi.service.command.commands.ExprMetaGetChildren;
@@ -923,7 +923,7 @@ public class MIVariableManager implements ICommandControl {
 		// The control context within which this variable object was created
 		// It only needs to be stored in the Root VarObj since any children
 		// will have the same control context
-	    private MIControlDMContext fControlContext = null;
+	    private ICommandControlDMContext fControlContext = null;
 	    
 		private boolean outOfDate = false;
 		
@@ -937,7 +937,7 @@ public class MIVariableManager implements ICommandControl {
 			modifiableDescendants = new HashMap<String, MIVariableObject>();
 		}
 
-		public MIControlDMContext getControlDMContext() { return fControlContext; }
+		public ICommandControlDMContext getControlDMContext() { return fControlContext; }
 
 		public boolean isUpdating() { return currentState == STATE_UPDATING; }
 
@@ -962,7 +962,7 @@ public class MIVariableManager implements ICommandControl {
 			if (currentState == STATE_NOT_CREATED) {
 				
 				currentState = STATE_CREATING;
-				fControlContext = DMContexts.getAncestorOfType(exprCtx, MIControlDMContext.class);
+				fControlContext = DMContexts.getAncestorOfType(exprCtx, ICommandControlDMContext.class);
 
 				fCommandControl.queueCommand(
 						new MIVarCreate(exprCtx, exprCtx.getExpression()), 

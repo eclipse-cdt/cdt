@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * 
@@ -19,7 +19,7 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class MIGDBSetAutoSolib extends MIGDBSet 
 {
-    public MIGDBSetAutoSolib(MIControlDMContext ctx, boolean isSet) {
+    public MIGDBSetAutoSolib(ICommandControlDMContext ctx, boolean isSet) {
         super(ctx, new String[] {"auto-solib-add", isSet ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
     }
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -25,11 +25,11 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MIFileExecAndSymbols extends MICommand<MIInfo>
 {
-    public MIFileExecAndSymbols(MIControlDMContext dmc, String file) {
+    public MIFileExecAndSymbols(ICommandControlDMContext dmc, String file) {
         super(dmc, "-file-exec-and-symbols", null, new String[] {file}); //$NON-NLS-1$
     }
     
-    public MIFileExecAndSymbols(MIControlDMContext dmc) {
+    public MIFileExecAndSymbols(ICommandControlDMContext dmc) {
         super(dmc, "-file-exec-and-symbols"); //$NON-NLS-1$
     }
 }

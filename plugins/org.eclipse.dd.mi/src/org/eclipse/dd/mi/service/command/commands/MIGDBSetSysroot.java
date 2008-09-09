@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * 
@@ -19,12 +19,12 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class MIGDBSetSysroot extends MIGDBSet 
 {
-	public MIGDBSetSysroot(MIControlDMContext ctx, String path) {
+	public MIGDBSetSysroot(ICommandControlDMContext ctx, String path) {
 		super(ctx, new String[] {"sysroot", path});//$NON-NLS-1$
 	}
 	
 	// Using /dev/null is the recommended way to disable sysroot
-	public MIGDBSetSysroot(MIControlDMContext ctx) {
+	public MIGDBSetSysroot(ICommandControlDMContext ctx) {
 		this(ctx, "/dev/null"); //$NON-NLS-1$ 
 	}
 }

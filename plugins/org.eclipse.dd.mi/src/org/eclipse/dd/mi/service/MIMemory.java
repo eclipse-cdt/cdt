@@ -36,12 +36,12 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.ExpressionService.ExpressionChangedEvent;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.dd.mi.service.command.commands.MIDataWriteMemory;
 import org.eclipse.dd.mi.service.command.output.MIDataReadMemoryInfo;
@@ -433,10 +433,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 		public MIMemoryCache() {
 	    	// Create the command cache
-	        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
-	    	fCommandCache = new CommandCache(getSession(), miControl);
-	    	fCommandCache.setContextAvailable(miControl.getControlDMContext(), true);
-	    	
+	        ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+	    	fCommandCache = new CommandCache(getSession(), commandControl);
+	    	fCommandCache.setContextAvailable(commandControl.getContext(), true);
+
 	    	// Create the memory block cache
 	    	fMemoryBlockList = new SortedMemoryBlockList();
 		}

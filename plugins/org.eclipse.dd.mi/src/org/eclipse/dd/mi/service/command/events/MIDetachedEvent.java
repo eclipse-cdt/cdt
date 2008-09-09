@@ -13,7 +13,7 @@
 package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 
 /**
@@ -21,9 +21,9 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  *  ^running
  */
 @Immutable
-public class MIDetachedEvent extends MIEvent<MIControlDMContext> {
+public class MIDetachedEvent extends MIEvent<ICommandControlDMContext> {
 
-    public MIDetachedEvent(MIControlDMContext ctx, int token) {
+    public MIDetachedEvent(ICommandControlDMContext ctx, int token) {
         super(ctx, token, null);
     }
 

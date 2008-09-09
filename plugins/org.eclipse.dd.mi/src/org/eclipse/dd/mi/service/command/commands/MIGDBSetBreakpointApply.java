@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * 
@@ -22,7 +22,7 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class MIGDBSetBreakpointApply extends MIGDBSet 
 {
-    public MIGDBSetBreakpointApply(MIControlDMContext ctx, boolean global) {
+    public MIGDBSetBreakpointApply(ICommandControlDMContext ctx, boolean global) {
         super(ctx, new String[] {"breakpoint", "apply", global ? "global" : "process"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
     }
 }

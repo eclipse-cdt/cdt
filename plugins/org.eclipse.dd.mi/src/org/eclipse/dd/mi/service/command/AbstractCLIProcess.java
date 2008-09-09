@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
@@ -58,7 +59,7 @@ public abstract class AbstractCLIProcess extends Process
     public static final String SECONDARY_PROMPT = ">"; //$NON-NLS-1$
 
     private final DsfSession fSession;
-    private final AbstractMIControl fCommandControl;
+    private final ICommandControlService fCommandControl;
 	private final OutputStream fOutputStream = new CLIOutputStream();
     
     // Client process console stream.
@@ -86,7 +87,7 @@ public abstract class AbstractCLIProcess extends Process
     private int fPrompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
-	public AbstractCLIProcess(AbstractMIControl commandControl) throws IOException {
+	public AbstractCLIProcess(ICommandControlService commandControl) throws IOException {
         fSession = commandControl.getSession();
         fCommandControl = commandControl;
         
@@ -120,7 +121,10 @@ public abstract class AbstractCLIProcess extends Process
     
     protected DsfSession getSession() { return fSession; }
 
-	protected AbstractMIControl getCommandControl() { return fCommandControl; }
+    @Deprecated
+	protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
+    
+	protected ICommandControlService getCommandControlService() { return fCommandControl; }
 	
 	protected boolean isDisposed() { return fDisposed; }
 	
@@ -289,20 +293,20 @@ public abstract class AbstractCLIProcess extends Process
             // Normal Command Line Interface.
             boolean secondary = inSecondaryPrompt();
             if (secondary) {
-                cmd = new RawCommand(getCommandControl().getControlDMContext(), str);
+                cmd = new RawCommand(getCommandControlService().getContext(), str);
             }
             else if (! CLIEventProcessor.isSteppingOperation(str)) 
             {
-                cmd = new ProcessMIInterpreterExecConsole(getCommandControl().getControlDMContext(), str);
+                cmd = new ProcessMIInterpreterExecConsole(getCommandControlService().getContext(), str);
             } 
             else {
-                cmd = new ProcessCLICommand(getCommandControl().getControlDMContext(), str);
+                cmd = new ProcessCLICommand(getCommandControlService().getContext(), str);
             }
             final ICommand<MIInfo> finalCmd = cmd; 
             fSession.getExecutor().execute(new DsfRunnable() { public void run() {
                 if (isDisposed()) return;
                 // Do not wait around for the answer.
-                getCommandControl().queueCommand(finalCmd, null);
+                getCommandControlService().queueCommand(finalCmd, null);
             }});
         }
     }

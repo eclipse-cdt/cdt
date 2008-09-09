@@ -14,7 +14,7 @@ package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 
 /**
@@ -24,9 +24,9 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  * {@link ICommandControlService.ICommandControlShutdownDMEvent}.
  */
 @Immutable
-public class MIGDBExitEvent extends MIEvent<MIControlDMContext> {
+public class MIGDBExitEvent extends MIEvent<ICommandControlDMContext> {
 
-    public MIGDBExitEvent(MIControlDMContext ctx, int token) {
+    public MIGDBExitEvent(ICommandControlDMContext ctx, int token) {
     	super(ctx, token, null);
     }
 }

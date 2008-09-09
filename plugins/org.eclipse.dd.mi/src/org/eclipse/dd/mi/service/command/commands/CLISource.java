@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  * 
  */
 public class CLISource extends CLICommand<MIInfo> {
-    public CLISource(MIControlDMContext ctx, String file) {
+    public CLISource(ICommandControlDMContext ctx, String file) {
         super(ctx, "source " + file); //$NON-NLS-1$
     }
 }

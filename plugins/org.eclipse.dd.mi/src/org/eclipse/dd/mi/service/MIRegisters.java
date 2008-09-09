@@ -28,11 +28,11 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIDataListRegisterNames;
 import org.eclipse.dd.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.dd.mi.service.command.output.MIDataListRegisterNamesInfo;
@@ -171,11 +171,11 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         /*
          * Create the lower level register cache.
          */
-        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
-        fRegisterValueCache = new CommandCache(getSession(), miControl);
-        fRegisterValueCache.setContextAvailable(miControl.getControlDMContext(), true);
-        fRegisterNameCache  = new CommandCache(getSession(), miControl);
-        fRegisterNameCache.setContextAvailable(miControl.getControlDMContext(), true);
+    	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+        fRegisterValueCache = new CommandCache(getSession(), commandControl);
+        fRegisterValueCache.setContextAvailable(commandControl.getContext(), true);
+        fRegisterNameCache  = new CommandCache(getSession(), commandControl);
+        fRegisterNameCache.setContextAvailable(commandControl.getContext(), true);
                
         /*
          * Sign up so we see events. We use these events to decide how to manage

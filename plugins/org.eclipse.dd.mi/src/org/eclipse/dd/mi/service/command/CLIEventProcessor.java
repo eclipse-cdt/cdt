@@ -25,10 +25,12 @@ import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
@@ -53,9 +55,9 @@ import org.eclipse.dd.mi.service.command.output.MIResultRecord;
 public class CLIEventProcessor
     implements ICommandListener, IEventListener
 {
-    private final AbstractMIControl fCommandControl;
+    private final ICommandControlService fCommandControl;
     private MIInferiorProcess fInferior;
-    private final MIControlDMContext fControlDmc;
+    private final ICommandControlDMContext fControlDmc;
     private final List<Object> fEventList = new LinkedList<Object>();
     
     // Last Thread ID created 
@@ -63,10 +65,10 @@ public class CLIEventProcessor
     
     private final DsfServicesTracker fServicesTracker;
     
-    public CLIEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
+    public CLIEventProcessor(ICommandControlService connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
         fCommandControl = connection;
         fInferior = inferior;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, MIControlDMContext.class);
+        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addCommandListener(this);
         connection.addEventListener(this);
@@ -256,7 +258,7 @@ public class CLIEventProcessor
             fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         } else if (isDetach(operation)) {
             // if it was a "detach" command change the state.
-            MIEvent<?> event = new MIDetachedEvent(DMContexts.getAncestorOfType(dmc, MIControlDMContext.class), token);
+            MIEvent<?> event = new MIDetachedEvent(DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class), token);
             fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         }
     }

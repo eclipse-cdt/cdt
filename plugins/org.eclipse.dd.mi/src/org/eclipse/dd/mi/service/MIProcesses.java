@@ -29,12 +29,12 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.CLIAttach;
 import org.eclipse.dd.mi.service.command.commands.CLIDetach;
 import org.eclipse.dd.mi.service.command.commands.CLIInfoThreads;
@@ -233,7 +233,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
          * @param controlDmc The control context parent of this process.
     	 * @param id process identifier.
     	 */
-    	public MIProcessDMC(String sessionId, MIControlDMContext controlDmc, String id) {
+    	public MIProcessDMC(String sessionId, ICommandControlDMContext controlDmc, String id) {
 			super(sessionId, controlDmc == null ? new IDMContext[0] : new IDMContext[] { controlDmc });
     		fId = id;
     	}
@@ -297,7 +297,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
         }
     }        
 
-    private AbstractMIControl fCommandControl;
+    private ICommandControlService fCommandControl;
 	private CommandCache fContainerCommandCache;
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
@@ -338,10 +338,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 //		register(new String[] { IProcesses.class.getName(),
 //				MIProcesses.class.getName() },
 //				new Hashtable<String, String>());
-		
-		fCommandControl = getServicesTracker().getService(AbstractMIControl.class);
+
+		fCommandControl = getServicesTracker().getService(ICommandControlService.class);
         fContainerCommandCache = new CommandCache(getSession(), fCommandControl);
-        fContainerCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
+        fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
         getSession().addServiceEventListener(this, null);
 
 		requestMonitor.done();
@@ -373,7 +373,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
         return new MIThreadDMC(getSession().getId(), processDmc, threadId);
     }
 
-    public IProcessDMContext createProcessContext(MIControlDMContext controlDmc, String pid) {
+    public IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid) {
         return new MIProcessDMC(getSession().getId(), controlDmc, pid);
     }
     
@@ -470,7 +470,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 			fCommandControl.queueCommand(
 					new CLIAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -497,7 +497,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     }
 
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
-    	MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 
     	if (controlDmc != null) {
     		// This service version cannot use -target-detach because it didn't exist
@@ -552,7 +552,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		} else {
 			// This service version only handles a single process to debug, therefore, we can simply
 			// create the context describing this process ourselves.
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 			IProcessDMContext procDmc = createProcessContext(controlDmc, UNIQUE_GROUP_ID);
 			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, UNIQUE_GROUP_ID);
 			rm.setData(new IContainerDMContext[] {newGroupDmc});

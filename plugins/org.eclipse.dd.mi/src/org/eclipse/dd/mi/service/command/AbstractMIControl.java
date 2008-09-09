@@ -66,8 +66,6 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
 public abstract class AbstractMIControl extends AbstractDsfService
     implements ICommandControlService
 {
-    final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
- 
     /*
 	 *  Thread control variables for the transmit and receive threads.
 	 */

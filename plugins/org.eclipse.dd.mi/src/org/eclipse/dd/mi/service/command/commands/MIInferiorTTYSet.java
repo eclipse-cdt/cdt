@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -22,7 +22,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MIInferiorTTYSet extends MICommand<MIInfo>
 {
-    public MIInferiorTTYSet(MIControlDMContext dmc, String tty) {
+    public MIInferiorTTYSet(ICommandControlDMContext dmc, String tty) {
         super(dmc, "-inferior-tty-set", null, new String[] {tty}); //$NON-NLS-1$
     }
 }  

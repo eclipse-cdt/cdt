@@ -14,8 +14,8 @@ package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 
@@ -30,7 +30,7 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
  */
 public class MIDataEvaluateExpression<V extends MIDataEvaluateExpressionInfo> extends MICommand<V> 
 {
-    public MIDataEvaluateExpression(MIControlDMContext ctx, String expr) {
+    public MIDataEvaluateExpression(ICommandControlDMContext ctx, String expr) {
         super(ctx, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
     }
     

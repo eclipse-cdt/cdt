@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * 
@@ -19,7 +19,7 @@ import org.eclipse.dd.mi.service.command.MIControlDMContext;
  */
 public class MIGDBSetSolibSearchPath extends MIGDBSet 
 {
-	public MIGDBSetSolibSearchPath(MIControlDMContext ctx, String[] paths) {
+	public MIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
 		super(ctx, null);
 		// Overload the parameter
 		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$

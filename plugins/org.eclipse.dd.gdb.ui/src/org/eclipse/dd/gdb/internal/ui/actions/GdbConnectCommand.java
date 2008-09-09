@@ -30,6 +30,8 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
@@ -37,8 +39,6 @@ import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.ProcessInfo;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 
@@ -61,10 +61,10 @@ public class GdbConnectCommand implements IConnect {
             @Override
             public void execute(DataRequestMonitor<Boolean> rm) {
        			IProcesses procService = fTracker.getService(IProcesses.class);
-       			AbstractMIControl miControl = fTracker.getService(AbstractMIControl.class);
+       			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
 
-       			if (procService != null && miControl != null) {
-       				procService.isDebuggerAttachSupported(miControl.getControlDMContext(), rm);
+       			if (procService != null && commandControl != null) {
+       				procService.isDebuggerAttachSupported(commandControl.getContext(), rm);
        			} else {
        				rm.setData(false);
        				rm.done();
@@ -145,10 +145,10 @@ public class GdbConnectCommand implements IConnect {
     	fExecutor.execute(new DsfRunnable() {
     		public void run() {
     			final IProcesses procService = fTracker.getService(IProcesses.class);
-    			AbstractMIControl miControl = fTracker.getService(AbstractMIControl.class);
-    			final MIControlDMContext controlCtx = miControl.getControlDMContext();        
+    			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
 
-    			if (procService != null && miControl != null) {
+    			if (procService != null && commandControl != null) {
+        			final ICommandControlDMContext controlCtx = commandControl.getContext();        
     				procService.getRunningProcesses(
     						controlCtx,        
     						new DataRequestMonitor<IProcessDMContext[]>(fExecutor, rm) {

@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -44,7 +45,6 @@ import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.dd.mi.service.command.commands.MITargetAttach;
 import org.eclipse.dd.mi.service.command.commands.MITargetDetach;
@@ -253,7 +253,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
          * @param controlDmc The control context parent of this process.
     	 * @param id process identifier.
     	 */
-    	public MIProcessDMC(String sessionId, MIControlDMContext controlDmc, String id) {
+    	public MIProcessDMC(String sessionId, ICommandControlDMContext controlDmc, String id) {
 			super(sessionId, controlDmc == null ? new IDMContext[0] : new IDMContext[] { controlDmc });
     		fId = id;
     	}
@@ -406,7 +406,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         return new MIThreadDMC(getSession().getId(), processDmc, threadId);
     }
 
-    public IProcessDMContext createProcessContext(MIControlDMContext controlDmc, String pid) {
+    public IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid) {
         return new MIProcessDMC(getSession().getId(), controlDmc, pid);
     }
     
@@ -451,7 +451,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		} else if (dmc instanceof MIThreadDMC) {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 	        fThreadCommandCache.execute(new MIThreadInfo(controlDmc, threadDmc.getId()),
 	        		new DataRequestMonitor<MIThreadInfoInfo>(getExecutor(), rm) {
         	        	@Override
@@ -497,7 +497,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
-			MIControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, MIControlDMContext.class);
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 			fCommandControl.queueCommand(
 					new MITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -524,7 +524,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     }
 
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
-    	MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
     	IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
 
     	if (controlDmc != null && procDmc != null) {
@@ -566,7 +566,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 //			inferiorProcess != null && 
 //			inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 		
-			final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+			final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 			final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
 			if (groupDmc != null) {
 				fThreadCommandCache.execute(
@@ -618,7 +618,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		}
 	}
 	
-	private IMIExecutionGroupDMContext[] makeExecutionGroupDMCs(MIControlDMContext controlDmc, IThreadGroupInfo[] groups) {
+	private IMIExecutionGroupDMContext[] makeExecutionGroupDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
 		IProcessDMContext[] procDmcs = makeProcessDMCs(controlDmc, groups);
 		
 		IMIExecutionGroupDMContext[] groupDmcs = new IMIExecutionGroupDMContext[groups.length];
@@ -631,7 +631,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	}
 
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
-		final MIControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, MIControlDMContext.class);
+		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 
 		if (controlDmc != null) {
 			// Don't cache this command since the list can change at any time.
@@ -658,7 +658,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 
 	}
 
-	private IProcessDMContext[] makeProcessDMCs(MIControlDMContext controlDmc, IThreadGroupInfo[] processes) {
+	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
 		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
 			procDmcs[i] = createProcessContext(controlDmc, processes[i].getGroupId()); 

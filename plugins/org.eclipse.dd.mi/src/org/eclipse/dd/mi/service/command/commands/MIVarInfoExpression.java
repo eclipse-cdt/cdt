@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarInfoExpressionInfo;
 
@@ -30,7 +30,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarInfoExpressionInfo;
 //MIVarInfoExpression.java
 public class MIVarInfoExpression extends MICommand<MIVarInfoExpressionInfo> 
 {
-	public MIVarInfoExpression(MIControlDMContext ctx, String name) {
+	public MIVarInfoExpression(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-info-expression", new String[]{name}); //$NON-NLS-1$
 	}
     

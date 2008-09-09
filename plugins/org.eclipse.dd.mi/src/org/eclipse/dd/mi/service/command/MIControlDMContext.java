@@ -16,6 +16,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.mi.internal.MIPlugin;
 import org.osgi.framework.Constants;
 
 /**
@@ -24,6 +25,8 @@ import org.osgi.framework.Constants;
 public class MIControlDMContext extends AbstractDMContext 
     implements ICommandControlDMContext
 {
+    final static String PROP_INSTANCE_ID = MIPlugin.PLUGIN_ID + ".miControlInstanceId";    //$NON-NLS-1$
+
     private final String fCommandControlFilter;
     private final String fCommandControlId;
     
@@ -39,7 +42,7 @@ public class MIControlDMContext extends AbstractDMContext
             "(&" +  //$NON-NLS-1$
             "(" + Constants.OBJECTCLASS + "=" + ICommandControl.class.getName() + ")" + //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
             "(" + IDsfService.PROP_SESSION_ID + "=" + sessionId + ")" + //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-            "(" + AbstractMIControl.PROP_INSTANCE_ID + "=" + commandControlId + ")" + //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            "(" + PROP_INSTANCE_ID + "=" + commandControlId + ")" + //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
             ")"; //$NON-NLS-1$
     }
 

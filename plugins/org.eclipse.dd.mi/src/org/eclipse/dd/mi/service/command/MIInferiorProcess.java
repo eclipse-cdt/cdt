@@ -36,6 +36,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
@@ -104,7 +105,7 @@ public class MIInferiorProcess extends Process
     private final DsfSession fSession;
     private final PTY fPty;
 
-    private final AbstractMIControl fCommandControl;
+    private final ICommandControlService fCommandControl;
 
     private final IExecutionDMContext fExecutionDMContext;
     
@@ -141,17 +142,17 @@ public class MIInferiorProcess extends Process
      * @param gdbOutputStream The output stream to use to write user IO into.
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
+    public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
         this(commandControl, inferiorExecCtx, gdbOutputStream, null);
     }
 
     /**
-     * @deprecated {@link #MIInferiorProcess(AbstractMIControl, IExecutionDMContext, OutputStream)} 
+     * @deprecated {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, OutputStream)} 
      * should be used instead.
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, OutputStream gdbOutputStream) {
+    public MIInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
         this(commandControl, null, gdbOutputStream, null);
     }
 
@@ -165,22 +166,22 @@ public class MIInferiorProcess extends Process
      * @param p The terminal to use to write user IO into.
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
+    public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
         this(commandControl, inferiorExecCtx, null, p);
     }
 
     /**
-     * @deprecated Should use {@link #MIInferiorProcess(AbstractMIControl, IExecutionDMContext, PTY)}
+     * @deprecated Should use {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, PTY)}
      * instead.
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, PTY p) {
+    public MIInferiorProcess(ICommandControlService commandControl, PTY p) {
         this(commandControl, null, null, p);
     }
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    private MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext execCtx, final OutputStream gdbOutputStream, PTY p) {
+    private MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext execCtx, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
         fSession = commandControl.getSession();
         fExecutionDMContext = execCtx;
@@ -244,7 +245,10 @@ public class MIInferiorProcess extends Process
         return fSession;
     }
     
-    protected AbstractMIControl getCommandControl() { return fCommandControl; }
+    @Deprecated
+    protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
+
+    protected ICommandControlService getCommandControlService() { return fCommandControl; }
     
     protected boolean isDisposed() { return fDisposed; }
     
@@ -306,8 +310,8 @@ public class MIInferiorProcess extends Process
                         rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "GDB is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
                         rm.done();
                     } else {
-                        getCommandControl().queueCommand(
-                            new MIGDBShowExitCode(getCommandControl().getControlDMContext()), 
+                    	getCommandControlService().queueCommand(
+                            new MIGDBShowExitCode(getCommandControlService().getContext()), 
                             new DataRequestMonitor<MIGDBShowExitCodeInfo>(fSession.getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {
@@ -377,8 +381,8 @@ public class MIInferiorProcess extends Process
 
         // To avoid a RejectedExecutionException, use an executor that
         // immediately executes in the same dispatch cycle.
-        CLIExecAbort cmd = new CLIExecAbort(getCommandControl().getControlDMContext());
-        getCommandControl().queueCommand(
+        CLIExecAbort cmd = new CLIExecAbort(getCommandControlService().getContext());
+        getCommandControlService().queueCommand(
             cmd,
             new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), null) { 
                 @Override
@@ -404,7 +408,7 @@ public class MIInferiorProcess extends Process
             if (fExecutionDMContext != null) {
                 getSession().dispatchEvent(
                     new InferiorExitedDMEvent(fExecutionDMContext), 
-                    fCommandControl.getProperties());
+                    getCommandControlService().getProperties());
             }
             closeIO();
         }

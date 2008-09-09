@@ -12,7 +12,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarDeleteInfo;
 
@@ -27,7 +27,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarDeleteInfo;
  */
 public class MIVarDelete extends MICommand<MIVarDeleteInfo> 
 {
-    public MIVarDelete(MIControlDMContext dmc, String name) {
+    public MIVarDelete(ICommandControlDMContext dmc, String name) {
         super(dmc, "-var-delete", new String[]{name}); //$NON-NLS-1$
     }
 

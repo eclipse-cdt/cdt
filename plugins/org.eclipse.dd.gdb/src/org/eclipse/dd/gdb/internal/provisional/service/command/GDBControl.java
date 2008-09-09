@@ -77,7 +77,7 @@ public class GDBControl extends AbstractMIControl {
     /**
      * Event indicating that the back end process has started.
      */
-    public static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
+    private static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
         implements ICommandControlInitializedDMEvent
     {
         public GDBControlInitializedDMEvent(ICommandControlDMContext context) {
@@ -88,7 +88,7 @@ public class GDBControl extends AbstractMIControl {
     /**
      * Event indicating that the back end process has terminated.
      */
-    public static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
+    private static class GDBControlShutdownDMEvent extends AbstractDMEvent<ICommandControlDMContext> 
         implements ICommandControlShutdownDMEvent
     {
         public GDBControlShutdownDMEvent(ICommandControlDMContext context) {
@@ -102,7 +102,7 @@ public class GDBControl extends AbstractMIControl {
     public enum SessionType { LOCAL, REMOTE, CORE }
     private SessionType fSessionType;
     
-    public boolean fAttach;
+    private boolean fAttach;
     
     private boolean fConnected = true;
     

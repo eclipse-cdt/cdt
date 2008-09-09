@@ -36,11 +36,11 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.dd.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.dd.mi.service.command.commands.MIStackListFrames;
@@ -150,9 +150,9 @@ public class MIStack extends AbstractDsfService
     }
 
     private void doInitialize(RequestMonitor rm) {
-        AbstractMIControl miControl = getServicesTracker().getService(AbstractMIControl.class);
-        fMICommandCache = new CommandCache(getSession(), miControl);
-        fMICommandCache.setContextAvailable(miControl.getControlDMContext(), true);
+    	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+        fMICommandCache = new CommandCache(getSession(), commandControl);
+        fMICommandCache.setContextAvailable(commandControl.getContext(), true);
         fRunControl = getServicesTracker().getService(IRunControl.class);
 
         getSession().addServiceEventListener(this, null);

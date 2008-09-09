@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MITargetDetach extends MICommand<MIInfo> {
 	
-	public MITargetDetach(MIControlDMContext ctx, String groupId) {
+	public MITargetDetach(ICommandControlDMContext ctx, String groupId) {
 		super(ctx, "-target-detach", new String[] {groupId}); //$NON-NLS-1$
 	}
 }

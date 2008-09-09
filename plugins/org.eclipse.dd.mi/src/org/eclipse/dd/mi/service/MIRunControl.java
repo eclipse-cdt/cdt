@@ -25,12 +25,12 @@ import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -260,7 +260,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 		}
 	}
 
-	private AbstractMIControl fConnection;
+	private ICommandControlService fConnection;
 	private CommandCache fMICommandCache;
     
     // State flags
@@ -289,9 +289,9 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     }
 
     private void doInitialize(final RequestMonitor rm) {
-        fConnection = getServicesTracker().getService(AbstractMIControl.class);
+        fConnection = getServicesTracker().getService(ICommandControlService.class);
         fMICommandCache = new CommandCache(getSession(), fConnection);
-        fMICommandCache.setContextAvailable(fConnection.getControlDMContext(), true);
+        fMICommandCache.setContextAvailable(fConnection.getContext(), true);
         getSession().addServiceEventListener(this, null);
         rm.done();
     }

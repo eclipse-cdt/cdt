@@ -12,7 +12,7 @@ package org.eclipse.dd.mi.service;
 
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
  * This interface provides a method for creating execution contexts.
@@ -32,7 +32,7 @@ public interface IMIProcesses extends IProcesses
 	 * 
 	 * @param pid The OS Id of the process
 	 */
-    IProcessDMContext createProcessContext(MIControlDMContext controlDmc, String pid);
+    IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid);
     
     /**
      * Create a execution context.

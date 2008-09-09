@@ -13,7 +13,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarListChildrenInfo;
 
@@ -29,7 +29,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarListChildrenInfo;
  */
 public class MIVarListChildren extends MICommand<MIVarListChildrenInfo> 
 {
-	public MIVarListChildren(MIControlDMContext ctx, String name) {
+	public MIVarListChildren(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-list-children", new String[]{name}); //$NON-NLS-1$
 	}
 

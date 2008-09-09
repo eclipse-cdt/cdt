@@ -11,7 +11,7 @@
 
 package org.eclipse.dd.mi.service.command.commands;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarShowFormatInfo;
 
@@ -27,7 +27,7 @@ import org.eclipse.dd.mi.service.command.output.MIVarShowFormatInfo;
  */
 public class MIVarShowFormat extends MICommand<MIVarShowFormatInfo> 
 {
-	public MIVarShowFormat(MIControlDMContext ctx, String name) {
+	public MIVarShowFormat(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-show-format", new String[]{name}); //$NON-NLS-1$
 	}
     

@@ -12,7 +12,7 @@ package org.eclipse.dd.mi.service.command.commands;
 
 import java.util.ArrayList;
 
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 
@@ -45,23 +45,23 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	
 	// List all groups being debugged
-	public MIListThreadGroups(MIControlDMContext ctx) {
+	public MIListThreadGroups(ICommandControlDMContext ctx) {
 		this(ctx, false);
 	}
 
 	// List all groups or threads being debugged which are children of the specified group
-	public MIListThreadGroups(MIControlDMContext ctx, String groupId) {
+	public MIListThreadGroups(ICommandControlDMContext ctx, String groupId) {
 		this(ctx, groupId, false);
 	}
 
 	// List all groups available on the target
-	public MIListThreadGroups(MIControlDMContext ctx, boolean listAll) {
+	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll) {
 		this(ctx, null, listAll);
 	}
 
 	// There should be no reason to have both listAll and groupId specified,
 	// so this constructor is private, and exists to avoid duplicating code.
-	private MIListThreadGroups(MIControlDMContext ctx, String groupId, boolean listAll) {
+	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll) {
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
         
 		final ArrayList<String> arguments = new ArrayList<String>();

@@ -46,6 +46,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
+import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.CLIEventProcessor;
@@ -72,7 +73,7 @@ import org.osgi.framework.BundleContext;
  * - CLI console support,<br>
  * - inferior process status tracking.<br>
  */
-public class GDBControl extends AbstractMIControl {
+public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     /**
      * Event indicating that the back end process has started.
@@ -99,7 +100,6 @@ public class GDBControl extends AbstractMIControl {
     private static int fgInstanceCounter = 0;
     private final GDBControlDMContext fControlDmc;
 
-    public enum SessionType { LOCAL, REMOTE, CORE }
     private SessionType fSessionType;
     
     private boolean fAttach;
@@ -743,7 +743,8 @@ public class GDBControl extends AbstractMIControl {
             register(
                 new String[]{ ICommandControl.class.getName(), 
                               ICommandControlService.class.getName(), 
-                              AbstractMIControl.class.getName() }, 
+                              AbstractMIControl.class.getName(),
+                              IGDBControl.class.getName() }, 
                 new Hashtable<String,String>());
             getSession().dispatchEvent(new GDBControlInitializedDMEvent(getGDBDMContext()), getProperties());
             requestMonitor.done();

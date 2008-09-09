@@ -28,7 +28,7 @@ import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.gdb.internal.provisional.launching.ServicesLaunchSequence;
 import org.eclipse.dd.gdb.internal.provisional.service.GdbDebugServicesFactory;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;

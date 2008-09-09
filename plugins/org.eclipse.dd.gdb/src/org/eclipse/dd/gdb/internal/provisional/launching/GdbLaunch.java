@@ -32,12 +32,13 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;
@@ -108,12 +109,12 @@ public class GdbLaunch extends Launch
         try {
             fExecutor.submit( new Callable<Object>() {
                 public Object call() throws CoreException {
-                    GDBControl gdbControl = fTracker.getService(GDBControl.class);
+                	ICommandControlService gdbControl = fTracker.getService(ICommandControlService.class);
                     if (gdbControl != null) {
                         fMemRetrieval = new DsfMemoryBlockRetrieval(
                                 GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
                         fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
-                        fMemRetrieval.initialize((IMemoryDMContext) gdbControl.getControlDMContext());
+                        fMemRetrieval.initialize((IMemoryDMContext) gdbControl.getContext());
                     }
                     return null;
                 }
@@ -136,7 +137,7 @@ public class GdbLaunch extends Launch
     		MIInferiorProcess inferiorProc = 
     			getDsfExecutor().submit( new Callable<MIInferiorProcess>() {
     				public MIInferiorProcess call() throws CoreException {
-    					GDBControl gdb = fTracker.getService(GDBControl.class);
+    					IGDBControl gdb = fTracker.getService(IGDBControl.class);
     					if (gdb != null) {
     						return gdb.getInferiorProcess();
     					}
@@ -161,7 +162,7 @@ public class GdbLaunch extends Launch
     		AbstractCLIProcess cliProc =
     			getDsfExecutor().submit( new Callable<AbstractCLIProcess>() {
     				public AbstractCLIProcess call() throws CoreException {
-    					GDBControl gdb = fTracker.getService(GDBControl.class);
+    					IGDBControl gdb = fTracker.getService(IGDBControl.class);
     					if (gdb != null) {
     						return gdb.getCLIProcess();
     					}

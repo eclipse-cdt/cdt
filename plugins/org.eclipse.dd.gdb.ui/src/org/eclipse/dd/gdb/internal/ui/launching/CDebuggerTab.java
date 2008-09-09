@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

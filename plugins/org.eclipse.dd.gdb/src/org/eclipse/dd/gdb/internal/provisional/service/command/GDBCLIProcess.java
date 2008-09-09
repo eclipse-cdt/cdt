@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 
@@ -24,7 +25,7 @@ import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
  */
 class GDBCLIProcess extends AbstractCLIProcess {
 
-    public GDBCLIProcess(GDBControl commandControl) throws IOException {
+    public GDBCLIProcess(ICommandControlService commandControl) throws IOException {
         super(commandControl);
     }
 
@@ -41,7 +42,7 @@ class GDBCLIProcess extends AbstractCLIProcess {
             process = getSession().getExecutor().submit(new Callable<Process>() { 
                 public Process call() throws Exception {
                     if (isDisposed()) return null;
-                    return ((GDBControl)getCommandControl()).getGDBProcess();
+                    return ((IGDBControl)getCommandControlService()).getGDBProcess();
                 }}).get();
         } catch (RejectedExecutionException e) {
         } catch (ExecutionException e) {
@@ -64,7 +65,7 @@ class GDBCLIProcess extends AbstractCLIProcess {
                         return new Integer(-1);
                     } else {
                         if (isDisposed()) return new Integer(-1);
-                        GDBControl gdb = (GDBControl)getCommandControl();
+                        IGDBControl gdb = (IGDBControl)getCommandControlService();
                         if (!gdb.isGDBExited()) {
                             throw new IllegalThreadStateException("GDB Process has not exited"); //$NON-NLS-1$
                         }
@@ -89,7 +90,7 @@ class GDBCLIProcess extends AbstractCLIProcess {
             getSession().getExecutor().execute(new DsfRunnable() { public void run() {
                 if (!DsfSession.isSessionActive(getSession().getId())) return;
                 if (isDisposed()) return;
-                GDBControl gdb = (GDBControl)getCommandControl();
+                IGDBControl gdb = (IGDBControl)getCommandControlService();
                 gdb.destroy();
             }});
         } catch (RejectedExecutionException e) {

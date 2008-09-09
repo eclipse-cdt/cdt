@@ -17,6 +17,8 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 /**
@@ -25,12 +27,12 @@ import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 class GDBInferiorProcess extends MIInferiorProcess {
 
     
-    public GDBInferiorProcess(GDBControl commandControl, PTY p) {
-        super(commandControl, commandControl.getGDBDMContext(), p);
+    public GDBInferiorProcess(ICommandControlService commandControl, PTY p) {
+        super(commandControl, (IExecutionDMContext)commandControl.getContext(), p);
     }
 
-    public GDBInferiorProcess(GDBControl commandControl, OutputStream gdbOutputStream) {
-        super(commandControl, commandControl.getGDBDMContext(), gdbOutputStream);
+    public GDBInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
+        super(commandControl, (IExecutionDMContext)commandControl.getContext(), gdbOutputStream);
     }
 
     @Override
@@ -40,7 +42,7 @@ class GDBInferiorProcess extends MIInferiorProcess {
             getSession().getExecutor().submit(new DsfRunnable() {
                 public void run() {
                     if (isDisposed() || !getSession().isActive()) return;
-                    GDBControl gdb = (GDBControl)getCommandControl();
+                    IGDBControl gdb = (IGDBControl)getCommandControlService();
                     if (gdb == null) return;
                     
                     // An inferior will be destroy():interrupt and kill if

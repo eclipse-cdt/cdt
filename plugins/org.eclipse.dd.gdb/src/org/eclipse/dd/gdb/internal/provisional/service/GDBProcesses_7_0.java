@@ -39,7 +39,7 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
@@ -317,7 +317,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         }
     }        
 
-    private GDBControl fCommandControl;
+    private IGDBControl fCommandControl;
     
     // A cache for commands about the threadGroups
 	private CommandCache fContainerCommandCache;
@@ -362,11 +362,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
         
-		fCommandControl = getServicesTracker().getService(GDBControl.class);
+		fCommandControl = getServicesTracker().getService(IGDBControl.class);
         fContainerCommandCache = new CommandCache(getSession(), fCommandControl);
-        fContainerCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
+        fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
         fThreadCommandCache = new CommandCache(getSession(), fCommandControl);
-        fThreadCommandCache.setContextAvailable(fCommandControl.getControlDMContext(), true);
+        fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
         getSession().addServiceEventListener(this, null);
         

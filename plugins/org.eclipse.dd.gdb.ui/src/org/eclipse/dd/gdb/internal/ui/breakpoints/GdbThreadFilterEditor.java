@@ -30,10 +30,11 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.debug.core.DebugPlugin;
@@ -374,12 +375,12 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), GDBControl.class
+                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), ICommandControlService.class
                     .getName(), null);
                 tracker.open();
-                GDBControl gdbControl = (GDBControl) tracker.getService();
-                if (gdbControl != null) {
-                    rm.setData(gdbControl.getGDBDMContext());
+                ICommandControlService commandControl = (ICommandControlService) tracker.getService();
+                if (commandControl != null) {
+                    rm.setData((IContainerDMContext)commandControl.getContext());
                 } else {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                 }
@@ -454,10 +455,10 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), GDBControl.class
+                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBControl.class
                     .getName(), null);
                 tracker.open();
-                GDBControl gdbControl = (GDBControl) tracker.getService();
+                IGDBControl gdbControl = (IGDBControl) tracker.getService();
                 if (gdbControl != null) {
                     rm.setData(gdbControl.getExecutablePath().toOSString());
                 } else {

@@ -25,14 +25,14 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -60,14 +60,14 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
 		IProcesses processService = getServicesTracker().getService(IProcesses.class);
-		GDBControl controlService = getServicesTracker().getService(GDBControl.class);
+		ICommandControlService controlService = getServicesTracker().getService(ICommandControlService.class);
 		if (processService == null || controlService == null) {
 			handleFailedUpdate(update);
 			return;
 		}
 
 		processService.getProcessesBeingDebugged(
-				controlService.getGDBDMContext(),
+				controlService.getContext(),
 				new ViewerDataRequestMonitor<IDMContext[]>(getExecutor(), update) {
 					@Override
 					public void handleCompleted() {

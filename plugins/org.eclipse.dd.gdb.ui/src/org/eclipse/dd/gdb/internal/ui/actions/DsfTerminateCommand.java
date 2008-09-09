@@ -19,7 +19,7 @@ import org.eclipse.dd.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
@@ -62,7 +62,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
             new DsfRunnable() { 
                 public void run() {
                     // Get the processes service and the exec context.
-                    GDBControl gdbControl = fTracker.getService(GDBControl.class);
+                    IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
                     if (gdbControl == null || dmc == null) {
                         // Context or service already invalid.
                         request.setEnabled(false);
@@ -84,7 +84,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
-                GDBControl gdbControl = fTracker.getService(GDBControl.class);
+                IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
                 if (gdbControl != null) {
                     gdbControl.terminate(new RequestMonitor(fExecutor, null));
                 }

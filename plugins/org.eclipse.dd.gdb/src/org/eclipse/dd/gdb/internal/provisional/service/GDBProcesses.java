@@ -29,8 +29,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
@@ -43,7 +42,7 @@ import org.osgi.framework.BundleContext;
 
 public class GDBProcesses extends MIProcesses {
     
-    private GDBControl fGdb;
+    private IGDBControl fGdb;
     
     // A map of pid to names.  It is filled when we get all the
     // processes that are running
@@ -73,7 +72,7 @@ public class GDBProcesses extends MIProcesses {
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
         
-        fGdb = getServicesTracker().getService(GDBControl.class);
+        fGdb = getServicesTracker().getService(IGDBControl.class);
         
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),

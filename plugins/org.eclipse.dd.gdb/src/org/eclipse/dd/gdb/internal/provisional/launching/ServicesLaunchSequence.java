@@ -23,8 +23,9 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.IStack;
+import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 
@@ -38,7 +39,7 @@ public class ServicesLaunchSequence extends Sequence {
                 //
                 // Create the connection.
                 //
-                fCommandControl = fLaunch.getServiceFactory().createService(GDBControl.class, fSession, fLaunch.getLaunchConfiguration());
+                fCommandControl = fLaunch.getServiceFactory().createService(ICommandControlService.class, fSession, fLaunch.getLaunchConfiguration());
                 fCommandControl.initialize(requestMonitor);
             }
         },
@@ -73,7 +74,7 @@ public class ServicesLaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            fSourceLookup.setSourceLookupDirector(fCommandControl.getGDBDMContext(), (CSourceLookupDirector)fLaunch.getSourceLocator());
+            fSourceLookup.setSourceLookupDirector((ISourceLookupDMContext)fCommandControl.getContext(), (CSourceLookupDirector)fLaunch.getSourceLocator());
             requestMonitor.done();
         }},
         new Step() { @Override
@@ -100,7 +101,7 @@ public class ServicesLaunchSequence extends Sequence {
     DsfSession fSession;
     GdbLaunch fLaunch;
 
-    GDBControl fCommandControl;
+    ICommandControlService fCommandControl;
     CSourceLookup fSourceLookup;
     
     public ServicesLaunchSequence(DsfSession session, GdbLaunch launch) {

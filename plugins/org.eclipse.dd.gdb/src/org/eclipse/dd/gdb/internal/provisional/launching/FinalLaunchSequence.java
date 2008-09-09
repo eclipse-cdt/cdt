@@ -33,12 +33,14 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
@@ -73,7 +75,7 @@ public class FinalLaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-            fCommandControl = fTracker.getService(GDBControl.class);
+            fCommandControl = fTracker.getService(IGDBControl.class);
             fProcService = fTracker.getService(IMIProcesses.class);
             if (fCommandControl == null || fProcService == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
@@ -91,7 +93,7 @@ public class FinalLaunchSequence extends Sequence {
         				                                                           IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
         		if (gdbinitFile != null && gdbinitFile.length() > 0) {
         			fCommandControl.queueCommand(
-        					new CLISource(fCommandControl.getControlDMContext(), gdbinitFile), 
+        					new CLISource(fCommandControl.getContext(), gdbinitFile), 
         					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         						@Override
         						protected void handleCompleted() {
@@ -131,7 +133,7 @@ public class FinalLaunchSequence extends Sequence {
         	final IPath execPath = fCommandControl.getExecutablePath();
         	if (!noFileCommand && execPath != null && !execPath.isEmpty()) {
         		fCommandControl.queueCommand(
-       				new MIFileExecAndSymbols(fCommandControl.getControlDMContext(), 
+       				new MIFileExecAndSymbols(fCommandControl.getContext(), 
        						                 execPath.toOSString()), 
        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         	} else {
@@ -150,7 +152,7 @@ public class FinalLaunchSequence extends Sequence {
         			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 
         			fCommandControl.queueCommand(
-        					new MIGDBSetArgs(fCommandControl.getControlDMContext(), args), 
+        					new MIGDBSetArgs(fCommandControl.getContext(), args), 
         					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         		} else {
         			requestMonitor.done();
@@ -216,7 +218,7 @@ public class FinalLaunchSequence extends Sequence {
         	File dir = getWorkingDirectory(requestMonitor);
         	if (dir != null) {
         		fCommandControl.queueCommand(
-        				new MIEnvironmentCD(fCommandControl.getControlDMContext(), dir.getAbsolutePath()), 
+        				new MIEnvironmentCD(fCommandControl.getContext(), dir.getAbsolutePath()), 
         				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         	} else {
         		requestMonitor.done();
@@ -230,7 +232,7 @@ public class FinalLaunchSequence extends Sequence {
         public void execute(final RequestMonitor requestMonitor) {
             fCommandControl.queueCommand(
                     // This command will fail for GDBs without multi-process support, and that is ok
-                    new MIGDBSetBreakpointApply(fCommandControl.getControlDMContext(), true),
+                    new MIGDBSetBreakpointApply(fCommandControl.getContext(), true),
                     new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
                         @Override
                         protected void handleCompleted() {
@@ -256,7 +258,7 @@ public class FinalLaunchSequence extends Sequence {
         	if (isNonStop) {
         		// The raw commands should not be necessary in the official GDB release
         		fCommandControl.queueCommand(
-        				new RawCommand(fCommandControl.getControlDMContext(), "set breakpoint always-inserted"), //$NON-NLS-1$
+        				new RawCommand(fCommandControl.getContext(), "set breakpoint always-inserted"), //$NON-NLS-1$
         				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         					@Override
         					protected void handleSuccess() {
@@ -268,17 +270,17 @@ public class FinalLaunchSequence extends Sequence {
         						}
 
         						fCommandControl.queueCommand(
-        								new RawCommand(fCommandControl.getControlDMContext(), asyncCommandStr),
+        								new RawCommand(fCommandControl.getContext(), asyncCommandStr),
         								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         									@Override
         									protected void handleSuccess() {
         										fCommandControl.queueCommand(
-        												new RawCommand(fCommandControl.getControlDMContext(), "set pagination off"),  //$NON-NLS-1$ 
+        												new RawCommand(fCommandControl.getContext(), "set pagination off"),  //$NON-NLS-1$ 
         												new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
         													@Override
         													protected void handleSuccess() {
         														fCommandControl.queueCommand(
-        																new MIGDBSetNonStop(fCommandControl.getControlDMContext(), true), 
+        																new MIGDBSetNonStop(fCommandControl.getContext(), true), 
         																new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         													}
         												});
@@ -299,7 +301,7 @@ public class FinalLaunchSequence extends Sequence {
     			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
     					                                                        IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
                 fCommandControl.queueCommand(
-                	new MIGDBSetAutoSolib(fCommandControl.getControlDMContext(), autolib), 
+                	new MIGDBSetAutoSolib(fCommandControl.getContext(), autolib), 
                 	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
     		} catch (CoreException e) {
     			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set shared library option", e)); //$NON-NLS-1$
@@ -318,7 +320,7 @@ public class FinalLaunchSequence extends Sequence {
    				if (p.size() > 0) {
    					String[] paths = p.toArray(new String[p.size()]);
    	                fCommandControl.queueCommand(
-   	                	new MIGDBSetSolibSearchPath(fCommandControl.getControlDMContext(), paths), 
+   	                	new MIGDBSetSolibSearchPath(fCommandControl.getContext(), paths), 
    	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
    	                		@Override
    	                		protected void handleSuccess() {
@@ -330,7 +332,7 @@ public class FinalLaunchSequence extends Sequence {
 //   	                			// in the GDB documentation.  This is to avoid the sysroot
 //   	                			// variable finding libraries that were not meant to be found.
 //   	        	                fCommandControl.queueCommand(
-//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getControlDMContext()), 
+//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getContext()), 
 //   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
    	                		};
    	                	});
@@ -350,7 +352,7 @@ public class FinalLaunchSequence extends Sequence {
             CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
 
             CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
-            sourceLookup.setSourceLookupPath(fCommandControl.getGDBDMContext(), 
+            sourceLookup.setSourceLookupPath((ISourceLookupDMContext)fCommandControl.getContext(), 
                	                             locator.getSourceContainers(), requestMonitor);
         }},
         /* 
@@ -421,14 +423,14 @@ public class FinalLaunchSequence extends Sequence {
                         if (!getTcpPort(requestMonitor)) return;
                     
                         fCommandControl.queueCommand(
-                        		new MITargetSelect(fCommandControl.getControlDMContext(), 
+                        		new MITargetSelect(fCommandControl.getContext(), 
                         				           fRemoteTcpHost, fRemoteTcpPort), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		} else {
                			if (!getSerialDevice(requestMonitor)) return;
                     
                         fCommandControl.queueCommand(
-                        		new MITargetSelect(fCommandControl.getControlDMContext(), 
+                        		new MITargetSelect(fCommandControl.getContext(), 
                         				           fSerialDevice), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		}
@@ -455,7 +457,7 @@ public class FinalLaunchSequence extends Sequence {
 
         			if (pid != -1) {
         				fProcService.attachDebuggerToProcess(
-        						fProcService.createProcessContext(fCommandControl.getGDBDMContext(), Integer.toString(pid)),
+        						fProcService.createProcessContext(fCommandControl.getContext(), Integer.toString(pid)),
         						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
         			} else {
         				IConnect connectCommand = (IConnect)fLaunch.getSession().getModelAdapter(IConnect.class);
@@ -476,7 +478,7 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
             MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-        	bpmService.startTrackingBreakpoints(fCommandControl.getGDBDMContext(), requestMonitor);
+        	bpmService.startTrackingBreakpoints((IBreakpointsTargetDMContext)fCommandControl.getContext(), requestMonitor);
         }},
         /*
          * Start the program.
@@ -504,7 +506,7 @@ public class FinalLaunchSequence extends Sequence {
     SessionType fSessionType;
     boolean fAttach;
 
-    GDBControl fCommandControl;
+    IGDBControl fCommandControl;
     IMIProcesses fProcService;
     DsfServicesTracker fTracker;
         

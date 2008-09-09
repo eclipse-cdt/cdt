@@ -23,7 +23,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IProcess;
@@ -48,7 +48,7 @@ public class GdbRestartCommand implements IRestart {
     	Query<Boolean> canRestart = new Query<Boolean>() {
     		@Override
     		protected void execute(DataRequestMonitor<Boolean> rm) {
-    			GDBControl gdbControl = fTracker.getService(GDBControl.class);
+    			IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
 				if (gdbControl != null) {
 					rm.setData(gdbControl.canRestart());
 				} else {
@@ -75,7 +75,7 @@ public class GdbRestartCommand implements IRestart {
     	Query<Object> restartQuery = new Query<Object>() {
     		@Override
     		protected void execute(final DataRequestMonitor<Object> rm) {
-    			final GDBControl gdbControl = fTracker.getService(GDBControl.class);
+    			final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
 				if (gdbControl != null) {
                     execPathRef.set(gdbControl.getExecutablePath());
                     gdbControl.initInferiorInputOutput(new RequestMonitor(fExecutor, rm) {

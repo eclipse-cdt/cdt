@@ -155,11 +155,13 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         fRollbackTaskName = rollbackTaskName;
         fRequestMonitor = rm;
         
-        fRequestMonitor.addCancelListener(new ICanceledListener() {
-            public void requestCanceled(RequestMonitor rm) {
-                fSync.doCancel();
-            }
-        });
+        if (fRequestMonitor != null) {
+            fRequestMonitor.addCancelListener(new ICanceledListener() {
+                public void requestCanceled(RequestMonitor rm) {
+                    fSync.doCancel();
+                }
+            });
+        }
     }
 
     /** 

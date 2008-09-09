@@ -29,5 +29,12 @@ public interface IVMEventListener {
 	/**
 	 * Process the given event and indicate completion with request monitor.
 	 */
-	public abstract void handleEvent(final Object event, RequestMonitor rm);
+	public void handleEvent(final Object event, RequestMonitor rm);
+	
+	/**
+	 * Returns whether the event handling manager should wait for this listener
+	 * to complete handling this event, or whether the event listener can process
+	 * the event asynchronously.  
+	 */
+	public boolean shouldWaitHandleEventToComplete();
 }

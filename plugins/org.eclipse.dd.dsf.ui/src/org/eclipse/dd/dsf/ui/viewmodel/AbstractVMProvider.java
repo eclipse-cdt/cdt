@@ -385,6 +385,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         return false;
     }
     
+    public boolean shouldWaitHandleEventToComplete() {
+        return false;
+    }
+    
     public IRootVMNode getRootVMNode() {
         return fRootNode;
     }
@@ -597,7 +601,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      */
     public void updateNode(IVMNode node, IChildrenUpdate update) {
         if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-            DsfUIPlugin.debug("updateNodeChildren(node = " + node + ", update = " + update + ")");
+            DsfUIPlugin.debug("updateNodeChildren(node = " + node + ", update = " + update + ")");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
         }
         node.update(new IChildrenUpdate[] { update });
     }

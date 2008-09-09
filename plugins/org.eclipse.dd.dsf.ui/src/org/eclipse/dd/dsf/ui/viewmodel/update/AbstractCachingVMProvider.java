@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.TreeItem;
 @SuppressWarnings("restriction")
 public class AbstractCachingVMProvider extends AbstractVMProvider implements ICachingVMProvider, ICachingVMProviderExtension {
 
-	private boolean fIsAtomicUpdate = false;
+	private boolean fDelayEventHandleForViewUpdate = false;
 	
     // debug flags
     public static boolean DEBUG_CACHE = false;
@@ -725,7 +725,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         
         if (proxyStrategy instanceof IVMModelProxyExtension) {
             IVMModelProxyExtension proxyStrategyExtension = (IVMModelProxyExtension)proxyStrategy;
-            if(fIsAtomicUpdate) {
+            if(fDelayEventHandleForViewUpdate) {
     	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
     	        	updateExpanded(
     	        	    proxyStrategyExtension, 
@@ -821,7 +821,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     {
     	List<Object> pathList = new LinkedList<Object>();
     	TreeItem item = child.getParentItem();
-    	Tree tree = null;
     	while (item != null) {
     	    pathList.add(0, item.getData());
     	    item = item.getParentItem();
@@ -1253,12 +1252,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         getPresentationContext().setProperty(SELECTED_UPDATE_SCOPE, updateScope.getID());
     }
 
-	public boolean isAtomicUpdate() {
-		return fIsAtomicUpdate;
-	}
+    public boolean shouldWaitHandleEventToComplete() {
+        return fDelayEventHandleForViewUpdate;
+    }
 
-	public void setAtomicUpdate(boolean enable) {
-		fIsAtomicUpdate = enable;
+	protected void setDelayEventHandleForViewUpdate(boolean on) {
+		fDelayEventHandleForViewUpdate = on;
 	}
 
 }

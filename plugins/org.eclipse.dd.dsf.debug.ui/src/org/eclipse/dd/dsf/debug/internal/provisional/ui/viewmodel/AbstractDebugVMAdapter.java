@@ -29,13 +29,17 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
     implements ISteppingControlParticipant 
 {
     
-    public AbstractDebugVMAdapter(DsfSession session, SteppingController controller) {
+    public AbstractDebugVMAdapter(DsfSession session, final SteppingController controller) {
         super(session);
         fController = controller;
-        fController.addSteppingControlParticipant(this);
+        fController.getExecutor().execute(new DsfRunnable() {
+            public void run() {
+                fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
+            }
+        });
     }
 
-    private SteppingController fController;
+    private final SteppingController fController;
     
 	@Override
     protected IVMProvider createViewModelProvider(IPresentationContext context) {
@@ -56,10 +60,11 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
 
     @Override
     public void dispose() {
-        if (fController != null) {
-            fController.removeSteppingControlParticipant(this);
-            fController = null;
-        }
+        fController.getExecutor().execute(new DsfRunnable() {
+            public void run() {
+                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
+            }
+        });
         super.dispose();
     }
 }

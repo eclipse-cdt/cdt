@@ -13,6 +13,7 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.action
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.AbstractVMProviderActionDelegate;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.update.ICachingVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.update.ICachingVMProviderExtension;
 import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdateScope;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.action.IAction;
@@ -45,7 +46,7 @@ public class SelectUpdateScopeAction extends AbstractVMProviderActionDelegate  {
     	{
 	        IVMProvider provider = getVMProvider();
 	        if (provider instanceof ICachingVMProvider) {
-	            ICachingVMProvider cachingProvider = (ICachingVMProvider)provider;
+	            ICachingVMProviderExtension cachingProvider = (ICachingVMProviderExtension)provider;
 	            IVMUpdateScope policy = getScopeFromProvider(cachingProvider, getUpdateScopeId());
 	            if (policy != null) {
 	                cachingProvider.setActiveUpdateScope(policy);
@@ -54,7 +55,7 @@ public class SelectUpdateScopeAction extends AbstractVMProviderActionDelegate  {
     	}
     }
     
-    private IVMUpdateScope getScopeFromProvider(ICachingVMProvider provider, String id) {
+    private IVMUpdateScope getScopeFromProvider(ICachingVMProviderExtension provider, String id) {
         for (IVMUpdateScope policy : provider.getAvailableUpdateScopes()) {
             if (policy.getID().equals(id)) {
                 return policy;
@@ -77,9 +78,9 @@ public class SelectUpdateScopeAction extends AbstractVMProviderActionDelegate  {
     
     protected void update() {
         IVMProvider provider = getVMProvider();
-        if (provider instanceof ICachingVMProvider) {
+        if (provider instanceof ICachingVMProviderExtension) {
             getAction().setEnabled(true);
-            IVMUpdateScope activeScope = ((ICachingVMProvider)provider).getActiveUpdateScope();
+            IVMUpdateScope activeScope = ((ICachingVMProviderExtension)provider).getActiveUpdateScope();
             getAction().setChecked( activeScope != null && getUpdateScopeId().equals(activeScope.getID()) );
         } else {
             getAction().setEnabled(false);

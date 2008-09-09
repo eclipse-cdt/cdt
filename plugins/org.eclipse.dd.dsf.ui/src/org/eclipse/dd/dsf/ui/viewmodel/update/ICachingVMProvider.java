@@ -36,32 +36,6 @@ public interface ICachingVMProvider extends IVMProvider {
     public void setActiveUpdatePolicy(IVMUpdatePolicy mode);
     
     /**
-     * Returns the update policies that the given provider supports.
-     */
-    public IVMUpdateScope[] getAvailableUpdateScopes();
-
-    /**
-     * Returns the active update policy.
-     */
-    public IVMUpdateScope getActiveUpdateScope();
-
-    /**
-     * Sets the active update policy.  This has to be one of the update
-     * policies supported by the provider.
-     */
-    public void setActiveUpdateScope(IVMUpdateScope mode);
-    
-    /**
-     * Is update atomic?
-     */
-    public boolean isAtomicUpdate();
-    
-    /**
-     * Sets atomic update.
-     */
-    public void setAtomicUpdate(boolean enable);
-
-    /**
      * Forces the view to flush its cache and re-fetch data from the view
      * model nodes.
      */

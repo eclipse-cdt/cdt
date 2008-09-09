@@ -103,10 +103,10 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         store.addPropertyChangeListener(new IPropertyChangeListener()
         {
 			public void propertyChange(PropertyChangeEvent event) {
-				setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
+				setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
 			}
         });
-        setAtomicUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE));
+        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
     }
 
     @Override

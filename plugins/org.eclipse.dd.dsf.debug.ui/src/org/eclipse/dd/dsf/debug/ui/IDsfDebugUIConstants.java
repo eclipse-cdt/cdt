@@ -61,7 +61,7 @@ public interface IDsfDebugUIConstants {
 
 	/**
 	 * Integer preference to control the maximum amount of stack frames to
-	 * retrieve from the backend. Default value is 10.
+	 * retrieve from the backend. Default value is <code>10</code>.
 	 * @see {@link #PREF_STACK_FRAME_LIMIT_ENABLE}
 	 * 
 	 * @since 1.1
@@ -77,26 +77,19 @@ public interface IDsfDebugUIConstants {
 	public static final String PREF_STACK_FRAME_LIMIT_ENABLE = "stackFrameLimitEnable"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference whether to keep stepping speed in sync with UI updates. Default is <code>true</code>.
+	 * Boolean preference whether to keep stepping speed in sync with UI updates. Default is <code>false</code>.
 	 * 
 	 * @since 1.1
 	 */
-	public static final String PREF_SYNCHRONIZED_STEPPING_ENABLE = "synchronizedSteppingEnable"; //$NON-NLS-1$
+	public static final String PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE = "delaySteppingForViewUpdatesEnable"; //$NON-NLS-1$
 
 	/**
-	 * Integer preference to enforce a minimum time interval between steps. Default is <code>0</code>.
+	 * Integer preference to enforce a minimum time interval between steps. Default is <code>100</code>.
 	 * 
 	 * @since 1.1
 	 */
 	public static final String PREF_MIN_STEP_INTERVAL= "minStepInterval"; //$NON-NLS-1$
 	
-	/**
-	 * Boolean preference whether to wait for view update before continuing run control requests
-	 * 
-	 * @since 1.1
-	 */
-	public static final String PREF_ATOMIC_UPDATE_ENABLE = "atomicUpdateEnable"; //$NON-NLS-1$
-
     /**
      * Help prefixes.
      */

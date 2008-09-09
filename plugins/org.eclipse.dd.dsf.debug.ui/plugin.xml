@@ -528,16 +528,16 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferencePage"
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            name="%disassemblyPreferencePage.name"
-            id="org.eclipse.dd.dsf.debug.ui.disassembly.preferencePage"/>
-      <page
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.dd.dsf.debug.internal.ui.preferences.DsfDebugPreferencePage"
             id="org.eclipse.dd.dsf.debug.ui.preferences"
             name="%preferencePage.name">
       </page>
+      <page
+            class="org.eclipse.dd.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferencePage"
+            category="org.eclipse.dd.dsf.debug.ui.preferences"
+            name="%disassemblyPreferencePage.name"
+            id="org.eclipse.dd.dsf.debug.ui.disassembly.preferencePage"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">

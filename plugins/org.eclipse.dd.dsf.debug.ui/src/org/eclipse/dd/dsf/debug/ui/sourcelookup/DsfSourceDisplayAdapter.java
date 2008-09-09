@@ -700,7 +700,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     }
 
 	private void doneStepping(IDMContext context) {
-		if (fController != null && fController.isSynchronizedSteppingEnabled()) {
+		if (fController != null) {
 			// indicate completion of step
         	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         	if (dmc != null) {

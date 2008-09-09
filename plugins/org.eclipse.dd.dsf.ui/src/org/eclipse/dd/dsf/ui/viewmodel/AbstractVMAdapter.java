@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
@@ -23,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
@@ -34,7 +34,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.jface.viewers.TreePath;
 
 /** 
  * Base implementation for View Model Adapters.  The implementation uses
@@ -46,139 +45,10 @@ import org.eclipse.jface.viewers.TreePath;
 abstract public class AbstractVMAdapter implements IVMAdapter
 {
  
-	/**
-	 * Interface for a viewer update which can be "monitored".
-	 */
-	interface IMonitoredUpdate extends IViewerUpdate {
- 		boolean isDone();
- 		void setMonitor(RequestMonitor monitor);
-	}
-
-	/**
-	 * Wraps an IViewerUpdate to add a request monitor.
-	 */
-	abstract static class MonitoredUpdate implements IMonitoredUpdate {
-
-		protected IViewerUpdate fDelegate;
-		private boolean fIsDone;
-		private RequestMonitor fMonitor;
-
-		MonitoredUpdate(IViewerUpdate update) {
-			fDelegate = update;
-		}
-
-		public boolean isDone() {
-			return fIsDone;
-		}
-
-		public void setMonitor(RequestMonitor monitor) {
-			fMonitor = monitor;
-			if (fIsDone) {
-				monitor.done();
-			}
-		}
-
-		public Object getElement() {
-			return fDelegate.getElement();
-		}
-
-		public TreePath getElementPath() {
-			return fDelegate.getElementPath();
-		}
-
-		public IPresentationContext getPresentationContext() {
-			return fDelegate.getPresentationContext();
-		}
-
-		public Object getViewerInput() {
-			return fDelegate.getViewerInput();
-		}
-
-		public void cancel() {
-			fDelegate.cancel();
-			if (!fIsDone) {
-				fIsDone = true;
-				if (fMonitor != null) {
-					fMonitor.done();
-				}
-			}
-		}
-
-		public void done() {
-			fDelegate.done();
-			if (!fIsDone) {
-				fIsDone = true;
-				if (fMonitor != null) {
-					fMonitor.done();
-				}
-			}
-		}
-
-		public IStatus getStatus() {
-			return fDelegate.getStatus();
-		}
-
-		public boolean isCanceled() {
-			return fDelegate.isCanceled();
-		}
-
-		public void setStatus(IStatus status) {
-			fDelegate.setStatus(status);
-		}
-
-	}
-
-	static class MonitoredChildrenUpdate extends MonitoredUpdate implements IChildrenUpdate {
-		public MonitoredChildrenUpdate(IChildrenUpdate update) {
-			super(update);
-		}
-
-		public int getLength() {
-			return ((IChildrenUpdate)fDelegate).getLength();
-		}
-
-		public int getOffset() {
-			return ((IChildrenUpdate)fDelegate).getOffset();
-		}
-
-		public void setChild(Object child, int offset) {
-			((IChildrenUpdate)fDelegate).setChild(child, offset);
-		}
-		
-	}
-
-	static class MonitoredHasChildrenUpdate extends MonitoredUpdate implements IHasChildrenUpdate {
-		public MonitoredHasChildrenUpdate(IHasChildrenUpdate update) {
-			super(update);
-		}
-
-		public void setHasChilren(boolean hasChildren) {
-			((IHasChildrenUpdate)fDelegate).setHasChilren(hasChildren);
-		}
-
-	}
-
-	static class MonitoredChildrenCountUpdate extends MonitoredUpdate implements IChildrenCountUpdate {
-		public MonitoredChildrenCountUpdate(IChildrenCountUpdate update) {
-			super(update);
-		}
-
-		public void setChildCount(int numChildren) {
-			((IChildrenCountUpdate)fDelegate).setChildCount(numChildren);
-		}
-
-	}
-
-
 	private boolean fDisposed;
 
     private final Map<IPresentationContext, IVMProvider> fViewModelProviders = 
         Collections.synchronizedMap( new HashMap<IPresentationContext, IVMProvider>() );
-
-	/**
-	 * List of IViewerUpdates pending after processing an event.
-	 */
-	private final List<IMonitoredUpdate> fPendingUpdates = new ArrayList<IMonitoredUpdate>();
 
     /**
      * Constructor for the View Model session.  It is tempting to have the 
@@ -260,7 +130,6 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
     
     private void handleUpdate(IViewerUpdate[] updates) {
-    	updates = wrapUpdates(updates);
         IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
         if (provider != null) {
             updateProvider(provider, updates);
@@ -351,73 +220,34 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 		}
 	
 		if (!eventListeners.isEmpty()) {
-			synchronized (fPendingUpdates) {
-				fPendingUpdates.clear();
-			}
-			// TODO which executor to use?
-			final Executor executor= eventListeners.get(0).getExecutor();
-			final CountingRequestMonitor crm = new CountingRequestMonitor(executor, null) {
+			final CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
 				@Override
 				protected void handleCompleted() {
 					if (isDisposed()) {
 						return;
 					}
-					// The event listeners have completed processing the event.
-					// Now monitor completion of viewer updates issued while dispatching the event
-					final CountingRequestMonitor updatesMonitor = new CountingRequestMonitor(executor, null) {
-						@Override
-						protected void handleCompleted() {
-							if (isDisposed()) {
-								return;
-							}
-							doneHandleEvent(event);
-						}
-					};
-					synchronized (fPendingUpdates) {
-						int pending = fPendingUpdates.size();
-						updatesMonitor.setDoneCount(pending);
-						for (IMonitoredUpdate update : fPendingUpdates) {
-							update.setMonitor(updatesMonitor);
-						}
-						fPendingUpdates.clear();
-					}
+                    doneHandleEvent(event);
 				}
 			};
-			crm.setDoneCount(eventListeners.size());
-	        
+
+			int count = 0;
 			for (final IVMEventListener vmEventListener : eventListeners) {
-				vmEventListener.getExecutor().execute(new DsfRunnable() {
+			    RequestMonitor listenerRm = null;
+			    if (vmEventListener.shouldWaitHandleEventToComplete()) {
+			        listenerRm = crm;
+			        count++;
+			    } else {
+			        // Create a dummy executor for the handling of this event.
+			        listenerRm = new RequestMonitor(ImmediateExecutor.getInstance(), null);
+			    }
+			    final RequestMonitor finalListenerRm = listenerRm;
+			    vmEventListener.getExecutor().execute(new DsfRunnable() {
 					public void run() {
-						vmEventListener.handleEvent(event, crm);
+						vmEventListener.handleEvent(event, finalListenerRm);
 					}});
 			}
+            crm.setDoneCount(count);
 		}
-	}
-
-	private IViewerUpdate[] wrapUpdates(IViewerUpdate[] updates) {
-		if (updates.length == 0) {
-			return updates;
-		}
-		int i = 0;
-		synchronized (fPendingUpdates) {
-			for (IViewerUpdate update : updates) {
-				IMonitoredUpdate wrap= createMonitoredUpdate(update);
-				updates[i++] = wrap;
-				fPendingUpdates.add(wrap);
-			}
-		}
-		return updates;
-	}
-
-	private IMonitoredUpdate createMonitoredUpdate(IViewerUpdate update) {
-		if (update instanceof IChildrenCountUpdate) {
-			return new MonitoredChildrenCountUpdate(((IChildrenCountUpdate)update));
-		} else if (update instanceof IHasChildrenUpdate) {
-			return new MonitoredHasChildrenUpdate(((IHasChildrenUpdate)update));
-		} else if (update instanceof IChildrenUpdate) {
-			return new MonitoredChildrenUpdate(((IChildrenUpdate)update));
-		}
-		return null;
 	}
 
     /**

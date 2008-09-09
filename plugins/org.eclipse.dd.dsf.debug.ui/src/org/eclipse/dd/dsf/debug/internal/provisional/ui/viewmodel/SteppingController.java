@@ -132,11 +132,6 @@ public final class SteppingController implements IStepQueueManager
 	private int fMinStepInterval= 0;
 
 	/**
-	 * Whether synchronized stepping is enabled.
-	 */
-	private boolean fSynchronizedStepping;
-	
-	/**
 	 * Map of execution contexts for which a step is in progress.
 	 */
 	private final Map<IExecutionDMContext, List<ISteppingControlParticipant>> fStepInProgress = new HashMap<IExecutionDMContext, List<ISteppingControlParticipant>>();
@@ -163,7 +158,6 @@ public final class SteppingController implements IStepQueueManager
             }};
         store.addPropertyChangeListener(fPreferencesListener);
         
-        enableSynchronizedStepping(store.getBoolean(IDsfDebugUIConstants.PREF_SYNCHRONIZED_STEPPING_ENABLE));
         setMinimumStepInterval(store.getInt(IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL));
     }
 
@@ -178,26 +172,6 @@ public final class SteppingController implements IStepQueueManager
         fServicesTracker.dispose();
     }
 
-    /**
-     * Enables or disables synchronized stepping mode.
-     * In synchronized mode, after a step command is issued,
-     * subsequent steps are blocked for the execution context
-     * until {@link #doneStepping()} is called to indicate completion
-     * of the processing for the last step.
-     * 
-     * @param enable
-     */
-    public void enableSynchronizedStepping(boolean enable) {
-    	fSynchronizedStepping = enable;
-    }
-
-	/**
-	 * @return whether synchronized stepping is enabled.
-	 */
-	public boolean isSynchronizedSteppingEnabled() {
-		return fSynchronizedStepping;
-	}
-    
     /**
      * Configure the minimum time (in milliseconds) to wait between steps.
      * 
@@ -375,10 +349,9 @@ public final class SteppingController implements IStepQueueManager
     }
 
 	private void doStep(final IExecutionDMContext execCtx, final StepType stepType) {
-		if (fSynchronizedStepping) {
-			disableStepping(execCtx);
-		}
+	    disableStepping(execCtx);
         updateLastStepTime(execCtx);
+        
 		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
 		    @Override
 		    protected void handleFailure() {
@@ -492,10 +465,8 @@ public final class SteppingController implements IStepQueueManager
      * @param execCtx
      */
     private void doneStepping(final IExecutionDMContext execCtx) {
-    	if (fSynchronizedStepping) {
-    		enableStepping(execCtx);
-    		processStepQueue(execCtx);
-    	}
+        enableStepping(execCtx);
+        processStepQueue(execCtx);
     }
 
 	/**
@@ -513,35 +484,29 @@ public final class SteppingController implements IStepQueueManager
 	}
 
 	private boolean isSteppingDisabled(IExecutionDMContext execCtx) {
-		if (fSynchronizedStepping) {
-	        boolean disabled= fStepInProgress.containsKey(execCtx);
-	        if (!disabled) {
-		        for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
-					if (DMContexts.isAncestorOf(execCtx, disabledCtx)) {
-						disabled = true;
-						break;
-					}
+        boolean disabled= fStepInProgress.containsKey(execCtx);
+        if (!disabled) {
+	        for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
+				if (DMContexts.isAncestorOf(execCtx, disabledCtx)) {
+					disabled = true;
+					break;
 				}
-	        }
-	        if (disabled) {
-	        	long now = System.currentTimeMillis();
-	        	long lastStepTime = getLastStepTime(execCtx);
-	        	if (now - lastStepTime > MAX_STEP_DELAY) {
-	        		enableStepping(execCtx);
-	        		disabled = false;
-	        	}
-	        }            
-	        return disabled;
-		} else {
-            return getRunControl().isStepping(execCtx);
-        }   
+			}
+        }
+        if (disabled) {
+        	long now = System.currentTimeMillis();
+        	long lastStepTime = getLastStepTime(execCtx);
+        	if (now - lastStepTime > MAX_STEP_DELAY) {
+        		enableStepping(execCtx);
+        		disabled = false;
+        	}
+        }            
+        return disabled;
 	}
 
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if (IDsfDebugUIConstants.PREF_SYNCHRONIZED_STEPPING_ENABLE.equals(property)) {
-			enableSynchronizedStepping(store.getBoolean(property));
-		} else if (IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL.equals(property)) {
+		if (IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL.equals(property)) {
 			setMinimumStepInterval(store.getInt(property));
 		}
 	}

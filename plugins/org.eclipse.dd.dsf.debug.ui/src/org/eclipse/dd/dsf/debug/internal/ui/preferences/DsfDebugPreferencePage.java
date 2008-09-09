@@ -78,8 +78,8 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 
 		// sync stepping speed
 		BooleanFieldEditor syncSteppingEditor= new BooleanFieldEditor(
-				IDsfDebugUIConstants.PREF_SYNCHRONIZED_STEPPING_ENABLE,
-				MessagesForPreferences.DsfDebugPreferencePage_syncStepping_label,
+				IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE,
+				MessagesForPreferences.DsfDebugPreferencePage_waitForViewUpdate_label,
 				performanceGroup);
 
 		syncSteppingEditor.fillIntoGrid(performanceGroup, 3);
@@ -95,15 +95,6 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 		minIntervalEditor.fillIntoGrid(performanceGroup, 3);
 		addField(minIntervalEditor);
 		
-		// atomic update
-		BooleanFieldEditor atomicUpdateEditor = new BooleanFieldEditor(
-				IDsfDebugUIConstants.PREF_ATOMIC_UPDATE_ENABLE,
-				MessagesForPreferences.DsfDebugPreferencePage_atomicUpdate_label,
-				performanceGroup);
-
-		atomicUpdateEditor.fillIntoGrid(performanceGroup, 3);
-		addField(atomicUpdateEditor);
-
 		// need to set layout again
 		performanceGroup.setLayout(groupLayout);
 }

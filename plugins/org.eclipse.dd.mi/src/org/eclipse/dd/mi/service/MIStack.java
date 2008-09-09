@@ -221,7 +221,7 @@ public class MIStack extends AbstractDsfService
 
 	    // Make sure the thread is stopped
 	    if (!fRunControl.isSuspended(execDmc)) {
-	    	rm.setData(new IFrameDMContext[0]);
+            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE, "Context is running: " + ctx, null)); //$NON-NLS-1$
 	    	rm.done();
 	    	return;
 	    }

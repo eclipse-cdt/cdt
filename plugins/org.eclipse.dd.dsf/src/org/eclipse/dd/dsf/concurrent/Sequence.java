@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor.ICanceledListener;
 import org.eclipse.dd.dsf.internal.DsfPlugin;
 
 /**
@@ -153,6 +154,12 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         fTaskName = taskName;
         fRollbackTaskName = rollbackTaskName;
         fRequestMonitor = rm;
+        
+        fRequestMonitor.addCancelListener(new ICanceledListener() {
+            public void requestCanceled(RequestMonitor rm) {
+                fSync.doCancel();
+            }
+        });
     }
 
     /** 
@@ -198,9 +205,20 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
     /**
      * Don't try to interrupt the DSF executor thread, just ignore the request 
      * if set.
+     * <p>If a request monitor was specified when creating a sequence, that 
+     * request monitor will be canceled by this method as well.  The client 
+     * can also use the request monitor's cancel method to cancel the sequence.
+     * 
+     * @see RequestMonitor#cancel()
      */
     public boolean cancel(boolean mayInterruptIfRunning) {
-        return fSync.doCancel(); 
+        // Cancel the request monitor first, to avoid a situation where
+        // the request monitor is not canceled but the status is set
+        // to canceled.
+        if (fRequestMonitor != null) {
+            fRequestMonitor.cancel();
+        }
+        return fSync.doCancel();
     }
 
     public boolean isCancelled() { return fSync.doIsCancelled(); }

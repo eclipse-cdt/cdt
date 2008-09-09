@@ -1,21 +1,22 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 161844 - regex matching backslashes
  * Martin Oberhuber (Wind River) - Fix 162781 - normalize without replaceAll()
  * Martin Oberhuber (Wind River) - Use pre-compiled regex Pattern
- * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
- * Martin Oberhuber (Wind River) - Fix 183991 - handle windows C:/ paths for FTP 
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
+ * Martin Oberhuber (Wind River) - Fix 183991 - handle windows C:/ paths for FTP
+ * Martin Oberhuber (Wind River) - [246710] Fix quoting backslashes in UNIX shells
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -25,15 +26,15 @@ import java.util.regex.Pattern;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 
-public class PathUtility 
+public class PathUtility
 {
 	//Regex pattern: / or \\
 	private static Pattern badSlashPatternWin=Pattern.compile("/|\\\\\\\\"); //$NON-NLS-1$
 
 	/**
-	 * Normalize a path name that is supposed to be Windows style. 
+	 * Normalize a path name that is supposed to be Windows style.
 	 * Replaces / characters by \ and remove duplicate \ characters.
-	 * 
+	 *
 	 * @param path a path to normalize
 	 * @return a normalized path.
 	 */
@@ -42,7 +43,7 @@ public class PathUtility
 		if (path == null || path.length() < 2) {
 			return path;
 		}
-		//FIXME Windows UNC Paths should probably be considered. 
+		//FIXME Windows UNC Paths should probably be considered.
 		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (badSlashPatternWin.matcher(path).find()) {
 			//Replace /->\, then replace \\->\
@@ -69,7 +70,7 @@ public class PathUtility
 			path = buf.toString();
 		} else if (endsWithSlash && path.length()!=3) {
 			//remove trailing slash only
-			path = path.substring(0, path.length() - 1);			
+			path = path.substring(0, path.length() - 1);
 		}
 		return path;
 	}
@@ -78,13 +79,13 @@ public class PathUtility
 	private static Pattern badSlashPatternUnix=Pattern.compile("\\\\|//"); //$NON-NLS-1$
 
 	/**
-	 * Normalize a path name that is supposed to be UNIX style. 
+	 * Normalize a path name that is supposed to be UNIX style.
 	 * Replaces \ characters by / and remove duplicate / characters.
-	 * 
+	 *
 	 * @deprecated this should not be used since \ is a valid part of
 	 *     UNIX file names. Also, a better normalizer would also consider
 	 *     swquences like a/../b and a/./b -- Try to work without this
-	 *     method. 
+	 *     method.
 	 * @param path a path to normalize
 	 * @return a normalized path.
 	 */
@@ -119,11 +120,11 @@ public class PathUtility
 			path = buf.toString();
 		} else if (endsWithSlash && path.length()!=1) {
 			//remove trailing slash only
-			path = path.substring(0, path.length() - 1);			
+			path = path.substring(0, path.length() - 1);
 		}
 		return path;
 	}
-	
+
 	public static String normalizeVirtualWindows(String path)
 	{
 		if (path == null || path.length() < 2) return path;
@@ -134,7 +135,7 @@ public class PathUtility
 		else realPart = normalizeWindows(realPart);
 		return realPart + ArchiveHandlerManager.VIRTUAL_SEPARATOR + avp.getVirtualPart();
 	}
-	
+
 	public static String normalizeVirtualUnix(String path)
 	{
 		if (path == null || path.length() < 2) return path;
@@ -143,9 +144,9 @@ public class PathUtility
 		if (ArchiveHandlerManager.isVirtual(realPart))
 			realPart = normalizeVirtualUnix(realPart);
 		else realPart = normalizeUnix(realPart);
-		return realPart + ArchiveHandlerManager.VIRTUAL_SEPARATOR + avp.getVirtualPart();		
+		return realPart + ArchiveHandlerManager.VIRTUAL_SEPARATOR + avp.getVirtualPart();
 	}
-	
+
 	public static String normalizeUnknown(String path)
 	{
 		if (path == null || path.length() < 2) return path;
@@ -159,7 +160,7 @@ public class PathUtility
 			else return normalizeVirtualUnix(path);
 		else return path;
 	}
-	
+
 	/**
 	 * Given a path name, try to guess what separator is used.
 	 * Should only be used for absolute path names, but tries to compute
@@ -187,13 +188,13 @@ public class PathUtility
 			//TODO check if it is a good idea to put an assert in here
 			//or even throw an (unchecked) exception.
 			if (path.indexOf('/')>0) {
-				//Slash is a path illegal character on Windows -> must be UNIX 
+				//Slash is a path illegal character on Windows -> must be UNIX
 				return "/"; //$NON-NLS-1$
 			} else if (path.indexOf('\\')>0) {
 				//Not a single / but got \\ -> Likely Windows but not sure
 				return "\\"; //$NON-NLS-1$
 			} else if (path.length()==2 && path.charAt(1)==':') {
-				//Windows drive letter only 
+				//Windows drive letter only
 				return "\\"; //$NON-NLS-1$
 			}
 		}
@@ -203,14 +204,14 @@ public class PathUtility
 
 	/**
 	 * Quotes a string such that it can be used in a remote UNIX shell.
-	 * 
+	 *
 	 * This has been tested with sh, bash and tcsh shells.
 	 * On Windows, special characters likes quotes and dollar sign. and
 	 * - most importantly - the backslash will not be quoted correctly.
-	 * 
+	 *
 	 * Newline is only quoted correctly in tcsh. But since this is mainly
 	 * intended for file names, it should work OK in almost every case.
-	 * 
+	 *
 	 * @param s String to be quoted
 	 * @return quoted string, or original if no quoting was necessary.
 	 */
@@ -224,15 +225,15 @@ public class PathUtility
 				char c=s.charAt(i);
 				switch(c) {
 				case '$':
+				case '\\':
 					//Need to treat specially to work in both bash and tcsh:
 					//close the quote, insert quoted $, reopen the quote
 					buf.append('"');
 					buf.append('\\');
-					buf.append('$');
+					buf.append(c);
 					buf.append('"');
 					break;
 				case '"':
-				case '\\':
 				case '\'':
 				case '`':
 				case '\n':

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 import java.util.ArrayList;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
@@ -21,12 +22,26 @@ import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 public class InputPage extends ExtractInputPage {
 
 	private final ArrayList<String> usedNames;
+	private boolean showVisibilityPane;
 
 	public InputPage(String name, NameNVisibilityInformation info) {
+		this(name, info, true);
+	}
+
+	public InputPage(String name, NameNVisibilityInformation info, boolean showVisibilityPane) {
 		super(name, info);
-		label = Messages.InputPage_ConstName; 
-		errorLabel = Messages.InputPage_EnterContName; 
+		label = Messages.InputPage_ConstName;
+		errorLabel = Messages.InputPage_EnterContName;
 		usedNames = info.getUsedNames();
+		this.showVisibilityPane = showVisibilityPane;
+	}
+	
+	
+
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		control.getVisibiltyGroup().setVisible(showVisibilityPane);
 	}
 
 	@Override

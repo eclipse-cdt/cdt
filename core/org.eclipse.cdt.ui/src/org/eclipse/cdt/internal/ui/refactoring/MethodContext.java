@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -57,10 +57,10 @@ public class MethodContext {
 		return declarationName;
 	}
 	
-	public IASTSimpleDeclaration getMethodDeclaration(){
+	public IASTDeclaration getMethodDeclaration(){
 		IASTNode parent = declarationName.getParent().getParent();
-		if (parent instanceof IASTSimpleDeclaration) {
-			return (IASTSimpleDeclaration) parent;
+		if (parent instanceof IASTDeclaration) {
+			return (IASTDeclaration) parent;
 		}
 		return null;
 	}
@@ -198,5 +198,20 @@ public class MethodContext {
 		IASTName classname = qname.getNames()[qname.getNames().length - 2];
 		ICPPClassType bind = (ICPPClassType)classname.resolveBinding(); 
 		return bind;
+	}
+
+	public static boolean isSameClass(IASTName declName1,
+			IASTName declName2) {
+		ICPPClassType bind1 = getClassBinding(declName1);
+		ICPPClassType bind2 = getClassBinding(declName2);
+		return bind1.equals(bind2);
+	}
+
+	private static ICPPClassType getClassBinding(IASTName declName1) {
+		if (declName1.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+			ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) declName1.getParent().getParent().getParent();
+			return (ICPPClassType) compTypeSpec.getName().resolveBinding();
+		}
+		return null;
 	}
 }

@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
+import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 
 /**
  * General class for common Node operations.
@@ -133,7 +134,7 @@ public class NodeHelper {
 			 ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
 			 context.setMethodQName(qname);
 			 IBinding bind = qname.resolveBinding();
-			 IASTName[] decl = translationUnit.getDeclarationsInAST(bind);//TODO HSR works only for names in the current translationUnit
+			 IASTName[] decl = translationUnit.getDeclarationsInAST(bind);
 			 for (IASTName tmpname : decl) {
 				 IASTNode methoddefinition = tmpname.getParent().getParent();
 				 if (methoddefinition instanceof IASTSimpleDeclaration) {
@@ -171,6 +172,11 @@ public class NodeHelper {
 						}
 					}
 				}
+			}
+		}else {
+			if (name.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+				context.setType(ContextType.METHOD);
+				context.setMethodDeclarationName(name);
 			}
 		}
 	}

@@ -399,9 +399,6 @@ public final class SteppingController implements IStepQueueManager
 	 * @param execCtx
 	 */
 	private void processStepQueue(final IExecutionDMContext execCtx) {
-		if (isSteppingDisabled(execCtx)) {
-			return;
-		}
         final List<StepRequest> queue = getStepQueue(execCtx);
 		if (queue != null) {
 			final int stepDelay = getStepDelay(execCtx);
@@ -415,9 +412,12 @@ public final class SteppingController implements IStepQueueManager
 			}
             final StepRequest request = queue.get(0);
             if (!request.inProgress) {
+        		if (isSteppingDisabled(request.fContext)) {
+        			return;
+        		}
                 request.inProgress = true;
                 getRunControl().canStep(
-                    execCtx, request.fStepType, 
+                    request.fContext, request.fStepType, 
                     new DataRequestMonitor<Boolean>(getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {

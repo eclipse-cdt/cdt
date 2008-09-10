@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -211,7 +212,7 @@ public class ErrorParserManager extends OutputStream {
 			parserIDs[i] = items.next();
 		}
 
-		for (int i = 0; i <parserIDs.length; ++i) {
+		for (int i = 0; i < parserIDs.length; ++i) {
 			IErrorParser[] parsers = fErrorParsers.get(parserIDs[i]);
 			for (IErrorParser curr : parsers) {
 				if (curr.processLine(line, this)) {
@@ -219,53 +220,30 @@ public class ErrorParserManager extends OutputStream {
 				}
 			}
 		}
-
-// This old way of doing was trouble because it did not
-// respect the ordering provide by the users.
-//
-//		int top = parserIDs.length - 1;
-//		int i = top;
-//		do {
-//			IErrorParser[] parsers = (IErrorParser[]) fErrorParsers.get(parserIDs[i]);
-//			for (int j = 0; j < parsers.length; j++) {
-//				IErrorParser curr = parsers[j];
-//				if (curr.processLine(line, this)) {
-//					if (i != top) {
-//						// move to top
-//						Object used = fErrorParsers.remove(parserIDs[i]);
-//						fErrorParsers.put(parserIDs[i], used);
-//						//savePreferences();
-//					}
-//					return;
-//				}
-//			}
-//			i--;
-//		} while (i >= 0);
 	}
 
 	/**
 	 * Returns the project file with the given name if that file can be uniquely identified.
 	 * Otherwise returns <code>null</code>. 
 	 */
-	public IFile findFileName(String fileName) {
+    public IFile findFileName(String fileName) {
 		IPath path = new Path(fileName);
 		Object obj = fFilesInProject.get(path.lastSegment());
-		if (obj == null || obj instanceof IFile) {
-			return (IFile) obj;
+		if (obj == null) {
+			return null;
 		}
-		Collection<?> files = (Collection<?>) obj;
-		IFile matchingFile = null;
-		for (Object name : files) {
-			IFile file = (IFile) name;
-			IPath location = file.getLocation();
-			boolean match = false;
-			if (path.isAbsolute()) {
-				match = path.equals(location);
-			} else {
-				int prefixLen = location.segmentCount() - path.segmentCount(); 
-				match = prefixLen >= 0 && location.removeFirstSegments(prefixLen).equals(path);
+		if (obj instanceof IFile) {
+			IFile file = (IFile) obj;
+			if (isPossibleMatch(path, file.getLocation())) {
+				return file;
 			}
-			if (match) {
+			return null;
+		}
+        IFile matchingFile = null;
+        @SuppressWarnings("unchecked")
+		Collection<IFile> files = (Collection<IFile>) obj;
+		for (IFile file : files) {
+			if (isPossibleMatch(path, file.getLocation())) {
 				if (matchingFile != null) {
 					return null;	// Ambiguous match
 				}
@@ -273,6 +251,23 @@ public class ErrorParserManager extends OutputStream {
 			}
 		}
 		return matchingFile;
+	}
+
+	/**
+	 * Checks if a file system path {@code location} may point to the same
+	 * file as an absolute file system path {@code absoluteLocation}.
+	 * @param location an absolute or relative file system path.
+	 * @param absoluteLocation an absolute file system path.
+	 * @return {@code true} if 
+	 */
+	private boolean isPossibleMatch(IPath location, IPath absoluteLocation) {
+	    Assert.isLegal(absoluteLocation.isAbsolute());
+		if (location.isAbsolute()) {
+			return location.equals(absoluteLocation);
+		} else {
+			int prefixLen = absoluteLocation.segmentCount() - location.segmentCount(); 
+			return prefixLen >= 0 && absoluteLocation.removeFirstSegments(prefixLen).equals(location);
+		}
 	}
 
 	protected IFile findFileInWorkspace(IPath path) {

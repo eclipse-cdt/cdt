@@ -403,6 +403,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                 		}
                 		return true;
             		} else {
+            			enableLineBackgroundPainter();
             			fTextViewer.setSelectedRange(fRegion.getOffset(), 0);
             		}
             	} else {

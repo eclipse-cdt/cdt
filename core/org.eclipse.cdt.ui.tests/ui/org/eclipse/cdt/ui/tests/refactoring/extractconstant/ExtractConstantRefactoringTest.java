@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
@@ -40,7 +40,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTest {
 	@Override
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
-		NameNVisibilityInformation info = new NameNVisibilityInformation();
+		ExtractConstantInfo info = new ExtractConstantInfo();
 		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring( refFile, selection, info);
 		try {
 			refactoring.lockIndex();

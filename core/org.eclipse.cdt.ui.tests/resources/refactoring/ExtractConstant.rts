@@ -456,18 +456,17 @@ filename=A.h
 //@A.h
 class X {
 	void method() {
-		int a= /*$*/1/*$$*/;
+		int a= /*$*/42/*$$*/;
 	}
 };
 
 //=
-namespace 
-{
-    const int theAnswer = 1;
-}
 class X {
 	void method() {
 		int a= theAnswer;
-	}
+    }
+
+public:
+    static const int theAnswer = 42;
 };
 

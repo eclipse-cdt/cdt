@@ -62,7 +62,6 @@ import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
@@ -78,9 +77,9 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	
 	private IASTLiteralExpression target = null;
 	private final ArrayList<IASTExpression> literalsToReplace = new ArrayList<IASTExpression>();
-	private final NameNVisibilityInformation info;
+	private final ExtractConstantInfo info;
 	
-	public ExtractConstantRefactoring(IFile file, ISelection selection, NameNVisibilityInformation info){
+	public ExtractConstantRefactoring(IFile file, ISelection selection, ExtractConstantInfo info){
 		super(file,selection, null);
 		this.info = info;
 		name = Messages.ExtractConstantRefactoring_ExtractConst; 
@@ -120,6 +119,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		
 		info.addNamesToUsedNames(findAllDeclaredNames());
 		info.setName(getDefaultName(target));
+		info.setMContext(NodeHelper.findMethodContext(target, getIndex()));
 		sm.done();
 		return initStatus;
 	}
@@ -254,7 +254,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 		throws CoreException, OperationCanceledException{
 		
-		MethodContext context = NodeHelper.findMethodContext(target, getIndex());
+		MethodContext context = info.getMContext();
 		Collection<IASTExpression> locLiteralsToReplace = new ArrayList<IASTExpression>();
 
 		if(context.getType() == MethodContext.ContextType.METHOD){
@@ -262,8 +262,14 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			for (IASTExpression expression : literalsToReplace) {
 				MethodContext exprContext = NodeHelper.findMethodContext(expression, getIndex());
 				if(exprContext.getType() == MethodContext.ContextType.METHOD){
-					if( MethodContext.isSameClass(exprContext.getMethodQName(), context.getMethodQName())){
-						locLiteralsToReplace.add(expression);
+					if(context.getMethodQName() != null) {
+						if( MethodContext.isSameClass(exprContext.getMethodQName(), context.getMethodQName())){
+							locLiteralsToReplace.add(expression);
+						}
+					}else {
+						if( MethodContext.isSameClass(exprContext.getMethodDeclarationName(), context.getMethodDeclarationName())){
+							locLiteralsToReplace.add(expression);
+						}
 					}
 				}
 			}

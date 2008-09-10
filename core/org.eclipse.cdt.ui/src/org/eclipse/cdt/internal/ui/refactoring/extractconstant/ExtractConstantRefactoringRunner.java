@@ -20,7 +20,6 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
@@ -35,7 +34,7 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 
 	@Override
 	public void run() {
-		NameNVisibilityInformation info = new NameNVisibilityInformation();
+		ExtractConstantInfo info = new ExtractConstantInfo();
 		CRefactoring refactoring = new ExtractConstantRefactoring(file,selection,info);
 		ExtractConstantRefactoringWizard wizard = new ExtractConstantRefactoringWizard(refactoring, info);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);

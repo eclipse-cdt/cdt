@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 
 /**
@@ -23,16 +23,16 @@ import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 public class ExtractConstantRefactoringWizard extends RefactoringWizard {
 
 	private ExtractInputPage page;
-	private final NameNVisibilityInformation info;
+	private final ExtractConstantInfo info;
 
-	public ExtractConstantRefactoringWizard(Refactoring refactoring, NameNVisibilityInformation info) {
+	public ExtractConstantRefactoringWizard(Refactoring refactoring, ExtractConstantInfo info) {
 		super(refactoring, WIZARD_BASED_USER_INTERFACE);
 		this.info = info;
 	}
 
 	@Override
 	protected void addUserInputPages() {
-		page = new InputPage(Messages.ExtractConstantRefactoring_ExtractConst, info); 
+		page = new InputPage(Messages.ExtractConstantRefactoring_ExtractConst, info, info.getMContext().getType() == ContextType.METHOD); 
 		addPage(page);
 
 	}

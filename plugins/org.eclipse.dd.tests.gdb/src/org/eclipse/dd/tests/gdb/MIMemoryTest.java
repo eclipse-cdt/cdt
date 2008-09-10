@@ -29,10 +29,10 @@ import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
@@ -101,8 +101,8 @@ public class MIMemoryTest extends BaseTestCase {
 		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 		assert(fServicesTracker != null);
 
-		GDBControl gdbControl = fServicesTracker.getService(GDBControl.class);
-		fGdbControlDmc = gdbControl.getGDBDMContext(); 
+		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+		fGdbControlDmc = (GDBControlDMContext)commandControl.getContext(); 
         assert(fGdbControlDmc != null);
 		    
 		fRunControl = fServicesTracker.getService(MIRunControl.class);

@@ -30,9 +30,10 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIStack;
@@ -53,12 +54,14 @@ import org.eclipse.dd.tests.gdb.launching.TestsPlugin;
 
 public class SyncUtil {
     
-    private static GDBControl fGDBControl;
+    private static ICommandControlService fCommandControl;
     private static MIRunControl fRunControl;
     private static MIStack fStack;
     private static IExpressions fExpressions;
     private static DsfSession fSession;
 	
+    private static GDBControlDMContext fGdbControlDmc;
+    
     // Initialize some common things, once the session has been established
     public static void initialize(DsfSession session) {
     	fSession = session;
@@ -67,7 +70,8 @@ public class SyncUtil {
     		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
     				fSession.getId());
     	
-    	fGDBControl = tracker.getService(GDBControl.class);
+    	fCommandControl = tracker.getService(ICommandControlService.class);
+    	fGdbControlDmc = (GDBControlDMContext)fCommandControl.getContext();
 		fRunControl = tracker.getService(MIRunControl.class);
 		fStack = tracker.getService(MIStack.class);
 		fExpressions = tracker.getService(IExpressions.class);
@@ -84,7 +88,7 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent SyncStep(final StepType stepType) throws Throwable {
-		return SyncStep(fGDBControl.getGDBDMContext(), stepType);
+		return SyncStep(fGdbControlDmc, stepType);
 	}
 		
 	public static MIStoppedEvent SyncStep(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
@@ -100,13 +104,13 @@ public class SyncUtil {
 				// ServiceEvent telling us the program has been suspended again
 				switch(stepType) {
 				case STEP_INTO:
-					fGDBControl.queueCommand(new MIExecStep(dmc), null);
+					fCommandControl.queueCommand(new MIExecStep(dmc), null);
 					break;
 				case STEP_OVER:
-					fGDBControl.queueCommand(new MIExecNext(dmc), null);
+					fCommandControl.queueCommand(new MIExecNext(dmc), null);
 					break;
 				case STEP_RETURN:
-					fGDBControl.queueCommand(new MIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
+					fCommandControl.queueCommand(new MIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
 					break;
 				default:
 					Assert.assertTrue("Unsupported step type; " + stepType.toString(), false);
@@ -131,7 +135,7 @@ public class SyncUtil {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
 				
-				fGDBControl.queueCommand(
+				fCommandControl.queueCommand(
 						new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
 						null);
 			}
@@ -143,11 +147,11 @@ public class SyncUtil {
 
 	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo, 
             final boolean skipBreakpoints) throws Throwable {
-		return SyncRunToLine(fGDBControl.getGDBDMContext(), fileName, lineNo, skipBreakpoints);
+		return SyncRunToLine(fGdbControlDmc, fileName, lineNo, skipBreakpoints);
 	}
 	
 	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo) throws Throwable {
-		return SyncRunToLine(fGDBControl.getGDBDMContext(), fileName, lineNo, false);
+		return SyncRunToLine(fGdbControlDmc, fileName, lineNo, false);
 	}
 
 	
@@ -172,8 +176,8 @@ public class SyncUtil {
 			}
 		};
 
-		fGDBControl.queueCommand(
-				new MIBreakInsert(fGDBControl.getGDBDMContext(), temporary, false, null, 0, location, 0),
+		fCommandControl.queueCommand(
+				new MIBreakInsert(fGdbControlDmc, temporary, false, null, 0, location, 0),
 			    addBreakDone);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -198,7 +202,7 @@ public class SyncUtil {
 			}
 		};
 
-		fGDBControl.queueCommand(new MIBreakList(fGDBControl.getGDBDMContext()), listDRM);
+		fCommandControl.queueCommand(new MIBreakList(fGdbControlDmc), listDRM);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
@@ -231,8 +235,8 @@ public class SyncUtil {
 			}
 		};
 
-		fGDBControl.queueCommand(
-				new MIBreakDelete(fGDBControl.getGDBDMContext(), breakpointIndices), //$NON-NLS-1$
+		fCommandControl.queueCommand(
+				new MIBreakDelete(fGdbControlDmc, breakpointIndices), //$NON-NLS-1$
 				deleteBreakDone);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -250,7 +254,7 @@ public class SyncUtil {
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
-				fGDBControl.queueCommand(
+				fCommandControl.queueCommand(
 						new MIExecContinue(dmc),
 						null);
 			}
@@ -261,7 +265,7 @@ public class SyncUtil {
 	}
 	
 	public static MIStoppedEvent SyncResumeUntilStopped() throws Throwable {
-		return SyncResumeUntilStopped(fGDBControl.getGDBDMContext());
+		return SyncResumeUntilStopped(fGdbControlDmc);
 	}
 
 	public static MIStoppedEvent SyncRunToLocation(final String location) throws Throwable {

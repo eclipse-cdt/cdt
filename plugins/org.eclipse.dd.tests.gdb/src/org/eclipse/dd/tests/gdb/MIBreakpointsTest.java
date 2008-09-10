@@ -35,10 +35,10 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIBreakpointDMData;
 import org.eclipse.dd.mi.service.MIBreakpoints;
@@ -178,8 +178,8 @@ public class MIBreakpointsTest extends BaseTestCase {
         fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
         assert(fServicesTracker != null);
 
-		GDBControl gdbControl = fServicesTracker.getService(GDBControl.class);
-		fGdbControlDmc = gdbControl.getGDBDMContext();
+		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+		fGdbControlDmc = (GDBControlDMContext)commandControl.getContext();
         assert(fGdbControlDmc != null);
 		    
         fRunControl = fServicesTracker.getService(MIRunControl.class);

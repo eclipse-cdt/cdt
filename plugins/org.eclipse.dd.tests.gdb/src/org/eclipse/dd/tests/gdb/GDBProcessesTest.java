@@ -26,7 +26,7 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BaseTestCase;
@@ -51,7 +51,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	private DsfSession fSession;
     private DsfServicesTracker fServicesTracker;	
 	
-    private GDBControl fGdbCtrl; 
+    private IGDBControl fGdbCtrl; 
 	private MIProcesses fProcService; 
 	
 	/*
@@ -68,7 +68,7 @@ public class GDBProcessesTest extends BaseTestCase {
          *  Get the GDBProcesses & MIRunControl service.
          */
 		fProcService = fServicesTracker.getService(MIProcesses.class);
-        fGdbCtrl = fServicesTracker.getService(GDBControl.class);
+        fGdbCtrl = fServicesTracker.getService(IGDBControl.class);
 	}
 
 	@After
@@ -113,7 +113,7 @@ public class GDBProcessesTest extends BaseTestCase {
             				@Override
             				protected void handleSuccess() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), pid);
             	            	fProcService.getExecutionData(procDmc, rm);            					
             				}
             			});
@@ -164,7 +164,7 @@ public class GDBProcessesTest extends BaseTestCase {
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
             	String groupId = fProcService.getExecutionGroupIdFromThread(THREAD_ID);
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getGDBDMContext(), groupId);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), groupId);
             	IThreadDMContext threadDmc = fProcService.createThreadContext(procDmc, THREAD_ID);
             	fProcService.getExecutionData(threadDmc, rm);
             }

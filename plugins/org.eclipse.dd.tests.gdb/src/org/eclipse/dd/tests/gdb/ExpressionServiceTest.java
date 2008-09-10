@@ -38,7 +38,6 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -59,8 +58,6 @@ public class ExpressionServiceTest extends BaseTestCase {
     private DsfSession fSession;
 
     private DsfServicesTracker fServicesTracker;
-
-    private GDBControl fGdbControl;
 
     private IExpressions fExpService;
 
@@ -83,7 +80,6 @@ public class ExpressionServiceTest extends BaseTestCase {
         fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
         fExpService = fServicesTracker.getService(IExpressions.class);
-        fGdbControl = fServicesTracker.getService(GDBControl.class);
         fSession.addServiceEventListener(this, null);
         clearExprChangedData();
     }
@@ -2874,11 +2870,13 @@ public class ExpressionServiceTest extends BaseTestCase {
         assertTrue(wait.getMessage(), wait.isOK());
         
        IExpressionDMAddress addr = (IExpressionDMAddress)wait.getReturnInfo();
-        
+
         assertTrue("Unable to get address", addr != null);
-        assertTrue("Received wrong address of " + addr.toString() + " instead of (" + 
-        		   actualAddrStr + ", " + actualAddrSize + ")", 
-        		   addressesEqual(addr, actualAddrStr, actualAddrSize));
+        if (addr != null) {
+        	assertTrue("Received wrong address of " + addr.toString() + " instead of (" + 
+        			actualAddrStr + ", " + actualAddrSize + ")", 
+        			addressesEqual(addr, actualAddrStr, actualAddrSize));
+        }
     }
     
     private void doTestChildren(MIStoppedEvent stoppedEvent) throws Throwable {

@@ -26,9 +26,9 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -73,8 +73,8 @@ public class MIRegistersTest extends BaseTestCase {
 		// launch has been performed
 		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-		GDBControl gdbControl = fServicesTracker.getService(GDBControl.class);
-		fGdbControlDmc = gdbControl.getGDBDMContext();
+		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+		fGdbControlDmc = (GDBControlDMContext)commandControl.getContext();
 		
 		fRegService = fServicesTracker.getService(IRegisters.class);
 	}

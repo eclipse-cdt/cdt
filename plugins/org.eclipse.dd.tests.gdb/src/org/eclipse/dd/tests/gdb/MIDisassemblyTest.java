@@ -29,9 +29,9 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.MIDisassembly;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
@@ -96,8 +96,8 @@ public class MIDisassemblyTest extends BaseTestCase {
         fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
         assert(fServicesTracker != null);
 
-        GDBControl gdbControl = fServicesTracker.getService(GDBControl.class);
-        fGdbControlDmc = gdbControl.getGDBDMContext(); 
+		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+        fGdbControlDmc = (GDBControlDMContext)commandControl.getContext(); 
         assert(fGdbControlDmc != null);
             
         fDisassembly = fServicesTracker.getService(MIDisassembly.class);

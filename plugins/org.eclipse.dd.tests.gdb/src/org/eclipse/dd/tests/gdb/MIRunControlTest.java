@@ -24,7 +24,8 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
+import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
@@ -50,10 +51,12 @@ public class MIRunControlTest extends BaseTestCase {
 
     private DsfServicesTracker fServicesTracker;    
 
-    private GDBControl fGDBCtrl;
+    private IGDBControl fGDBCtrl;
 	private MIRunControl fRunCtrl;
 	private IMIProcesses fProcService;
 
+	private GDBControlDMContext fGdbControlDmc;
+	
 	/*
 	 * Path to executable
 	 */
@@ -69,7 +72,8 @@ public class MIRunControlTest extends BaseTestCase {
 		fServicesTracker = 
 			new DsfServicesTracker(TestsPlugin.getBundleContext(), 
                      			   getGDBLaunch().getSession().getId());
-		fGDBCtrl = fServicesTracker.getService(GDBControl.class);
+		fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+		fGdbControlDmc = (GDBControlDMContext)fGDBCtrl.getContext();
 		fRunCtrl = fServicesTracker.getService(MIRunControl.class);
 		fProcService = fServicesTracker.getService(IMIProcesses.class);
 	}
@@ -116,7 +120,7 @@ public class MIRunControlTest extends BaseTestCase {
             				@Override
             				protected void handleSuccess() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	            	fRunCtrl.getExecutionContexts(groupDmc, rm);
             				}
@@ -178,7 +182,7 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * Run till line for 2 threads to be created
         	 */
-        	SyncUtil.SyncRunToLine(fGDBCtrl.getGDBDMContext(), SOURCE_NAME, "22", true);	
+        	SyncUtil.SyncRunToLine(fGdbControlDmc, SOURCE_NAME, "22", true);	
         }
         catch(Throwable t){
         	Assert.fail("Exception in SyncUtil.SyncRunToLine: " + t.getMessage());
@@ -208,7 +212,7 @@ public class MIRunControlTest extends BaseTestCase {
             				@Override
             				protected void handleSuccess() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	           		fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
             				}
@@ -266,7 +270,7 @@ public class MIRunControlTest extends BaseTestCase {
             				@Override
             				protected void handleSuccess() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
             				}
@@ -395,7 +399,7 @@ public class MIRunControlTest extends BaseTestCase {
         
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRunCtrl.getExecutionData(fGDBCtrl.getGDBDMContext(), rm);
+            	fRunCtrl.getExecutionData(fGdbControlDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -435,7 +439,7 @@ public class MIRunControlTest extends BaseTestCase {
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
             	// Pass an invalid dmc
-            	fRunCtrl.getExecutionContexts(fGDBCtrl.getGDBDMContext(), rm);
+            	fRunCtrl.getExecutionContexts(fGdbControlDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -491,7 +495,7 @@ public class MIRunControlTest extends BaseTestCase {
             				@Override
             				protected void handleSuccess() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	           		fRunCtrl.resume(groupDmc, rm);
             				}
@@ -517,7 +521,7 @@ public class MIRunControlTest extends BaseTestCase {
 							@Override
 							protected void handleCompleted() {
             					String pid = getData();
-								IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+								IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
 								IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
 								wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
@@ -555,7 +559,7 @@ public class MIRunControlTest extends BaseTestCase {
 
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-           		fRunCtrl.resume(fGDBCtrl.getGDBDMContext(), rm);
+           		fRunCtrl.resume(fGdbControlDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -578,7 +582,7 @@ public class MIRunControlTest extends BaseTestCase {
             				@Override
             				protected void handleCompleted() {
             					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getGDBDMContext(), pid);
+            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
             	            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));

@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [232126] persist filter type attribute
+ * David McKnight (IBM) - [247011] Process subsystem disappears after restart
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -39,7 +40,6 @@ import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
@@ -340,7 +340,10 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		IConnectorService[] connectorServices = host.getConnectorServices();
 		for (int i = 0; i < connectorServices.length; i++) {
 			IConnectorService service = connectorServices[i];
-			if (!(service instanceof IDelegatingConnectorService)) // don't persist delegated ones
+			
+			// for bug 247011 - Process subsystem disappears after restart
+			// commenting out the next line since it's preventing the subsystem from being persisted
+			//	if (!(service instanceof IDelegatingConnectorService)) // don't persist delegated ones
 			{
 				createNode(node, service, clean);
 			}

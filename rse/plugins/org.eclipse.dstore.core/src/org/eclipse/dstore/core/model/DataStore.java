@@ -25,6 +25,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [231639] [dstore] in single-process multi-client mode tracing shouldn't start until the client is set
  * Noriaki Takatsu  (IBM) - [239073] [dstore] [multithread] In multithread, the cache jar should be assigned after the client is set
+ * Noriaki Takatsu  (IBM) - [245069] [dstore] dstoreTrace has no timestamp
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -4081,6 +4082,7 @@ public final class DataStore
 		{
 			try
 			{
+				_traceFile.writeBytes((new Date()).toString() + ": "); //$NON-NLS-1$
 				_traceFile.writeBytes(message);
 				_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 			}

@@ -14,6 +14,7 @@
  * Contributors:
  * Kevin Doyle (IBM) - [194463] Use the result of _editable.download() to decide if file is to be opened
  * David McKnight (IBM)  - [189873] Improve remote shell editor open action with background jobs
+ * David McKnight (IBM)  - [246651] FTP subsystem doesn't handle disconnected situation well
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.internal.files.ui.FileResources;
@@ -129,10 +131,22 @@ public class DownloadAndOpenJob extends Job
 		try
 		{
 			IFile localFile = _editable.getLocalResource();
-			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
-			listener.addIgnoreFile(localFile);
-			downloadSuccessful = _editable.download(monitor);
-			listener.removeIgnoreFile(localFile);
+			ISubSystem ss = _editable.getSubSystem();
+
+			
+			// if we're not connected, connect
+			if (!ss.isConnected()){
+				ss.connect(monitor, false);
+			}
+			if (ss.isConnected()){
+				SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
+				listener.addIgnoreFile(localFile);
+				downloadSuccessful = _editable.download(monitor);
+				listener.removeIgnoreFile(localFile);
+			}
+			else {
+				return Status.CANCEL_STATUS;
+			}
 		}
 		catch (Exception e)
 		{				

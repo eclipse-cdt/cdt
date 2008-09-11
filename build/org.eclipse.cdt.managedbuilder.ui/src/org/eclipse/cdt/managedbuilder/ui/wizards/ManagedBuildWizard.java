@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Image;
 public class ManagedBuildWizard extends AbstractCWizard {
 	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
 	public static final String OTHERS_LABEL = Messages.getString("CNewWizard.0");  //$NON-NLS-1$
+	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
@@ -54,7 +55,13 @@ public class ManagedBuildWizard extends AbstractCWizard {
 					h.addTc(tcs[j]);
 			}
 			if (h.getToolChainsCount() > 0) {
+				// The project category item.
 				items.add(new EntryDescriptor(vs[i].getId(), null, vs[i].getName(), true, h, null));
+				// A default project type for that category -- not using any template.
+				EntryDescriptor entryDescriptor = new EntryDescriptor(vs[i].getId() + ".default", vs[i].getId(),
+						EMPTY_PROJECT, false, h, null);
+				entryDescriptor.setDefaultForCategory(true);
+				items.add(entryDescriptor);
 			}
 		}
 		
@@ -102,7 +109,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 			} else { // do not group to <Others>
 				pId = null;
 			}
-			items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), true, h, IMG));
+			items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), false, h, IMG));
 		}
 		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);
 	}

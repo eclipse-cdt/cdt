@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	    private Label right_label;
    
 	    public CWizardHandler h_selected = null;
+		private Label categorySelectedLabel;
 
 	    /**
 	     * Creates a new project creation wizard page.
@@ -290,6 +291,18 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					}
 				}
 			}
+			// If there is a EntryDescriptor which is default for category, make sure it 
+			// is in the front of the list.
+			for (int i = 0; i < items.size(); ++i)
+			{
+				EntryDescriptor ed = items.get(i);
+				if (ed.isDefaultForCategory())
+				{
+					items.remove(i);
+					items.add(0, ed);
+					break;
+				}				
+			}
 			
 			// bug # 211935 : allow items filtering.
 			if (ls != null) // NULL means call from prefs
@@ -297,7 +310,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			addItemsToTree(tree, items);
 			
 			if (tree.getItemCount() > 0) {
-				TreeItem target = tree.getItem(0);
+				TreeItem target = null;
 				// try to search item which was selected before
 				if (savedStr != null) {
 					TreeItem[] all = tree.getItems();
@@ -307,6 +320,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 							break;
 						}
 					}
+				}
+				if (target == null)
+				{
+					target = tree.getItem(0);
+					if (target.getItemCount() != 0)
+						target = target.getItem(0);
 				}
 				tree.setSelection(target);
 				return (CWizardHandler)target.getData();
@@ -344,7 +363,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 							found = true;
 							wd1.setParentId(null);
 							CWizardHandler h = wd2.getHandler();
-							if (h == null && !wd1.isCategory()) 
+							/* If neither wd1 itself, nor its parent (wd2) have a handler
+							 * associated with them, and the item is not a category,
+							 * then skip it. If it's category, then it's possible that
+							 * children will have a handler associated with them.
+							 */
+							if (h == null && wd1.getHandler() == null && !wd1.isCategory())
 								break;
 
 							wd1.setPath(wd2.getPath() + "/" + wd1.getId()); //$NON-NLS-1$
@@ -377,18 +401,35 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		private void switchTo(CWizardHandler h, EntryDescriptor ed) {
 			if (h == null) 
 				h = ed.getHandler();
+			if (ed.isCategory())
+				h = null;
 			try {
 				if (h != null && ed != null) 
 					h.initialize(ed);
 			} catch (CoreException e) { 
-				h = null; 
+				h = null;
 			}
 			if (h_selected != null) 
 				h_selected.handleUnSelection();
 			h_selected = h;
 			if (h == null) 
+			{
+				if (ed != null && ed.isCategory())
+				{
+					if (categorySelectedLabel == null)
+					{
+						categorySelectedLabel = new Label(right, SWT.WRAP);
+						categorySelectedLabel.setText(
+								UIMessages.getString("CDTMainWizardPage.1"));						 //$NON-NLS-1$
+						right.layout();
+					}
+					categorySelectedLabel.setVisible(true);
+				}
 				return;
+			}
 			right_label.setText(h_selected.getHeader());
+			if (categorySelectedLabel != null)
+				categorySelectedLabel.setVisible(false);
 			h_selected.handleSelection();
 			h_selected.setSupportedOnly(show_sup.getSelection());
 		}

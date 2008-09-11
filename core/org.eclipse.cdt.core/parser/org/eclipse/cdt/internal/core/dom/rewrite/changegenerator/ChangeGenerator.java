@@ -232,8 +232,10 @@ public class ChangeGenerator extends CPPASTVisitor {
 			targetLocation = getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
-			IFile relevantFile = ResourcesPlugin.getWorkspace().getRoot()
-			.getFileForLocation(implPath);
+			IFile relevantFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(implPath);
+			if (relevantFile == null) { // if not in workspace
+			    throw new UnhandledASTModificationException(modification);
+			}
 			MultiTextEdit edit;
 			if (changes.containsKey(relevantFile)) {
 				edit = changes.get(relevantFile);

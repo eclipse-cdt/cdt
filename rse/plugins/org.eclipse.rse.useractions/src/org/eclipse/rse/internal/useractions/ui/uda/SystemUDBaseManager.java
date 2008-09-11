@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM)   - [240725] Add Null Pointer checking when there are no default user actions
  * Kevin Doyle (IBM)   - [239702] Copy/Paste doesn't work with User Defined Actions and Named Types
  * Kevin Doyle 		(IBM)	 - [222829] MoveUp/Down Broken in Work with User Actions Dialog
+ * Xuan Chen        (IBM)    - [246807] [useractions] - Command Command property set from different os and subsystem are all shown as "Compile Commands" in Team view
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -1039,7 +1040,7 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		if (udaRootPropertySet == null)
 		{
 			udaRootPropertySet = profile.createPropertySet(udaRootPropertySetName);
-			udaRootPropertySet.addProperty(ISystemUDAConstants.NAME_ATTR, ISystemUDAConstants.ACTION_FILETYPES);
+			udaRootPropertySet.addProperty(ISystemUDAConstants.NAME_ATTR, ISystemUDAConstants.ACTION_FILETYPES + " - " + osType); //$NON-NLS-1$
 			udaRootPropertySet.addProperty(ISystemUDAConstants.RELEASE_ATTR, CURRENT_RELEASE_NAME);
 			udaRootPropertySet.addProperty(ISystemUDAConstants.UDA_ROOT_ATTR, getDocumentRootTagName());
 		}

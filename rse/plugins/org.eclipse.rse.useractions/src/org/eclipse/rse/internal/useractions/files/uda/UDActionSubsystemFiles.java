@@ -11,6 +11,7 @@ package org.eclipse.rse.internal.useractions.files.uda;
  *     IBM Corporation - initial API and implementation
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Kevin Doyle		(IBM)	 - [222830] ArrayIndexOutOfBoundsException on Restore Defaults on Folder User Actions
+ * Xuan Chen        (IBM)    - [246807] [useractions] - Command Command property set from different os and subsystem are all shown as "Compile Commands" in Team view
  *******************************************************************************/
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -453,7 +454,7 @@ public class UDActionSubsystemFiles extends SystemUDActionSubsystem {
 		if (null == userDefinedActionPropertySet)
 		{
 			userDefinedActionPropertySet = profile.createPropertySet(userDefinedActionPropertySetName);
-			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.NAME_ATTR, ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_Name);
+			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.NAME_ATTR, ISystemUDAConstants.USER_DEFINED_ACTION_PROPRERTY_SET_Name + " - " + osType); //$NON-NLS-1$
 			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.RELEASE_ATTR, ISystemUDAConstants.RELEASE_VALUE);
 			userDefinedActionPropertySet.addProperty(ISystemUDAConstants.UDA_ROOT_ATTR, actionMgr.getDocumentRootTagName());
 		}

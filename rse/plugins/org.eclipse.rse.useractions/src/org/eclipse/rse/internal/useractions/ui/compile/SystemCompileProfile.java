@@ -12,6 +12,7 @@
  * Xuan Chen        (IBM)    - [222263] Need to provide a PropertySet Adapter for System Team View (cleanup some use action stuff)
  * Xuan Chen        (IBM)    - [225617] [useraction][api] Remove Team view support inside user action.
  * Kevin Doyle		(IBM)	 - [239701] [useractions] Compile types show up multiple times after adding a command
+ * Xuan Chen        (IBM)    - [246807] [useractions] - Command Command property set from different os and subsystem are all shown as "Compile Commands" in Team view
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -496,7 +497,8 @@ public abstract class SystemCompileProfile {
 		{
 			compileCommandPropertySet = systemProfile.createPropertySet(compileCommandPropertySetName);
 			//Set its name and type attributes
-			compileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, ISystemCompileXMLConstants.COMPILE_COMMAND_NAME);
+			String compileCommandPropertySetLabel = ISystemCompileXMLConstants.COMPILE_COMMAND_NAME + " - " + osType; //$NON-NLS-1$
+			compileCommandPropertySet.addProperty(ISystemCompileXMLConstants.LABEL_ATTRIBUTE, compileCommandPropertySetLabel);
 		}
 		// write type and compile commands for each
 		for (int i = 0; i < types.size(); i++) {

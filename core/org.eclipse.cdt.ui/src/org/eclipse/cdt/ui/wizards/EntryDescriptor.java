@@ -27,6 +27,7 @@ public final class EntryDescriptor {
 	private CWizardHandler handler = null;
 	private String path = null;
 	private EntryDescriptor parent = null;
+	private boolean isDefaultForCategory = false;
 
 	public EntryDescriptor (String _id, String _par, String _name, boolean _cat, CWizardHandler _h, Image _image) {
 		id = _id;
@@ -81,5 +82,11 @@ public final class EntryDescriptor {
 	}
 	public CWizardHandler getHandler() {
 		return handler;
+	}
+	public void setDefaultForCategory(boolean isDefaultForCategory) {
+		this.isDefaultForCategory = isDefaultForCategory;
+	}
+	public boolean isDefaultForCategory() {
+		return isDefaultForCategory;
 	}
 }

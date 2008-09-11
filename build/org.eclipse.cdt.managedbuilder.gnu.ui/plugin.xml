@@ -3779,13 +3779,7 @@
             filterPattern=".*"
             location="$nl$/templates/projecttemplates/HelloWorldCAnsiProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-      </template>
-      <template
-            id="org.eclipse.cdt.build.core.templates.EmptyProject"
-            filterPattern=".*"
-            location="$nl$/templates/projecttemplates/EmptyProject/template.xml"
-            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-      </template>
+      </template>      
       <template
             id="org.eclipse.cdt.build.core.templates.MakefileHelloWorldCCProject"
             filterPattern=".*"

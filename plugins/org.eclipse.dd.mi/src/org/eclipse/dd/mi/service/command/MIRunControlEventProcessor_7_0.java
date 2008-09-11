@@ -7,14 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Additional handling of events  	
+ *     Ericsson			  - Version 7.0	
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -46,11 +45,16 @@ import org.eclipse.dd.mi.service.command.events.MIRunningEvent;
 import org.eclipse.dd.mi.service.command.events.MISignalEvent;
 import org.eclipse.dd.mi.service.command.events.MISteppingRangeEvent;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadCreatedEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
+import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.dd.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.dd.mi.service.command.output.MIConst;
 import org.eclipse.dd.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
+import org.eclipse.dd.mi.service.command.output.MINotifyAsyncOutput;
 import org.eclipse.dd.mi.service.command.output.MIOOBRecord;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIResult;
@@ -62,11 +66,13 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
  * generates corresponding MI events.  The generated MI events are then
  * received by other services and clients.
  */
-public class MIRunControlEventProcessor 
+public class MIRunControlEventProcessor_7_0
     implements IEventListener, ICommandListener
 {
 	private static final String STOPPED_REASON = "stopped"; //$NON-NLS-1$
+	private static final String RUNNING_REASON = "running"; //$NON-NLS-1$
 	   
+	private Integer fLastRunningCmdType = null;
 	/**
      * The connection service that this event processor is registered with.
      */
@@ -86,9 +92,9 @@ public class MIRunControlEventProcessor
      * @param connection
      * @param inferior
      */
-    public MIRunControlEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc) {
+    public MIRunControlEventProcessor_7_0(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
+        fControlDmc = controlDmc;
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addEventListener(this);
         connection.addCommandListener(this);
@@ -143,6 +149,84 @@ public class MIRunControlEventProcessor
         				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         			}
     			}
+    			else if ("running".equals(state)) { //$NON-NLS-1$
+					MIEvent<?> event = createEvent(RUNNING_REASON, exec);
+					if (event != null) {
+						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+					}
+    			}
+    		} else if (oobr instanceof MINotifyAsyncOutput) {
+    			// Parse the string and dispatch the corresponding event
+    			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
+    			String miEvent = exec.getAsyncClass();
+    			if ("thread-created".equals(miEvent) || "thread-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				String threadId = null;
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("group-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString();
+    						}
+    					} else if (var.equals("id")) { //$NON-NLS-1$
+    		    			if (val instanceof MIConst) {
+    							threadId = ((MIConst) val).getString();
+    		    			}
+    		    		}
+    				}
+
+    		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    		    	
+    		    	if (groupId == null) {
+    		    		groupId = procService.getExecutionGroupIdFromThread(threadId);
+    		    	}
+    		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+    		    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+
+    		    	MIEvent<?> event = null;
+    				if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
+    					 event = new MIThreadCreatedEvent(processContainerDmc, exec.getToken(), threadId);
+    				} else if ("thread-exited".equals(miEvent)) { //$NON-NLS-1$
+        				event = new MIThreadExitEvent(processContainerDmc, exec.getToken(), threadId);
+    				}
+    				
+    				if (event != null) {
+    					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    				}
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+
+    				if (groupId != null) {
+    					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+
+    					MIEvent<?> event = null;
+    					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
+    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
+    					}
+
+    					if (event != null) {
+    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    					}
+    				}
+    			}
     		}
     	}
     }
@@ -160,13 +244,18 @@ public class MIRunControlEventProcessor
     			if (val instanceof MIConst) {
     				threadId = ((MIConst)val).getString();
     			}
+    		} else if (var.equals("group-id")) { //$NON-NLS-1$
+    			if (val instanceof MIConst) {
+    				groupId = ((MIConst)val).getString();
+    			}
     		}
     	}
 
     	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
-   		groupId = procService.getExecutionGroupIdFromThread(threadId);
-
+    	if (groupId == null) {
+    		groupId = procService.getExecutionGroupIdFromThread(threadId);
+    	}
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
@@ -200,6 +289,14 @@ public class MIRunControlEventProcessor
     		event = MIInferiorSignalExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
     	} else if (STOPPED_REASON.equals(reason)) {
     		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    	} else if (RUNNING_REASON.equals(reason)) {
+    		// Retrieve the type of command from what we last stored
+    		int type = MIRunningEvent.CONTINUE;
+    		if (fLastRunningCmdType != null) {
+    			type = fLastRunningCmdType;
+    			fLastRunningCmdType = null;
+    		}
+    		event = new MIRunningEvent(execDmc, exec.getToken(), type);
     	}
     	return event;
     }
@@ -226,32 +323,17 @@ public class MIRunControlEventProcessor
             // Check if the state changed.
             String state = rr.getResultClass();
             if ("running".equals(state)) { //$NON-NLS-1$
-                int type = 0;
-                // Check the type of command
-                // if it was a step instruction set state stepping
-                
-                     if (cmd instanceof MIExecNext)            { type = MIRunningEvent.NEXT; }
-                else if (cmd instanceof MIExecNextInstruction) { type = MIRunningEvent.NEXTI; }
-                else if (cmd instanceof MIExecStep)            { type = MIRunningEvent.STEP; }
-                else if (cmd instanceof MIExecStepInstruction) { type = MIRunningEvent.STEPI; }
-                else if (cmd instanceof MIExecUntil)           { type = MIRunningEvent.UNTIL; }
-                else if (cmd instanceof MIExecFinish)          { type = MIRunningEvent.FINISH; }
-                else if (cmd instanceof MIExecReturn)          { type = MIRunningEvent.RETURN; }
-                else if (cmd instanceof MIExecContinue)        { type = MIRunningEvent.CONTINUE; }
-                else                                           { type = MIRunningEvent.CONTINUE; }
-
-                IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-        		String groupId = procService.getExecutionGroupIdFromThread(null);
-                IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
-
-                fCommandControl.getSession().dispatchEvent(
-                		new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());
-            } else if ("exit".equals(state)) { //$NON-NLS-1$
-                // No need to do anything, terminate() will.
-                // Send exited?
-            } else if ("connected".equals(state)) { //$NON-NLS-1$
-            } else if ("error".equals(state)) { //$NON-NLS-1$
+            	// Store the type of command that is the trigger for the coming
+            	// *running event
+                     if (cmd instanceof MIExecNext)            { fLastRunningCmdType = MIRunningEvent.NEXT; }
+                else if (cmd instanceof MIExecNextInstruction) { fLastRunningCmdType = MIRunningEvent.NEXTI; }
+                else if (cmd instanceof MIExecStep)            { fLastRunningCmdType = MIRunningEvent.STEP; }
+                else if (cmd instanceof MIExecStepInstruction) { fLastRunningCmdType = MIRunningEvent.STEPI; }
+                else if (cmd instanceof MIExecUntil)           { fLastRunningCmdType = MIRunningEvent.UNTIL; }
+                else if (cmd instanceof MIExecFinish)          { fLastRunningCmdType = MIRunningEvent.FINISH; }
+                else if (cmd instanceof MIExecReturn)          { fLastRunningCmdType = MIRunningEvent.RETURN; }
+                else if (cmd instanceof MIExecContinue)        { fLastRunningCmdType = MIRunningEvent.CONTINUE; }
+                else                                           { fLastRunningCmdType = MIRunningEvent.CONTINUE; }
             } 
         }
     }

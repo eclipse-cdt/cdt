@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
+ *     Ericsson           - New version for 7_0
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service.command;
 
@@ -49,10 +50,10 @@ import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
-import org.eclipse.dd.mi.service.command.CLIEventProcessor;
+import org.eclipse.dd.mi.service.command.CLIEventProcessor_7_0;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
-import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor;
+import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor_7_0;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
@@ -73,7 +74,7 @@ import org.osgi.framework.BundleContext;
  * - CLI console support,<br>
  * - inferior process status tracking.<br>
  */
-public class GDBControl extends AbstractMIControl implements IGDBControl {
+public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 
     /**
      * Event indicating that the back end process has started.
@@ -113,15 +114,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private int fGDBExitValue;
     private int fGDBLaunchTimeout = 30;
     
-    private MIRunControlEventProcessor fMIEventProcessor;
-    private CLIEventProcessor fCLICommandProcessor;
+    private MIRunControlEventProcessor_7_0 fMIEventProcessor;
+    private CLIEventProcessor_7_0 fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
     private MIInferiorProcess fInferiorProcess = null;
     
     private PTY fPty;
 
-    public GDBControl(DsfSession session, ILaunchConfiguration config) { 
-        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]", false); //$NON-NLS-1$ //$NON-NLS-2$
+    public GDBControl_7_0(DsfSession session, ILaunchConfiguration config) { 
+        super(session, "gdbcontrol[" + ++fgInstanceCounter + "]", true); //$NON-NLS-1$ //$NON-NLS-2$
         fSessionType = LaunchUtils.getSessionType(config);
         fAttach = LaunchUtils.getIsAttach(config);
         fGdbPath = LaunchUtils.getGDBPath(config);
@@ -392,9 +393,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      */
     public void createInferiorProcess() {
     	if (fPty == null) {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fProcess.getOutputStream());
+    		fInferiorProcess = new GDBInferiorProcess(GDBControl_7_0.this, fProcess.getOutputStream());
     	} else {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fPty);
+    		fInferiorProcess = new GDBInferiorProcess(GDBControl_7_0.this, fPty);
     	}
     }
 
@@ -708,7 +709,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
             try {
-                fCLIProcess = new GDBCLIProcess(GDBControl.this);
+                fCLIProcess = new GDBCLIProcess(GDBControl_7_0.this);
             }
             catch(IOException e) {
                 requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$
@@ -718,8 +719,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
             createInferiorProcess();
             
-            fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc, fInferiorProcess);
-            fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
+            fCLICommandProcessor = new CLIEventProcessor_7_0(GDBControl_7_0.this, fControlDmc, fInferiorProcess);
+            fMIEventProcessor = new MIRunControlEventProcessor_7_0(GDBControl_7_0.this, fControlDmc);
 
             requestMonitor.done();
         }
@@ -739,7 +740,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         RegisterStep(Direction direction) { super(direction); }
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
-            getSession().addServiceEventListener(GDBControl.this, null);
+            getSession().addServiceEventListener(GDBControl_7_0.this, null);
             register(
                 new String[]{ ICommandControl.class.getName(), 
                               ICommandControlService.class.getName(), 
@@ -753,7 +754,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
             unregister();
-            getSession().removeServiceEventListener(GDBControl.this);
+            getSession().removeServiceEventListener(GDBControl_7_0.this);
             requestMonitor.done();
         }
     }

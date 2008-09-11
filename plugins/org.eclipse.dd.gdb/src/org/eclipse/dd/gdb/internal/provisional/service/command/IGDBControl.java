@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
-import org.eclipse.dd.mi.service.command.CLIEventProcessor;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 public interface IGDBControl extends ICommandControlService {
@@ -49,8 +48,8 @@ public interface IGDBControl extends ICommandControlService {
 
 	MIInferiorProcess getInferiorProcess();
 
-	CLIEventProcessor getCLICommandProcessor();
-
+    public void resetInferior(MIInferiorProcess inferior);
+	
 	boolean isGDBExited();
 
 	int getGDBExitCode();

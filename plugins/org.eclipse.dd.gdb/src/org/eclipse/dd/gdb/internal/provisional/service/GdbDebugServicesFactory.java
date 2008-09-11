@@ -25,6 +25,7 @@ import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl_7_0;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
 import org.eclipse.dd.mi.service.MIBreakpoints;
@@ -73,12 +74,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
-		boolean useThreadAndFrameOptions = false;
 		if ("6.8".compareTo(fVersion) < 0) { //$NON-NLS-1$
-			useThreadAndFrameOptions = true;
+			return new GDBControl_7_0(session, config);
 		}
-
-		return new GDBControl(session, config, useThreadAndFrameOptions);
+		return new GDBControl(session, config);
 	}
 
 	@Override
@@ -116,6 +115,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
+		if ("6.8".compareTo(fVersion) < 0) { //$NON-NLS-1$
+			return new GDBRunControl_7_0(session);
+		}
 		return new GDBRunControl(session);
 	}
 

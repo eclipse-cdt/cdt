@@ -82,7 +82,7 @@ public class GdbRestartCommand implements IRestart {
                     	@Override
                     	protected void handleSuccess() {
                     		gdbControl.createInferiorProcess();
-                    		gdbControl.getCLICommandProcessor().resetInferior(gdbControl.getInferiorProcess());
+                    		gdbControl.resetInferior(gdbControl.getInferiorProcess());
                     		gdbControl.restart(fLaunch, rm);
                     	}
                     });

@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
+ * David McKnight   (IBM)        - [246897] Wrong canonical path for a symbolic link
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -195,7 +196,14 @@ public class DStoreFile extends AbstractRemoteFile
 
 	public String getCanonicalPath()
 	{
-		return getAbsolutePath();
+		String classification = getClassification();
+		if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
+			// special path - use path in classification
+			int colonIndex = classification.indexOf(":");
+			String canonicalPath = classification.substring(colonIndex + 1);
+			return canonicalPath;
+		}
+		return getAbsolutePath();			
 	}
 
 	public String getClassification()

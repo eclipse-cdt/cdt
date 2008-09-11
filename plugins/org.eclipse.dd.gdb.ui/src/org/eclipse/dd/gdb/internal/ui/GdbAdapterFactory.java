@@ -208,11 +208,13 @@ public class GdbAdapterFactory
 
         GdbLaunch launch = (GdbLaunch)adaptableObject;
 
+        // check for valid session
+        DsfSession session = launch.getSession();
+        if (session == null || !session.isActive()) return null;
+
         // Find the correct set of adapters based on the launch session-ID.  If not found
         // it means that we have a new launch and new session, and we have to create a
         // new set of adapters.
-        DsfSession session = launch.getSession();
-        if (session == null) return null;
 
         SessionAdapterSet adapterSet;
         synchronized(fgLaunchAdapterSets) {

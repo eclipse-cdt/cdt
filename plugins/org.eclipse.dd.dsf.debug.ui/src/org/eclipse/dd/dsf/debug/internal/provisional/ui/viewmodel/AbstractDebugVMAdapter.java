@@ -60,11 +60,13 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
 
     @Override
     public void dispose() {
-        fController.getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
-            }
-        });
+    	if (!fController.getExecutor().isShutdown()) {
+	        fController.getExecutor().execute(new DsfRunnable() {
+	            public void run() {
+	                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
+	            }
+	        });
+    	}
         super.dispose();
     }
 }

@@ -187,6 +187,10 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
 
         PDALaunch launch = (PDALaunch)adaptableObject;
 
+        // check for valid session
+        DsfSession session = launch.getSession();
+        if (session == null || !session.isActive()) return null;
+
         // Find the correct set of adapters based on the launch.  If not found
         // it means that we have a new launch, and we have to create a
         // new set of adapters.

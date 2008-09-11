@@ -13,7 +13,10 @@ package org.eclipse.dd.gdb.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -57,9 +60,21 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
+		disposeAdapterSets();
 		plugin = null;
 		super.stop(context);
         fgBundleContext = null;
+	}
+
+	/**
+	 * Dispose adapter sets for all launches.
+	 */
+	private void disposeAdapterSets() {
+        for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+            if (launch instanceof GdbLaunch) {
+                GdbAdapterFactory.disposeAdapterSet(launch);
+            }
+        }
 	}
 
 	/**

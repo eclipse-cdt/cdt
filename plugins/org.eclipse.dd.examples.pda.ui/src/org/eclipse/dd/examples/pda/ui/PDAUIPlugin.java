@@ -16,6 +16,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dd.examples.pda.launch.PDALaunch;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Color;
@@ -67,6 +70,7 @@ public class PDAUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
         fContext = context;
 		super.start(context);
@@ -79,7 +83,9 @@ public class PDAUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
+		disposeAdapterSets();
 		super.stop(context);
 		plugin = null;
 		fContext = null;
@@ -99,6 +105,7 @@ public class PDAUIPlugin extends AbstractUIPlugin {
 	    return fContext;
 	}
 	    
+	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif");
 	}
@@ -134,4 +141,15 @@ public class PDAUIPlugin extends AbstractUIPlugin {
         return color;
     }
     
+	/**
+	 * Dispose adapter sets for all launches.
+	 */
+	private void disposeAdapterSets() {
+        for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+            if (launch instanceof PDALaunch) {
+                PDAAdapterFactory.disposeAdapterSet(launch);
+            }
+        }
+	}
+
  }

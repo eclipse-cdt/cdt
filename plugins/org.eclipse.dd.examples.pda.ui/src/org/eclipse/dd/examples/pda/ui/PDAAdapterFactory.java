@@ -165,9 +165,17 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         }
     }
 
-    private Map<PDALaunch, LaunchAdapterSet> fLaunchAdapterSets =
+    private static Map<PDALaunch, LaunchAdapterSet> fgLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<PDALaunch, LaunchAdapterSet>());
-    
+ 
+	static void disposeAdapterSet(ILaunch launch) {
+		synchronized(fgLaunchAdapterSets) {
+		    if ( fgLaunchAdapterSets.containsKey(launch) ) {
+		        fgLaunchAdapterSets.remove(launch).dispose();
+		    }
+		}
+	}
+
     public PDAAdapterFactory() {
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
@@ -183,11 +191,11 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         // it means that we have a new launch, and we have to create a
         // new set of adapters.
         LaunchAdapterSet adapterSet;
-        synchronized(fLaunchAdapterSets) {
-            adapterSet = fLaunchAdapterSets.get(launch);
+        synchronized(fgLaunchAdapterSets) {
+            adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
                 adapterSet = new LaunchAdapterSet(launch);
-                fLaunchAdapterSets.put(launch, adapterSet);
+                fgLaunchAdapterSets.put(launch, adapterSet);
             }
         }
         
@@ -208,12 +216,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         // are still needed to populate the contents of the view.
         for (ILaunch launch : launches) {
             if (launch instanceof PDALaunch) {
-                PDALaunch pdaLaunch = (PDALaunch)launch;
-                synchronized(fLaunchAdapterSets) {
-                    if ( fLaunchAdapterSets.containsKey(pdaLaunch) ) {
-                        fLaunchAdapterSets.remove(pdaLaunch).dispose();
-                    }
-                }
+            	disposeAdapterSet(launch);
             }
         }
     }

@@ -184,9 +184,17 @@ public class GdbAdapterFactory
         
     }
 
-    private Map<GdbLaunch, SessionAdapterSet> fLaunchAdapterSets =
+    private static Map<GdbLaunch, SessionAdapterSet> fgLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<GdbLaunch, SessionAdapterSet>());
     
+	static void disposeAdapterSet(ILaunch launch) {
+		synchronized(fgLaunchAdapterSets) {
+		    if ( fgLaunchAdapterSets.containsKey(launch) ) {
+		        fgLaunchAdapterSets.remove(launch).dispose();
+		    }
+		}
+	}
+
     public GdbAdapterFactory() {
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
@@ -207,11 +215,11 @@ public class GdbAdapterFactory
         if (session == null) return null;
 
         SessionAdapterSet adapterSet;
-        synchronized(fLaunchAdapterSets) {
-            adapterSet = fLaunchAdapterSets.get(launch);
+        synchronized(fgLaunchAdapterSets) {
+            adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
                 adapterSet = new SessionAdapterSet(launch);
-                fLaunchAdapterSets.put(launch, adapterSet);
+                fgLaunchAdapterSets.put(launch, adapterSet);
             }
         }
         
@@ -236,11 +244,7 @@ public class GdbAdapterFactory
         // removed.
         for (ILaunch launch : launches) {
             if (launch instanceof GdbLaunch) {
-                synchronized(fLaunchAdapterSets) {
-                    if ( fLaunchAdapterSets.containsKey(launch) ) {
-                        fLaunchAdapterSets.remove(launch).dispose();
-                    }
-                }
+                disposeAdapterSet(launch);
             }
         }
     }

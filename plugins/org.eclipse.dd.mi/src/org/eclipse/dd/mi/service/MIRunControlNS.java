@@ -133,22 +133,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 	}
 
-//	@Immutable
-//	private static class ContainerSuspendedEvent extends SuspendedEvent
-//	implements IContainerSuspendedDMEvent
-//	{
-//		final IExecutionDMContext[] triggeringDmcs;
-//		ContainerSuspendedEvent(IContainerDMContext containerDmc, MIStoppedEvent miInfo, IExecutionDMContext triggeringDmc) {
-//			super(containerDmc, miInfo);
-//			this.triggeringDmcs = triggeringDmc != null
-//			? new IExecutionDMContext[] { triggeringDmc } : new IExecutionDMContext[0];
-//		}
-//
-//		public IExecutionDMContext[] getTriggeringContexts() {
-//			return triggeringDmcs;
-//		}
-//	}
-
 	@Immutable
 	private static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
 	implements IResumedDMEvent
@@ -176,23 +160,6 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 			return StateChangeReason.UNKNOWN;
 		}
 	}
-
-//	@Immutable
-//	private static class ContainerResumedEvent extends ResumedEvent
-//	implements IContainerResumedDMEvent
-//	{
-//		final IExecutionDMContext[] triggeringDmcs;
-//
-//		ContainerResumedEvent(IContainerDMContext containerDmc, MIRunningEvent miInfo, IExecutionDMContext triggeringDmc) {
-//			super(containerDmc, miInfo);
-//			this.triggeringDmcs = triggeringDmc != null
-//			? new IExecutionDMContext[] { triggeringDmc } : new IExecutionDMContext[0];
-//		}
-//
-//		public IExecutionDMContext[] getTriggeringContexts() {
-//			return triggeringDmcs;
-//		}
-//	}
 
 	@Immutable
 	private static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>

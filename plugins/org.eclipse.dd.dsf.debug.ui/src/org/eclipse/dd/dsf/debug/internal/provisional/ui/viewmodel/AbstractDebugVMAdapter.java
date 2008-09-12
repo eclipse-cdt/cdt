@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController.ISteppingControlParticipant;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -32,11 +34,13 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
     public AbstractDebugVMAdapter(DsfSession session, final SteppingController controller) {
         super(session);
         fController = controller;
-        fController.getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
-            }
-        });
+        try {
+            fController.getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
+                }
+            });
+        } catch (RejectedExecutionException e) {} // Do nothing if session is shut down.
     }
 
     private final SteppingController fController;
@@ -60,13 +64,13 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
 
     @Override
     public void dispose() {
-    	if (!fController.getExecutor().isShutdown()) {
+        try {
 	        fController.getExecutor().execute(new DsfRunnable() {
 	            public void run() {
 	                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
 	            }
 	        });
-    	}
+        } catch (RejectedExecutionException e) {} // Do nothing if session is shut down.
         super.dispose();
     }
 }

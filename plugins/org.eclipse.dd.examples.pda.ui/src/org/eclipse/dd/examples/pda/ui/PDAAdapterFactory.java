@@ -187,9 +187,12 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
 
         PDALaunch launch = (PDALaunch)adaptableObject;
 
-        // check for valid session
+        // Check for valid session.  
+        // Note: even if the session is no longer active, the adapter set 
+        // should still be returned.  This is because the view model may still
+        // need to show elements representing a terminated process/thread/etc.
         DsfSession session = launch.getSession();
-        if (session == null || !session.isActive()) return null;
+        if (session == null) return null;
 
         // Find the correct set of adapters based on the launch.  If not found
         // it means that we have a new launch, and we have to create a

@@ -13,6 +13,7 @@ package org.eclipse.dd.examples.pda.ui;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
@@ -135,7 +136,7 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
             // and debug model ID will be associated with all DMContexts from this
             // session.
             session.registerModelAdapter(ILaunch.class, fLaunch);
-}
+        }
         
         void dispose() {
             DsfSession session = fLaunch.getSession();
@@ -165,14 +166,34 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         }
     }
 
+    /**
+     * Active adapter sets.  They are accessed using the launch instance 
+     * which owns the debug services session. 
+     */
     private static Map<PDALaunch, LaunchAdapterSet> fgLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<PDALaunch, LaunchAdapterSet>());
  
+    /**
+     * Map of launches for which adapter sets have already been disposed.
+     * This map (used as a set) is maintained in order to avoid re-creating an 
+     * adapter set after the launch was removed from the launch manager, but 
+     * while the launch is still being held by other classes which may 
+     * request its adapters.  A weak map is used to avoid leaking 
+     * memory once the launches are no longer referenced.
+     * <p>
+     * Access to this map is synchronized using the fgLaunchAdapterSets 
+     * instance.
+     * </p>
+     */
+    private static Map<ILaunch, Object> fgDisposedLaunchAdapterSets =
+        new WeakHashMap<ILaunch, Object>();
+
 	static void disposeAdapterSet(ILaunch launch) {
 		synchronized(fgLaunchAdapterSets) {
-		    if ( fgLaunchAdapterSets.containsKey(launch) ) {
-		        fgLaunchAdapterSets.remove(launch).dispose();
-		    }
+            if ( fgLaunchAdapterSets.containsKey(launch) ) {
+                fgLaunchAdapterSets.remove(launch).dispose();
+                fgDisposedLaunchAdapterSets.put(launch, null);
+            }
 		}
 	}
 
@@ -199,6 +220,11 @@ public class PDAAdapterFactory implements IAdapterFactory, ILaunchesListener2
         // new set of adapters.
         LaunchAdapterSet adapterSet;
         synchronized(fgLaunchAdapterSets) {
+            // The adapter set for the given launch was already disposed.  
+            // Return a null adapter.
+            if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
+                return null;
+            }
             adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
                 adapterSet = new LaunchAdapterSet(launch);

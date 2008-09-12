@@ -13,6 +13,7 @@ package org.eclipse.dd.gdb.internal.ui;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
@@ -184,13 +185,33 @@ public class GdbAdapterFactory
         
     }
 
+    /**
+     * Active adapter sets.  They are accessed using the launch instance 
+     * which owns the debug services session. 
+     */
     private static Map<GdbLaunch, SessionAdapterSet> fgLaunchAdapterSets =
         Collections.synchronizedMap(new HashMap<GdbLaunch, SessionAdapterSet>());
-    
+
+    /**
+     * Map of launches for which adapter sets have already been disposed.
+     * This map (used as a set) is maintained in order to avoid re-creating an 
+     * adapter set after the launch was removed from the launch manager, but 
+     * while the launch is still being held by other classes which may 
+     * request its adapters.  A weak map is used to avoid leaking 
+     * memory once the launches are no longer referenced.
+     * <p>
+     * Access to this map is synchronized using the fgLaunchAdapterSets 
+     * instance.
+     * </p>
+     */
+    private static Map<ILaunch, SessionAdapterSet> fgDisposedLaunchAdapterSets =
+        new WeakHashMap<ILaunch, SessionAdapterSet>();
+
 	static void disposeAdapterSet(ILaunch launch) {
 		synchronized(fgLaunchAdapterSets) {
 		    if ( fgLaunchAdapterSets.containsKey(launch) ) {
 		        fgLaunchAdapterSets.remove(launch).dispose();
+		        fgDisposedLaunchAdapterSets.put(launch, null);
 		    }
 		}
 	}
@@ -221,6 +242,11 @@ public class GdbAdapterFactory
 
         SessionAdapterSet adapterSet;
         synchronized(fgLaunchAdapterSets) {
+            // The adapter set for the given launch was already disposed.  
+            // Return a null adapter.
+            if (fgDisposedLaunchAdapterSets.containsKey(launch)) {
+                return null;
+            }
             adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
                 adapterSet = new SessionAdapterSet(launch);

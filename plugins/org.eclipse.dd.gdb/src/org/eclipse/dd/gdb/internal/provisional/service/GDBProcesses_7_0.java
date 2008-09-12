@@ -49,8 +49,6 @@ import org.eclipse.dd.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.dd.mi.service.command.commands.MITargetAttach;
 import org.eclipse.dd.mi.service.command.commands.MITargetDetach;
 import org.eclipse.dd.mi.service.command.commands.MIThreadInfo;
-import org.eclipse.dd.mi.service.command.events.IMIDMEvent;
-import org.eclipse.dd.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.dd.mi.service.command.output.IThreadInfo;
@@ -736,17 +734,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     	if (e instanceof ExecutionGroupStartedDMEvent) {
     		fContainerCommandCache.reset();
     	} else {
-    		// HACK figure out the thread and the group ids
-    		// I had to HACK GDB for this
-    		if (e instanceof IMIDMEvent) {
-        		String threadId = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getStrId();
-        		IContainerDMContext ctx = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getDMContext();
-        		if (ctx instanceof IMIExecutionGroupDMContext) {
-        			String groupId = ((IMIExecutionGroupDMContext)ctx).getGroupId();
-              		 fGroupIdMap.put(threadId, groupId);
-        		}
-    		}
-    		// END HACK
     		fThreadCommandCache.reset();
     	}
 	}
@@ -757,14 +744,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     	if (e instanceof ExecutionGroupExitedDMEvent) {
     		fContainerCommandCache.reset();
     	} else {
-    		// HACK figure out the thread and the group ids
-    		// I had to HACK GDB for this
-    		if (e instanceof IMIDMEvent) {
-        		String threadId = ((MIThreadCreatedEvent)((IMIDMEvent)e).getMIEvent()).getStrId();
-                fGroupIdMap.remove(threadId);
-    		}
-    		// END HACK
- 
     		fThreadCommandCache.reset();
     	}
     }
@@ -772,6 +751,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	public void flushCache(IDMContext context) {
 		fContainerCommandCache.reset(context);
 		fThreadCommandCache.reset(context);
+	}
+
+	public void addThreadId(String threadId, String groupId) {
+ 		 fGroupIdMap.put(threadId, groupId);
+	}
+
+	public void removeThreadId(String threadId) {
+        fGroupIdMap.remove(threadId);		
 	}
     
 }

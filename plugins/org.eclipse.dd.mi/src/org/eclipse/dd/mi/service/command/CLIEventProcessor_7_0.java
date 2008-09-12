@@ -106,6 +106,9 @@ public class CLIEventProcessor_7_0
         if (rr != null) {
             // Check if the state changed.
             String state = rr.getResultClass();
+            
+            // This is not handled properly yet
+            // see bug 247161
             if (fInferior != null && "error".equals(state)) { //$NON-NLS-1$
                 if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
                     fInferior.setState(MIInferiorProcess.State.STOPPED);

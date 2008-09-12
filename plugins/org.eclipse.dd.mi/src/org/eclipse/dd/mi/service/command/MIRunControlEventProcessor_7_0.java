@@ -180,8 +180,15 @@ public class MIRunControlEventProcessor_7_0
 
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
     		    	
-    		    	if (groupId == null) {
-    		    		groupId = procService.getExecutionGroupIdFromThread(threadId);
+    		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
+    		    		// Update the thread to groupId map with the new groupId
+    		    		procService.addThreadId(threadId, groupId);
+    		    	} else {
+    		    		// It was not clear if MI would specify the groupId in the event
+    		    		if (groupId == null) {
+    		    			groupId = procService.getExecutionGroupIdFromThread(threadId);
+    		    		}
+    		    		procService.removeThreadId(threadId);
     		    	}
     		    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     		    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
@@ -193,9 +200,7 @@ public class MIRunControlEventProcessor_7_0
         				event = new MIThreadExitEvent(processContainerDmc, exec.getToken(), threadId);
     				}
     				
-    				if (event != null) {
-    					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
-    				}
+   					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     				
     				String groupId = null;
@@ -222,9 +227,7 @@ public class MIRunControlEventProcessor_7_0
     						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
     					}
 
-    					if (event != null) {
-    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
-    					}
+   						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     				}
     			}
     		}
@@ -253,6 +256,7 @@ public class MIRunControlEventProcessor_7_0
 
     	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
+    	// MI does not currently provide the group-id in these events
     	if (groupId == null) {
     		groupId = procService.getExecutionGroupIdFromThread(threadId);
     	}
@@ -319,7 +323,6 @@ public class MIRunControlEventProcessor_7_0
     	MIOutput output =  cmdResult.getMIOutput();
     	MIResultRecord rr = output.getMIResultRecord();
         if (rr != null) {
-            int id = rr.getToken();
             // Check if the state changed.
             String state = rr.getResultClass();
             if ("running".equals(state)) { //$NON-NLS-1$

@@ -108,15 +108,10 @@ public class GDBProcessesTest extends BaseTestCase {
          */
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
-            	fGdbCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fSession.getExecutor(), rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), pid);
-            	            	fProcService.getExecutionData(procDmc, rm);            					
-            				}
-            			});
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), pid);
+            	fProcService.getExecutionData(procDmc, rm);            					
             }
         });
         /*

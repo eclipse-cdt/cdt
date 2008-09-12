@@ -553,8 +553,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			// This service version only handles a single process to debug, therefore, we can simply
 			// create the context describing this process ourselves.
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			IProcessDMContext procDmc = createProcessContext(controlDmc, UNIQUE_GROUP_ID);
-			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, UNIQUE_GROUP_ID);
+			// Get the groupId properly for the case of an attach
+			String groupId = getExecutionGroupIdFromThread(null);
+			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
+			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, groupId);
 			rm.setData(new IContainerDMContext[] {newGroupDmc});
 			rm.done();
 		}
@@ -645,6 +647,16 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	public void flushCache(IDMContext context) {
         fContainerCommandCache.reset(context);
+	}
+
+	public void addThreadId(String threadId, String groupId) {
+		// This version of the service does not support multiple
+		// processes, so there is nothing to do here
+	}
+
+	public void removeThreadId(String threadId) {
+		// This version of the service does not support multiple
+		// processes, so there is nothing to do here
 	}
 
 }

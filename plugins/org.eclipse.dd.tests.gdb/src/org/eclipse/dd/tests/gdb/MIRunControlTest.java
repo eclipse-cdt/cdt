@@ -115,16 +115,10 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fGDBCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	            	fRunCtrl.getExecutionContexts(groupDmc, rm);
-            				}
-            			});
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	fRunCtrl.getExecutionContexts(groupDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -207,16 +201,10 @@ public class MIRunControlTest extends BaseTestCase {
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fGDBCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rmExecutionCtxts) {
-            				@Override
-            				protected void handleSuccess() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	           		fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
-            				}
-            			});
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -265,16 +253,10 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	fGDBCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
-            				}
-            			});
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -490,16 +472,10 @@ public class MIRunControlTest extends BaseTestCase {
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-               	fGDBCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), rm) {
-            				@Override
-            				protected void handleSuccess() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	           		fRunCtrl.resume(groupDmc, rm);
-            				}
-            			});
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	fRunCtrl.resume(groupDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -516,18 +492,12 @@ public class MIRunControlTest extends BaseTestCase {
 		wait.waitReset();
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			public void run() {
-				fGDBCtrl.getInferiorProcessId(
-						new DataRequestMonitor<String>(fRunCtrl.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-            					String pid = getData();
-								IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-								IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+				String pid = fProcService.getExecutionGroupIdFromThread(null);
+				IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+				IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
-								wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
-								wait.waitFinished();
-							}
-						});
+				wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+				wait.waitFinished();
 			}
 		});
 
@@ -577,18 +547,12 @@ public class MIRunControlTest extends BaseTestCase {
 		wait.waitReset();
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-               	fGDBCtrl.getInferiorProcessId(
-            			new DataRequestMonitor<String>(fRunCtrl.getExecutor(), null) {
-            				@Override
-            				protected void handleCompleted() {
-            					String pid = getData();
-            	            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
-            	            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
-            	                wait.waitFinished();
-            				}
-            			});
+            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+            	wait.waitFinished();
             }
         });
 

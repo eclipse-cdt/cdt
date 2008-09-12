@@ -11,7 +11,6 @@
 package org.eclipse.dd.gdb.internal.provisional.service.command;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
@@ -55,6 +54,4 @@ public interface IGDBControl extends ICommandControlService {
 	int getGDBExitCode();
 
 	IPath getExecutablePath();
-
-	void getInferiorProcessId(DataRequestMonitor<String> rm);
 }

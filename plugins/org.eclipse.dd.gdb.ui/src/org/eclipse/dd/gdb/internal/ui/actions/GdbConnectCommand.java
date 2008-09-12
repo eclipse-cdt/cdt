@@ -13,6 +13,7 @@ package org.eclipse.dd.gdb.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -71,13 +72,15 @@ public class GdbConnectCommand implements IConnect {
        			}
        		}
        	};
-
-   		fExecutor.execute(canConnectQuery);
     	try {
+    		fExecutor.execute(canConnectQuery);
 			return canConnectQuery.get();
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
-		}
+        } catch (RejectedExecutionException e) {
+        	// Can be thrown if the session is shutdown
+        }
+
 		return false;
      }
 

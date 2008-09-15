@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.action
 import org.eclipse.dd.dsf.ui.viewmodel.update.AllUpdateScope;
 
 /**
- * 
+ * @since 1.1
  */
 public class AllUpdateScopeAction extends SelectUpdateScopeAction {
 

@@ -18,6 +18,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  * 
  * This command attaches to the process specified by the PID
  * or THREAD_GROUP_ID
+ * @since 1.1
  */
 public class MITargetAttach extends MICommand<MIInfo> {
 

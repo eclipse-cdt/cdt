@@ -34,6 +34,9 @@ public class MIExecInterrupt extends MICommand<MIInfo>
         this(dmc, false);
     }
 
+    /**
+     * @since 1.1
+     */
     public MIExecInterrupt(IExecutionDMContext dmc, boolean allThreads) {
         super(dmc, "-exec-interrupt"); //$NON-NLS-1$
         if (allThreads) {

@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * View Model extension to IVMModelProxy interface.  This extension
  * allows access to the viewer.
+ * 
+ * @since 1.1
  */
 public interface IVMModelProxyExtension extends IVMModelProxy {
 

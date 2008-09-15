@@ -70,6 +70,7 @@ import java.util.regex.Pattern;
  *            file="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",
  *            fullname="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",line="279"},
  *        state="stopped"}]
+ * @since 1.1
  */
 public class MIThreadInfoInfo extends MIInfo {
 

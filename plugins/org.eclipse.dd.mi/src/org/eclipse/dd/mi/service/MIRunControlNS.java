@@ -69,6 +69,7 @@ import org.osgi.framework.BundleContext;
  * consistent with the events. The purpose of this pattern is to allow clients
  * that listen to service events and track service state, to be perfectly in
  * sync with the service state.
+ * @since 1.1
  */
 public class MIRunControlNS extends AbstractDsfService implements IRunControl, ICachingService
 {
@@ -667,17 +668,29 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 	// Event handlers
 	///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIRunningEvent e) {
         getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
         getSession().dispatchEvent(new SuspendedEvent(e.getDMContext(), e), getProperties());
 	}
 
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIThreadCreatedEvent e) {
 		IContainerDMContext containerDmc = e.getDMContext();
@@ -688,6 +701,10 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		getSession().dispatchEvent(new StartedDMEvent(executionCtx, e),	getProperties());
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIThreadExitEvent e) {
 		IContainerDMContext containerDmc = e.getDMContext();
@@ -698,6 +715,10 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(ResumedEvent e) {
 		IExecutionDMContext ctx = e.getDMContext();
@@ -706,6 +727,10 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(SuspendedEvent e) {
 		IExecutionDMContext ctx = e.getDMContext();
@@ -714,6 +739,10 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(StartedDMEvent e) {
 		IExecutionDMContext executionCtx = e.getDMContext();
@@ -724,11 +753,19 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(ExitedDMEvent e) {
 		fThreadRunStates.remove(e.getDMContext());
 	}
 	
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(ICommandControlShutdownDMEvent e) {
 		fTerminated = true;

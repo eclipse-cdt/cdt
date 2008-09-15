@@ -11,6 +11,9 @@
 package org.eclipse.dd.mi.service.command.output;
 
 
+/**
+ * @since 1.1
+ */
 public interface IThreadInfo {
 	String getThreadId();
 	String getTargetId();

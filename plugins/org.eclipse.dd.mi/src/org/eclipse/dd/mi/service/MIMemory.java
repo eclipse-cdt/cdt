@@ -274,6 +274,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     // Event handlers
     //////////////////////////////////////////////////////////////////////////
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
 	public void eventDispatched(IRunControl.IContainerResumedDMEvent e) {
 		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
@@ -282,12 +286,20 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		}
 	}
    
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
 	public void eventDispatched(IRunControl.IContainerSuspendedDMEvent e) {
 		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
 		fMemoryCache.reset();
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
    	@DsfServiceEventHandler
 	public void eventDispatched(ExpressionChangedEvent e) {
 
@@ -318,6 +330,24 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 			});
 		}
 	}
+
+    /**
+     * This method is left for API compatibility only.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(IRunControl.IResumedDMEvent e) {
+    }   	
+
+    /**
+     * This method is left for API compatibility only.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+    }       
 
 	///////////////////////////////////////////////////////////////////////////
 	// SortedLinkedlist
@@ -907,6 +937,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 	}
 
+   /**
+    * {@inheritDoc}
+    * @since 1.1
+    */
     public void flushCache(IDMContext context) {
         fMemoryCache.reset();
     }

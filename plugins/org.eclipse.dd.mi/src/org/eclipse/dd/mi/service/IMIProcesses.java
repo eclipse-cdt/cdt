@@ -16,6 +16,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 
 /**
  * This interface provides a method for creating execution contexts.
+ * @since 1.1
  */
 public interface IMIProcesses extends IProcesses
 {

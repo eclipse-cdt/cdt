@@ -14,6 +14,7 @@ package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIConst;
 import org.eclipse.dd.mi.service.command.output.MIResult;
 import org.eclipse.dd.mi.service.command.output.MIValue;
@@ -29,15 +30,29 @@ public class MIInferiorExitEvent extends MIEvent<ICommandControlDMContext> {
 
     final private int code;
 
+    /**
+     * @since 1.1
+     */
     public MIInferiorExitEvent(ICommandControlDMContext ctx, int token, MIResult[] results, int code) {
     	super(ctx, token, results);
     	this.code = code;
     }
 
+    public MIInferiorExitEvent(MIControlDMContext ctx, int token, MIResult[] results, int code) {
+        this ((ICommandControlDMContext)ctx, token, results, code);
+    }
+    
     public int getExitCode() {
     	return code;
     }
 
+    public static MIInferiorExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
+        return parse((ICommandControlDMContext)ctx, token, results);
+    }
+
+    /**
+     * @since 1.1
+     */
     public static MIInferiorExitEvent parse(ICommandControlDMContext ctx, int token, MIResult[] results) 
     {
     	int code = 0;

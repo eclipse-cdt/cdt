@@ -11,8 +11,8 @@
 package org.eclipse.dd.dsf.ui.viewmodel.update;
 
 
-/**
- * 
+/** 
+ * @since 1.1 
  */
 public interface IVMUpdateScope {
 

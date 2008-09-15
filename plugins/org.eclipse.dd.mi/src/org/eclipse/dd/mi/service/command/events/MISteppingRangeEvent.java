@@ -38,6 +38,9 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
         return new MISteppingRangeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }    
     
+    /**
+     * @since 1.1
+     */
     public static MISteppingRangeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results)
     {
     	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);

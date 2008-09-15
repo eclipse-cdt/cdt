@@ -12,6 +12,9 @@ package org.eclipse.dd.mi.service.command.output;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
+/**
+ * @since 1.1
+ */
 @Immutable
 public class ThreadInfo implements IThreadInfo {
 
@@ -41,8 +44,4 @@ public class ThreadInfo implements IThreadInfo {
 	public IThreadFrame getTopFrame() { return fTopFrame; } 
 	public String getDetails()        { return fDetails;  }
 	public String getState()          { return fState;    }
-	
-
-
-
 }

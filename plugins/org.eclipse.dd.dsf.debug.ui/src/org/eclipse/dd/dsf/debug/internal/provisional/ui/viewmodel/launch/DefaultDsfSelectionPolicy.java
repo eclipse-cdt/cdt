@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 /**
  * Default DSF selection policy implementation modelled after platform version
  * (<code>DefaultSelectionPolicy</code>).
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {

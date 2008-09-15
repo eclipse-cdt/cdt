@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
  *  list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
+ * @since 1.1
  */
 public class MIListThreadGroupsInfo extends MIInfo {
 	

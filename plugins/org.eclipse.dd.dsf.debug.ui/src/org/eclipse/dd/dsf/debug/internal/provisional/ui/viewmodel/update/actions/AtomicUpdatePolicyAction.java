@@ -16,6 +16,9 @@ import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 1.1
+ */
 public class AtomicUpdatePolicyAction extends AbstractVMProviderActionDelegate {
 
 	private final static String ATOMIC_UPDATE = "ATOMIC_UPDATE";

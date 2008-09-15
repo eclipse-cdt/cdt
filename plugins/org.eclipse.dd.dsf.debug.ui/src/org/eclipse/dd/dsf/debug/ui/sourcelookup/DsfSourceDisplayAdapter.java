@@ -768,6 +768,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         startAnnotationClearingJob(e.getDMContext());
     }
 
+    /**
+     * @since 1.1
+     */
     @DsfServiceEventHandler
     public void eventDispatched(SteppingTimedOutEvent e) {
         startAnnotationClearingJob(e.getDMContext());        

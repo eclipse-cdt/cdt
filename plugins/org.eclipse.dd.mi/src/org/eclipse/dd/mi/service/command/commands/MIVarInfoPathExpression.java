@@ -12,6 +12,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarInfoPathExpressionInfo;
 
@@ -30,10 +31,17 @@ import org.eclipse.dd.mi.service.command.output.MIVarInfoPathExpressionInfo;
 
 public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionInfo> 
 {
+	/**
+     * @since 1.1
+     */
 	public MIVarInfoPathExpression(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-info-path-expression", new String[]{name}); //$NON-NLS-1$
 	}
-    
+
+	public MIVarInfoPathExpression(MIControlDMContext dmc, String name) {
+	    this ((ICommandControlDMContext)dmc, name);
+	}
+	
     @Override
     public MIVarInfoPathExpressionInfo getResult(MIOutput out) {
         return new MIVarInfoPathExpressionInfo(out);

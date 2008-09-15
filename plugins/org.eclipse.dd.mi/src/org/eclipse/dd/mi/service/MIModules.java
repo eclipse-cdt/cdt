@@ -218,6 +218,10 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         rm.done();
     }
 
+    /**
+     * {@inheritDoc}
+     * @since 1.1
+     */
 	public void flushCache(IDMContext context) {
 		fModulesCache.reset();		
 	}

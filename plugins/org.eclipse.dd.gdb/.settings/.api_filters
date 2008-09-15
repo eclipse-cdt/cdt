@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.dd.gdb" version="2">
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/GDBDebugger.java" type="org.eclipse.dd.gdb.internal.provisional.launching.GDBDebugger">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.GDBDebugger"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/IGDBLaunchConfigurationConstants.java" type="org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/LaunchMessages.java" type="org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/GdbLaunchDelegate.java" type="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunchDelegate"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/service/command/GDBControlDMContext.java" type="org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/ShutdownSequence.java" type="org.eclipse.dd.gdb.internal.provisional.launching.ShutdownSequence">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.ShutdownSequence"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/breakpoints/CBreakpointGdbThreadsFilterExtension.java" type="org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="META-INF/MANIFEST.MF">
+<filter id="923795461">
+<message_arguments>
+<message_argument value="1.1.0.qualifier"/>
+<message_argument value="1.0.0.v20080609"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/GDBServerDebugger.java" type="org.eclipse.dd.gdb.internal.provisional.launching.GDBServerDebugger">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.GDBServerDebugger"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/service/command/GDBControl.java" type="org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/FinalLaunchSequence.java" type="org.eclipse.dd.gdb.internal.provisional.launching.FinalLaunchSequence">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.FinalLaunchSequence"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/GdbLaunch.java" type="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/launching/ServicesLaunchSequence.java" type="org.eclipse.dd.gdb.internal.provisional.launching.ServicesLaunchSequence">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.launching.ServicesLaunchSequence"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/gdb/internal/provisional/service/GDBRunControl.java" type="org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.gdb.internal.provisional.service.GDBRunControl"/>
+<message_argument value="org.eclipse.dd.gdb_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+</component>

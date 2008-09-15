@@ -65,6 +65,9 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
         return new MIWatchpointScopeEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number);
     }
 
+    /**
+     * @since 1.1
+     */
     public static MIWatchpointScopeEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
        int number = 0;

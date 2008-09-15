@@ -340,6 +340,8 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
      * @param update  the viewer update request
      * @param dmcs  the data model contexts
      * @param firstIndex  the index of the first data model context
+     * 
+     * @since 1.1
      */
     protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext[] dmcs, int firstIndex) {
         int updateIdx = update.getOffset() != -1 ? update.getOffset() : 0;

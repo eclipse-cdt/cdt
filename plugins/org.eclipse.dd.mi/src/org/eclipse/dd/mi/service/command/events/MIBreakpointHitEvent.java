@@ -64,6 +64,9 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
         return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }
     
+    /**
+     * @since 1.1
+     */
     public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     { 
        int bkptno = -1;

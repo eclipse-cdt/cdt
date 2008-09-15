@@ -12,6 +12,9 @@ package org.eclipse.dd.gdb.internal.provisional.actions;
 
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 
+/**
+ * @since 1.1
+ */
 public interface IConnect {
 	/**
 	 * Returns whether this element can currently attempt to 

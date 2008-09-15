@@ -137,6 +137,9 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     /*
      * Returns the constructed command potentially using the --thread/--frame options.
      */
+    /**
+     * @since 1.1
+     */
     public String constructCommand(String threadId, int frameId) {
         StringBuffer command = new StringBuffer(getOperation());
         
@@ -234,6 +237,9 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
         return false;
     }
     
+    /**
+     * @since 1.1
+     */
     public boolean supportsThreadAndFrameOptions() { return true; }
     
     /**

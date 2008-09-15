@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ * @since 1.1
  */
 public class SelectUpdateScopeAction extends AbstractVMProviderActionDelegate  {
 

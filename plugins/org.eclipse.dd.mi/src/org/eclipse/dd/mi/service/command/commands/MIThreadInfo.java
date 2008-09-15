@@ -22,6 +22,7 @@ import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
  * Reports information about either a specific thread, if [thread-id] is present,
  * or about all threads. When printing information about all threads, also reports
  * the current thread.
+ * @since 1.1
  * 
  */
 public class MIThreadInfo extends MICommand<MIThreadInfoInfo> {

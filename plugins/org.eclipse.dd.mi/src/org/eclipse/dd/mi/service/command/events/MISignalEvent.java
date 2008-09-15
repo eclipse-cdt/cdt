@@ -75,6 +75,9 @@ public class MISignalEvent extends MIStoppedEvent {
 
     }
     
+    /**
+     * @since 1.1
+     */
     public static MISignalEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
        String sigName = ""; //$NON-NLS-1$

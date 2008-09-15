@@ -68,6 +68,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 	private boolean fDelayEventHandleForViewUpdate = false;
 	
     // debug flags
+    /** 
+     * @since 1.1 
+     */
     public static boolean DEBUG_CACHE = false;
 
     static {
@@ -305,6 +308,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
         
     protected static String SELECTED_UPDATE_MODE = "org.eclipse.dd.dsf.ui.viewmodel.update.selectedUpdateMode";  //$NON-NLS-1$
+
+    /** 
+     * @since 1.1 
+     */
     protected static String SELECTED_UPDATE_SCOPE = "org.eclipse.dd.dsf.ui.viewmodel.update.selectedUpdateScope";  //$NON-NLS-1$
 
     private IVMUpdatePolicy[] fAvailableUpdatePolicies;
@@ -351,6 +358,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy() };
     }
     
+    /** 
+     * @since 1.1 
+     */
     protected IVMUpdateScope[] createUpdateScopes() {
         return new IVMUpdateScope[] { new VisibleUpdateScope(), new AllUpdateScope() };
     }
@@ -1230,10 +1240,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return null;
     }
 
+    /** 
+     * @since 1.1 
+     */
     public IVMUpdateScope[] getAvailableUpdateScopes() {
         return fAvailableUpdateScopes;
     }
 
+    /** 
+     * @since 1.1 
+     */
     public IVMUpdateScope getActiveUpdateScope() {
         String updateScopeId = (String)getPresentationContext().getProperty(SELECTED_UPDATE_SCOPE);
         if (updateScopeId != null) {
@@ -1248,14 +1264,21 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return getAvailableUpdateScopes()[0];
     }
 
+    /** 
+     * @since 1.1 
+     */
     public void setActiveUpdateScope(IVMUpdateScope updateScope) {
         getPresentationContext().setProperty(SELECTED_UPDATE_SCOPE, updateScope.getID());
     }
 
+    @Override
     public boolean shouldWaitHandleEventToComplete() {
         return fDelayEventHandleForViewUpdate;
     }
 
+    /** 
+     * @since 1.1 
+     */
 	protected void setDelayEventHandleForViewUpdate(boolean on) {
 		fDelayEventHandleForViewUpdate = on;
 	}

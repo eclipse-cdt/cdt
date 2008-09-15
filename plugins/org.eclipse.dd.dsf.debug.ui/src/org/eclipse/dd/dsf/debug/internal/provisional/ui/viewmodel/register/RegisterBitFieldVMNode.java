@@ -149,7 +149,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     }
     
     private SyncRegisterDataAccess fSyncRegisterDataAccess = null;
-    private IWatchExpressionFactoryAdapter2 fBitFieldExpressionFactory = null; 
+    protected IWatchExpressionFactoryAdapter2 fBitFieldExpressionFactory = null; 
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
     
     public RegisterBitFieldVMNode(IFormattedValuePreferenceStore prefStore, AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess access) {
@@ -168,10 +168,16 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return fFormattedPrefStore;
     }
     
+    /**
+     * @since 1.1
+     */
     public SyncRegisterDataAccess getSyncRegisterDataAccess() {
         return fSyncRegisterDataAccess;
     }
 
+    /**
+     * @since 1.1
+     */
     public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
     	if ( fBitFieldExpressionFactory == null ) {
     		fBitFieldExpressionFactory = new BitFieldExpressionFactory();

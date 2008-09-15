@@ -18,6 +18,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  *      -environment-cd PATHDIR
  *
  *   Set GDB's working directory.
+ * @since 1.1
  * 
  */
 public class MIEnvironmentCD extends MICommand <MIInfo> 

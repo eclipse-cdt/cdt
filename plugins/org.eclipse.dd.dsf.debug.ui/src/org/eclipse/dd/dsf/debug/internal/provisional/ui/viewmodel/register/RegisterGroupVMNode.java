@@ -143,6 +143,9 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return fSyncRegisterDataAccess;
     }
 
+    /**
+     * @since 1.1
+     */
     public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
     	if ( fRegisterGroupExpressionFactory == null ) {
     		fRegisterGroupExpressionFactory = new RegisterGroupExpressionFactory();

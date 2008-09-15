@@ -103,10 +103,12 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy, IVMModelProxy
         return fRootElement;
     }
     
-    public Object getViewerInput() {
+    /** @since 1.1 */
+   public Object getViewerInput() {
         return fRootElement;
     }
     
+   /** @since 1.1 */
     public TreePath getRootPath() {
         return TreePath.EMPTY;
     }
@@ -237,6 +239,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy, IVMModelProxy
      * Returns the viewer this proxy is installed in.
      * 
      * @return viewer or <code>null</code> if not installed
+     * 
+     * @since 1.1
      */
     public Viewer getViewer() {
         return fViewer;

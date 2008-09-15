@@ -11,6 +11,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 
 /**
  * 
@@ -19,6 +20,9 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
  */
 public class MIGDBSetSolibSearchPath extends MIGDBSet 
 {
+	/**
+     * @since 1.1
+     */
 	public MIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
 		super(ctx, null);
 		// Overload the parameter
@@ -34,4 +38,8 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet
 		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
 		setParameters(p);
 	}
+
+    public MIGDBSetSolibSearchPath(MIControlDMContext ctx, String[] paths) {
+        this ((ICommandControlDMContext)ctx, paths);
+    }
 }

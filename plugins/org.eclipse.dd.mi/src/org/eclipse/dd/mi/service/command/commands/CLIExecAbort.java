@@ -13,6 +13,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
@@ -24,7 +25,14 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class CLIExecAbort extends CLICommand<MIInfo> 
 {
+    /**
+     * @since 1.1
+     */
     public CLIExecAbort(ICommandControlDMContext ctx) {
         super(ctx, "kill"); //$NON-NLS-1$
+    }
+    
+    public CLIExecAbort(MIControlDMContext ctx) {
+        this ((ICommandControlDMContext)ctx);
     }
 }

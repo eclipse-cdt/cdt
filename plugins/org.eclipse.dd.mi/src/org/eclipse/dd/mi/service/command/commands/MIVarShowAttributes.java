@@ -12,6 +12,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarShowAttributesInfo;
 
@@ -30,10 +31,17 @@ import org.eclipse.dd.mi.service.command.output.MIVarShowAttributesInfo;
 
 public class MIVarShowAttributes extends MICommand<MIVarShowAttributesInfo> 
 {
+	/**
+     * @since 1.1
+     */
 	public MIVarShowAttributes(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-show-attributes", new String[]{name}); //$NON-NLS-1$
 	}
-      
+
+	public MIVarShowAttributes(MIControlDMContext ctx, String name) {
+	    this ((ICommandControlDMContext)ctx, name);
+	}
+	
     @Override
     public MIVarShowAttributesInfo getResult(MIOutput out) {
         return new MIVarShowAttributesInfo(out);

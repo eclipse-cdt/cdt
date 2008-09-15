@@ -17,6 +17,7 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 
 /**
  * This can only be detected by gdb/mi after GDB 6.8.
+ * @since 1.1
  *
  */
 @Immutable

@@ -12,9 +12,10 @@ package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.service.DsfSession;
 
-/*
+/**
  * A factory to create DSF services.  Using this interface allows
  * to easily have different service implementation for different backends.
+ * @since 1.1
  */
 public interface IDsfDebugServicesFactory {
 	<V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments);

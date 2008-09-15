@@ -19,6 +19,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
  * Set breakpoints applicability mode.
  *   global == a breakpoint applies to all processes.
  *   process == a breakpoint applies to a single process.
+ * @since 1.1
  */
 public class MIGDBSetBreakpointApply extends MIGDBSet 
 {

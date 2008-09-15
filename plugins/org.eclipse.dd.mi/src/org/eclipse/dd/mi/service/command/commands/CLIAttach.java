@@ -23,6 +23,9 @@ public class CLIAttach extends CLICommand<MIInfo> {
 		super(ctx, "attach " + Integer.toString(pid)); //$NON-NLS-1$
 	}
 	
+	/**
+     * @since 1.1
+     */
 	public CLIAttach(ICommandControlDMContext ctx, String pid) {
 		super(ctx, "attach " + pid); //$NON-NLS-1$
 	}

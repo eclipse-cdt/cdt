@@ -13,6 +13,10 @@ package org.eclipse.dd.dsf.debug.service;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfSession;
 
+/**
+ * Convenience base class for {@link IDsfDebugServicesFactory}
+ * @since 1.1
+ */
 public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServicesFactory {
 
     @SuppressWarnings("unchecked")

@@ -254,14 +254,16 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     // IServiceEventListener
     ///////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * When a watchpoint goes out of scope, it is automatically removed from
-	 * the back-end. To keep our internal state synchronized, we have to
-	 * remove it from our breakpoints map.
-	 */
+    /**
+     * This method is left for API compatibility only.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
 	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointScopeEvent e) {
-	    // PP:
+	    // When a watchpoint goes out of scope, it is automatically removed from
+	    // the back-end. To keep our internal state synchronized, we have to
+	    // remove it from our breakpoints map.
 	    IBreakpointsTargetDMContext bpContext = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
 	    if (bpContext != null) {
 	        Map<Integer, MIBreakpointDMData> contextBps = fBreakpoints.get(bpContext);
@@ -271,11 +273,21 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	    }
 	}
 
-	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
+    /**
+     * This method is left for API compatibility only.
+     * ICommandControlShutdownDMEvent is used instead
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
     }
 
+    /**
+     * @since 1.1
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
     }

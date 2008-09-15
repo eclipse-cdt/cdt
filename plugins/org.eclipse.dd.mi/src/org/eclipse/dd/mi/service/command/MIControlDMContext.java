@@ -50,6 +50,9 @@ public class MIControlDMContext extends AbstractDMContext
         return fCommandControlFilter;
     }
 
+    /**
+     * @since 1.1
+     */
     public String getCommandControlId() {
         return fCommandControlId;
     }

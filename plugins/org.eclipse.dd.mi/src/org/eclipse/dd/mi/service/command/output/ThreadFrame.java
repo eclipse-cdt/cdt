@@ -14,6 +14,9 @@ import java.math.BigInteger;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
+/**
+ * @since 1.1
+ */
 @Immutable
 public class ThreadFrame implements IThreadFrame {
 	final private int        fStackLevel;

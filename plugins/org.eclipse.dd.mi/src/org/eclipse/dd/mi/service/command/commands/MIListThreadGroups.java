@@ -40,6 +40,7 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
  *  {id="xxx",type="process",pid="yyy",num_children="1"}
  *  
  *  The id of a thread group should be considered an opaque string.
+ * @since 1.1
  *
  */
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {

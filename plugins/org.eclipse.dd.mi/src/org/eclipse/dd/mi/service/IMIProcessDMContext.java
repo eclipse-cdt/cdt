@@ -15,6 +15,7 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 /**
  * A process context object.  In the GDB/MI protocol, processes are represented 
  * by an string identifier, which is the basis for this context.
+ * @since 1.1
  */
 public interface IMIProcessDMContext extends IProcessDMContext { 
     /**

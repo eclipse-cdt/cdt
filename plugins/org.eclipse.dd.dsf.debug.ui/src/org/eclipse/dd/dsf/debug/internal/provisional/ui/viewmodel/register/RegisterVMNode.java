@@ -165,6 +165,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         return fFormattedPrefStore;
     }
     
+    /**
+     * @since 1.1
+     */
     public IWatchExpressionFactoryAdapter2 getWatchExpressionFactory() {
     	if ( fRegisterExpressionFactory == null ) {
     		fRegisterExpressionFactory = new RegisterExpressionFactory();

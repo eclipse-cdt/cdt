@@ -15,6 +15,7 @@ package org.eclipse.dd.mi.service.command.events;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 
 
 /**
@@ -23,10 +24,18 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
  * @deprecated This event is not used in DSF-GDB as it has been replaced by 
  * {@link ICommandControlService.ICommandControlShutdownDMEvent}.
  */
+@Deprecated
 @Immutable
 public class MIGDBExitEvent extends MIEvent<ICommandControlDMContext> {
 
+    /**
+     * @since 1.1
+     */
     public MIGDBExitEvent(ICommandControlDMContext ctx, int token) {
     	super(ctx, token, null);
+    }
+    
+    public MIGDBExitEvent(MIControlDMContext ctx, int token) {
+        this ((ICommandControlDMContext)ctx, token);
     }
 }

@@ -913,6 +913,10 @@ public class ExpressionService extends AbstractDsfService implements IExpression
         // MIVariableManager separately traps this event
     }
 
+    /**
+     * {@inheritDoc}
+     * @since 1.1
+     */
     public void flushCache(IDMContext context) {
         fExpressionCache.reset(context);
         // We must also mark all variable objects as out-of-date

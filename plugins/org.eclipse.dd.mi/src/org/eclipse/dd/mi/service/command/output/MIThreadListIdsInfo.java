@@ -41,6 +41,9 @@ public class MIThreadListIdsInfo extends MIInfo {
 		return threadIds;
 	}
 
+	/**
+     * @since 1.1
+     */
 	public String[] getStrThreadIds() {
 		if (strThreadIds == null) {
 			parse();

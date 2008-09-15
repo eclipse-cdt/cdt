@@ -458,6 +458,9 @@ public class SyncVariableDataAccess {
         }
     }
  
+    /**
+     * @since 1.1
+     */
     public class CanWriteExpressionQuery extends Query<Boolean> {
 
         private IExpressionDMContext fDmc;

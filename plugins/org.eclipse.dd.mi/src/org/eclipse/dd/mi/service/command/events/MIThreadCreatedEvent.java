@@ -34,10 +34,16 @@ public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
         fThreadId = Integer.toString(id);
     }
 
+    /**
+     * @since 1.1
+     */
     public MIThreadCreatedEvent(IContainerDMContext ctx, String threadId) {
         this(ctx, 0, threadId);
     }
 
+    /**
+     * @since 1.1
+     */
     public MIThreadCreatedEvent(IContainerDMContext ctx, int token, String threadId) {
         super(ctx, token, null);
         fThreadId = threadId;
@@ -52,6 +58,9 @@ public class MIThreadCreatedEvent extends MIEvent<IContainerDMContext> {
     	}
     }
     
+    /**
+     * @since 1.1
+     */
     public String getStrId() {
         return fThreadId;
     }

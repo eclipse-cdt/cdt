@@ -65,8 +65,13 @@ import org.eclipse.swt.widgets.Display;
 abstract public class AbstractVMProvider implements IVMProvider, IVMEventListener
 {
     // debug flags
+    /** @since 1.1 */
     public static String DEBUG_PRESENTATION_ID = null;
+
+    /** @since 1.1 */
     public static boolean DEBUG_CONTENT_PROVIDER = false;
+
+    /** @since 1.1 */
     public static boolean DEBUG_DELTA = false;
 
     static {
@@ -385,6 +390,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         return false;
     }
     
+    /** @since 1.1 */
     public boolean shouldWaitHandleEventToComplete() {
         return false;
     }

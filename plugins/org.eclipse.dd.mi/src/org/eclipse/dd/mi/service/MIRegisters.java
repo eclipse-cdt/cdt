@@ -399,6 +399,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      *   need to be flushed. These handlers maintain the state of the caches.
      */
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.IResumedDMEvent e) {
         fRegisterValueCache.setContextAvailable(e.getDMContext(), false);
@@ -407,6 +411,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         }
     }
     
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(
     IRunControl.ISuspendedDMEvent e) {
@@ -414,6 +422,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         fRegisterValueCache.reset();
     }
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(final IRegisters.IRegisterChangedDMEvent e) {
     	fRegisterValueCache.reset();
@@ -623,6 +635,10 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         rm.done();
     }
     
+    /**
+     * {@inheritDoc}
+     * @since 1.1
+     */
     public void flushCache(IDMContext context) {
         fRegisterNameCache.reset(context);
         fRegisterValueCache.reset(context);

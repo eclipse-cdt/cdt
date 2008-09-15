@@ -14,6 +14,9 @@ package org.eclipse.dd.dsf.debug.ui;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+/**
+ * @since 1.1
+ */
 public class DsfDebugUITools {
 	
 	public static IPreferenceStore getPreferenceStore()

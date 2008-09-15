@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
  *      -gdb-set args ARGS
  *
  * Set the inferior program arguments, to be used in the next `-exec-run'.
+ * @since 1.1
  * 
  */
 public class MIGDBSetArgs extends MIGDBSet 

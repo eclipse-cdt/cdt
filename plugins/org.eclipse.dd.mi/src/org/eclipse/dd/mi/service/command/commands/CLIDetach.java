@@ -15,6 +15,7 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 /**
  * This command disconnects from a remote target.
+ * @since 1.1
  */
 public class CLIDetach extends CLICommand<MIInfo> {
 

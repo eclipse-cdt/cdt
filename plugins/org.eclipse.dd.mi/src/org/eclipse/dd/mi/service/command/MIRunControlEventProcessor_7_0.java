@@ -67,6 +67,7 @@ import org.eclipse.dd.mi.service.command.output.MIValue;
  * MI debugger output listener that listens for the parsed MI output, and
  * generates corresponding MI events.  The generated MI events are then
  * received by other services and clients.
+ * @since 1.1
  */
 public class MIRunControlEventProcessor_7_0
     implements IEventListener, ICommandListener

@@ -14,6 +14,7 @@ package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIConst;
 import org.eclipse.dd.mi.service.command.output.MIResult;
 import org.eclipse.dd.mi.service.command.output.MIValue;
@@ -30,10 +31,17 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
     final private String sigName;
     final private String sigMeaning;
 
+    /**
+     * @since 1.1
+     */
     public MIInferiorSignalExitEvent(ICommandControlDMContext ctx, int token, MIResult[] results, String sigName, String sigMeaning) {
         super(ctx, token, results);
         this.sigName = sigName;
         this.sigMeaning = sigMeaning;
+    }
+
+    public MIInferiorSignalExitEvent(MIControlDMContext ctx, int token, MIResult[] results, String sigName, String sigMeaning) {
+        this((ICommandControlDMContext)ctx, token, results, sigName, sigMeaning);
     }
 
     public String getName() {
@@ -44,6 +52,13 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
     	return sigMeaning;
     }
 
+    public static MIInferiorSignalExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
+        return parse((ICommandControlDMContext)ctx, token, results);
+    }
+
+    /**
+     * @since 1.1
+     */
     public static MIInferiorSignalExitEvent parse(ICommandControlDMContext ctx, int token, MIResult[] results) 
     {
         String sigName = ""; //$NON-NLS-1$

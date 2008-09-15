@@ -15,6 +15,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 /**
  * 
  *     -gdb-set sysroot PATH
+ * @since 1.1
  * 
  */
 public class MIGDBSetSysroot extends MIGDBSet 

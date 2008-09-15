@@ -29,6 +29,9 @@ public class MIExecContinue extends MICommand<MIInfo>
         this(dmc, false);
     }
 
+    /**
+     * @since 1.1
+     */
     public MIExecContinue(IExecutionDMContext dmc, boolean allThreads) {
         super(dmc, "-exec-continue"); //$NON-NLS-1$
         if (allThreads) {

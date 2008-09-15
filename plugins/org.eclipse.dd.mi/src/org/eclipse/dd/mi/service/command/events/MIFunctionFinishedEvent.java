@@ -82,6 +82,9 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
         return new MIFunctionFinishedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), gdbResult, returnValue, returnType);
     }
 
+    /**
+     * @since 1.1
+     */
     public static MIFunctionFinishedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
        String gdbResult = ""; //$NON-NLS-1$

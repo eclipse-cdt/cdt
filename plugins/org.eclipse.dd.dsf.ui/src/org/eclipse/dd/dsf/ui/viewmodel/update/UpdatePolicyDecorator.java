@@ -12,6 +12,8 @@ package org.eclipse.dd.dsf.ui.viewmodel.update;
 
 /**
  * An update policy decorator which can override behaviour of an underlying update policy.
+ * 
+ * @since 1.1
  */
 public abstract class UpdatePolicyDecorator implements IVMUpdatePolicy {
 

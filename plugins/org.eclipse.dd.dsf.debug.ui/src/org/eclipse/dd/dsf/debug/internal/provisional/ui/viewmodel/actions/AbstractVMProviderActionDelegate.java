@@ -29,6 +29,9 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * @since 1.1
+ */
 @SuppressWarnings("restriction")
 abstract public class AbstractVMProviderActionDelegate implements IViewActionDelegate, IDebugContextListener, IActionDelegate2 {
 

@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Default model selection policy factory for DSF.
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 public class DefaultDsfModelSelectionPolicyFactory implements IModelSelectionPolicyFactory {

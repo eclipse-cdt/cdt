@@ -8,13 +8,13 @@
  * Contributors:
  *     Ericsson - initial API and implementation          
  *******************************************************************************/
-package org.eclipse.dd.mi.service;
+package org.eclipse.dd.gdb.internal.ui.actions;
 
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
 @Immutable
-public class ProcessInfo implements IProcessInfo, Comparable<ProcessInfo> {
+class ProcessInfo implements IProcessInfo, Comparable<ProcessInfo> {
 	private final int pid;
 	private final String name;
 	

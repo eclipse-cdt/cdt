@@ -37,6 +37,7 @@ import org.eclipse.dd.mi.service.command.events.MISignalChangedEvent;
 
 /**
  * GDB debugger output listener.
+ * @since 1.1
  */
 @ConfinedToDsfExecutor("fConnection#getExecutor")
 public class CLIEventProcessor_7_0

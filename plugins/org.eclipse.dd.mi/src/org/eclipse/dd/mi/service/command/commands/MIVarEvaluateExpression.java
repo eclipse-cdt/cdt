@@ -14,6 +14,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarEvaluateExpressionInfo;
 
@@ -30,10 +31,17 @@ import org.eclipse.dd.mi.service.command.output.MIVarEvaluateExpressionInfo;
  */
 public class MIVarEvaluateExpression extends MICommand<MIVarEvaluateExpressionInfo> {
     
+    /**
+     * @since 1.1
+     */
     public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
         super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
     }
 
+    public MIVarEvaluateExpression(MIControlDMContext dmc, String name) {
+        this ((ICommandControlDMContext)dmc, name);
+    }
+    
     @Override
     public MIVarEvaluateExpressionInfo getResult(MIOutput out) {
         return new MIVarEvaluateExpressionInfo(out);

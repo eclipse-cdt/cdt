@@ -78,6 +78,7 @@ public class DMContexts {
      * @param ctx DMC to search.
      * @param ancestorType Class type of the desired DMC ancestor.
      * @return Returns all ancestors found, null if none.
+     * @since 1.1
      */
     @ThreadSafe
     @SuppressWarnings("unchecked")

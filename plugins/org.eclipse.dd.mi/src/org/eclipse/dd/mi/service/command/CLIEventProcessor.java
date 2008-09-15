@@ -60,6 +60,9 @@ public class CLIEventProcessor
     
     private final DsfServicesTracker fServicesTracker;
 
+    /**
+     * @since 1.1
+     */
     public CLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
         fControlDmc = controlDmc;
@@ -71,7 +74,7 @@ public class CLIEventProcessor
     }
 
     @Deprecated
-    public CLIEventProcessor(ICommandControlService connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
+    public CLIEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
         this(connection, DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class));
     }
 

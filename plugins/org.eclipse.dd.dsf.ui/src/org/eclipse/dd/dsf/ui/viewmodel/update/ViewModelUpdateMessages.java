@@ -18,7 +18,13 @@ public class ViewModelUpdateMessages extends NLS {
 
     public static String AutomaticUpdatePolicy_name;
     public static String ManualUpdatePolicy_name;
+    /** 
+     * @since 1.1 
+     */
     public static String AllUpdateScope_name;
+    /** 
+     * @since 1.1 
+     */
     public static String VisibleUpdateScope_name;
 	
     static {

@@ -641,7 +641,10 @@ public class MIStack extends AbstractDsfService
         }
     }
 
-    // IServiceEventListener
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(IResumedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), false);
@@ -651,12 +654,23 @@ public class MIStack extends AbstractDsfService
         }
     }
     
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     * @since 1.1
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(ISuspendedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
     }
     
+
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     * @since 1.1
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(IMIDMEvent e) {
     	if (e.getMIEvent() instanceof MIStoppedEvent) {
@@ -664,6 +678,19 @@ public class MIStack extends AbstractDsfService
     	}
     }
 
+    /**
+     * This method is left for API compatibility only.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler 
+    public void eventDispatched(MIRunControl.ContainerSuspendedEvent e) {
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @since 1.1
+     */
 	public void flushCache(IDMContext context) {
         fMICommandCache.reset(context);
 	}

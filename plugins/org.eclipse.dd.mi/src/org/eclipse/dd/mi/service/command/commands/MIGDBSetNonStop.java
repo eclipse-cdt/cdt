@@ -15,6 +15,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 /**
  * 
  *     -gdb-set non-stop [on | off]
+ * @since 1.1
  * 
  */
 public class MIGDBSetNonStop extends MIGDBSet 

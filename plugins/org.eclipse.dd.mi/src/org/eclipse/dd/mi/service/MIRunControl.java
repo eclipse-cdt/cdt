@@ -321,9 +321,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         return new MIExecutionDMC(getSession().getId(), container, threadId);
     }
     
-    //
-    // Running event handling
-    //
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(final MIRunningEvent e) {
         IDMEvent<?> event = null;
@@ -339,9 +340,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         getSession().dispatchEvent(event, getProperties());
     }
 
-    //
-    // Suspended event handling
-    //
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(final MIStoppedEvent e) {
         IDMEvent<?> event = null;
@@ -357,10 +359,12 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         getSession().dispatchEvent(event, getProperties());
     }
 
-    //
-    // Thread Created event handling
-    // When a new thread is created - OOB Event fired ~"[New Thread 1077300144 (LWP 7973)]\n"
-    //
+    /**
+     * Thread Created event handling
+     * When a new thread is created - OOB Event fired ~"[New Thread 1077300144 (LWP 7973)]\n"
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadCreatedEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
@@ -368,10 +372,12 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         getSession().dispatchEvent(new StartedDMEvent(executionCtx, e), getProperties());
     }
 
-    //
-    // Thread exit event handling
-    // When a new thread is destroyed - OOB Event fired "
-    //
+    /**
+     * Thread exit event handling
+     * When a new thread is destroyed - OOB Event fired "
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadExitEvent e) {
         IContainerDMContext containerDmc = e.getDMContext();
@@ -379,6 +385,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     	getSession().dispatchEvent(new ExitedDMEvent(executionCtx, e), getProperties());
     }
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ContainerResumedEvent e) {
         fSuspended = false;
@@ -393,7 +403,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         }
     }
 
-
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ContainerSuspendedEvent e) {
         fMICommandCache.setContextAvailable(e.getDMContext(), true);
@@ -405,25 +418,42 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         fStepping = false;
     }
     
-	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
+    /**
+     * Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
         fTerminated = true;
     }
     
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     * @since 1.1
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         fTerminated = true;
 	}
 
 
-    // Event handler when New thread is created
+    /**
+     * Event handler when New thread is created
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(StartedDMEvent e) {
 
 	}
 
-    // Event handler when a thread is destroyed
+    /**
+     * Event handler when a thread is destroyed
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ExitedDMEvent e) {
     	fMICommandCache.reset(e.getDMContext());
@@ -645,12 +675,13 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         rm.done();
     }
 	
-	/*
+	/**
 	 * Run selected execution thread to a given line number.
 	 */
-	// Later add support for Address and function.
-	// skipBreakpoints is not used at the moment. Implement later
 	public void runToLine(IExecutionDMContext context, String fileName, String lineNo, boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm){
+	    // Later add support for Address and function.
+	    // skipBreakpoints is not used at the moment. Implement later
+	    
     	assert context != null;
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -678,6 +709,10 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         }
 	}
 
+	/**
+	 * {@inheritDoc}
+     * @since 1.1
+     */
 	public void flushCache(IDMContext context) {
 		fMICommandCache.reset(context);		
 	}

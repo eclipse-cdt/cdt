@@ -12,6 +12,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarInfoTypeInfo;
 
@@ -28,10 +29,17 @@ import org.eclipse.dd.mi.service.command.output.MIVarInfoTypeInfo;
  */
 public class MIVarInfoType extends MICommand<MIVarInfoTypeInfo> 
 {
+	/**
+     * @since 1.1
+     */
 	public MIVarInfoType(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-info-type", new String[]{name}); //$NON-NLS-1$
 	}
-    
+
+	public MIVarInfoType(MIControlDMContext ctx, String name) {
+	    this ((ICommandControlDMContext)ctx, name);
+	}
+	
     @Override
     public MIVarInfoTypeInfo getResult(MIOutput out) {
         return new MIVarInfoTypeInfo(out);

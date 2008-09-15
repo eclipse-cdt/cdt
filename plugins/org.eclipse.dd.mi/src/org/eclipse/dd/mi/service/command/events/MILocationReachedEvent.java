@@ -37,6 +37,9 @@ public class MILocationReachedEvent extends MIStoppedEvent {
         return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }
 
+    /**
+     * @since 1.1
+     */
     public static MILocationReachedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
     	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 

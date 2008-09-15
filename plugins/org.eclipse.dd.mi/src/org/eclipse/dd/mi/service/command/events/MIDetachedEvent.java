@@ -14,6 +14,7 @@ package org.eclipse.dd.mi.service.command.events;
 
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 
 
 /**
@@ -23,10 +24,17 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 @Immutable
 public class MIDetachedEvent extends MIEvent<ICommandControlDMContext> {
 
+    /**
+     * @since 1.1
+     */
     public MIDetachedEvent(ICommandControlDMContext ctx, int token) {
         super(ctx, token, null);
     }
 
+    public MIDetachedEvent(MIControlDMContext ctx, int token) {
+        this ((ICommandControlDMContext)ctx, token);
+    }
+    
     @Override
     public String toString() {
         return "Detached"; //$NON-NLS-1$

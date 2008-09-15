@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.dd.dsf.debug.ui" version="2">
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/launch/StackFramesVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFramesVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/WatchExpressionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/MessagesForVariablesVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/AutomaticUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/BreakpointHitUpdatePolicy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/BreakpointHitUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/ManualUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/SyncVariableDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/AbstractExpressionVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/RefreshActionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/SyncRegisterDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/AbstractSetFormatStyle.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.AbstractSetFormatStyle">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.AbstractSetFormatStyle"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProviderModelProxyStrategy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="META-INF/MANIFEST.MF">
+<filter id="923795461">
+<message_arguments>
+<message_argument value="1.1.0.qualifier"/>
+<message_argument value="1.0.0.v20080609"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/SelectUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/IDebugVMConstants.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionManagerVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionManagerVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionManagerVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMProvider">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMProvider"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/IExpressionUpdate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionUpdate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionUpdate"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/MessagesForRegisterVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.MessagesForRegisterVM">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.MessagesForRegisterVM"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/launch/LaunchRootVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.LaunchRootVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterGroupVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterGroupVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterGroupVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/IFormattedValuePreferenceStore.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValuePreferenceStore">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValuePreferenceStore"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatDecimal.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/WatchExpressionCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatNatural.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterRootDMVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterRootDMVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterRootDMVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/MessagesForExpressionVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.MessagesForExpressionVM">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.MessagesForExpressionVM"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProviderContentStragegy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderContentStragegy">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderContentStragegy"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterColumnPresentation">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatBinary.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/modules/ModulesVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatOctal.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/modules/ModulesVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMProvider">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMProvider"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/IFormattedValueVMContext.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValueVMContext">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/IExpressionVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/launch/StandardProcessVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StandardProcessVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/FormattedValuePreferenceStore.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.FormattedValuePreferenceStore">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.FormattedValuePreferenceStore"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatHex.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMNode">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+</component>

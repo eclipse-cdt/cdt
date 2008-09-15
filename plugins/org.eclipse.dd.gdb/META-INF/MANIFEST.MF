@@ -15,9 +15,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.dd.gdb.internal.provisional,
- org.eclipse.dd.gdb.internal.provisional.actions,
- org.eclipse.dd.gdb.internal.provisional.breakpoints,
- org.eclipse.dd.gdb.internal.provisional.launching,
- org.eclipse.dd.gdb.internal.provisional.service,
- org.eclipse.dd.gdb.internal.provisional.service.command
+Export-Package: org.eclipse.dd.gdb.internal.provisional;x-internal:=true,
+ org.eclipse.dd.gdb.internal.provisional.actions;x-internal:=true,
+ org.eclipse.dd.gdb.internal.provisional.breakpoints;x-internal:=true,
+ org.eclipse.dd.gdb.internal.provisional.launching;x-internal:=true,
+ org.eclipse.dd.gdb.internal.provisional.service;x-internal:=true,
+ org.eclipse.dd.gdb.internal.provisional.service.command;x-internal:=true

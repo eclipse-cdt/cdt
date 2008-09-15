@@ -31,6 +31,9 @@ public class MIThreadSelect extends MICommand<MIInfo>
 		super(ctx, "-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
 	}
 	
+	/**
+     * @since 1.1
+     */
 	public MIThreadSelect(IDMContext ctx, String threadNum) {
 		super(ctx, "-thread-select", new String[]{threadNum}); //$NON-NLS-1$
 	}

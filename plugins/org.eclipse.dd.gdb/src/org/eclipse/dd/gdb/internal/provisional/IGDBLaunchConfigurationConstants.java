@@ -51,6 +51,7 @@ public class IGDBLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. Boolean value to set the non-stop mode
 	 * Debuger/gdb/MI property.
+	 * @since 1.1
 	 */
 	public static final String ATTR_DEBUGGER_NON_STOP = GdbPlugin.PLUGIN_ID + ".NON_STOP"; //$NON-NLS-1$
 
@@ -66,6 +67,7 @@ public class IGDBLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. Boolean value to set the 'use shared library symbols for application' flag of the debugger.
+	 * @since 1.1
 	 */
 	public static final String ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP = GdbPlugin.PLUGIN_ID + ".USE_SOLIB_SYMBOLS_FOR_APP"; //$NON-NLS-1$
 
@@ -91,6 +93,7 @@ public class IGDBLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_NON_STOP.
+	 * @since 1.1
 	 */
 	public static final boolean DEBUGGER_NON_STOP_DEFAULT = false;
 
@@ -106,6 +109,7 @@ public class IGDBLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP.
+     * @since 1.1
 	 */
 	public static final boolean DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT = false;
 

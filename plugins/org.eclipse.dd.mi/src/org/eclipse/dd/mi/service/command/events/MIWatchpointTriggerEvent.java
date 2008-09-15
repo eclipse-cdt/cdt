@@ -121,6 +121,9 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
         return new MIWatchpointTriggerEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), number, exp, oldValue, newValue);
     }
 
+    /**
+     * @since 1.1
+     */
     public static MIWatchpointTriggerEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
        int number = 0;

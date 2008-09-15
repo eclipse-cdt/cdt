@@ -12,6 +12,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
 import org.eclipse.dd.mi.service.command.output.MIVarAssignInfo;
 
@@ -25,10 +26,16 @@ import org.eclipse.dd.mi.service.command.output.MIVarAssignInfo;
  */
 public class MIVarAssign extends MICommand<MIVarAssignInfo> 
 {
+	/**
+     * @since 1.1
+     */
 	public MIVarAssign(ICommandControlDMContext ctx, String name, String expression) {
 		super(ctx, "-var-assign", new String[]{name, expression}); //$NON-NLS-1$
 	}
-	
+
+	public MIVarAssign(MIControlDMContext ctx, String name, String expression) {
+	    this ((ICommandControlDMContext)ctx, name, expression);
+	}
     @Override
     public MIVarAssignInfo getResult(MIOutput out) {
         return new MIVarAssignInfo(out);

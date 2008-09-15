@@ -1228,12 +1228,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Session exit
     //-------------------------------------------------------------------------
 
-	// Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
+	// Not used, kept for API compatibility.  
+    /**
+     * This method is left for API compatibility only.
+     * ICommandControlShutdownDMEvent is used instead.
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(MIGDBExitEvent e) {
         terminated();
     }
 
+    /**
+     * @since 1.1
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // bug 243899: The call to terminate results in an exception,  

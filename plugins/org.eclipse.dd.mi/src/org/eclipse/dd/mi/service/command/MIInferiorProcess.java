@@ -140,19 +140,25 @@ public class MIInferiorProcess extends Process
      * @param inferiorExecCtx The execution context controlling the execution 
      * state of the inferior process.
      * @param gdbOutputStream The output stream to use to write user IO into.
+     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
         this(commandControl, inferiorExecCtx, gdbOutputStream, null);
     }
 
+    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
+        this(commandControl, inferiorExecCtx, gdbOutputStream, null);
+    }
+
     /**
      * @deprecated {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, OutputStream)} 
      * should be used instead.
+     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
-    public MIInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
+    public MIInferiorProcess(AbstractMIControl commandControl, OutputStream gdbOutputStream) {
         this(commandControl, null, gdbOutputStream, null);
     }
 
@@ -164,19 +170,25 @@ public class MIInferiorProcess extends Process
      * @param inferiorExecCtx The execution context controlling the execution 
      * state of the inferior process.
      * @param p The terminal to use to write user IO into.
+     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
         this(commandControl, inferiorExecCtx, null, p);
     }
 
+    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
+        this(commandControl, inferiorExecCtx, null, p);
+    }
+    
     /**
      * @deprecated Should use {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, PTY)}
      * instead.
+     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
-    public MIInferiorProcess(ICommandControlService commandControl, PTY p) {
+    public MIInferiorProcess(AbstractMIControl commandControl, PTY p) {
         this(commandControl, null, null, p);
     }
 
@@ -245,9 +257,15 @@ public class MIInferiorProcess extends Process
         return fSession;
     }
     
+    /**
+     * @since 1.1
+     */
     @Deprecated
     protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
 
+    /**
+     * @since 1.1
+     */
     protected ICommandControlService getCommandControlService() { return fCommandControl; }
     
     protected boolean isDisposed() { return fDisposed; }
@@ -419,18 +437,30 @@ public class MIInferiorProcess extends Process
         return fInputStreamPiped;
     }
 
+    /**
+     * @since 1.1
+     */
     public OutputStream getPipedErrorStream() {
         return fErrorStreamPiped;
     }
 
+    /**
+     * @since 1.1
+     */
     public PTY getPTY() {
         return fPty;
     }
     
+    /**
+     * @since 1.1
+     */
     public String getPid() { 
     	return fInferiorPid;
     }
     
+    /**
+     * @since 1.1
+     */
     public void setPid(String pid) { 
     	fInferiorPid = pid;
     }

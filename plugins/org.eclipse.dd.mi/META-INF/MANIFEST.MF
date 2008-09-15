@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.debug.core,
  org.eclipse.cdt.core
 Export-Package: 
- org.eclipse.dd.mi.internal,
+ org.eclipse.dd.mi.internal;x-internal:=true,
  org.eclipse.dd.mi.service,
  org.eclipse.dd.mi.service.command,
  org.eclipse.dd.mi.service.command.commands,

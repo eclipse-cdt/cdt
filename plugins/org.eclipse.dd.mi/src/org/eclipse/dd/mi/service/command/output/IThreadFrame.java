@@ -12,6 +12,9 @@ package org.eclipse.dd.mi.service.command.output;
 
 import java.math.BigInteger;
 
+/**
+ * @since 1.1
+ */
 public interface IThreadFrame {
 	int        getStackLevel();
 	BigInteger getAddress();

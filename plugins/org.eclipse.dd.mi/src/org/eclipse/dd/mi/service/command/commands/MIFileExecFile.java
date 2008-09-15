@@ -13,6 +13,7 @@
 package org.eclipse.dd.mi.service.command.commands;
 
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 
 
@@ -26,11 +27,25 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MIFileExecFile extends MICommand<MIInfo>
 {
+    /**
+     * @since 1.1
+     */
     public MIFileExecFile(ICommandControlDMContext dmc, String file) {
         super(dmc, "-file-exec-file", null, new String[] {file}); //$NON-NLS-1$
     }
+
+    public MIFileExecFile(MIControlDMContext dmc, String file) {
+        this ((ICommandControlDMContext)dmc, file);
+    }
     
+    /**
+     * @since 1.1
+     */
     public MIFileExecFile(ICommandControlDMContext dmc) {
         super(dmc, "-file-exec-file"); //$NON-NLS-1$
+    }
+
+    public MIFileExecFile(MIControlDMContext dmc) {
+        this ((ICommandControlDMContext)dmc);
     }
 }

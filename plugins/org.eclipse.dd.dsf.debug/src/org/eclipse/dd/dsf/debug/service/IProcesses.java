@@ -24,6 +24,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  * This service provides a relatively simple interface for 
  * manipulating processes as compared with a full-blown
  * remote target debugger. 
+ * @since 1.1
  */
 public interface IProcesses extends IDMService {
     

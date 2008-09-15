@@ -1678,6 +1678,9 @@ public class MIVariableManager implements ICommandControl {
         }
     }
     
+    /**
+     * @since 1.1
+     */
     public void markAllOutOfDate() {
     	MIRootVariableObject root;
     	while ((root = updatedRootList.poll()) != null) {

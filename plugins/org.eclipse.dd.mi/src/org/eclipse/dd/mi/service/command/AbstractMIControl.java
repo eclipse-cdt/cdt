@@ -118,6 +118,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
         fUseThreadAndFrameOptions = false;
     }
 
+    /**
+     * @since 1.1
+     */
     public AbstractMIControl(DsfSession session, String id, boolean useThreadAndFrameOptions) {
         super(session);
         fId = id;
@@ -359,10 +362,16 @@ public abstract class AbstractMIControl extends AbstractDsfService
     
     abstract public MIControlDMContext getControlDMContext();
     
+    /**
+     * @since 1.1
+     */
     public boolean isActive() {
         return !fStoppedCommandProcessing;
     }
     
+    /**
+     * @since 1.1
+     */
     public String getId() {
         return fId;
     }

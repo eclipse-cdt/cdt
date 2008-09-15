@@ -39,7 +39,6 @@ import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchMessages;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
-import org.eclipse.dd.mi.service.ProcessInfo;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 

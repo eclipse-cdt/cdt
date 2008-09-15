@@ -86,6 +86,9 @@ public abstract class AbstractCLIProcess extends Process
          
     private int fPrompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 
+    /**
+     * @since 1.1
+     */
     @ConfinedToDsfExecutor("fSession#getExecutor")
 	public AbstractCLIProcess(ICommandControlService commandControl) throws IOException {
         fSession = commandControl.getSession();
@@ -118,12 +121,19 @@ public abstract class AbstractCLIProcess extends Process
         fMIOutLogPipe = miOutLogPipe;
         fMIInLogPipe = miInLogPipe; 
 	}
+
+    public AbstractCLIProcess(AbstractMIControl commandControl) throws IOException {
+        this ( (ICommandControlService)commandControl );
+    }
     
     protected DsfSession getSession() { return fSession; }
 
     @Deprecated
 	protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
     
+    /**
+     * @since 1.1
+     */
 	protected ICommandControlService getCommandControlService() { return fCommandControl; }
 	
 	protected boolean isDisposed() { return fDisposed; }

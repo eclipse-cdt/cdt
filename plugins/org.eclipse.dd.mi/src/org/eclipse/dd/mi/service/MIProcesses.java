@@ -45,6 +45,9 @@ import org.eclipse.dd.mi.service.command.output.MIThreadListIdsInfo;
 import org.osgi.framework.BundleContext;
 
 
+/**
+ * @since 1.1
+ */
 public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICachingService {
 	
 	// Below is the context hierarchy that is implemented between the
@@ -606,6 +609,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		rm.done();
 	}
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
     	if (e instanceof IContainerResumedDMEvent) {
@@ -618,6 +625,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     }
 
 
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
        	if (e instanceof IContainerSuspendedDMEvent) {
@@ -628,13 +639,19 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
        	}
     }
 
-    // Event handler when a thread starts
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
         fContainerCommandCache.reset();
 	}
 
-    // Event handler when a thread exits
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
         fContainerCommandCache.reset();

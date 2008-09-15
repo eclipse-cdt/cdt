@@ -72,6 +72,9 @@ public class MIStoppedEvent extends MIEvent<IExecutionDMContext> {
 		return new MIStoppedEvent(execDmc, token, results, frame);
     }
     
+    /**
+     * @since 1.1
+     */
     public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
     {
     	MIFrame frame = null;

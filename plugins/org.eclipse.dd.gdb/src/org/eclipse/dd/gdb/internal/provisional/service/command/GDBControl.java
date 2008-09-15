@@ -418,10 +418,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fInferiorProcess;
     }
     
-    public void resetInferior(MIInferiorProcess inferior) {
-    	fCLICommandProcessor.resetInferior(inferior);
-    }
-    
     public boolean isGDBExited() { 
         return fMonitorJob != null && fMonitorJob.fExited; 
     }
@@ -709,7 +705,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
             createInferiorProcess();
             
-            fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc, fInferiorProcess);
+            fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
 
             requestMonitor.done();

@@ -18,8 +18,6 @@ import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
@@ -29,17 +27,13 @@ import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
-import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointChangedEvent;
 import org.eclipse.dd.mi.service.command.events.MIDetachedEvent;
-import org.eclipse.dd.mi.service.command.events.MIErrorEvent;
 import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIRunningEvent;
 import org.eclipse.dd.mi.service.command.events.MISignalChangedEvent;
-import org.eclipse.dd.mi.service.command.output.MIOutput;
-import org.eclipse.dd.mi.service.command.output.MIResultRecord;
 
 /**
  * GDB debugger output listener.
@@ -49,28 +43,22 @@ public class CLIEventProcessor_7_0
     implements ICommandListener, IEventListener
 {
     private final ICommandControlService fCommandControl;
-    private MIInferiorProcess fInferior;
     private final ICommandControlDMContext fControlDmc;
     
     private final DsfServicesTracker fServicesTracker;
     
-    public CLIEventProcessor_7_0(ICommandControlService connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
+    public CLIEventProcessor_7_0(ICommandControlService connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fInferior = inferior;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
+        fControlDmc = controlDmc;
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
-        connection.addCommandListener(this);
-        connection.addEventListener(this);
+        fCommandControl.addCommandListener(this);
+        fCommandControl.addEventListener(this);
     }
 
     public void dispose() {
         fCommandControl.removeCommandListener(this);
         fCommandControl.removeEventListener(this);
         fServicesTracker.dispose();
-    }
-
-    public void resetInferior(MIInferiorProcess inferior) {
-    	fInferior = inferior;
     }
     
     public void commandSent(ICommandToken token) {
@@ -100,29 +88,6 @@ public class CLIEventProcessor_7_0
     }
     
     public void eventReceived(Object output) {
-        // GDB can send an error result following sending an OK result. 
-        // In this case the error is routed as an event.  
-        MIResultRecord rr = ((MIOutput)output).getMIResultRecord();
-        if (rr != null) {
-            // Check if the state changed.
-            String state = rr.getResultClass();
-            
-            // This is not handled properly yet
-            // see bug 247161
-            if (fInferior != null && "error".equals(state)) { //$NON-NLS-1$
-                if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
-                    fInferior.setState(MIInferiorProcess.State.STOPPED);
-                    IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-		    		String groupId = procService.getExecutionGroupIdFromThread(null);
-
-                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
-                    fCommandControl.getSession().dispatchEvent(
-                        MIErrorEvent.parse(processContainerDmc, rr.getToken(), rr.getMIResults(), null),
-                        fCommandControl.getProperties());
-                }
-            } 
-        }
     }
 
 

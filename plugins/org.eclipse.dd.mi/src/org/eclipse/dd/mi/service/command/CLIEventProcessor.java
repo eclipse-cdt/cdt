@@ -36,7 +36,6 @@ import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointChangedEvent;
 import org.eclipse.dd.mi.service.command.events.MIDetachedEvent;
-import org.eclipse.dd.mi.service.command.events.MIErrorEvent;
 import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIRunningEvent;
 import org.eclipse.dd.mi.service.command.events.MISignalChangedEvent;
@@ -44,7 +43,6 @@ import org.eclipse.dd.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.dd.mi.service.command.output.MIConsoleStreamOutput;
 import org.eclipse.dd.mi.service.command.output.MIOOBRecord;
 import org.eclipse.dd.mi.service.command.output.MIOutput;
-import org.eclipse.dd.mi.service.command.output.MIResultRecord;
 
 /**
  * GDB debugger output listener.
@@ -54,23 +52,26 @@ public class CLIEventProcessor
     implements ICommandListener, IEventListener
 {
     private final ICommandControlService fCommandControl;
-    private MIInferiorProcess fInferior;
     private final ICommandControlDMContext fControlDmc;
     
     // Last Thread ID created 
 	private static int fLastThreadId;
     
     private final DsfServicesTracker fServicesTracker;
-    
-    public CLIEventProcessor(ICommandControlService connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
+
+    public CLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fInferior = inferior;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
+        fControlDmc = controlDmc;
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addCommandListener(this);
         connection.addEventListener(this);
         // Re-set the counter
         fLastThreadId = 0;
+    }
+
+    @Deprecated
+    public CLIEventProcessor(ICommandControlService connection, IContainerDMContext containerDmc, MIInferiorProcess inferior) {
+        this(connection, DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class));
     }
 
     public void dispose() {
@@ -79,8 +80,8 @@ public class CLIEventProcessor
         fServicesTracker.dispose();
     }
 
+    @Deprecated
     public void resetInferior(MIInferiorProcess inferior) {
-    	fInferior = inferior;
     }
     
     public void commandSent(ICommandToken token) {
@@ -135,27 +136,6 @@ public class CLIEventProcessor
                 // -thread-list-ids command. This is done as threads reported by exit event are still reported till 
                 // they completely exit the system.
             }
-        }
-        
-        // GDB can send an error result following sending an OK result. 
-        // In this case the error is routed as an event.  
-        MIResultRecord rr = ((MIOutput)output).getMIResultRecord();
-        if (rr != null) {
-            // Check if the state changed.
-            String state = rr.getResultClass();
-            if (fInferior != null && "error".equals(state)) { //$NON-NLS-1$
-                if (fInferior.getState() == MIInferiorProcess.State.RUNNING) {
-                    fInferior.setState(MIInferiorProcess.State.STOPPED);
-                    IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-		    		String groupId = procService.getExecutionGroupIdFromThread(null);
-
-                    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                    IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
-                    fCommandControl.getSession().dispatchEvent(
-                        MIErrorEvent.parse(processContainerDmc, rr.getToken(), rr.getMIResults(), null),
-                        fCommandControl.getProperties());
-                }
-            } 
         }
     }
 

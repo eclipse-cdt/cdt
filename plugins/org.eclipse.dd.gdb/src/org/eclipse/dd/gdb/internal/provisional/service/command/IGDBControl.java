@@ -47,8 +47,6 @@ public interface IGDBControl extends ICommandControlService {
 
 	MIInferiorProcess getInferiorProcess();
 
-    public void resetInferior(MIInferiorProcess inferior);
-	
 	boolean isGDBExited();
 
 	int getGDBExitCode();

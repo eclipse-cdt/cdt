@@ -29,7 +29,7 @@ public final class EntryDescriptor {
 	private EntryDescriptor parent = null;
 	private boolean isDefaultForCategory = false;
 
-	public EntryDescriptor (String _id, String _par, String _name, boolean _cat, CWizardHandler _h, Image _image) {
+	public EntryDescriptor(String _id, String _par, String _name, boolean _cat, CWizardHandler _h, Image _image) {
 		id = _id;
 		parentId = _par;
 		name = _name;

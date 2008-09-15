@@ -266,8 +266,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			String savedStr = (sel.length > 0) ? sel[0].getText() : null; 
 			
 			tree.removeAll();
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-				.getExtensionPoint(EXTENSION_POINT_ID);
+			IExtensionPoint extensionPoint =
+				    Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 			if (extensionPoint == null) return null;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
@@ -357,7 +357,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				while (it2.hasNext()) {
 					EntryDescriptor wd1 = it2.next();
 					if (wd1.getParentId() == null) continue;
-					for (int i=0; i<placedEntryDescriptorsList.size(); i++) {
+					for (int i = 0; i< placedEntryDescriptorsList.size(); i++) {
 						EntryDescriptor wd2 = placedEntryDescriptorsList.get(i);
 						if (wd2.getId().equals(wd1.getParentId())) {
 							found = true;
@@ -404,7 +404,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			if (ed.isCategory())
 				h = null;
 			try {
-				if (h != null && ed != null) 
+				if (h != null) 
 					h.initialize(ed);
 			} catch (CoreException e) { 
 				h = null;
@@ -412,15 +412,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			if (h_selected != null) 
 				h_selected.handleUnSelection();
 			h_selected = h;
-			if (h == null) 
-			{
-				if (ed != null && ed.isCategory())
-				{
-					if (categorySelectedLabel == null)
-					{
+			if (h == null) {
+				if (ed.isCategory()) {
+					if (categorySelectedLabel == null) {
 						categorySelectedLabel = new Label(right, SWT.WRAP);
 						categorySelectedLabel.setText(
-								UIMessages.getString("CDTMainWizardPage.1"));						 //$NON-NLS-1$
+								UIMessages.getString("CDTMainWizardPage.1"));  //$NON-NLS-1$
 						right.layout();
 					}
 					categorySelectedLabel.setVisible(true);

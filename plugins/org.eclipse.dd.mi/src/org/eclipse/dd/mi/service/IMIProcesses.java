@@ -53,30 +53,5 @@ public interface IMIProcesses extends IProcesses
      */
     IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
     												       String groupId);
-    
-    /**
-     * Retrieve the groupId to which this threadId belongs
-     * 
-     * @param threadId The ID of the thread
-     * @return The ID of the group to which the specified thread belongs
-     */
-    String getExecutionGroupIdFromThread(String threadId);
-    
-    /**
-     * This method should be called when a new thread is created.  It allows
-     * to keep track of the thread to group relationship.
-     * 
-     * @param threadId The ID of the new thread
-     * @param groupId The ID of the group to which the new thread belongs
-     */
-    void addThreadId(String threadId, String groupId);
-
-    /**
-     * This method should be called when a thread exits.  It is meant
-     * to remove the thread to group entry.
-     * 
-     * @param threadId The ID of the thread that exited
-     */
-    void removeThreadId(String threadId);
 }
 

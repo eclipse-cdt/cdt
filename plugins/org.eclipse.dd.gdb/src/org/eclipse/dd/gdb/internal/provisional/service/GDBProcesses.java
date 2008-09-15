@@ -97,12 +97,21 @@ public class GDBProcesses extends MIProcesses {
 	protected BundleContext getBundleContext() {
 		return GdbPlugin.getBundleContext();
 	}
-	
 
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
 			String pidStr = ((IMIProcessDMContext)dmc).getProcId();
+			// In our context hierarchy we don't actually use the pid in this version, because in this version,
+			// we only debug a single process.  This means we will not have a proper pid in all cases
+			// inside the context, so must find it another way.  Note that this method is also called to find the name
+			// of processes to attach to, and in this case, we do have the proper pid. 
+			if (pidStr == null || pidStr.length() == 0) {
+				MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+			    if (inferiorProcess != null) {
+			    	pidStr = inferiorProcess.getPid();
+			    }
+			}
 			int pid = -1;
 			try {
 				pid = Integer.parseInt(pidStr);
@@ -110,7 +119,7 @@ public class GDBProcesses extends MIProcesses {
 			}
 			
 			String name = fProcessNames.get(pid);
-			// If we don't find the name in our list, return the default name of our program
+			// If we still don't find the name in our list, return the default name of our program
 			if (name == null) name = fGdb.getExecutablePath().lastSegment();
 			rm.setData(new MIThreadDMData(name, pidStr));
 			rm.done();
@@ -182,8 +191,7 @@ public class GDBProcesses extends MIProcesses {
 				// This service version only handles a single process to debug, therefore, we can simply
 				// create the context describing this process ourselves.
 				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-				// Get the groupId properly for the case of an attach
-				String groupId = getExecutionGroupIdFromThread(null);
+				String groupId = MIProcesses.UNIQUE_GROUP_ID;
 				IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
 				IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, groupId);
 				rm.setData(new IContainerDMContext[] {newGroupDmc});
@@ -262,21 +270,4 @@ public class GDBProcesses extends MIProcesses {
             rm.done();
 	    }
 	}
-	
-    @Override
-	public String getExecutionGroupIdFromThread(String threadId) {
-    	// We need to properly return the groupId based on the pid
-    	// to properly handle the case of an attach.  See bug 244749
-    	String groupId = null;
-		MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-	    if (inferiorProcess != null) {
-	    	groupId = inferiorProcess.getPid();
-	    }
-	    if (groupId != null) {
-	    	return groupId;
-	    } else {
-	    	return super.getExecutionGroupIdFromThread(threadId);
-	    }
-    }
-
 }

@@ -28,6 +28,7 @@ import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMConte
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -115,7 +116,7 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	fRunCtrl.getExecutionContexts(groupDmc, rm);
@@ -201,7 +202,7 @@ public class MIRunControlTest extends BaseTestCase {
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
@@ -253,7 +254,7 @@ public class MIRunControlTest extends BaseTestCase {
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
@@ -472,7 +473,7 @@ public class MIRunControlTest extends BaseTestCase {
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
             	fRunCtrl.resume(groupDmc, rm);
@@ -492,7 +493,7 @@ public class MIRunControlTest extends BaseTestCase {
 		wait.waitReset();
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			public void run() {
-				String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
 				IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
 				IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 
@@ -547,7 +548,7 @@ public class MIRunControlTest extends BaseTestCase {
 		wait.waitReset();
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
 

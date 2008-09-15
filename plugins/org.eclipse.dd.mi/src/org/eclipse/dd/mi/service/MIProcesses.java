@@ -302,7 +302,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 	// The unique id should be an empty string so that the views know not to display the fake id
-	private static final String UNIQUE_GROUP_ID = ""; //$NON-NLS-1$
+	public static final String UNIQUE_GROUP_ID = ""; //$NON-NLS-1$
 
     public MIProcesses(DsfSession session) {
     	super(session);
@@ -553,8 +553,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			// This service version only handles a single process to debug, therefore, we can simply
 			// create the context describing this process ourselves.
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			// Get the groupId properly for the case of an attach
-			String groupId = getExecutionGroupIdFromThread(null);
+			String groupId = MIProcesses.UNIQUE_GROUP_ID;
 			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
 			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, groupId);
 			rm.setData(new IContainerDMContext[] {newGroupDmc});
@@ -606,10 +605,6 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
 	}
-	
-    public String getExecutionGroupIdFromThread(String threadId) {
-    	return UNIQUE_GROUP_ID;
-    }
 
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
@@ -648,15 +643,4 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	public void flushCache(IDMContext context) {
         fContainerCommandCache.reset(context);
 	}
-
-	public void addThreadId(String threadId, String groupId) {
-		// This version of the service does not support multiple
-		// processes, so there is nothing to do here
-	}
-
-	public void removeThreadId(String threadId) {
-		// This version of the service does not support multiple
-		// processes, so there is nothing to do here
-	}
-
 }

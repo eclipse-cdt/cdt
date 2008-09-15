@@ -325,8 +325,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 
     // A map of process id to process names.  It is filled when we get all the processes that are running
     private Map<String, String> fProcessNames = new HashMap<String, String>();
-    // A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
-    private Map<String, String> fGroupIdMap   = new HashMap<String, String>();
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -683,12 +681,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	    }
 	}
 	
-    public String getExecutionGroupIdFromThread(String threadId) {
-    	String groupId = fGroupIdMap.get(threadId);
-    	if (groupId == null) return ""; //$NON-NLS-1$
-    	else return groupId;
-    }
-    
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();
@@ -752,13 +744,4 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		fContainerCommandCache.reset(context);
 		fThreadCommandCache.reset(context);
 	}
-
-	public void addThreadId(String threadId, String groupId) {
- 		 fGroupIdMap.put(threadId, groupId);
-	}
-
-	public void removeThreadId(String threadId) {
-        fGroupIdMap.remove(threadId);		
-	}
-    
 }

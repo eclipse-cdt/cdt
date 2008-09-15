@@ -108,9 +108,9 @@ public class GDBProcessesTest extends BaseTestCase {
          */
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = fProcService.getExecutionGroupIdFromThread(null);
+            	String groupId = MIProcesses.UNIQUE_GROUP_ID;
 
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), pid);
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), groupId);
             	fProcService.getExecutionData(procDmc, rm);            					
             }
         });
@@ -158,7 +158,7 @@ public class GDBProcessesTest extends BaseTestCase {
          
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
-            	String groupId = fProcService.getExecutionGroupIdFromThread(THREAD_ID);
+            	String groupId = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), groupId);
             	IThreadDMContext threadDmc = fProcService.createThreadContext(procDmc, THREAD_ID);
             	fProcService.getExecutionData(threadDmc, rm);

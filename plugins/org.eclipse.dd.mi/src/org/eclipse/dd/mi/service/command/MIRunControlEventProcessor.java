@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecNext;
@@ -136,7 +137,9 @@ public class MIRunControlEventProcessor
         			// "reason" ??? still fire a stopped event.
         			if (events.isEmpty()) {
         				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
-        				events.add(e);
+						if (e != null) {
+							events.add(e);
+						}
         			}
 
         			for (MIEvent<?> event : events) {
@@ -149,7 +152,6 @@ public class MIRunControlEventProcessor
     
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
     	String threadId = null; 
-    	String groupId = null;
 
     	MIResult[] results = exec.getMIResults();
     	for (int i = 0; i < results.length; i++) {
@@ -164,8 +166,11 @@ public class MIRunControlEventProcessor
     	}
 
     	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-
-   		groupId = procService.getExecutionGroupIdFromThread(threadId);
+        if (procService == null) {
+        	return null;
+        }
+        
+   		String groupId = MIProcesses.UNIQUE_GROUP_ID;
 
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
@@ -241,12 +246,14 @@ public class MIRunControlEventProcessor
                 else                                           { type = MIRunningEvent.CONTINUE; }
 
                 IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-        		String groupId = procService.getExecutionGroupIdFromThread(null);
-                IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+                if (procService != null) {
+                	String groupId = MIProcesses.UNIQUE_GROUP_ID;
+                	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
 
-                fCommandControl.getSession().dispatchEvent(
-                		new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());
+                	fCommandControl.getSession().dispatchEvent(
+                			new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());
+                }
             } else if ("exit".equals(state)) { //$NON-NLS-1$
                 // No need to do anything, terminate() will.
                 // Send exited?

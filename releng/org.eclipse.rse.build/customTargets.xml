@@ -88,6 +88,7 @@
 
 	<target name="assemble.org.eclipse.rse.ftp">
 		<property name="archiveName" value="RSE-runtime-ftp-${buildId}.zip"/>
+		<property name="copyOrbit" value="true"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
@@ -112,6 +113,8 @@
 
 	<target name="assemble.org.eclipse.rse.sdk">
 		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
+		<property name="copyOrbit" value="true"/>
+		<property name="copyOrbitSrc" value="true"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
@@ -176,11 +179,33 @@
 		</copy>
 
 		<unpackUpdateJars site="${tmpsite}/eclipse" output="${tmpsite}/new/eclipse"/>
+		<antcall target="copyOrbitBundlesToUpdateSite"/>
 		<antcall target="packageLicenseFiles"/>
 		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}"
 			basedir="${tmpsite}/new"
 	  	/>
 		<delete dir="${tmpsite}"/>
+	</target>
+
+	<target name="copyOrbitBundlesToUpdateSite" depends="copyOrbit,copyOrbitSrc">
+	</target>
+
+	<target name="copyOrbit" if="copyOrbit">
+		<copy todir="${buildDirectory}/tmpsite/new/eclipse/plugins">
+			<fileset dir="${buildDirectory}/plugins">
+				<include name="org.apache.commons.net_*.jar"/>
+				<include name="org.apache.oro_*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyOrbitSrc" if="copyOrbitSrc">
+		<copy todir="${buildDirectory}/tmpsite/new/eclipse/plugins">
+			<fileset dir="${buildDirectory}/plugins">
+				<include name="org.apache.commons.net.source_*.jar"/>
+				<include name="org.apache.oro.source_*.jar"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="packageLicenseFiles">

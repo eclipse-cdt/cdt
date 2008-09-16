@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.eclipse.rse.ftp.source" version="3.0.1.qualifier" label="%featureName" provider-name="%providerName">
+        <description >
+                %description
+        </description>
+        <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+                %copyright
+        </copyright>
+        <license url="%licenseURL">
+                %license
+        </license>
+        <url>
+                <update url="http://download.eclipse.org/dsdp/tm/updates/3.0" label="%tmUpdateSiteName"/>
+                <discovery url="http://download.eclipse.org/dsdp/tm/updates/3.0" label="%tmUpdateSiteName"/>
+        </url>
+        <plugin id="org.eclipse.rse.ftp.source" version="0.0.0" download-size="50" install-size="104" />
+        <plugin id="org.apache.commons.net.source" version="0.0.0" download-size="180" install-size="304" unpack="false" />
+        <plugin id="org.apache.oro.source" version="0.0.0" download-size="101" install-size="201" unpack="false" />
+</feature>

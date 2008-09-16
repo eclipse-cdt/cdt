@@ -177,8 +177,11 @@
 		<copy todir="${buildUpdateSitePath}">
 		    <fileset dir="${tmpsite}/eclipse"/>
 		</copy>
+		<property name="orbitDest" value="${buildUpdateSitePath}"/>
+		<antcall target="copyOrbitBundlesToUpdateSite"/>
 
 		<unpackUpdateJars site="${tmpsite}/eclipse" output="${tmpsite}/new/eclipse"/>
+		<property name="orbitDest" value="${tmpsite}/new/eclipse"/>
 		<antcall target="copyOrbitBundlesToUpdateSite"/>
 		<antcall target="packageLicenseFiles"/>
 		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}"
@@ -191,7 +194,7 @@
 	</target>
 
 	<target name="copyOrbit" if="copyOrbit">
-		<copy todir="${buildDirectory}/tmpsite/new/eclipse/plugins">
+		<copy todir="${orbitDest}/plugins">
 			<fileset dir="${buildDirectory}/plugins">
 				<include name="org.apache.commons.net_*.jar"/>
 				<include name="org.apache.oro_*.jar"/>

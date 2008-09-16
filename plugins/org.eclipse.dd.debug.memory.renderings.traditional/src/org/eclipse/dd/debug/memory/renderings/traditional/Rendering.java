@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,6 +139,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     private int fCellPadding = 2;
 
     private int fPaneSpacing = 16;
+    
+    private String fPaddingString = "?"; //$NON-NLS-1$
     
     // flag whether the memory cache is dirty
     private boolean fCacheDirty = false;
@@ -512,6 +514,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         packColumns();
         layout(true);
+    }
+    
+    public void setPaddingString(String padding)
+    {
+    	fPaddingString = padding;
+    	
+    	refresh();
+    }
+    
+    public char getPaddingCharacter()
+    {
+    	return fPaddingString.charAt(0); // use only the first character
     }
     
     static int suspendCount = 0;
@@ -1933,7 +1947,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         StringBuffer errorText = new StringBuffer();
         for(int i = getRadixCharacterCount(radix, bytes.length); i > 0; i--)
-            errorText.append('?');
+            errorText.append(getPaddingCharacter());
 
         return errorText.toString();
     }
@@ -2015,7 +2029,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
             StringBuffer errorText = new StringBuffer();
             for(int i = memoryBytes.length; i > 0; i--)
-                errorText.append('?');
+                errorText.append(getPaddingCharacter());
             return errorText.toString();
         }
 
@@ -2077,7 +2091,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		// return ?s the length of byte count
     		StringBuffer buf = new StringBuffer();
     		for(int i = 0; i < memoryBytes.length - buf.length(); i++)
-    			buf.append('?');
+    			buf.append(getPaddingCharacter());
     		return buf.toString();
     	}   
     }

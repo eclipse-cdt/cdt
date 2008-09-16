@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.debug.memory.renderings.traditional.Rendering.Selection;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -31,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -156,6 +156,30 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     			}
     		});
         
+        
+        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
+        	new IPropertyChangeListener()
+        	{
+        		public void propertyChange(PropertyChangeEvent event)
+        		{
+        			if(event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR))
+        			{
+        				if(TraditionalRendering.this.fRendering != null)
+        				{
+	        				setRenderingPadding((String) event.getNewValue());
+	        				TraditionalRendering.this.fRendering.redrawPanes();
+        				}
+        			}
+        		}
+        	});
+           
+    }
+    
+    private void setRenderingPadding(String padding)
+    {
+    	if(padding == null || padding.length() == 0)
+			padding = "?";
+		TraditionalRendering.this.fRendering.setPaddingString(padding);
     }
     
     protected void logError(String message, Exception e)
@@ -441,6 +465,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	    	AbstractPane panes[] = fRendering.getRenderingPanes();
 	    	for(int i = 0; i < panes.length; i++)
 	    		panes[i].setBackground(getColorBackground());
+	    	
+	    	setRenderingPadding(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR));
 	    	
 	    	fRendering.redrawPanes();
     	}

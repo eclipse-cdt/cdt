@@ -146,12 +146,12 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 	}
 
 	protected IIndexFileLocation findLocation(String absolutePath) {
-		IIndexFileLocation result = (IIndexFileLocation) fIflCache.get(absolutePath); 
-		if(result==null) {
-			result = IndexLocationFactory.getIFLExpensive(getCProject(), absolutePath);
-			fIflCache.put(absolutePath, result);
-		}
-		return result;
+		return IndexBasedCodeReaderFactory.findLocation(getCProject(), fIflCache, absolutePath);
+	}
+
+	
+	protected void storeLocation(String path, IIndexFileLocation ifl) {
+		fIflCache.put(path, ifl);
 	}
 
 	protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {

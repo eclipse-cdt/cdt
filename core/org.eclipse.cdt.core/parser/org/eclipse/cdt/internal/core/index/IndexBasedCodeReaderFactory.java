@@ -77,7 +77,6 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		private static final long serialVersionUID = 1L;
 	}
 	
-	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
 	private final static char[] EMPTY_CHARS = new char[0];
 
 	private final IIndex index;
@@ -144,22 +143,14 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		if (!fIncludeFileResolutionCache.exists(path)) {
 			return null;
 		}
-		String canonicalPath= path;
-		if (!CASE_SENSITIVE_FILES) {
-			try {
-				File location= new File(path);
-				canonicalPath= location.getCanonicalPath();
-			}
-			catch (IOException e) {
-				// just use the original
-			}
-		}
 		try {
-			IIndexFileLocation incLocation = findLocation(canonicalPath);
+			IIndexFileLocation incLocation = findLocation(path);
 			IndexFileInfo info= createInfo(incLocation, null);
+			// use the version of the path created by findLocation.
+			path= IndexLocationFactory.getAbsolutePath(incLocation).toOSString();
 
 			if (isIncluded(info)) {
-				return new CodeReader(canonicalPath, EMPTY_CHARS);
+				return new CodeReader(path, EMPTY_CHARS);
 			}
 
 			// try to build macro dictionary off index
@@ -186,7 +177,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 						usedMacros.add(fi.fMacros);
 						setIncluded(fi);
 					}
-					return new CodeReader(canonicalPath, EMPTY_CHARS);
+					return new CodeReader(path, EMPTY_CHARS);
 				} catch (NeedToParseException e) {
 				}
 			}
@@ -198,23 +189,13 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		}
 
 		if (fFallBackFactory != null) {
-			return fFallBackFactory.createCodeReaderForInclusion(scanner, canonicalPath);
+			return fFallBackFactory.createCodeReaderForInclusion(scanner, path);
 		}
-		return ParserUtil.createReader(canonicalPath, null);
+		return ParserUtil.createReader(path, null);
 	}
 
 	public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
-		String canonicalPath= path;
-		if (!CASE_SENSITIVE_FILES) {
-			try {
-				File location= new File(path);
-				canonicalPath= location.getCanonicalPath();
-			}
-			catch (IOException e) {
-				// just use the original
-			}
-		}
-		IIndexFileLocation loc= findLocation(canonicalPath);
+		IIndexFileLocation loc= findLocation(path);
 		IndexFileInfo info= (IndexFileInfo) fileInfoCache.get(loc);
 		if (info != null && isIncluded(info)) {
 			return true;
@@ -312,9 +293,31 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 	}
 	
 	public IIndexFileLocation findLocation(String absolutePath) {
-		if(!iflCache.containsKey(absolutePath)) {
-			iflCache.put(absolutePath, IndexLocationFactory.getIFLExpensive(cproject, absolutePath));
+		return findLocation(cproject, iflCache, absolutePath);
+	}
+	
+	public static IIndexFileLocation findLocation(ICProject cproject, Map iflCache, String absolutePath) {
+		IIndexFileLocation ifl=  (IIndexFileLocation) iflCache.get(absolutePath);
+		if (ifl != null)
+			return ifl;
+		
+		ifl= IndexLocationFactory.getIFLExpensive(cproject, absolutePath);
+		try {
+			String canonicPath= new File(absolutePath).getCanonicalPath();
+			if (ifl.getFullPath() == null) {
+				// for external paths use the canonic version
+				ifl= (IIndexFileLocation) iflCache.get(canonicPath); 
+				if (ifl == null) {
+					ifl= IndexLocationFactory.getExternalIFL(canonicPath);
+					iflCache.put(canonicPath, ifl);
+				}
+			} else {
+				// for workspace paths, cache with the canonical path, also.
+				iflCache.put(canonicPath, ifl);
+			}
+		} catch (IOException e) {
 		}
+		iflCache.put(absolutePath, ifl);
 		return (IIndexFileLocation) iflCache.get(absolutePath);
 	}
 

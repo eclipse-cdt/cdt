@@ -89,12 +89,15 @@ public class IndexLocationFactory {
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
 		if(files.length==1) {
-			return getWorkspaceIFL(files[0]);
+			IFile file = files[0];
+			if (file.exists())
+				return getWorkspaceIFL(file);
 		} else {
 			if(cproject!=null) {
 				for(int i=0; i<files.length; i++) {
-					if(files[i].getProject().equals(cproject.getProject()))
-						return getWorkspaceIFL(files[i]);
+					IFile file = files[i];
+					if(file.getProject().equals(cproject.getProject()) && file.exists())
+						return getWorkspaceIFL(file);
 				}
 			}
 		}

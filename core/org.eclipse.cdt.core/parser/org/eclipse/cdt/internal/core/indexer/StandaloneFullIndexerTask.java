@@ -149,6 +149,10 @@ public class StandaloneFullIndexerTask extends StandaloneIndexerTask {
 		return result;		
 	}
 
+	protected void storeLocation(String path, IIndexFileLocation ifl) {
+		fIflCache.put(path, ifl);
+	}
+
 	protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {		
 		// get the AST in a "Fast" way
 		IASTTranslationUnit ast= lang.getASTTranslationUnit(codeReader, scanInfo, ((StandaloneFullIndexer)fIndexer).getCodeReaderFactory(), null, options, fIndexer.getParserLog());

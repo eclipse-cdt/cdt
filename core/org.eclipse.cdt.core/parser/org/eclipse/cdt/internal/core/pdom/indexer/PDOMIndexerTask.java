@@ -63,6 +63,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 
 public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexerTask {
+	private static final String TRACE_INCLUDES= "/debug/indexer/includes"; //$NON-NLS-1$
 	private static final Object NO_CONTEXT = new Object();
 	private static final int MAX_ERRORS = 500;
 	private static final String TRUE = "true"; //$NON-NLS-1$
@@ -79,6 +80,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
+		setShowUnresolvedIncludes(checkDebugOption(TRACE_INCLUDES, TRUE));
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			setSkipReferences(SKIP_ALL_REFERENCES);
 		}
@@ -151,7 +153,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return TRUE.equals(getIndexer().getProperty(key));
 	}
 
-	private IASTTranslationUnit createAST(ITranslationUnit tu, IScannerInfo scannerInfo, int options, IProgressMonitor pm) throws CoreException {
+	private IASTTranslationUnit createAST(ITranslationUnit tu, IIndexFileLocation ifl, IScannerInfo scannerInfo, int options, IProgressMonitor pm) throws CoreException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return null;
@@ -164,7 +166,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		if (codeReader == null) {
 			return null;
 		}
-		
+		storeLocation(codeReader.getPath(), ifl);
 		return createAST((AbstractLanguage) language, codeReader, scannerInfo, options, pm);
 	}
 
@@ -328,7 +330,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 							new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
 					long start= System.currentTimeMillis();
-					IASTTranslationUnit ast= createAST(tu, scanner, options, pm);
+					IASTTranslationUnit ast= createAST(tu, originator, scanner, options, pm);
 					fStatistics.fParsingTime += System.currentTimeMillis()-start;
 					if (ast != null) {
 						addSymbols(ast, index, readlockCount, false, configHash, taskUpdater, pm);

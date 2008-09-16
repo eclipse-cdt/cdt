@@ -771,6 +771,24 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return r_unclear;
         }
 
+    	public String toString() {
+    		StringBuffer result= new StringBuffer();
+    		result.append(getName().toCharArray());
+    		result.append('(');
+    		IASTFunctionStyleMacroParameter[] params=  getParameters();
+    		for (int i = 0; i < params.length; i++) {
+    			IASTFunctionStyleMacroParameter param= params[i];
+    			if (i>0) {
+    				result.append(',');
+    			}
+    			result.append(param.getParameter());
+    		}
+    		result.append(')');
+    		result.append('=');
+    		result.append(getExpansion());
+    		return result.toString();
+    	}
+
     }
 
     public static interface _IPreprocessorDirective {
@@ -1022,6 +1040,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             this.expansion = exp;
         }
 
+
+        public String toString() {
+    		return getName().toString() + '=' + getExpansion();
+    	}
     }
 
     public abstract static class Location implements IASTNodeLocation {

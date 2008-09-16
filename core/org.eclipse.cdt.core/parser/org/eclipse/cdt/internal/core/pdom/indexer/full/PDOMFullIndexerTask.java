@@ -159,6 +159,11 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		}
 		return result;
 	}
+	
+	protected void storeLocation(String path, IIndexFileLocation ifl) {
+		fIflCache.put(path, ifl);
+	}
+
 
 	protected IASTTranslationUnit createAST(AbstractLanguage lang, CodeReader codeReader, IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
 		SavedCodeReaderFactory codeReaderFactory= SavedCodeReaderFactory.getInstance();

@@ -67,6 +67,7 @@ abstract public class PDOMWriter {
 	
 	protected boolean fShowActivity;
 	protected boolean fShowProblems;
+	protected boolean fShowUnresolvedIncludes;
 	protected IndexerStatistics fStatistics;
 	
 	private IndexerProgress fInfo= new IndexerProgress();
@@ -74,6 +75,10 @@ abstract public class PDOMWriter {
 	
 	public PDOMWriter() {
 		fStatistics= new IndexerStatistics();
+	}
+
+	public void setShowUnresolvedIncludes(boolean val) {
+		fShowUnresolvedIncludes= val;
 	}
 	
 	public void setShowActivity(boolean val) {
@@ -113,6 +118,11 @@ abstract public class PDOMWriter {
 	 */
 	protected abstract IIndexFileLocation findLocation(String absolutePath);
 		
+	/**
+	 * Called to store the location that has to be found later via the given path
+	 */
+	protected abstract void storeLocation(String absolutePath, IIndexFileLocation ifl);
+	
 	/**
 	 * Fully equivalent to 
 	 * <code>addSymbols(IASTTranslationUnit, IWritableIndex, int, true, int, null, IProgressMonitor)</code>.
@@ -401,7 +411,7 @@ abstract public class PDOMWriter {
 
 	private void reportProblem(IASTPreprocessorIncludeStatement problem) {
 		fStatistics.fUnresolvedIncludes++;
-		if (fShowProblems) {
+		if (fShowProblems || fShowUnresolvedIncludes) {
 			String msg= "Indexer: unresolved include"; //$NON-NLS-1$
 			IASTFileLocation loc= problem.getFileLocation();
 			if (loc != null && loc.getFileName() != null) {

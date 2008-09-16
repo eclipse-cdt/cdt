@@ -45,9 +45,14 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.dd.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
+import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -76,7 +81,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusAdapter;
@@ -91,6 +99,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -104,6 +113,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusLineContributionItem;
 
+@SuppressWarnings("restriction")
 public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
 
     /**
@@ -278,15 +288,20 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * Job to compute the details for a selection
      */
     class DetailJob extends Job implements IValueDetailListener {
-        
-        private IStructuredSelection fElements;
+        private IPresentationContext fPresentationContext;
+        private Object fViewerInput;
+        private ITreeSelection fElements;
         private boolean fFirst = true;
         private IProgressMonitor fMonitor;
         private boolean fComputed = false;
         
-        public DetailJob(IStructuredSelection elements, IDebugModelPresentation model) {
+        public DetailJob(IPresentationContext context, Object viewerInput, ITreeSelection elements, 
+                        IDebugModelPresentation model) 
+        {
             super("compute variable details"); //$NON-NLS-1$
             setSystem(true);
+            fPresentationContext = context;
+            fViewerInput = viewerInput;
             fElements = elements;
         }
         
@@ -295,7 +310,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
          *  for a given element.  It is expected and required that this routine will be
          *  called from within a DSF executor.
          */
-        private void putInformationIntoDetailPane( final IFormattedDataDMContext finalDmc , 
+        private void putInformationIntoDetailPane( final AbstractCachingVMProvider provider,
+                                                   final IVMNode node, 
+                                                   final TreePath path,
+                                                   final IFormattedDataDMContext finalDmc , 
         		 								   final IFormattedValues service, 
         										   final IProgressMonitor monitor, 
         										   final String name ) {
@@ -381,8 +399,20 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                              */
                             final FormattedValueDMContext valueDmc = service.getFormattedValueContext(finalDmc, str);
                             
-                            service.getFormattedExpressionValue(
-                                valueDmc,
+                            provider.getModelData(
+                                node, 
+                                new IViewerUpdate() {
+                                    public void cancel() {}
+                                    public void done() {}
+                                    public Object getViewerInput() { return fViewerInput; }
+                                    public TreePath getElementPath() { return path; }
+                                    public Object getElement() { return path.getLastSegment(); }
+                                    public IPresentationContext getPresentationContext() { return fPresentationContext; }
+                                    public boolean isCanceled() { return monitor.isCanceled(); }
+                                    public void setStatus(IStatus status) {}
+                                    public IStatus getStatus() { return null; }
+                                }, 
+                                service, valueDmc, 
                                 new DataRequestMonitor<FormattedValueDMData>(service.getExecutor(), null) {
                                     @Override
                                     public void handleCompleted() {
@@ -411,8 +441,8 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                         }
                                         countingRm.done();
                                     }
-                                }
-                            );
+                                },
+                                provider.getExecutor());
                         }
                     }
                 };
@@ -426,7 +456,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        @SuppressWarnings("unchecked")
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
             
@@ -435,17 +464,19 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 fMonitor.setCanceled(true);
             }
             fMonitor = monitor;
-            Iterator<Object> iterator = fElements.iterator();
-            while (iterator.hasNext()) {
+            TreePath[] paths = fElements.getPaths();
+            for (int i = 0; i < paths.length; i++) {
                 if (monitor.isCanceled()) {
                     break;
                 }
-                Object element = iterator.next();
+                final TreePath path = paths[i];
+                Object element = paths[i].getLastSegment();
                 
                 /*
                  *  Make sure this is an element we want to deal with.
                  */
                 if ( element instanceof IDMVMContext) {
+                    IDMVMContext vmc = (IDMVMContext)element;
                     /*
                      *  We are specifically looking to support the following Data Model Contexts
                      *  
@@ -467,11 +498,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                      *  have a BitField DMC we will get the register and show the value of  the
                      *  register not the bit field.
                      */
-                    
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), ((IDMVMContext) element).getDMContext().getSessionId());
-                    
-                    final IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class);
 
+                    DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), vmc.getDMContext().getSessionId());
+
+                    final AbstractCachingVMProvider provider = (AbstractCachingVMProvider)vmc.getAdapter(AbstractCachingVMProvider.class);
+                    final IVMNode node = (IVMNode)vmc.getAdapter(IVMNode.class);
+                                        
+                    final IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class);
                     if ( bitfieldDmc != null ) {
                     	/*
                          *  Get the name so we can construct the header which identifies the detail
@@ -488,7 +521,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                     						@Override
                     						public void handleCompleted() {
                     							if (getStatus().isOK()) {
-                    								putInformationIntoDetailPane(bitfieldDmc , regService, monitor, getData().getName());
+                    								putInformationIntoDetailPane(provider, node, path, bitfieldDmc , regService, monitor, getData().getName());
                     							}
                     						}
                     					}
@@ -516,7 +549,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                            		@Override
                                            		public void handleCompleted() {
                                            			if (getStatus().isOK()) {
-                                           				putInformationIntoDetailPane(regDmc , regService, monitor, getData().getName());
+                                           				putInformationIntoDetailPane(provider, node, path, regDmc , regService, monitor, getData().getName());
                                            			}
                                            		}
                                            	}
@@ -534,7 +567,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 exprService.getExecutor().submit(
                                     new Runnable() {
                                     	public void run() {
-                                    		putInformationIntoDetailPane(exprDmc , exprService, monitor, exprDmc.getExpression());
+                                    		putInformationIntoDetailPane(provider, node, path, exprDmc , exprService, monitor, exprDmc.getExpression());
                                     	}
                                     }
                                 );
@@ -870,23 +903,38 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 
         fLastDisplayed = selection;
                         
-        if (selection.isEmpty()){
+        if ( selection.isEmpty() || !(selection instanceof ITreeSelection) ) {
             clearSourceViewer();
             return;
         }
         
         Object firstElement = selection.getFirstElement();
-        if (firstElement != null && firstElement instanceof IDebugElement) {
-            String modelID = ((IDebugElement)firstElement).getModelIdentifier();
-            setDebugModel(modelID);
+        if (firstElement instanceof IAdaptable) {
+            IDebugModelProvider debugModelProvider = 
+                (IDebugModelProvider)((IAdaptable)firstElement).getAdapter(IDebugModelProvider.class);
+            if (debugModelProvider != null) {
+                String[] ids = debugModelProvider.getModelIdentifiers();
+                if (ids != null && ids.length > 0) {
+                    setDebugModel(ids[0]);
+                }
+            }
         }
         
         synchronized (this) {
             if (fDetailJob != null) {
                 fDetailJob.cancel();
             }
-            fDetailJob = new DetailJob(selection, null);
-            fDetailJob.schedule();
+            IWorkbenchPart part = fWorkbenchPartSite.getPart(); 
+            if (part instanceof IDebugView) {
+                Viewer viewer = ((IDebugView)part).getViewer();
+                Object input = viewer.getInput();
+                if (input != null && viewer instanceof TreeModelViewer) {
+                    TreeModelViewer treeModelViewer = (TreeModelViewer)viewer;
+                    fDetailJob = new DetailJob(treeModelViewer.getPresentationContext(), input, 
+                        (ITreeSelection)selection, null);
+                    fDetailJob.schedule();
+                }
+            }
         }
     }
     

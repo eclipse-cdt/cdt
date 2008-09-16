@@ -174,15 +174,13 @@
 		<exec executable="unzip" dir="${buildDirectory}/${buildLabel}">
 			<arg line="-q ${archiveName} -d ${tmpsite}" />
 		</exec>
+		<property name="orbitDest" value="${tmpsite}/eclipse"/>
+		<antcall target="copyOrbitBundlesToUpdateSite"/>
 		<copy todir="${buildUpdateSitePath}">
 		    <fileset dir="${tmpsite}/eclipse"/>
 		</copy>
-		<property name="orbitDest" value="${buildUpdateSitePath}"/>
-		<antcall target="copyOrbitBundlesToUpdateSite"/>
 
 		<unpackUpdateJars site="${tmpsite}/eclipse" output="${tmpsite}/new/eclipse"/>
-		<property name="orbitDest" value="${tmpsite}/new/eclipse"/>
-		<antcall target="copyOrbitBundlesToUpdateSite"/>
 		<antcall target="packageLicenseFiles"/>
 		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}"
 			basedir="${tmpsite}/new"

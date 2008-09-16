@@ -100,6 +100,11 @@ public class LaunchTerminalCommandHandler extends AbstractHandler {
 	private void init(IStructuredSelection selection) {
 		Iterator e = selection.iterator();
 		Object selectedObject = e.next();
+		
+		selected = null;
+		subSystem = null;
+		selectedFilterRef = null;
+		
 		if (selectedObject != null) {
 			if (selectedObject instanceof ISystemFilterReference) {
 				selectedFilterRef = (ISystemFilterReference) selectedObject;
@@ -145,9 +150,12 @@ public class LaunchTerminalCommandHandler extends AbstractHandler {
 			return null;
 		String path = getWorkingDirectory(selected);
 
-		String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
+		String cdCmd; 
 		if (getTerminalSubSystem().getHost().getSystemType().isWindows()) {
 			cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
+		} else
+		{
+			cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
 		}
 		return cdCmd + "\r"; //$NON-NLS-1$
 	}

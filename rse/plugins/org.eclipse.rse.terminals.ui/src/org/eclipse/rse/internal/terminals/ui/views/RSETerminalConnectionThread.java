@@ -7,6 +7,7 @@
  * Contributors:
  * Anna Dushistova (MontaVista) - initial API and implementation
  * Anna Dushistova (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
+ * Anna Dushistova (MontaVista) - [246592] Terminal session issues "cd /
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -51,7 +52,7 @@ public class RSETerminalConnectionThread extends Thread {
         try {
             if (subsystem instanceof TerminalServiceSubSystem) {
 				ITerminalService ts = ((TerminalServiceSubSystem) subsystem).getTerminalService();
-				shell = ts.launchTerminal("ansi", null, null, "/", null, new NullProgressMonitor());
+				shell = ts.launchTerminal("ansi", null, null, null, null, new NullProgressMonitor());
 			}
             fConn.setInputStream(shell.getInputStream());
             fConn.setOutputStream(shell.getOutputStream());

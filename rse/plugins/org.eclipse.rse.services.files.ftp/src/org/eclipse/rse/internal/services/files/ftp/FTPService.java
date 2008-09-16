@@ -80,6 +80,7 @@
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * Martin Oberhuber (Wind River) - [240738][ftp] Incorrect behavior on getFile for non-existing folder
  * David McKnight   (IBM)        - [243921] FTP subsystem timeout causes error when expanding folders
+ * Martin Oberhuber (Wind River) - [217472][ftp] Error copying files with very short filenames
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -680,7 +681,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	{
 		boolean isConnected = false;
 
-		if(_ftpClient!=null) {			
+		if(_ftpClient!=null) {
 			isConnected =  _ftpClient.isConnected();
 			if (isConnected){ // make sure that there hasn't been a timeout
 				try {
@@ -1366,7 +1367,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			File tempFile = null;
 
 			try {
-				tempFile = File.createTempFile(srcName, String.valueOf(srcParent.hashCode()));
+				tempFile = File.createTempFile("ftpcp" + String.valueOf(srcParent.hashCode()), "temp");
 				tempFile.deleteOnExit();
 			} catch (IOException e) {
 				throw new RemoteFileIOException(e);

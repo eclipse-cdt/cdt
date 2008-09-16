@@ -153,7 +153,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return TRUE.equals(getIndexer().getProperty(key));
 	}
 
-	private IASTTranslationUnit createAST(ITranslationUnit tu, IIndexFileLocation ifl, IScannerInfo scannerInfo, int options, IProgressMonitor pm) throws CoreException {
+	private IASTTranslationUnit createAST(ITranslationUnit tu, IScannerInfo scannerInfo, int options, IProgressMonitor pm) throws CoreException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return null;
@@ -166,7 +166,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		if (codeReader == null) {
 			return null;
 		}
-		storeLocation(codeReader.getPath(), ifl);
+		storeLocation(codeReader.getPath(), IndexLocationFactory.getIFL(tu));
 		return createAST((AbstractLanguage) language, codeReader, scannerInfo, options, pm);
 	}
 
@@ -330,7 +330,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 					pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 							new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
 					long start= System.currentTimeMillis();
-					IASTTranslationUnit ast= createAST(tu, originator, scanner, options, pm);
+					IASTTranslationUnit ast= createAST(tu, scanner, options, pm);
 					fStatistics.fParsingTime += System.currentTimeMillis()-start;
 					if (ast != null) {
 						addSymbols(ast, index, readlockCount, false, configHash, taskUpdater, pm);

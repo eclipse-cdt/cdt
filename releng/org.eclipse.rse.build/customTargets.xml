@@ -239,6 +239,10 @@
 			<or>
 				<equals arg1="${buildType}" arg2="S"/>
 				<equals arg1="${buildType}" arg2="R"/>
+				<and>
+					<equals arg1="${buildType}" arg2="M"/>
+					<not><matches pattern="M[0-9-]*" string="${buildId}"/></not>
+				</and>
 			</or>
 		</condition>
 		<property name="buildUpdateSitePath" value="${packageDirectory}/${dropDir}/updates"/>

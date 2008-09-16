@@ -33,75 +33,16 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>The <b>RSE User Actions</b> framework is available as a new downloadable package
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187395">187395</a>].</li>
-<li>The <b>RAPI Library and Windows CE Subsystem</b> is available as a new downloadable
-  package in Incubation status. Thanks to Radoslav Gerganov for contributing this new
-  functionality
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=214887">214887</a>].</li>
-<li><b>Tgz and tar.gz files</b> are now supported by the DSore and Local archive handlers.
-  Thanks to Johnson Ma for contributing this new functionality
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195402">195402</a>].</li>
-<li>The optional <b>terminal input line is now resizeable</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196447">196447</a>].</li>
-<li>Performance: <b>Fewer plugins are now activated</b> when RSE starts up, because the
-  code that loads UI Adapters for the core services being used now loads those
-  adapters more lazily. For some extenders of RSE, this might mean that they need
-  to manually provide for loading their adapters when needed. For details, see the
-  final comments on bug
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218304">218304</a>].</li>
-<li>API: <b>Streamed remote shell and Terminal access</b> is now supported by API. 
-  <code>IAdaptable</code> is used to convert the old API into the new one. This
-  will enable RSE Terminal integrations, and provide better performance and 
-  consumability. At the same time, the RSE Services was cleaned up and made 
-  implement <code>IAdaptable</code> in general
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170910">170910</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226262">226262</a>].</li>
-<li>API: <b>RSE Early Startup and initialization</b> behavior was improved. The
-  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_core_modelInitializers.html">org.eclipse.rse.core.modelInitializers</a></code>
-  extension point was added for clients to register code that needs to be executed
-  when the RSE Model is initialized. For clients, new API was added to
-  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html">RSECorePlugin</a></code>
-  in order to
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#isInitComplete(int)">query</a>
-  when initialization is complete, or to 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#waitForInitCompletion(int)">wait</a>
-  until initialization completes a given phase, or to get
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/RSECorePlugin.html#addInitListener(org.eclipse.rse.core.IRSEInitListener)">notified</a>
-  when initialization passes a given phase
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197167">197167</a>].</li>
-<li>API: <b>RSE SystemMessages</b> can now be constructed more easily with the new
-  <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/messages/SimpleSystemMessage.html">SimpleSystemMessage</a></code> API.
-  Contents of these messages typically comes from
-  standard Eclipse NLS property files, rather than the RSE-specific monolithic
-  systemmessages.xml file. At the same time, messages have been refactored into
-  non-UI plugins where possible, or the correct feature-specific plugins. This 
-  accounts for better modularity and Platform integration;
-  but it also means breaking API changes where clients had re-used RSE messages
-  for themselves. Such re-use is now no longer supported  
-  [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=211067,216252,220309">211067,216252,220309</a>].</li>
-<li>API: <b>RSE MOVE and COPY Events</b> now also contain source and destination objects,
-  such that listeners can update data associated with moved remote objects
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224313">224313</a>].</li>
-<li>API: Added API to support running the dstore server in multi-threaded mode,
-  where many clients can share a single remote process to save resources
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220126">220126</a>].</li>
-<li>API: The TerminalConnectorProxy class was removed, and replaced by
-  an <code>IAdaptable</code> mechanism to get a concrete connector instance. This
-  allows to programmatically create connections when a concrete connector instance
-  is known, and will be further enhanced in the future
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=200541">200541</a>].</li>
-<li>API: RSE FTP Listing Parsers can now contribute custom commands to send on
-  connect. This enables connecting IBM System/i (OS400) FTP in IFS mode
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=212382">212382</a>].</li>
+<li>API: WinCE <b>IRAPISession.CeRapiInvoke()</b> has been added
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238773">238773</a>].</li>
 </ul></li>
-<li>At least 100 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-02-19&chfieldto=2008-06-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B345%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.0+M7&target_milestone=3.0+RC1&target_milestone=3.0+RC2&target_milestone=3.0+RC3&target_milestone=3.0+RC4&target_milestone=3.0+RC5&target_milestone=3.0&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 2 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-06-20&chfieldto=2008-10-03&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B345%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M6-200804112145/">
-  TM 3.0M6</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M6-200804112145/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/">
+  TM 3.0.1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads//buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://www.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -145,169 +86,42 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>For the upcoming TM 3.0 release, some API changes will be inevitable,
-especially in order to support improved componentization and UI/Non-UI splitting.
-Although we completed a great deal of API cleanup for TM 2.0, we decided
-to still mark all API as <i>provisional</i> since we expect more work to do.
-If anyhow possible, we will avoid breaking API changes after TM 2.0, but please 
-be prepared for future changes, and especially take care of API marked as 
-<b>@deprecated</b> in the Javadoc.
-Such API is prime candidate to be removed in the future. All
-API changes will be voted by committers on the 
-<a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
-dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
-for future releases. Early migration information can also be found right
-in the bug reports. Look for those that are tagged [api][breaking].</p>
+<p>For the upcoming TM 3.1 release, only backward compatible API changes
+are planned, especially in order to support improved componentization
+and UI/Non-UI splitting.
+In the interest of improving the code base, though, please 
+take care of API marked as <b>@deprecated</b> in the Javadoc.
+Such API is prime candidate to be removed in the future.
+Also, observe the API Tooling tags such as <b>@noextend</b> and 
+<b>@noimplement</b>.
+</p>
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since TM 2.0 - newest changest first</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.0</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following lists those API changes that are not backward compatible and require
-user attention. A short hint on what needs to change is given directly in the list.
+The following lists amendments to API specifications that are worth noticing,
+and may require changes in client code even though they are binary compatible.
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M7&target_milestone=3.0+RC1&target_milestone=3.0+RC2&target_milestone=3.0+RC3&target_milestone=3.0+RC4&target_milestone=3.0+RC5&target_milestone=3.0&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
+<li>TM @buildId@ API Specification Updates
 <ul>
-</ul>
-<li>TM 3.0M6 Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M6&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
-<ul>
-<li><b>RSE UI Adapter Loading</b> has been made more lazy. This means, that contributors
-  of RSE subsystems, which provide core services and UI adapters in separate plugins, may
-  need to take care of loading their adapters at the right time. RSE does provide for 
-  automatica adapter loading when a subsystem gets connected, but any adapter functionality
-  that's needed before that time needs to be provided by the client. For details, see the
-  final comments on bug
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218304">218304</a>].</li>
-<li>Several <b>SystemMessages and Shared Resource Strings</b> have been moved to different packages in order
-    to allow better integration with other Eclipse projects and better UI/Non-UI splitting.
-    New <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/messages/SimpleSystemMessage.html">SimpleSystemMessage</a></code> class has been added to create System Messages out 
-    of standard Eclipse NLS Strings. A list of related breaking API changes is attached to bugs
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216252">216252</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220309">220309</a>].</li>
-<li><b>Adaptable Services</b>: All RSE Services must now extend <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/package-summary.html">AbstractService</a></code>
-  rather than implementing the Service interface directly, in order to make the Service
-  adaptable
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226262">226262</a>].</li>
-<li><b>ISystemNewConnectionWizardPage</b> was moved from Core to non-UI, and replaced
-  by a non-UI base class named <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/model/ISubSystemConfigurator.html">ISubSystemConfigurator</a></code> in non-UI.
-  Contributed Wizard Pages should use the new API in order to support configuring 
-  subsystems without bringing in unnecessary UI dependencies
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168976">168976</a>].</li>
-<li><b>SystemFileTransferModeRegistry</b> has been moved to internal class. <code>ISystemFileTransferModeRegistry</code> can now
-    be accessed by calling new API <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/RemoteFileUtility.html#getSystemFileTransferModeRegistry()">RemoteFileUtility.getSystemFileTransferModeRegistry()</a></code>
-    instead
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=220020">220020</a>].</li>
-<li>Some deprecated or not correctly working methods have been removed but should not have
-    been used by any clients anyways
-    [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=219975,221138,220041,223126">219975,220041,223126</a>].</li>
-<li>Some less relevant breaking API changes, mostly for cleaning up API, have been made.
-    See the bug reports if you find that your code doesn't compile any more against RSE
-    3.0M6 and you find that not even an "organize imports" operation helps:
-    [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bbreaking%5D&product=Target+Management&component=Core&component=RSE&component=Terminal&resolution=FIXED&chfieldfrom=2008-02-19&chfieldto=2008-04-12&chfield=resolution&chfieldvalue=&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0+M%5B3457%5D&field0-0-2=bug_id&type0-0-2=anyexact&value0-0-2=168976%2C220020%2C216252%2C220309%2C219975%2C220041%2C223126%2C218304%2C221138%2C226262">query bugzilla</a>].</li>
-</ul></li>
-<li>TM 3.0M5 Breaking API Changes [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&target_milestone=3.0+M5&resolution=FIXED&keywords_type=allwords&keywords=api&cmdtype=doit">query</a>]
-<ul>
-<li><b>Removed</b> <tt>IServiceSubSystem</tt> and related types in order to simplify the code, and allow better lazy initialization.
-    <tt>ISubSystem.getServiceType()</tt> is now used to know whether a given subsystem
-    is based on a service or not. Implementers of IServiceSubSystem need to implement ISubSystem now; code that tested for <tt>instanceof IServiceSubSystem</tt>
-    needs to use the dynamic check now
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217556">217556</a>].</li>
-<li><b>Removed</b> <tt>ISystemProfile#createHost(IRSESystemType, String, String, String)</tt>. Deprecated some other methods related
-    to filter or host creation, in order to support lazy initialization of filter pools.
-    Replacement methods are mentioned in the deprecation text
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197036">197036</a>].</li>
-<li>Made the <b>TerminalConnectorId mandatory</b> in terminal connector plugin.xml,
-    because it is essentially API allowing to talk to a given connector
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199285">199285</a>].</li>
-<li><b>Removed</b> deprecated <tt>ISystemViewInputProvider#getShell()</tt> 
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218524">218524</a>].</li>
-<li><b>Moved</b> some methods from <tt>ISystemRegistry</tt> into <tt>ISystemRegistryUI</tt>
-    in order to facilitate moving SystemRegistry implementation to non-UI. Making this change
-    also required <b>adding an SWT dependency for rse.core</b>, which we hope to get rid
-    again later. The SystemRegistry logfile can now be found in the <tt>rse.core</tt> plugin rather
-    than the <tt>rse.ui</tt> plugin
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215820">215820</a>].</li>
-<li><b>IRSESystemType.isEnabled()</b> has been added instead of <tt>RSESystemTypeAdapter.isEnabled()</tt>,
-    in order to provide enablement info to non-UI plugins as well. The adapter method has been made 
-    final in order to warn extenders that they need to move their code to non-UI.
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218655">218655</a>].</li>
-</ul></li>
-<li>TM 3.0M4 Breaking API Changes
-<ul>
-<li><b><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/subsystems/IRemoteObjectResolver.html#getObjectWithAbsoluteName(java.lang.String,%20org.eclipse.core.runtime.IProgressMonitor)">
-    IRemoteObjectResolver.getObjectWithAbsoluteName()</a></b>
-    now takes an additional <tt>IProgressMonitor</tt> parameter, in order to support cancellation of deferred queries.
-    The old method has been deprecated and will be removed for 3.0. Especially custom <b>Subsystem</b> implementations will need to 
-    be changed to implement the new method instead of the old one
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211472">211472</a>].</li>
-<li><b><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/IFileService.html#getOutputStream(java.lang.String,%20java.lang.String,%20boolean,%20int,%20org.eclipse.core.runtime.IProgressMonitor)">
-    IFileService.getOutputStream()</a></b>
-    now takes an additional <tt>int options</tt> parameter, in order to support opening streams which append
-    to existing files. This was required in order to properly fulfill the EFS APIs. The corresponding old
-    method has been deprecated and will be removed for 3.0. Custom File Service implementations should be
-    changed to implement the new method instead of the old one
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208778">208778</a>].</li>
-<li><b>Removed</b> the now obsolete IFileService.list(...) methods in favor of the new API
-    from <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">bug 207178</a>.
-    Clients of IRemoteFileSubSystem and IFileService need to be changed, though the change
-    is simple and compiler will mark error positions
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209552">209552</a>].</li>
-<li><b>Archive Handler API</b> has been changed to support background operation and cancellation.
-    To facilitate this, an additional ISystemOperationMonitor interface was added as last parameter
-    of most method calls in 
-    <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/archiveutils/ISystemArchiveHandler.html"><tt>ISystemArchiveHandler</tt></a>. In addition to that,
-    <tt><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/archiveutils/VirtualChild.html">VirtualChild</a>#getExtractedFile()</tt> was also changed
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160775">160775</a>].</li>
-<li><b>Removed</b> obsolete method
-    <tt><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/ui/RSESystemTypeAdapter.html">RSESystemTypeAdapter</a>#acceptContextMenuActionContribution()</tt>
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199032">199032</a>].</li>
-</ul></li>
-<li>TM 3.0M3 Breaking API Changes
-<ul>
-<li><b>Optimized IFileService for multi-queries</b>. This is not a breaking API change for clients
-    that extend <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/AbstractFileService.html"><tt>AbstractFileService</tt></a>
-    rather than implementing IFileService directly. But the
-    now deprecated methods <tt>getFiles()</tt>, <tt>getFolders()</tt> and <tt>getFilesAndFolders()</tt>
-    may be removed soon in favor of the new list() API
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">207178</a>].</li>
-<li><b>Changed ISubSystem#checkIsConnected()</b> to accept an IProgressMonitor argument
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207095">207095</a>].</li>
-<li><b>Changed the <tt>mountPathMappers</tt> extension point:</b>
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/files/ui/resources/ISystemMountPathMapper.html"><tt>ISystemMountPathMapper</a>#getWorkspaceMappingFor()</tt></b>
-  has been changed to accept an additional parameter of type 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/subsystems/IRemoteFileSubSystem.html"><tt>IRemoteFileSubSystem</tt></a>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195285">195285</a>].</li>
-<li><b>Removed some deprecated APIs:</b>
-  <ul><li>ISubSystem#connect() API without progress or callback
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186363">186363</a>].</li>
-      <li>obsolete SystemSelectConnection* classes
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196938">196938</a>].</li>
-      <li>obsolete classes ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=197129">197129</a>].</li>
-      <li>obsolete methods in IRemoteCmdSubSystem and IRemoteSystemEnvVar
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208813">208813</a>].</li>
-  </ul>
-    <!-- 
-    See the respective bug reports for migration.
-    <a href="https://bugs.eclipse.org/bugs/buglist.cgi?quicksearch=186363,196938,208813">186363,196938,208813</a>]
-    -->
-  </li>
+<li>None</li> 
 </ul>
 </li>
 </ul>
 
 Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2008-07-01&chfield=resolution&cmdtype=doit">
   <!-- 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.0+M3&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2008-06-20&chfieldto=2008-10-03&chfield=resolution&cmdtype=doit">
    -->
-  this query</a> to show the full list of API changes since TM 2.0
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1+M2&cmdtype=doit">
+  this query</a> to show the full list of API related updates since TM 3.0
   <!--
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
@@ -326,16 +140,16 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=235221">bug 235221</a> - cri - Files truncated on exit of Eclipse</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225360">bug 225360</a> - cri - [files] Deadlock on Startup with a remote file in the Editor</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=247059">bug 247059</a> - maj - [dstore] RSE AIX:SSL Connections work with EXPIRED certificate</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">bug 245260</a> - maj - Different user's connections on a single ftp host are mapped to the same temp files cache</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244070">bug 244070</a> - maj - [dstore] DStoreHostShell#exit() does not terminate child processes</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=236443">bug 236443</a> - maj - [releng] Using P2 to install "remotecdt" only from update site creates an unusable installation</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227944">bug 227944</a> - maj - [efs][regression] IllegalArgumentException for RemoteSystemsTempFiles project.</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226564">bug 226564</a> - maj - [efs] Deadlock while starting dirty workspace
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

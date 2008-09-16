@@ -41,12 +41,12 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_rel=R
-ep_ver=3.4
-ep_date=200806172000
+ep_rel=S
+ep_ver=3.5M1
+ep_date=200808071402
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3448f.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3504a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -107,12 +107,12 @@ else
   DROPUP=../..
 fi
 
-# EMF 2.4.0
-EMFBRANCH=2.4.0
-EMFREL=R
-EMFDATE=200806091234
-EMFVER=2.4.0
-if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_2.4.0.v${EMFDATE}.jar ]; then
+# EMF 2.5M1
+EMFBRANCH=2.5.0
+EMFREL=S
+EMFDATE=200808111043
+EMFVER=2.5.0M1
+if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFVER}.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
   cd ${DROPIN}
@@ -137,13 +137,16 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   cd ${DROPUP}
 fi
 
-# CDT 5.0 Runtime
-CDTVER=200806171202
-#CDTNAME=cdt-master-5.0.0-I${CDTVER}.zip
-#CDTLOC=builds/5.0.0/I.I${CDTVER}/${CDTNAME}
-CDTNAME=cdt-master-5.0.0.zip
-CDTLOC=releases/ganymede/dist/${CDTNAME}
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
+# CDT Runtime
+#CDTREL=5.0.0
+#CDTVER=200806171202
+#CDTNAME=cdt-master-5.0.0.zip
+#CDTLOC=releases/ganymede/dist/${CDTNAME}
+CDTREL=5.0.1
+CDTVER=200808290803
+CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
+CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTREL}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
   CDTTMP=`pwd`/tmp.$$
@@ -157,13 +160,13 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_5.0.0.${CDTVER}.jar ]; then
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt.platform \
-    -version 5.0.0.${CDTVER}
+    -version ${CDTREL}.${CDTVER}
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
-    -version 5.0.0.${CDTVER}
+    -version ${CDTREL}.${CDTVER}
   rm -rf ${CDTTMP}
   rm ${CDTNAME}
 fi
@@ -247,7 +250,7 @@ if [ ! -h doit_nightly.sh ]; then
 fi
 if [ ! -h setup.sh ]; then
   if [ -f setup.sh ]; then rm -f setup.sh; fi
-  ln -s org.eclipse.rse.build/bin/setup.sh .
+  ln -s org.eclipse.rse.build/setup.sh .
 fi
 chmod a+x doit_irsbuild.sh doit_nightly.sh
 cd org.eclipse.rse.build

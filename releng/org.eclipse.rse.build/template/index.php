@@ -18,12 +18,12 @@
 		User Agreement</a>.</p>
 		
 		<p><font size="+1"><strong>
-<!--
 		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
--->
+<!--
 		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.0/tm-news-3.0.html">New and Noteworthy</a></p>
 		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.0/readme_tm_3.0.html">TM 3.0 Readme / Release Notes</a></p>
 		  <p><a href="buildNotes.php">Build Notes</a></p>
+-->
 		</strong></font></p>
 		
 		<!-- <p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>

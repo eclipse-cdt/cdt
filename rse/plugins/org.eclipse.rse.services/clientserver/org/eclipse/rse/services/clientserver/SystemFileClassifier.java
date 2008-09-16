@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * Martin Oberhuber (Wind River) - [141823] Local connection does not classify symbolic links
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -179,7 +180,7 @@ public class SystemFileClassifier {
             	poutReader.close();
 
             	// if it a symbolic link, then get the canonical path and classify it as well
-        		if (type.equals("link")) { //$NON-NLS-1$
+				if (type.equals("symbolic link")) { //$NON-NLS-1$
         			String canonicalPath = file.getCanonicalPath();
         			return type + "(" + classifyNonVirtual(canonicalPath) + ")" + ":" + canonicalPath; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         		}
@@ -270,9 +271,10 @@ public class SystemFileClassifier {
     		type = "OS/400 object"; //$NON-NLS-1$
     	}
 
-    	// finally, if the full type contains the symbolic link string, then type is simply "link"
+    	// finally, if the full type contains the symbolic link string, then
+		// type is simply "symbolic link"
     	else if (fulltype.startsWith("symbolic link to")) { //$NON-NLS-1$
-    		type = "link"; //$NON-NLS-1$
+    		type = "symbolic link"; //$NON-NLS-1$
     	}
 
     	return type;

@@ -33,6 +33,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
+ * David McKnight   (IBM)        - [247189] SystemEditableRemoteFile.openEditor() not updating the default editor properly
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1615,7 +1616,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		String editorId = null;
 		if (_editorDescriptor != null)
-			_editorDescriptor.getId();
+			editorId = _editorDescriptor.getId();
 
 		IDE.setDefaultEditor(file, editorId);
 

@@ -107,6 +107,7 @@
 
 	<target name="assemble.org.eclipse.rse.telnet">
 		<property name="archiveName" value="RSE-runtime-telnet-${buildId}.zip"/>
+		<property name="copyOrbit" value="true"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

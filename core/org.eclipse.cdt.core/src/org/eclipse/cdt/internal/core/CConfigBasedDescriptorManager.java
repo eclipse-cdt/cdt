@@ -324,7 +324,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		dr = getLoaddedDescriptor(des);
 		if(dr == null){
 			dr = loadDescriptor(des);
-			if(dr != null){
+			if(dr != null && !des.isLoadding()){
 				setLoaddedDescriptor(des, dr);
 			}
 		}

@@ -33,7 +33,6 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	
 	public GPPScannerExtensionConfiguration() {
 		addMacro("__null", "0");  //$NON-NLS-1$//$NON-NLS-2$
-		addKeyword(Keywords.cRESTRICT, IToken.t_restrict);
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 	}

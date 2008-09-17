@@ -3341,7 +3341,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testBug87424() throws Exception {
 		IASTTranslationUnit tu = parse(
-				"int * restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
+				"int * __restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
 		
@@ -3350,7 +3350,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(t instanceof IGPPPointerType);
 		assertTrue(((IGPPPointerType) t).isRestrict());
 		
-		tu = parse("class A {}; int A::* restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
+		tu = parse("class A {}; int A::* __restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
 		col = new CPPNameCollector();
 		tu.accept(col);
 		
@@ -5971,6 +5971,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	public void testTypeIdForPtrToMember_Bug242197() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+	
+	// void restrict();
+	public void testRestrictIsNoCPPKeyword_Bug228826() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP, false);
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);  // even with gnu extensions
 	}
 	
 	// void test1();

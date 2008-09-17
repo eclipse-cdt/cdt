@@ -591,11 +591,13 @@
             targetID="org.eclipse.debug.ui.MemoryView"
             id="org.eclipse.debug.ui.memoryView.toolbar">
     	<action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.RefreshAction"
-               icon="icons/refresh.gif"
-               id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
-               label="Refresh"
-               toolbarPath="additions">
+           class="org.eclipse.dd.dsf.debug.internal.provisional.ui.memory.RefreshAction"
+           enablesFor="1"
+           icon="icons/refresh.gif"
+           id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
+           label="Refresh"
+           state="false"
+           toolbarPath="additions">
          </action>
          </viewContribution>
     </extension>

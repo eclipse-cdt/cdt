@@ -201,7 +201,7 @@
 	</target>
 
 	<target name="copyOrbitSrc" if="copyOrbitSrc">
-		<copy todir="${buildDirectory}/tmpsite/new/eclipse/plugins">
+		<copy todir="${orbitDest}/plugins">
 			<fileset dir="${buildDirectory}/plugins">
 				<include name="org.apache.commons.net.source_*.jar"/>
 				<include name="org.apache.oro.source_*.jar"/>

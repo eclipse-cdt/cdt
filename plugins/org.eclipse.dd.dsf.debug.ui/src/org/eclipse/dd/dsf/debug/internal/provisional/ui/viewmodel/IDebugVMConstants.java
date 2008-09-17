@@ -20,6 +20,7 @@ public interface IDebugVMConstants {
     public static final String COLUMN_ID__NAME = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__NAME"; //$NON-NLS-1$
     public static final String COLUMN_ID__TYPE = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__TYPE"; //$NON-NLS-1$
     public static final String COLUMN_ID__VALUE = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__VALUE"; //$NON-NLS-1$
+    public static final String COLUMN_ID__ADDRESS = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__ADDRESS"; //$NON-NLS-1$
     public static final String COLUMN_ID__DESCRIPTION = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__DESCRIPTION"; //$NON-NLS-1$
     public static final String COLUMN_ID__EXPRESSION = DsfDebugUIPlugin.PLUGIN_ID + ".COLUMN_ID__EXPRESSION"; //$NON-NLS-1$
 

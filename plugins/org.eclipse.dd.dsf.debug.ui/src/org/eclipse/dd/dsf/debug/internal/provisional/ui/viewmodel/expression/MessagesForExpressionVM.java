@@ -19,6 +19,7 @@ public class MessagesForExpressionVM extends NLS {
     public static String ExpressionColumnPresentation_name;
     public static String ExpressionColumnPresentation_type;
     public static String ExpressionColumnPresentation_value;
+    public static String ExpressionColumnPresentation_address;
     public static String ExpressionColumnPresentation_description;
 
     public static String ExpressionManagerLayoutNode__invalidExpression_nameColumn_label;

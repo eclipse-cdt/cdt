@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.utils.Addr32;
+import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,6 +39,7 @@ import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -180,12 +184,43 @@ public class VariableVMNode extends AbstractExpressionVMNode
         }
     }
 
+    private void fillInExpressionErrorInfo( ILabelUpdate update, IExpressionDMContext dmc, IStatus status ) { 
+    	/*
+    	 *  Instead of just failing this outright we are going to attempt to do more here.
+    	 *  Failing it outright causes the view to display ... for all columns in the line
+    	 *  and this is uninformative about what is happening. It will be very common that
+    	 *  one or more variables at that given instance in time are not evaluatable. They
+    	 *  may be out of scope and will come back into scope later.
+    	 */
+    	String[] localColumns = update.getColumnIds();
+    	if (localColumns == null)
+    		localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+
+    	for (int idx = 0; idx < localColumns.length; idx++) {
+    		if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
+    			update.setLabel(dmc.getExpression(), idx);
+    		} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+    			update.setLabel("", idx);
+    		} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+    			update.setLabel("Error : " + status.getMessage(), idx);
+    		} else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(localColumns[idx])) {
+    			update.setLabel("", idx);
+    		} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
+    			update.setLabel("", idx);
+    		} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+    			update.setLabel(dmc.getExpression(), idx);
+    		} else {
+    			update.setLabel("", idx);
+    		}
+    		update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+    	}
+    }
+
     
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             
             final IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
-            
             
             if ( dmc == null ) {
                 // Workaround for a bug in platform, where the find operation may use wrong label provider.
@@ -208,32 +243,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						assert getStatus().isOK() || 
        						getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
        						getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-       						/*
-       						 *  Instead of just failing this outright we are going to attempt to do more here.
-       						 *  Failing it outright causes the view to display ... for all columns in the line
-       						 *  and this is uninformative about what is happening. It will be very common that
-       						 *  one or more variables at that given instance in time are not evaluatable. They
-       						 *  may be out of scope and will come back into scope later.
-       						 */
-       						String[] localColumns = update.getColumnIds();
-       						if (localColumns == null)
-       							localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
-
-       						for (int idx = 0; idx < localColumns.length; idx++) {
-       							if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
-   									update.setLabel(dmc.getExpression(), idx);
-       							} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
-       								update.setLabel("", idx);
-       							} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-       								update.setLabel("Error : " + getStatus().getMessage(), idx);
-       							} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
-       								update.setLabel("", idx);
-       							} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
-   									update.setLabel(dmc.getExpression(), idx);
-       							}
-       							update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
-       						}
-
+       						
+       						fillInExpressionErrorInfo( update, dmc, getStatus() );
 
        						update.done();
        						return;
@@ -249,6 +260,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
 
        					boolean weAreExtractingFormattedData = false;
+       					boolean weAreExtractingAddressData = false;
 
        					for (int idx = 0; idx < localColumns.length; idx++) {
        						if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
@@ -257,6 +269,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
        							update.setLabel(getData().getTypeName(), idx);
        						} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
        							weAreExtractingFormattedData = true;
+       						} else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(localColumns[idx])) {
+       							weAreExtractingAddressData = true;
        						} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
        							update.setLabel("", idx);
        						} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
@@ -271,20 +285,86 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
        					}
 
-       					if ( ! weAreExtractingFormattedData ) {
+       					if ( ! weAreExtractingFormattedData && ! weAreExtractingAddressData ) {
        						update.done();
        					} else {
-       						boolean found = false;
-       						for (int idx = 0; idx < localColumns.length; idx++) {
-       							if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-       								found = true;
-       								updateFormattedExpressionValue(update, idx, dmc, getData());
-       								break;
-       							}
-       						}
-       						if (!found) {
-       							update.done();
-       						}
+       						/*
+       						 * We are either updating the value or the address or possibly both.
+       						 * We will create a overarching monitor to handle completing the update
+       						 * when either/both of the lower level updates are done.
+       						 */
+       					    final DsfExecutor dsfExecutor = getSession().getExecutor();
+       					    
+       						final MultiRequestMonitor<RequestMonitor> mrm =
+       	                        new MultiRequestMonitor<RequestMonitor>(dsfExecutor, null) {
+       	                            @Override
+       	                            public void handleCompleted() {
+       	                                // Now that all the calls to getModelData() are complete, we create an
+       	                                // IExpressionDMContext object for each local variable name, saving them all
+       	                                // in an array.
+
+       	                                if (!isSuccess()) {
+       	                                    handleFailedUpdate(update);
+       	                                    return;
+       	                                }
+       	                                
+       	                                update.done();
+       	                            }
+       	                    };
+       						
+       	                    /*
+       	                     * Deal with the value.
+       	                     */
+       	                    if ( weAreExtractingFormattedData ) {
+       	                    	boolean found = false;
+           						for (int idx = 0; idx < localColumns.length; idx++) {
+           							if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+           								found = true;
+           								RequestMonitor rm =
+           		                            new RequestMonitor(dsfExecutor, null) {
+           		                                @Override
+           		                                public void handleCompleted() {
+           		                                    mrm.requestMonitorDone(this);
+           		                                }
+           		                        };
+           		                        
+           		                        mrm.add(rm);
+           								updateFormattedExpressionValue(update, idx, dmc, getData(),rm);
+           								break;
+           							}
+           						}
+           						
+           						if (!found && ! weAreExtractingAddressData) {
+           							update.done();
+           						}
+       	                    }
+       	                    
+       	                    /*
+       	                     * Deal with the address.
+       	                     */
+       	                    if ( weAreExtractingAddressData ) {
+       	                    	boolean found = false;
+           						for (int idx = 0; idx < localColumns.length; idx++) {
+           							if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(localColumns[idx])) {
+           								found = true;
+           								RequestMonitor rm =
+           		                            new RequestMonitor(dsfExecutor, null) {
+           		                                @Override
+           		                                public void handleCompleted() {
+           		                                    mrm.requestMonitorDone(this);
+           		                                }
+           		                        };
+           		                        
+           		                        mrm.add(rm);
+           		                        updateAddressData(update, idx, dmc, rm);
+           								break;
+           							}
+           						}
+           						
+           						if (!found && ! weAreExtractingFormattedData) {
+           							update.done();
+           						}
+       	                    }
        					}
        				}
        			},
@@ -297,8 +377,66 @@ public class VariableVMNode extends AbstractExpressionVMNode
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
      */
-    private void updateFormattedExpressionValue(final ILabelUpdate update, final int labelIndex,
-                                                final IExpressionDMContext dmc, final IExpressionDMData expressionDMData)
+    private void updateAddressData(final ILabelUpdate update,
+    		                       final int labelIndex,
+                                   final IExpressionDMContext dmc, 
+                                   final RequestMonitor monitor)
+    { 
+        /*
+         *  First select the format to be used. This involves checking so see that the preference
+         *  page format is supported by the register service. If the format is not supported then 
+         *  we will pick the first available format.
+         */
+    	final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+        
+		// Get the variable information and update the corresponding memory locations
+        if (expressionService != null) {
+        	expressionService.getExpressionAddressData(dmc,
+        		new DataRequestMonitor<IExpressionDMAddress>(getExecutor(), monitor) {
+        			@Override
+        			protected void handleCompleted() {
+        				if ( isSuccess() ) {
+        					// Figure out which memory area was modified
+        					IExpressionDMAddress expression = getData();
+        					IAddress expAddress = expression.getAddress();
+        					if (expAddress instanceof Addr64) {
+        						update.setLabel( ((Addr64) expAddress).toHexAddressString(), labelIndex);
+        					}
+        					else if (expAddress instanceof Addr32) {
+        						update.setLabel( ((Addr32) expAddress).toHexAddressString(), labelIndex);
+        					}
+        					else {
+        						update.setLabel( "Unknown address format", labelIndex);
+        					}
+        				}
+        				else {
+        					/*
+        					 *  We could not get the format. Currently GDB does not handle getting the address of
+        					 *  a constant for example. We could put the error message in,  but that would not be
+        					 *  all that helpful top the user.  The interface is a new one and perhaps failing to
+        					 *  return a valid set of information  is just saying it does not exist. Anyway,  for
+        					 *  now we will just put nothing in.
+        					 */
+        					update.setLabel( "", labelIndex);
+        				}
+        				
+        				update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
+        				monitor.done();
+        	    	}
+        		}
+        	);
+        }
+    }
+    
+    /**
+     *  Private data access routine which performs the extra level of data access needed to
+     *  get the formatted data value for a specific register.
+     */
+    private void updateFormattedExpressionValue(final ILabelUpdate update,
+    		                                    final int labelIndex,
+                                                final IExpressionDMContext dmc, 
+                                                final IExpressionDMData expressionDMData,
+                                                final RequestMonitor monitor)
     { 
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
         /*
@@ -306,18 +444,17 @@ public class VariableVMNode extends AbstractExpressionVMNode
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
          */
-        final IPresentationContext context  = update.getPresentationContext();
+        final IPresentationContext context = update.getPresentationContext();
         final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
         
         expressionService.getAvailableFormats(
             dmc,
-            new ViewerDataRequestMonitor<String[]>(getSession().getExecutor(), update) {
+            new DataRequestMonitor<String[]>(getSession().getExecutor(), monitor) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
-                    	update.setLabel("Format information not available", labelIndex);
-                        update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
-                        update.done();
+                    	monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Format information not available", null));
+                        monitor.done();
                         return;
                     }
                     
@@ -349,7 +486,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         else {
                             // Expression service does not support any format.
                             
-                            handleFailedUpdate(update);
+                        	monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service does not support any formats", null));
+                            monitor.done();
                             return;
                         }
                     }
@@ -363,13 +501,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         VariableVMNode.this, update,
                         expressionService,
                         valueDmc, 
-                        new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
+                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), monitor) {
                             @Override
                             public void handleCompleted() {
                                 if (!isSuccess()) {
-                                	update.setLabel("Error : " + getStatus().getMessage(), labelIndex);
-                                    update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
-                                    update.done();
+                                	monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, getStatus().getMessage(), null));
+                                    monitor.done();
                                     return;
                                 }
 
@@ -401,7 +538,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                         DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), labelIndex);
                                 }
 
-                                update.done();
+                                monitor.done();
                             }
                         },
                         getExecutor()
@@ -410,7 +547,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
             }
         );
     }
-    
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
             return new TextCellEditor(parent);

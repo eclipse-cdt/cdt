@@ -32,7 +32,7 @@ public class ExpressionColumnPresentation implements IColumnPresentation {
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__EXPRESSION, IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
+        return new String[] { IDebugVMConstants.COLUMN_ID__EXPRESSION, IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION, IDebugVMConstants.COLUMN_ID__ADDRESS };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
@@ -47,6 +47,8 @@ public class ExpressionColumnPresentation implements IColumnPresentation {
             return MessagesForExpressionVM.ExpressionColumnPresentation_value;
         } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(id)) {
             return MessagesForExpressionVM.ExpressionColumnPresentation_description;
+        } else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(id)) {
+        	return MessagesForExpressionVM.ExpressionColumnPresentation_address;
         }
         return null;
     }

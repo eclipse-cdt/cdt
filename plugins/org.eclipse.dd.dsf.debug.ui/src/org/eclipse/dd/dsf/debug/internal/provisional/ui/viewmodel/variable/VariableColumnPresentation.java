@@ -31,7 +31,7 @@ public class VariableColumnPresentation implements IColumnPresentation {
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
     public String[] getAvailableColumns() {
-        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE };
+        return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__ADDRESS };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
@@ -42,6 +42,8 @@ public class VariableColumnPresentation implements IColumnPresentation {
             return MessagesForVariablesVM.VariableColumnPresentation_type;
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
             return MessagesForVariablesVM.VariableColumnPresentation_value;
+        } else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(id)) {
+        	return MessagesForVariablesVM.VariableColumnPresentation_address;
         } 
         return null;
     }

@@ -21,6 +21,8 @@ public class MessagesForVariablesVM extends NLS {
     public static String VariableColumnPresentation_type;
 
     public static String VariableColumnPresentation_value;
+    
+    public static String VariableColumnPresentation_address;
 
     static {
         // initialize resource bundle

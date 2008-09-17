@@ -12,9 +12,12 @@
 package org.eclipse.dd.mi.service.command;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -92,7 +95,7 @@ public class MIRunControlEventProcessor_7_0
     /**
      *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
      */
-    private Map<String, String> fGroupIdMap   = new HashMap<String, String>();
+    private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
 
     /**
      * Creates the event processor and registers it as listener with the debugger
@@ -190,13 +193,13 @@ public class MIRunControlEventProcessor_7_0
     		    	
     		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
     		    		// Update the thread to groupId map with the new groupId
-    		    		fGroupIdMap.put(threadId, groupId);
+    		    		fThreadToGroupMap.put(threadId, groupId);
     		    	} else {
     		    		// It was not clear if MI would specify the groupId in the thread-exited event
     		    		if (groupId == null) {
-    		    			groupId = fGroupIdMap.get(threadId);
+    		    			groupId = fThreadToGroupMap.get(threadId);
     		    		}
-    		    		fGroupIdMap.remove(threadId);
+    		    		fThreadToGroupMap.remove(threadId);
     		    	}
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
@@ -237,6 +240,27 @@ public class MIRunControlEventProcessor_7_0
     						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
+    						
+    						// Remove any entries for that group from our thread to group map
+    						// When detaching from a group, we won't have received any thread-exited event
+    						// but we don't want to keep those entries.
+    						if (fThreadToGroupMap.containsValue(groupId)) {
+    							Set<String> setToRemove = new HashSet<String>();
+
+    							Iterator<Map.Entry<String, String>> iterator1 = fThreadToGroupMap.entrySet().iterator();
+    							while (iterator1.hasNext()){
+    								Map.Entry<String, String> pairs = iterator1.next();
+    								if (pairs.getValue().equals(groupId)) {
+    									setToRemove.add(pairs.getKey());
+    								}
+    							}
+
+    							Iterator<String> iterator2 = setToRemove.iterator();
+    							while (iterator2.hasNext()){
+    								String key = iterator2.next();
+    								fThreadToGroupMap.remove(key);
+    							}
+    						}
     					}
 
    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
@@ -273,7 +297,7 @@ public class MIRunControlEventProcessor_7_0
     	
     	// MI does not currently provide the group-id in these events
     	if (groupId == null) {
-    		groupId = fGroupIdMap.get(threadId);
+    		groupId = fThreadToGroupMap.get(threadId);
     	}
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
     	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);

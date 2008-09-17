@@ -39,10 +39,20 @@ if [ -f web/site.xsl.new ]; then
 fi
 
 # get newest plugins and features: to be done manually on real update site
+TPVERSION="Target Management"
 TYPE=none
-if [ `basename $SITE` = testUpdates ]; then
+SITEDIR=`basename ${SITE}`
+case ${SITEDIR} in
+  test*Updates)   TYPE=test ;;
+  signed*Updates) TYPE=testSigned ;;
+  *milestones)    TYPE=milestone ;;
+  *interim)       TYPE=interim ;;
+  *)              TYPE=unknown ;;
+esac
+if [ ${TYPE} = test ]; then
     echo "Working on test update site"
-    TYPE=test
+    TPTYPE="3.1 Test"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
     REL=`ls $HOME/ws2/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
       echo "Checking new Updates from $REL"
@@ -57,17 +67,17 @@ if [ `basename $SITE` = testUpdates ]; then
     fi
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
-    	-e 's,Project 2.0 Update,Project Test Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
-        -e 's,Project 2.0 Update,Project Test Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project 2.0 Update,Project Test Update,g' \
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
     echo "Conditioning the site... $SITE"
@@ -81,9 +91,10 @@ if [ `basename $SITE` = testUpdates ]; then
     #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
     #	$HOME/ws2/jarprocessor/jarprocessor.jar \
 	#	-outputDir $SITE -processAll -repack $SITE
-elif [ `basename $SITE` = signedUpdates ]; then
+elif [ ${TYPE} = testSigned ]; then
     echo "Working on signed update site"
-    TYPE=testSigned
+    TPTYPE="3.1 Signed Test"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Signing jars from test update site (expecting conditioned jars)..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
     stamp=`date +'%Y%m%d-%H%M'`
@@ -179,65 +190,69 @@ elif [ `basename $SITE` = signedUpdates ]; then
     fi
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
-    	-e 's,Project 2.0 Update,Project Signed Test Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
-        -e 's,Project 2.0 Update,Project Signed Test Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project 2.0 Update,Project Signed Test Update,g' \
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
     ## CHECK VERSION CORRECTNESS for 2.0.1
     echo "VERIFYING VERSION CORRECNESS: Features"
-    ls features | grep -v '_[12]\.0\.1\.v' | sort > f1.$$.txt
-    ls ../updates/2.0/features | sort > f2.$$.txt
+    ls features | grep -v '_[123]\.0\.0\.v' | sort > f1.$$.txt
+    ls ../updates/3.0/features | sort > f2.$$.txt
     echo "wc old-features:"
     wc f1.$$.txt
     diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
     echo "VERIFYING VERSION CORRECNESS: Plugins"
-    ls plugins | grep -v '_[12]\.0\.1\.v' | sort > p1.$$.txt
-    ls ../updates/2.0/plugins | sort > p2.$$.txt
+    ls plugins | grep -v '_[123]\.0\.0\.v' | sort > p1.$$.txt
+    ls ../updates/3.0/plugins | sort > p2.$$.txt
     echo "wc old-plugins:"
     wc p1.$$.txt
     diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
     rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
-elif [ `basename $SITE` = milestones ]; then
+elif [ ${TYPE} = milestone ]; then
     echo "Working on milestone update site"
-    TYPE=milestone
+    TPTYPE="3.1 Milestone"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
-    	-e 's,Project 2.0 Update,Project Milestone Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management Milestones (I-, S- and M- builds) which are \
-being contributed to the Europa coordinated release train (Eclipse 3.3).' \
+being contributed to the Galileo coordinated release train (Eclipse 3.5.x).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    ## keep 2.0.x features in site.xml
+    ## keep 3.0.x features in site.xml
     ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_4 -->/d' \
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
-        -e 's,Project 2.0 Update,Project Milestone Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project 2.0 Update,Project Milestone Update,g' \
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-elif [ `basename $SITE` = interim ]; then
+elif [ ${TYPE} = interim ]; then
     echo "Working on interim update site"
-    TYPE=interim
+    TPTYPE="3.1 Interim"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
-    	-e 's,Project 2.0 Update,Project Interim Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management Interim Maintenance builds (I-, S-, and M-builds) in order \
 to test them before going live.' \
@@ -245,37 +260,40 @@ to test them before going live.' \
     mv -f index.html.new index.html
     ## keep 2.0.x features in site.xml
     ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_4 -->/d' \
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
-        -e 's,Project 2.0 Update,Project Interim Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0_5 -->/,/<!-- END_2_0_5 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project 2.0 Update,Project Interim Update,g' \
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-elif [ `basename $SITE` = 3.0 ]; then
-    echo "Working on 3.0 update site"
+elif [ `basename $SITE` = 3.1 ]; then
+    echo "Working on 3.1 update site"
+    TPTYPE="3.1"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
     TYPE=milestone
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
-    	-e 's,Project 2.0 Update,Project 3.0 Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management 3.0 Releases and Updates (R- builds) which are \
-being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
+being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## dont keep 2.0.x features in site.xml
-    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
-        -e 's,Project 2.0 Update,Project 3.0 Update,g' \
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
         site.xml > site.xml.new1
-    sed -e '/<!-- BEGIN_3_0_1 -->/,/<!-- END_3_0_1 -->/d' \
+    sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_1 -->/d' \
         site.xml.new1 > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1
-    sed -e 's,Project 2.0 Update,Project 3.0 Update,g' \
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 else
@@ -357,9 +375,9 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -updateSite ${SITE}/ \
     -site file:${SITE}/site.xml \
     -metadataRepository file:${SITE}/ \
-    -metadataRepositoryName "Target Management 3.0 Update Site" \
+    -metadataRepositoryName "${TPVERSION} Update Site" \
     -artifactRepository file:${SITE}/ \
-    -artifactRepositoryName "Target Management 3.0 Artifacts" \
+    -artifactRepositoryName "${TPVERSION} Artifacts" \
     -compress \
     -reusePack200Files \
     -noDefaultIUs \

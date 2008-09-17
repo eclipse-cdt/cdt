@@ -259,8 +259,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
        					if (localColumns == null)
        						localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
 
-       					boolean weAreExtractingFormattedData = false;
-       					boolean weAreExtractingAddressData = false;
+       					int extractingFormattedDataIndex = -1;
+       					int extractingAddressDataIndex = -1;
 
        					for (int idx = 0; idx < localColumns.length; idx++) {
        						if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
@@ -268,9 +268,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						} else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
        							update.setLabel(getData().getTypeName(), idx);
        						} else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-       							weAreExtractingFormattedData = true;
+       							extractingFormattedDataIndex = idx;
        						} else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(localColumns[idx])) {
-       							weAreExtractingAddressData = true;
+       							extractingAddressDataIndex = idx;
        						} else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
        							update.setLabel("", idx);
        						} else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
@@ -285,7 +285,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
        					}
 
-       					if ( ! weAreExtractingFormattedData && ! weAreExtractingAddressData ) {
+       					if ( ( extractingFormattedDataIndex == -1 ) && ( extractingAddressDataIndex == 1 ) ) {
        						update.done();
        					} else {
        						/*
@@ -299,15 +299,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
        	                        new MultiRequestMonitor<RequestMonitor>(dsfExecutor, null) {
        	                            @Override
        	                            public void handleCompleted() {
-       	                                // Now that all the calls to getModelData() are complete, we create an
-       	                                // IExpressionDMContext object for each local variable name, saving them all
-       	                                // in an array.
-
        	                                if (!isSuccess()) {
        	                                    handleFailedUpdate(update);
        	                                    return;
        	                                }
-       	                                
        	                                update.done();
        	                            }
        	                    };
@@ -315,55 +310,31 @@ public class VariableVMNode extends AbstractExpressionVMNode
        	                    /*
        	                     * Deal with the value.
        	                     */
-       	                    if ( weAreExtractingFormattedData ) {
-       	                    	boolean found = false;
-           						for (int idx = 0; idx < localColumns.length; idx++) {
-           							if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-           								found = true;
-           								RequestMonitor rm =
-           		                            new RequestMonitor(dsfExecutor, null) {
-           		                                @Override
-           		                                public void handleCompleted() {
-           		                                    mrm.requestMonitorDone(this);
-           		                                }
-           		                        };
-           		                        
-           		                        mrm.add(rm);
-           								updateFormattedExpressionValue(update, idx, dmc, getData(),rm);
-           								break;
-           							}
-           						}
-           						
-           						if (!found && ! weAreExtractingAddressData) {
-           							update.done();
-           						}
+       	                    if ( extractingFormattedDataIndex != -1 ) {
+       	                    	RequestMonitor rm = new RequestMonitor(dsfExecutor, null) {
+       	                    		@Override
+       	                    		public void handleCompleted() {
+       	                    			mrm.requestMonitorDone(this);
+       	                    		}
+       	                    	};
+
+       	                    	mrm.add(rm);
+       	                    	updateFormattedExpressionValue(update, extractingFormattedDataIndex, dmc, getData(),rm);
        	                    }
        	                    
        	                    /*
        	                     * Deal with the address.
        	                     */
-       	                    if ( weAreExtractingAddressData ) {
-       	                    	boolean found = false;
-           						for (int idx = 0; idx < localColumns.length; idx++) {
-           							if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(localColumns[idx])) {
-           								found = true;
-           								RequestMonitor rm =
-           		                            new RequestMonitor(dsfExecutor, null) {
-           		                                @Override
-           		                                public void handleCompleted() {
-           		                                    mrm.requestMonitorDone(this);
-           		                                }
-           		                        };
-           		                        
-           		                        mrm.add(rm);
-           		                        updateAddressData(update, idx, dmc, rm);
-           								break;
-           							}
-           						}
-           						
-           						if (!found && ! weAreExtractingFormattedData) {
-           							update.done();
-           						}
+       	                    if ( extractingAddressDataIndex != -1 ) {
+       	                    	RequestMonitor rm = new RequestMonitor(dsfExecutor, null) {
+       	                    		@Override
+       	                    		public void handleCompleted() {
+       	                    			mrm.requestMonitorDone(this);
+       	                    		}
+       	                    	};
+
+       	                    	mrm.add(rm);
+       	                    	updateAddressData(update, extractingAddressDataIndex, dmc, rm);
        	                    }
        					}
        				}

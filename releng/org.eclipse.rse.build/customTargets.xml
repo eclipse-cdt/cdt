@@ -321,7 +321,38 @@
 		</ant>
 	</target>
 
-	<target name="preFetch" depends="preFetchOrbitBundles">
+	<target name="preFetchOrbitSource" depends="myInit">
+		<!-- fetch Orbit stuff since I'm not sure how to get sources -->
+		<mkdir dir="${buildDirectory}/plugins"/>
+		<eclipse.fetch
+			elements="plugin@org.apache.oro.source"
+			buildDirectory="${buildDirectory}"
+			directory="${buildDirectory}/directory.txt"
+			fetchTag=""
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
+		/>
+		<!-- Run generated fetch script -->
+		<ant antfile="${buildDirectory}/fetch_org.apache.oro.source.xml">
+			<property name="featureOnly" value="true"/>
+			<property name="featureAndPlugins" value="true"/>
+		</ant>
+		<eclipse.fetch
+			elements="plugin@org.apache.commons.net.source"
+			buildDirectory="${buildDirectory}"
+			directory="${buildDirectory}/directory.txt"
+			fetchTag=""
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
+		/>
+		<!-- Run generated fetch script -->
+		<ant antfile="${buildDirectory}/fetch_org.apache.commons.net.source.xml">
+			<property name="featureOnly" value="true"/>
+			<property name="featureAndPlugins" value="true"/>
+		</ant>
+	</target>
+
+	<target name="preFetch" depends="preFetchOrbitBundles,preFetchOrbitSource">
 	</target>
 
 	<!-- ===================================================================== -->

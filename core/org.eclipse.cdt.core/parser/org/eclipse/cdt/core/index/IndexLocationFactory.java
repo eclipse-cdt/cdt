@@ -114,36 +114,37 @@ public class IndexLocationFactory {
 	 */
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
-		switch(files.length) {
-		case 0:
-			return getExternalIFL(absolutePath);
-		case 1:
-			return getWorkspaceIFL(files[0]);
-		}
-		
-		Arrays.sort(files, new FILE_COMPARATOR());
-		final IProject preferredProject= cproject == null ? null : cproject.getProject();
-		IFile fileInCProject= null;
-		for (IFile file : files) {
-			// check for preferred project
-			final IProject project = file.getProject();
-			if (preferredProject != null && preferredProject.equals(project)) 
+		if (files.length==1) {
+			IFile file = files[0];
+			if (file.exists())
 				return getWorkspaceIFL(file);
-			
-			if (fileInCProject == null) {
-				try {
-					if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-						fileInCProject= file;
+		} else {
+			Arrays.sort(files, new FILE_COMPARATOR());
+			final IProject preferredProject= cproject == null ? null : cproject.getProject();
+			IFile fileInCProject= null;
+			for (IFile file : files) {
+				if (file.exists()) {
+					// check for preferred project
+					final IProject project = file.getProject();
+					if (preferredProject != null && preferredProject.equals(project)) 
+						return getWorkspaceIFL(file);
+
+					if (fileInCProject == null) {
+						try {
+							if (project.hasNature(CProjectNature.C_NATURE_ID)) {
+								fileInCProject= file;
+							}
+						} catch (CoreException e) {
+							// treat as non-c project
+						}
 					}
-				} catch (CoreException e) {
-					// treat as non-c project
 				}
 			}
+			if (fileInCProject != null) 
+				return getWorkspaceIFL(fileInCProject);
 		}
-		if (fileInCProject != null) 
-			return getWorkspaceIFL(fileInCProject);
 		
-		return getWorkspaceIFL(files[0]);
+		return getExternalIFL(absolutePath);
 	}
 	
 	/**

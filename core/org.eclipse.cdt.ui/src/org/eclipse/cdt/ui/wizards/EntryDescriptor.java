@@ -83,9 +83,15 @@ public final class EntryDescriptor {
 	public CWizardHandler getHandler() {
 		return handler;
 	}
+	/**
+	 * @since 5.1
+	 */
 	public void setDefaultForCategory(boolean isDefaultForCategory) {
 		this.isDefaultForCategory = isDefaultForCategory;
 	}
+	/**
+	 * @since 5.1
+	 */
 	public boolean isDefaultForCategory() {
 		return isDefaultForCategory;
 	}

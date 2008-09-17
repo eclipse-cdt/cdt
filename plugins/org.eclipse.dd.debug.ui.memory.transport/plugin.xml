@@ -36,23 +36,27 @@
 	    	targetID="org.eclipse.debug.ui.MemoryView"
 	        id="org.eclipse.debug.ui.memoryView.toolbar">
 	        	<action
-	               	class="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
-	               	helpContextId="ExportMemoryAction_context"
-	               	icon="icons/export.png"
-	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
-	               	label="%ExportMemoryAction.label"
-	               	style="push"
-	               	toolbarPath="additions"
-	               	tooltip="%ExportMemoryAction.label"/>
+                class="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
+                enablesFor="1"
+                helpContextId="ExportMemoryAction_context"
+                icon="icons/export.png"
+                id="org.eclipse.dd.debug.ui.memory.transport.actions.ExportMemoryAction"
+                label="%ExportMemoryAction.label"
+                state="false"
+                style="push"
+                toolbarPath="additions"
+                tooltip="%ExportMemoryAction.label"/>
 	            <action
-	               	class="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
-	               	helpContextId="ExportMemoryAction_context"
-	               	icon="icons/import.png"
-	               	id="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
-	               	label="%ImportMemoryAction.label"
-	               	style="push"
-	               	toolbarPath="additions"
-	               	tooltip="%ImportMemoryAction.label"/>
+                   class="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
+                   enablesFor="1"
+                   helpContextId="ExportMemoryAction_context"
+                   icon="icons/import.png"
+                   id="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
+                   label="%ImportMemoryAction.label"
+                   state="false"
+                   style="push"
+                   toolbarPath="additions"
+                   tooltip="%ImportMemoryAction.label"/>
 	    </viewContribution>
 	</extension>
 </plugin>

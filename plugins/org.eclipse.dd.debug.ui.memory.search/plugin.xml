@@ -7,9 +7,11 @@
        targetID="org.eclipse.debug.ui.MemoryView">
     <action
           class="org.eclipse.dd.debug.ui.memory.search.FindAction"
+          enablesFor="1"
           id="org.eclipse.dd.debug.ui.memory.search.FindAction"
           label="Find Next"
-          menubarPath="additions">
+          menubarPath="additions"
+          state="false">
     </action>
  </viewContribution>
  <viewContribution
@@ -17,9 +19,11 @@
        targetID="org.eclipse.debug.ui.MemoryView">
     <action
           class="org.eclipse.dd.debug.ui.memory.search.FindAction"
+          enablesFor="1"
           id="org.eclipse.dd.debug.ui.memory.search.FindAction"
           label="Find/Replace..."
-          menubarPath="additions">
+          menubarPath="additions"
+          state="false">
     </action>
  </viewContribution>
 </extension>

@@ -50,7 +50,9 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @param mapper - a mapper used to determine ICLanguage for a particular file
 	 * @param log - logger
 	 * @throws CoreException
+	 * @deprecated
 	 */
+	@Deprecated
 	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 

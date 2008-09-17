@@ -55,7 +55,9 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * @param codeReaderFactory - factory that provides CodeReaders for files included
 	 *                    		  by the source code being parsed.
 	 * @throws CoreException
+	 * @deprecated
 	 */
+	@Deprecated
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 

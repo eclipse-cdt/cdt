@@ -22,7 +22,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 /**
  * Base class implementing standard import and export functionality

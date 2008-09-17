@@ -35,7 +35,6 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 
 		sAdditionalKeywords= new CharArrayIntMap(10, -1);
 		GNUScannerExtensionConfiguration.addAdditionalGNUKeywords(sAdditionalKeywords);
-		sAdditionalKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
 		sAdditionalKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
 		sAdditionalKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
 	}

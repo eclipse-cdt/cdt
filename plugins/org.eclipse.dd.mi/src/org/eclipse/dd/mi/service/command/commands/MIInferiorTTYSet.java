@@ -30,6 +30,7 @@ public class MIInferiorTTYSet extends MICommand<MIInfo>
         super(dmc, "-inferior-tty-set", null, new String[] {tty}); //$NON-NLS-1$
     }
     
+    @Deprecated
     public MIInferiorTTYSet(MIControlDMContext dmc, String tty) {
         this ((ICommandControlDMContext)dmc, tty);
     }

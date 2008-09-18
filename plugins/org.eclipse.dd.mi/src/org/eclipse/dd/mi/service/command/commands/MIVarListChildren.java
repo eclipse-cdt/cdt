@@ -36,7 +36,8 @@ public class MIVarListChildren extends MICommand<MIVarListChildrenInfo>
 	public MIVarListChildren(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-list-children", new String[]{name}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarListChildren(MIControlDMContext ctx, String name) {
 	    this ((ICommandControlDMContext)ctx, name);
 	}

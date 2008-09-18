@@ -37,7 +37,8 @@ public class MIVarShowAttributes extends MICommand<MIVarShowAttributesInfo>
 	public MIVarShowAttributes(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-show-attributes", new String[]{name}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarShowAttributes(MIControlDMContext ctx, String name) {
 	    this ((ICommandControlDMContext)ctx, name);
 	}

@@ -32,6 +32,7 @@ public class CLIExecAbort extends CLICommand<MIInfo>
         super(ctx, "kill"); //$NON-NLS-1$
     }
     
+    @Deprecated
     public CLIExecAbort(MIControlDMContext ctx) {
         this ((ICommandControlDMContext)ctx);
     }

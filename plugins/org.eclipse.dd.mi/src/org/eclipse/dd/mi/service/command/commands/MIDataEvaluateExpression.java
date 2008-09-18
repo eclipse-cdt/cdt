@@ -38,6 +38,7 @@ public class MIDataEvaluateExpression<V extends MIDataEvaluateExpressionInfo> ex
         super(ctx, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIDataEvaluateExpression(MIControlDMContext ctx, String expr) {
         this ((ICommandControlDMContext)ctx, expr);
     }

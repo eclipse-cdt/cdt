@@ -35,7 +35,8 @@ public class MIVarInfoType extends MICommand<MIVarInfoTypeInfo>
 	public MIVarInfoType(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-info-type", new String[]{name}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarInfoType(MIControlDMContext ctx, String name) {
 	    this ((ICommandControlDMContext)ctx, name);
 	}

@@ -37,7 +37,8 @@ public class MIInferiorExitEvent extends MIEvent<ICommandControlDMContext> {
     	super(ctx, token, results);
     	this.code = code;
     }
-
+    
+    @Deprecated
     public MIInferiorExitEvent(MIControlDMContext ctx, int token, MIResult[] results, int code) {
         this ((ICommandControlDMContext)ctx, token, results, code);
     }
@@ -45,7 +46,8 @@ public class MIInferiorExitEvent extends MIEvent<ICommandControlDMContext> {
     public int getExitCode() {
     	return code;
     }
-
+    
+    @Deprecated
     public static MIInferiorExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
         return parse((ICommandControlDMContext)ctx, token, results);
     }

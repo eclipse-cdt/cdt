@@ -32,7 +32,8 @@ public class MIVarAssign extends MICommand<MIVarAssignInfo>
 	public MIVarAssign(ICommandControlDMContext ctx, String name, String expression) {
 		super(ctx, "-var-assign", new String[]{name, expression}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarAssign(MIControlDMContext ctx, String name, String expression) {
 	    this ((ICommandControlDMContext)ctx, name, expression);
 	}

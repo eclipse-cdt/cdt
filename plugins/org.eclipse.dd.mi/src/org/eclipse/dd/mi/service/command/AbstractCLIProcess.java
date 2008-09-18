@@ -121,7 +121,8 @@ public abstract class AbstractCLIProcess extends Process
         fMIOutLogPipe = miOutLogPipe;
         fMIInLogPipe = miInLogPipe; 
 	}
-
+    
+    @Deprecated
     public AbstractCLIProcess(AbstractMIControl commandControl) throws IOException {
         this ( (ICommandControlService)commandControl );
     }

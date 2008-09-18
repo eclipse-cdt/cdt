@@ -146,7 +146,8 @@ public class MIInferiorProcess extends Process
     public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
         this(commandControl, inferiorExecCtx, gdbOutputStream, null);
     }
-
+    
+    @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
         this(commandControl, inferiorExecCtx, gdbOutputStream, null);
     }
@@ -154,7 +155,6 @@ public class MIInferiorProcess extends Process
     /**
      * @deprecated {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, OutputStream)} 
      * should be used instead.
-     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
@@ -176,7 +176,8 @@ public class MIInferiorProcess extends Process
     public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
         this(commandControl, inferiorExecCtx, null, p);
     }
-
+    
+    @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
         this(commandControl, inferiorExecCtx, null, p);
     }
@@ -184,7 +185,6 @@ public class MIInferiorProcess extends Process
     /**
      * @deprecated Should use {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, PTY)}
      * instead.
-     * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
@@ -257,9 +257,6 @@ public class MIInferiorProcess extends Process
         return fSession;
     }
     
-    /**
-     * @since 1.1
-     */
     @Deprecated
     protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
 
@@ -437,16 +434,10 @@ public class MIInferiorProcess extends Process
         return fInputStreamPiped;
     }
 
-    /**
-     * @since 1.1
-     */
     public OutputStream getPipedErrorStream() {
         return fErrorStreamPiped;
     }
 
-    /**
-     * @since 1.1
-     */
     public PTY getPTY() {
         return fPty;
     }

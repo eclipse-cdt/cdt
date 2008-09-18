@@ -37,7 +37,8 @@ public class MIVarInfoExpression extends MICommand<MIVarInfoExpressionInfo>
 	public MIVarInfoExpression(ICommandControlDMContext ctx, String name) {
 		super(ctx, "-var-info-expression", new String[]{name}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarInfoExpression(MIControlDMContext ctx, String name) {
 	    this ((ICommandControlDMContext)ctx, name);
 	}

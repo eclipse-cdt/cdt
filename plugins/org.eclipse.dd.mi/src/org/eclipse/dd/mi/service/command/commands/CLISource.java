@@ -29,6 +29,7 @@ public class CLISource extends CLICommand<MIInfo> {
         super(ctx, "source " + file); //$NON-NLS-1$
     }
 
+    @Deprecated
     public CLISource(MIControlDMContext ctx, String file) {
         this ((ICommandControlDMContext)ctx, file);
     }

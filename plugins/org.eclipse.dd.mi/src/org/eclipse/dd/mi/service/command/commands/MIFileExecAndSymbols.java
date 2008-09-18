@@ -33,6 +33,7 @@ public class MIFileExecAndSymbols extends MICommand<MIInfo>
         super(dmc, "-file-exec-and-symbols", null, new String[] {file}); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileExecAndSymbols(MIControlDMContext dmc, String file) {
         this ((ICommandControlDMContext)dmc, file);
     }
@@ -44,6 +45,7 @@ public class MIFileExecAndSymbols extends MICommand<MIInfo>
         super(dmc, "-file-exec-and-symbols"); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileExecAndSymbols(MIControlDMContext dmc) {
         this ((ICommandControlDMContext)dmc);
     }

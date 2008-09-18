@@ -33,7 +33,8 @@ public class MIGDBShowExitCode extends MIDataEvaluateExpression<MIGDBShowExitCod
     public MIGDBShowExitCode(ICommandControlDMContext ctx) {
         super(ctx, "$_exitcode"); //$NON-NLS-1$
     }
-
+    
+    @Deprecated
     public MIGDBShowExitCode(MIControlDMContext ctx) {
         this ((ICommandControlDMContext)ctx);
     }

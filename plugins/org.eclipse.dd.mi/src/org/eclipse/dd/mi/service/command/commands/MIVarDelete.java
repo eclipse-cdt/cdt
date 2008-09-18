@@ -34,7 +34,8 @@ public class MIVarDelete extends MICommand<MIVarDeleteInfo>
     public MIVarDelete(ICommandControlDMContext dmc, String name) {
         super(dmc, "-var-delete", new String[]{name}); //$NON-NLS-1$
     }
-
+    
+    @Deprecated
     public MIVarDelete(MIControlDMContext dmc, String name) {
         this ((ICommandControlDMContext)dmc, name);
     }

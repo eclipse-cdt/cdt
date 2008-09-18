@@ -35,6 +35,7 @@ public class MIGDBExitEvent extends MIEvent<ICommandControlDMContext> {
     	super(ctx, token, null);
     }
     
+    @Deprecated
     public MIGDBExitEvent(MIControlDMContext ctx, int token) {
         this ((ICommandControlDMContext)ctx, token);
     }

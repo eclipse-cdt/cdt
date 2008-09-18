@@ -38,7 +38,8 @@ public class MIVarUpdate extends MICommand<MIVarUpdateInfo> {
 	public MIVarUpdate(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-update", new String[] { "1", name }); //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+    
+    @Deprecated
     public MIVarUpdate(MIControlDMContext ctx, String name) {
         this ((ICommandControlDMContext)ctx, name);
     }

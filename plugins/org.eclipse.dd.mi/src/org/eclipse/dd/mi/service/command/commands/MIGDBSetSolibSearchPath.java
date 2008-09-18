@@ -38,7 +38,8 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet
 		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
 		setParameters(p);
 	}
-
+    
+    @Deprecated
     public MIGDBSetSolibSearchPath(MIControlDMContext ctx, String[] paths) {
         this ((ICommandControlDMContext)ctx, paths);
     }

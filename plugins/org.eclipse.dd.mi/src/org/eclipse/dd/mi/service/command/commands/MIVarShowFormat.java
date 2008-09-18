@@ -35,6 +35,7 @@ public class MIVarShowFormat extends MICommand<MIVarShowFormatInfo>
 		super(ctx, "-var-show-format", new String[]{name}); //$NON-NLS-1$
 	}
     
+    @Deprecated
 	public MIVarShowFormat(MIControlDMContext ctx, String name) {
 	    this ((ICommandControlDMContext)ctx, name);
 	}

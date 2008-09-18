@@ -67,8 +67,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
- * 
- * @since 2.0
  */
 
 public class CMainTab extends CLaunchConfigurationTab {

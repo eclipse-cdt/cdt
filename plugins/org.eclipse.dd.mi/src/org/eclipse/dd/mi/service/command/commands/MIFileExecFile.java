@@ -34,6 +34,7 @@ public class MIFileExecFile extends MICommand<MIInfo>
         super(dmc, "-file-exec-file", null, new String[] {file}); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileExecFile(MIControlDMContext dmc, String file) {
         this ((ICommandControlDMContext)dmc, file);
     }
@@ -45,6 +46,7 @@ public class MIFileExecFile extends MICommand<MIInfo>
         super(dmc, "-file-exec-file"); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileExecFile(MIControlDMContext dmc) {
         this ((ICommandControlDMContext)dmc);
     }

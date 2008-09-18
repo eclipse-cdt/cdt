@@ -27,6 +27,7 @@ public class MIGDBSetAutoSolib extends MIGDBSet
         super(ctx, new String[] {"auto-solib-add", isSet ? "on" : "off"});//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
     }
     
+    @Deprecated
     public MIGDBSetAutoSolib(MIControlDMContext ctx, boolean isSet) {
         this ((ICommandControlDMContext)ctx, isSet);
     }

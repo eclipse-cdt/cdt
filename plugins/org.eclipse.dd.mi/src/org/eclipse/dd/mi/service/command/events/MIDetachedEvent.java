@@ -30,7 +30,8 @@ public class MIDetachedEvent extends MIEvent<ICommandControlDMContext> {
     public MIDetachedEvent(ICommandControlDMContext ctx, int token) {
         super(ctx, token, null);
     }
-
+    
+    @Deprecated
     public MIDetachedEvent(MIControlDMContext ctx, int token) {
         this ((ICommandControlDMContext)ctx, token);
     }

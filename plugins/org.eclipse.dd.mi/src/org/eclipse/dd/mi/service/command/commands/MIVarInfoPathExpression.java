@@ -37,7 +37,8 @@ public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionIn
 	public MIVarInfoPathExpression(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-info-path-expression", new String[]{name}); //$NON-NLS-1$
 	}
-
+    
+    @Deprecated
 	public MIVarInfoPathExpression(MIControlDMContext dmc, String name) {
 	    this ((ICommandControlDMContext)dmc, name);
 	}

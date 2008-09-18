@@ -33,6 +33,7 @@ public class MIFileSymbolFile extends MICommand<MIInfo>
         super(dmc, "-file-symbol-file", null, new String[] {file}); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileSymbolFile(MIControlDMContext dmc, String file) {
         this ((ICommandControlDMContext)dmc, file);
     }
@@ -44,6 +45,7 @@ public class MIFileSymbolFile extends MICommand<MIInfo>
         super(dmc, "-file-symbol-file"); //$NON-NLS-1$
     }
 
+    @Deprecated
     public MIFileSymbolFile(MIControlDMContext dmc) {
         this ((ICommandControlDMContext)dmc);
     }

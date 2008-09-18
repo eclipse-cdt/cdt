@@ -39,7 +39,8 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
         this.sigName = sigName;
         this.sigMeaning = sigMeaning;
     }
-
+    
+    @Deprecated
     public MIInferiorSignalExitEvent(MIControlDMContext ctx, int token, MIResult[] results, String sigName, String sigMeaning) {
         this((ICommandControlDMContext)ctx, token, results, sigName, sigMeaning);
     }
@@ -51,7 +52,8 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
     public String getMeaning() {
     	return sigMeaning;
     }
-
+    
+    @Deprecated
     public static MIInferiorSignalExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
         return parse((ICommandControlDMContext)ctx, token, results);
     }

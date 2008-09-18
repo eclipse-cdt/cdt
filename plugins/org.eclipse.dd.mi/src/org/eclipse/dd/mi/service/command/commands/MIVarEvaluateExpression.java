@@ -37,7 +37,8 @@ public class MIVarEvaluateExpression extends MICommand<MIVarEvaluateExpressionIn
     public MIVarEvaluateExpression(ICommandControlDMContext dmc, String name) {
         super(dmc, "-var-evaluate-expression", new String[] { name }); //$NON-NLS-1$
     }
-
+    
+    @Deprecated
     public MIVarEvaluateExpression(MIControlDMContext dmc, String name) {
         this ((ICommandControlDMContext)dmc, name);
     }

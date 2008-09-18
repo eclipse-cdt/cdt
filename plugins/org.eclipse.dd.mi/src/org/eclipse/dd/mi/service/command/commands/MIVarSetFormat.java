@@ -41,7 +41,8 @@ public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo>
         super(ctx, "-var-set-format"); //$NON-NLS-1$
         setParameters(new String[]{name, getFormat(fmt)});
     }
-
+    
+    @Deprecated
     public MIVarSetFormat(MIControlDMContext ctx, String name, String fmt) {
         this ((ICommandControlDMContext)ctx, name, fmt);
     }

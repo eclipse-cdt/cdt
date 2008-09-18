@@ -92,7 +92,8 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 				}
 				catch(NumberFormatException nfe)
 				{
-					
+					MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+							DebugUIMessages.GoToAddressAction_Address_is_invalid, nfe);
 				}
 	
 				IMemoryRenderingContainer containers[] = fSite.getMemoryRenderingContainers();

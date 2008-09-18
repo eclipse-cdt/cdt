@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
@@ -43,19 +42,14 @@ import org.eclipse.dd.dsf.ui.viewmodel.VMHasChildrenUpdate;
 import org.eclipse.dd.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -68,9 +62,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 	private boolean fDelayEventHandleForViewUpdate = false;
 	
     // debug flags
-    /** 
-     * @since 1.1 
-     */
     public static boolean DEBUG_CACHE = false;
 
     static {
@@ -80,7 +71,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
 
     private static final int MAX_CACHE_SIZE = 1000;
 
-    /**
+	/**
      * Class representing a key to an element's data in the cache.  The main
      * components of this key are the viewer input and the path, they uniquely
      * identify an element.  The root element is used to track when a given
@@ -308,10 +299,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
         
     protected static String SELECTED_UPDATE_MODE = "org.eclipse.dd.dsf.ui.viewmodel.update.selectedUpdateMode";  //$NON-NLS-1$
-
-    /** 
-     * @since 1.1 
-     */
     protected static String SELECTED_UPDATE_SCOPE = "org.eclipse.dd.dsf.ui.viewmodel.update.selectedUpdateScope";  //$NON-NLS-1$
 
     private IVMUpdatePolicy[] fAvailableUpdatePolicies;
@@ -358,9 +345,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy() };
     }
     
-    /** 
-     * @since 1.1 
-     */
     protected IVMUpdateScope[] createUpdateScopes() {
         return new IVMUpdateScope[] { new VisibleUpdateScope(), new AllUpdateScope() };
     }
@@ -737,32 +721,33 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             IVMModelProxyExtension proxyStrategyExtension = (IVMModelProxyExtension)proxyStrategy;
             if(fDelayEventHandleForViewUpdate) {
     	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-    	        	updateExpanded(
-    	        	    proxyStrategyExtension, 
-    	        	    proxyStrategyExtension.getViewerInput(), proxyStrategyExtension.getRootPath(), 
-    	        	    new RequestMonitor(getExecutor(), null) {
-        					@Override
-        					protected void handleCompleted() {
-        						AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, rm);
-        					}
-        		        });
+    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
+    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, new RequestMonitor(getExecutor(), null) {
+    	        		@Override
+    	        		protected void handleCompleted() {
+    	        			AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, rm);
+    	        		}
+    	        	});
+					handler.startUpdate();
     	        } else {
     	        	// block updating only the viewport
     	        	
     	        	TreeViewer viewer = (TreeViewer) proxyStrategyExtension.getViewer();
     	        	Tree tree = viewer.getTree();
-    	        	int maximumViewportElementCount[] = { tree.getSize().y / tree.getItemHeight() };
+    	        	int count = tree.getSize().y / tree.getItemHeight();
     	        	
-    	        	final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-                    
-                    ArrayList<IChildrenUpdate> childrenUpdateVector = new ArrayList<IChildrenUpdate>();
-                    
-    	        	updateVisibleExpanded(tree, new TreeItem[] { tree.getTopItem() }, maximumViewportElementCount, viewer, proxyStrategyExtension, 
-    	        	    multiRm, childrenUpdateVector);
-    	        	update(childrenUpdateVector.toArray(new IChildrenUpdate[childrenUpdateVector.size()]));
-    	        	multiRm.setDoneCount(childrenUpdateVector.size() + 1);
-
-    	        	super.handleEvent(proxyStrategy, event, multiRm);
+    	        	TreeItem topItem = tree.getTopItem();
+    	        	int index = computeTreeIndex(topItem);
+    	        	
+    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
+    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, new RequestMonitor(getExecutor(), null) {
+    	        		@Override
+    	        		protected void handleCompleted() {
+    	        			AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, rm);
+    	        		}
+    	        	});
+    	        	handler.setRange(index, index + count);
+					handler.startUpdate();
     	        }
             } else {
             	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID))
@@ -770,11 +755,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             		final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
                     multiRm.setDoneCount(2);
             		
-    	        	updateExpanded(
-                        proxyStrategyExtension, 
-                        proxyStrategyExtension.getViewerInput(), proxyStrategyExtension.getRootPath(), 
-                        multiRm);
-    	        	super.handleEvent(proxyStrategy, event, multiRm);
+    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
+    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm);
+					handler.startUpdate();
+
+					super.handleEvent(proxyStrategy, event, multiRm);
     	        } else {
     	        	super.handleEvent(proxyStrategy, event, rm);
     	        }
@@ -784,261 +769,37 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         }
     }
         
-    private void updateVisibleExpanded(final Object parent, TreeItem startItem[], final int count[], final TreeViewer viewer, 
-    	final IVMModelProxy proxyStrategy, final RequestMonitor rm, List<IChildrenUpdate> childrenUpdatesVector)
-    {
-    	if(parent instanceof Tree)
-    	{
-    		for(int i = 0; i < ((Tree) parent).getItemCount() && count[0] > 0; i++)
-    		{
-    			TreeItem item = ((Tree) parent).getItem(i);
-    			if(item.equals(startItem[0]))
-    				startItem[0] = null;
-    				
-    			if(startItem[0] == null)
-    			{
-    				childrenUpdatesVector.add(createChildrenUpdate(item, proxyStrategy, viewer.getInput(), rm));
-    				count[0]--;
-    			}
-    			
-				if(item.getData() != null && viewer.getExpandedState(item.getData()))
-					updateVisibleExpanded(item, startItem, count, viewer, proxyStrategy, rm, 
-						childrenUpdatesVector);
-    		}
-    	}
-    	else
-    	{
-    		for(int i = 0; i < ((TreeItem) parent).getItemCount() && count[0] > 0; i++)
-    		{
-    			TreeItem item = ((TreeItem) parent).getItem(i);
-    			if(item.equals(startItem[0]))
-    				startItem[0] = null;
-    				
-    			if(startItem[0] == null)
-    			{
-    				childrenUpdatesVector.add(createChildrenUpdate(item, proxyStrategy, viewer.getInput(), rm));
-    				count[0]--;
-    			}
-    			
-				if(item.getData() != null && viewer.getExpandedState(item.getData()))
-					updateVisibleExpanded(item, startItem, count, viewer, proxyStrategy, rm, 
-						childrenUpdatesVector);
-    		}
-    	}
-    }
-    
-    private IChildrenUpdate createChildrenUpdate(TreeItem child, final IVMModelProxy proxyStrategy, final Object viewerInput, final RequestMonitor rm)
-    {
-    	List<Object> pathList = new LinkedList<Object>();
-    	TreeItem item = child.getParentItem();
-    	while (item != null) {
-    	    pathList.add(0, item.getData());
-    	    item = item.getParentItem();
-    	}
-    	final TreePath path = new TreePath(pathList.toArray()); 
-		int index = 0;
-		if(child.getParentItem() != null)
-			index = child.getParentItem().indexOf(child);
-		else
-			index = child.getParent().indexOf(child);
-		
-		final IPresentationContext presentationContext = getPresentationContext();
-		
-		final String columns[] = presentationContext.getColumns();
-		
-    	return new VMChildrenUpdate(
-    	    path, viewerInput,
-	    	getPresentationContext(), index, 1, new DataRequestMonitor<List<Object>>(getExecutor(), null) {
-	            @Override
-	            protected void handleCompleted() {
-	            	for(final Object o : getData())
-	            	{
-	            		if(o instanceof IAdaptable)
-	            		{
-	            			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable) o).getAdapter(IElementLabelProvider.class);
-	            			
-	            			labelProvider.update(new ILabelUpdate[] {
-	            				new ILabelUpdate()
-	            				{
-	            					public Object getElement() {
-										return o;
-									}
+	private static int computeTreeIndex(TreeItem child) {
+		if (child != null) {
+			if(child.getParentItem() != null) {
+				int previous = 0;
+				int index = child.getParentItem().indexOf(child);
+				while (--index >= 0) {
+					previous += computeTreeExtent(child.getParentItem().getItem(index));
+				}
+				return computeTreeIndex(child.getParentItem()) + previous;
+			} else {
+				int previous = 0;
+				int index = child.getParent().indexOf(child);
+				while (--index >= 0) {
+					previous += computeTreeExtent(child.getParent().getItem(index));
+				}
+				return previous;
+			}
+		}
+		return 0;
+	}
 
-									public TreePath getElementPath() {
-										return path.createChildPath(o);
-									}
-
-									public IPresentationContext getPresentationContext() {
-										return presentationContext;
-									}
-
-									public Object getViewerInput() {
-										return viewerInput;
-									}
-
-									public void cancel() {
-										
-									}
-
-									public IStatus getStatus() {
-										return null;
-									}
-
-									public boolean isCanceled() {
-										return false;
-									}
-
-									public void setStatus(IStatus status) {
-										
-									}
-
-									public String[] getColumnIds() {
-	            						return columns;
-	            					}
-
-	            					public void setBackground(RGB arg0, int arg1) {
-	            						
-	            					}
-
-	            					public void setFontData(FontData arg0, int arg1) {
-	            						
-	            					}
-
-	            					public void setForeground(RGB arg0, int arg1) {
-	            						
-	            					}
-
-	            					public void setImageDescriptor(ImageDescriptor arg0, int arg1) {
-	            						
-	            					}
-
-	            					public void setLabel(String arg0, int arg1) {
-	            					}
-
-	            					public void done() {
-	            				        
-	            				        rm.done();
-	            				    }
-	            				}
-	            			});
-	            		}
-	            	}
-	            }
-	        });
-    }
-    
-    private void updateExpanded(final IVMModelProxyExtension proxyStrategy, final Object viewerInput, final TreePath path, final RequestMonitor rm)
-    {
-    	final IPresentationContext presentationContext = getPresentationContext();
-    	final String[] columns = presentationContext.getColumns();
-    	
-    	this.update(new IChildrenUpdate[] {  new VMChildrenUpdate(
-    	    path, viewerInput, 
-	    	presentationContext, -1, -1, new DataRequestMonitor<List<Object>>(getExecutor(), null) {
-	            @Override
-	            protected void handleCompleted() {
-	            	if (getData() != null) {
-                		TreeViewer viewer = (TreeViewer) proxyStrategy.getViewer();
-                		
-                		int expandedCount = 0;
-                		int elementCount = 0;
-                		
-                        final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-                        
-                        
-                        for(final Object data : getData())
-                		{
-                    		if(viewer.getExpandedState(data))
-                    		{
-                    		    Object[] childPathSegments = new Object[path.getSegmentCount() + 1];
-                    		    int i = 0;
-                    		    for (i = 0; i < path.getSegmentCount(); i++) {
-                    		        childPathSegments[i] = path.getSegment(i);
-                    		    }
-                    		    childPathSegments[i] = data;
-                    			updateExpanded(proxyStrategy, viewerInput, new TreePath(childPathSegments), multiRm);
-                    			expandedCount++;
-                    		}
-                    		
-                    		if(data instanceof IAdaptable)
-    	            		{
-                    			elementCount++;
-    	            			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable) data).getAdapter(IElementLabelProvider.class);
-    	            			
-    	            			labelProvider.update(new ILabelUpdate[] {
-    	            				new ILabelUpdate()
-    	            				{
-    	            					public Object getElement() {
-    										return data;
-    									}
-
-    									public TreePath getElementPath() {
-    										return path.createChildPath(data);
-    									}
-
-    									public IPresentationContext getPresentationContext() {
-    										return presentationContext;
-    									}
-
-    									public Object getViewerInput() {
-    										return viewerInput;
-    									}
-
-    									public void cancel() {
-    										
-    									}
-
-    									public IStatus getStatus() {
-    										return null;
-    									}
-
-    									public boolean isCanceled() {
-    										return false;
-    									}
-
-    									public void setStatus(IStatus status) {
-    										
-    									}
-
-    									public String[] getColumnIds() {
-    	            						return columns;
-    	            					}
-
-    	            					public void setBackground(RGB arg0, int arg1) {
-    	            						
-    	            					}
-
-    	            					public void setFontData(FontData arg0, int arg1) {
-    	            						
-    	            					}
-
-    	            					public void setForeground(RGB arg0, int arg1) {
-    	            						
-    	            					}
-
-    	            					public void setImageDescriptor(ImageDescriptor arg0, int arg1) {
-    	            						
-    	            					}
-
-    	            					public void setLabel(String arg0, int arg1) {
-    	            					}
-
-    	            					public void done() {
-    	            				        
-    	            						multiRm.done();
-    	            				    }
-    	            				}
-    	            			});
-    	            		}
-
-                		}
-                        
-                        multiRm.setDoneCount(expandedCount + elementCount);
-	                }
-	            }
-	        })});
-    }
-    
+	private static int computeTreeExtent(TreeItem item) {
+		int extent = 1;
+		if (item.getExpanded()) {
+			for (TreeItem i : item.getItems()) {
+				extent += computeTreeExtent(i);
+			}
+		}
+		return extent;
+	}
+	
     /**
      * Override default implementation to avoid automatically removing disposed proxies from
      * list of active proxies.  The caching provider only removes a proxy after its root element
@@ -1240,16 +1001,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return null;
     }
 
-    /** 
-     * @since 1.1 
-     */
     public IVMUpdateScope[] getAvailableUpdateScopes() {
         return fAvailableUpdateScopes;
     }
 
-    /** 
-     * @since 1.1 
-     */
     public IVMUpdateScope getActiveUpdateScope() {
         String updateScopeId = (String)getPresentationContext().getProperty(SELECTED_UPDATE_SCOPE);
         if (updateScopeId != null) {
@@ -1264,21 +1019,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         return getAvailableUpdateScopes()[0];
     }
 
-    /** 
-     * @since 1.1 
-     */
     public void setActiveUpdateScope(IVMUpdateScope updateScope) {
         getPresentationContext().setProperty(SELECTED_UPDATE_SCOPE, updateScope.getID());
     }
 
-    @Override
     public boolean shouldWaitHandleEventToComplete() {
         return fDelayEventHandleForViewUpdate;
     }
 
-    /** 
-     * @since 1.1 
-     */
 	protected void setDelayEventHandleForViewUpdate(boolean on) {
 		fDelayEventHandleForViewUpdate = on;
 	}

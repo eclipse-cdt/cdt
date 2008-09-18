@@ -470,7 +470,7 @@ public class BreakpointManager extends Manager {
 							hint == MIBreakpointChangedEvent.HINT_NONE) && function != null && function.length() > 0) {
 						FunctionLocation location = createFunctionLocation(file, function);
 						newBreakpoint = new FunctionBreakpoint(target, type, location, condition, enabled);
-					} else if (hint == MIBreakpointChangedEvent.HINT_NEW_EVENTBREAKPOINT	|| EventBreakpoint.getEventArgumentFromMI(miBreakpoint)!=null) {
+					} else if (hint == MIBreakpointChangedEvent.HINT_NEW_EVENTBREAKPOINT	|| EventBreakpoint.getEventTypeFromMI(miBreakpoint)!=null) {
 						String ctype = EventBreakpoint.getEventTypeFromMI(miBreakpoint);
 						if (ctype != null) {
 							newBreakpoint = new EventBreakpoint(target, ctype, EventBreakpoint

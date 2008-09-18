@@ -751,16 +751,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     	        	
     	        	TreeViewer viewer = (TreeViewer) proxyStrategyExtension.getViewer();
     	        	Tree tree = viewer.getTree();
-    	        	int count[] = { tree.getSize().y / tree.getItemHeight() };
+    	        	int maximumViewportElementCount[] = { tree.getSize().y / tree.getItemHeight() };
     	        	
     	        	final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-                    multiRm.setDoneCount(count[0] + 1);
-    
+                    
                     ArrayList<IChildrenUpdate> childrenUpdateVector = new ArrayList<IChildrenUpdate>();
                     
-    	        	updateVisibleExpanded(tree, new TreeItem[] { tree.getTopItem() }, count, viewer, proxyStrategyExtension, 
+    	        	updateVisibleExpanded(tree, new TreeItem[] { tree.getTopItem() }, maximumViewportElementCount, viewer, proxyStrategyExtension, 
     	        	    multiRm, childrenUpdateVector);
     	        	update(childrenUpdateVector.toArray(new IChildrenUpdate[childrenUpdateVector.size()]));
+    	        	multiRm.setDoneCount(childrenUpdateVector.size() + 1);
 
     	        	super.handleEvent(proxyStrategy, event, multiRm);
     	        }

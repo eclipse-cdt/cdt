@@ -23,9 +23,8 @@
 
 package org.eclipse.rse.internal.connectorservice.dstore;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.IUniversalDStoreConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -60,62 +59,49 @@ public class Activator extends SystemBasePlugin {
 		initializeDefaultPreferences();
 	}
 
-	/**
-	 * A Preference Store that gives direct access to Default Preferences.
-	 */
-	private static class DefaultPreferenceStore extends ScopedPreferenceStore {
-		private IEclipsePreferences[] defaultNodes;
-		public DefaultPreferenceStore(String qualifier) {
-			super(new DefaultScope(), qualifier);
-			defaultNodes = new IEclipsePreferences[] {
-				new DefaultScope().getNode(qualifier) };
-		}
-		public boolean hasDefault(String key) {
-			return Platform.getPreferencesService().get(key, null, defaultNodes) != null;
-		}
-	}
-
 	public void initializeDefaultPreferences() {
 
 		// [245918] Since our Preferences are stored in RSEUIPlugin, we cannot
 		// use the core.runtime.preferences extension in order to do
 		// initialization in the correct order (allow overriding by
 		// plugin_customization.ini). We therefore explicitly check each
-		// Preference slot, and only set a there isn't one set already. Note
-		// that requires explicit access to the DefaultScope().
+		// Preference slot, and only set a there isn't one set already.
+		// This requires explicit access to the DefaultScope().
 		// TODO move Preferences to our own PreferenceStore to simplify this
-		DefaultPreferenceStore store = new DefaultPreferenceStore(RSEUIPlugin.getDefault().getBundle().getSymbolicName());
+		IPreferenceStore store = new ScopedPreferenceStore(new DefaultScope(), RSEUIPlugin.getDefault().getBundle().getSymbolicName());
 		//IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		//Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
 
-		if (!store.hasDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT))
+		//In DefaultScope, isDefault() means: no value specified in defaultScope, fallback to default-default
+		//In this case (no default specified yet), we may specify our default
+		if (store.isDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT))
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_TIMEOUT);
 
 		// do keepalive
-		if (!store.hasDefault(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE))
+		if (store.isDefault(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE))
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_DO_KEEPALIVE);
 
 		// socket read timeout
-		if (!store.hasDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT))
+		if (store.isDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT))
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_SOCKET_READ_TIMEOUT);
 
 		// keepalive response timeout
-		if (!store.hasDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT))
+		if (store.isDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT))
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT,
 					IDStoreDefaultPreferenceConstants.DEFAULT_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 
 		// show mismatched server warning
-		if (!store.hasDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER))
+		if (store.isDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER))
 			store.setDefault(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, IDStoreDefaultPreferenceConstants.DEFAULT_ALERT_MISMATCHED_SERVER);
 
 		// cache remote classes
-		if (!store.hasDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES))
+		if (store.isDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES))
 			store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IDStoreDefaultPreferenceConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);
 
 		// alert defaults
-		if (!store.hasDefault(ISystemPreferencesConstants.ALERT_SSL))
+		if (store.isDefault(ISystemPreferencesConstants.ALERT_SSL))
 			store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-		if (!store.hasDefault(ISystemPreferencesConstants.ALERT_NONSSL))
+		if (store.isDefault(ISystemPreferencesConstants.ALERT_NONSSL))
 			store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
 	}
 

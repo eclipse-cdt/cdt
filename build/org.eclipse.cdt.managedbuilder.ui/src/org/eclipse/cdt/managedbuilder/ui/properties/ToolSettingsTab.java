@@ -622,7 +622,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		} else return;
 		if (t1.length != t2.length) return; // not our case
 		for (int i=0; i<t1.length; i++)
-			copyHoldsOptions(t1[i], t2[i], ri2);
+			if ((t1[i].getUniqueRealName()).equals(t2[i].getUniqueRealName())) {
+				copyHoldsOptions(t1[i], t2[i], ri2);
+			}
 		setDirty(false);
 	}
 

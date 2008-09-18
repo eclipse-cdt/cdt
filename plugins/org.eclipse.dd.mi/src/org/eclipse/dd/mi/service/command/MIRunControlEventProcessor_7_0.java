@@ -12,12 +12,10 @@
 package org.eclipse.dd.mi.service.command;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -245,20 +243,11 @@ public class MIRunControlEventProcessor_7_0
     						// When detaching from a group, we won't have received any thread-exited event
     						// but we don't want to keep those entries.
     						if (fThreadToGroupMap.containsValue(groupId)) {
-    							Set<String> setToRemove = new HashSet<String>();
-
-    							Iterator<Map.Entry<String, String>> iterator1 = fThreadToGroupMap.entrySet().iterator();
-    							while (iterator1.hasNext()){
-    								Map.Entry<String, String> pairs = iterator1.next();
-    								if (pairs.getValue().equals(groupId)) {
-    									setToRemove.add(pairs.getKey());
+    							Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
+    							while (iterator.hasNext()){
+    								if (iterator.next().getValue().equals(groupId)) {
+    									iterator.remove();
     								}
-    							}
-
-    							Iterator<String> iterator2 = setToRemove.iterator();
-    							while (iterator2.hasNext()){
-    								String key = iterator2.next();
-    								fThreadToGroupMap.remove(key);
     							}
     						}
     					}
@@ -327,9 +316,9 @@ public class MIRunControlEventProcessor_7_0
     	} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
     		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
-    		event = MIInferiorExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    		event = MIInferiorExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     	} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
-    		event = MIInferiorSignalExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    		event = MIInferiorSignalExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     	} else if (STOPPED_REASON.equals(reason)) {
     		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	} else if (RUNNING_REASON.equals(reason)) {

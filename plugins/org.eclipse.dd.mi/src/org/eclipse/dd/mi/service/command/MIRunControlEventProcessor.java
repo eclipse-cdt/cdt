@@ -173,7 +173,7 @@ public class MIRunControlEventProcessor
    		String groupId = MIProcesses.UNIQUE_GROUP_ID;
 
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
     	IExecutionDMContext execDmc = processContainerDmc;
     	if (procService != null && threadId != null) {
@@ -249,7 +249,7 @@ public class MIRunControlEventProcessor
                 if (procService != null) {
                 	String groupId = MIProcesses.UNIQUE_GROUP_ID;
                 	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+                	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
                 	fCommandControl.getSession().dispatchEvent(
                 			new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());

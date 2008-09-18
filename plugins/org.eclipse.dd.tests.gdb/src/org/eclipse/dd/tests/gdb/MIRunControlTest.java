@@ -118,8 +118,8 @@ public class MIRunControlTest extends BaseTestCase {
             public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	fRunCtrl.getExecutionContexts(groupDmc, rm);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	fRunCtrl.getExecutionContexts(containerDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -204,8 +204,8 @@ public class MIRunControlTest extends BaseTestCase {
             public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	fRunCtrl.getExecutionContexts(groupDmc, rmExecutionCtxts);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -256,8 +256,8 @@ public class MIRunControlTest extends BaseTestCase {
             public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(groupDmc, 1), rm);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(containerDmc, 1), rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -475,8 +475,8 @@ public class MIRunControlTest extends BaseTestCase {
             public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
-            	fRunCtrl.resume(groupDmc, rm);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	fRunCtrl.resume(containerDmc, rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -495,9 +495,9 @@ public class MIRunControlTest extends BaseTestCase {
 			public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
 				IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-				IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+				IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
 
-				wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
 				wait.waitFinished();
 			}
 		});
@@ -550,9 +550,9 @@ public class MIRunControlTest extends BaseTestCase {
             public void run() {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext groupDmc = fProcService.createExecutionGroupContext(procDmc, pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
 
-            	wait.setReturnInfo(fRunCtrl.isSuspended(groupDmc));
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
             	wait.waitFinished();
             }
         });

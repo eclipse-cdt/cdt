@@ -131,7 +131,7 @@ public class CLIEventProcessor
                     	String groupId = MIProcesses.UNIQUE_GROUP_ID;
 
                     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+                    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
                     	MIEvent<?> e =  new MIThreadCreatedEvent(processContainerDmc, threadId);
                     	fCommandControl.getSession().dispatchEvent(e, fCommandControl.getProperties());
                     }
@@ -183,7 +183,7 @@ public class CLIEventProcessor
             	String groupId = MIProcesses.UNIQUE_GROUP_ID;
 
             	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-            	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+            	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
             	MIEvent<?> event = new MIRunningEvent(processContainerDmc, token, type);
             	fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
             }

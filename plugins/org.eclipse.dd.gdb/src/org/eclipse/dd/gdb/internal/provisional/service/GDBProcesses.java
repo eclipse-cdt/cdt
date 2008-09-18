@@ -30,7 +30,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
-import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
+import org.eclipse.dd.mi.service.IMIContainerDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses;
@@ -186,15 +186,15 @@ public class GDBProcesses extends MIProcesses {
 	    	inferiorProcess != null && 
 	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 
-	    	final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
-			if (groupDmc == null) {
+	    	final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+			if (containerDmc == null) {
 				// This service version only handles a single process to debug, therefore, we can simply
 				// create the context describing this process ourselves.
 				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 				String groupId = MIProcesses.UNIQUE_GROUP_ID;
 				IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
-				IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, groupId);
-				rm.setData(new IContainerDMContext[] {newGroupDmc});
+				IMIContainerDMContext newContainerDmc = createContainerContext(procDmc, groupId);
+				rm.setData(new IContainerDMContext[] {newContainerDmc});
 				rm.done();
 			} else {
 				// List of threads

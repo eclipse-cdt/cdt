@@ -47,12 +47,12 @@ public interface IMIProcesses extends IProcesses
                                                  String threadId);
 
     /**
-     * Create a executionGroup context.
+     * Create a container context.
      * 
      * @param processDmc The parent process context of this context
      * @param groupId The thread group id of the process
      */
-    IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
-    												       String groupId);
+    IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
+    											 String groupId);
 }
 

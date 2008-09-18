@@ -13,11 +13,12 @@ package org.eclipse.dd.mi.service;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 
 /**
- * An execution group context object.  In the GDB/MI protocol, thread groups
- * are represented by a string identifier, which is the basis for this context.
+ * An container context object.  In the GDB/MI protocol, thread groups
+ * are used as containers of threads, and are represented by a string 
+ * identifier.  These thread groups are the basis for this context.
  * @since 1.1
  */
-public interface IMIExecutionGroupDMContext extends IContainerDMContext 
+public interface IMIContainerDMContext extends IContainerDMContext 
 {
     /**
      * Returns the GDB/MI thread group identifier of this context.

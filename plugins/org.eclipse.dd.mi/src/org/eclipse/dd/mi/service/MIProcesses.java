@@ -57,7 +57,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	//                           MIControlDMContext
 	//                                |
 	//                           MIProcessDMC (IProcess)
-	//   MIExecutionGroupDMC __/      |
+	//    MIContainerDMC ______/      |
 	//     (IContainer)               |
 	//          |                MIThreadDMC (IThread)
 	//    MIExecutionDMC  _____/
@@ -129,8 +129,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	private static class MIExecutionGroupDMC extends AbstractDMContext
-	implements IMIExecutionGroupDMContext
+	private static class MIContainerDMC extends AbstractDMContext
+	implements IMIContainerDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread group in the GDB/MI protocol.
@@ -139,14 +139,14 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 		/**
 		 * Constructor for the context.  It should not be called directly by clients.
-		 * Instead clients should call {@link IMIProcesses#createExecutionGroupContext
+		 * Instead clients should call {@link IMIProcesses#createContainerContext
 		 * to create instances of this context based on the group name.
 		 * 
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process context that is the parent of this context.
 		 * @param groupId GDB/MI thread group identifier.
 		 */
-		public MIExecutionGroupDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
+		public MIContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc == null ? new IDMContext[0] : new IDMContext[] { processDmc });
 			fId = groupId;
 		}
@@ -162,7 +162,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		@Override
 		public boolean equals(Object obj) {
 			return super.baseEquals(obj) && 
-			       (((MIExecutionGroupDMC)obj).fId == null ? fId == null : ((MIExecutionGroupDMC)obj).fId.equals(fId));
+			       (((MIContainerDMC)obj).fId == null ? fId == null : ((MIContainerDMC)obj).fId.equals(fId));
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     {
       	/**
     	 * ID given by the OS.
-     	 * For practicality, we use the same id as the one used in {@link MIProcesses#MIExecutionGroupDMC}
+     	 * For practicality, we use the same id as the one used in {@link MIProcesses#MIContainerDMC}
     	 */
     	private final String fId;
 
@@ -280,10 +280,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
      * Event indicating that an execution group (debugged process) has started.  This event
      * implements the {@link IStartedMDEvent} from the IRunControl service. 
      */
-    public static class ExecutionGroupStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+    public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
-        public ExecutionGroupStartedDMEvent(IMIExecutionGroupDMContext context) {
+        public ContainerStartedDMEvent(IMIContainerDMContext context) {
             super(context);
         }
     }        
@@ -292,10 +292,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
      * Event indicating that an execution group is no longer being debugged.  This event
      * implements the {@link IExitedMDEvent} from the IRunControl service. 
      */
-    public static class ExecutionGroupExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+    public static class ContainerExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IExitedDMEvent
     {
-        public ExecutionGroupExitedDMEvent(IContainerDMContext context) {
+        public ContainerExitedDMEvent(IContainerDMContext context) {
             super(context);
         }
     }        
@@ -386,9 +386,9 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     	return new MIExecutionDMC(getSession().getId(), containerDmc, threadDmc, threadId);
     }
 
-    public IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
-    															  String groupId) {
-    	return new MIExecutionGroupDMC(getSession().getId(), processDmc, groupId);
+    public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
+    												    String groupId) {
+    	return new MIContainerDMC(getSession().getId(), processDmc, groupId);
     }
 
 	/**
@@ -423,8 +423,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 					new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
 				        @Override
 				        protected void handleSuccess() {
-				        	if (getData() instanceof IMIExecutionGroupDMContext) {
-				        		IMIExecutionGroupDMContext contDmc = (IMIExecutionGroupDMContext)getData();
+				        	if (getData() instanceof IMIContainerDMContext) {
+				        		IMIContainerDMContext contDmc = (IMIContainerDMContext)getData();
 				        		fContainerCommandCache.execute(new CLIInfoThreads(contDmc),
 				        				new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
 				        		        	@Override
@@ -452,12 +452,12 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
     	if (dmc instanceof MIProcessDMC) {
     		MIProcessDMC procDmc = (MIProcessDMC)dmc;
-    		rm.setData(createExecutionGroupContext(procDmc, procDmc.getProcId()));
+    		rm.setData(createContainerContext(procDmc, procDmc.getProcId()));
     	} else if (dmc instanceof MIThreadDMC) {
     		MIThreadDMC threadDmc = (MIThreadDMC)dmc;
     		IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
-    		IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procDmc, procDmc.getProcId()); 
-    		rm.setData(createExecutionContext(groupDmc, threadDmc, threadDmc.getId()));
+    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, procDmc.getProcId()); 
+    		rm.setData(createExecutionContext(containerDmc, threadDmc, threadDmc.getId()));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
     	}
@@ -479,11 +479,11 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procCtx, 
+							IMIContainerDMContext containerDmc = createContainerContext(procCtx, 
 									                                             ((IMIProcessDMContext)procCtx).getProcId());
-			                getSession().dispatchEvent(new ExecutionGroupStartedDMEvent(groupDmc), 
+			                getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), 
 			                                           getProperties());
-			                rm.setData(groupDmc);
+			                rm.setData(containerDmc);
 							rm.done();
 						}
 					});
@@ -512,7 +512,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     					protected void handleSuccess() {
     				    	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
     				    	if (containerDmc != null) {
-    				    		getSession().dispatchEvent(new ExecutionGroupExitedDMEvent(containerDmc), 
+    				    		getSession().dispatchEvent(new ContainerExitedDMEvent(containerDmc), 
     				    				getProperties());
     				    	}
     						rm.done();
@@ -541,14 +541,14 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	}
     
 	public void getProcessesBeingDebugged(IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
-		final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
-		if (groupDmc != null) {
+		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+		if (containerDmc != null) {
 			fContainerCommandCache.execute(
-					new MIThreadListIds(groupDmc),
+					new MIThreadListIds(containerDmc),
 					new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							rm.setData(makeExecutionDMCs(groupDmc, getData()));
+							rm.setData(makeExecutionDMCs(containerDmc, getData()));
 							rm.done();
 						}
 					});
@@ -558,8 +558,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 			String groupId = MIProcesses.UNIQUE_GROUP_ID;
 			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
-			IMIExecutionGroupDMContext newGroupDmc = createExecutionGroupContext(procDmc, groupId);
-			rm.setData(new IContainerDMContext[] {newGroupDmc});
+			IMIContainerDMContext newContainerDmc = createContainerContext(procDmc, groupId);
+			rm.setData(new IContainerDMContext[] {newContainerDmc});
 			rm.done();
 		}
 	}

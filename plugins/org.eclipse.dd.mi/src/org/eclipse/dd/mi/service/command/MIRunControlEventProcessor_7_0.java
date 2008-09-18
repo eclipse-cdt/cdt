@@ -205,7 +205,7 @@ public class MIRunControlEventProcessor_7_0
 
     		    	if (procService != null) {
     		    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    		    		IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+    		    		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
     		    		MIEvent<?> event = null;
     		    		if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class MIRunControlEventProcessor_7_0
     		groupId = fThreadToGroupMap.get(threadId);
     	}
     	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    	IContainerDMContext processContainerDmc = procService.createExecutionGroupContext(procDmc, groupId);
+    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
     	IExecutionDMContext execDmc = processContainerDmc;
     	if (procService != null && threadId != null) {

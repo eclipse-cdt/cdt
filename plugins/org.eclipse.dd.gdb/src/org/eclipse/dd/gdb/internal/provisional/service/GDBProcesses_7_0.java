@@ -40,9 +40,8 @@ import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
-import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.IMIContainerDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
-import org.eclipse.dd.mi.service.IMIExecutionGroupDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIListThreadGroups;
@@ -74,7 +73,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	//                           MIControlDMContext
 	//                                |
 	//                           MIProcessDMC (IProcess)
-	//   MIExecutionGroupDMC __/      |
+	//     MIContainerDMC _____/      |
 	//     (IContainer)               |
 	//          |                MIThreadDMC (IThread)
 	//    MIExecutionDMC  _____/
@@ -146,8 +145,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	private static class MIExecutionGroupDMC extends AbstractDMContext
-	implements IMIExecutionGroupDMContext
+	private static class MIContainerDMC extends AbstractDMContext
+	implements IMIContainerDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread group in the GDB/MI protocol.
@@ -156,14 +155,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 
 		/**
 		 * Constructor for the context.  It should not be called directly by clients.
-		 * Instead clients should call {@link IMIProcesses#createExecutionGroupContext
+		 * Instead clients should call {@link IMIProcesses#createContainerContext
 		 * to create instances of this context based on the group name.
 		 * 
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process context that is the parent of this context.
 		 * @param groupId GDB/MI thread group identifier.
 		 */
-		public MIExecutionGroupDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
+		public MIContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc == null ? new IDMContext[0] : new IDMContext[] { processDmc });
 			fId = groupId;
 		}
@@ -179,7 +178,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		@Override
 		public boolean equals(Object obj) {
 			return super.baseEquals(obj) && 
-			       (((MIExecutionGroupDMC)obj).fId == null ? fId == null : ((MIExecutionGroupDMC)obj).fId.equals(fId));
+			       (((MIContainerDMC)obj).fId == null ? fId == null : ((MIContainerDMC)obj).fId.equals(fId));
 		}
 
 		@Override
@@ -271,7 +270,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
     }
     
-    /*
+    /**
      * The data of a corresponding thread or process.
      */
     @Immutable
@@ -292,25 +291,25 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     }
     
     /**
-     * Event indicating that an execution group (debugged process) has started.  This event
+     * Event indicating that an container (debugged process) has started.  This event
      * implements the {@link IStartedMDEvent} from the IRunControl service. 
      */
-    public static class ExecutionGroupStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+    public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
-        public ExecutionGroupStartedDMEvent(IMIExecutionGroupDMContext context) {
+        public ContainerStartedDMEvent(IMIContainerDMContext context) {
             super(context);
         }
     }        
     
     /**
-     * Event indicating that an execution group is no longer being debugged.  This event
+     * Event indicating that an container is no longer being debugged.  This event
      * implements the {@link IExitedMDEvent} from the IRunControl service. 
      */
-    public static class ExecutionGroupExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
+    public static class ContainerExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IExitedDMEvent
     {
-        public ExecutionGroupExitedDMEvent(IContainerDMContext context) {
+        public ContainerExitedDMEvent(IContainerDMContext context) {
             super(context);
         }
     }        
@@ -412,9 +411,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     	return new MIExecutionDMC(getSession().getId(), containerDmc, threadDmc, threadId);
     }
 
-    public IMIExecutionGroupDMContext createExecutionGroupContext(IProcessDMContext processDmc,
+    public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
     															  String groupId) {
-    	return new MIExecutionGroupDMC(getSession().getId(), processDmc, groupId);
+    	return new MIContainerDMC(getSession().getId(), processDmc, groupId);
     }
 
 	/**
@@ -473,14 +472,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
     	if (dmc instanceof MIProcessDMC) {
     		MIProcessDMC procDmc = (MIProcessDMC)dmc;
-    		rm.setData(createExecutionGroupContext(procDmc, procDmc.getProcId()));
+    		rm.setData(createContainerContext(procDmc, procDmc.getProcId()));
     	} else if (dmc instanceof MIThreadDMC) {
     		MIThreadDMC threadDmc = (MIThreadDMC)dmc;
     		IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
-    		IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procDmc, procDmc.getProcId()); 
-    		rm.setData(createExecutionContext(groupDmc, threadDmc, threadDmc.getId()));
+    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, procDmc.getProcId()); 
+    		rm.setData(createExecutionContext(containerDmc, threadDmc, threadDmc.getId()));
     	} else {
-            rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
     	}
 
     	rm.done();
@@ -501,9 +500,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 						protected void handleSuccess() {
 							fCommandControl.setConnected(true);
 
-							IMIExecutionGroupDMContext groupDmc = createExecutionGroupContext(procCtx,
-									                                         ((IMIProcessDMContext)procCtx).getProcId());
-			                rm.setData(groupDmc);
+							IMIContainerDMContext containerDmc = createContainerContext(procCtx,
+									                                                    ((IMIProcessDMContext)procCtx).getProcId());
+			                rm.setData(containerDmc);
 							rm.done();
 						}
 					});
@@ -563,14 +562,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 //			inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 		
 			final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			final IMIExecutionGroupDMContext groupDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionGroupDMContext.class);
-			if (groupDmc != null) {
+			final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+			if (containerDmc != null) {
 				fThreadCommandCache.execute(
-						new MIListThreadGroups(controlDmc, groupDmc.getGroupId()),
+						new MIListThreadGroups(controlDmc, containerDmc.getGroupId()),
 						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {
-								rm.setData(makeExecutionDMCs(groupDmc, getData().getThreadInfo().getThreadList()));
+								rm.setData(makeExecutionDMCs(containerDmc, getData().getThreadInfo().getThreadList()));
 								rm.done();
 							}
 						});
@@ -580,7 +579,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {
-								rm.setData(makeExecutionGroupDMCs(controlDmc, getData().getGroupList()));
+								rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
 								rm.done();
 							}
 						});
@@ -614,16 +613,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		}
 	}
 	
-	private IMIExecutionGroupDMContext[] makeExecutionGroupDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
+	private IMIContainerDMContext[] makeContainerDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
 		IProcessDMContext[] procDmcs = makeProcessDMCs(controlDmc, groups);
 		
-		IMIExecutionGroupDMContext[] groupDmcs = new IMIExecutionGroupDMContext[groups.length];
+		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
 		for (int i = 0; i < procDmcs.length; i++) {
 			String groupId = groups[i].getGroupId();
 			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
-			groupDmcs[i] = createExecutionGroupContext(procDmc, groupId);
+			containerDmcs[i] = createContainerContext(procDmc, groupId);
 		}
-		return groupDmcs;
+		return containerDmcs;
 	}
 
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
@@ -684,15 +683,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();
-        IMIExecutionGroupDMContext groupDmc = e.getGroupId() != null ? createExecutionGroupContext(procDmc, e.getGroupId()) : null;
-        getSession().dispatchEvent(new ExecutionGroupStartedDMEvent(groupDmc), getProperties());
+        IMIContainerDMContext containerDmc = e.getGroupId() != null ? createContainerContext(procDmc, e.getGroupId()) : null;
+        getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
     }
 
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupExitedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();
-        IMIExecutionGroupDMContext groupDmc = e.getGroupId() != null ? createExecutionGroupContext(procDmc, e.getGroupId()) : null;
-		getSession().dispatchEvent(new ExecutionGroupExitedDMEvent(groupDmc), getProperties());
+        IMIContainerDMContext containerDmc = e.getGroupId() != null ? createContainerContext(procDmc, e.getGroupId()) : null;
+		getSession().dispatchEvent(new ContainerExitedDMEvent(containerDmc), getProperties());
 
     }
     
@@ -723,7 +722,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     // Event handler when a thread or threadGroup starts
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
-    	if (e instanceof ExecutionGroupStartedDMEvent) {
+    	if (e instanceof ContainerStartedDMEvent) {
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();
@@ -733,7 +732,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     // Event handler when a thread or a threadGroup exits
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
-    	if (e instanceof ExecutionGroupExitedDMEvent) {
+    	if (e instanceof ContainerExitedDMEvent) {
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();

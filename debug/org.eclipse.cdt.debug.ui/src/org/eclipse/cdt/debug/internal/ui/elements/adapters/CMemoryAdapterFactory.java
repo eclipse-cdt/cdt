@@ -38,9 +38,11 @@ public class CMemoryAdapterFactory implements IAdapterFactory {
 			return adaptableObject;
 		}
 
+		// If the target supports memory spaces and there's more than one
+		// available, we use a custom Add Monitor dialog
 		if (adapterType.equals(IAddMemoryBlocksTarget.class)) {
 			if (adaptableObject instanceof CMemoryBlockRetrievalExtension) {
-				if (((CMemoryBlockRetrievalExtension)adaptableObject).hasMemorySpaces())
+				if (((CMemoryBlockRetrievalExtension)adaptableObject).getMemorySpaces().length > 1)
 					return fgAddMemoryBlocks;
 			}
 		}

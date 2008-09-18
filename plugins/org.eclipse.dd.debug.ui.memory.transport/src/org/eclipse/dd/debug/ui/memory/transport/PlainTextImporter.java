@@ -294,6 +294,8 @@ public class PlainTextImporter implements IMemoryImporter {
 						if(!fUseCustomAddress)
 							offset = BigInteger.ZERO;
 						
+						BigInteger scrollToAddress = null;
+						
 						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
 						
 						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
@@ -323,6 +325,9 @@ public class PlainTextImporter implements IMemoryImporter {
 									data[i] = new BigInteger(valueString.substring(position++, position++ + 1), 16).byteValue();
 								}
 								
+								if(scrollToAddress == null)
+									scrollToAddress = recordAddress;
+								
 								((IMemoryBlockExtension) fMemoryBlock).setValue(recordAddress.subtract(((IMemoryBlockExtension) 
 									fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead)), data);
 								
@@ -343,6 +348,9 @@ public class PlainTextImporter implements IMemoryImporter {
 						
 						reader.close();
 						monitor.done();
+						
+						if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+							fParentDialog.scrollRenderings(scrollToAddress);
 					}
 					catch(Exception e) 
 					{ 

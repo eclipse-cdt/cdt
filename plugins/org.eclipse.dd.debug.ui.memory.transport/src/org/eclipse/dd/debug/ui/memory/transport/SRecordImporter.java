@@ -289,6 +289,8 @@ public class SRecordImporter implements IMemoryImporter {
 						
 						final int CHECKSUM_LENGTH = 1;
 						
+						BigInteger scrollToAddress = null;
+						
 						BigInteger offset = null;
 						if(!fUseCustomAddress)
 							offset = BigInteger.ZERO;
@@ -364,6 +366,9 @@ public class SRecordImporter implements IMemoryImporter {
 								return new Status( IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(), "Checksum failure of line = " + line); //$NON-NLS-1$
 							}
 							
+							if(scrollToAddress == null)
+								scrollToAddress = recordAddress;
+							
 							// FIXME error on incorrect checksum
 							
 							((IMemoryBlockExtension) fMemoryBlock).setValue(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
@@ -380,6 +385,9 @@ public class SRecordImporter implements IMemoryImporter {
 						
 						reader.close();
 						monitor.done();
+						
+						if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+							fParentDialog.scrollRenderings(scrollToAddress);
 					}
 					catch(Exception e) 
 					{ 

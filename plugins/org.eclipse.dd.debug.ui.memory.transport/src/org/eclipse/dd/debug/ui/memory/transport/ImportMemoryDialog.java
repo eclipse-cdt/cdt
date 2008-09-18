@@ -11,21 +11,26 @@
 
 package org.eclipse.dd.debug.ui.memory.transport;
 
+import java.math.BigInteger;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.dd.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.memory.MemoryView;
+import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,10 +41,12 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.progress.UIJob;
 
 public class ImportMemoryDialog extends SelectionDialog 
 {
@@ -55,13 +62,50 @@ public class ImportMemoryDialog extends SelectionDialog
 	
 	private Properties fProperties = new Properties();
 	
-	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock)
+	private MemoryView fMemoryView;
+	
+	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, MemoryView view)
 	{
 		super(parent);
 		super.setTitle("Download to Memory");  
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
+		fMemoryView = view;
+	}
+	
+	protected void scrollRenderings(final BigInteger address)
+	{
+		UIJob job = new UIJob("repositionRenderings"){ //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				final IMemoryRenderingContainer containers[] = fMemoryView.getMemoryRenderingContainers();
+				for(int i = 0; i < containers.length; i++)
+				{
+					if(containers[i] instanceof RenderingViewPane)
+					{
+						IMemoryRendering rendering = containers[i].getActiveRendering();
+						
+						if(rendering instanceof IRepositionableMemoryRendering)
+						{
+							try 
+							{
+								((IRepositionableMemoryRendering) rendering).goToAddress(address);
+							} 
+							catch (DebugException e) 
+							{
+								// do nothing
+							}
+						}
+					}
+				}
+
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true); 
+		job.setThread(Display.getDefault().getThread());
+		job.schedule();
+		
+	
 	}
 	
 	/* (non-Javadoc)

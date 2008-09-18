@@ -16,7 +16,9 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewIdRegistry;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -36,6 +38,10 @@ public class ImportMemoryAction implements IViewActionDelegate {
 	public void init(IViewPart view) {
 		if (view instanceof MemoryView)
 			fView = (MemoryView) view;
+		
+//		IDebugContextService debugContextService = DebugUITools.getDebugContextManager().getContextService(view.getSite().getWorkbenchWindow());
+//        this.
+//		debugContextService.getActiveContext(); 
 	}
 	
 	private IMemoryBlock getMemoryBlock(ISelection selection)
@@ -71,7 +77,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 		if(memBlock == null)
 			return;
 			
-		ImportMemoryDialog dialog = new ImportMemoryDialog(DebugUIPlugin.getShell(), memBlock);
+		ImportMemoryDialog dialog = new ImportMemoryDialog(DebugUIPlugin.getShell(), memBlock, fView);
 		dialog.open();
 		
 		dialog.getResult();

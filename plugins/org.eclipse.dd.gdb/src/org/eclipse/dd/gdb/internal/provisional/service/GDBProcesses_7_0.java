@@ -50,9 +50,9 @@ import org.eclipse.dd.mi.service.command.commands.MITargetDetach;
 import org.eclipse.dd.mi.service.command.commands.MIThreadInfo;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
-import org.eclipse.dd.mi.service.command.output.IThreadInfo;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.dd.mi.service.command.output.MIThread;
 import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.osgi.framework.BundleContext;
@@ -453,7 +453,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         	        	protected void handleSuccess() {
         	        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
         	        		if (getData().getThreadList().length != 0) {
-        	        			IThreadInfo thread = getData().getThreadList()[0];
+        	        			MIThread thread = getData().getThreadList()[0];
         	        			if (thread.getThreadId().equals(threadDmc.getId())) {
         	        				threadData = new MIThreadDMData("", thread.getOsId());      //$NON-NLS-1$
         	        			}
@@ -590,7 +590,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 //		}
 	}
 
-	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, IThreadInfo[] threadInfos) {
+	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, MIThread[] threadInfos) {
 		final IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
 
 		if (threadInfos.length == 0) {

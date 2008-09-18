@@ -7,12 +7,11 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Wind River Systems - refactored to match pattern in package
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command.output;
 
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * GDB/MI thread list parsing.
@@ -75,7 +74,7 @@ import java.util.regex.Pattern;
 public class MIThreadInfoInfo extends MIInfo {
 
 	private String fCurrentThread = null;
-	private IThreadInfo[] fThreadList = null;
+	private MIThread[] fThreadList = null;
 
 	public MIThreadInfoInfo(MIOutput out) {
 		super(out);
@@ -86,7 +85,7 @@ public class MIThreadInfoInfo extends MIInfo {
 		return fCurrentThread;
 	}
 
-	public IThreadInfo[] getThreadList() {
+	public MIThread[] getThreadList() {
 		return fThreadList;
 	}
 
@@ -116,7 +115,7 @@ public class MIThreadInfoInfo extends MIInfo {
 			}
 		}
 		if (fThreadList == null) {
-			fThreadList = new IThreadInfo[0];
+			fThreadList = new MIThread[0];
 		}
 	}
 
@@ -126,97 +125,11 @@ public class MIThreadInfoInfo extends MIInfo {
 	//      id="n",target-id="Thread 162.32942",details="...",frame={...},state="stopped"
 	private void parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
-		fThreadList = new IThreadInfo[values.length];
+		fThreadList = new MIThread[values.length];
 		
 		for (int i = 0; i < values.length; i++) {
-			MITuple value = (MITuple) values[i];
-			MIResult[] results = value.getMIResults();
-
-			String threadId = null;
-			String targetId = null;
-			String osId = null;
-			String parentId = null;
-			ThreadFrame topFrame = null;
-			String state = null;
-			String details = null;
-
-			for (int j = 0; j < results.length; j++) {
-				MIResult result = results[j];
-				String var = result.getVariable();
-				if (var.equals("id")) { //$NON-NLS-1$
-					MIValue val = results[j].getMIValue();
-					if (val instanceof MIConst) {
-						threadId = ((MIConst) val).getCString().trim();
-					}
-				}
-				else if (var.equals("target-id")) { //$NON-NLS-1$
-					MIValue val = results[j].getMIValue();
-					if (val instanceof MIConst) {
-						targetId = ((MIConst) val).getCString().trim();
-						osId = parseOsId(targetId);
-						parentId = parseParentId(targetId);
-					}
-				}
-				else if (var.equals("frame")) { //$NON-NLS-1$
-					MIValue val = results[j].getMIValue();
-					topFrame = parseFrame(val);
-				}
-				else if (var.equals("state")) { //$NON-NLS-1$
-					MIValue val = results[j].getMIValue();
-					if (val instanceof MIConst) {
-						state = ((MIConst) val).getCString().trim();
-					}
-				}
-				else if (var.equals("details")) { //$NON-NLS-1$
-					MIValue val = results[j].getMIValue();
-					if (val instanceof MIConst) {
-						details = ((MIConst) val).getCString().trim();
-					}
-				}
-			}
-			
-			fThreadList[i] = new ThreadInfo(threadId, targetId, osId, parentId, topFrame, details, state);
+			fThreadList[i] = MIThread.parse((MITuple) values[i]);
 		}
 	}
-
-	// General format:
-	// 		"Thread 0xb7c8ab90 (LWP 7010)"
-	//      "Thread 162.32942"
-	private String parseOsId(String str) {
-		Pattern pattern = Pattern.compile("(Thread\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\(LWP\\s*)(\\d*)", 0); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher(str);
-		if (matcher.find()) {
-			return matcher.group(4);
-		}
-		
-		pattern = Pattern.compile("Thread\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
-		matcher = pattern.matcher(str);
-		if (matcher.find()) {
-			return matcher.group(1);
-		}
-		
-		return null;
-	}
-
-	// General format:
-	// 		"Thread 0xb7c8ab90 (LWP 7010)"
-	//      "Thread 162.32942"
-	private String parseParentId(String str) {
-		Pattern pattern = Pattern.compile("Thread\\s*(\\d+)\\.\\d+", 0); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher(str);
-		if (matcher.find()) {
-			return matcher.group(1);
-		}
-		
-		return null;
-	}
-
-	// General format:
-	// 		level="0",addr="0x08048bba",func="func",args=[...],file="file.cc",fullname="/path/file.cc",line="26"
-	private ThreadFrame parseFrame(MIValue val) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
 

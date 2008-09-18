@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -919,11 +919,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             {
             }
         };
-        boolean currentCountIsCustom = true;
-        for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j*=2)
-        	currentCountIsCustom = (j != fRendering.getColumnsSetting());
-        displayColumnCountCustomValue.setChecked(currentCountIsCustom);
-        
         
         final Action displayColumnCountCustom = new Action(
             TraditionalRenderingMessages
@@ -1040,8 +1035,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 sub.add(displayColumnCountAuto);
                 for(int i = 0; i < displayColumnCounts.length; i++)
                 	sub.add(displayColumnCounts[i]);
-                if(displayColumnCountCustomValue.isChecked())
+                
+                boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
+                for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j*=2)
+                	currentCountIsCustom = (j != fRendering.getColumnsSetting());
+                if(currentCountIsCustom)
                 	sub.add(displayColumnCountCustomValue);
+                
                 sub.add(displayColumnCountCustom);
                 manager.add(sub);
                 manager.add(new Separator());

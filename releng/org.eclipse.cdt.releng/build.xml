@@ -15,7 +15,7 @@
 		<tstamp/>
 		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.4-200806172000/eclipse-SDK-3.4-linux-gtk-ppc.tar.gz"/>
 		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.v20080619-1900-e3.4.zip"/>
-		<property name="branchVersion" value="5.0.1"/>
+		<property name="branchVersion" value="5.0.2"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -215,10 +215,9 @@
 		</copy>
 		
 		<!-- Create symlink to latest build -->
-		<!--
 		<symlink action="delete" link="${copyToDir}/latest" failonerror="false"/>
 		<symlink link="${copyToDir}/latest" resource="${copyToDir}/${buildType}.${buildId}" overwrite="true"/>
-		-->
+
 	</target>
 
 	<target name="mail" depends="init">

@@ -101,7 +101,7 @@ public class MIThread {
 	}
 	
     private static Pattern fgOsIdPattern1 = Pattern.compile("(Thread\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\(LWP\\s*)(\\d*)", 0); //$NON-NLS-1$
-    private static Pattern fgOsIdPattern2 = Pattern.compile("(Thread\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\(LWP\\s*)(\\d*)", 0); //$NON-NLS-1$
+    private static Pattern fgOsIdPattern2 = Pattern.compile("Thread\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
 	
     private static String parseOsId(String str) {
         // General format:

@@ -36,4 +36,4 @@ java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launc
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*
 	
 # Copy the build.log to where the latest build is
-cp build.log /home/www/tools/cdt/builds/5.0.2/latest
+cp /opt/public/download-staging.priv/tools/cdt/releng/build.log /home/www/tools/cdt/builds/5.0.2/latest

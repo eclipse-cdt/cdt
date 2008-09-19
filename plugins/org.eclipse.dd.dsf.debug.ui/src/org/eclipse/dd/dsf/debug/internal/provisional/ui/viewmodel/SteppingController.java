@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
@@ -73,6 +74,8 @@ public final class SteppingController implements IStepQueueManager
 	 * control participants fail to indicate completion of event processing.
 	 */
     public final static int MAX_STEP_DELAY= 1000;
+
+    private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.ui/stepping")); //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Indicates that the given context has been stepping for some time, 
@@ -349,6 +352,7 @@ public final class SteppingController implements IStepQueueManager
     }
 
 	private void doStep(final IExecutionDMContext execCtx, final StepType stepType) {
+		if (DEBUG) System.out.println("[SteppingController] doStep ctx="+execCtx); //$NON-NLS-1$
 	    disableStepping(execCtx);
         updateLastStepTime(execCtx);
         
@@ -465,6 +469,7 @@ public final class SteppingController implements IStepQueueManager
      * @param execCtx
      */
     private void doneStepping(final IExecutionDMContext execCtx) {
+    	if (DEBUG) System.out.println("[SteppingController] doneStepping ctx=" + execCtx); //$NON-NLS-1$
         enableStepping(execCtx);
         processStepQueue(execCtx);
     }

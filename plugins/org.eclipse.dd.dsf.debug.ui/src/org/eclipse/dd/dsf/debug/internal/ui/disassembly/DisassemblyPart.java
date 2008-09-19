@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
@@ -193,7 +194,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 @SuppressWarnings("restriction")
 public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, SessionEndedListener {
 
-	private final static boolean DEBUG = DsfDebugUIPlugin.getDefault().isDebugging();
+	private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.ui/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Annotation model attachment key for breakpoint annotations.
@@ -2409,26 +2410,40 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
-		if (event.getDMContext().equals(fTargetContext)
-				|| DMContexts.isAncestorOf(event.getDMContext(), fTargetContext)) {
-			setDebugContext(null);
+		final IExecutionDMContext context= event.getDMContext();
+		if (context.equals(fTargetContext)
+				|| DMContexts.isAncestorOf(fTargetContext, context)) {
+			asyncExec(new Runnable() {
+				public void run() {
+					setDebugContext(null);
+				}});
 		}
 	}
 
 	@DsfServiceEventHandler
 	public void handleEvent(ISuspendedDMEvent event) {
-		if (event.getDMContext().equals(fTargetContext)
-				|| DMContexts.isAncestorOf(event.getDMContext(), fTargetContext)) {
-			updatePC(PC_UNKNOWN);
+		final IExecutionDMContext context= event.getDMContext();
+		if (context.equals(fTargetContext)
+				|| DMContexts.isAncestorOf(fTargetContext, context)) {
+			asyncExec(new Runnable() {
+				public void run() {
+					updatePC(PC_UNKNOWN);
+				}
+			});
 			firePropertyChange(PROP_SUSPENDED);
 		}
 	}
 
 	@DsfServiceEventHandler
 	public void handleEvent(IResumedDMEvent event) {
-		if (event.getDMContext().equals(fTargetContext)
-				|| DMContexts.isAncestorOf(event.getDMContext(), fTargetContext)) {
-			updatePC(PC_RUNNING);
+		final IExecutionDMContext context= event.getDMContext();
+		if (context.equals(fTargetContext)
+				|| DMContexts.isAncestorOf(fTargetContext, context)) {
+			asyncExec(new Runnable() {
+				public void run() {
+					updatePC(PC_RUNNING);
+				}
+			});
 			firePropertyChange(PROP_SUSPENDED);
 		}
 	}

@@ -147,16 +147,18 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		
 		private final IWorkbenchPage fPage;
 		private final FrameData fFrameData;
+		private final boolean fEventTriggered;
 
 		/**
 		 * Constructs a new source lookup job.
 		 */
-		public LookupJob(FrameData frameData, IWorkbenchPage page) {
+		public LookupJob(FrameData frameData, IWorkbenchPage page, boolean eventTriggered) {
 			super("DSF Source Lookup");  //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
 			fFrameData = frameData;
 			fPage = page;
+			fEventTriggered = eventTriggered;
 		}
 
         IDMContext getDmc() { return fFrameData.fDmc; }
@@ -173,7 +175,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                     fPrevResult = result;
                     fPrevFrameData = fFrameData;
                     fRunningLookupJob = null;
-                    startDisplayJob(fPrevResult, fFrameData, fPage);
+                    startDisplayJob(fPrevResult, fFrameData, fPage, fEventTriggered);
                 }
             }});
 			return Status.OK_STATUS;
@@ -230,17 +232,17 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
      * Job that positions the editor and paints the IP Annotation for given DMC. 
      */
 	class DisplayJob extends UIJob {
-		private SourceLookupResult fResult;
-		private IWorkbenchPage fPage;
-		private FrameData fFrameData;
+		private final SourceLookupResult fResult;
+		private final IWorkbenchPage fPage;
+		private final FrameData fFrameData;
 
-		private DsfRunnable fDisplayJobFinishedRunnable = new DsfRunnable() { 
+		private final DsfRunnable fDisplayJobFinishedRunnable = new DsfRunnable() { 
             public void run() {
                 // If the current display job does not match up with "this", it means that this job got canceled
                 // after it already completed and after this runnable was queued into the dispatch thread.
                 if (fRunningDisplayJob == DisplayJob.this) {
                     fRunningDisplayJob = null;
-                    if (!fDoneStepping.getAndSet(true)) {
+                    if (fEventTriggered && !fDoneStepping.getAndSet(true)) {
                         doneStepping(fResult.getDmc());
                     }
                     serviceDisplayAndClearingJobs();
@@ -248,22 +250,24 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             }
         }; 
 
-        private AtomicBoolean fDoneStepping = new AtomicBoolean(false);
+        private final AtomicBoolean fDoneStepping = new AtomicBoolean(false);
         private IRegion fRegion;
         private ITextViewer fTextViewer;
+		private final boolean fEventTriggered;
         
         IDMContext getDmc() { return fResult.getDmc(); }
         
 		/**
 		 * Constructs a new source display job
 		 */
-		public DisplayJob(SourceLookupResult result, FrameData frameData, IWorkbenchPage page) {
+		public DisplayJob(SourceLookupResult result, FrameData frameData, IWorkbenchPage page, boolean eventTriggered) {
 			super("Debug Source Display");  //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 			fResult = result;
 			fFrameData = frameData;
 			fPage = page;
+			fEventTriggered = eventTriggered;
 		}
 
 		@Override
@@ -614,16 +618,18 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
     public void displaySource(Object context, final IWorkbenchPage page, final boolean force) {
+		fStepCount = 0;
+
         if (!(context instanceof IDMVMContext)) return;
         final IDMContext dmc = ((IDMVMContext)context).getDMContext();
 
         // Quick test.  DMC is checked again in source lookup participant, but 
         // it's much quicker to test here. 
         if (!(dmc instanceof IFrameDMContext)) return;
-        doDisplaySource((IFrameDMContext) dmc, page, force);
+        doDisplaySource((IFrameDMContext) dmc, page, force, false);
 	}
 
-    private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force) {
+	private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
     	if (context.getLevel() < 0) {
     		return;
     	}
@@ -648,9 +654,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 						frameData.fFile = data.getFile();
 						if (!force && frameData.equals(fPrevFrameData)) {
 							fPrevResult.updateArtifact(context);
-							startDisplayJob(fPrevResult, frameData, page);
+							startDisplayJob(fPrevResult, frameData, page, eventTriggered);
 						} else {
-							startLookupJob(frameData, page);
+							startLookupJob(frameData, page, eventTriggered);
 						}
 					}
     			});
@@ -665,25 +671,30 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         }
     }
     
-    private void startLookupJob(final FrameData frameData, final IWorkbenchPage page) {
+	private void startLookupJob(final FrameData frameData, final IWorkbenchPage page, boolean eventTriggered) {
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
             fRunningLookupJob.cancel();
         }
         
-        fRunningLookupJob = new LookupJob(frameData, page);
+        fRunningLookupJob = new LookupJob(frameData, page, eventTriggered);
         fRunningLookupJob.schedule();
     }
     
     // To be called only on dispatch thread. 
-    private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page) {
-    	DisplayJob nextDisplayJob = new DisplayJob(lookupResult, frameData, page);
+	private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page) {
+		startDisplayJob(lookupResult, frameData, page, false);
+	}
+
+	// To be called only on dispatch thread. 
+    private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page, boolean eventTriggered) {
+    	DisplayJob nextDisplayJob = new DisplayJob(lookupResult, frameData, page, eventTriggered);
     	if (fRunningDisplayJob != null) {
     		fPendingDisplayJob = null;
     		IExecutionDMContext[] execCtxs = DMContexts.getAllAncestorsOfType(frameData.fDmc, IExecutionDMContext.class);
     		fPendingExecDmcsToClear.removeAll(Arrays.asList(execCtxs));
 
-    		if (frameData.isIdentical(fRunningDisplayJob.fFrameData)) {
+    		if (!eventTriggered && frameData.isIdentical(fRunningDisplayJob.fFrameData)) {
     			// identical location - we are done
     			return;
     		}
@@ -793,7 +804,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
 				        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
 				        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-							doDisplaySource((IFrameDMContext) dmc, page, false);
+							doDisplaySource((IFrameDMContext) dmc, page, false, true);
 				        }
 			        }
 				}});

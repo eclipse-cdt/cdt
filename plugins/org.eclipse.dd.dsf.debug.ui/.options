@@ -1,1 +1,3 @@
 org.eclipse.dd.dsf.debug.ui/debug = false
+org.eclipse.dd.dsf.debug.ui/stepping = false
+org.eclipse.dd.dsf.debug.ui/disassembly = false

@@ -534,7 +534,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		rm.done();	
 	}
 
-	public void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm) {
+	public void debugNewProcess(String file, DataRequestMonitor<IDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();

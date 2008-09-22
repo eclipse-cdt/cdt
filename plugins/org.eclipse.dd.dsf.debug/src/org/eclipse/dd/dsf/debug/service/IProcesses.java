@@ -138,9 +138,10 @@ public interface IProcesses extends IDMService {
     /**
      * Starts a new process with the debugger attached.
      * @param file Process image to use for the new process.
-     * @param rm Request completion monitor, to be willed in with the process context.
+     * @param rm Request completion monitor, to be filled in with the 
+     *           debugging context that can now be used to characterize the process
      */
-    void debugNewProcess(String file, DataRequestMonitor<IProcessDMContext> rm);
+    void debugNewProcess(String file, DataRequestMonitor<IDMContext> rm);
 
     /**
      * Retrieves the list of processes which are currently under debugger control.

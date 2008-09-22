@@ -31,7 +31,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -234,7 +233,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 		if (obj instanceof IFile) {
 			IFile file = (IFile) obj;
-			if (isPossibleMatch(path, file.getLocation())) {
+			if (isPossibleMatch(path, file)) {
 				return file;
 			}
 			return null;
@@ -243,7 +242,7 @@ public class ErrorParserManager extends OutputStream {
         @SuppressWarnings("unchecked")
 		Collection<IFile> files = (Collection<IFile>) obj;
 		for (IFile file : files) {
-			if (isPossibleMatch(path, file.getLocation())) {
+			if (isPossibleMatch(path, file)) {
 				if (matchingFile != null) {
 					return null;	// Ambiguous match
 				}
@@ -254,19 +253,21 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Checks if a file system path {@code location} may point to the same
-	 * file as an absolute file system path {@code absoluteLocation}.
+	 * Checks if a file system path {@code location} may point to a workspace {@code resource}.
 	 * @param location an absolute or relative file system path.
-	 * @param absoluteLocation an absolute file system path.
-	 * @return {@code true} if 
+	 * @param resource a workspace resource.
+	 * @return {@code true} if {@code location} may point to {@code resource}.
 	 */
-	private boolean isPossibleMatch(IPath location, IPath absoluteLocation) {
-	    Assert.isLegal(absoluteLocation.isAbsolute());
+	private static boolean isPossibleMatch(IPath location, IResource resource) {
+		IPath resourceLocation = resource.getLocation();
+		if (resourceLocation == null) {
+			return false;
+		}
 		if (location.isAbsolute()) {
-			return location.equals(absoluteLocation);
+			return location.equals(resourceLocation);
 		} else {
-			int prefixLen = absoluteLocation.segmentCount() - location.segmentCount(); 
-			return prefixLen >= 0 && absoluteLocation.removeFirstSegments(prefixLen).equals(location);
+			int prefixLen = resourceLocation.segmentCount() - location.segmentCount(); 
+			return prefixLen >= 0 && resourceLocation.removeFirstSegments(prefixLen).equals(location);
 		}
 	}
 

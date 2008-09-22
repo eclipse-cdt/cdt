@@ -145,9 +145,10 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
         
-        // The initializeControl method should be called after the GdbControl class has
-        // be initialized (in the ServicesLaunchSequence above.)  This is because it is the 
-        // GdbControl class that will trigger the launch cleanup through a GDBControl.GDBExitedEvent
+        // The initializeControl method should be called after the ICommandControlService
+        // be initialized in the ServicesLaunchSequence above.  This is because it is that
+        // service that will trigger the launch cleanup (if we need it during this launch)
+        // through an ICommandControlShutdownDMEvent
         launch.initializeControl();
 
         // Add the CLI and "inferior" process objects to the launch.

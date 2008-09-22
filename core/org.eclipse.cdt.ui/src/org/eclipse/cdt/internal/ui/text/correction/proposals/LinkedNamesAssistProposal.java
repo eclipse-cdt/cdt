@@ -46,7 +46,6 @@ import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -58,8 +57,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
-import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
-import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
+import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
 import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
@@ -113,7 +111,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	private String fLabel;
 	private String fValueSuggestion;
 	private int fRelevance;
-	private OccurrenceLocation[] fLocations;
+	private IRegion[] fLocations;
 
 	public LinkedNamesAssistProposal(ITranslationUnit tu) {
 		this(CorrectionMessages.LinkedNamesAssistProposal_description, tu, null);
@@ -144,15 +142,8 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 					IASTNodeSelector selector= astRoot.getNodeSelector(null);
 					IASTName name= selector.findEnclosingName(secectionOffset, selectionLength);
-
 					if (name != null) {
-						IBinding binding= name.resolveBinding();
-						if (binding != null) {
-							OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
-							if (occurrencesFinder.initialize(astRoot, name) == null) {
-								fLocations= occurrencesFinder.getOccurrences();
-							}
-						}
+						fLocations = LinkedNamesFinder.findByName(astRoot, name);
 					}
 					return Status.OK_STATUS;
 				}
@@ -163,9 +154,9 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			}
 
 			// Sort the locations starting with the one @ offset.
-			Arrays.sort(fLocations, new Comparator<OccurrenceLocation>() {
+			Arrays.sort(fLocations, new Comparator<IRegion>() {
 
-				public int compare(OccurrenceLocation n1, OccurrenceLocation n2) {
+				public int compare(IRegion n1, IRegion n2) {
 					return rank(n1) - rank(n2);
 				}
 
@@ -176,7 +167,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 				 * @param location the location to compute the rank for
 				 * @return the rank of the location with respect to the invocation offset
 				 */
-				private int rank(OccurrenceLocation location) {
+				private int rank(IRegion location) {
 					int relativeRank= location.getOffset() + location.getLength() - offset;
 					if (relativeRank < 0)
 						return Integer.MAX_VALUE + relativeRank;
@@ -188,7 +179,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			IDocument document= viewer.getDocument();
 			LinkedPositionGroup group= new LinkedPositionGroup();
 			for (int i= 0; i < fLocations.length; i++) {
-				OccurrenceLocation item= fLocations[i];
+				IRegion item= fLocations[i];
 				group.addPosition(new LinkedPosition(document, item.getOffset(), item.getLength(), i));
 			}
 

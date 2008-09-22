@@ -409,12 +409,16 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				base = 16;
 				offset = 2;
 			}
+			// Check for "binarity"
+			else if (expression.startsWith("0b")) { //$NON-NLS-1$
+				base = 2;
+				offset = 2;
+			}
 			// Check for "octality"
 			else if (expression.startsWith("0")) { //$NON-NLS-1$
 				base = 8;
 				offset = 1;
 			}
-
 			// Now, try to parse the expression. If a NumberFormatException is
 			// thrown, then it wasn't a simple numerical expression and we go 
 			// to plan B (attempt an expression evaluation)

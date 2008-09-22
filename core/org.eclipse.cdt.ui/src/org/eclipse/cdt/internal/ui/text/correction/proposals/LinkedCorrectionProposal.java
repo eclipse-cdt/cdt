@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 /**
  * A proposal for quick fixes and quick assists that works on a AST rewriter and enters the
  * linked mode when the proposal is set up.
- * Either a rewriter is directly passed in the constructor or method {@link #getRewrite()} is overridden
- * to provide the AST rewriter that is evaluated to the document when the proposal is
- * applied.
+ * Either a rewriter is directly passed in the constructor or method {@link #getRewrite()} is
+ * overridden to provide the AST rewriter that is evaluated to the document when the proposal
+ * is applied.
  * @since 5.1
  */
 public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
@@ -37,7 +37,8 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 	 * @param image The image that is displayed for this proposal or <code>null</code> if no
 	 * image is desired.
 	 */
-	public LinkedCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance, Image image) {
+	public LinkedCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite,
+			int relevance, Image image) {
 		super(name, tu, rewrite, relevance, image);
 	}
 
@@ -71,14 +72,4 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 	public void addLinkedPositionProposal(String groupID, String proposal, Image image) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addProposal(proposal, image, 10);
 	}
-
-	// TODO(sprigogin): Cleanup
-	/**
-	 * Adds a linked position proposal to the group with the given id.
-	 * @param groupID The id of the group that should present the proposal
-	 * @param type The binding to use as type name proposal.
-	 */
-//	public void addLinkedPositionProposal(String groupID, ITypeBinding type) {
-//		getLinkedProposalModel().getPositionGroup(groupID, true).addProposal(type, getTranslationUnit(), 10);
-//	}
 }

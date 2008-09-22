@@ -19,7 +19,7 @@ public interface IOccurrencesFinder {
 	public static final int K_OCCURRENCE= 5;
 
 	/**
-	 * Element representing a occurrence
+	 * Element representing an occurrence
 	 */
 	public static class OccurrenceLocation {
 		private final int fOffset;
@@ -54,7 +54,6 @@ public interface IOccurrencesFinder {
 		public String toString() {
 			return "[" + fOffset + " / " + fLength + "] " + fDescription; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
-		
 	}
 	
 	public String initialize(IASTTranslationUnit root, IASTNode node);
@@ -101,7 +100,6 @@ public interface IOccurrencesFinder {
 	 */
 	public OccurrenceLocation[] getOccurrences();
 
-
 	public int getSearchKind();
 			
 	/**
@@ -109,5 +107,4 @@ public interface IOccurrencesFinder {
 	 * @return returns the id of this finder.
 	 */
 	public String getID();
-
 }

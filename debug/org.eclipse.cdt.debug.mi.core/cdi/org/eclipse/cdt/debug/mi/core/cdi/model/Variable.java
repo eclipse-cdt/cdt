@@ -280,7 +280,9 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (t instanceof ICDIStructType || t instanceof IncompleteType) {
-					fn = "(" + fn + ")." + childName; //$NON-NLS-1$ //$NON-NLS-2$
+					if (childName.length()>0) {
+						fn = "(" + fn + ")." + childName; //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 				Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
 						childName, fn, getPosition(), getStackDepth(), vars[i]);

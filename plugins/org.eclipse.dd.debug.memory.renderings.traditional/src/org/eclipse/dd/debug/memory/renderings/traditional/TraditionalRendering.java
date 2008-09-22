@@ -1183,7 +1183,15 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 						Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
 						display.asyncExec(new Runnable() {
 							public void run() {
-								TraditionalRendering.this.fRendering.refresh();
+								try 
+								{
+									fBigBaseAddress = TraditionalRendering.this.fRendering.getMemoryBlock().getBigBaseAddress();
+									TraditionalRendering.this.fRendering.gotoAddress(fBigBaseAddress);
+									TraditionalRendering.this.fRendering.refresh();
+								} 
+								catch (DebugException e) 
+								{
+								}
 							}
 						});
 					}

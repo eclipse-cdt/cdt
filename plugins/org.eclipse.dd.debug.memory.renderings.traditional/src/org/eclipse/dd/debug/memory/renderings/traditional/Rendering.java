@@ -1691,7 +1691,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	fIsDisplayLittleEndian = littleEndian;
     	
     	fireSettingsChanged();
-        layoutPanes();
+    	Display.getDefault().asyncExec(new Runnable(){
+    		public void run()
+    		{
+    			layoutPanes();
+    		}
+    	});
     }
     
     public void setBytesPerColumn(int byteCount)

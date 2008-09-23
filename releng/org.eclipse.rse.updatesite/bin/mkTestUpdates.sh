@@ -272,7 +272,7 @@ elif [ `basename $SITE` = 3.1 ]; then
     echo "Working on 3.1 update site"
     TPTYPE="3.1"
     TPVERSION="${TPVERSION} ${TPTYPE}"
-    TYPE=milestone
+    TYPE=official
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -292,7 +292,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
     sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_1 -->/d' \
         site.xml.new1 > site.xml.new
     mv -f site.xml.new site.xml
-    rm site.xml.new1
+    rm site.xml.new1 site.xml.new2
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
@@ -305,9 +305,9 @@ else
     cvs -q update -dPR
     sed -e '/<!-- BEGIN_2_0_5 -->/,/<!-- END_2_0_5 -->/d' \
         site.xml > site.xml.new1
-    sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
+    sed -e '/<!-- BEGIN_3_0_2 -->/,/<!-- END_3_0_2 -->/d' \
         site.xml.new1 > site.xml.new2
-    sed -e '/<!-- BEGIN_3_0_1 -->/,/<!-- END_3_0_1 -->/d' \
+    sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_3_1 -->/d' \
         site.xml.new2 > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2

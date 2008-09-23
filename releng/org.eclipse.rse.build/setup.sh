@@ -42,11 +42,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel=S
-ep_ver=3.5M1
-ep_date=200808071402
+ep_ver=3.5M2
+ep_date=200809180100
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.4.0.v3504a.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3509c.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then

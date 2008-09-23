@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.ftp"
       label="%featureName"
-      version="3.0.1.qualifier"
+      version="3.0.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.files.ftp">
 

@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="modelInitializer" minOccurs="0" maxOccurs="unbounded"/>
@@ -50,7 +55,7 @@
                   A class that extends &lt;b&gt;org.eclipse.rse.core.IRSEModelInitializer&lt;/b&gt;.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.rse.core.model.RSEModelInitializer"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.rse.core.IRSEModelInitializer"/>
                </appinfo>
             </annotation>
          </attribute>

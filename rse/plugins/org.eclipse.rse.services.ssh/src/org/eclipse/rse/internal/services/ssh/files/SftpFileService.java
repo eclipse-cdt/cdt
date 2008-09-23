@@ -889,7 +889,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				String fullPathRecoded = recodeSafeForJsch(concat(remoteParent, fileName));
 				OutputStream os = getChannel("SftpFileService.createFile").put(fullPathRecoded); //$NON-NLS-1$
 				os.close();
-				SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPathRecoded); //$NON-NLS-1$
+				// use lstat for consistency with other invocations of makeHostFile()
+				SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").lstat(fullPathRecoded); //$NON-NLS-1$
 				result = makeHostFile(remoteParent, fileName, attrs);
 				Activator.trace("SftpFileService.createFile ok"); //$NON-NLS-1$
 			} catch (Exception e) {
@@ -912,7 +913,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			try {
 				String fullPathRecoded = recodeSafe(fullPath);
 				getChannel("SftpFileService.createFolder").mkdir(fullPathRecoded); //$NON-NLS-1$
-				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(quoteForJsch(fullPathRecoded)); //$NON-NLS-1$
+				// use lstat for consistency with other invocations of makeHostFile()
+				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").lstat(quoteForJsch(fullPathRecoded)); //$NON-NLS-1$
 				result = makeHostFile(remoteParent, folderName, attrs);
 				Activator.trace("SftpFileService.createFolder ok"); //$NON-NLS-1$
 			} catch (Exception e) {

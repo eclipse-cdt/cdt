@@ -438,7 +438,7 @@
    <feature url="features/org.eclipse.rse.terminals_0.1.1.qualifier.jar" id="org.eclipse.rse.terminals" version="0.1.1.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.useractions_1.1.1.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.1.qualifier">
+   <feature url="features/org.eclipse.rse.useractions_1.1.100.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.100.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.wince_0.2.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.1.1.qualifier" os="win32" arch="x86">

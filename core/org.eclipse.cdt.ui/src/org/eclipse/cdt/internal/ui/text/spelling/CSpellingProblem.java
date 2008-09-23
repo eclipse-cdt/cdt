@@ -26,6 +26,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
+import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
@@ -113,6 +114,9 @@ public class CSpellingProblem extends SpellingProblem {
 
 		if (checker != null) {
 			CorrectionContext context= new CorrectionContext(null, getOffset(), getLength());
+
+			// Hack borrowed from JDT.
+			fixed= arguments[0].charAt(0) == IHtmlTagConstants.HTML_TAG_PREFIX;
 
 			if ((sentence && match) && !fixed) {
 				result= new ICCompletionProposal[] { new ChangeCaseProposal(

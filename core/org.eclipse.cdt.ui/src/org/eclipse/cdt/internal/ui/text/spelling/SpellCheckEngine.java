@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +54,6 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	 */
 	private static Set<Locale> fgLocalesWithInstalledDictionaries;
 
-	
 	/**
 	 * Returns the locales for which this
 	 * spell check engine has dictionaries.
@@ -133,9 +131,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 		
 		// Try same language
 		String language= locale.getLanguage();
-		Iterator<Map.Entry<Locale, ISpellDictionary>> iter= fLocaleDictionaries.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<Locale, ISpellDictionary> entry= iter.next();
+		for (Entry<Locale, ISpellDictionary> entry : fLocaleDictionaries.entrySet()) {
 			Locale dictLocale= entry.getKey();
 			if (dictLocale.getLanguage().equals(language))
 				return entry.getValue();
@@ -156,9 +152,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 
 		// Try same language
 		String language= locale.getLanguage();
-		Iterator<Locale> iter= getLocalesWithInstalledDictionaries().iterator();
-		while (iter.hasNext()) {
-			Locale dictLocale= iter.next();
+		for (Locale dictLocale : getLocalesWithInstalledDictionaries()) {
 			if (dictLocale.getLanguage().equals(language))
 				return dictLocale;
 		}
@@ -231,6 +225,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	 */
 	private SpellCheckEngine() {
 		fGlobalDictionaries.add(new TaskTagDictionary());
+		fGlobalDictionaries.add(new HtmlTagDictionary());
 
 		try {
 			final URL location= getDictionaryLocation();
@@ -388,15 +383,12 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	public synchronized final void shutdown() {
 		SpellingPreferences.removePropertyChangeListener(this);
 
-		ISpellDictionary dictionary= null;
-		for (final Iterator<ISpellDictionary> iterator= fGlobalDictionaries.iterator(); iterator.hasNext();) {
-			dictionary= iterator.next();
+		for (ISpellDictionary dictionary : fGlobalDictionaries) {
 			dictionary.unload();
 		}
 		fGlobalDictionaries= null;
 
-		for (Object element : fLocaleDictionaries.values()) {
-			dictionary= (ISpellDictionary)element;
+		for (ISpellDictionary dictionary : fLocaleDictionaries.values()) {
 			dictionary.unload();
 		}
 		fLocaleDictionaries= null;

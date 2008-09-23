@@ -19,9 +19,9 @@ import org.eclipse.jface.text.IRegion;
 
 import com.ibm.icu.text.BreakIterator;
 
+import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
-
 
 /**
  * Iterator to spell check multiline comment regions.
@@ -278,7 +278,35 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 
 		boolean update= false;
 		if (fNext - fPrevious > 0) {
-			if (!isWhitespace(fPrevious, fNext) && isAlphaNumeric(fPrevious, fNext)) {
+			if (fSuccessor != BreakIterator.DONE && fContent.charAt(fPrevious) == IHtmlTagConstants.HTML_TAG_PREFIX && (Character.isLetter(fContent.charAt(fNext)) || fContent.charAt(fNext) == '/')) {
+				if (fContent.startsWith(IHtmlTagConstants.HTML_CLOSE_PREFIX, fPrevious))
+					nextBreak();
+
+				nextBreak();
+
+				if (fSuccessor != BreakIterator.DONE && fContent.charAt(fNext) == IHtmlTagConstants.HTML_TAG_POSTFIX) {
+					nextBreak();
+					if (fSuccessor != BreakIterator.DONE) {
+						update= true;
+						token= fContent.substring(fPrevious, fNext);
+					}
+				}
+			} else if (fSuccessor != BreakIterator.DONE && fContent.charAt(fPrevious) == IHtmlTagConstants.HTML_ENTITY_START && (Character.isLetter(fContent.charAt(fNext)))) {
+				nextBreak();
+				if (fSuccessor != BreakIterator.DONE && fContent.charAt(fNext) == IHtmlTagConstants.HTML_ENTITY_END) {
+					nextBreak();
+					if (isToken(fContent.substring(fPrevious, fNext), IHtmlTagConstants.HTML_ENTITY_CODES)) {
+						skipTokens(fPrevious, IHtmlTagConstants.HTML_ENTITY_END);
+						update= true;
+					} else {
+						token= fContent.substring(fPrevious, fNext);
+					}
+				} else {
+					token= fContent.substring(fPrevious, fNext);
+				}
+				
+				update= true;
+			} else if (!isWhitespace(fPrevious, fNext) && isAlphaNumeric(fPrevious, fNext)) {
 				if (isUrlToken(fPrevious)) {
 					skipTokens(fPrevious, ' ');
 				} else if (fNext - fPrevious > 1 || isSingleLetter(fPrevious) && !fIsIgnoringSingleLetters) {

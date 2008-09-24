@@ -2,7 +2,7 @@
 !*** Project's plugins, features and fragments
 feature@org.eclipse.rse=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
 feature@org.eclipse.rse.core=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
-feature@org.eclipse.rse.dstore=v200809181500,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
+feature@org.eclipse.rse.dstore=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
 feature@org.eclipse.rse.ftp=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 feature@org.eclipse.rse.local=v20080710,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature
@@ -45,7 +45,7 @@ plugin@org.eclipse.rse.services.telnet=v20080604,:pserver:anonymous:none@dev.ecl
 plugin@org.eclipse.rse.services=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services
 plugin@org.eclipse.rse.shells.ui=v20080710,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.shells.ui
 plugin@org.eclipse.rse.subsystems.files.core=v200809041200,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.core
-plugin@org.eclipse.rse.subsystems.files.dstore=v200809110140,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.dstore
+plugin@org.eclipse.rse.subsystems.files.dstore=v200809231530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.dstore
 plugin@org.eclipse.rse.subsystems.files.ftp=v20080609,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.ftp
 plugin@org.eclipse.rse.subsystems.files.local=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.local
 plugin@org.eclipse.rse.subsystems.files.ssh=v20080604,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.files.ssh

@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Martin Oberhuber (Wind River) - [235363][api][breaking] IHostFileToRemoteFileAdapter methods should return AbstractRemoteFile
+ * David McKnight   (IBM)        - [244765] Invalid thread access during workbench termination
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -32,6 +33,8 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 {
@@ -42,8 +45,11 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		if (_listener == null)
 		{
 			DStoreConnectorService connectorService = (DStoreConnectorService)ss.getConnectorService();
-			Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
-			_listener = new RemoteFilePropertyChangeListener(shell, connectorService, connectorService.getDataStore(), ss);
+			IWorkbench wb = PlatformUI.getWorkbench();
+			if (!wb.isClosing()) {
+				Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
+				_listener = new RemoteFilePropertyChangeListener(shell, connectorService, connectorService.getDataStore(), ss);
+			}
 		}
 	}
 

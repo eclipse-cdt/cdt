@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Hans-Erik Floryd (hef-cdt@rt-labs.com)  - http://bugs.eclipse.org/245692
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -126,7 +127,7 @@ public class CygpathTranslator {
                 	if ("cygdrive".equals(realPath.segment(0))) { //$NON-NLS-1$
                 		String drive= realPath.segment(1);
                 		if (drive.length() == 1) {
-                			translatedPath= realPath.removeFirstSegments(2).setDevice(drive.toUpperCase() + ':').toOSString();
+                			translatedPath= realPath.removeFirstSegments(2).makeAbsolute().setDevice(drive.toUpperCase() + ':').toOSString();
                 		}
                 	}
                 }

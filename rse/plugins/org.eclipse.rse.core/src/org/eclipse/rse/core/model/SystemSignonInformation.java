@@ -27,7 +27,6 @@ import org.eclipse.rse.core.subsystems.ICredentials;
  * must be secure and never disclose the password for the remote system in its unencrypted form.
  * However the encrypted form of the password is not considered secret information and can be
  * accessed by anyone.
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class SystemSignonInformation implements ICredentials {
 

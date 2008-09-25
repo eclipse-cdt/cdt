@@ -33,7 +33,6 @@ import org.eclipse.dstore.internal.extra.PropertySource;
  * <code>DataElement</code>s should not be constructed directly, rather they are requested via the createObject()
  * method in <code>DataStore</code>
  *
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.  DataElements
  * should be created via the DataStore create methods.
  */

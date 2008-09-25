@@ -79,7 +79,6 @@ import org.eclipse.dstore.internal.core.util.XMLparser;
  * <code>DataStore</code>, either directly via a <code>IDomainNotifier</code> or indirectly over the communication
  * layer through a client <code>DataStore</code>.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class DataStore

@@ -23,7 +23,6 @@ import java.util.List;
 /**
  * Server Launch Type Enum type.
  * 
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients. Use
  *                the {@link #get(int)} or {@link #get(String)} factory methods
  *                instead.

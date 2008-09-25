@@ -32,6 +32,7 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
@@ -39,6 +40,8 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.debug.core.DebugException;
@@ -109,12 +112,16 @@ public class GdbLaunch extends Launch
         try {
             fExecutor.submit( new Callable<Object>() {
                 public Object call() throws CoreException {
-                	ICommandControlService gdbControl = fTracker.getService(ICommandControlService.class);
-                    if (gdbControl != null) {
+                	ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+                	IMIProcesses procService = fTracker.getService(IMIProcesses.class);
+                    if (commandControl != null && procService != null) {
                         fMemRetrieval = new DsfMemoryBlockRetrieval(
                                 GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
                         fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
-                        fMemRetrieval.initialize((IMemoryDMContext) gdbControl.getContext());
+                        
+                   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+                        IMemoryDMContext memoryDmc = (IMemoryDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+                        fMemRetrieval.initialize(memoryDmc);
                     }
                     return null;
                 }

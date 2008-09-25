@@ -25,7 +25,14 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
+import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
@@ -42,6 +49,15 @@ import org.osgi.framework.BundleContext;
 
 public class GDBProcesses extends MIProcesses {
     
+	private class GDBContainerDMC extends MIContainerDMC
+	implements ISymbolDMContext, IMemoryDMContext, IBreakpointsTargetDMContext, ISourceLookupDMContext, 
+	           ISignalsDMContext, IDisassemblyDMContext 
+	{
+		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
+			super(sessionId, processDmc, groupId);
+		}
+	}
+	
     private IGDBControl fGdb;
     
     // A map of pid to names.  It is filled when we get all the
@@ -81,6 +97,11 @@ public class GDBProcesses extends MIProcesses {
 				GDBProcesses.class.getName() },
 				new Hashtable<String, String>());
         
+		ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+		IProcessDMContext procDmc = createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+		IContainerDMContext containerDmc = createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+		fGdb.getInferiorProcess().setContainerContext(containerDmc);
+
 		requestMonitor.done();
 	}
 
@@ -98,6 +119,12 @@ public class GDBProcesses extends MIProcesses {
 		return GdbPlugin.getBundleContext();
 	}
 
+	@Override
+	public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
+			                                            String groupId) {
+		return new GDBContainerDMC(getSession().getId(), processDmc, groupId);
+	}
+	
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {

@@ -26,6 +26,7 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -37,6 +38,8 @@ import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -375,17 +378,27 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), ICommandControlService.class
+                ServiceTracker tracker1 = new ServiceTracker(GdbUIPlugin.getBundleContext(), ICommandControlService.class
                     .getName(), null);
-                tracker.open();
-                ICommandControlService commandControl = (ICommandControlService) tracker.getService();
-                if (commandControl != null) {
-                    rm.setData((IContainerDMContext)commandControl.getContext());
+                tracker1.open();
+
+                ICommandControlService commandControl = (ICommandControlService) tracker1.getService();
+                ServiceTracker tracker2 = new ServiceTracker(GdbUIPlugin.getBundleContext(), IMIProcesses.class
+                    .getName(), null);
+                tracker2.open();
+                IMIProcesses procService = (IMIProcesses) tracker2.getService();
+                
+                if (commandControl != null && procService != null) {
+               		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+               		IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+
+                    rm.setData(containerDmc);
                 } else {
-                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control or Process service not accessible.")); //$NON-NLS-1$
                 }
                 rm.done();
-                tracker.close();
+                tracker1.close();
+                tracker2.close();
             }
         }
 

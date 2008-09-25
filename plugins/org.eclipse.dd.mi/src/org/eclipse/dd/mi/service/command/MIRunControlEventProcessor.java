@@ -86,13 +86,20 @@ public class MIRunControlEventProcessor
      * control.
      * @param connection
      * @param inferior
+     * @since 1.1
      */
-    public MIRunControlEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc) {
+    public MIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fControlDmc = DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class);
+        fControlDmc = controlDmc;
         fServicesTracker = new DsfServicesTracker(MIPlugin.getBundleContext(), fCommandControl.getSession().getId());
         connection.addEventListener(this);
         connection.addCommandListener(this);
+    }
+    
+    @Deprecated
+    public MIRunControlEventProcessor(AbstractMIControl connection, IContainerDMContext containerDmc) {
+        this(connection, DMContexts.getAncestorOfType(containerDmc, ICommandControlDMContext.class));
+
     }
 
     /**
@@ -200,9 +207,9 @@ public class MIRunControlEventProcessor
     	} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
     		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
-    		event = MIInferiorExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    		event = MIInferiorExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     	} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
-    		event = MIInferiorSignalExitEvent.parse(fCommandControl.getControlDMContext(), exec.getToken(), exec.getMIResults());
+    		event = MIInferiorSignalExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     	} else if (STOPPED_REASON.equals(reason)) {
     		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	}

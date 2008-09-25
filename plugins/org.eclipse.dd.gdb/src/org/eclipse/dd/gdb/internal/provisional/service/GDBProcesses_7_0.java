@@ -25,6 +25,10 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -33,6 +37,8 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
+import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
@@ -185,6 +191,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
 	}
 
+	private class GDBContainerDMC extends MIContainerDMC
+	implements ISymbolDMContext, IMemoryDMContext, IBreakpointsTargetDMContext, ISourceLookupDMContext, 
+	           ISignalsDMContext, IDisassemblyDMContext 
+	{
+		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
+			super(sessionId, processDmc, groupId);
+		}
+	}
+	
 	/**
 	 * Context representing a thread. 
 	 */
@@ -297,7 +312,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
-        public ContainerStartedDMEvent(IMIContainerDMContext context) {
+        public ContainerStartedDMEvent(IContainerDMContext context) {
             super(context);
         }
     }        
@@ -413,7 +428,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 
     public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
     															  String groupId) {
-    	return new MIContainerDMC(getSession().getId(), processDmc, groupId);
+    	return new GDBContainerDMC(getSession().getId(), processDmc, groupId);
     }
 
 	/**

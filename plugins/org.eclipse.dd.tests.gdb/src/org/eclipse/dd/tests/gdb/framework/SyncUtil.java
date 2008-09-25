@@ -23,9 +23,11 @@ import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
@@ -33,8 +35,9 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.commands.MIBreakDelete;
@@ -60,7 +63,8 @@ public class SyncUtil {
     private static IExpressions fExpressions;
     private static DsfSession fSession;
 	
-    private static GDBControlDMContext fGdbControlDmc;
+    private static IContainerDMContext fGdbContainerDmc;
+    private static IBreakpointsTargetDMContext fBreakpointsDmc;
     
     // Initialize some common things, once the session has been established
     public static void initialize(DsfSession session) {
@@ -71,7 +75,12 @@ public class SyncUtil {
     				fSession.getId());
     	
     	fCommandControl = tracker.getService(ICommandControlService.class);
-    	fGdbControlDmc = (GDBControlDMContext)fCommandControl.getContext();
+    	IMIProcesses procService = tracker.getService(IMIProcesses.class);
+   		IProcessDMContext procDmc = procService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+   		fGdbContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+
+   		fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbContainerDmc;
+   		
 		fRunControl = tracker.getService(MIRunControl.class);
 		fStack = tracker.getService(MIStack.class);
 		fExpressions = tracker.getService(IExpressions.class);
@@ -88,7 +97,7 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent SyncStep(final StepType stepType) throws Throwable {
-		return SyncStep(fGdbControlDmc, stepType);
+		return SyncStep(fGdbContainerDmc, stepType);
 	}
 		
 	public static MIStoppedEvent SyncStep(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
@@ -147,11 +156,11 @@ public class SyncUtil {
 
 	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo, 
             final boolean skipBreakpoints) throws Throwable {
-		return SyncRunToLine(fGdbControlDmc, fileName, lineNo, skipBreakpoints);
+		return SyncRunToLine(fGdbContainerDmc, fileName, lineNo, skipBreakpoints);
 	}
 	
 	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo) throws Throwable {
-		return SyncRunToLine(fGdbControlDmc, fileName, lineNo, false);
+		return SyncRunToLine(fGdbContainerDmc, fileName, lineNo, false);
 	}
 
 	
@@ -177,7 +186,7 @@ public class SyncUtil {
 		};
 
 		fCommandControl.queueCommand(
-				new MIBreakInsert(fGdbControlDmc, temporary, false, null, 0, location, 0),
+				new MIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
 			    addBreakDone);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -202,7 +211,7 @@ public class SyncUtil {
 			}
 		};
 
-		fCommandControl.queueCommand(new MIBreakList(fGdbControlDmc), listDRM);
+		fCommandControl.queueCommand(new MIBreakList(fBreakpointsDmc), listDRM);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         assertTrue(wait.getMessage(), wait.isOK());
@@ -236,7 +245,7 @@ public class SyncUtil {
 		};
 
 		fCommandControl.queueCommand(
-				new MIBreakDelete(fGdbControlDmc, breakpointIndices), //$NON-NLS-1$
+				new MIBreakDelete(fBreakpointsDmc, breakpointIndices), //$NON-NLS-1$
 				deleteBreakDone);
 		
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -265,7 +274,7 @@ public class SyncUtil {
 	}
 	
 	public static MIStoppedEvent SyncResumeUntilStopped() throws Throwable {
-		return SyncResumeUntilStopped(fGdbControlDmc);
+		return SyncResumeUntilStopped(fGdbContainerDmc);
 	}
 
 	public static MIStoppedEvent SyncRunToLocation(final String location) throws Throwable {

@@ -19,6 +19,7 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
@@ -29,7 +30,8 @@ import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;
@@ -63,7 +65,7 @@ public class MIRegistersTest extends BaseTestCase {
     //private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
-	private GDBControlDMContext fGdbControlDmc;
+	private IContainerDMContext fContainerDmc;
     private IRegisters fRegService;
     
 	@Before
@@ -74,7 +76,10 @@ public class MIRegistersTest extends BaseTestCase {
 		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
 		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-		fGdbControlDmc = (GDBControlDMContext)commandControl.getContext();
+		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+   		fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+
 		
 		fRegService = fServicesTracker.getService(IRegisters.class);
 	}
@@ -113,7 +118,7 @@ public class MIRegistersTest extends BaseTestCase {
         
         fRegService.getExecutor().submit(new Runnable() {
             public void run() {
-            	fRegService.getRegisterGroups(fGdbControlDmc, regGroupDone);
+            	fRegService.getRegisterGroups(fContainerDmc, regGroupDone);
             }
         });
         

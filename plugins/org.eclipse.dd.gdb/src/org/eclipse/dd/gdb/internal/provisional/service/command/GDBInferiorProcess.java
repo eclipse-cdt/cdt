@@ -17,7 +17,6 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
@@ -28,11 +27,11 @@ class GDBInferiorProcess extends MIInferiorProcess {
 
     
     public GDBInferiorProcess(ICommandControlService commandControl, PTY p) {
-        super(commandControl, (IExecutionDMContext)commandControl.getContext(), p);
+        super(commandControl, p);
     }
 
     public GDBInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
-        super(commandControl, (IExecutionDMContext)commandControl.getContext(), gdbOutputStream);
+        super(commandControl, gdbOutputStream);
     }
 
     @Override

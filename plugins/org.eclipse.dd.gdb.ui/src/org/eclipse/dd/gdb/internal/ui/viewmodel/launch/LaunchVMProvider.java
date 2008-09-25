@@ -31,8 +31,6 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorExitedDMEvent;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -80,9 +78,7 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
     @Override
     protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
         // Never skip the process lifecycle events.
-        if (eventToSkip instanceof InferiorExitedDMEvent || 
-            eventToSkip instanceof InferiorStartedDMEvent ||
-            eventToSkip instanceof ICommandControlInitializedDMEvent ||
+        if (eventToSkip instanceof ICommandControlInitializedDMEvent ||
             eventToSkip instanceof ICommandControlShutdownDMEvent) 
         {
             return false;

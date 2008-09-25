@@ -129,7 +129,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	 * Context representing a thread group of GDB/MI. 
 	 */
     @Immutable
-	private static class MIContainerDMC extends AbstractDMContext
+	protected static class MIContainerDMC extends AbstractDMContext
 	implements IMIContainerDMContext
 	{
 		/**
@@ -283,7 +283,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
-        public ContainerStartedDMEvent(IMIContainerDMContext context) {
+        public ContainerStartedDMEvent(IContainerDMContext context) {
             super(context);
         }
     }        

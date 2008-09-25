@@ -40,21 +40,26 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
+import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
+import org.eclipse.dd.gdb.internal.provisional.service.GDBProcesses;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.AbstractMIControl;
 import org.eclipse.dd.mi.service.command.CLIEventProcessor_7_0;
 import org.eclipse.dd.mi.service.command.MIControlDMContext;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 import org.eclipse.dd.mi.service.command.MIRunControlEventProcessor_7_0;
-import org.eclipse.dd.mi.service.command.MIInferiorProcess.InferiorStartedDMEvent;
 import org.eclipse.dd.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.dd.mi.service.command.commands.MICommand;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
@@ -99,7 +104,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     }
 
     private static int fgInstanceCounter = 0;
-    private final GDBControlDMContext fControlDmc;
+    private final MIControlDMContext fControlDmc;
 
     private SessionType fSessionType;
     
@@ -131,7 +136,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 		} catch (CoreException e) {
 			fExecPath = new Path(""); //$NON-NLS-1$
 		}
-        fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
+        fControlDmc = new MIControlDMContext(session.getId(), getId()); 
     }
 
     @Override
@@ -191,13 +196,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         return fControlDmc;
     }
     
-    /**
-     * More strongly typed version of {@link #getControlDMContext()}.
-     */
-    public GDBControlDMContext getGDBDMContext() {
-        return (GDBControlDMContext) getControlDMContext();
-    }
-
     public SessionType getSessionType() { 
         return fSessionType; 
     }
@@ -337,12 +335,18 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     		return;
     	}
 
+    	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
+    	GDBProcesses procService = servicesTracker.getService(GDBProcesses.class);
+    	servicesTracker.dispose();
+   		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+   		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+
     	final MICommand<MIInfo> execCommand;
     	if (fSessionType == SessionType.REMOTE) {
     		// When doing remote debugging, we use -exec-continue instead of -exec-run 
-    		execCommand = new MIExecContinue(fControlDmc);
+    		execCommand = new MIExecContinue(containerDmc);
     	} else {
-    		execCommand = new MIExecRun(fControlDmc, new String[0]);	
+    		execCommand = new MIExecRun(containerDmc, new String[0]);	
     	}
 
     	boolean stopInMain = false;
@@ -354,13 +358,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     		return;
     	}
 
-    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    		@Override
-    		protected void handleSuccess() {
-    			getSession().dispatchEvent(new InferiorStartedDMEvent(getGDBDMContext()), getProperties());
-    			super.handleSuccess();
-    		}
-    	};
+    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor);
 
     	if (!stopInMain) {
     		// Just start the program.
@@ -375,9 +373,11 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     			return;
     		}
 
+        	final IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext)containerDmc;
+
     		// Insert a breakpoint at the requested stop symbol.
     		queueCommand(
-    				new MIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
+    				new MIBreakInsert(breakpointDmc, true, false, null, 0, stopSymbol, 0), 
     				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
     					@Override
     					protected void handleSuccess() {
@@ -734,7 +734,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
                               AbstractMIControl.class.getName(),
                               IGDBControl.class.getName() }, 
                 new Hashtable<String,String>());
-            getSession().dispatchEvent(new GDBControlInitializedDMEvent(getGDBDMContext()), getProperties());
+            getSession().dispatchEvent(new GDBControlInitializedDMEvent(fControlDmc), getProperties());
             requestMonitor.done();
         }
 

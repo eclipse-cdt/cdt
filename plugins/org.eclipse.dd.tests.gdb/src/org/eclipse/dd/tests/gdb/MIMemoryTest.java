@@ -27,13 +27,15 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControlDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
@@ -68,7 +70,7 @@ public class MIMemoryTest extends BaseTestCase {
 	private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession          fSession;
 	private DsfServicesTracker  fServicesTracker;
-	private GDBControlDMContext fGdbControlDmc;
+	private IMemoryDMContext    fMemoryDmc;
 	private MIRunControl        fRunControl;
 	private IMemory             fMemoryService;
 	private IExpressions        fExpressionService;
@@ -102,8 +104,10 @@ public class MIMemoryTest extends BaseTestCase {
 		assert(fServicesTracker != null);
 
 		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-		fGdbControlDmc = (GDBControlDMContext)commandControl.getContext(); 
-        assert(fGdbControlDmc != null);
+    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+   		fMemoryDmc = (IMemoryDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+        assert(fMemoryDmc != null);
 		    
 		fRunControl = fServicesTracker.getService(MIRunControl.class);
 		assert(fRunControl != null);
@@ -484,7 +488,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
 		//	Ensure that we receive a block of invalid memory bytes
@@ -518,14 +522,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, 0, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, 0, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
 				fWait.getMessage().contains(expected));
 
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, 2, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, 2, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -557,7 +561,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Invalid word count (< 0)";
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -590,7 +594,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, address, offset, word_size, count);
+			readMemory(fMemoryDmc, address, offset, word_size, count);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -607,7 +611,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, address, offset, word_size, count);
+			readMemory(fMemoryDmc, address, offset, word_size, count);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
 			assertTrue(fWait.getMessage(), fWait.isOK());
@@ -640,7 +644,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Verify that all bytes are '0'
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+			readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -656,7 +660,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Verify that all bytes are set
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+			readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -689,7 +693,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Get the memory block
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -707,7 +711,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Get the memory block
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -780,7 +784,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		String expected = "Cannot access memory at address";	// Error msg returned by gdb
@@ -813,14 +817,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, 0, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, 0, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
 				fWait.getMessage().contains(expected));
 
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, 2, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, 2, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -853,7 +857,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Invalid word count (< 0)";
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -886,7 +890,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Buffer too short";
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -921,7 +925,7 @@ public class MIMemoryTest extends BaseTestCase {
 			
 			// [1] Ensure that the memory byte = 0
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, i, word_size, 1);
+			readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -933,7 +937,7 @@ public class MIMemoryTest extends BaseTestCase {
 			fWait.waitReset();
 			byte expected = (byte) (count - i - 1);
 			buffer[0] = expected;
-			writeMemory(fGdbControlDmc, address, offset, word_size, 1, buffer);
+			writeMemory(fMemoryDmc, address, offset, word_size, 1, buffer);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -945,7 +949,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 			// [4] Verify that the memory byte was written correctly
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, i, word_size, 1);
+			readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			block = (MemoryByte[]) fWait.getReturnInfo();
@@ -983,7 +987,7 @@ public class MIMemoryTest extends BaseTestCase {
 			
 			// [1] Ensure that the memory byte = 0
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, 1);
+			readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -994,7 +998,7 @@ public class MIMemoryTest extends BaseTestCase {
 			fWait.waitReset();
 			byte expected = (byte) (count - offset - 1);
 			buffer[0] = expected;
-			writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, 1, buffer);
+			writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, buffer);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -1005,7 +1009,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 			// [4] Verify that the memory byte was written correctly
 			fWait.waitReset();
-			readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, 1);
+			readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1041,7 +1045,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Make sure that the memory block is zeroed
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1056,13 +1060,13 @@ public class MIMemoryTest extends BaseTestCase {
 			buffer[i] = (byte) i;
 		}
 		fWait.waitReset();
-		writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+		writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Make sure that the memory block is initialized
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1136,7 +1140,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		String expected = "Cannot access memory at address";	// Error msg returned by gdb
@@ -1169,14 +1173,14 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Word size not supported (!= 1)";
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, 0, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, 0, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
 				fWait.getMessage().contains(expected));
 
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, 2, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, 2, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -1209,7 +1213,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Invalid repeat count (< 0)";
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -1242,7 +1246,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Perform the test
 		String expected = "Empty pattern";
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -1276,7 +1280,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1287,7 +1291,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < BLOCK_SIZE; i += length) {
 			IAddress address = fBaseAddress.add(i);
 			fWait.waitReset();
-			fillMemory(fGdbControlDmc, address, offset, word_size, count, pattern);
+			fillMemory(fMemoryDmc, address, offset, word_size, count, pattern);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -1295,7 +1299,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify that the memory is correctly set
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, 0, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, 0, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1337,7 +1341,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1348,7 +1352,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < (BLOCK_SIZE / length); i++) {
 			offset = i * length;
 			fWait.waitReset();
-			fillMemory(fGdbControlDmc, fBaseAddress, offset, word_size, 1, pattern);
+			fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, pattern);
 			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -1356,7 +1360,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify that the memory is correctly set
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, 0, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, 0, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1398,7 +1402,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Ensure that the memory is zeroed
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1408,13 +1412,13 @@ public class MIMemoryTest extends BaseTestCase {
 		
 		// Write the pattern [count] times
 		fWait.waitReset();
-		fillMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, pattern);
+		fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Verify that the memory is correctly set
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count * length);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		block = (MemoryByte[]) fWait.getReturnInfo();
@@ -1455,7 +1459,7 @@ public class MIMemoryTest extends BaseTestCase {
 		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			readMemoryByteAtOffset(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		}
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
@@ -1470,7 +1474,7 @@ public class MIMemoryTest extends BaseTestCase {
 			fWait.increment();
 			byte[] block = new byte[count];
 			block[0] = (byte) offset;
-			writeMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count, block);
+			writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, block);
 		}
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
@@ -1485,7 +1489,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			readMemoryByteAtOffset(fGdbControlDmc, fBaseAddress, offset, word_size, count, buffer);
+			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		}
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
@@ -1516,7 +1520,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Get the 'reference' memory block
 		fWait.waitReset();
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		MemoryByte[] buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1534,7 +1538,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  0;
 		count = 64;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1549,7 +1553,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  128;
 		count = 64;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1564,7 +1568,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  80;
 		count = 32;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1579,7 +1583,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  192;
 		count = 32;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1594,7 +1598,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  192;
 		count = 64;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1609,7 +1613,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  32;
 		count = 128;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1624,7 +1628,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  48;
 		count = 192;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();
@@ -1639,7 +1643,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.waitReset();
 		offset =  0;
 		count = BLOCK_SIZE;
-		readMemory(fGdbControlDmc, fBaseAddress, offset, word_size, count);
+		readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		buffer = (MemoryByte[]) fWait.getReturnInfo();

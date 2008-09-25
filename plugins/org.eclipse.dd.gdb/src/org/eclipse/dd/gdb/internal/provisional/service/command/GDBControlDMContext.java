@@ -10,25 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service.command;
 
-import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
-import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
-import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
-import org.eclipse.dd.mi.service.command.MIControlDMContext;
 
 /**
- * 
+ * To be removed
  */
-public class GDBControlDMContext extends MIControlDMContext
-    implements IContainerDMContext, ISymbolDMContext, IMemoryDMContext, IBreakpointsTargetDMContext, ISourceLookupDMContext, 
-        ISignalsDMContext, IDisassemblyDMContext 
+public class GDBControlDMContext
 {
-
-    public GDBControlDMContext(String sessionId, String commandControlId) {
-        super(sessionId, commandControlId);
-    }
-
+    public GDBControlDMContext(String sessionId, String commandControlId) {}
 }

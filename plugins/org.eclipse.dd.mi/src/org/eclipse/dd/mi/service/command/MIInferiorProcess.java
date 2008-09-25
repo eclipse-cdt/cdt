@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
@@ -43,6 +44,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.dd.mi.service.command.commands.CLICommand;
 import org.eclipse.dd.mi.service.command.commands.CLIExecAbort;
 import org.eclipse.dd.mi.service.command.commands.MIGDBShowExitCode;
@@ -70,8 +72,10 @@ public class MIInferiorProcess extends Process
     
     /**
      * Event indicating that the GDB inferior process has started.  This event
-     * implements the {@link IStartedMDEvent} from the IRunControl service. 
+     * implements the {@link IStartedDMEvent} from the IRunControl service. 
+     * @deprecated
      */
+	@Deprecated
     public static class InferiorStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IStartedDMEvent
     {
@@ -82,8 +86,10 @@ public class MIInferiorProcess extends Process
     
     /**
      * Event indicating that the GDB inferior process has exited.  This event
-     * implements the {@link IExitedMDEvent} from the IRunControl service. 
+     * implements the {@link IExitedDMEvent} from the IRunControl service. 
+     * @deprecated 
      */
+    @Deprecated
     public static class InferiorExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
         implements IExitedDMEvent
     {
@@ -107,7 +113,7 @@ public class MIInferiorProcess extends Process
 
     private final ICommandControlService fCommandControl;
 
-    private final IExecutionDMContext fExecutionDMContext;
+    private IContainerDMContext fContainerDMContext;
     
     @ConfinedToDsfExecutor("fSession#getExecutor")
     private boolean fDisposed = false;
@@ -143,13 +149,13 @@ public class MIInferiorProcess extends Process
      * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
-        this(commandControl, inferiorExecCtx, gdbOutputStream, null);
+    public MIInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
+        this(commandControl, gdbOutputStream, null);
     }
     
     @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
-        this(commandControl, inferiorExecCtx, gdbOutputStream, null);
+        this(commandControl, gdbOutputStream, null);
     }
 
     /**
@@ -159,7 +165,7 @@ public class MIInferiorProcess extends Process
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, OutputStream gdbOutputStream) {
-        this(commandControl, null, gdbOutputStream, null);
+        this(commandControl, gdbOutputStream, null);
     }
 
     /**
@@ -173,13 +179,13 @@ public class MIInferiorProcess extends Process
      * @since 1.1
      */
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    public MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
-        this(commandControl, inferiorExecCtx, null, p);
+    public MIInferiorProcess(ICommandControlService commandControl, PTY p) {
+        this(commandControl, null, p);
     }
     
     @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
-        this(commandControl, inferiorExecCtx, null, p);
+        this(commandControl, (OutputStream)null, p);
     }
     
     /**
@@ -189,14 +195,13 @@ public class MIInferiorProcess extends Process
     @ConfinedToDsfExecutor("fSession#getExecutor")
     @Deprecated
     public MIInferiorProcess(AbstractMIControl commandControl, PTY p) {
-        this(commandControl, null, null, p);
+        this(commandControl, (OutputStream)null, p);
     }
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    private MIInferiorProcess(ICommandControlService commandControl, IExecutionDMContext execCtx, final OutputStream gdbOutputStream, PTY p) {
+    private MIInferiorProcess(ICommandControlService commandControl, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
         fSession = commandControl.getSession();
-        fExecutionDMContext = execCtx;
         
         commandControl.addEventListener(this);
         commandControl.addCommandListener(this);
@@ -413,16 +418,24 @@ public class MIInferiorProcess extends Process
     }
 
     public IExecutionDMContext getExecutionContext() {
-        return fExecutionDMContext;
+        return fContainerDMContext;
+    }
+    
+    /**
+	 * @since 1.1
+	 */
+    public void setContainerContext(IContainerDMContext containerDmc) {
+    	fContainerDMContext = containerDmc;
     }
     
     synchronized void setState(State state) {
         if (fState == State.TERMINATED) return;
         fState = state;
         if (fState == State.TERMINATED) {
-            if (fExecutionDMContext != null) {
+            if (fContainerDMContext != null) {
+            	// This may not be necessary in 7.0 because of the =thread-group-exited event
                 getSession().dispatchEvent(
-                    new InferiorExitedDMEvent(fExecutionDMContext), 
+                    new ContainerExitedDMEvent(fContainerDMContext), 
                     getCommandControlService().getProperties());
             }
             closeIO();

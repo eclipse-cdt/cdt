@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Martin Oberhuber (Wind River) - initial API and implementation
- * Ewa Matejska (PalmSource) - [158783] browse button for cdt remote path
+ * Martin Oberhuber      (Wind River) - initial API and implementation
+ * Ewa Matejska          (PalmSource) - [158783] browse button for cdt remote path
  * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
+ * Anna Dushistova       (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -40,13 +41,30 @@ public class Messages extends NLS {
 	public static String RemoteCMainTab_Properties_Location;
 	public static String RemoteCMainTab_Properties_Skip_default;
 
+	public static String RemoteRunLaunchDelegate_0;
+
 	public static String RemoteRunLaunchDelegate_RemoteShell;
 	public static String RemoteRunLaunchDelegate_1;
+
+	public static String RemoteRunLaunchDelegate_10;
+
+	public static String RemoteRunLaunchDelegate_11;
+
+	public static String RemoteRunLaunchDelegate_12;
+
+	public static String RemoteRunLaunchDelegate_13;
+
+	public static String RemoteRunLaunchDelegate_14;
+
+	public static String RemoteRunLaunchDelegate_2;
 	public static String RemoteRunLaunchDelegate_3;
 	public static String RemoteRunLaunchDelegate_4;
 	public static String RemoteRunLaunchDelegate_5;
 	public static String RemoteRunLaunchDelegate_6;
 	public static String RemoteRunLaunchDelegate_7;
+	public static String RemoteRunLaunchDelegate_8;
+
+	public static String RemoteRunLaunchDelegate_9;
 
 	static {
 		// initialize resource bundle

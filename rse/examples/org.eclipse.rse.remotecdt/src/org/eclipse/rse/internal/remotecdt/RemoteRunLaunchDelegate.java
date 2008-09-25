@@ -6,12 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Ewa Matejska (PalmSource) - Adapted from LocalRunLaunchDelegate
+ * Ewa Matejska     (PalmSource) - Adapted from LocalRunLaunchDelegate
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * Anna Dushistova  (MontaVista) - [234490][remotecdt] Launching with disconnected target fails
  * Anna Dushistova  (MontaVista) - [235298][remotecdt] Further improve progress reporting and cancellation of Remote CDT Launch
+ * Anna Dushistova  (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  *******************************************************************************/
 
 
@@ -87,7 +88,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 		
 		if(mode.equals(ILaunchManager.DEBUG_MODE)){
-			monitor.beginTask("Launching", 100); //$NON-NLS-1$
+			monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100); 
 			setDefaultSourceLocator(launch, config);
 			String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
@@ -96,11 +97,11 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				ICDISession dsession = null;
 				try {
 					// Download the binary to the remote before debugging.
-					monitor.setTaskName("Downloading"); //$NON-NLS-1$
+					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2); 
 					remoteFileDownload(config, launch, exePath.toString(), remoteExePath, new SubProgressMonitor(monitor, 80));
 
 					// Automatically start up the gdbserver.  In the future this should be expanded to launch
-					// an arbitrary remote damon.
+					// an arbitrary remote daemon.
 					String gdbserver_port_number = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
 																       IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
 					String gdbserver_command = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
@@ -109,7 +110,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 												+ spaceEscapify(remoteExePath);
 					if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
 						command_arguments += " " + arguments; //$NON-NLS-1$
-					monitor.setTaskName("Launching"); //$NON-NLS-1$
+					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9); 
 					remoteShellProcess = remoteShellExec(config, gdbserver_command,
 														 command_arguments, new SubProgressMonitor(monitor, 5));
 					DebugPlugin.newProcess(launch, remoteShellProcess, Messages.RemoteRunLaunchDelegate_RemoteShell);
@@ -165,14 +166,14 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			}
 
 		} else if(mode.equals(ILaunchManager.RUN_MODE)) {
-			monitor.beginTask("Launching", 100); //$NON-NLS-1$
+			monitor.beginTask(Messages.RemoteRunLaunchDelegate_10, 100); 
 			Process remoteProcess = null;
 			try {
 				// Download the binary to the remote before debugging.
-				monitor.setTaskName("Downloading"); //$NON-NLS-1$
+				monitor.setTaskName(Messages.RemoteRunLaunchDelegate_11);
 				remoteFileDownload(config, launch, exePath.toString(),remoteExePath, new SubProgressMonitor(monitor,80));
 				// Use a remote shell to launch the binary.
-				monitor.setTaskName("Launching"); //$NON-NLS-1$
+				monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12); 
 				remoteProcess = remoteShellExec(config, remoteExePath, arguments, new SubProgressMonitor(monitor,20));
 				DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
 			} catch (CoreException e) {
@@ -207,7 +208,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if(connections[i].getAliasName().equals(remoteConnection))
 				break;
 		if(i >= connections.length) {
-			abort("Could not find the remote connection.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_13, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		return connections[i];
 	}
@@ -261,7 +262,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if(skipDownload)
 			// Nothing to do.  Download is skipped.
 			return null;
-		monitor.beginTask("Downloading remote file", 100); //$NON-NLS-1$
+		monitor.beginTask(Messages.RemoteRunLaunchDelegate_14, 100); 
 		IFileService fileService = (IFileService) getConnectedRemoteService(config, FILE_SERVICE, new SubProgressMonitor(monitor, 10));
 		File file = new File(localExePath);
 		Path remotePath = new Path(remoteExePath);
@@ -292,7 +293,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		// The exit command is called to force the remote shell to close after our command
 		// is executed. This is to prevent a running process at the end of the debug session.
 		// See Bug 158786.
-		monitor.beginTask("Executing "+ remoteCommandPath +" "+ arguments, 10);
+		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8, remoteCommandPath,arguments), 10);
 		String real_remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
 												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 		String remote_command = real_remote_command + CMD_DELIMITER + EXIT_CMD;

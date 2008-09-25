@@ -1525,7 +1525,8 @@ public class SystemViewPart
 		protected IStatus doSelect(IProgressMonitor monitor)
 		{
 			Vector v = new Vector();
-			for (int i = 0; i < _remoteObjectsToSelect.size(); i++){
+			int MAX_SELECT = 1;
+			for (int i = 0; i < _remoteObjectsToSelect.size() && i < MAX_SELECT; i++){
 
 				Object object = _remoteObjectsToSelect.get(i);
 				if (object instanceof RemoteObject)

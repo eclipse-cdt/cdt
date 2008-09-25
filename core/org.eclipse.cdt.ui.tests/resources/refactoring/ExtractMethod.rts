@@ -2226,3 +2226,117 @@ void Test::test()
 	RetType v = exp();
 }
 
+//!Bug 248238: Extract Method Produces Wrong Return Type Or Just Fails Classtype
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=startTag
+//@testString.h
+
+namespace test{
+
+	class string{
+	public:
+
+		friend string operator+(const string& lhs, const string& rhs)
+		{
+		        return rhs;
+		}
+
+
+		string operator+(const string& rhs){return rhs;}
+		string(char* cp){}
+		string(){};
+
+	};
+}
+
+//@Test.cpp
+#include "testString.h"
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return /*$*/"<" + name + ">"/*$$*/ + "</" + name + ">";
+}
+
+int main() {
+	return 0;
+}
+
+//=
+#include "testString.h"
+
+test::string startTag(test::string & name)
+{
+    return "<" + name + ">";
+}
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return startTag(name) + "</" + name + ">";
+}
+
+int main() {
+	return 0;
+}
+
+//!Bug 248238: Extract Method Produces Wrong Return Type Or Just Fails Typedef
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=startTag
+//@testString.h
+
+namespace test{
+
+class string2{
+	public:
+
+		friend string2 operator+(const string2& lhs, const string2& rhs)
+		{
+		        return rhs;
+		}
+
+
+		string2 operator+(const string2& rhs){return rhs;}
+		string2(char* cp){}
+		string2(){};
+
+	};
+
+	typedef string2 string;
+}
+
+//@Test.cpp
+#include "testString.h"
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return /*$*/"<" + name + ">"/*$$*/ + "</" + name + ">";
+}
+
+int main() {
+	return 0;
+}
+
+//=
+#include "testString.h"
+
+test::string startTag(test::string & name)
+{
+    return "<" + name + ">";
+}
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return startTag(name) + "</" + name + ">";
+}
+
+int main() {
+	return 0;
+}
+

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -29,21 +30,25 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
@@ -121,31 +126,98 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_divideAssign:
 		case IASTBinaryExpression.op_assign:
+
 			
-			/* Assume that the expression's return type is the same as the left operand's.*/
-			
-			if(node.getOperand1() instanceof CPPASTIdExpression) {
-				IType expressionType = ((CPPASTIdExpression) node.getOperand1()).getExpressionType();
-				
-				if (expressionType instanceof CPPBasicType) {
-					
-					CPPBasicType basicType = (CPPBasicType) expressionType;
-					return createSimpleDeclSpecifier(basicType.getType());
-					
-				} else if (expressionType instanceof CPPTypedef) {
-					
-					CPPTypedef typedef = (CPPTypedef) expressionType;
-					return new CPPASTNamedTypeSpecifier((IASTName) typedef.getDefinition(), false);
-					
-				} else if (expressionType instanceof CPPClassType) {
-					
-					CPPClassType classType = (CPPClassType) expressionType;
-					return new CPPASTNamedTypeSpecifier((IASTName) classType.getDefinition(), false);
-				}
-			}
+			return getTypeFromBinaryExp(node);
 		}
 		
 		return null /* not yet handled */;
+	}
+
+	private IASTDeclSpecifier getTypeFromBinaryExp(ICPPASTBinaryExpression node) {
+		if(node.getOperand1() instanceof ICPPASTBinaryExpression) {
+			IASTDeclSpecifier ret = getTypeFromBinaryExp(((CPPASTBinaryExpression)node.getOperand1()));
+			if(ret != null) return ret;
+		}else {
+			if(node.getOperand1() instanceof CPPASTIdExpression) {
+				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand1()).getExpressionType());
+			}
+		}
+
+		if(node.getOperand2() instanceof ICPPASTBinaryExpression) {
+			IASTDeclSpecifier ret = getTypeFromBinaryExp(((CPPASTBinaryExpression)node.getOperand2()));
+			if(ret != null) return ret;
+		}else {
+			if(node.getOperand2() instanceof CPPASTIdExpression) {
+				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand2()).getExpressionType());
+			}
+		}
+		return null;
+	}
+
+	private IASTDeclSpecifier getBinaryExpressionType(IType expressionType) {		
+		if (expressionType instanceof CPPBasicType) {
+			
+			CPPBasicType basicType = (CPPBasicType) expressionType;
+			return createSimpleDeclSpecifier(basicType.getType());
+			
+		} else if (expressionType instanceof CPPTypedef) {
+			
+			return getDeclSpecForType(((CPPTypedef)expressionType));
+			
+		} else if (expressionType instanceof CPPClassType) {
+
+			return getDeclSpecForType((CPPClassType)expressionType);
+		}
+		return null;
+	}
+
+	private CPPASTNamedTypeSpecifier getDeclSpecForType(CPPClassType classType) {
+		
+		IASTName name = null;
+		try {
+			IBinding bind = classType.getOwner();
+			if (bind instanceof CPPNamespace) {
+				ICPPASTQualifiedName qname = getQname(classType, bind);
+				qname.addName((IASTName) classType.getDefinition());
+				name = qname;
+			}else {
+				name = (IASTName) classType.getDefinition();
+			}
+		} catch (DOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new CPPASTNamedTypeSpecifier(name, false);
+	}
+
+	private ICPPASTQualifiedName getQname(IBinding classType, IBinding bind) {
+		CPPNamespace namespace = (CPPNamespace) bind;
+		char[][] names = namespace.getFullyQualifiedNameCharArray();
+		CPPASTQualifiedName qname = new CPPASTQualifiedName();
+		for (char[] string : names) {
+			qname.addName(new CPPASTName(string));
+		}
+		return qname;
+	}
+
+	private IASTDeclSpecifier getDeclSpecForType(CPPTypedef typedef) {
+		IASTName name = null;
+		try {
+			IBinding bind = typedef.getOwner();
+			if (bind instanceof CPPNamespace) {
+				ICPPASTQualifiedName qname = getQname(typedef, bind);
+				qname.addName((IASTName) typedef.getDefinition());
+				name = qname;
+			}else {
+				name = (IASTName) typedef.getDefinition();
+			}
+		} catch (DOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new CPPASTNamedTypeSpecifier(name, false);
 	}
 	
 	private static IASTDeclSpecifier createSimpleDeclSpecifier(int type) {

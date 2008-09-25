@@ -18,7 +18,6 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -26,7 +25,6 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlInitializedDMEvent;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -129,8 +127,6 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	public int getDeltaFlags(Object e) {
 		if (e instanceof ICommandControlShutdownDMEvent) {
 	        return IModelDelta.CONTENT;
-	    } else if (e instanceof ICommandControlInitializedDMEvent) {
-	        return IModelDelta.EXPAND;
 	    }
 	    return super.getDeltaFlags(e);
 	}
@@ -139,8 +135,6 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
 		if (e instanceof ICommandControlShutdownDMEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-	    } else if (e instanceof ICommandControlInitializedDMEvent) {
-	        parentDelta.addNode(createVMContext(((IDMEvent<?>)e).getDMContext()), IModelDelta.EXPAND);
 	    } else {
 	    	super.buildDelta(e, parentDelta, nodeOffset, requestMonitor);
 	    	return;

@@ -46,15 +46,9 @@ public class Messages extends NLS {
 	public static String RemoteRunLaunchDelegate_RemoteShell;
 	public static String RemoteRunLaunchDelegate_1;
 
-	public static String RemoteRunLaunchDelegate_10;
-
-	public static String RemoteRunLaunchDelegate_11;
-
 	public static String RemoteRunLaunchDelegate_12;
 
 	public static String RemoteRunLaunchDelegate_13;
-
-	public static String RemoteRunLaunchDelegate_14;
 
 	public static String RemoteRunLaunchDelegate_2;
 	public static String RemoteRunLaunchDelegate_3;

@@ -166,11 +166,11 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			}
 
 		} else if(mode.equals(ILaunchManager.RUN_MODE)) {
-			monitor.beginTask(Messages.RemoteRunLaunchDelegate_10, 100); 
+			monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100); 
 			Process remoteProcess = null;
 			try {
 				// Download the binary to the remote before debugging.
-				monitor.setTaskName(Messages.RemoteRunLaunchDelegate_11);
+				monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
 				remoteFileDownload(config, launch, exePath.toString(),remoteExePath, new SubProgressMonitor(monitor,80));
 				// Use a remote shell to launch the binary.
 				monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12); 
@@ -262,7 +262,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if(skipDownload)
 			// Nothing to do.  Download is skipped.
 			return null;
-		monitor.beginTask(Messages.RemoteRunLaunchDelegate_14, 100); 
+		monitor.beginTask(Messages.RemoteRunLaunchDelegate_2, 100); 
 		IFileService fileService = (IFileService) getConnectedRemoteService(config, FILE_SERVICE, new SubProgressMonitor(monitor, 10));
 		File file = new File(localExePath);
 		Path remotePath = new Path(remoteExePath);

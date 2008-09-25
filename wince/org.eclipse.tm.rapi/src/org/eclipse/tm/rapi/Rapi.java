@@ -13,7 +13,6 @@ package org.eclipse.tm.rapi;
 /**
  * This class provides access to some native Win32 APIs and constants.
  *
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @author Radoslav Gerganov
  */

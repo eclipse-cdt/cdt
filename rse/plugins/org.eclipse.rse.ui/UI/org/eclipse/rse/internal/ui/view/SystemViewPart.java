@@ -33,6 +33,7 @@
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
  * David McKnight (IBM)  - [244807] System view does not handle restore from cache
+ * David McKnight (IBM)  - [247544] [performance] Restoring Selection on Restart can cause the UI to freeze
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1023,8 +1024,9 @@ public class SystemViewPart
 		Object elements[] = ((IStructuredSelection) systemView.getSelection()).toArray();
 		if ((elements != null) && (elements.length > 0))
 		{
+			int MAX_SELECTION = 1;
 			IMemento selectionMem = memento.createChild(TAG_SELECTION);
-			for (int i = 0; i < elements.length; i++)
+			for (int i = 0; i < elements.length && i < MAX_SELECTION; i++)
 			{
 				Object o = elements[i];
 				ISystemViewElementAdapter adapter = systemView.getViewAdapter(o);

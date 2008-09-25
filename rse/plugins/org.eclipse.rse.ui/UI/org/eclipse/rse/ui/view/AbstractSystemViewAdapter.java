@@ -2115,8 +2115,6 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * Initialize Message Objects. <i>Internal use. Do not call or override.</i>
 	 *
 	 * @deprecated Internal use. Do not call this method.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 * 	by clients.
 	 */
 	protected final void initMsgObjects()
 	{
@@ -2199,9 +2197,6 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * can be used to answer getChildren().
 	 * <p>
 	 * <i>Callable by subclasses. Do not override.</i> <br>
-	 *
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 * 	by clients.
 	 */
     protected final Object[] getCancelledMessageObject()
     {
@@ -2216,9 +2211,6 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * to answer getChildren().
 	 * <p>
 	 * <i>Callable by subclasses. Do not override.</i> <br>
-	 *
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 * 	by clients.
 	 */
     protected final Object[] getFailedMessageObject()
     {
@@ -2236,8 +2228,6 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 *
 	 * @deprecated Use {@link #checkForEmptyList(Object[], Object, boolean)}
 	 * 	instead.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 * 	by clients.
 	 */
     protected final Object[] getEmptyMessageObject()
     {

@@ -13,10 +13,11 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
- * Sheldon D'souza (Celunite) - Adapted from SshShellService.
+ * Sheldon D'souza  (Celunite)   - Adapted from SshShellService.
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
-s *******************************************************************************/
+ * Anna Dushistova  (MontaVista) - [246422] Possible bug in TelnetShellService.runCommand()
+ *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,7 +46,7 @@ public class TelnetShellService extends AbstractShellService implements ITelnetS
 	public IHostShell runCommand(String initialWorkingDirectory,
 			String command, String encoding, String[] environment,
 			IProgressMonitor monitor) throws SystemMessageException {
-		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, TelnetHostShell.SHELL_INVOCATION, encoding, environment);
+		TelnetHostShell hostShell = new TelnetHostShell(fTelnetSessionProvider, initialWorkingDirectory, command, encoding, environment);
 		return hostShell;
 	}
 

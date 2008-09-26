@@ -39,8 +39,6 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
 
 	private IAction fAction = null;
     private IMemoryBlock fMemoryBlock = null;
-    
-    private String fUpdatePolicy = null;
 	
     public void dispose() {
 		// do nothing
@@ -69,7 +67,6 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
 		@Override
 		public void run() {
             ((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).setUpdatePolicy(fID);
-            fUpdatePolicy = fID;
         }
     
     }
@@ -111,18 +108,6 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
     			action.setMenuCreator(this);
     			action.setEnabled(true);
     		}
-    		
-    		if(fMemoryBlock != null)
-    		{
-    			if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
-    	    	{
-    	    		String currentPolicy = ((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).getUpdatePolicy();
-    	    		if(fUpdatePolicy == null)
-    	    			fUpdatePolicy = currentPolicy;
-    	    		
-    	    		((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).setUpdatePolicy(fUpdatePolicy);
-    	    	}
-    		}
     	}
     }
     
@@ -158,6 +143,7 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
 		    	SelectPolicy action = new SelectPolicy(policies[i], blockPolicy.getUpdatePolicyDescription(policies[i]));
 		    	ActionContributionItem item = new ActionContributionItem(action);
 		    	action.setChecked(policies[i].equals(currentPolicy));
+		    	
 		    	item.fill(menu, -1);
     		}
     	}

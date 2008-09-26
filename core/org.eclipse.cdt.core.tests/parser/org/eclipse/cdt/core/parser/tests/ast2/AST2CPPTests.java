@@ -123,7 +123,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 	
-	
 	public AST2CPPTests() {
 	}
 	
@@ -6012,5 +6011,19 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	public void testScopeOfCatchHandler_Bug209579() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+
+	//	void func(const char& c);
+	//	void func(char& c);
+	//
+	//	void test(const char& x, char& y) {
+	//	  func(x);
+	//	  func(y);
+	//	}
+	public void testOverloadedFunction_248774() throws Exception {
+		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction func1= helper.assertNonProblem("func(x)", 4, ICPPFunction.class);
+		ICPPFunction func2= helper.assertNonProblem("func(y)", 4, ICPPFunction.class);
+		assertNotSame(func1, func2);
 	}
 }

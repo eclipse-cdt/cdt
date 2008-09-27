@@ -2026,8 +2026,12 @@ public class CPPVisitor {
 		} else if (expression instanceof IASTArraySubscriptExpression) {
 			IType t = getExpressionType(((IASTArraySubscriptExpression) expression).getArrayExpression());
 			try {
-				if (t instanceof ICPPReferenceType)
+				if (t instanceof ICPPReferenceType) {
 					t = ((ICPPReferenceType)t).getType();
+				}
+				if (t instanceof IQualifierType) {
+					t = ((IQualifierType) t).getType();
+				}
 				while (t instanceof ITypedef) {
 					t = ((ITypedef)t).getType();
 				}

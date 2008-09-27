@@ -123,6 +123,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 	
+	
 	public AST2CPPTests() {
 	}
 	
@@ -5993,6 +5994,25 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction func1= helper.assertNonProblem("func(x)", 4, ICPPFunction.class);
 		ICPPFunction func2= helper.assertNonProblem("func(y)", 4, ICPPFunction.class);
+		assertNotSame(func1, func2);
+	}
+
+	//	struct A {
+	//	  const char& operator[](int pos) const;
+	//	  char& operator[](int pos);
+	//	};
+	//	
+	//	void func(const char& c);
+	//	void func(char& c);
+	//
+	//	void test(const A& x, A& y) {
+	//	  func(x[0]);
+	//	  func(y[0]);
+	//	}
+	public void testOverloadedOperator_248803() throws Exception {
+		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction func1= helper.assertNonProblem("func(x[0])", 4, ICPPFunction.class);
+		ICPPFunction func2= helper.assertNonProblem("func(y[0])", 4, ICPPFunction.class);
 		assertNotSame(func1, func2);
 	}
 }

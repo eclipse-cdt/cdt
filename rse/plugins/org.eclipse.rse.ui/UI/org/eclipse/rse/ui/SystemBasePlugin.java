@@ -15,11 +15,11 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [243263] NPE on expanding a filter
  * David McKnight   (IBM)        - [244454] SystemBasePlugin.getWorkBench() incorrectly returns null when called during Eclipse startup
+ * David McKnight   (IBM)  [246406] [performance] Timeout waiting when loading SystemPreferencesManager$ModelChangeListener during startup
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -302,9 +302,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		try {
 			URL url = resolveBundleNameNL(bundle, fileName);
 			if (url != null) {
-				InputStream messageFileStream = url.openStream();
-				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
-				messageFileStream.close();
+				mf = SystemUIMessageFile.getMessageFile(fileName, url);
 				ok = true;
 			}
 		} catch (Throwable t) {
@@ -345,10 +343,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		boolean ok = false;
 		try {
 			URL url = bundle.getEntry("/"+fileName); //$NON-NLS-1$
-			if (url != null) {
-				InputStream messageFileStream = url.openStream();
-				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
-				messageFileStream.close();
+			if (url != null) { 
+				mf = SystemUIMessageFile.getMessageFile(fileName, url);
 				ok = true;
 			}
 		} catch (Throwable t) {

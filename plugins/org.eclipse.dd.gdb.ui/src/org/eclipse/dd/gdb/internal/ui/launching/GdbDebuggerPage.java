@@ -259,18 +259,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			}
 		});
 
-		// TODO: Fetch the string from LaunchUIMessages
-		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
-		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
-		// Button fNonStopButton = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString( "GDBDebuggerPage.15") ); //$NON-NLS-1$
-		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.13")); //$NON-NLS-1$
-		fNonStopCheckBox.addSelectionListener( new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					updateLaunchConfigurationDialog();
-				}
-			});
-		
 		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.9"), //$NON-NLS-1$
 				200, SWT.DEFAULT, SWT.WRAP);
 
@@ -278,6 +266,16 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
 		label.setLayoutData(gd);
+		
+		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
+		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
+		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.13")); //$NON-NLS-1$
+		fNonStopCheckBox.addSelectionListener( new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			});
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {

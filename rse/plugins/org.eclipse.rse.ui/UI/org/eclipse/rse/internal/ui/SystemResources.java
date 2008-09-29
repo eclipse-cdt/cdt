@@ -24,6 +24,7 @@
  * David Dykstal (IBM) - [231943] Make "true" and "false" translatable on SystemTypeFieldEditor
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
+ * David McKnight (IBM) - [248922]  [dnd] Remote to local overwrite copy does not work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -1043,6 +1044,11 @@ public class SystemResources extends NLS
 	public static String SystemTypeFieldEditor_false;
 
 	public static String SystemTypeFieldEditor_true;
+	
+	
+	// collision dialog when copying from RSE resources to Eclipse resources
+	public static String RESID_COLLISION_DUPLICATE_RESOURCE_TITLE;
+	public static String RESID_COLLISION_OVERWRITE_RESOURCE_MESSAGE;
 
 	static {
 		// load message values from bundle file

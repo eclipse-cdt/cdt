@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 
 /**
  * This class contains several convenience methods 
@@ -68,5 +75,30 @@ public class DebugUtil {
 		return obj != null ?
 				String.valueOf(obj) + " " + obj.getClass().getSimpleName() :
 				"null";
+	}
+	
+	
+	/**
+	 * Prints the values of javabean properties to the console.
+	 * This method is not recursive, it does not print nested properties.
+	 * 
+	 * Example of usage: 
+	 * 
+	 * IResource resource = ...;
+	 * DebugUtil.printObjectProperties(resource);
+	 * DebugUtil.printObjectProperties(resource.getResourceAttributes());
+	 */
+	public static void printObjectProperties(Object obj) {
+		try {
+			System.out.println("Object: " + obj);
+			BeanInfo info = Introspector.getBeanInfo(obj.getClass());
+			
+			for(PropertyDescriptor propertyDescriptor : info.getPropertyDescriptors()) {
+				Method getter = propertyDescriptor.getReadMethod();
+				try {
+					System.out.println("  " + getter.getName() + "=" + getter.invoke(obj, new Object[0]));
+				} catch (Exception e) {} 
+			}
+		} catch (IntrospectionException e) {}
 	}
 }

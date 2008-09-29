@@ -16,9 +16,11 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
+ * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -222,7 +224,14 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 			}
 		}
 
-		PluginTransferData data = new PluginTransferData(SystemDropActionDelegate.ID, dataStream.toString().getBytes());
+		byte[] bytes = null;
+		try {
+			bytes = dataStream.toString().getBytes("UTF-8"); //$NON-NLS-1$
+		}
+		catch (UnsupportedEncodingException e){
+			bytes = dataStream.toString().getBytes();
+		}
+		PluginTransferData data = new PluginTransferData(SystemDropActionDelegate.ID, bytes);
 
 		// put data in clipboard
 		if (_doResourceTransfer && resources.size() > 0)

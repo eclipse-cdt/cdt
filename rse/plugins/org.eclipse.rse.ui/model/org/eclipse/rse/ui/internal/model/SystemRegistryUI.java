@@ -18,9 +18,11 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Martin Oberhuber (Wind River) - [] Move SystemRegistry impl into Core
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
+ * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -376,9 +378,19 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 				// RSE transfer
 				PluginTransferData data = (PluginTransferData) object;
 				byte[] result = data.getData();
+				
+				// get the sources	
+				String str = null;
+				try {
+					str = new String(result, "UTF-8"); //$NON-NLS-1$
+				}
+				catch (UnsupportedEncodingException e)
+				{
+					str = new String(result);
+				}
 
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
+				String[] tokens = str.split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 
 				for (int i = 0;i < tokens.length; i++)
 				{

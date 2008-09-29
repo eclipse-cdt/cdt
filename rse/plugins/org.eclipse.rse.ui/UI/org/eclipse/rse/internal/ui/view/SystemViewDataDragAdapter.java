@@ -17,10 +17,12 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [142065] fix drag and drop on Mac OS X
  * Kevin Doyle (IBM) - [187536] Drag & Drop file to Editor launchs file in system editor
+ * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
@@ -228,7 +230,15 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 					}
 				}
 
-				PluginTransferData data = new PluginTransferData("org.eclipse.rse.ui.view.DropActions", dataStream.toString().getBytes()); //$NON-NLS-1$
+				byte[] bytes = null;
+				try {
+					bytes = dataStream.toString().getBytes("UTF-8"); //$NON-NLS-1$
+				}
+				catch (UnsupportedEncodingException e){
+					bytes = dataStream.toString().getBytes();
+				}
+				
+				PluginTransferData data = new PluginTransferData("org.eclipse.rse.ui.view.DropActions", bytes); //$NON-NLS-1$
 				event.data = data;
 				if (dataStream.length() > 0)
 				{

@@ -16,10 +16,12 @@
  * David McKnight (IBM) - [192704] work around drag&drop issues from Project Explorer
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
+ * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -133,8 +135,16 @@ extends ViewerDropAdapter
 		byte[] result = transferData.getData();
 
 		// get the sources	
-		//StringTokenizer tokenizer = new StringTokenizer(new String(result), RESOURCE_SEPARATOR);
-		String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
+		String str = null;
+		try {
+			str = new String(result, "UTF-8"); //$NON-NLS-1$
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			str = new String(result);
+		}
+		
+		String[] tokens = str.split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 		
 
 		ArrayList srcObjects = new ArrayList();

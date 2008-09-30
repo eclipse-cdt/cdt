@@ -5,6 +5,8 @@
       version="0.2.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.subsystems.wince"
+      os="win32"
+      arch="x86"
       image="eclipse_update_120.jpg">
 
    <description>

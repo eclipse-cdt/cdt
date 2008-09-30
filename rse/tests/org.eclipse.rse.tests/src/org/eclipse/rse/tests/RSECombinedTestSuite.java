@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  *******************************************************************************/
@@ -54,12 +54,13 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 		suite.addTest(org.eclipse.rse.tests.persistence.PersistenceTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.preferences.RSEPreferencesTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite.suite());
+		suite.addTest(org.eclipse.rse.tests.subsystems.shells.RSEShellSubsystemTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.subsystems.testsubsystem.RSETestSubsystemTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.ui.mnemonics.MnemonicsTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.ui.preferences.PreferencesTestSuite.suite());
 		return suite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
 	 */

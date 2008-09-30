@@ -14,6 +14,9 @@
       <suite type="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" name="RSEFileSubsystemTestSuite"/>
       	<type name="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" class="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" />
 
+      <suite type="org.eclipse.rse.tests.subsystems.shells.RSEShellSubsystemTestSuite" name="RSEShellSubsystemTestSuite"/>
+      	<type name="org.eclipse.rse.tests.subsystems.shells.RSEShellSubsystemTestSuite" class="org.eclipse.rse.tests.subsystems.shells.RSEShellSubsystemTestSuite" />
+
       <suite type="org.eclipse.rse.tests.persistence.PersistenceTestSuite" name="RSE Persistence Test Suite"/>
       	<type name="org.eclipse.rse.tests.persistence.PersistenceTestSuite" class="org.eclipse.rse.tests.persistence.PersistenceTestSuite" />
    </extension>

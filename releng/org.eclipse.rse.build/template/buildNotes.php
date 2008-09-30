@@ -36,7 +36,7 @@
 <li>API: WinCE <b>IRAPISession.CeRapiInvoke()</b> has been added
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238773">238773</a>].</li>
 </ul></li>
-<li>At least 2 bugs were fixed: Use 
+<li>At least 14 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-06-20&chfieldto=2008-10-03&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B345%5D"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
@@ -140,6 +140,9 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248754">bug 248754</a> - maj - [dstore] I get RSEG1242 when attempting to connect using RSE via SSL.</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=247059">bug 247059</a> - maj - [dstore] RSE AIX:SSL Connections work with EXPIRED certificate</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">bug 245260</a> - maj - Different user's connections on a single ftp host are mapped to the same temp files cache</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244070">bug 244070</a> - maj - [dstore] DStoreHostShell#exit() does not terminate child processes</li>

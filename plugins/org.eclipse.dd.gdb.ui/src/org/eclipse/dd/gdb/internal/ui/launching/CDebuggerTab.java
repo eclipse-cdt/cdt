@@ -18,9 +18,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -45,7 +43,6 @@ import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -59,80 +56,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
-
-	public class AdvancedDebuggerOptionsDialog extends Dialog {
-
-		private Button fVarBookKeeping;
-		private Button fRegBookKeeping;
-
-		/**
-		 * Constructor for AdvancedDebuggerOptionsDialog.
-		 */
-		protected AdvancedDebuggerOptionsDialog(Shell parentShell) {
-			super(parentShell);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-		 */
-		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite composite = (Composite)super.createDialogArea(parent);
-			Group group = new Group(composite, SWT.NONE);
-			group.setText(LaunchMessages.getString("CDebuggerTab.Automatically_track_values_of")); //$NON-NLS-1$
-			GridLayout layout = new GridLayout();
-			group.setLayout(layout);
-			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			fVarBookKeeping = new Button(group, SWT.CHECK);
-			fVarBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Variables")); //$NON-NLS-1$
-			fRegBookKeeping = new Button(group, SWT.CHECK);
-			fRegBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Registers")); //$NON-NLS-1$
-			initialize();
-			return composite;
-		}
-
-		@Override
-		protected void okPressed() {
-			saveValues();
-			super.okPressed();
-		}
-
-		private void initialize() {
-			Map<String, Boolean> attr = getAdvancedAttributes();
-			Object varBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING);
-			fVarBookKeeping.setSelection((varBookkeeping instanceof Boolean) ? !((Boolean)varBookkeeping).booleanValue() : true);
-			Object regBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING);
-			fRegBookKeeping.setSelection((regBookkeeping instanceof Boolean) ? !((Boolean)regBookkeeping).booleanValue() : true);
-		}
-
-		private void saveValues() {
-			Map<String, Boolean> attr = getAdvancedAttributes();
-			Boolean varBookkeeping = Boolean.valueOf(!fVarBookKeeping.getSelection());
-			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
-			Boolean regBookkeeping = Boolean.valueOf(!fRegBookKeeping.getSelection());
-			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
-			update();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-		 */
-		@Override
-		protected void configureShell(Shell newShell) {
-			super.configureShell(newShell);
-			newShell.setText(LaunchMessages.getString("CDebuggerTab.Advanced_Options_Dialog_Title")); //$NON-NLS-1$
-		}
-	}
 	
 	private final static String LOCAL_DEBUGGER_ID = "org.eclipse.dd.gdb.GdbDebugger";//$NON-NLS-1$
 	private final static String REMOTE_DEBUGGER_ID = "org.eclipse.dd.gdb.GdbServerDebugger";//$NON-NLS-1$
@@ -140,11 +67,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected boolean fAttachMode = false;
 	protected boolean fRemoteMode = false;
 	
-	protected Button fAdvancedButton;
 	protected Button fStopInMain;
 	protected Text fStopInMainSymbol;
-
-	private Map<String, Boolean> fAdvancedAttributes = new HashMap<String, Boolean>(5);
 
 	private ScrolledComposite fContainer;
 
@@ -251,8 +175,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
 					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
 		}
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false);
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, false);
 		
 		// Set the default debugger based on the active toolchain on the project (if possible)
 		String defaultDebugger = null;
@@ -327,8 +249,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				    fStopInMainSymbol.getText());
 
 		}
-		
-		applyAdvancedAttributes(config);
 	}
 
 	@Override
@@ -469,50 +389,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				}
 			);
 		}
-		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.getString("CDebuggerTab.Advanced"), null); //$NON-NLS-1$
-		((GridData)fAdvancedButton.getLayoutData()).horizontalAlignment = GridData.END;
-		fAdvancedButton.addSelectionListener(
-			new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Dialog dialog = new AdvancedDebuggerOptionsDialog(getShell());
-					dialog.open();
-				}
-		});
-	}
-
-	protected Map<String, Boolean> getAdvancedAttributes() {
-		return fAdvancedAttributes;
-	}
-
-	private void initializeAdvancedAttributes(ILaunchConfiguration config) {
-		Map<String, Boolean> attr = getAdvancedAttributes();
-		try {
-			boolean varBookkeeping = (config.getAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false))
-					? true : false;
-			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
-		} catch (CoreException e) {
-		}
-		try {
-			Boolean regBookkeeping = (config.getAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, false))
-					? true :false;
-			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
-		} catch (CoreException e) {
-		}
-	}
-
-	private void applyAdvancedAttributes(ILaunchConfigurationWorkingCopy config) {
-		Map<String, Boolean> attr = getAdvancedAttributes();
-		Object varBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING);
-		if (varBookkeeping instanceof Boolean)
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING,
-					((Boolean)varBookkeeping).booleanValue());
-		Object regBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING);
-		if (regBookkeeping instanceof Boolean)
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING,
-					((Boolean)regBookkeeping).booleanValue());
 	}
 
 	@Override
@@ -527,7 +403,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	 */
 	@Override
 	public void dispose() {
-		getAdvancedAttributes().clear();
 		ICDebuggerPage debuggerPage = getDynamicTab();
 		if (debuggerPage != null)
 			debuggerPage.dispose();
@@ -548,7 +423,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				if (getDebugConfig().getID().equals(REMOTE_DEBUGGER_ID)) fRemoteMode = true;
 				else fRemoteMode = false;
 			}
-			initializeAdvancedAttributes(config);
 		} catch (CoreException e) {
 		}
 	}

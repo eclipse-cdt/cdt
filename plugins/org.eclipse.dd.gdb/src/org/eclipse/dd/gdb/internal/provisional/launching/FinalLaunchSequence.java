@@ -54,7 +54,6 @@ import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetBreakpointApply;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
-import org.eclipse.dd.mi.service.command.commands.MIGDBSetStopOnSolibEvents;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
 import org.eclipse.dd.mi.service.command.commands.RawCommand;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
@@ -305,22 +304,6 @@ public class FinalLaunchSequence extends Sequence {
     					                                                        IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
                 fCommandControl.queueCommand(
                 	new MIGDBSetAutoSolib(fCommandControl.getContext(), autolib), 
-                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-    		} catch (CoreException e) {
-    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set shared library option", e)); //$NON-NLS-1$
-    			requestMonitor.done();
-    		}
-        }},
-        /*
-         * Tell GDB to stop or not on shared library events
-         */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-    		try {
-    			boolean stopOnSolibEvents = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS,
-    					                                                                  IGDBLaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
-                fCommandControl.queueCommand(
-                	new MIGDBSetStopOnSolibEvents(fCommandControl.getContext(), stopOnSolibEvents), 
                 	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
     		} catch (CoreException e) {
     			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set shared library option", e)); //$NON-NLS-1$

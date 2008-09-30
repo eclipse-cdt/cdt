@@ -61,11 +61,6 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_AUTO_SOLIB = GdbPlugin.PLUGIN_ID + ".AUTO_SOLIB"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. Boolean value to set the 'stop on shared library events' flag of the debugger.
-	 */
-	public static final String ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS = GdbPlugin.PLUGIN_ID + ".STOP_ON_SOLIB_EVENTS"; //$NON-NLS-1$
-
-	/**
 	 * Launch configuration attribute key. Boolean value to set the 'use shared library symbols for application' flag of the debugger.
 	 * @since 1.1
 	 */
@@ -101,11 +96,6 @@ public class IGDBLaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_AUTO_SOLIB.
 	 */
 	public static final boolean DEBUGGER_AUTO_SOLIB_DEFAULT = true;
-
-	/**
-	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS.
-	 */
-	public static final boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP.

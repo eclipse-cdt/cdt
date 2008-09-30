@@ -37,23 +37,18 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 
 	private Button fAutoSoLibButton;
 
-	private Button fStopOnSolibEventsButton;
-
 	private Button fUseSolibForAppButton;
 	
 	private Composite fControl;
 	
 	private boolean fAutoSolib = false;
 
-	private boolean fStopOnSolibEvents = false;
-	
 	private boolean fUseSolibForApp = true;
 
 	public GDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, boolean autoSolib, boolean stopOnSolibEvents ) {
 		super();
 		fSolibSearchPathBlock = solibSearchBlock;
 		fAutoSolib = autoSolib;
-		fStopOnSolibEvents = stopOnSolibEvents;
 	}
 
 	public void createControl( Composite parent ) {
@@ -69,17 +64,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		if ( fAutoSolib ) {
 			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, LaunchUIMessages.getString( "GDBSolibBlock.0" ) ); //$NON-NLS-1$
 			fAutoSoLibButton.addSelectionListener( new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected( SelectionEvent e ) {
-					updateButtons();
-					changed();
-				}
-			} );
-		}
-		if ( fStopOnSolibEvents ) {
-			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, LaunchUIMessages.getString( "GDBSolibBlock.1" ) ); //$NON-NLS-1$
-			fStopOnSolibEventsButton.addSelectionListener( new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected( SelectionEvent e ) {
@@ -108,8 +92,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		try {
 			if ( fAutoSoLibButton != null )
 				fAutoSoLibButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT ) );
-			if ( fStopOnSolibEventsButton != null )
-				fStopOnSolibEventsButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IGDBLaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT ) );
 			if ( fUseSolibForAppButton != null )
 				fUseSolibForAppButton.setSelection( configuration.getAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP, IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT ) );
 			initializeButtons( configuration );
@@ -128,8 +110,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 			
 			if ( fAutoSoLibButton != null )
 				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, Boolean.valueOf( fAutoSoLibButton.getSelection() ) );
-			if ( fStopOnSolibEventsButton != null )
-				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, Boolean.valueOf( fStopOnSolibEventsButton.getSelection() ) );
 			if ( fUseSolibForAppButton != null )
 				attrs.put( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP, Boolean.valueOf( fUseSolibForAppButton.getSelection() ) );
 			configuration.setAttributes( attrs );
@@ -142,7 +122,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.setDefaults( configuration );
 		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT );
-		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IGDBLaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT );
 		configuration.setAttribute( IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP, IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT );
 	}
 
@@ -172,8 +151,6 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 			boolean enable = !ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, "" ) ); //$NON-NLS-1$
 			if ( fAutoSoLibButton != null )
 				fAutoSoLibButton.setEnabled( enable );
-			if ( fStopOnSolibEventsButton != null )
-				fStopOnSolibEventsButton.setEnabled( enable );
 			if ( fUseSolibForAppButton != null )
 				fUseSolibForAppButton.setEnabled( enable );
 		}

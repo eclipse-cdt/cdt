@@ -28,6 +28,7 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.StackFr
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
@@ -254,6 +255,12 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         // before the last suspended events.  However, the debug view can get suspended
         // events for different threads, so make sure to skip only the events if they
         // were in the same hierarchy as the last suspended event.
+        // Note: Avoid skipping thread started/exited events which require a larger
+        // scope refresh than some suspended events.
+        if (newEvent instanceof IStartedDMEvent || newEvent instanceof IExitedDMEvent) {
+            return false;
+        }
+        
         if (newEvent instanceof ISuspendedDMEvent && eventToSkip instanceof IDMEvent<?>) {
             IDMContext newEventDmc = ((IDMEvent<?>)newEvent).getDMContext();
             IDMContext eventToSkipDmc = ((IDMEvent<?>)eventToSkip).getDMContext();

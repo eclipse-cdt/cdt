@@ -50,8 +50,8 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
 import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
-import org.eclipse.dd.gdb.internal.provisional.service.GDBProcesses;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
+import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.MIProcesses.ContainerStartedDMEvent;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
@@ -336,7 +336,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	}
 
     	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
-    	GDBProcesses procService = servicesTracker.getService(GDBProcesses.class);
+    	IMIProcesses procService = servicesTracker.getService(IMIProcesses.class);
     	servicesTracker.dispose();
    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
    		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);

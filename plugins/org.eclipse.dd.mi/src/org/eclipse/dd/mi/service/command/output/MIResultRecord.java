@@ -57,7 +57,10 @@ public class MIResultRecord {
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(token).append('^').append(resultClass);
+        if (token > 0) {
+        	buffer.append(token);
+        }
+        buffer.append('^').append(resultClass);
         for (int i = 0; i < results.length; i++) {
             buffer.append(',').append(results[i].toString());
         }

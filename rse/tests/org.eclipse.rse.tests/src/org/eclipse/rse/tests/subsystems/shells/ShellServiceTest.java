@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Anna Dushistova  (MontaVista) - adapted from FileServiceTest
+ * Anna Dushistova  (MontaVista) - [249102][testing] Improve ShellService Unittests
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.shells;
 
@@ -22,15 +23,12 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
-import org.eclipse.rse.services.shells.IHostShellChangeEvent;
-import org.eclipse.rse.services.shells.IHostShellOutputListener;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
-public class ShellServiceTest extends RSEBaseConnectionTestCase implements
-		IHostShellOutputListener {
+public class ShellServiceTest extends RSEBaseConnectionTestCase {
 
 	private String fPropertiesFileName;
 	// For testing the test: verify methods on Local
@@ -42,7 +40,7 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase implements
 
 	/**
 	 * Constructor with specific test name.
-	 *
+	 * 
 	 * @param name
 	 *            test to execute
 	 */
@@ -52,7 +50,7 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase implements
 
 	/**
 	 * Constructor with connection type and specific test name.
-	 *
+	 * 
 	 * @param name
 	 *            test to execute
 	 * @param propertiesFileName
@@ -130,27 +128,46 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase implements
 				mon);
 		assertNotNull(hostShell);
 		assertNotNull(hostShell.getStandardOutputReader());
-
+		ShellOutputListener outputListener = new ShellOutputListener();
+		hostShell.addOutputListener(outputListener);
+		// run command
+		hostShell.writeToShell("echo test");
+		hostShell.writeToShell("exit");
+		while (hostShell.isActive()) {
+			Thread.sleep(200);
+		}
+		Object[] allOutput = outputListener.getAllOutput();
+		boolean matchFound = false;
+		for (int i = 0; i < allOutput.length; i++) {
+			matchFound = ((IHostOutput) allOutput[i]).getString()
+					.equals("test");
+			if (matchFound)
+				break;
+		}
+		assertTrue(matchFound);
 	}
 
 	public void testRunCommand() throws Exception {
 		IHostShell hostShell = null;
-		if (!isWindows()) {
-			hostShell = shellService.runCommand("", "echo test",
-					new String[] {}, mon);
-			hostShell.addOutputListener(this);
-			assertNotNull(hostShell);
-			assertNotNull(hostShell.getStandardOutputReader());
-			while (hostShell.isActive()) {
-				Thread.sleep(200);
-			}
+		hostShell = shellService.runCommand("", "echo test", new String[] {},
+				mon);
+		ShellOutputListener outputListener = new ShellOutputListener();
+		hostShell.addOutputListener(outputListener);
+		hostShell.writeToShell("exit");
+		assertNotNull(hostShell);
+		assertNotNull(hostShell.getStandardOutputReader());
+		while (hostShell.isActive()) {
+			Thread.sleep(200);
 		}
+		Object[] allOutput = outputListener.getAllOutput();
+		boolean matchFound = false;
+		for (int i = 0; i < allOutput.length; i++) {
+			matchFound = ((IHostOutput) allOutput[i]).getString()
+					.equals("test");
+			if (matchFound)
+				break;
+		}
+		assertTrue(matchFound);
 	}
 
-	public void shellOutputChanged(IHostShellChangeEvent event) {
-		IHostOutput[] output = event.getLines();
-		if (output.length > 0) {
-			assertEquals(output[0].getString(), "test");
-		}
-	}
 }

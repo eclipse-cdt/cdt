@@ -14,7 +14,6 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
@@ -87,6 +86,7 @@ public class DebugUtil {
 	 * IResource resource = ...;
 	 * DebugUtil.printObjectProperties(resource);
 	 * DebugUtil.printObjectProperties(resource.getResourceAttributes());
+	 * @since 5.1
 	 */
 	public static void printObjectProperties(Object obj) {
 		try {

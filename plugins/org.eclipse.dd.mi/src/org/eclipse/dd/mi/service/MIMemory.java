@@ -31,9 +31,12 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IMemory;
-import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
@@ -279,11 +282,13 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      * @noreference This method is not intended to be referenced by clients.
      */
     @DsfServiceEventHandler
-	public void eventDispatched(IRunControl.IContainerResumedDMEvent e) {
-		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
-		if (e.getReason() != StateChangeReason.STEP) {
-			fMemoryCache.reset();
-		}
+	public void eventDispatched(IResumedDMEvent e) {
+    	if (e instanceof IContainerResumedDMEvent) {
+    		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
+    		if (e.getReason() != StateChangeReason.STEP) {
+    			fMemoryCache.reset();
+    		}
+    	}
 	}
    
     /**
@@ -291,9 +296,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      * @noreference This method is not intended to be referenced by clients.
      */
     @DsfServiceEventHandler
-	public void eventDispatched(IRunControl.IContainerSuspendedDMEvent e) {
-		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
-		fMemoryCache.reset();
+	public void eventDispatched(ISuspendedDMEvent e) {
+    	if (e instanceof IContainerSuspendedDMEvent) {
+    		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
+    		fMemoryCache.reset();
+    	}
 	}
 
     /**
@@ -330,24 +337,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 			});
 		}
 	}
-
-    /**
-     * This method is left for API compatibility only.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(IRunControl.IResumedDMEvent e) {
-    }   	
-
-    /**
-     * This method is left for API compatibility only.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-    }       
 
 	///////////////////////////////////////////////////////////////////////////
 	// SortedLinkedlist
@@ -774,11 +763,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						// that the subsequent memory read will be correct) 
 						fCommandCache.reset();
 
-						// Asynchronous update of the memory cache
-				        final DataRequestMonitor<MemoryByte[]> drm =
-							new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) { 
-								@Override
-								protected void handleSuccess() {
+				    	// Re-read the modified memory block to asynchronously update of the memory cache
+				        readMemoryBlock(memoryDMC, address, offset, word_size, count,
+					        new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) { 
+					        	@Override
+	                            protected void handleSuccess() {
 									updateMemoryCache(address.add(offset), count, getData());
 									// Send the MemoryChangedEvent
 									IAddress[] addresses = new IAddress[count];
@@ -788,16 +777,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 									getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
 									// Finally...
 									rm.done();
-								}
-							};
-
-				    	// Re-read the modified memory block
-				        readMemoryBlock(memoryDMC, address, offset, word_size, count,
-					        new DataRequestMonitor<MemoryByte[]>(getExecutor(), drm) { 
-					        	@Override
-	                            protected void handleSuccess() {
-					        		drm.setData(getData());
-	        						drm.done();
 					        	}
 							});
 				    }

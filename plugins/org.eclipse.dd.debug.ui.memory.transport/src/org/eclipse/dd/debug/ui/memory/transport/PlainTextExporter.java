@@ -29,6 +29,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -210,8 +212,8 @@ public class PlainTextExporter implements IMemoryExporter {
 			
 		});
 		
-		fStartText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fStartText.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
 				boolean valid = true;
 				try
 				{
@@ -235,10 +237,11 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 			
+			public void keyPressed(KeyEvent e) {}
 		});
 		
-		fEndText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fEndText.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
 				try
 				{
 					getEndAddress();
@@ -260,10 +263,12 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 			
+			public void keyPressed(KeyEvent e) {}
+			
 		});
 		
-		fLengthText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fLengthText.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
 				try
 				{
 					BigInteger length = getLength();
@@ -281,11 +286,20 @@ public class PlainTextExporter implements IMemoryExporter {
 				validate();
 			}
 			
+			
+
+			public void keyPressed(KeyEvent e) {
+				
+			}
 		});
 		
-		fFileText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fFileText.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
 				validate();
+			}
+			
+			public void keyPressed(KeyEvent e) {
+				
 			}
 		});
 		

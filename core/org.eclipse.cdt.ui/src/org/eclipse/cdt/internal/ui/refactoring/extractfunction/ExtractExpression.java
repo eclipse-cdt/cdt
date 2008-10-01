@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
@@ -86,6 +86,10 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			declSpecifier = handleFunctionCallExpression((IASTFunctionCallExpression) extractedNode);
 		}
 		
+		if (extractedNode instanceof IASTLiteralExpression) {
+		    declSpecifier = handleLiteralExpression((IASTLiteralExpression) extractedNode);
+		}
+		
 		if(declSpecifier == null) {
 			return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_void);
 		}
@@ -93,7 +97,26 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		return declSpecifier;
 	}
 
-	private IASTDeclSpecifier handleNewExpression(ICPPASTNewExpression expression) {
+	private IASTDeclSpecifier handleLiteralExpression(IASTLiteralExpression extractedNode) {
+        switch(extractedNode.getKind()){
+          case IASTLiteralExpression.lk_char_constant:
+              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_char);
+          case IASTLiteralExpression.lk_float_constant:
+              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_float);
+          case IASTLiteralExpression.lk_integer_constant:
+              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_int);
+          case IASTLiteralExpression.lk_string_literal:
+              return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_wchar_t);
+          case ICPPASTLiteralExpression.lk_false: 
+              //Like lk_true a boolean type
+          case ICPPASTLiteralExpression.lk_true:
+              return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_bool);
+          default:
+              return null;
+          }
+    }
+
+    private IASTDeclSpecifier handleNewExpression(ICPPASTNewExpression expression) {
 		return expression.getTypeId().getDeclSpecifier();
 	}
 

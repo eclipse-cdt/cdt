@@ -47,6 +47,7 @@ public class RSEShellSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		TestSuite suite = new TestSuite("RSEShellSubsystemTestSuite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(ShellServiceTest.class);
+		suite.addTestSuite(ShellSubSystemTest.class);
 		return suite;
 	}
 

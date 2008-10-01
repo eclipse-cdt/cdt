@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register;
 
+import java.util.ArrayList;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -175,16 +178,95 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	return fRegisterExpressionFactory;
     }
     
+    /*
+     * This class is used to hold the associated information needed to finally get the
+     * formatted value for a register DMC.  It starts out with the basic set  sans the
+     * actual formatted register DMC.  Once found this is added to the information.
+     */
+    private class QueuedValueUpdate {
+    	
+    	ILabelUpdate fUpdate;
+    	int fIndex ;
+    	IRegisterDMContext fDmc;
+    	FormattedValueDMContext fValueDmc = null;
+    	
+    	public QueuedValueUpdate( ILabelUpdate update, int index , IRegisterDMContext dmc ) {
+    		fUpdate = update;
+        	fIndex = index;
+        	fDmc = dmc;
+    	}
+    	
+    	public ILabelUpdate getUpdate() { return fUpdate; }
+    	public int getIndex() { return fIndex; }
+    	public IRegisterDMContext getDmc() { return fDmc; }
+    	
+    	public void setValueDmc( FormattedValueDMContext dmc ) { fValueDmc = dmc; }
+    	public FormattedValueDMContext getValueDmc() { return fValueDmc; }
+    }
+                                                 
+    private void retrieveAllFormattedDataValues( final ArrayList<QueuedValueUpdate> updates ) {
+    	
+    	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
+        if ( regService == null ) {
+        	for ( final QueuedValueUpdate up : updates ) {
+        		handleFailedUpdate(up.getUpdate());
+        	}
+            return;
+        }
+        
+    	for ( final QueuedValueUpdate up : updates ) {
+    		
+    		final ILabelUpdate update = up.getUpdate();
+    		final int idx = up.getIndex();
+    		final FormattedValueDMContext valueDmc = up.getValueDmc();
+    		
+    		getDMVMProvider().getModelData(
+    			RegisterVMNode.this, 
+    			update, 
+    			regService, 
+    			valueDmc,
+    			new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
+    				@Override
+    				public void handleCompleted() {
+    					if (!isSuccess()) {
+    						if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
+    							update.setLabel("...", idx); //$NON-NLS-1$
+    						} else {
+    							update.setLabel("Error: " + getStatus().getMessage(), idx); //$NON-NLS-1$
+    						}
+    						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+    						update.done();
+    						return;
+    					}
+    					/*
+    					 *  Fill the label/column with the properly formatted data value.
+    					 */
+    					update.setLabel(getData().getFormattedValue(), idx);
+
+    					// color based on change history
+   						FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(RegisterVMNode.this, update, valueDmc);
+   						if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
+   							update.setBackground(DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), idx);
+   						}
+   						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
+   						update.done();
+   					}
+   				}, 
+   				getSession().getExecutor()
+    		);
+    	}
+    }
+    
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
      */
-    private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IRegisterDMContext dmc)
+    private void getFormattedDmcForReqister( final ILabelUpdate update, final IRegisterDMContext dmc, final DataRequestMonitor<FormattedValueDMContext> rm)
     {
-        final IRegisters regService = getServicesTracker().getService(IRegisters.class);
-        
+    	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
         if ( regService == null ) {
-        	handleFailedUpdate(update);
+        	rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+            rm.done();
             return;
         }
         
@@ -193,20 +275,14 @@ public class RegisterVMNode extends AbstractExpressionVMNode
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
          */
-        
         final IPresentationContext context  = update.getPresentationContext();
-        final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
+        final String preferencePageFormatId = getPreferenceStore().getCurrentNumericFormat(context) ;
             
         regService.getAvailableFormats(
             dmc,
-            new ViewerDataRequestMonitor<String[]>(getSession().getExecutor(), update) {
+            new DataRequestMonitor<String[]>(getSession().getExecutor(), rm) {
                 @Override
-                public void handleCompleted() {
-                    if (!isSuccess()) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
-                    
+                public void handleSuccess() {
                     /*
                      *  See if the desired format is supported.
                      */
@@ -237,50 +313,16 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                             /*
                              *  Register service does not support any format.
                              */
-                            handleFailedUpdate(update);
+                            handleFailure();
                             return;
                         }
                     }
                     
                     /*
-                     *  Format has been validated. Get the formatted value.
+                     *  Format has been validated. Return it.
                      */
-                    final FormattedValueDMContext valueDmc = regService.getFormattedValueContext(dmc, finalFormatId);
-                    
-                    getDMVMProvider().getModelData(
-                        RegisterVMNode.this, update, regService, valueDmc,
-	                    new ViewerDataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), update) {
-	                        @Override
-	                        public void handleCompleted() {
-	                            if (!isSuccess()) {
-	                            	if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
-	                                    update.setLabel("...", labelIndex); //$NON-NLS-1$
-	                                } else {
-	                                    update.setLabel("Error: " + getStatus().getMessage(), labelIndex); //$NON-NLS-1$
-	                                }
-	                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
-	                                update.done();
-	                                return;
-	                            }
-	                            /*
-	                             *  Fill the label/column with the properly formatted data value.
-	                             */
-	                            update.setLabel(getData().getFormattedValue(), labelIndex);
-	                                
-	                            // color based on change history
-	                            
-	                            FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(
-	                                RegisterVMNode.this, update, valueDmc);
-	                            if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
-	                                update.setBackground(
-	                                    DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), labelIndex);
-	                            }
-	                            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
-	                            update.done();
-	                        }
-	                    }, 
-	                    getSession().getExecutor()
-                    );
+                    rm.setData(regService.getFormattedValueContext(dmc, finalFormatId));
+                    rm.done();
                 }
             }
         );
@@ -290,7 +332,6 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
-    
     public void update(final ILabelUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
@@ -303,11 +344,42 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             }
         }
     }
-
+    
     /*
      *  Updates the labels which are controlled by the column being requested.
      */
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
+    protected void updateLabelInSessionThread(final ILabelUpdate[] updates) {
+    	
+    	/*
+    	 * This list represents all the QUEUED requests for formatted DMCs. This allows us to issue the
+    	 * requests for the data in the same dispatch cycle. Thus the lower level services is given its
+    	 * best chance to coalesce the registers in to a single request.
+    	 */
+    	final ArrayList<QueuedValueUpdate> valueUpdatesToProcess = new ArrayList<QueuedValueUpdate>();
+    	
+    	final DsfExecutor dsfExecutor = getSession().getExecutor();
+    	final MultiRequestMonitor<RequestMonitor> mrm =
+            new MultiRequestMonitor<RequestMonitor>(dsfExecutor, null) {
+                @Override
+                public void handleCompleted() {
+                    if (!isSuccess()) {
+                  	    for ( ILabelUpdate up : updates ) {
+                    	   handleFailedUpdate(up);
+                    	}
+                        return;
+                    }
+                    
+                    /*
+                     * We have all of the formatted DMCs. Go issue the requests for the formatted data
+                     * in a single dispatch cycle.
+                     */
+                    retrieveAllFormattedDataValues( valueUpdatesToProcess );
+                }
+            };
+        /*
+         * Process each update request, creating a QUEUE of requests which need further processing
+         * for the formatted values. 
+         */
         for (final ILabelUpdate update : updates) {
         	
             final IRegisterDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterDMContext.class);
@@ -321,7 +393,6 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             	handleFailedUpdate(update);
                 continue;
             }
-            
             
             getDMVMProvider().getModelData(
                 this, 
@@ -389,18 +460,15 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     }
                     
                     /*
-                     * If columns are configured, extract the selected values for each
-                     * understood column. First we fill all of those columns which can
-                     * be filled without the extra data mining. We also note if we  do
-                     * have to datamine. Any columns need to set the processing flag
-                     * so we know we have further work to do. If there are more columns
-                     * which need data extraction they need to be added in both "for"
-                     * loops.
+                     * If columns are configured, extract the selected values for each understood column.  First we fill all
+                     * of those columns which can be filled without  the extra data mining.  We also note, if we  do have to 
+                     * datamine. Any columns need to set the processing flag so we know we have further work to do. If there 
+                     * are more columns which need data extraction they need to be added in both "for" loops.
                      */
                     String[] localColumns = update.getColumnIds();
                     if (localColumns == null) localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME }; 
                     
-                    boolean weAreExtractingFormattedData = false;
+                    boolean allFieldsProcessed = true;
                     
                     for (int idx = 0; idx < localColumns.length; idx++) {
                     	update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
@@ -408,7 +476,28 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                             update.setLabel(getData().getName(), idx);
                             update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER), idx);
                         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                            weAreExtractingFormattedData = true;
+                        	allFieldsProcessed = false;
+                        	/*
+                        	 * Create an entry which holds all related data and add it to the list to process
+                        	 * when all the formatted DMCs are gathered.
+                        	 */
+                        	final QueuedValueUpdate valueUpdate = new QueuedValueUpdate(update,idx,dmc);
+                        	valueUpdatesToProcess.add(valueUpdate);
+                        	
+                        	/*
+                        	 * Fetch the associated formatted DMC for this field. This is added to the multi-request
+                        	 * monitor so they can all be gathered and processed in a single set.
+                        	 */
+                        	DataRequestMonitor<FormattedValueDMContext> rm = new DataRequestMonitor<FormattedValueDMContext>(dsfExecutor, null) {
+                        		@Override
+                        		public void handleCompleted() {
+                        			valueUpdate.setValueDmc(getData());
+                        			mrm.requestMonitorDone(this);
+                        		}
+                        	};
+
+                        	mrm.add(rm);
+                        	getFormattedDmcForReqister(update, dmc, rm);
                         } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
                             IRegisterDMData data = getData();
                             String typeStr      = "Unsigned"; //$NON-NLS-1$
@@ -438,27 +527,19 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         }
                     }
                     
-                    if ( ! weAreExtractingFormattedData ) {
+                    if ( allFieldsProcessed ) {
                         update.done();
-                    } else {
-                    	boolean found = false;
-                        for (int idx = 0; idx < localColumns.length; idx++) {
-                            if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                            	found = true;
-                                updateFormattedRegisterValue(update, idx, dmc);
-                                break;
-                            }
-                        }
-                        if (!found) {
-                        	update.done();
-                        }
-                    }
+                    } 
                 }
             },
             getSession().getExecutor());
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
+     */
     @Override
     public void update(IHasChildrenUpdate[] updates) {
         // As an optimization, always indicate that register groups have 

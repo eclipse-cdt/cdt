@@ -439,7 +439,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                                 completedFormatStrings.add("String : " + getData().getFormattedValue()); //$NON-NLS-1$
                                             }
                                             else {
-                                                completedFormatStrings.add("Other.. : " + getData().getFormattedValue()); //$NON-NLS-1$
+                                                completedFormatStrings.add("Other.. : (" + str + ") " + getData().getFormattedValue()); //$NON-NLS-1$  //$NON-NLS-2$
                                             }
                                         }
                                         countingRm.done();

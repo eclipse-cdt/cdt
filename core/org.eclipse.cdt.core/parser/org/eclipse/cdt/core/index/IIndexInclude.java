@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,14 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for an include directive stored in the index.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0
  */
 public interface IIndexInclude {
@@ -106,4 +97,11 @@ public interface IIndexInclude {
 	 * @throws CoreException
 	 */
 	boolean isResolved() throws CoreException;
+	
+	/**
+	 * Tests whether this include has been resolved using a heuristics rather than relying on
+	 * the include search path.
+	 * @since 5.1
+	 */
+	boolean isResolvedByHeuristics() throws CoreException;
 }

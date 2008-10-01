@@ -43,6 +43,7 @@ public class IncludeFileContent {
 	private final List<IIndexMacro> fMacroDefinitions;
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
+	private boolean fHeuristic;
 	private List<IIndexFile> fFiles;
 	
 	/**
@@ -143,5 +144,16 @@ public class IncludeFileContent {
 	 */
 	public List<IIndexFile> getFilesIncluded() {
 		return fFiles;
+	}
+
+	/**
+	 * Returns whether this inclusion was found by a heuristics.
+	 */
+	public boolean isFoundByHeuristics() {
+		return fHeuristic;
+	}
+	
+	public void setFoundByHeuristics(boolean val) {
+		fHeuristic= val;
 	}
 }

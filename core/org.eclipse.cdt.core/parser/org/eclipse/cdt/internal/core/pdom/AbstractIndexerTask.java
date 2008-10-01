@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
@@ -134,6 +135,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	protected abstract IWritableIndex createIndex();
+	protected abstract IIncludeFileResolutionHeuristics createIncludeHeuristics();
 	protected abstract ICodeReaderFactory createReaderFactory();
 	protected abstract AbstractLanguage[] getLanguages(String fileName);
 
@@ -178,7 +180,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
 		if (fCodeReaderFactory == null) {
 			if (fIsFastIndexer) {
-				fCodeReaderFactory= new IndexBasedCodeReaderFactory(fIndex, fResolver, language.getLinkageID(), createReaderFactory(), this);
+				fCodeReaderFactory= new IndexBasedCodeReaderFactory(fIndex, createIncludeHeuristics(), fResolver, language.getLinkageID(), createReaderFactory(), this);
 			}
 			else {
 				fCodeReaderFactory= createReaderFactory();

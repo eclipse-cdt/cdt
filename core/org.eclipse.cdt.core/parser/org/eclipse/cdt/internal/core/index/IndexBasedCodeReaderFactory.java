@@ -34,6 +34,8 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
+import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
@@ -46,7 +48,7 @@ import org.eclipse.core.runtime.CoreException;
  * Code reader factory, that fakes code readers for header files already stored in the 
  * index.
  */
-public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory {
+public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory implements IIndexBasedCodeReaderFactory {
 	private static final class NeedToParseException extends Exception {}
 	private static final String GAP = "__gap__"; //$NON-NLS-1$
 
@@ -59,13 +61,15 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private boolean fSupportFillGapFromContextToHeader= false;
 	
-	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage, 
-			ICodeReaderFactory fallbackFactory) {
-		this(index, pathResolver, linkage, fallbackFactory, null);
+	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
+			ASTFilePathResolver pathResolver, int linkage, ICodeReaderFactory fallbackFactory) {
+		this(index, heuristics, pathResolver, linkage, fallbackFactory, null);
 	}
 
-	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage,
+	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
+			ASTFilePathResolver pathResolver, int linkage,
 			ICodeReaderFactory fallbackFactory, AbstractIndexerTask relatedIndexerTask) {
+		super(heuristics);
 		fIndex= index;
 		fFallBackFactory= fallbackFactory;
 		fPathResolver= pathResolver;

@@ -36,6 +36,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	protected static final String TRUE = String.valueOf(true);
 
 	private Button fAllFiles;
+	private Button fIncludeHeuristics;
 	private Text fFilesToParseUpFront;
 	private Button fSkipReferences;
 	private Button fSkipTypeReferences;
@@ -57,6 +58,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	public void createControl(Composite parent) {
 		Composite page = ControlFactory.createComposite(parent, 1);
 		fAllFiles= createAllFilesButton(page);
+		fIncludeHeuristics= createIncludeHeuristicsButton(page);
 		fSkipReferences= createSkipReferencesButton(page);
 		fSkipTypeReferences= createSkipTypeReferencesButton(page);
 		fSkipMacroReferences= createSkipMacroReferencesButton(page);
@@ -80,6 +82,11 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		if (fAllFiles != null) {
 			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ALL_FILES));
 			fAllFiles.setSelection(indexAllFiles);
+		}
+		if (fIncludeHeuristics != null) {
+			Object prop= properties.get(IndexerPreferences.KEY_INCLUDE_HEURISTICS);
+			boolean use= prop == null || TRUE.equals(prop);
+			fIncludeHeuristics.setSelection(use);
 		}
 		if (fSkipReferences != null) {
 			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
@@ -108,6 +115,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		Properties props= new Properties();
 		if (fAllFiles != null) {
 			props.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(fAllFiles.getSelection()));
+		}
+		if (fIncludeHeuristics != null) {
+			props.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(fIncludeHeuristics.getSelection()));
 		}
 		if (fFilesToParseUpFront != null) {
 			props.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, fFilesToParseUpFront.getText());
@@ -168,7 +178,11 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button createAllFilesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, INDEX_ALL_FILES);
 	}
-	
+
+	private Button createIncludeHeuristicsButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
+	}
+
 	private Button createSkipReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipAllReferences);
 	}

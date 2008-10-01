@@ -45,6 +45,7 @@ public class IndexerPreferences {
 	
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
+	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
@@ -156,7 +157,7 @@ public class IndexerPreferences {
 		Preferences[] prefs= getPreferences(project, scope);
 		Properties props= new Properties();
 		for (int i=prefs.length-1; i>=0; i--) {
-			addProperties(prefs[i], props);
+			readProperties(prefs[i], props);
 		}
 		return props;
 	}
@@ -164,7 +165,7 @@ public class IndexerPreferences {
 	public static Properties getDefaultIndexerProperties() {
 		Preferences prefs= getDefaultPreferences();
 		Properties props= new Properties();
-		addProperties(prefs, props);
+		readProperties(prefs, props);
 		return props;
 	}
 
@@ -280,7 +281,7 @@ public class IndexerPreferences {
 		return new LocalProjectScope(project).getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 	
-	private static void addProperties(Preferences preferences, Properties props) {
+	private static void readProperties(Preferences preferences, Properties props) {
 		try {
 			String[] keys = preferences.keys();
 			for (int i=0; i < keys.length; i++) {
@@ -298,6 +299,7 @@ public class IndexerPreferences {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
+		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);

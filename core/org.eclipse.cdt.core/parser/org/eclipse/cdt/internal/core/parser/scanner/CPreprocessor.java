@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
@@ -87,21 +88,29 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 
 	private interface IIncludeFileTester<T> {
-    	T checkFile(String path, String fileName);
+    	T checkFile(String path, String fileName, boolean isHeuristicMatch);
     }
 
     final private IIncludeFileTester<IncludeFileContent> createCodeReaderTester= new IIncludeFileTester<IncludeFileContent>() { 
-    	public IncludeFileContent checkFile(String path, String fileName) {
-    		String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-			return fCodeReaderFactory.getContentForInclusion(finalPath);
+    	public IncludeFileContent checkFile(String path, String fileName, boolean isHeuristicMatch) {
+    		final String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+			final IncludeFileContent fc= fCodeReaderFactory.getContentForInclusion(finalPath);
+			if (fc != null) {
+				fc.setFoundByHeuristics(isHeuristicMatch);
+			}
+			return fc;
     	}
     };
     
-    final private IIncludeFileTester<String> createPathTester= new IIncludeFileTester<String>() { 
-    	public String checkFile(String path, String fileName) {
+    private static class IncludeResolution {String fLocation; boolean fHeuristic;}
+    final private IIncludeFileTester<IncludeResolution> createPathTester= new IIncludeFileTester<IncludeResolution>() { 
+    	public IncludeResolution checkFile(String path, String fileName, boolean isHeuristicMatch) {
     		String finalPath= ScannerUtility.createReconciledPath(path, fileName);
     		if (fCodeReaderFactory.getInclusionExists(finalPath)) {
-    			return finalPath;
+    			IncludeResolution res= new IncludeResolution();
+    			res.fHeuristic= isHeuristicMatch;
+    			res.fLocation= finalPath;
+    			return res;
     		}
     		return null;
     	}
@@ -109,6 +118,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     final private IParserLogService fLog;
     final private IIndexBasedCodeReaderFactory fCodeReaderFactory;
+
+    private IIncludeFileResolutionHeuristics fIncludeFileResolutionHeuristics;
     private final ExpressionEvaluator fExpressionEvaluator;
 	private final MacroDefinitionParser fMacroDefinitionParser;
 	private final MacroExpander fMacroExpander;
@@ -142,7 +153,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private Token fPrefetchedTokens;
     private Token fLastToken;
 
-
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
         fLog = log;
@@ -162,6 +172,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fMacroDefinitionParser= new MacroDefinitionParser();
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fCodeReaderFactory= wrapReaderFactory(readerFactory);
+        if (readerFactory instanceof IAdaptable) {
+        	fIncludeFileResolutionHeuristics= (IIncludeFileResolutionHeuristics) ((IAdaptable) readerFactory).getAdapter(IIncludeFileResolutionHeuristics.class);
+        }
 
         setupMacroDictionary(configuration, info, language);		
                 
@@ -746,41 +759,48 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
     }
 
-    private IncludeFileContent findInclusion(final String filename, final boolean quoteInclude, 
-    		final boolean includeNext, final File currentDir) {
-    	return findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
-    }
-
     private <T> T findInclusion(final String filename, final boolean quoteInclude, 
-    		final boolean includeNext, final File currentDirectory, final IIncludeFileTester<T> tester) {
+    		final boolean includeNext, final String currentFile, final IIncludeFileTester<T> tester) {
         T reader = null;
 		// filename is an absolute path or it is a Linux absolute path on a windows machine
 		if (new File(filename).isAbsolute() || filename.startsWith("/")) {  //$NON-NLS-1$
-		    return tester.checkFile( EMPTY_STRING, filename );
+		    return tester.checkFile(EMPTY_STRING, filename, false);
 		}
-                
-        if (currentDirectory != null && quoteInclude && !includeNext) {
+		                
+        if (currentFile != null && quoteInclude && !includeNext) {
             // Check to see if we find a match in the current directory
-        	String absolutePath = currentDirectory.getAbsolutePath();
-        	reader = tester.checkFile(absolutePath, filename);
-        	if (reader != null) {
-        		return reader;
-        	}
+    		final File currentDir= new File(currentFile).getParentFile();
+    		if (currentDir != null) {
+    			String absolutePath = currentDir.getAbsolutePath();
+    			reader = tester.checkFile(absolutePath, filename, false);
+    			if (reader != null) {
+    				return reader;
+    			}
+    		}
         }
         
         // if we're not include_next, then we are looking for the first occurrence of 
         // the file, otherwise, we ignore all the paths before the current directory
         final String[] isp= quoteInclude ? fQuoteIncludePaths : fIncludePaths;
-        if (isp != null ) {
+        if (isp != null) {
         	int i=0;
-        	if (includeNext && currentDirectory != null) {
-        		i= findIncludePos(isp, currentDirectory) + 1;
+        	if (includeNext && currentFile != null) {
+        		final File currentDir= new File(currentFile).getParentFile();
+        		if (currentDir != null) {
+        			i= findIncludePos(isp, currentDir) + 1;
+        		}
         	}
         	for (; i < isp.length; ++i) {
-        		reader= tester.checkFile(isp[i], filename);
+        		reader= tester.checkFile(isp[i], filename, false);
         		if (reader != null) {
         			return reader;
         		}
+        	}
+        }
+        if (fIncludeFileResolutionHeuristics != null) {
+        	String location= fIncludeFileResolutionHeuristics.findInclusion(filename, currentFile);
+        	if (location != null) {
+        		return tester.checkFile(null, location, true);
         	}
         }
         return null;
@@ -1027,20 +1047,21 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 		String path= null;
 		boolean reported= false;
+		boolean isHeuristic= false;
 		
 		if (!active) {
 			// test if the include is inactive just because it was included before (bug 167100)
-			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			final String resolved= findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
-			if (resolved != null && fCodeReaderFactory.hasFileBeenIncludedInCurrentTranslationUnit(resolved)) {
-				path= resolved;
+			final IncludeResolution resolved= findInclusion(new String(headerName), userInclude, include_next, getCurrentFilename(), createPathTester);
+			if (resolved != null && fCodeReaderFactory.hasFileBeenIncludedInCurrentTranslationUnit(resolved.fLocation)) {
+				path= resolved.fLocation;
+				isHeuristic= resolved.fHeuristic;
 			}
 		}
 		else {
-			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			final IncludeFileContent fi= findInclusion(new String(headerName), userInclude, include_next, currentDir);
+			final IncludeFileContent fi= findInclusion(new String(headerName), userInclude, include_next, getCurrentFilename(), createCodeReaderTester);
 			if (fi != null) {
 				path= fi.getFileLocation();
+				isHeuristic= fi.isFoundByHeuristics();
 				switch(fi.getKind()) {
 				case FOUND_IN_INDEX:
 					processInclusionFromIndex(poundOffset, path, fi);
@@ -1050,7 +1071,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					if (reader != null && !isCircularInclusion(path)) {
 						reported= true;
 						fAllIncludedFiles.add(path);
-						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude);
+						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude, isHeuristic);
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this, this));
 						fCurrentContext= fctx;
 					}
@@ -1074,7 +1095,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 
 		if (!reported) {
-			fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, headerName, path, userInclude, active); 
+			fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, headerName, path, userInclude, active, isHeuristic); 
 		}
 	}
 

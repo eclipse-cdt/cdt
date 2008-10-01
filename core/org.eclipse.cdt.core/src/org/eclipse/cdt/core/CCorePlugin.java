@@ -55,6 +55,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -322,6 +323,7 @@ public class CCorePlugin extends Plugin {
 			}
 
             fNewCProjectDescriptionManager.shutdown();
+            ResourceLookup.shutdown();
 
 			savePluginPreferences();
 		} finally {
@@ -340,7 +342,8 @@ public class CCorePlugin extends Plugin {
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		configurePluginDebugOptions();
         PositionTrackerManager.getInstance().install();
-
+        ResourceLookup.startup();
+        
         // new project model needs to register the resource listener first.
 		fNewCProjectDescriptionManager= CProjectDescriptionManager.getInstance();
 		final Job post1= fNewCProjectDescriptionManager.startup();

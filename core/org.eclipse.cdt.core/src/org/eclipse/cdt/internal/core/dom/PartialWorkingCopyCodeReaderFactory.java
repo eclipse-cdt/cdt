@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
@@ -26,8 +25,7 @@ import org.eclipse.cdt.internal.core.parser.EmptyIterator;
 /**
  * @author jcamelon
  */
-public class PartialWorkingCopyCodeReaderFactory 
-        implements ICodeReaderFactory {
+public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFactory {
 
     private final IWorkingCopyProvider provider;
 	private ICodeReaderCache cache = null;
@@ -35,7 +33,8 @@ public class PartialWorkingCopyCodeReaderFactory
     /**
      * @param provider
      */
-    public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider) {
+    public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider, IIncludeFileResolutionHeuristics heuristics) {
+    	super(heuristics);
         this.provider = provider;
 		cache = SavedCodeReaderFactory.getInstance().getCodeReaderCache();
     }

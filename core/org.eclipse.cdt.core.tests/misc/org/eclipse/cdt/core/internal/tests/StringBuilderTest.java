@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
 
 public class StringBuilderTest extends TestCase {
     public static Test suite() {
-        return new TestSuite(StringBuilderTest.class, "StringBuilderTest");
+        return new TestSuite(StringBuilderTest.class);
     }
 
     public void testSafe() {

@@ -1,0 +1,205 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+package org.eclipse.cdt.core.internal.tests;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+
+public class ResourceLookupTests extends TestCase {
+    public static Test suite() {
+        return new TestSuite(ResourceLookupTests.class);
+    }
+
+	private IProject fProject;
+
+    @Override
+	protected void setUp() {
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		fProject= root.getProject("reslookup");
+    }
+    
+    @Override
+	protected void tearDown() throws Exception {
+		fProject.delete(true, new NullProgressMonitor());
+    }
+    
+	protected IFolder createFolder(IProject project, String filename) throws CoreException {
+		IFolder folder= project.getFolder(filename);
+		folder.create(true, false, new NullProgressMonitor());
+		return folder;
+	}
+
+	protected IFile createFile(IProject project, String filename) throws CoreException {
+		IFile file= project.getFile(filename);
+		file.create(new InputStream() {
+			@Override
+			public int read() throws IOException {
+				return -1;
+			}}, true, new NullProgressMonitor());
+		return file;
+	}
+    
+	public void testNameLookup() throws CoreException {
+		IProject[] prjs= new IProject[]{fProject};
+
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+		createFolder(fProject, "folder1");
+		createFolder(fProject, "folder2");
+		createFile(fProject, "abc.h");
+		createFile(fProject, "folder1/abc.h");
+		createFile(fProject, "folder2/abC.h");
+
+		IFile[] files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, false);
+		assertEquals(2, files.length);
+		files= ResourceLookup.findFilesByName(new Path("bla/../abc.h"), prjs, false);
+		assertEquals(2, files.length);
+		files= ResourceLookup.findFilesByName(new Path("../abc.h"), prjs, false);
+		assertEquals(2, files.length);
+		files= ResourceLookup.findFilesByName(new Path("../../abc.h"), prjs, false);
+		assertEquals(2, files.length);
+
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);
+
+		files= ResourceLookup.findFilesByName(new Path("folder1/abc.h"), prjs, false);
+		assertEquals(1, files.length);
+		files= ResourceLookup.findFilesByName(new Path("folder1/abC.h"), prjs, false);
+		assertEquals(0, files.length);
+		files= ResourceLookup.findFilesByName(new Path("fOlder1/abc.h"), prjs, false);
+		assertEquals(0, files.length);
+
+		files= ResourceLookup.findFilesByName(new Path("folder1/abc.h"), prjs, true);
+		assertEquals(1, files.length);
+		files= ResourceLookup.findFilesByName(new Path("folder1/abC.h"), prjs, true);
+		assertEquals(1, files.length);
+		files= ResourceLookup.findFilesByName(new Path("fOlder1/abc.h"), prjs, true);
+		assertEquals(1, files.length);
+
+		files= ResourceLookup.findFilesByName(new Path("bla/../abc.h"), prjs, true);
+		assertEquals(3, files.length);
+	}
+
+	public void testResourceDelta() throws CoreException {
+		IProject[] prjs= new IProject[]{fProject};
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+
+		IFile[] files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(0, files.length);
+
+		IFolder f1= createFolder(fProject, "folder1");
+		createFolder(fProject, "folder2");
+		IFile f2= createFile(fProject, "abc.h");
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(1, files.length);
+
+		createFile(fProject, "folder1/abc.h");
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(2, files.length);
+
+		createFile(fProject, "folder2/abC.h");
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);
+		
+		f1.delete(true, new NullProgressMonitor());
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(2, files.length);
+		
+		f2.delete(true, new NullProgressMonitor());
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(1, files.length);
+	}
+
+	public void testDeref() throws CoreException {
+		IProject[] prjs= new IProject[]{fProject};
+
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+		createFolder(fProject, "folder1");
+		createFolder(fProject, "folder2");
+		createFile(fProject, "abc.h");
+		IFile[] files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(1, files.length);
+		
+		ResourceLookup.unrefNodeMap();
+		createFile(fProject, "folder1/abc.h");
+		createFile(fProject, "folder2/abC.h");
+
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);
+		
+		ResourceLookup.unrefNodeMap();
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);		
+	}
+	
+	public void testCollected() throws CoreException {
+		IProject[] prjs= new IProject[]{fProject};
+
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+		createFolder(fProject, "folder1");
+		createFolder(fProject, "folder2");
+		createFile(fProject, "abc.h");
+		IFile[] files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(1, files.length);
+		
+		ResourceLookup.simulateNodeMapCollection();
+		createFile(fProject, "folder1/abc.h");
+		createFile(fProject, "folder2/abC.h");
+
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);
+		
+		ResourceLookup.simulateNodeMapCollection();
+		files= ResourceLookup.findFilesByName(new Path("abc.h"), prjs, true);
+		assertEquals(3, files.length);		
+	}
+	
+	public void testFindFilesByLocation() throws Exception {
+		IProject[] prjs= new IProject[]{fProject};
+
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+		createFolder(fProject, "folder1");
+		createFolder(fProject, "folder2");
+		IFile file= createFile(fProject, "abc.h");
+		createFile(fProject, "folder1/abc.h");
+		createFile(fProject, "folder2/abC.h");
+
+		URI uri= file.getLocationURI();
+		IFile[] files= ResourceLookup.findFilesForLocation(uri, prjs);
+		assertEquals(1, files.length);
+
+		if (new File("a").equals(new File("A"))) {
+			URI upperCase= new URI(uri.getScheme(), uri.getSchemeSpecificPart().toUpperCase(), uri.getFragment());
+			files= ResourceLookup.findFilesForLocation(upperCase, prjs);
+			assertEquals(1, files.length);
+		}		
+	}
+}

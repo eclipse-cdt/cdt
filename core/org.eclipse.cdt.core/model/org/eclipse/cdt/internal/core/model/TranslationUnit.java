@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
+import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerIncludeResolutionHeuristics;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
@@ -835,15 +836,20 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	private ICodeReaderFactory getCodeReaderFactory(int style, IIndex index, int linkageID) {
+		final ICProject cprj= getCProject();
+		final ProjectIndexerInputAdapter pathResolver = new ProjectIndexerInputAdapter(cprj);
+		final ProjectIndexerIncludeResolutionHeuristics heuristics = new ProjectIndexerIncludeResolutionHeuristics(cprj.getProject(), pathResolver);
 		ICodeReaderFactory codeReaderFactory;
 		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
 			codeReaderFactory= NullCodeReaderFactory.getInstance();
 		} else {
-			codeReaderFactory= SavedCodeReaderFactory.getInstance();
+			codeReaderFactory= SavedCodeReaderFactory.createInstance(heuristics);
 		}
 		
 		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
-			IndexBasedCodeReaderFactory ibcf= new IndexBasedCodeReaderFactory(index, new ProjectIndexerInputAdapter(getCProject()), linkageID, codeReaderFactory);
+			IndexBasedCodeReaderFactory ibcf= new IndexBasedCodeReaderFactory(index, 
+					heuristics,
+					pathResolver, linkageID, codeReaderFactory);
 			if ((style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 				ibcf.setSupportFillGapFromContextToHeader(true);
 			}

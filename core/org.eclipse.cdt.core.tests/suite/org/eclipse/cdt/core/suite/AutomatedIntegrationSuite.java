@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
+import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
 import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
 import org.eclipse.cdt.core.language.AllLanguageTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
@@ -61,6 +62,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
         suite.addTest(PositionTrackerTests.suite());
+        suite.addTest(ResourceLookupTests.suite());
         suite.addTest(StringBuilderTest.suite());
         suite.addTest(AllLanguageTests.suite());
         suite.addTest(RewriteTests.suite());

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
  *
  * @since 4.0
  */
-public class NullCodeReaderFactory implements ICodeReaderFactory {
+public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	private static final char[] EMPTY_CHARS = new char[0];
 	private static final ICodeReaderFactory INSTANCE= new NullCodeReaderFactory();
@@ -29,7 +29,7 @@ public class NullCodeReaderFactory implements ICodeReaderFactory {
 	}
 
 	private NullCodeReaderFactory() {
-		// singleton
+		super(null);
 	}
 
 	/*

@@ -212,16 +212,18 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsActive;
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
+	private final boolean fFoundByHeuristics;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
-			char[] headerName, String filePath, boolean userInclude, boolean active) {
+			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
 		fIsActive= active;
 		fIsResolved= filePath != null;
 		fIsSystemInclude= !userInclude;
+		fFoundByHeuristics= heuristic;
 	}
 
 	public IASTName getName() {
@@ -248,6 +250,10 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	void findNode(ASTNodeSpecification<?> nodeSpec) {
 		super.findNode(nodeSpec);
 		nodeSpec.visit(fName);
+	}
+
+	public boolean isResolvedByHeuristics() {
+		return fFoundByHeuristics;
 	}
 }
 

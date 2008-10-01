@@ -44,6 +44,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private static final int FLAG_SYSTEM_INCLUDE 		= 1;
 	private static final int FLAG_INACTIVE_INCLUDE 		= 2;
 	private static final int FLAG_UNRESOLVED_INCLUDE 	= 4;
+	private static final int FLAG_RESOLVED_BY_HEURISTICS= 8;
 	
 	private final PDOM pdom;
 	private final int record;
@@ -81,6 +82,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		}
 		if (unresolved) {
 			flags |= FLAG_UNRESOLVED_INCLUDE;
+		} else if (include.isResolvedByHeuristics()) {
+			flags |= FLAG_RESOLVED_BY_HEURISTICS;
 		}
 		return flags;
 	}
@@ -224,7 +227,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	public boolean isResolved() throws CoreException {
 		return (getFlag() & FLAG_UNRESOLVED_INCLUDE) == 0;
 	}
-	
+
+	public boolean isResolvedByHeuristics() throws CoreException {
+		return (getFlag() & FLAG_RESOLVED_BY_HEURISTICS) != 0;
+	}
+
 	public int getNameOffset() throws CoreException {
 		return pdom.getDB().getInt(record + NODE_OFFSET_OFFSET);
 	}

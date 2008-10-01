@@ -89,6 +89,10 @@ abstract public class PDOMWriter {
 		fResolver= resolver;
 	}
 	
+	protected IndexerInputAdapter getInputAdapter() {
+		return fResolver;
+	}
+	
 	public void setShowActivity(boolean val) {
 		fShowActivity= val;
 	}

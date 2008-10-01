@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
@@ -22,43 +21,49 @@ import org.eclipse.core.runtime.Preferences;
 /**
  * @author jcamelon
  */
-public class SavedCodeReaderFactory implements ICodeReaderFactory {
+public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 
-	private ICodeReaderCache cache = null;
+	private static ICodeReaderCache cache;
+    private static SavedCodeReaderFactory instance = new SavedCodeReaderFactory(null);
 	
-    public static SavedCodeReaderFactory getInstance()
-    {
+    public static SavedCodeReaderFactory getInstance() {
         return instance;
     }
     
-    private static SavedCodeReaderFactory instance = new SavedCodeReaderFactory();
+    public static SavedCodeReaderFactory createInstance(IIncludeFileResolutionHeuristics heuristics) {
+    	return new SavedCodeReaderFactory(heuristics);
+    }
     
-    private SavedCodeReaderFactory()
-    {
-		int size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
-		final CCorePlugin corePlugin = CCorePlugin.getDefault();
-		if (corePlugin != null) {
-			Preferences pluginPreferences = corePlugin.getPluginPreferences();
-			if (pluginPreferences != null) {
-				size = pluginPreferences.getInt(CodeReaderCache.CODE_READER_BUFFER);
-				if (size == 0) {
-					String [] properties = pluginPreferences.propertyNames();
-					boolean found = false;
-					for (int j = 0; j < properties.length; ++j) {
-						if (properties[j].equals( CodeReaderCache.CODE_READER_BUFFER)) {
-							found = true;
-							break;
+    
+    private SavedCodeReaderFactory(IIncludeFileResolutionHeuristics heuristics) {
+    	super(heuristics);
+    	
+		if (cache == null) {
+			int size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
+			final CCorePlugin corePlugin = CCorePlugin.getDefault();
+			if (corePlugin != null) {
+				Preferences pluginPreferences = corePlugin.getPluginPreferences();
+				if (pluginPreferences != null) {
+					size = pluginPreferences.getInt(CodeReaderCache.CODE_READER_BUFFER);
+					if (size == 0) {
+						String [] properties = pluginPreferences.propertyNames();
+						boolean found = false;
+						for (int j = 0; j < properties.length; ++j) {
+							if (properties[j].equals( CodeReaderCache.CODE_READER_BUFFER)) {
+								found = true;
+								break;
+							}
 						}
-					}
-					if (!found) {
+						if (!found) {
+							size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
+						}
+					} else if (size < 0) {
 						size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
 					}
-				} else if (size < 0) {
-					size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
 				}
 			}
+			cache= new CodeReaderCache(size);
 		}
-		cache = new CodeReaderCache(size);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()

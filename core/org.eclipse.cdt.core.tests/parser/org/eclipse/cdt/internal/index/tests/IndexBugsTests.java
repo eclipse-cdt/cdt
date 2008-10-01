@@ -1350,4 +1350,53 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	
+	// #include <header.h>
+	// #define _CONCAT(x,y) x##y
+	// #define CONCAT(x,y) _CONCAT(x,y)
+	public void testIncludeHeuristics_Bug213562() throws Exception {
+		String contents= getContentsForTest(1)[0];
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "f1/g/header.h", "#define ID one\n");
+		TestSourceReader.createFile(fCProject.getProject(), "f2/header.h",    "#define ID two\n");
+		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/header.h", "#define ID three\n");
+		TestSourceReader.createFile(fCProject.getProject(), "f1/g/source.cpp", contents + "int CONCAT(one, ID);\n");
+		TestSourceReader.createFile(fCProject.getProject(), "f2/g/source.cpp", contents + "int CONCAT(two, ID);\n");
+		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/source.cpp", contents + "int CONCAT(three, ID);\n");
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("oneone".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, bindings.length);
+			bindings= fIndex.findBindings("twotwo".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, bindings.length);
+			bindings= fIndex.findBindings("threethree".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, bindings.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	public void testIncludeHeuristicsFlag_Bug213562() throws Exception {
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "f1/header.h", "");
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", "#include \"header.h\"\n");
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", "#include \"f1/header.h\"\n");
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f1));
+			IIndexInclude i= f.getIncludes()[0];
+			assertTrue(i.isResolvedByHeuristics());
+
+			f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f2));
+			i= f.getIncludes()[0];
+			assertFalse(i.isResolvedByHeuristics());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 }

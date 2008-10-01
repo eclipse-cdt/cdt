@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -105,9 +105,9 @@ public class CDOM implements IASTServiceProvider {
         	case PARSE_SAVED_RESOURCES: 
         	    return SavedCodeReaderFactory.getInstance();
         	case PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS:
-        	    return new PartialWorkingCopyCodeReaderFactory( provider );
+        	    return new PartialWorkingCopyCodeReaderFactory(provider, null);
         	case PARSE_WORKING_COPY_WHENEVER_POSSIBLE:
-        	    return new WorkingCopyCodeReaderFactory( provider );
+        	    return new WorkingCopyCodeReaderFactory( provider, null );
         }
         return null;
     }

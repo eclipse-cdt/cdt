@@ -116,14 +116,14 @@ public class LocationMap implements ILocationResolver {
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 */
 	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset, int endOffset, 
-			char[] buffer, String filename, char[] name, boolean userInclude) {
+			char[] buffer, String filename, char[] name, boolean userInclude, boolean heuristic) {
 		assert fCurrentContext instanceof LocationCtxContainer;
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final ASTInclusionStatement inclusionStatement= 
-			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true);
+			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true, heuristic);
 		fDirectives.add(inclusionStatement);
 		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
 		fLastChildInsertionOffset= 0;
@@ -218,12 +218,12 @@ public class LocationMap implements ILocationResolver {
 	 * @param active <code>true</code> when include appears in active code.
 	 */
 	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
-			char[] name, String filename, boolean userInclude, boolean active) {
+			char[] name, String filename, boolean userInclude, boolean active, boolean heuristic) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, endOffset, name, filename, userInclude, active));
+		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, endOffset, name, filename, userInclude, active, heuristic));
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {

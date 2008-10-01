@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
@@ -23,8 +23,8 @@ public class WorkingCopyCodeReaderFactory extends PartialWorkingCopyCodeReaderFa
     /**
      * @param provider
      */
-    public WorkingCopyCodeReaderFactory(IWorkingCopyProvider provider) {
-        super(provider);
+    public WorkingCopyCodeReaderFactory(IWorkingCopyProvider provider, IIncludeFileResolutionHeuristics heuristics) {
+        super(provider, heuristics);
     }
     
     /* (non-Javadoc)

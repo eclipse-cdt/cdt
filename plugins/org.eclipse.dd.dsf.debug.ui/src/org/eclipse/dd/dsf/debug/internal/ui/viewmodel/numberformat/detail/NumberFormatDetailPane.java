@@ -435,6 +435,9 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                             else if ( str == IFormattedValues.DECIMAL_FORMAT) {
                                                 completedFormatStrings.add("Decimal : " + getData().getFormattedValue()); //$NON-NLS-1$
                                             }
+                                            else if ( str == IFormattedValues.STRING_FORMAT) {
+                                                completedFormatStrings.add("String : " + getData().getFormattedValue()); //$NON-NLS-1$
+                                            }
                                             else {
                                                 completedFormatStrings.add("Other.. : " + getData().getFormattedValue()); //$NON-NLS-1$
                                             }

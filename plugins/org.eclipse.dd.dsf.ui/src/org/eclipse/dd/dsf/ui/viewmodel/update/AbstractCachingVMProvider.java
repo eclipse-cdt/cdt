@@ -23,12 +23,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -935,7 +937,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             fCacheListHead.fNext.remove();
         }
     }
-
+    
     /**
      * Retrieves the deprecated IDMData object for the given IDMContext.  This 
      * method should be removed once the use of IDMData is replaced with 
@@ -944,49 +946,76 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     @Deprecated
     public void getModelData(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
         final DataRequestMonitor rm, final Executor executor)
-    { 
-        getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                
-                ElementDataKey key = makeEntryKey(node, update);
-                final ElementDataEntry entry = getElementDataEntry(key);
-                /*if (entry.fDirty) {
-                    rm.setStatus(Status.CANCEL_STATUS);
-                    rm.done();
-                } else */{
-	                Object dataOrStatus = entry.fDataOrStatus.get(dmc);
-	                if(dataOrStatus != null) {
-	                    if (dataOrStatus instanceof IDMData) {
-	                        rm.setData( dataOrStatus );
-	                    } else {
-	                        rm.setStatus((IStatus)dataOrStatus );
-	                    }
-	                    rm.done();
-	                } else {
-	                	service.getExecutor().execute(new DsfRunnable() {
-	                		public void run() {
-	                			service.getModelData(dmc,
-	                					new ViewerDataRequestMonitor<IDMData>(executor, update) {
-	                				@Override
-	                				protected void handleCompleted() {
-	                					if (isSuccess()) {
-	                						entry.fDataOrStatus.put(dmc, getData());
-	                						rm.setData(getData());
-	                					} else {
-	                					    if (!isCanceled()) {
-	                					        entry.fDataOrStatus.put(dmc, getStatus());
-	                					    }
-	                						rm.setStatus(getStatus());
-	                					}
-	                					rm.done();
-	                				}
-	                			});
-	                		}
-	                	});
-	                }
-                }
-            }
-        });
+    {
+    	// Determine if this request is being issues on the a VM executor thread. If so
+    	// then we do not need to create a new one to insure data integrity.
+    	Executor vmExecutor = getExecutor();
+    	if ( vmExecutor instanceof SimpleDisplayExecutor ) {
+    		getCacheModelData(node, update, service, dmc, rm, executor );
+    	} else {
+    		vmExecutor.execute(new DsfRunnable() {
+    			public void run() {
+    				getCacheModelData(node, update, service, dmc, rm, executor );
+    			}
+    		});
+    	}
+    }
+    
+    private void getCacheModelData(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
+            final DataRequestMonitor rm, final Executor executor)
+    {
+    	ElementDataKey key = makeEntryKey(node, update);
+    	final ElementDataEntry entry = getElementDataEntry(key);
+    	/*if (entry.fDirty) {
+            rm.setStatus(Status.CANCEL_STATUS);
+            rm.done();
+        } else */{
+        	Object dataOrStatus = entry.fDataOrStatus.get(dmc);
+        	if(dataOrStatus != null) {
+        		if (dataOrStatus instanceof IDMData) {
+        			rm.setData( dataOrStatus );
+        		} else {
+        			rm.setStatus((IStatus)dataOrStatus );
+        		}
+        		rm.done();
+        	} else {
+        		// Determine if we are already running on a DSF executor thread. if so then
+        		// we do not need to create a new one to issue the request to the service.
+        		DsfExecutor dsfExecutor = service.getExecutor();
+        		if ( dsfExecutor.isInExecutorThread() ) {
+        			getModelDataFromService(node, update, service, dmc, rm, executor, entry );
+        		}
+        		else {
+        			dsfExecutor.execute(new DsfRunnable() {
+        				public void run() {
+        					getModelDataFromService(node, update, service, dmc, rm, executor, entry );
+        				}
+        			});
+        		}
+        	}
+        }
+    }
+    
+    private void getModelDataFromService(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
+            final DataRequestMonitor rm, final Executor executor, final ElementDataEntry entry)
+    {
+    	service.getModelData(
+    		dmc,
+			new ViewerDataRequestMonitor<IDMData>(executor, update) {
+			@Override
+			protected void handleCompleted() {
+				if (isSuccess()) {
+					entry.fDataOrStatus.put(dmc, getData());
+					rm.setData(getData());
+				} else {
+					if (!isCanceled()) {
+						entry.fDataOrStatus.put(dmc, getStatus());
+					}
+					rm.setStatus(getStatus());
+				}
+				rm.done();
+			}
+		});
     }
     
     /**

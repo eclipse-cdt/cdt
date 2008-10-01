@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -115,7 +116,7 @@ implements
 {
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
-	private static int cfgIndex = -1;
+	private static ICConfigurationDescription lastSelectedCfg = null;
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
@@ -198,7 +199,8 @@ implements
 	public AbstractPage() {
 		if (CDTPropertyManager.getPagesCount() == 0) {
 			cfgDescs = null;
-			cfgIndex = -1;
+			lastSelectedCfg = null;
+			multiCfgs = null;
 		}
 	}
 	
@@ -383,39 +385,103 @@ implements
 		if (configSelector.getItemCount() == 0) return;
 		int selectionIndex = configSelector.getSelectionIndex();
 		if (selectionIndex == -1) return;
+		if (cfgDescs == null || cfgDescs.length == 0) return;
 
 		// Check if the user has selected the "all / multiple" configuration
 		if (selectionIndex >= cfgDescs.length) {
-			if ((selectionIndex - cfgDescs.length) == 0) {  // all
+			if (selectionIndex == cfgDescs.length) {  // all
 				multiCfgs = cfgDescs;
-				cfgIndex = selectionIndex; 
 			} else { // multiple
-				if (cfgIndex != selectionIndex) { // to avoid re-request on page change 
+				// Check previous state of variables figuring out if need to pop up selection dialog
+				// areCfgsStillThere() covers deletions by a user in Manage Configurations dialog
+				boolean enterMultiCfgsDialog = (multiCfgs == null)
+						|| (multiCfgs == cfgDescs) || !areCfgsStillThere(multiCfgs);
+				if (enterMultiCfgsDialog) {
 					ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
 					if (mcfgs == null || mcfgs.length == 0) {
 						// return back to previous selection
-						if (cfgIndex > configSelector.getItemCount()) {
-							cfgIndex = 0;
-							configSelector.select(0);
-							cfgChanged(cfgDescs[0]);
+						int cfgIndex = -1;
+						if (multiCfgs == cfgDescs) { // return to choice "All"
+							cfgIndex = cfgDescs.length;
 						} else {
-							configSelector.select(cfgIndex);
+							cfgIndex = getCfgIndex(lastSelectedCfg);
 						}
+						configSelector.select(cfgIndex);
 						return;
 					}
 					multiCfgs = mcfgs;
-					cfgIndex = selectionIndex;
 				}
+					
 			}
-			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs)); 
+			lastSelectedCfg = null;
+
+			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs));
 			return;
 		}
+		multiCfgs = null;
+		
 		String id1 = getResDesc() == null ? null : getResDesc().getId();
-		cfgIndex = selectionIndex;
-		ICConfigurationDescription newConfig = cfgDescs[selectionIndex];
-		String id2 = newConfig.getId();
-		if (id2 != null && !id2.equals(id1))
-			cfgChanged(newConfig);
+		lastSelectedCfg = cfgDescs[selectionIndex];
+		String id2 = lastSelectedCfg.getId();
+		if (id2 != null && !id2.equals(id1)) {
+			cfgChanged(lastSelectedCfg);
+		}
+	}
+
+	/**
+	 * Find index of configuration description in the internal array of
+	 * configuration descriptions.
+	 * 
+	 * @param cfgd
+	 * @return index of found configuration description or index of active
+	 *         configuration.
+	 */
+	private static int getCfgIndex(ICConfigurationDescription cfgd) {
+		int index = 0;
+		for (int i = 0; i < cfgDescs.length; ++i) {
+			if (cfgd != null) {
+				if (cfgd.getId().equals(cfgDescs[i].getId())) {
+					return i;
+				}
+			} else if (cfgDescs[i].isActive()) {
+				index = i;
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * Find index of active configuration description in the internal array of
+	 * configuration descriptions.
+	 * 
+	 * @return index of active configuration description.
+	 */
+	private static int getActiveCfgIndex() {
+		return getCfgIndex(null);
+	}
+	
+	/**
+	 * Check if all configuration descriptions are present in the internal array of
+	 * configuration descriptions.
+	 * @param cfgs
+	 * @return true if all present, false otherwise
+	 */
+	private static boolean areCfgsStillThere(ICConfigurationDescription[] cfgs) {
+		if (cfgs==null || cfgDescs==null) return false;
+		
+		for (ICConfigurationDescription multiCfg : cfgs) {
+			boolean foundOne = false;
+			for (ICConfigurationDescription cfgDesc : cfgDescs) {
+				if (multiCfg.getId().equals(cfgDesc.getId())) {
+					foundOne = true;
+					break;
+				}
+			}
+			if (!foundOne) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
     @Override
@@ -585,7 +651,7 @@ implements
 			return false;
 		} catch (InterruptedException e) {}
 		return true;
-    }
+	}
 
 	private void populateConfigurations() {
 		IProject prj = getProject();
@@ -600,36 +666,49 @@ implements
 			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
 			
 		} else {
+			if (cfgDescs.length == 0) return;
 			// just register in CDTPropertyManager;
 			CDTPropertyManager.getProjectDescription(this, prj);
 		}
 		
 		// Do nothing if widget not created yet.
 		if (configSelector == null)	{
-			if (cfgDescs != null && cfgDescs.length > 0) {
-				for (int i = 0; i < cfgDescs.length; ++i) {
-					if (cfgIndex == -1 && cfgDescs[i].isActive()) 
-						cfgIndex = i;
-				}
-				if (cfgIndex < 0) {
-					cfgIndex = 0;
-				}
-				cfgChanged(cfgDescs[cfgIndex]); 
-			}
+			lastSelectedCfg = cfgDescs[getActiveCfgIndex()];
+			cfgChanged(lastSelectedCfg); 
 			return;
 		}
 
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
 		for (int i = 0; i < cfgDescs.length; ++i) {
-			configSelector.add(cfgDescs[i].getName());
-			if (cfgIndex == -1 && cfgDescs[i].isActive()) 
-				cfgIndex = i;
+			String name = cfgDescs[i].getName();
+			if (cfgDescs[i].isActive()) {
+				name = name + "  " + UIMessages.getString("AbstractPage.16"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			configSelector.add(name);
 		}
-		if (cfgDescs.length > 1) // "All cfgs" - shown if at least 2 cfgs available
+
+		int cfgIndex = -1;
+		
+		// "All cfgs" - shown if at least 2 cfgs available
+		if (cfgDescs.length > 1) {
 			configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
-		if (cfgDescs.length > 2)// "Multi cfgs" - shown if at least 3 cfgs available
+			if (multiCfgs == cfgDescs) {
+				cfgIndex = cfgDescs.length;
+			}
+		}
+		// "Multi cfgs" - shown if at least 3 cfgs available
+		if (cfgDescs.length > 2) {
 			configSelector.add(UIMessages.getString("AbstractPage.5")); //$NON-NLS-1$
+			if (multiCfgs != null && multiCfgs != cfgDescs) {
+				cfgIndex = cfgDescs.length + 1;
+			}
+		}
+
+		if (cfgIndex<0) {
+			cfgIndex = getActiveCfgIndex();
+		}
+
 		configSelector.select(cfgIndex);
 		handleConfigSelection();
 	}
@@ -757,12 +836,10 @@ implements
 		if (resd == null) {
 			if (cfgDescs == null) {
 				populateConfigurations();
-				if (cfgDescs == null || cfgDescs.length == 0) return null;
 			}
-			if (cfgDescs.length == 0) {
-				return null;
+			if (lastSelectedCfg!=null) {
+				resd = getResDesc(lastSelectedCfg);
 			}
-			resd = getResDesc(cfgDescs[cfgIndex]);			
 		}
 		return resd;
 	}

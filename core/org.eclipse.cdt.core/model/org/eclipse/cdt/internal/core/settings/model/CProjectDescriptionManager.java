@@ -1582,7 +1582,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 */			
 			if(exts != null && exts.length != 0){
 				for(int j = 0; j < exts.length; j++){
-					if(ext.equals(exts[j]))
+					// since the file types prefs are not case sensitive, don't be here
+					if(ext.equalsIgnoreCase(exts[j]))
 						return setting;
 				}
 			}

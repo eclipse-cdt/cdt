@@ -52,6 +52,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -950,7 +951,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     	// Determine if this request is being issues on the a VM executor thread. If so
     	// then we do not need to create a new one to insure data integrity.
     	Executor vmExecutor = getExecutor();
-    	if ( vmExecutor instanceof SimpleDisplayExecutor ) {
+    	if ( vmExecutor instanceof SimpleDisplayExecutor && 
+    	     Display.getDefault().getThread() == Thread.currentThread() ) 
+    	{
     		getCacheModelData(node, update, service, dmc, rm, executor );
     	} else {
     		vmExecutor.execute(new DsfRunnable() {

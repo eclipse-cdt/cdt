@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.DebugLogConstants;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -117,22 +118,18 @@ public class ParserUtil
 
         try
         {
-    		IFile resultingResource = root.getFile(path);
-    		if( resultingResource != null && resultingResource.exists() ) 
-    		    return resultingResource;
-            resultingResource = root.getFileForLocation( path );
-            if( resultingResource != null && resultingResource.exists() ) 
-                return resultingResource;
+    		IFile file = root.getFile(path);
+    		if( file != null && file.exists() ) 
+    		    return file;
+    		
+            file = root.getFileForLocation( path );
+            if( file != null && file.exists() ) 
+                return file;
 
             // check for linked resources
-            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(initialPath); 
-
-            // note for findFilesForLocation(IPath): This method does not consider whether resources actually exist at the given locations.
-            // so only return the first IFile found that is accessible
-            for (IFile file : files) {
-            	if (file.isAccessible())
-            		return file;
-            }
+            file= ResourceLookup.selectFileForLocation(initialPath, null); 
+            if (file != null && file.exists())
+            	return file;
             
     		return null;
         }

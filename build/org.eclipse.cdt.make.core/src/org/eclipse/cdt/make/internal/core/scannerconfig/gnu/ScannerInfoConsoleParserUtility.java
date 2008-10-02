@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
+ *    IBM - Initial API and implementation
+ *    Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
@@ -42,16 +43,16 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	/*
 	 * For tracking the location of files being compiled
 	 */
-	private Map fFilesInProject;
-	private List fCollectedFiles;
-	private List fNameConflicts;
+	private Map<String, IFile> fFilesInProject;
+	private List<IResource> fCollectedFiles;
+	private List<String> fNameConflicts;
     
 	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
 	    super(project, workingDirectory, markerGenerator);
         
-		fFilesInProject = new HashMap();
-		fCollectedFiles = new ArrayList();
-		fNameConflicts = new ArrayList();
+		fFilesInProject = new HashMap<String, IFile>();
+		fCollectedFiles = new ArrayList<IResource>();
+		fNameConflicts = new ArrayList<String>();
 
 		collectFiles(getProject(), fCollectedFiles);
 
@@ -135,7 +136,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	 */
 	protected IFile findFileName(String fileName) {
 		IPath path = new Path(fileName);
-		return (IFile) fFilesInProject.get(path.lastSegment());
+		return fFilesInProject.get(path.lastSegment());
 	}
 
 	protected IFile findFileInWorkspace(IPath path) {
@@ -145,22 +146,15 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 			file =  root.getFileForLocation(path);
 			// It may be a link resource so we must check it also.
 			if (file == null) {
-				IFile[] files = root.findFilesForLocation(path);
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].getProject().equals(getProject())) {
-						file = files[i];
-						break;
-					}
-				}
+				file= ResourceLookup.selectFileForLocation(path, getProject());
 			}
-
 		} else {
 			file = getProject().getFile(path);
 		}
 		return file;
 	}
 
-	protected void collectFiles(IContainer parent, List result) {
+	protected void collectFiles(IContainer parent, List<IResource> result) {
 		try {
 			IResource[] resources = parent.members();
 			for (int i = 0; i < resources.length; i++) {
@@ -181,10 +175,10 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 		return fNameConflicts.contains(path.lastSegment());
 	}
 
-	public List translateRelativePaths(IFile file, String fileName, List includes) {
-		List translatedIncludes = new ArrayList(includes.size());
-		for (Iterator i = includes.iterator(); i.hasNext(); ) {
-			String include = (String) i.next();
+	public List<String> translateRelativePaths(IFile file, String fileName, List<String> includes) {
+		List<String> translatedIncludes = new ArrayList<String>(includes.size());
+		for (Iterator<String> i = includes.iterator(); i.hasNext(); ) {
+			String include = i.next();
 			IPath includePath = new Path(include);
 			if (!includePath.isAbsolute() && !includePath.isUNC()) {	// do not translate UNC paths
 				// First try the current working directory
@@ -205,7 +199,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$
 						// probably multiple choices for cwd, hopeless
 						final String error = MakeMessages.getString("ConsoleParser.Working_Directory_Error_Message"); //$NON-NLS-1$
-						TraceUtil.outputError(error, fileName); //$NON-NLS-1$
+						TraceUtil.outputError(error, fileName);
 						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);				
 						break;
 					}

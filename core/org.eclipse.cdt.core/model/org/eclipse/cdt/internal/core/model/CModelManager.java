@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -218,10 +219,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		// In case this is an external resource see if we can find
 		// a file for it.
 		if (res == null) {
-			IFile[] files = root.findFilesForLocation(path);
-			if (files.length > 0) {
-				res = files[0];
-			}
+			res= ResourceLookup.selectFileForLocation(path, null);
 		}
 
 		return create(res, null);

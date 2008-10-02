@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -182,8 +183,6 @@ public class ResourceLookupTests extends TestCase {
 	}
 	
 	public void testFindFilesByLocation() throws Exception {
-		IProject[] prjs= new IProject[]{fProject};
-
 		fProject.create(new NullProgressMonitor());
 		fProject.open(new NullProgressMonitor());
 		createFolder(fProject, "folder1");
@@ -193,12 +192,18 @@ public class ResourceLookupTests extends TestCase {
 		createFile(fProject, "folder2/abC.h");
 
 		URI uri= file.getLocationURI();
-		IFile[] files= ResourceLookup.findFilesForLocation(uri, prjs);
+		IPath path= file.getLocation();
+		IFile[] files= ResourceLookup.findFilesForLocationURI(uri);
+		assertEquals(1, files.length);
+		files= ResourceLookup.findFilesForLocation(path);
 		assertEquals(1, files.length);
 
 		if (new File("a").equals(new File("A"))) {
 			URI upperCase= new URI(uri.getScheme(), uri.getSchemeSpecificPart().toUpperCase(), uri.getFragment());
-			files= ResourceLookup.findFilesForLocation(upperCase, prjs);
+			IPath upperCasePath= new Path(path.toString().toUpperCase());
+			files= ResourceLookup.findFilesForLocationURI(upperCase);
+			assertEquals(1, files.length);
+			files= ResourceLookup.findFilesForLocation(upperCasePath);
 			assertEquals(1, files.length);
 		}		
 	}

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -278,13 +279,7 @@ public class ErrorParserManager extends OutputStream {
 			file =  root.getFileForLocation(path);
 			// It may be a link resource so we must check it also.
 			if (file == null) {
-				IFile[] files = root.findFilesForLocation(path);
-				for (IFile file2 : files) {
-					if (file2.getProject().equals(fProject)) {
-						file = file2;
-						break;
-					}
-				}
+				file= ResourceLookup.selectFileForLocation(path, fProject);
 			}
 
 		} else {

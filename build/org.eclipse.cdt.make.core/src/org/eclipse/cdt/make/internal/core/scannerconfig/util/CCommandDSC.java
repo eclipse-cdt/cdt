@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -44,14 +45,14 @@ public class CCommandDSC {
     private final static String KIND_ATTR = "kind"; //$NON-NLS-1$
     
 	private int commandId;
-	private List compilerCommand;	// members are KVStringPair objects
+	private List<KVStringPair> compilerCommand;	// members are KVStringPair objects
 	private boolean discovered;
 	private boolean cppFileType;	// C or C++ file type
 	private IProject project;
 
-    private List symbols;
-    private List includes;
-    private List quoteIncludes;
+    private List<String> symbols;
+    private List<String> includes;
+    private List<String> quoteIncludes;
     
     /**
 	 * @param cppFileType2 
@@ -61,13 +62,13 @@ public class CCommandDSC {
 	}
 	
 	public CCommandDSC(boolean cppFileType, IProject project) {
-		compilerCommand = new ArrayList();
+		compilerCommand = new ArrayList<KVStringPair>();
 		discovered = false;
 		this.cppFileType = cppFileType;
         
-        symbols = new ArrayList();
-        includes = new ArrayList();
-        quoteIncludes = new ArrayList();
+        symbols = new ArrayList<String>();
+        includes = new ArrayList<String>();
+        quoteIncludes = new ArrayList<String>();
         this.project = project;
 	}
 
@@ -84,7 +85,7 @@ public class CCommandDSC {
 			 option.getKey().equals(SCDOptionsEnum.IQUOTE.toString())))
 		{
 			String value = option.getValue();
-			value = (String)CygpathTranslator.translateIncludePaths(project, Collections.singletonList(value)).get(0);
+			value = CygpathTranslator.translateIncludePaths(project, Collections.singletonList(value)).get(0);
 			value = makeRelative(project, new Path(value)).toOSString();
 			option = new KVStringPair(option.getKey(), value);
 		}
@@ -110,10 +111,11 @@ public class CCommandDSC {
         this.commandId = commandId;
     }
     
+	@Override
 	public String toString() {
 		String commandAsString = new String();
-		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)i.next();
+		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
+			KVStringPair optionPair = i.next();
 			String value = optionPair.getValue();
 			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
                                value + SINGLE_SPACE;
@@ -132,8 +134,8 @@ public class CCommandDSC {
 	 */
 	public String getSCDRunnableCommand(boolean quoteIncludePaths, boolean quoteDefines) {
 		String commandAsString = new String();
-		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)i.next();
+		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
+			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {
                 commandAsString += optionPair.getValue() + SINGLE_SPACE;
             }
@@ -172,8 +174,8 @@ public class CCommandDSC {
 	 */
 	public String getCompilerName() {
 		String compiler = new String();
-		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)i.next();
+		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
+			KVStringPair optionPair = i.next();
             if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {
             	compiler = optionPair.getValue();
             	break;
@@ -185,10 +187,10 @@ public class CCommandDSC {
 	/**
 	 * @return list of strings
 	 */
-	public List getImacrosFile() {
-		List imacrosFiles = new ArrayList();
-		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)i.next();
+	public List<String> getImacrosFile() {
+		List<String> imacrosFiles = new ArrayList<String>();
+		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
+			KVStringPair optionPair = i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())) {
 				imacrosFiles.add(makeAbsolute(project,optionPair.getValue()));
 			}
@@ -199,10 +201,10 @@ public class CCommandDSC {
 	/**
 	 * @return list of strings
 	 */
-	public List getIncludeFile() {
-		List includeFiles = new ArrayList();
-		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVStringPair optionPair = (KVStringPair)i.next();
+	public List<String> getIncludeFile() {
+		List<String> includeFiles = new ArrayList<String>();
+		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
+			KVStringPair optionPair = i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())) {
 				includeFiles.add(makeAbsolute(project,optionPair.getValue()));
 			}
@@ -217,6 +219,7 @@ public class CCommandDSC {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 != null && arg0.getClass().equals(this.getClass())) {
             CCommandDSC other = (CCommandDSC)arg0;
@@ -228,6 +231,7 @@ public class CCommandDSC {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return compilerCommand.hashCode();
 	}
@@ -235,37 +239,37 @@ public class CCommandDSC {
     /**
      * @return Returns the includes as strings.
      */
-    public List getIncludes() {
+    public List<String> getIncludes() {
         return makeAbsolute(project, includes);
     }
     /**
      * @param includes The includes to set.
      */
-    public void setIncludes(List includes) {
+    public void setIncludes(List<String> includes) {
         this.includes = includes;
     }
     /**
      * @return Returns the quote include paths as strings (for #include "...")
      */
-    public List getQuoteIncludes() {
+    public List<String> getQuoteIncludes() {
         return makeAbsolute(project, quoteIncludes);
     }
     /**
      * @param includes. Quote include paths (for #include "...")
      */
-    public void setQuoteIncludes(List includes) {
+    public void setQuoteIncludes(List<String> includes) {
         quoteIncludes = includes;
     }
     /**
      * @return Returns the symbols.
      */
-    public List getSymbols() {
+    public List<String> getSymbols() {
         return symbols;
     }
     /**
      * @param symbols The symbols to set.
      */
-    public void setSymbols(List symbols) {
+    public void setSymbols(List<String> symbols) {
         this.symbols = symbols;
     }
     /**
@@ -288,9 +292,9 @@ public class CCommandDSC {
         Document doc = cmdElem.getOwnerDocument();
         // serialize the command
         Element cmdDescElem = doc.createElement(CMD_DESCRIPTION_ELEM);
-        for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
+        for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext(); ) {
             Element optionElem = doc.createElement(OPTION_ELEM); 
-            KVStringPair option = (KVStringPair) i.next();
+            KVStringPair option = i.next();
             optionElem.setAttribute(KEY_ATTR, option.getKey()); 
             optionElem.setAttribute(VALUE_ATTR, option.getValue()); 
             cmdDescElem.appendChild(optionElem);
@@ -298,23 +302,23 @@ public class CCommandDSC {
         cmdElem.appendChild(cmdDescElem);
         // serialize includes and symbols
         Element siElem = doc.createElement(CMD_SI_ELEM);
-        for (Iterator j = quoteIncludes.iterator(); j.hasNext(); ) {
+        for (Iterator<String> j = quoteIncludes.iterator(); j.hasNext(); ) {
             Element siItem = doc.createElement(SI_ITEM_ELEM); 
             siItem.setAttribute(KIND_ATTR, "INCLUDE_PATH");  //$NON-NLS-1$
-            siItem.setAttribute(VALUE_ATTR, (String) j.next());
+            siItem.setAttribute(VALUE_ATTR, j.next());
             siItem.setAttribute(QUOTE_INCLUDE_ATTR, "true"); //$NON-NLS-1$
             siElem.appendChild(siItem);
         }
-        for (Iterator j = includes.iterator(); j.hasNext(); ) {
+        for (Iterator<String> j = includes.iterator(); j.hasNext(); ) {
             Element siItem = doc.createElement(SI_ITEM_ELEM); 
             siItem.setAttribute(KIND_ATTR, "INCLUDE_PATH");  //$NON-NLS-1$
-            siItem.setAttribute(VALUE_ATTR, (String) j.next());
+            siItem.setAttribute(VALUE_ATTR, j.next());
             siElem.appendChild(siItem);
         }
-        for (Iterator j = symbols.iterator(); j.hasNext(); ) {
+        for (Iterator<String> j = symbols.iterator(); j.hasNext(); ) {
             Element siItem = doc.createElement(SI_ITEM_ELEM);
             siItem.setAttribute(KIND_ATTR, "SYMBOL_DEFINITION"); //$NON-NLS-1$
-            siItem.setAttribute(VALUE_ATTR, (String) j.next()); 
+            siItem.setAttribute(VALUE_ATTR, j.next()); 
             siElem.appendChild(siItem);
         }
         cmdElem.appendChild(siElem);
@@ -366,11 +370,11 @@ public class CCommandDSC {
     public void resolveOptions(IProject project) {
     	if (!isDiscovered()) {
     		// that's wrong for sure, options cannot be resolved fron the optionPairs??
-    		ArrayList symbols = new ArrayList();
-    		ArrayList includes = new ArrayList();
-    		ArrayList quoteincludes = new ArrayList();
-    		for (Iterator options = compilerCommand.iterator(); options.hasNext(); ) {
-    			KVStringPair optionPair = (KVStringPair)options.next();
+    		ArrayList<String> symbols = new ArrayList<String>();
+    		ArrayList<String> includes = new ArrayList<String>();
+    		ArrayList<String> quoteincludes = new ArrayList<String>();
+    		for (Iterator<KVStringPair> options = compilerCommand.iterator(); options.hasNext(); ) {
+    			KVStringPair optionPair = options.next();
     			String key = optionPair.getKey();
     			String value = optionPair.getValue();
     			if (key.equals(SCDOptionsEnum.INCLUDE.toString()) || key.equals(SCDOptionsEnum.ISYSTEM.toString())) {
@@ -409,30 +413,16 @@ public class CCommandDSC {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			resource = root.findMember(path, false);
 			if (resource == null) {
-				IResource[] resources = root.findFilesForLocation(path);
-				if (project != null) {
-					for (int i = 0; i < resources.length; i++) {
-						final IProject myProject = resources[i].getProject();
-						// resource could be root, then myProject is null.
-						if (myProject != null && myProject.equals(project)) {
-							resource = resources[i];
-							break;
-						}
-					}
-				}
-				// make a relative path to another project (better than an absolute path)
-				if (resource == null && resources.length > 0) {
-					resource = resources[0];
-				}
+				resource= ResourceLookup.selectFileForLocation(path, project);
 			}
 		}
 		return resource;
 	}
 
-	public static List makeRelative(IProject project, List paths) {
-		List list = new ArrayList(paths.size());
-		for (Iterator iter=paths.iterator(); iter.hasNext(); ) {
-			String path = (String)iter.next();
+	public static List<String> makeRelative(IProject project, List<String> paths) {
+		List<String> list = new ArrayList<String>(paths.size());
+		for (Iterator<String> iter=paths.iterator(); iter.hasNext(); ) {
+			String path = iter.next();
 			path = makeRelative(project, new Path(path)).toOSString();
 			list.add(path);
 		}
@@ -455,10 +445,10 @@ public class CCommandDSC {
 		return path;
 	}
 
-	public static List makeAbsolute(IProject project, List paths) {
-		List list = new ArrayList(paths.size());
-		for (Iterator iter=paths.iterator(); iter.hasNext(); ) {
-			String path = (String)iter.next();
+	public static List<String> makeAbsolute(IProject project, List<String> paths) {
+		List<String> list = new ArrayList<String>(paths.size());
+		for (Iterator<String> iter=paths.iterator(); iter.hasNext(); ) {
+			String path = iter.next();
 			path = makeAbsolute(project, path);
 			list.add(path);
 		}

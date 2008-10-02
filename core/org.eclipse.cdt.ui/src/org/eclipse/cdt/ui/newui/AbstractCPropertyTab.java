@@ -58,6 +58,8 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 /**
@@ -477,9 +479,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		} else {
 			IResource resource = null;
 			if(path.isAbsolute()){
-				IFile fs[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-				if(fs != null && fs.length > 0)
-					resource = fs[0];
+				resource= ResourceLookup.selectFileForLocation(path, prj);
 			}
 			dialog.setInitialSelection(resource);
 			dialog.setValidator(new ISelectionStatusValidator() {

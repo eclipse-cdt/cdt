@@ -69,6 +69,8 @@ import org.eclipse.cdt.core.resources.EFSFileStorage;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
@@ -435,45 +437,24 @@ public class EditorUtility {
 				project= cProject.getProject();
 			}
 		}
-		IFile bestMatch= null;
-		IFile secondBestMatch= null;
+		IFile file= ResourceLookup.selectFileForLocation(location, project);
+		if (file != null && file.isAccessible())
+			return file;
+		
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= root.findFilesForLocation(location);
-		if (files.length == 0) {
-			// workaround http://bugs.eclipse.org/233939
-			IFile file= root.getFileForLocation(location);
-			if (file != null) {
-				files= new IFile[] { file };
-			}
+		// workaround http://bugs.eclipse.org/233939
+		file= root.getFileForLocation(location);
+		if (file != null && file.isAccessible()) 
+			return file;
+
+		// try workspace relative path
+		if (location.segmentCount() >= 2) {
+			// @see IContainer#getFile for the required number of segments
+			file= root.getFile(location);
+			if (file != null && file.isAccessible()) 
+				return file;
 		}
-		for (IFile file : files) {
-			if (file.isAccessible()) {
-				if (project != null && file.getProject().equals(project)) {
-					bestMatch= file;
-					break;
-				} else if (CoreModel.hasCNature(file.getProject())) {
-					bestMatch= file;
-					if (project == null) {
-						break;
-					}
-				} else {
-					// match in  non-CDT project
-					secondBestMatch= file;
-				}
-			}
-		}
-		bestMatch=  bestMatch != null ? bestMatch : secondBestMatch;
-		if (bestMatch == null) {
-			// try workspace relative path
-			if (location.segmentCount() >= 2) {
-				// @see IContainer#getFile for the required number of segments
-				IFile file= root.getFile(location);
-				if  (file != null && file.isAccessible()) {
-					bestMatch= file;
-				}
-			}
-		}
-		return bestMatch;
+		return null;
 	}
 
 	/**
@@ -493,29 +474,12 @@ public class EditorUtility {
 				project= cProject.getProject();
 			}
 		}
-		IFile bestMatch= null;
-		IFile secondBestMatch= null;
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= root.findFilesForLocationURI(locationURI);
-		for (IFile file : files) {
-			if (file.isAccessible()) {
-				if (project != null && file.getProject().equals(project)) {
-					bestMatch= file;
-					break;
-				} else if (CoreModel.hasCNature(file.getProject())) {
-					bestMatch= file;
-					if (project == null) {
-						break;
-					}
-				} else {
-					// match in  non-CDT project
-					secondBestMatch= file;
-				}
-			}
-		}
-		bestMatch=  bestMatch != null ? bestMatch : secondBestMatch;
-
-		return bestMatch;
+		
+		IFile file= ResourceLookup.selectFileForLocationURI(locationURI, project);
+		if (file != null && file.isAccessible())
+			return file;
+		
+		return null;
 	}
 	
 	/**

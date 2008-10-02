@@ -10,8 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.resources;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * A node contains the name of a file plus a link to the parent resource. From that we can compute
  * the resource path and obtain further information via the resource.
  */
-class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisitor, IResourceProxyVisitor {
+class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisitor, IResourceProxyVisitor {
 	private static final int UNREF_DELAY = 10 * 60000; // 10 min
 	
 	private static final boolean VISIT_CHILDREN = true;
@@ -88,7 +86,7 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 			if (idx < 0)
 				return true;
 			
-			return fExtensions.contains(filename.substring(idx+1)) != fInvert;
+			return fExtensions.contains(filename.substring(idx+1).toUpperCase()) != fInvert;
 		}
 	}
 	
@@ -109,7 +107,7 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 				parent.fHasChildren= true;
 		}
 	}
-
+	
 	private final Object fLock= new Object();
 	private final Job fUnrefJob;
 	private SoftReference<Map<Integer, Object>> fNodeMapRef;
@@ -122,7 +120,7 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 	private boolean fNeedCleanup;
 	private Node fLastFolderNode;
 	
-	public ResourceLookupImpl() {
+	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, true) {};
 		fFileExtensions= new HashMap<String, Extensions>();
 		fUnrefJob= new Job("Timer") { //$NON-NLS-1$
@@ -326,10 +324,11 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 	 * Initializes file-extensions and node map
 	 */
 	private void initFileExtensions() {
+		
 		if (fDefaultExtensions == null) {
-			HashSet<String> select= new HashSet<String>();
+			HashSet<String> cdtContentTypes= new HashSet<String>();
 			String[] registeredContentTypes= CoreModel.getRegistedContentTypeIds();
-			select.addAll(Arrays.asList(registeredContentTypes));
+			cdtContentTypes.addAll(Arrays.asList(registeredContentTypes));
 
 			final IContentTypeManager ctm= Platform.getContentTypeManager();
 			final IContentType[] ctts= ctm.getAllContentTypes();
@@ -337,37 +336,34 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 			outer: for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
 				while (basedOn != null) {
-					if (select.contains(basedOn.getId())) 
+					if (cdtContentTypes.contains(basedOn.getId())) 
 						continue outer;
 					basedOn= basedOn.getBaseType();
 				}
 				// this is a non-cdt content type
-				String[] fspecs= ctt.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				result.addAll(Arrays.asList(fspecs));
+				addFileSpecs(ctt, result);
 			}
 			fCDTProjectExtensions= new Extensions(result, true);
 
 			result= new HashSet<String>();
-			select.clear();
-			select.add(CCorePlugin.CONTENT_TYPE_CHEADER);
-			select.add(CCorePlugin.CONTENT_TYPE_CXXHEADER);
 			for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
-				boolean selectme= false;
 				while (basedOn != null) {
-					if (select.contains(basedOn.getId())) {
-						selectme= true;
+					if (cdtContentTypes.contains(basedOn.getId())) {
+						addFileSpecs(ctt, result);
 						break;
 					}
 					basedOn= basedOn.getBaseType();
 				}
-				if (selectme) {
-					// this is content type for a header file
-					String[] fspecs= ctt.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-					result.addAll(Arrays.asList(fspecs));
-				}
 			}
 			fDefaultExtensions= new Extensions(result, false);
+		}
+	}
+
+	private void addFileSpecs(IContentType ctt, Set<String> result) {
+		String[] fspecs= ctt.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+		for (String fspec : fspecs) {
+			result.add(fspec.toUpperCase());
 		}
 	}
 
@@ -594,21 +590,49 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 	}
 
 	/**
-	 * Searches for all files with the given location.
+	 * Searches for all files with the given location. In case the name of the location is
+	 * a cdt-content type the lookup tree is consulted, otherwise as a fallback the platform's
+	 * method is called.
 	 */
-	public IFile[] findFilesForLocation(URI location, IProject[] projects) {
+	public IFile[] findFilesForLocationURI(URI location) {
+		return findFilesForLocation(location, LocationAdapter.URI);
+	}
+
+	/**
+	 * Searches for all files with the given location. In case the name of the location is
+	 * a cdt-content type the lookup tree is consulted, otherwise as a fallback the platform's
+	 * method is called.
+	 */
+	public IFile[] findFilesForLocation(IPath location) {
+		return findFilesForLocation(location, LocationAdapter.PATH);
+	}
+
+	/**
+	 * Searches for all files with the given location. In case the name of the location is
+	 * a cdt-content type the lookup tree is consulted, otherwise as a fallback the platform's
+	 * method is called.
+	 */
+	public <T> IFile[] findFilesForLocation(T location, LocationAdapter<T> adapter) {
 		initFileExtensions();
-		String name= extractName(location);
-		Node[] candidates;
+		String name= adapter.extractName(location);
+		Node[] candidates= null;
 		synchronized (fLock) {
-			initializeProjects(projects);
+			initializeProjects(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 			Object obj= fNodeMap.get(hashCode(name.toCharArray()));
 			if (obj == null) {
-				return NO_FILES;
+				if (fDefaultExtensions.isRelevant(name))
+					return NO_FILES;
+			} else {
+				candidates= convert(obj);
 			}
-			candidates= convert(obj);
 		}	
-		return extractMatchesForLocation(candidates, location);
+		
+		// fall back to platform functionality
+		if (candidates == null) {
+			return adapter.platformsFindFilesForLocation(location);
+		}
+		
+		return extractMatchesForLocation(candidates, location, adapter);
 	}
 
 	private Node[] convert(Object obj) {
@@ -649,12 +673,6 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 		return extractMatchesForName(candidates, name, suffix, ignoreCase);
 	}
 	
-	private String extractName(URI location) {
-		String path= location.getPath();
-		int idx= path.lastIndexOf('/');
-		return path.substring(idx+1);
-	}
-
 	/**
 	 * Selects the actual matches for the list of candidate nodes.
 	 */
@@ -717,16 +735,16 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 	/**
 	 * Selects the actual matches from the list of candidates
 	 */
-	private IFile[] extractMatchesForLocation(Node[] candidates, URI location) {
+	private <T> IFile[] extractMatchesForLocation(Node[] candidates, T location, LocationAdapter<T> adapter) {
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		final String searchPath= getCanonicalPath(location);
+		final String searchPath= adapter.getCanonicalPath(location);
 		IFile[] result= null;
 		int resultIdx= 0;
 		for (int i = 0; i < candidates.length; i++) {
 			final Node node = candidates[i];
 			if (!node.fIsFolder) {
 				final IFile file= root.getFile(createPath(node));
-				final URI loc= file.getLocationURI();
+				final T loc= adapter.getLocation(file);
 				if (loc != null) {
 					if (!loc.equals(location)) {
 						if (searchPath == null) 
@@ -735,7 +753,7 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 						if (node.fCanonicHash != 0 && node.fCanonicHash != searchPath.hashCode())
 							continue;
 						
-						final String candPath= getCanonicalPath(loc);
+						final String candPath= adapter.getCanonicalPath(loc);
 						if (candPath == null)
 							continue;
 						
@@ -759,21 +777,6 @@ class ResourceLookupImpl implements IResourceChangeListener, IResourceDeltaVisit
 		}
 		return result;
 	}
-
-	private String getCanonicalPath(URI location) {
-		if (!"file".equals(location.getScheme()))  //$NON-NLS-1$
-			return null;
-		
-		String path= location.getPath();
-		try {
-			path= new File(path).getCanonicalPath();
-		} catch (IOException e) {
-			// use non-canonical version
-		}
-		return path;
-	}
-
-
 
 	@SuppressWarnings("nls")
 	public void dump() {

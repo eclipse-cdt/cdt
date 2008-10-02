@@ -21,14 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -41,7 +40,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     private final static String[] FILE_EXTENSIONS = {
         ".c", ".cc", ".cpp", ".cxx", ".C", ".CC", ".CPP", ".CXX" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     };
-    private final static List FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
+    private final static List<String> FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
     
     private GCCPerFileBOPConsoleParserUtility fUtil;
     
@@ -57,14 +56,16 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#getUtility()
      */
-    protected AbstractGCCBOPConsoleParserUtility getUtility() {
+    @Override
+	protected AbstractGCCBOPConsoleParserUtility getUtility() {
         return fUtil;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#processSingleLine(java.lang.String)
      */
-    protected boolean processCommand(String[] tokens) {
+    @Override
+	protected boolean processCommand(String[] tokens) {
         // GCC C/C++ compiler invocation 
         int compilerInvocationIndex= findCompilerInvocation(tokens);
         if (compilerInvocationIndex < 0) {
@@ -132,20 +133,13 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             } else {
             	// search linked resources
             	final IProject prj= fUtil.getProject();
-	            final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-            	IFile[] foundOccurrences= root.findFilesForLocation(pFilePath);
-            	for (int j=0; j<foundOccurrences.length; j++) {
-            		if (prj.equals(foundOccurrences[j].getProject())) {
-            			file= foundOccurrences[j];
-            			break;
-            		}
-            	}
+            	file= ResourceLookup.selectFileForLocation(pFilePath, prj);
             }
             if (file != null) {
                 CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
-	            List cmdList = new ArrayList();
+	            List<CCommandDSC> cmdList = new ArrayList<CCommandDSC>();
 	            cmdList.add(cmd);
-	            Map sc = new HashMap(1);
+	            Map<ScannerInfoTypes, List<CCommandDSC>> sc = new HashMap<ScannerInfoTypes, List<CCommandDSC>>(1);
 	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
 	            getCollector().contributeToScannerConfig(file, sc);
             } else

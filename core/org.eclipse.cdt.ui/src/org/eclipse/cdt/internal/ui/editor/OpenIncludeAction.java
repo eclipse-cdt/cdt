@@ -52,6 +52,8 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.PathUtil;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -181,7 +183,7 @@ public class OpenIncludeAction extends Action {
 	 */
 	private IPath[] resolveIncludeLink(IPath path) {
 		if (!isInProject(path)) {
-			IFile[] files = getWorkspaceRoot().findFilesForLocation(path);
+			IFile[] files = ResourceLookup.findFilesForLocation(path);
 			if (files.length > 0) {
 				IPath[] paths = new IPath[files.length];
 				for (int i = 0; i < files.length; i++) {

@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -221,7 +222,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		finally {
 			close(out);
 		}
-		IFile[] wsResource= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
+		IFile[] wsResource= ResourceLookup.findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
 		for (int i = 0; i < wsResource.length; i++) {
 			IFile file = wsResource[i];
 			file.refreshLocal(0, new NullProgressMonitor());

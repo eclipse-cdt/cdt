@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 BitMethods Inc and others.
+ * Copyright (c) 2004, 2008 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,8 @@ import org.eclipse.cdt.ui.newui.CDTStatusInfo;
 import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
+
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 /**
  * Instances of this class allow the user to add,remove, delete, moveup and movedown
@@ -190,9 +192,7 @@ public class FileListControl {
 						} else {
 							IResource resource = null;
 							if(path.isAbsolute()){
-								IFile fs[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-								if(fs != null && fs.length > 0)
-									resource = fs[0];
+								resource= ResourceLookup.selectFileForLocation(path, null);
 							}
 							if(resource == null) resource = rc;
 

@@ -35,10 +35,10 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -327,9 +327,7 @@ public class Binary extends Openable implements IBinary {
 				// See if this source file is already in the project.
 				// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
 				IFile wkspFile = null;
-				IFile[] filesInWP = ResourcesPlugin
-				.getWorkspace().getRoot()
-						.findFilesForLocation(new Path(filename));
+				IFile[] filesInWP = ResourceLookup.findFilesForLocation(new Path(filename));
 
 				for (IFile element : filesInWP) {
 					if (element.isAccessible()) {

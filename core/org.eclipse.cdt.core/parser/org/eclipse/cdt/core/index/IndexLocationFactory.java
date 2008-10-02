@@ -12,19 +12,15 @@
 package org.eclipse.cdt.core.index;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Comparator;
 
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -41,25 +37,6 @@ import org.eclipse.core.runtime.Path;
  * @since 4.0
  */
 public class IndexLocationFactory {
-	/**
-	 * Comparator to sort files for location.
-	 */
-	private static final class FILE_COMPARATOR implements Comparator<IFile> {
-		public int compare(IFile o1, IFile o2) {
-			return compare(o1.getLocationURI(), o2.getLocationURI());
-		}
-
-		private int compare(URI uri1, URI uri2) {
-			if (uri1 == uri2)
-				return 0;
-			if (uri1 == null)
-				return -1;
-			if (uri2 == null)
-				return 1;
-			return uri1.toString().compareTo(uri2.toString());
-		}
-	}
-
 	/**
 	 * Returns
 	 * <ul>
@@ -113,37 +90,11 @@ public class IndexLocationFactory {
 	 * @return an IIndexFileLocation for the specified resource, containing a workspace relative path if possible.
 	 */
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
-		if (files.length==1) {
-			IFile file = files[0];
-			if (file.exists())
-				return getWorkspaceIFL(file);
-		} else {
-			Arrays.sort(files, new FILE_COMPARATOR());
-			final IProject preferredProject= cproject == null ? null : cproject.getProject();
-			IFile fileInCProject= null;
-			for (IFile file : files) {
-				if (file.exists()) {
-					// check for preferred project
-					final IProject project = file.getProject();
-					if (preferredProject != null && preferredProject.equals(project)) 
-						return getWorkspaceIFL(file);
+		final IProject preferredProject= cproject == null ? null : cproject.getProject();
+		IFile file= ResourceLookup.selectFileForLocation(new Path(absolutePath), preferredProject);
+		if (file != null)
+			return getWorkspaceIFL(file);
 
-					if (fileInCProject == null) {
-						try {
-							if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-								fileInCProject= file;
-							}
-						} catch (CoreException e) {
-							// treat as non-c project
-						}
-					}
-				}
-			}
-			if (fileInCProject != null) 
-				return getWorkspaceIFL(fileInCProject);
-		}
-		
 		return getExternalIFL(absolutePath);
 	}
 	

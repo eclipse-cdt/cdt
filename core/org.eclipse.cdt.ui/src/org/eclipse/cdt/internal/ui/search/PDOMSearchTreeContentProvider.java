@@ -38,6 +38,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+
 /**
  * @author Doug Schaefer
  *
@@ -122,7 +124,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			files= new IFile[] {ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()))};
 		} else {
 			IPath path= IndexLocationFactory.getAbsolutePath(element.getLocation());
-			files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			files= ResourceLookup.findFilesForLocation(path);
 		}
 		boolean handled= false;
 		if (files.length > 0) {

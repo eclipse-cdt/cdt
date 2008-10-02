@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,6 +30,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 public class IBDropTargetListener implements DropTargetListener {
     
@@ -119,10 +119,9 @@ public class IBDropTargetListener implements DropTargetListener {
     private ITranslationUnit findFirstTranslationUnit(Object o) {
         if (o instanceof String[]) {
             String[] filePaths= (String[]) o;
-            IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
             for (int i = 0; i < filePaths.length; i++) {
                 String filePath = filePaths[i];
-                ITranslationUnit tu= findTranslationUnit(root.findFilesForLocation(Path.fromOSString(filePath)));
+                ITranslationUnit tu= findTranslationUnit(ResourceLookup.findFilesForLocation(Path.fromOSString(filePath)));
                 if (tu != null) {
                     return tu;
                 }

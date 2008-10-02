@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation - EFS support
+ *    QNX Software Systems - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation - EFS support
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -544,7 +545,7 @@ public class CoreModelUtil {
 	 * @since 4.0
 	 */
 	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		IFile[] files= ResourceLookup.findFilesForLocation(location);
 		if (files.length > 0) {
 			for (IFile file : files) {
 				ITranslationUnit tu= findTranslationUnit(file);
@@ -580,7 +581,7 @@ public class CoreModelUtil {
 	 * @since 5.0
 	 */
 	public static ITranslationUnit findTranslationUnitForLocation(URI locationURI, ICProject preferredProject) throws CModelException {
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(locationURI);
+		IFile[] files= ResourceLookup.findFilesForLocationURI(locationURI);
 		if (files.length > 0) {
 			for (IFile file : files) {
 				ITranslationUnit tu= findTranslationUnit(file);

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
  * Represents a build configuration.
  * 
  * @author Doug Schaefer
+ * @since 5.1
  */
 public interface IConfiguration {
 

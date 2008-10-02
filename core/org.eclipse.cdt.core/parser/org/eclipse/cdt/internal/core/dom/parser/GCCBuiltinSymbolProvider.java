@@ -30,12 +30,14 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
@@ -161,8 +163,11 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
     private static final char[] __BUILTIN_ISLESSEQUAL = "__builtin_islessequal".toCharArray(); //$NON-NLS-1$
     private static final char[] __BUILTIN_ISLESSGREATER = "__builtin_islessgreater".toCharArray(); //$NON-NLS-1$
     private static final char[] __BUILTIN_ISUNORDERED = "__builtin_isunordered".toCharArray(); //$NON-NLS-1$
+    private static final char[] __FUNC__ = "__func__".toCharArray(); //$NON-NLS-1$
+    private static final char[] __FUNCTION__ = "__FUNCTION__".toCharArray(); //$NON-NLS-1$
+    private static final char[] __PRETTY_FUNCTION__ = "__PRETTY_FUNCTION__".toCharArray(); //$NON-NLS-1$
 
-    private static final int NUM_OTHER_GCC_BUILTINS = 105; // the total number of builtin functions listed above
+    private static final int NUM_OTHER_GCC_BUILTINS = 109; // the total number of builtin functions listed above
 	
     static final private  IType c_unspecified;
     static final private  IType c_char;
@@ -320,8 +325,26 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
         __builtin_mem();
         __builtin_str_strn();
         __builtin_less_greater();
+        __func__();
 	}
 	
+	private void __func__() {
+		// const char * __func__;
+		IBinding temp1, temp2, temp3;
+        if (lang == ParserLanguage.C) {
+            temp1 = new CBuiltinVariable(c_const_char_p, __FUNC__, scope);
+            temp2 = new CBuiltinVariable(c_const_char_p, __FUNCTION__, scope);
+            temp3 = new CBuiltinVariable(c_const_char_p, __PRETTY_FUNCTION__, scope);
+        } else {
+            temp1 = new CPPBuiltinVariable(cpp_const_char_p, __FUNC__, scope);
+            temp2 = new CPPBuiltinVariable(cpp_const_char_p, __FUNCTION__, scope);
+            temp3 = new CPPBuiltinVariable(cpp_const_char_p, __PRETTY_FUNCTION__, scope);
+        }
+		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp1);
+		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp2);
+		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp3);
+	}
+
 	private void __builtin_va_list() {
 		// char * __builtin_va_list();
 		IBinding temp = null;

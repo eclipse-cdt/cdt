@@ -91,7 +91,13 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	        definition = name;
 	    else 
 	        declarations = new IASTName[] { name };
-	    name.setBinding(this);
+	    
+	    // built-in variables supply a null
+	    if (name != null) {
+	    	name.setBinding(this);
+	    } else {
+	    	assert this instanceof CPPBuiltinVariable;
+	    }
 	}
 	
 	protected boolean isDefinition(IASTName name) {

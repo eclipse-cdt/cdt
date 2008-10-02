@@ -96,17 +96,18 @@ public class ThreadVMNode extends AbstractThreadVMNode
                         new ViewerDataRequestMonitor<IThreadDMData>(getSession().getExecutor(), update) {
                             @Override
                             public void handleCompleted() {
-                                if (!isSuccess()) {
-                                    update.done();
-                                    return;
-                                }
+                            	// We can still generate a good enough label even if this call fails
+                            	// so continue and check if we should use getData() or not.
+
                                 // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
                                 // Thread[1] 3457 (Suspended:BREAKPOINT)
                                 final StringBuilder builder = new StringBuilder("Thread["); //$NON-NLS-1$
                                 builder.append(execDmc.getThreadId());
                                 builder.append("] "); //$NON-NLS-1$
-                                builder.append(getData().getId());
-                                builder.append(getData().getName());
+                                if (isSuccess()) {
+                                	builder.append(getData().getId());
+                                	builder.append(getData().getName());
+                                }
                                 if(threadSuspended)
                                     builder.append(" (Suspended"); //$NON-NLS-1$
                                 else

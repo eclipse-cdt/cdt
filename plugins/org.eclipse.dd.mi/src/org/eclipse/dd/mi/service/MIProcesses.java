@@ -429,15 +429,19 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 				        				new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
 				        		        	@Override
 				        		        	protected void handleSuccess() {
-				        		        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				        		        		IThreadDMData threadData = null;
 				        		        		for (CLIInfoThreadsInfo.ThreadInfo thread : getData().getThreadInfo()) {
 				        		        			if (thread.getId().equals(threadDmc.getId())) {
 				        		        				threadData = new MIThreadDMData(thread.getName(), thread.getOsId());     
 				        		        				break;
 				        		        			}
 				        		        		}
-				        		        		rm.setData(threadData);
-				        		        		rm.done();
+				            	        		if (threadData != null) {
+				                	        		rm.setData(threadData);        	        			
+				            	        		} else {
+				            	        			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Could not get thread info", null)); //$NON-NLS-1$        	        			
+				            	        		}
+				            	        		rm.done();
 				        		        	}
 				        		});
 				        	} else {

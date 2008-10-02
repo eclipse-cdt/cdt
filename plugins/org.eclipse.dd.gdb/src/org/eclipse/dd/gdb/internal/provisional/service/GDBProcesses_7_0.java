@@ -466,7 +466,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	        		new DataRequestMonitor<MIThreadInfoInfo>(getExecutor(), rm) {
         	        	@Override
         	        	protected void handleSuccess() {
-        	        		IThreadDMData threadData = new MIThreadDMData("", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        	        		IThreadDMData threadData = null;
         	        		if (getData().getThreadList().length != 0) {
         	        			MIThread thread = getData().getThreadList()[0];
         	        			if (thread.getThreadId().equals(threadDmc.getId())) {
@@ -474,7 +474,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         	        			}
         	        		}
         	        		
-        	        		rm.setData(threadData);
+        	        		if (threadData != null) {
+            	        		rm.setData(threadData);        	        			
+        	        		} else {
+        	        			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Could not get thread info", null)); //$NON-NLS-1$        	        			
+        	        		}
         	        		rm.done();
         	        	}
 	        });

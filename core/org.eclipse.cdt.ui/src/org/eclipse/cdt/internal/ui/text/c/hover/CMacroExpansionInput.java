@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -251,7 +252,11 @@ public class CMacroExpansionInput {
 		IEditorInput editorInput= editor.getEditorInput();
 		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();
 		IWorkingCopy tu = manager.getWorkingCopy(editorInput);
-		if (tu == null) {
+		try {
+			if (tu == null || !tu.isConsistent()) {
+				return null;
+			}
+		} catch (CModelException exc) {
 			return null;
 		}
 		

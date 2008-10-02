@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 
@@ -27,8 +26,8 @@ import org.eclipse.cdt.core.model.IAsmLanguage;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
+import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 
 
 /*
@@ -66,10 +65,10 @@ public final class AsmCodeScanner extends AbstractCScanner {
 			rules.add(new EndOfLineRule(new String(new char [] {lineCommentChars[i]}), token));
 		}
 
-		// Add generic whitespace rule.
-		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
-
 		final IToken other= getToken(ICColorConstants.C_DEFAULT);		
+
+		// Add generic whitespace rule.
+		rules.add(new CWhitespaceRule(other));
 
 		// Add rule for labels
 		token= getToken(ICColorConstants.ASM_LABEL);

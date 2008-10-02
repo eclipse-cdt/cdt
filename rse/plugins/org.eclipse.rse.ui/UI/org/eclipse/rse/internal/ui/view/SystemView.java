@@ -63,6 +63,7 @@
  * David McKnight   (IBM)        - [241722] New -> File doesn't select the newly created file
  * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
  * David Dykstal (IBM) - [233530] Not Prompted on Promptable Filters after using once by double click
+ * David McKnight   (IBM)        - [241744] Refresh collapse low level nodes which is expended before.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3787,8 +3788,28 @@ public class SystemView extends SafeTreeViewer
 					((TreeItem) item).setExpanded(true);
 					if (debug) System.out.println("Re-Expanded RemoteItem: " + itemToExpand.remoteName); //$NON-NLS-1$
 				} else if (debug) System.out.println("Re-Expand of RemoteItem '" + itemToExpand.remoteName + "' failed. Not found"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else if (itemToExpand.data!=null) {
-				setExpandedState(itemToExpand.data, true);
+			} else if (itemToExpand.data!=null) {				
+				ExpandedItem nextItemToExpand = null;
+				if (idx + 1< expandedChildren.size()){
+					nextItemToExpand = (ExpandedItem)expandedChildren.get(idx + 1);
+				}
+				// this is to address bug 241744
+				if (nextItemToExpand != null && nextItemToExpand.isRemote()){	// if the next item to expand is remote
+					List remainingExpandedChildren = new ArrayList(expandedChildren.size() - idx);
+					for (int e = idx + 1; e < expandedChildren.size(); e++){
+						remainingExpandedChildren.add(expandedChildren.get(e));
+					}					
+					
+					Item item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
+					if (item != null){
+						IRSECallback callback = new ExpandRemoteObjects(remainingExpandedChildren);	
+						createChildren(item, callback);
+						((TreeItem) item).setExpanded(true);
+					}			
+				}
+				else { // original approach
+					setExpandedState(itemToExpand.data, true);
+				}
 				if (debug) System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data); //$NON-NLS-1$
 			}
 		}

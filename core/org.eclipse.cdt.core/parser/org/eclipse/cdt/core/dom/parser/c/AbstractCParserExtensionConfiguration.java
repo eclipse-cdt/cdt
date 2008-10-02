@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.CBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
 
@@ -92,7 +93,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 		if (supportGCCOtherBuiltinSymbols()) {
 			return new GCCBuiltinSymbolProvider(ParserLanguage.C);
 		}
-		return null;
+		return new CBuiltinSymbolProvider();
 	}
 
 }

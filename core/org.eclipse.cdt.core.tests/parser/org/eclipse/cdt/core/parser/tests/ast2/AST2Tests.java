@@ -5255,4 +5255,23 @@ public class AST2Tests extends AST2BaseTest {
 			parseAndCheckBindings(getAboveComment(), lang, true);
 		}
 	}
+	
+	//	void alloc(const char * id) {}
+	//	void test() {
+	//	    alloc(__func__); 
+	//	}
+	public void testPredefinedFunctionName_Bug247747() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, false);
+	}
+
+	//	void alloc(const char * id) {}
+	//	void test() {
+	//	    alloc(__func__); 
+	//	    alloc(__FUNCTION__); 
+	//	    alloc(__PRETTY_FUNCTION__); 
+	//	}
+	public void testPredefinedFunctionNameGcc_Bug247747() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+	}
 }

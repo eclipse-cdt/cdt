@@ -18,16 +18,14 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.WhitespaceRule;
-
 import org.eclipse.cdt.core.model.IAsmLanguage;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.CHeaderRule;
+import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.PreprocessorRule;
-import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 
 /**
@@ -69,7 +67,7 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 		IToken token;
 
 		// Add generic white space rule.
-		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
+		rules.add(new CWhitespaceRule(defaultToken));
 
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule= new PreprocessorRule(new CWordDetector(), defaultToken, getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));

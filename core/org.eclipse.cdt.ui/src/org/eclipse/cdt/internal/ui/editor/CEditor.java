@@ -107,6 +107,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -1290,20 +1291,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (!(sourceViewer instanceof ISourceViewerExtension2)) {
 			setPreferenceStore(createCombinedPreferenceStore(input));
 			internalDoSetInput(input);
+			updateScalabilityMode(input);
 			return;
 		}
 
-		// uninstall & unregister preference store listener
-		getSourceViewerDecorationSupport(sourceViewer).uninstall();
-		((ISourceViewerExtension2)sourceViewer).unconfigure();
+		getDocumentProvider().connect(input);
+		try {
+			// uninstall & unregister preference store listener
+			getSourceViewerDecorationSupport(sourceViewer).uninstall();
+			((ISourceViewerExtension2)sourceViewer).unconfigure();
 
-		setPreferenceStore(createCombinedPreferenceStore(input));
+			setPreferenceStore(createCombinedPreferenceStore(input));
+			updateScalabilityMode(input);
 
-		// install & register preference store listener
-		sourceViewer.configure(getSourceViewerConfiguration());
-		getSourceViewerDecorationSupport(sourceViewer).install(getPreferenceStore());
+			// install & register preference store listener
+			sourceViewer.configure(getSourceViewerConfiguration());
+			getSourceViewerDecorationSupport(sourceViewer).install(getPreferenceStore());
 
-		internalDoSetInput(input);
+			internalDoSetInput(input);
+		} finally {
+			getDocumentProvider().disconnect(input);
+		}
 	}
 
 	private void internalDoSetInput(IEditorInput input) throws CoreException {
@@ -1333,12 +1341,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		} else {
 			fBracketMatcher.configure(null);
 		}
-	
+	}
+
+	private void updateScalabilityMode(IEditorInput input) {
 		int lines = getDocumentProvider().getDocument(input).getNumberOfLines();
-		if (lines > getPreferenceStore().getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES)) {
-			//Detecting if scalability mode should be turned on
-			fEnableScalablilityMode = true;
-			
+		boolean wasEnabled = fEnableScalablilityMode;
+		fEnableScalablilityMode = lines > getPreferenceStore().getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES);
+		if (fEnableScalablilityMode && !wasEnabled) {
 			//Alert users that scalability mode should be turned on
 			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
@@ -1412,8 +1421,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      * @return Outline page.
 	 */
 	public CContentOutlinePage getOutlinePage() {
-		if (isEnableScalablilityMode() && getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_RECONCILER))
-    		return null;
 		if (fOutlinePage == null) {
 			fOutlinePage = new CContentOutlinePage(this);
 			fOutlinePage.addSelectionChangedListener(this);
@@ -1494,7 +1501,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		try {
-			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
+			final AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
 
 			if (asv != null) {
 
@@ -1529,12 +1536,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					} else {
 						removeActionActivationCode("IndentOnTab"); //$NON-NLS-1$
 					}
+					return;
 				}
 
 				if (TODO_TASK_TAGS.equals(event.getProperty())) {
 					ISourceViewer sourceViewer = getSourceViewer();
 					if (sourceViewer != null && affectsTextPresentation(event))
 						sourceViewer.invalidateTextPresentation();
+					return;
 				}
 
 				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
@@ -1595,8 +1604,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				if (isEnableScalablilityMode()) {
 					if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property) ||
 							PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
-							asv.unconfigure();
-							asv.configure(getSourceViewerConfiguration());
+						BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+							public void run() {
+								setOutlinePageInput(fOutlinePage, getEditorInput());
+								asv.unconfigure();
+								asv.configure(getSourceViewerConfiguration());
+							}});
+						return;
 					}
 				}
 				

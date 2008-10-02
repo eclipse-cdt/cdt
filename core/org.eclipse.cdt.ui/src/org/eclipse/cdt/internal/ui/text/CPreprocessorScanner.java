@@ -17,13 +17,11 @@ import java.util.List;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.PatternRule;
-import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
-import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 
 /**
@@ -64,7 +62,7 @@ public class CPreprocessorScanner extends AbstractCScanner {
 		IToken token;
 		
 		// Add generic white space rule.
-		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
+		rules.add(new CWhitespaceRule(defaultToken));
 		
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
 		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), defaultToken);

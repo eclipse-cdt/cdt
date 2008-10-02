@@ -18,13 +18,11 @@ import java.util.List;
 
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
-import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 
 
@@ -63,11 +61,12 @@ public final class CCodeScanner extends AbstractCScanner {
 		List<IRule> rules= new ArrayList<IRule>();		
 		IToken token;
 		
+		token= getToken(ICColorConstants.C_DEFAULT);
+
 		// Add generic white space rule.
-		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
+		rules.add(new CWhitespaceRule(token));
 
 		// Add word rule for keywords, types, and constants.
-		token= getToken(ICColorConstants.C_DEFAULT);
 		WordRule wordRule= new WordRule(new CWordDetector(), token);
 		
 		token= getToken(ICColorConstants.C_KEYWORD);

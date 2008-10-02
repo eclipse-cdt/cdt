@@ -269,7 +269,7 @@ public final class ASTProvider {
 	 * @return <code>true</code> if the given translation unit is the active one
 	 */
 	public boolean isActive(ITranslationUnit tu) {
-		return fCache.isActiveElement(tu);
+		return fCache.isActiveElement(tu) && tu.isOpen();
 	}
 
 	/**

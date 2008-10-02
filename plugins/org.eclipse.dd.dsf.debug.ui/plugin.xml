@@ -414,28 +414,6 @@
                state="true"
                style="radio">
          </action>    
-         
-         <menu id="updatesAtomic"
-               label="%menu.updatePolicyAtomic"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AtomicUpdatePolicyAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Atomic"
-               label="%action.updatePolicyAtomic.label"
-               menubarPath="updatesAtomic/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.NonAtomicUpdatePolicyAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_NonAtomic"
-               label="%action.updatePolicyNotAtomic.label"
-               menubarPath="updatesAtomic/additions"
-               state="true"
-               style="radio">
-         </action>            
-         
-         
-         
       </viewContribution>
 
    </extension>

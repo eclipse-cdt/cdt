@@ -182,7 +182,7 @@ public class CDescriptorTests extends TestCase {
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorCreation2() throws Exception {
-		int numElements = 0;
+		int lastLength = 0;
 		for (int i=0; i<200; ++i) {
 			final int indexi = i;
 			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
@@ -191,7 +191,8 @@ public class CDescriptorTests extends TestCase {
 			fProject.open(null);
 			pdomMgr.startup().schedule();
 			ICDescriptor desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
-			int lengthBefore= countChildElements(desc.getProjectData("testElement"));
+			if (lastLength == 0)
+				lastLength = countChildElements(desc.getProjectData("testElement"));
 			final Throwable[] exception= new Throwable[10];
 			Thread[] threads= new Thread[10];
 			for (int j = 0; j < 10; j++) {
@@ -235,7 +236,8 @@ public class CDescriptorTests extends TestCase {
 			}
 			desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			int lengthAfter = countChildElements(desc.getProjectData("testElement"));
-			assertEquals("Iteration count: " + i, threads.length, lengthAfter - lengthBefore);
+			lastLength += threads.length; // Update last lengths to what we expect
+			assertEquals("Iteration count: " + i, lastLength, lengthAfter);
 
 			fLastEvent = null;
 		}

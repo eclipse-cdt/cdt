@@ -398,22 +398,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
 
     private void processCommandDone(CommandHandle commandHandle, ICommandResult result) {
-    	
-    	/*
-    	 *  Provide tracking for out processing.
-    	 */
-    	if ( result != null ) {
-    		MIInfo cmdResult = (MIInfo) result ;
-    		MIOutput output =  cmdResult.getMIOutput();
-    		// Only print the result record and not the out-of-band records.
-    		// Out-of-band records have already been printed in processEvent()
-    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + output.getMIResultRecord() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-    	}
-    	else
-    	{
-    		MIPlugin.debug(MIPlugin.getDebugTime() + " result output not available\n"); //$NON-NLS-1$
-    	}
-    	
         /*
          *  Tell the listeners we have completed this one.
          */
@@ -423,7 +407,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
     
     private void processEvent(MIOutput output) {
-        MIPlugin.debug(MIPlugin.getDebugTime() + " " + output + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         for (IEventListener processor : fEventProcessors) {
             processor.eventReceived(output);
         }
@@ -549,11 +532,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     if (fOutputStream != null) {
                         fOutputStream.write(str.getBytes());
                         fOutputStream.flush();
-						getExecutor().execute(new DsfRunnable() {
-	                        public void run() {
-	                    		MIPlugin.debug(MIPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
-	                        }
-	                    });
+
+                        MIPlugin.debug(MIPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
                     }
                 } catch (IOException e) {
                     // Shutdown thread in case of IO error.
@@ -585,6 +565,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
+                        MIPlugin.debug(MIPlugin.getDebugTime() + " " + line +"\n"); //$NON-NLS-1$ //$NON-NLS-2$
                     	processMIOutput(line);
                     }
                 }
@@ -757,7 +738,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         }
                     });
                 }
-            //} else {
         	} else if (recordType == MIParser.RecordType.OOBRecord) {
 				// Process OOBs
         		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);

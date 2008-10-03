@@ -112,6 +112,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecializat
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
@@ -936,22 +937,33 @@ public class CPPTemplates {
 			}		
 
 			if (type instanceof ITypeContainer) {
-				IType temp = ((ITypeContainer) type).getType();
-				IType newType = instantiateType(temp, argMap, within);
+				IType nestedType = ((ITypeContainer) type).getType();
+				IType newNestedType = instantiateType(nestedType, argMap, within);
 				if (type instanceof ICPPPointerToMemberType) {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) type;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, argMap, within);
-					if ((newType != temp || newMemberOfClass != memberOfClass) &&
+					if ((newNestedType != nestedType || newMemberOfClass != memberOfClass) &&
 							newMemberOfClass instanceof ICPPClassType) {
-						return new CPPPointerToMemberType(newType, (ICPPClassType) newMemberOfClass,
+						return new CPPPointerToMemberType(newNestedType, (ICPPClassType) newMemberOfClass,
 								ptm.isConst(), ptm.isVolatile());
 					}
 				}
-				if (newType != temp) {
-					temp = (IType) type.clone();
-					((ITypeContainer) temp).setType(newType);
-					return temp;
+				if (newNestedType != nestedType) {
+					// bug 249085 make sure not to add unnecessary qualifications
+					if (type instanceof IQualifierType) {
+						IQualifierType qt1= (IQualifierType) type;
+						if (newNestedType instanceof IQualifierType) {
+							IQualifierType qt2= (IQualifierType) newNestedType;
+							return new CPPQualifierType(qt2.getType(), qt1.isConst() || qt2.isConst(), qt1.isVolatile() || qt2.isVolatile());
+						} else if (newNestedType instanceof IPointerType) {
+							IPointerType pt2= (IPointerType) newNestedType;
+							return new CPPPointerType(pt2.getType(), qt1.isConst() || pt2.isConst(), qt1.isVolatile() || pt2.isVolatile());
+						}
+					}
+					type = (IType) type.clone();
+					((ITypeContainer) type).setType(newNestedType);
+					return type;
 				} 
 				return type;
 			} 

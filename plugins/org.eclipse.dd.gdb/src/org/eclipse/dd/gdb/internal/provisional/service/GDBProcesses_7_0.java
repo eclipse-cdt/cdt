@@ -568,7 +568,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		rm.done();	
 	}
 
-	public void debugNewProcess(IDMContext dmc, String file, DataRequestMonitor<IDMContext> rm) {
+	public void debugNewProcess(IDMContext dmc, String file, 
+			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
@@ -684,7 +685,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 		rm.setData(false);
 		rm.done();			
 	}
-	public void runNewProcess(IDMContext dmc, String file, DataRequestMonitor<IProcessDMContext> rm) {
+	
+	public void runNewProcess(IDMContext dmc, String file, 
+			                  Map<String, Object> attributes, DataRequestMonitor<IProcessDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();

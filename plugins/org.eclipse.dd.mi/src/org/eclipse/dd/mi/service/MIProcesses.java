@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -538,7 +540,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		rm.done();	
 	}
 
-	public void debugNewProcess(IDMContext dmc, String file, DataRequestMonitor<IDMContext> rm) {
+	public void debugNewProcess(IDMContext dmc, String file, 
+			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();
@@ -601,7 +604,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		rm.setData(false);
 		rm.done();			
 	}
-	public void runNewProcess(IDMContext dmc, String file, DataRequestMonitor<IProcessDMContext> rm) {
+	public void runNewProcess(IDMContext dmc, String file, 
+			                  Map<String, Object> attributes, DataRequestMonitor<IProcessDMContext> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
 				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
 		rm.done();

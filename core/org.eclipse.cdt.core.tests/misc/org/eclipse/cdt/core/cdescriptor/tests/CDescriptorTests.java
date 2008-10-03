@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.internal.core.CConfigBasedDescriptor;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -36,6 +37,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -77,10 +79,12 @@ public class CDescriptorTests extends TestCase {
 		
 		TestSetup wrapper = new TestSetup(suite) {
 
+			@Override
 			protected void setUp() throws Exception {
 				oneTimeSetUp();
 			}
 
+			@Override
 			protected void tearDown() throws Exception {
 				oneTimeTearDown();
 			}
@@ -157,6 +161,7 @@ public class CDescriptorTests extends TestCase {
 		fProject.close(null);
 		fProject.open(null);
 		Thread t= new Thread() {
+			@Override
 			public void run() {
 				try {
 					CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -178,44 +183,48 @@ public class CDescriptorTests extends TestCase {
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorCreation2() throws Exception {
-		for (int i=0; i<20; ++i) {
+		int numElements = 0;
+		for (int i=0; i<200; ++i) {
+			final int indexi = i;
 			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
 			pdomMgr.shutdown();
 			fProject.close(null);
 			fProject.open(null);
 			pdomMgr.startup().schedule();
 			ICDescriptor desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
-			NodeList childNodes= desc.getProjectData("testElement").getChildNodes();
-			int lengthBefore= childNodes.getLength();
+			int lengthBefore= countChildElements(desc.getProjectData("testElement"));
 			final Throwable[] exception= new Throwable[10];
 			Thread[] threads= new Thread[10];
 			for (int j = 0; j < 10; j++) {
-				final int index= j;
+				final int indexj = j;
 				Thread t= new Thread() {
+					@Override
 					public void run() {
 						try {
 							ICDescriptorOperation operation= new ICDescriptorOperation() {
 								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
-									try {
-										Thread.sleep(10);
-									} catch (InterruptedException exc) {
-									}
 									Element data = descriptor.getProjectData("testElement");
-									data.appendChild(data.getOwnerDocument().createElement("test"));
+									String test = "test"+(indexi*10 + indexj);
+									data.appendChild(data.getOwnerDocument().createElement(test));
 									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
+									// BUG196118 the model cached in memory doesn't reflect the contents of .cproject
+									//
+									// descriptor.saveProjectData() doesn't actually save despite what the API says
+									// see CConfigBasedDescriptor.fApplyOnChange
 									descriptor.saveProjectData();
+									((CConfigBasedDescriptor)descriptor).apply(false);
+//									System.out.println("Saved " + test);
 								}};
 								CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation, null);
 						} catch (Throwable exc) {
-							exception[index]= exc;
+							exception[indexj]= exc;
 							exc.printStackTrace();
 						}
 					}
 				};
 				t.start();
 				threads[j] = t;
-				Thread.sleep(10);
 			}
 			for (int j = 0; j < threads.length; j++) {
 				if (threads[j] != null) {
@@ -224,12 +233,27 @@ public class CDescriptorTests extends TestCase {
 				assertNull(exception[j]);
 			}
 			desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
-			childNodes= desc.getProjectData("testElement").getChildNodes();
-			int lengthAfter= childNodes.getLength();
-			assertEquals(threads.length, lengthAfter - lengthBefore);
+			int lengthAfter = countChildElements(desc.getProjectData("testElement"));
+			assertEquals("Iteration count: " + i, threads.length, lengthAfter - lengthBefore);
 
 			fLastEvent = null;
 		}
+	}
+
+	/**
+	 * Count the number of Node.ELEMENT_NODE elements which are a 
+	 * direct descendent of the parent Element.
+	 * Other nodes (e.g. Text) are ignored
+	 * @param parent
+	 * @return
+	 */
+	private int countChildElements(Element parent) {
+		int numElements = 0;
+		NodeList childNodes = parent.getChildNodes();
+		for (int k = 0 ; k < childNodes.getLength() ; k++)
+			if (childNodes.item(k).getNodeType() == Node.ELEMENT_NODE)
+				numElements ++;
+		return numElements;
 	}
 
 	public void testDeadlockDuringProjectCreation() throws Exception {
@@ -237,6 +261,7 @@ public class CDescriptorTests extends TestCase {
 			oneTimeTearDown();
 			oneTimeSetUp();
 			Thread t= new Thread() {
+				@Override
 				public void run() {
 					try {
 						ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);

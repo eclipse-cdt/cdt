@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.internal.core.CConfigBasedDescriptor;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -212,11 +211,13 @@ public class CDescriptorTests extends TestCase {
 									//
 									// descriptor.saveProjectData() doesn't actually save despite what the API says
 									// see CConfigBasedDescriptor.fApplyOnChange
-									descriptor.saveProjectData();
-									((CConfigBasedDescriptor)descriptor).apply(false);
+//									((CConfigBasedDescriptor)descriptor).apply(false);
 //									System.out.println("Saved " + test);
 								}};
 								CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation, null);
+								ICDescriptor descriptor = CCorePlugin.getDefault().getCDescriptorManager().getDescriptor(fProject);
+								// perform apply outside descriptor operation to avoid deadlock - http://bugs.eclipse.org/241288 
+								descriptor.saveProjectData();
 						} catch (Throwable exc) {
 							exception[indexj]= exc;
 							exc.printStackTrace();
@@ -230,7 +231,7 @@ public class CDescriptorTests extends TestCase {
 				if (threads[j] != null) {
 					threads[j].join();
 				}
-				assertNull(exception[j]);
+				assertNull("Exception occurred: "+exception[j], exception[j]);
 			}
 			desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			int lengthAfter = countChildElements(desc.getProjectData("testElement"));

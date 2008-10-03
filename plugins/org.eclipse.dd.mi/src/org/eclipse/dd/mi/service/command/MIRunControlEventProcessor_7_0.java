@@ -30,6 +30,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.mi.internal.MIPlugin;
 import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecNext;
@@ -190,6 +191,12 @@ public class MIRunControlEventProcessor_7_0
     				}
     		    	
     		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
+    		    		// Until GDB is officially supporting multi-process, we may not get
+    		    		// a groupId.  In this case, we are running single process and we'll
+    		    		// need a groupId
+    		    		if (groupId == null) {
+    		    			groupId = MIProcesses.UNIQUE_GROUP_ID;
+    		    		}
     		    		// Update the thread to groupId map with the new groupId
     		    		fThreadToGroupMap.put(threadId, groupId);
     		    	} else {

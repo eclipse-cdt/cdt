@@ -30,6 +30,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -104,11 +105,14 @@ public class IBViewPart extends ViewPart
         implements IShowInSource, IShowInTarget, IShowInTargetList {
 
 	private static final int MAX_HISTORY_SIZE = 10;
-    private static final String TRUE = String.valueOf(true);
+    private static final String TRUE = "true"; //$NON-NLS-1$
+    private static final String FALSE = "false"; //$NON-NLS-1$
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_SYSTEM = "systemFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_INACTIVE = "inactiveFilter"; //$NON-NLS-1$
     private static final String KEY_INPUT_PATH= "inputPath"; //$NON-NLS-1$
+	private static final String KEY_INCLUDED_BY = "includedBy"; //$NON-NLS-1$
+	private static final String KEY_SHOW_FOLDERS = "showFolders"; //$NON-NLS-1$
     
     private IMemento fMemento;
     private boolean fShowsMessage;
@@ -276,6 +280,7 @@ public class IBViewPart extends ViewPart
 	
 	@Override
 	public void dispose() {
+		putDialogSettings();
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
 	    	if (ctxService != null) {
@@ -288,23 +293,19 @@ public class IBViewPart extends ViewPart
 	}
 	
     private void initializeActionStates() {
-        boolean includedBy= true;
-        boolean filterSystem= false;
-        boolean filterInactive= false;
-        
-        if (fMemento != null) {
-            filterSystem= TRUE.equals(fMemento.getString(KEY_FILTER_SYSTEM));
-            filterInactive= TRUE.equals(fMemento.getString(KEY_FILTER_INACTIVE));
-        }
-        
+        IDialogSettings ds= getDialogSettings();
+
+        boolean includedBy= !FALSE.equals(ds.get(KEY_INCLUDED_BY));
         fIncludedByAction.setChecked(includedBy);
         fIncludesToAction.setChecked(!includedBy);
         fContentProvider.setComputeIncludedBy(includedBy);
         
-        fFilterInactiveAction.setChecked(filterInactive);
+        fFilterInactiveAction.setChecked(TRUE.equals(ds.get(KEY_FILTER_INACTIVE)));
         fFilterInactiveAction.run();
-        fFilterSystemAction.setChecked(filterSystem);
+        fFilterSystemAction.setChecked(TRUE.equals(ds.get(KEY_FILTER_SYSTEM)));
         fFilterSystemAction.run();
+        fShowFolderInLabelsAction.setChecked(TRUE.equals((ds.get(KEY_SHOW_FOLDERS))));
+        fShowFolderInLabelsAction.run();
         updateSorter();
     }
     
@@ -342,22 +343,41 @@ public class IBViewPart extends ViewPart
 
     @Override
 	public void saveState(IMemento memento) {
-        if (fWorkingSetFilter != null) {
-            fWorkingSetFilter.getUI().saveState(memento, KEY_WORKING_SET_FILTER);
-        }
-        memento.putString(KEY_FILTER_INACTIVE, String.valueOf(fFilterInactiveAction.isChecked()));
-        memento.putString(KEY_FILTER_SYSTEM, String.valueOf(fFilterSystemAction.isChecked()));
-        ITranslationUnit input= getInput();
-        if (input != null) {
-            IPath path= input.getPath();
-            if (path != null) {
-                memento.putString(KEY_INPUT_PATH, path.toPortableString());
+    	putDialogSettings();
+    	if (memento != null) {
+    		if (fWorkingSetFilter != null) {
+    			fWorkingSetFilter.getUI().saveState(memento, KEY_WORKING_SET_FILTER);
+    		}
+            ITranslationUnit input= getInput();
+            if (input != null) {
+                IPath path= input.getPath();
+                if (path != null) {
+                    memento.putString(KEY_INPUT_PATH, path.toPortableString());
+                }
             }
-        }
+    	}
         super.saveState(memento);
     }
+    
+    private void putDialogSettings() {
+    	IDialogSettings ds= getDialogSettings();
+        ds.put(KEY_FILTER_INACTIVE, String.valueOf(fFilterInactiveAction.isChecked()));
+        ds.put(KEY_FILTER_SYSTEM, String.valueOf(fFilterSystemAction.isChecked()));
+        ds.put(KEY_INCLUDED_BY, String.valueOf(fIncludedByAction.isChecked()));
+        ds.put(KEY_SHOW_FOLDERS, String.valueOf(fShowFolderInLabelsAction.isChecked()));
+    }
 
-    private void createContextMenu() {
+	private IDialogSettings getDialogSettings() {
+		IDialogSettings ds= CUIPlugin.getDefault().getDialogSettings();
+		final String name = IBViewPart.class.getName();
+		IDialogSettings result= ds.getSection(name);
+		if (result == null) {
+			result= ds.addNewSection(name);
+		}
+		return result;
+	}
+
+	private void createContextMenu() {
         MenuManager manager = new MenuManager();
         manager.setRemoveAllWhenShown(true);
         manager.addMenuListener(new IMenuListener() {

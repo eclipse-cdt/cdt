@@ -44,7 +44,12 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -827,12 +832,39 @@ public class ASTManager {
         IASTTranslationUnit tu= getTranslationUnit(index, fArgument.getSourceFile(), true, status);
         pm.worked(1);
         if (tu != null) {
-        	IASTName name= tu.getNodeSelector(tu.getFilePath()).findEnclosingName(fArgument.getOffset(), fArgument.getLength());
+        	final IASTNodeSelector nodeSelector = tu.getNodeSelector(tu.getFilePath());
+			final int offset = fArgument.getOffset();
+			final int length = fArgument.getLength();
+			IASTName name= nodeSelector.findEnclosingName(offset, length);
         	if (name != null) {
         		if (name instanceof ICPPASTQualifiedName) {
         			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
         			name= na[na.length-1];
         		}
+        	} else {
+        		IASTNode node= nodeSelector.findEnclosingNode(offset, length);
+        		if (node instanceof IASTPreprocessorMacroDefinition ||
+        				node instanceof IASTPreprocessorElifStatement ||
+        				node instanceof IASTPreprocessorIfdefStatement ||
+        				node instanceof IASTPreprocessorIfndefStatement ||
+        				node instanceof IASTPreprocessorIfStatement) {
+        			final IASTFileLocation fileLocation = node.getFileLocation();
+        			if (fileLocation != null) {
+        				final String ident= extractIdentifier(node.getRawSignature(), offset - fileLocation.getNodeOffset(), length);
+        				if (ident != null) {
+        					IASTPreprocessorMacroDefinition[] mdefs= tu.getMacroDefinitions();
+        					for (IASTPreprocessorMacroDefinition mdef : mdefs) {
+        						IASTName n= mdef.getName();
+        						if (ident.equals(n.toString())) {
+        							name= n;
+        							break;
+        						}
+        					}
+        				}
+        			}
+        		}
+        	}
+        	if (name != null) {
         		fArgument.setName(name);
         		IBinding binding= name.resolveBinding();
         		if (binding != null) {
@@ -850,7 +882,32 @@ public class ASTManager {
         pm.done();
     }
 
-    private IASTTranslationUnit getTranslationUnit(IIndex index, IFile sourceFile, 
+	private String extractIdentifier(String rawSignature, int offset, int length) {
+		char[] sig= rawSignature.toCharArray();
+		int end= offset+length;
+		if (offset < 0 || end > sig.length)
+			return null;
+		
+		for (int i = offset; i < end; i++) {
+			if (!Character.isJavaIdentifierPart(sig[i]))
+				return null;
+		}
+		while(offset > 0) {
+			if (Character.isJavaIdentifierPart(sig[offset-1]))
+				offset--;
+			else 
+				break;
+		}
+		while(end < sig.length) {
+			if (Character.isJavaIdentifierPart(sig[end]))
+				end++;
+			else
+				break;
+		}
+		return rawSignature.substring(offset, end);
+	}
+
+	private IASTTranslationUnit getTranslationUnit(IIndex index, IFile sourceFile, 
             boolean cacheit, RefactoringStatus status) {
         IASTTranslationUnit ast=  fTranslationUnits.get(sourceFile);
         if (ast == null) {

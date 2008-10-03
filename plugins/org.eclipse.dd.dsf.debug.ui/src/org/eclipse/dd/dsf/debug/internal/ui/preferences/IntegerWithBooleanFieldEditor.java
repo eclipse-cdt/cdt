@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.ui.preferences;
 
-import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * An integer field editor with an enablement check box.
  */
-public class IntegerWithBooleanFieldEditor extends IntegerFieldEditor {
+public class IntegerWithBooleanFieldEditor extends DecoratingIntegerFieldEditor {
 
 	private final String fEnableKey;
 	private Button fCheckbox;
@@ -83,8 +82,8 @@ public class IntegerWithBooleanFieldEditor extends IntegerFieldEditor {
 	}
 
 	protected void valueChanged(boolean oldValue, boolean newValue) {
-        setPresentsDefaultValue(false);
         if (oldValue != newValue) {
+    		valueChanged();
 			fireStateChanged(VALUE, oldValue, newValue);
         	getTextControl().setEnabled(newValue);
         	getLabelControl().setEnabled(newValue);
@@ -94,6 +93,7 @@ public class IntegerWithBooleanFieldEditor extends IntegerFieldEditor {
 	@Override
 	protected boolean checkState() {
 		if (fCheckbox != null && !fCheckbox.getSelection()) {
+			clearErrorMessage();
 			return true;
 		}
 		return super.checkState();

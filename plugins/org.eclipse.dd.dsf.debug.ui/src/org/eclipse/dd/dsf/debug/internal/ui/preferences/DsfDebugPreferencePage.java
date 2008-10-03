@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -73,6 +74,7 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 				performanceGroup);
 
 		limitEditor.setValidRange(1, Integer.MAX_VALUE);
+		limitEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
 		limitEditor.fillIntoGrid(performanceGroup, 3);
 		addField(limitEditor);
 
@@ -86,7 +88,7 @@ public class DsfDebugPreferencePage extends FieldEditorPreferencePage implements
 		addField(syncSteppingEditor);
 
 		// minimum step interval
-		IntegerFieldEditor minIntervalEditor= new IntegerFieldEditor(
+		IntegerFieldEditor minIntervalEditor= new DecoratingIntegerFieldEditor(
 				IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL,
 				MessagesForPreferences.DsfDebugPreferencePage_minStepInterval_label,
 				performanceGroup);

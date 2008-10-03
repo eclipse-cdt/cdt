@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.ui.preferences;
 
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * A string field editor with an enablement check box.
  */
-public class StringWithBooleanFieldEditor extends StringFieldEditor {
+public class StringWithBooleanFieldEditor extends DecoratingStringFieldEditor {
 
 	private final String fEnableKey;
 	private Button fCheckbox;
@@ -88,8 +87,8 @@ public class StringWithBooleanFieldEditor extends StringFieldEditor {
 	}
 
 	protected void valueChanged(boolean oldValue, boolean newValue) {
-        setPresentsDefaultValue(false);
         if (oldValue != newValue) {
+    		valueChanged();
 			fireStateChanged(VALUE, oldValue, newValue);
         	getTextControl().setEnabled(newValue);
         	getLabelControl().setEnabled(newValue);
@@ -99,6 +98,7 @@ public class StringWithBooleanFieldEditor extends StringFieldEditor {
 	@Override
 	protected boolean checkState() {
 		if (fCheckbox != null && !fCheckbox.getSelection()) {
+			clearErrorMessage();
 			return true;
 		}
 		return super.checkState();

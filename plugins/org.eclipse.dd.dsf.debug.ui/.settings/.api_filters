@@ -8,154 +8,18 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/WatchExpressionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/MessagesForVariablesVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/AutomaticUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/BreakpointHitUpdatePolicy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/BreakpointHitUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/ManualUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/SyncVariableDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/AbstractExpressionVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/RefreshActionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/SyncRegisterDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/AbstractSetFormatStyle.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.AbstractSetFormatStyle">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.AbstractSetFormatStyle"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProviderModelProxyStrategy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="META-INF/MANIFEST.MF">
-<filter id="923795461">
-<message_arguments>
-<message_argument value="1.1.0.qualifier"/>
-<message_argument value="1.0.0.v20080609"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/SelectUpdatePolicyAction.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/IDebugVMConstants.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants">
 <filter id="305365105">
 <message_arguments>
 <message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/WatchExpressionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionDelegate"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -168,10 +32,26 @@
 </message_arguments>
 </filter>
 </resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/MessagesForVariablesVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.MessagesForVariablesVM"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider">
 <filter id="305365105">
 <message_arguments>
 <message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMProvider"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterCellModifier"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -208,6 +88,22 @@
 </message_arguments>
 </filter>
 </resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/BreakpointHitUpdatePolicy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProvider.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider">
 <filter id="305365105">
 <message_arguments>
@@ -232,26 +128,10 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatDecimal.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/WatchExpressionCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionCellModifier">
 <filter id="305365105">
 <message_arguments>
 <message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.WatchExpressionCellModifier"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatNatural.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -264,6 +144,14 @@
 </message_arguments>
 </filter>
 </resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/MessagesForExpressionVM.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.MessagesForExpressionVM">
 <filter id="305365105">
 <message_arguments>
@@ -272,10 +160,10 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation">
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/RegisterBitFieldVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode">
 <filter id="305365105">
 <message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterBitFieldVMNode"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -304,10 +192,18 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatBinary.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary">
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/AbstractExpressionVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode">
 <filter id="305365105">
 <message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"/>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.AbstractExpressionVMNode"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/SyncVariableDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -316,14 +212,6 @@
 <filter id="305365105">
 <message_arguments>
 <message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules.ModulesVMNode"/>
-<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
-</message_arguments>
-</filter>
-</resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatOctal.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal">
-<filter id="305365105">
-<message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -344,6 +232,14 @@
 </message_arguments>
 </filter>
 </resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/update/actions/RefreshActionDelegate.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
 <resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/IExpressionVMNode.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.IExpressionVMNode">
 <filter id="305365105">
 <message_arguments>
@@ -360,10 +256,10 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier">
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/register/SyncRegisterDataAccess.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess">
 <filter id="305365105">
 <message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -376,10 +272,18 @@
 </message_arguments>
 </filter>
 </resource>
-<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/numberformat/actions/SetDefaultFormatHex.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex">
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableCellModifier.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier">
 <filter id="305365105">
 <message_arguments>
-<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"/>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableCellModifier"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/expression/ExpressionVMProviderModelProxyStrategy.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProviderModelProxyStrategy"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
 </message_arguments>
 </filter>
@@ -389,6 +293,30 @@
 <message_arguments>
 <message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMNode"/>
 <message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="src/org/eclipse/dd/dsf/debug/internal/provisional/ui/viewmodel/variable/VariableColumnPresentation.java" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation">
+<filter id="305365105">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableColumnPresentation"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="META-INF/MANIFEST.MF" type="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction">
+<filter id="305324134">
+<message_arguments>
+<message_argument value="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.SelectUpdatePolicyAction"/>
+<message_argument value="org.eclipse.dd.dsf.debug.ui_1.1.0"/>
+</message_arguments>
+</filter>
+</resource>
+<resource path="META-INF/MANIFEST.MF">
+<filter id="923795461">
+<message_arguments>
+<message_argument value="1.1.0.qualifier"/>
+<message_argument value="1.0.0.v20080609"/>
 </message_arguments>
 </filter>
 </resource>

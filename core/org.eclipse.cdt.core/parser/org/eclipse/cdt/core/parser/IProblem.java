@@ -326,6 +326,12 @@ public interface IProblem
 	 */
 	public final static int SCANNER_BAD_CONDITIONAL_EXPRESSION = SCANNER_RELATED | 0x00E;
 	
+	/** 
+	 * Bad binary encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_BINARY_FORMAT = SCANNER_RELATED | 0x00F;
+
 
 	/*
 	 * Preprocessor Problems

@@ -1334,4 +1334,30 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	// #define BIN 0b10101010
+	// #define HEX 0xAA
+	// #define OCT 0252
+	// #define DEC 170
+	// #if (BIN == HEX && HEX == OCT && OCT == DEC)
+	// int foo = BIN;
+	// #endif
+	public void testGCC43BinaryNumbers() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_int);
+		validateIdentifier("foo");
+		validateToken(IToken.tASSIGN);
+		validateInteger("0b10101010");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	
+		String badbinary = "{0b012, 0b01b, 0b1111e01, 0b1111p10, 0b10010.10010}";
+		initializeScanner(badbinary);
+		fullyTokenize();
+		validateProblemCount(5);
+		for (int i = 0; i < 5; i++) {
+			validateProblem(i, IProblem.SCANNER_BAD_BINARY_FORMAT, null);
+		}
+	}
 }

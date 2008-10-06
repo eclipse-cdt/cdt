@@ -332,6 +332,13 @@ class ExpressionEvaluator {
     }
 
 	private long getNumber(char[] image) throws EvalException {
+
+        // Integer constants written in binary are a non-standard extension 
+        // supported by GCC since 4.3 and by some other C compilers
+        // They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
+        // see http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
+        boolean isBin = false;
+        
         boolean isHex = false;
         boolean isOctal = false;
 
@@ -339,6 +346,11 @@ class ExpressionEvaluator {
         if (image.length > 1) {
         	if (image[0] == '0') {
         		switch (image[++pos]) {
+        		case 'b':
+        		case 'B':
+        			isBin = true;
+        			++pos;
+        			break;
         		case 'x':
         		case 'X':
         			isHex = true;
@@ -350,6 +362,9 @@ class ExpressionEvaluator {
         			break;
         		}
         	}
+        }
+        if (isBin) {
+        	return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_BINARY_FORMAT);
         }
         if (isHex) {
         	return getNumber(image, 2, image.length, 16, IProblem.SCANNER_BAD_HEX_FORMAT);

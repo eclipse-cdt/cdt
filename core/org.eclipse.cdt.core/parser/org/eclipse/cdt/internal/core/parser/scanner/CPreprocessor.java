@@ -640,6 +640,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         final char[] image= number.getCharImage();
         boolean hasExponent = false;
 
+        // Integer constants written in binary are a non-standard extension 
+        // supported by GCC since 4.3 and by some other C compilers
+        // They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
+        // see http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
+        boolean isBin = false;
+        
         boolean isHex = false;
         boolean isOctal = false;
         boolean hasDot= false;
@@ -648,6 +654,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         if (image.length > 1) {
         	if (image[0] == '0') {
         		switch (image[++pos]) {
+        		case 'b':
+        		case 'B':
+        			isBin = true;
+        			++pos;
+        			break;
         		case 'x':
         		case 'X':
         			isHex = true;
@@ -665,6 +676,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
 
         loop: for (; pos < image.length; pos++) {
+            if (isBin) {
+            	switch (image[pos]) {
+                case '0': case'1':
+                	continue;
+                default:
+                	// 0 and 1 are the only allowed digits for binary integers
+                	// No floating point, exponents etc. are allowed
+                	break loop;
+            	}
+            }
             switch (image[pos]) {
             // octal digits
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': 
@@ -743,7 +764,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					continue loop;
 				}
 			}
-            if (isFloat) {
+            if (isBin) {
+            	// The check for bin has to come before float, otherwise binary integers
+            	// with float components get flagged as BAD_FLOATING_POINT
+            	handleProblem(IProblem.SCANNER_BAD_BINARY_FORMAT, image, number.getOffset(), number.getEndOffset());
+            }
+            else if (isFloat) {
             	handleProblem(IProblem.SCANNER_BAD_FLOATING_POINT, image, number.getOffset(), number.getEndOffset());
             }
             else if (isHex) {

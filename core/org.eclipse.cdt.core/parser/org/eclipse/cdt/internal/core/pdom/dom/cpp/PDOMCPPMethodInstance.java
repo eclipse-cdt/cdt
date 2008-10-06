@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
-		ICPPMethod {
+class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMethod {
 
 	/**
 	 * The size in bytes of a PDOMCPPMethodInstance record in the database.
@@ -67,6 +66,10 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 
 	public boolean isVirtual() throws DOMException {
 		return ((ICPPMethod)getTemplateDefinition()).isVirtual();
+	}
+
+	public boolean isPureVirtual() throws DOMException {
+		return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();		
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {

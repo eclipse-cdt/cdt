@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.util.Arrays;
@@ -49,6 +48,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	private static final String EXPLICIT = "explicit";
 	private static final String VIRTUAL = "virtual";
+	private static final String PURE_VIRTUAL= "pure-virtual";
 	private static final String PROTECTED = "protected";
 	private static final String PUBLIC = "public";
 	private static final String PRIVATE = "private";
@@ -80,6 +80,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		super(name);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fCppProject == null) {
@@ -119,6 +120,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
 	}
 	
+	@Override
 	public void tearDown() throws Exception {
 		fIndex= null;
 		if (fFile != null) {
@@ -375,9 +377,11 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {private: int method(char a);};
 
 	// class MyClass {int method(char a){};};
+	
+	// class MyClass {virtual int method(char a) = 0;};
 
 	public void testCppMethod() throws Exception {
-		setupFile(9, true);
+		setupFile(10, true);
 		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PRIVATE});
 		updateFile();
 		checkCppMethod("MyClass::method", new String[] {SHORT, INT, INT}, new String[]{PRIVATE});
@@ -395,6 +399,8 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE});
 		updateFile();
 		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, INLINE});
+		updateFile();
+		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, VIRTUAL, PURE_VIRTUAL});
 	}
 
 	// class MyClass {protected: int method(int a, int b);};
@@ -429,6 +435,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkFunction(method, types, modifiers);
 		checkCppMember(method, modifiers);
 		checkModifier(modifiers, VIRTUAL, method.isVirtual());
+		checkModifier(modifiers, PURE_VIRTUAL, method.isPureVirtual());
 		checkModifier(modifiers, IMPLICIT, method.isImplicit());
 	}
 	

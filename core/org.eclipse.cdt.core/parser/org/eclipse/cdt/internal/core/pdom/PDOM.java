@@ -179,6 +179,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  70.0 - cleaned up templates, fixes bug 236197
 	 *  71.0 - proper support for anonymous unions, bug 206450
 	 *  72.0 - store project-relative paths for resources that belong to the project, bug 239472
+	 *  72.1 - store flag for pure virtual methods.
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

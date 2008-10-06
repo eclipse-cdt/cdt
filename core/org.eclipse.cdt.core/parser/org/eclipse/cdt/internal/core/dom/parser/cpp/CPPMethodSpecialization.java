@@ -79,4 +79,12 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return false;
 	}
 
+	public boolean isPureVirtual() throws DOMException {
+		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
+		if (f != null)
+			return f.isPureVirtual();
+
+		return false;
+	}
+
 }

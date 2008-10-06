@@ -60,6 +60,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         public boolean isVirtual() throws DOMException {
             throw new DOMException( this );
         }
+        public boolean isPureVirtual() throws DOMException {
+        	throw new DOMException( this );
+        }
 
 		/* (non-Javadoc)
     	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
@@ -239,4 +242,27 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	public boolean isImplicit() {
 		return false;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isPureVirtual()
+     */
+    public boolean isPureVirtual() throws DOMException {
+    	if (declarations != null) {
+			for (IASTDeclarator dtor : declarations) {
+				if (dtor == null) 
+					break;
+
+				dtor = CPPVisitor.findOutermostDeclarator(dtor);
+				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
+				if (decl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+					dtor= CPPVisitor.findTypeRelevantDeclarator(dtor);
+					if (dtor instanceof ICPPASTFunctionDeclarator) {
+						return ((ICPPASTFunctionDeclarator) dtor).isPureVirtual();
+					}
+				}
+			}
+		}
+    	return false;
+    }
+
 }

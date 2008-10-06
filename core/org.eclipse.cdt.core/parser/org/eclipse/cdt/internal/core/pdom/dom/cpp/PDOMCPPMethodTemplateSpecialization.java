@@ -83,4 +83,8 @@ class PDOMCPPMethodTemplateSpecialization extends
 	public boolean isExternC() {
 		return false;
 	}
+
+	public boolean isPureVirtual() throws DOMException {
+		return false;
+	}
 }

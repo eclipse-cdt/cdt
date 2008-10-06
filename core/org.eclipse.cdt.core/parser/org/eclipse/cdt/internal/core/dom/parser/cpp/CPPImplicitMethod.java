@@ -171,8 +171,13 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return true;
 	}
 	
+	public boolean isPureVirtual() {
+		return false;
+	}
+
 	@Override
 	public IBinding getOwner() {
 		return getClassOwner();
 	}
+
 }

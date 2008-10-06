@@ -89,6 +89,10 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
+	public boolean isPureVirtual() throws DOMException {
+		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
+	}
+
 	@Override
 	public boolean isExtern() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6

@@ -11,7 +11,6 @@
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -102,6 +101,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	public boolean isVirtual() throws DOMException {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
+	}
+
+	public boolean isPureVirtual() throws DOMException {
+		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
 
 	public boolean isDestructor() throws DOMException {

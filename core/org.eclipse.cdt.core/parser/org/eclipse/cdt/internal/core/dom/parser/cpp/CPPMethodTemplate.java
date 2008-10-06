@@ -156,4 +156,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		return false;
 	}
 
+	public boolean isPureVirtual() throws DOMException {
+		return false;
+	}
+
 }

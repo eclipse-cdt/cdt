@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation.
+ * Copyright (c) 2006, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
@@ -38,12 +37,14 @@ public class MethodTests extends PDOMTestBase {
 		return suite(MethodTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		project = createProject("methodTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
@@ -109,6 +110,7 @@ public class MethodTests extends PDOMTestBase {
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
 		assertTrue(method.isVirtual());
+		assertTrue(method.isPureVirtual());
 	}
 	
 	public void testPureVirtualMethodType() throws Exception {

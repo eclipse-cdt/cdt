@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -42,6 +42,10 @@ public class CompositeCPPMethodTemplate extends CompositeCPPFunctionTemplate imp
 
 	public int getVisibility() throws DOMException {
 		return ((ICPPMethod)rbinding).getVisibility();
+	}
+
+	public boolean isPureVirtual() throws DOMException {
+		return ((ICPPMethod)rbinding).isPureVirtual();
 	}
 
 }

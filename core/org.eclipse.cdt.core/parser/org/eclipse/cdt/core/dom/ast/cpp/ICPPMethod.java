@@ -6,14 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
- * @author Doug Schaefer
+ * Base interface for methods, also used for constructors.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	public static final ICPPMethod [] EMPTY_CPPMETHOD_ARRAY = new ICPPMethod[0];
@@ -36,4 +38,10 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * @since 4.0
 	 */
 	public boolean isImplicit();
+	
+	/**
+	 * Returns whether this is a pure abstract method
+	 * @since 5.1
+	 */
+	public boolean isPureVirtual() throws DOMException;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,10 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	@Override
 	public boolean isRegister() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
+		return false;
+	}
+
+	public boolean isPureVirtual() throws DOMException {
 		return false;
 	}
 }

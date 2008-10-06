@@ -43,4 +43,8 @@ class CompositeCPPMethod extends CompositeCPPFunction implements ICPPMethod {
 	public int getVisibility() throws DOMException {
 		return ((ICPPMethod)rbinding).getVisibility();
 	}
+
+	public boolean isPureVirtual() throws DOMException {
+		return ((ICPPMethod)rbinding).isPureVirtual();
+	}
 }

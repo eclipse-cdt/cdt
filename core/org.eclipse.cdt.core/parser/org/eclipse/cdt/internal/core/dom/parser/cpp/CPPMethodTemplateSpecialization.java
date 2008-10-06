@@ -57,4 +57,8 @@ public class CPPMethodTemplateSpecialization extends
 		return false;
 	}
 
+	public boolean isPureVirtual() throws DOMException {
+		return false;
+	}
+
 }

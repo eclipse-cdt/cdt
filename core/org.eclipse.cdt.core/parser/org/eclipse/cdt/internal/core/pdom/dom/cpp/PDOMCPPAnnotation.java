@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation.
+ * Copyright (c) 2006, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -39,7 +38,8 @@ class PDOMCPPAnnotation {
 	public static final int DESTRUCTOR_OFFSET = 1;
 	public static final int IMPLICIT_METHOD_OFFSET = 2;
 	public static final int EXPLICIT_CONSTRUCTOR_OFFSET = 3;
-	public static final int MAX_EXTRA_OFFSET= EXPLICIT_CONSTRUCTOR_OFFSET;
+	public static final int PURE_VIRTUAL_OFFSET = 4;
+	public static final int MAX_EXTRA_OFFSET= PURE_VIRTUAL_OFFSET;
 	
 	/**
 	 * Encodes storage class specifiers and other annotation, including
@@ -92,6 +92,7 @@ class PDOMCPPAnnotation {
 			modifiers |= (method.isVirtual() ? 1 : 0) << VIRTUAL_OFFSET;
 			modifiers |= (method.isDestructor() ? 1 : 0) << DESTRUCTOR_OFFSET;
 			modifiers |= (method.isImplicit() ? 1 : 0) << IMPLICIT_METHOD_OFFSET;
+			modifiers |= (method.isPureVirtual() ? 1 : 0) << PURE_VIRTUAL_OFFSET;
 		}
 		if (binding instanceof ICPPConstructor) {
 			ICPPConstructor constructor= (ICPPConstructor) binding;

@@ -79,7 +79,7 @@ public class SyncUtil {
    		IProcessDMContext procDmc = procService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
    		fGdbContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
-   		fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbContainerDmc;
+   		fBreakpointsDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
    		
 		fRunControl = tracker.getService(MIRunControl.class);
 		fStack = tracker.getService(MIStack.class);

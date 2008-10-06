@@ -28,14 +28,11 @@ import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIDisassembly;
-import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.dd.tests.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.dd.tests.gdb.framework.BackgroundRunner;
@@ -99,9 +96,7 @@ public class MIDisassemblyTest extends BaseTestCase {
         assert(fServicesTracker != null);
 
 		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-   		fDisassemblyDmc = (IDisassemblyDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+   		fDisassemblyDmc = (IDisassemblyDMContext)commandControl.getContext();
         assert(fDisassemblyDmc != null);
             
         fDisassembly = fServicesTracker.getService(MIDisassembly.class);

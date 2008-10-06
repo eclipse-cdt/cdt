@@ -34,16 +34,13 @@ import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointDMData;
 import org.eclipse.dd.mi.service.MIBreakpoints;
-import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 import org.eclipse.dd.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.dd.mi.service.command.events.MIBreakpointHitEvent;
@@ -181,9 +178,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         assert(fServicesTracker != null);
 
 		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-   		fBreakpointsDmc = (IBreakpointsTargetDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+   		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
         assert(fBreakpointsDmc != null);
 		    
         fRunControl = fServicesTracker.getService(MIRunControl.class);

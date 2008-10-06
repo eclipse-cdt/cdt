@@ -23,14 +23,12 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup;
 import org.eclipse.dd.dsf.debug.service.IStack;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
-import org.eclipse.dd.mi.service.MIProcesses;
 
 public class ServicesLaunchSequence extends Sequence {
 
@@ -78,8 +76,7 @@ public class ServicesLaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
-       		IProcessDMContext procDmc = fProcService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-       		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fProcService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+       		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
             fSourceLookup.setSourceLookupDirector(sourceLookupDmc, (CSourceLookupDirector)fLaunch.getSourceLocator());
             requestMonitor.done();
         }},

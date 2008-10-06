@@ -34,7 +34,6 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
@@ -45,7 +44,6 @@ import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
-import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.commands.CLISource;
 import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
@@ -353,8 +351,7 @@ public class FinalLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
             CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
             CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
-       		IProcessDMContext procDmc = fProcService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-    		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext) fProcService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+    		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
 
             sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
         }},
@@ -481,8 +478,7 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
             MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-       		IProcessDMContext procDmc = fProcService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-       		IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext) fProcService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+       		IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
 
         	bpmService.startTrackingBreakpoints(breakpointDmc, requestMonitor);
         }},

@@ -26,10 +26,7 @@ import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.ICachingService;
 import org.eclipse.dd.dsf.debug.service.IProcesses;
-import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.dd.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -38,8 +35,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
-import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -201,9 +196,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
 	}
 
-	private class GDBContainerDMC extends MIContainerDMC
-	implements ISymbolDMContext, IMemoryDMContext, IBreakpointsTargetDMContext, ISourceLookupDMContext, 
-	           ISignalsDMContext, IDisassemblyDMContext 
+	private class GDBContainerDMC extends MIContainerDMC 
+	implements IMemoryDMContext 
 	{
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);

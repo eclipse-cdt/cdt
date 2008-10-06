@@ -39,7 +39,6 @@ import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.datamodel.AbstractDMEvent;
-import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
@@ -104,7 +103,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     }
 
     private static int fgInstanceCounter = 0;
-    private final MIControlDMContext fControlDmc;
+    private final GDBControlDMContext fControlDmc;
 
     private SessionType fSessionType;
     
@@ -136,7 +135,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		} catch (CoreException e) {
 			fExecPath = new Path(""); //$NON-NLS-1$
 		}
-        fControlDmc = new MIControlDMContext(session.getId(), getId()); 
+        fControlDmc = new GDBControlDMContext(session.getId(), getId()); 
     }
 
     @Override
@@ -379,11 +378,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     			return;
     		}
 
-        	final IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext)containerDmc;
-
     		// Insert a breakpoint at the requested stop symbol.
     		queueCommand(
-    				new MIBreakInsert(breakpointDmc, true, false, null, 0, stopSymbol, 0), 
+    				new MIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
     				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
     					@Override
     					protected void handleSuccess() {

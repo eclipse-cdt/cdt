@@ -393,6 +393,12 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     	return new MIContainerDMC(getSession().getId(), processDmc, groupId);
     }
 
+    public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
+    	String groupId = UNIQUE_GROUP_ID;
+    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+    	return createContainerContext(processDmc, groupId);
+    }
+
 	/**
 	 * This method obtains the model data for a given IThreadDMContext object
 	 * which can represent a thread or a process.

@@ -36,7 +36,7 @@ public interface IMIProcesses extends IProcesses
     IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid);
     
     /**
-     * Create a execution context.
+     * Create an execution context.
      * 
      * @param containerDmc The parent process debugging context
      * @param threadDmc The parent thread context
@@ -54,5 +54,14 @@ public interface IMIProcesses extends IProcesses
      */
     IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
     											 String groupId);
+
+    /**
+     * Create a container context based on a threadId.  This implies knowledge
+     * of which threads belong to which container.
+     * 
+     * @param controlDmc The parent command control context of this context
+     * @param threadId The thread id belonging to the container we want to create
+     */
+    IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId);
 }
 

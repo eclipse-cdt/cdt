@@ -183,7 +183,7 @@ public class MIRunControlEventProcessor
     	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
     	IExecutionDMContext execDmc = processContainerDmc;
-    	if (procService != null && threadId != null) {
+    	if (threadId != null) {
    			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
    			execDmc = procService.createExecutionContext(processContainerDmc, threadDmc, threadId);
     	}

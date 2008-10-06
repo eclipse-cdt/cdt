@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -91,11 +89,6 @@ public class MIRunControlEventProcessor_7_0
     
     private final DsfServicesTracker fServicesTracker;
     
-    /**
-     *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
-     */
-    private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
-
     /**
      * Creates the event processor and registers it as listener with the debugger
      * control.
@@ -190,22 +183,16 @@ public class MIRunControlEventProcessor_7_0
     		    		}
     				}
     		    	
-    		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
-    		    		// Until GDB is officially supporting multi-process, we may not get
-    		    		// a groupId.  In this case, we are running single process and we'll
-    		    		// need a groupId
-    		    		if (groupId == null) {
-    		    			groupId = MIProcesses.UNIQUE_GROUP_ID;
-    		    		}
-    		    		// Update the thread to groupId map with the new groupId
-    		    		fThreadToGroupMap.put(threadId, groupId);
-    		    	} else {
-    		    		// It was not clear if MI would specify the groupId in the thread-exited event
-    		    		if (groupId == null) {
-    		    			groupId = fThreadToGroupMap.get(threadId);
-    		    		}
-    		    		fThreadToGroupMap.remove(threadId);
-    		    	}
+   		    		// Until GDB is officially supporting multi-process, we may not get
+		    		// a groupId.  In this case, we are running single process and we'll
+		    		// need its groupId
+		    		if (groupId == null) {
+		    			groupId = MIProcesses.UNIQUE_GROUP_ID;
+		    		}
+
+		    		// Here, threads are created and removed.  We cannot use the IMIProcesses service
+		    		// to map a threadId to a groupId, because there would be a race condition.
+		    		// Since we have the groupId anyway, we have no problems.
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
     		    	if (procService != null) {
@@ -245,18 +232,6 @@ public class MIRunControlEventProcessor_7_0
     						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
-    						
-    						// Remove any entries for that group from our thread to group map
-    						// When detaching from a group, we won't have received any thread-exited event
-    						// but we don't want to keep those entries.
-    						if (fThreadToGroupMap.containsValue(groupId)) {
-    							Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
-    							while (iterator.hasNext()){
-    								if (iterator.next().getValue().equals(groupId)) {
-    									iterator.remove();
-    								}
-    							}
-    						}
     					}
 
    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
@@ -291,19 +266,26 @@ public class MIRunControlEventProcessor_7_0
     		return null;
     	}
     	
-    	// MI does not currently provide the group-id in these events
+   		IProcessDMContext procDmc = null;
+		IContainerDMContext containerDmc = null;
     	if (groupId == null) {
-    		groupId = fThreadToGroupMap.get(threadId);
-    	}
-    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
-
-    	IExecutionDMContext execDmc = processContainerDmc;
-    	if (procService != null && threadId != null) {
-   			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
-   			execDmc = procService.createExecutionContext(processContainerDmc, threadDmc, threadId);
+        	// MI does not currently provide the group-id in these events
+    		if (threadId != null) {
+    			containerDmc = procService.createContainerContextFromThreadId(fControlDmc, threadId);
+    			procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+    		}
+    	} else {
+    		// This code would only trigger if the groupId was provided by MI
+    		procDmc = procService.createProcessContext(fControlDmc, groupId);
+    		containerDmc = procService.createContainerContext(procDmc, groupId);
     	}
     	
+    	IExecutionDMContext execDmc = containerDmc;
+    	if (threadId != null) {
+    		IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
+    		execDmc = procService.createExecutionContext(containerDmc, threadDmc, threadId);
+    	}
+
     	MIEvent<?> event = null;
     	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
     		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());

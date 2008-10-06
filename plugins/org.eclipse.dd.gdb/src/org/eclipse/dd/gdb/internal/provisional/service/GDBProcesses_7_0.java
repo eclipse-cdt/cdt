@@ -12,6 +12,7 @@ package org.eclipse.dd.gdb.internal.provisional.service;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -40,6 +41,7 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.CommandCache;
+import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
@@ -50,16 +52,23 @@ import org.eclipse.dd.mi.service.IMIContainerDMContext;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcessDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIProcesses;
 import org.eclipse.dd.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.dd.mi.service.command.commands.MITargetAttach;
 import org.eclipse.dd.mi.service.command.commands.MITargetDetach;
 import org.eclipse.dd.mi.service.command.commands.MIThreadInfo;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadGroupExitedEvent;
+import org.eclipse.dd.mi.service.command.output.MIConst;
 import org.eclipse.dd.mi.service.command.output.MIInfo;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.dd.mi.service.command.output.MINotifyAsyncOutput;
+import org.eclipse.dd.mi.service.command.output.MIOOBRecord;
+import org.eclipse.dd.mi.service.command.output.MIOutput;
+import org.eclipse.dd.mi.service.command.output.MIResult;
 import org.eclipse.dd.mi.service.command.output.MIThread;
 import org.eclipse.dd.mi.service.command.output.MIThreadInfoInfo;
+import org.eclipse.dd.mi.service.command.output.MIValue;
 import org.eclipse.dd.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.osgi.framework.BundleContext;
 
@@ -70,7 +79,8 @@ import org.osgi.framework.BundleContext;
  * which really mean it supports the new -list-thread-groups command.
  * 
  */
-public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses, ICachingService {
+public class GDBProcesses_7_0 extends AbstractDsfService 
+    implements IMIProcesses, ICachingService, IEventListener {
 
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -329,6 +339,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         }
     }        
 
+    /**
+     *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
+     */
+    private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
+
     private IGDBControl fCommandControl;
     
     // A cache for commands about the threadGroups
@@ -379,7 +394,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
         fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
         getSession().addServiceEventListener(this, null);
-        
+        fCommandControl.addEventListener(this);
+
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),
 				IMIProcesses.class.getName(),
@@ -401,6 +417,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
         getSession().removeServiceEventListener(this);
+        fCommandControl.removeEventListener(this);
 		super.shutdown(requestMonitor);
 	}
 	
@@ -427,8 +444,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
     }
 
     public IMIContainerDMContext createContainerContext(IProcessDMContext processDmc,
-    															  String groupId) {
+    													String groupId) {
     	return new GDBContainerDMC(getSession().getId(), processDmc, groupId);
+    }
+
+    public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
+    	String groupId = fThreadToGroupMap.get(threadId);
+    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+    	return createContainerContext(processDmc, groupId);
     }
 
 	/**
@@ -764,5 +787,81 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IMIProcesses
 	public void flushCache(IDMContext context) {
 		fContainerCommandCache.reset(context);
 		fThreadCommandCache.reset(context);
+	}
+
+	/*
+	 * Catch =thread-created/exited and =thread-group-exited events to update our
+	 * groupId to threadId map. 
+	 */
+	public void eventReceived(Object output) {
+    	for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
+			if (oobr instanceof MINotifyAsyncOutput) {
+    			MINotifyAsyncOutput exec = (MINotifyAsyncOutput) oobr;
+    			String miEvent = exec.getAsyncClass();
+    			if ("thread-created".equals(miEvent) || "thread-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				String threadId = null;
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("group-id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString();
+    						}
+    					} else if (var.equals("id")) { //$NON-NLS-1$
+    		    			if (val instanceof MIConst) {
+    							threadId = ((MIConst) val).getString();
+    		    			}
+    		    		}
+    				}
+
+		    		// Until GDB is officially supporting multi-process, we may not get
+		    		// a groupId.  In this case, we are running single process and we'll
+		    		// need its groupId
+		    		if (groupId == null) {
+		    			groupId = MIProcesses.UNIQUE_GROUP_ID;
+		    		}
+
+    		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
+    		    		// Update the thread to groupId map with the new groupId
+    		    		fThreadToGroupMap.put(threadId, groupId);
+    		    	} else {
+    		    		fThreadToGroupMap.remove(threadId);
+    		    	}
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    				
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+
+    				if (groupId != null) {
+    					if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						// Remove any entries for that group from our thread to group map
+    						// When detaching from a group, we won't have received any thread-exited event
+    						// but we don't want to keep those entries.
+    						if (fThreadToGroupMap.containsValue(groupId)) {
+    							Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
+    							while (iterator.hasNext()){
+    								if (iterator.next().getValue().equals(groupId)) {
+    									iterator.remove();
+    								}
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}	
 	}
 }

@@ -68,103 +68,6 @@
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
-         
-         <menu id="numberFormat"
-               label="%menu.numberFormat"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
-               label="%action.setDefaultNumberFormatHex.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
-               label="%action.setDefaultNumberFormatDecimal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
-               label="%action.setDefaultNumberFormatOctal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
-               label="%action.setDefaultNumberFormatBinary.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
-               label="%action.setDefaultNumberFormatNatural.label"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-         
-         <menu id="updateScope"
-               label="%menu.updateScope"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
-               label="%action.allUpdateScope.label"
-               state="false"
-               menubarPath="updateScope/additions"
-               style="radio">
-         </action>  
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
-               label="%action.visibleUpdateScope.label"
-               menubarPath="updateScope/additions"
-               state="true"
-               style="radio">
-         </action>      
-         
-         <menu id="updatePolicy"
-               label="%menu.updatePolicy"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
-               label="%action.breakpointHitUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
-               label="%action.manualUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
-               label="%action.automaticUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               state="true"
-               style="radio">
-         </action>         
-         
-         
- 		 
       </viewContribution>
 
       <!-- Registers View menu contributions -->
@@ -178,100 +81,6 @@
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
-         
-         <menu id="numberFormat"
-               label="%menu.numberFormat"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
-               label="%action.setDefaultNumberFormatHex.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
-               label="%action.setDefaultNumberFormatDecimal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
-               label="%action.setDefaultNumberFormatOctal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
-               label="%action.setDefaultNumberFormatBinary.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
-               label="%action.setDefaultNumberFormatNatural.label"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-         
-         <menu id="updateScope"
-               label="%menu.updateScope"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
-               label="%action.allUpdateScope.label"
-               menubarPath="updateScope/additions"
-               style="radio">
-         </action>  
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
-               label="%action.visibleUpdateScope.label"
-               menubarPath="updateScope/additions"
-               state="true"
-               style="radio">
-         </action>      
-         
-         <menu id="updatePolicy"
-               label="%menu.updatePolicy"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
-               label="%action.breakpointHitUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
-               label="%action.manualUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
-               label="%action.automaticUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               state="true"
-               style="radio">
-         </action>         
-         
       </viewContribution>
       
       <!-- Expressions View menu contributions -->
@@ -285,101 +94,6 @@
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
-         
-         <menu id="numberFormat"
-               label="%menu.numberFormat"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatHex"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Hex"
-               label="%action.setDefaultNumberFormatHex.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatDecimal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Decimal"
-               label="%action.setDefaultNumberFormatDecimal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatOctal"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Octal"
-               label="%action.setDefaultNumberFormatOctal.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatBinary"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Binary"
-               label="%action.setDefaultNumberFormatBinary.label"
-               menubarPath="numberFormat/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions.SetDefaultFormatNatural"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.NumberFormat_Natural"
-               label="%action.setDefaultNumberFormatNatural.label"
-               menubarPath="numberFormat/additions"
-               state="true"
-               style="radio">
-         </action>
-         
-         <menu id="updateScope"
-               label="%menu.updateScope"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AllUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_All"
-               label="%action.allUpdateScope.label"
-               state="false"
-               menubarPath="updateScope/additions"
-               style="radio">
-         </action>  
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.VisibleUpdateScopeAction"
-               id="org.eclipse.dd.dsf.debug.ui.UpdateScope_Visible"
-               label="%action.visibleUpdateScope.label"
-               menubarPath="updateScope/additions"
-               state="true"
-               style="radio">
-         </action>  
-         
-         <menu id="updatePolicy"
-               label="%menu.updatePolicy"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.BreakpointHitUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_BreakpointHit"
-               label="%action.breakpointHitUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
-               label="%action.manualUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
-               label="%action.automaticUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               state="true"
-               style="radio">
-         </action>         
-         
       </viewContribution>
 
       <!-- Debug View menu contributions -->
@@ -393,29 +107,290 @@
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
-         
-         <menu id="updatePolicy"
-               label="%menu.threadsUpdatePolicy"
-               path="additions"/>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.ManualUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Manual"
-               label="%action.manualUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.AutomaticUpdatePolicyAction"
-               helpContextId="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic_helpContext"
-               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicy_Automatic"
-               label="%action.automaticUpdatePolicy.label"
-               menubarPath="updatePolicy/additions"
-               state="true"
-               style="radio">
-         </action>    
       </viewContribution>
+   </extension>
 
+   <extension 
+         point="org.eclipse.ui.menus">
+	   <!-- Debug view menu commands -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.DebugView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.DebugView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.debugView_updatePolicies" 
+            	 label="%menu.threadsUpdatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <and>
+                     <with variable="org.eclipse.core.runtime.Platform">
+                        <test property="org.eclipse.core.runtime.bundleState"
+                             args="org.eclipse.dd.dsf.debug.ui"
+                             value="ACTIVE"/>
+                     </with>
+					 <with variable="selection">
+					    <count value="+"/>
+					    <iterate>
+                           <test property="org.eclipse.dd.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+					    </iterate>
+         			 </with>
+                  </and>
+               </visibleWhen>    
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicies"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+
+	   <!-- Registers view menu commands -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.registersView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.registersUpdatePolicies"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.registersView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.registersUpdateScopes"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=formatting">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.registersView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.registersNumberFormats"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+
+	   <!-- Variables view menu commands  -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.variablesView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdatePolicies"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.variablesView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdateScopes"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=formatting">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.variablesView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.variablesNumberFormats"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+
+	   <!-- Expressions view menu commands  -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.expressionsView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdatePolicies"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.expressionsView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdateScopes"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=formatting">
+            <menu 
+                 id="org.eclipse.dd.dsf.debug.ui.expressionsView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.dd.dsf.debug.ui.expressionNumberFormats"
+	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+   </extension>  
+
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.dd.dsf.debug.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+      <definition
+            id="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.dd.dsf.debug.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areUpdateScopesSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areUpdateScopesSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+      <definition
+            id="org.eclipse.dd.dsf.debug.ui.testAreNumberFormatsSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.dd.dsf.debug.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areNumberFormatsSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.dd.dsf.debug.ui.areNumberFormatsSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+   </extension>  
+
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.selectionUpdatePoliciesTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
+            type="org.eclipse.dd.dsf.ui.viewmodel.IVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.partUpdatePoliciesTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
+            type="org.eclipse.debug.ui.IDebugView">
+      </propertyTester>
+
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.selectionUpdateScopesTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
+            type="org.eclipse.dd.dsf.ui.viewmodel.IVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.partUpdateScopesTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
+            type="org.eclipse.debug.ui.IDebugView">
+      </propertyTester>
+
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.selectionNumberFormatsTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive"
+            type="org.eclipse.dd.dsf.ui.viewmodel.IVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
+            id="org.eclipse.dd.dsf.debug.ui.partNumberFormatsTester"
+            namespace="org.eclipse.dd.dsf.debug.ui"
+            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive"
+            type="org.eclipse.debug.ui.IDebugView">
+      </propertyTester>
    </extension>
    
 	<extension 

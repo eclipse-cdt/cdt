@@ -35,7 +35,6 @@ Export-Package:
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch;x-internal:=true,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.modules;x-internal:=true,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat;x-internal:=true,
- org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.actions;x-internal:=true,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register;x-internal:=true,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update;x-internal:=true,
  org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions;x-internal:=true,

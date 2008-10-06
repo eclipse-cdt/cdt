@@ -77,6 +77,12 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_AUTO_SOLIB_LIST = GdbPlugin.PLUGIN_ID + ".AUTO_SOLIB_LIST"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key.  The value is a boolean specifying the mode of the gdb console.
+	 * @since 1.1
+	 */
+	public static final String ATTR_DEBUGGER_VERBOSE_MODE = GdbPlugin.PLUGIN_ID + ".verboseMode"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
 	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "gdb"; //$NON-NLS-1$
@@ -103,33 +109,9 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final boolean DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT = false;
 
-//	/**
-//	 * Launch configuration attribute key.  The value is a string specifying the identifier of the command factory to use.
-//	 */
-//	public static final String ATTR_DEBUGGER_COMMAND_FACTORY = GdbPlugin.PLUGIN_ID + ".commandFactory"; //$NON-NLS-1$
-//
-//	/**
-//	 * Launch configuration attribute key.  The value is a string specifying the protocol to
-//	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
-//	 */
-//	public static final String ATTR_DEBUGGER_PROTOCOL = GdbPlugin.PLUGIN_ID + ".protocol"; //$NON-NLS-1$
-//
-//	/**
-//	 * Launch configuration attribute key.  The value is a boolean specifying the mode of the gdb console.
-//	 */
-//	public static final String ATTR_DEBUGGER_VERBOSE_MODE = GdbPlugin.PLUGIN_ID + ".verboseMode"; //$NON-NLS-1$
-//
-//	/**
-//	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_VERBOSE_MODE.
-//	 */
-//	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
-//	/**
-//	 * Launch configuration attribute key.  The value is a boolean specifying is debugger should use full pathname to set breakpoints.
-//	 */
-//	public static final String ATTR_DEBUGGER_FULLPATH_BREAKPOINTS = GdbPlugin.PLUGIN_ID + ".breakpointsFullPath"; //$NON-NLS-1$
-//
-//	/**
-//	 * Launch configuration default attribute value. The key is ATTR_DEBUGGER_FULLPATH_BREAKPOINTS.
-//	 */
-//	public static final boolean DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT = false;
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_VERBOSE_MODE.
+	 * @since 1.1
+	 */
+	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
 }

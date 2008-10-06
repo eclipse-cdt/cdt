@@ -273,6 +273,16 @@ public class LaunchUtils {
     	}
     	return SessionType.LOCAL;
     }
-    
+
+	public static boolean getConsoleVerboseMode(ILaunchConfiguration config) {
+		boolean verboseMode = IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT;
+    	try {
+    		verboseMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
+    				                          IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
+    	} catch (CoreException e) {    		
+    	}
+    	return verboseMode;
+    }
+
 }
 

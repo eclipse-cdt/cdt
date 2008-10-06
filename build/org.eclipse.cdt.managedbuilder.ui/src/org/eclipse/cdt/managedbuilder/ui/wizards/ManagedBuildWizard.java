@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.SortedMap;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.DefaultEntryDescriptor;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -38,6 +39,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
+	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
 		IBuildPropertyType bpt = bpm.getPropertyType(MBSWizardHandler.ARTIFACT);
@@ -58,9 +60,8 @@ public class ManagedBuildWizard extends AbstractCWizard {
 				// The project category item.
 				items.add(new EntryDescriptor(vs[i].getId(), null, vs[i].getName(), true, h, null));
 				// A default project type for that category -- not using any template.
-				EntryDescriptor entryDescriptor = new EntryDescriptor(vs[i].getId() + ".default", vs[i].getId(),
+				EntryDescriptor entryDescriptor = new DefaultEntryDescriptor(vs[i].getId() + ".default", vs[i].getId(),
 						EMPTY_PROJECT, false, h, null);
-				entryDescriptor.setDefaultForCategory(true);
 				items.add(entryDescriptor);
 			}
 		}
@@ -69,7 +70,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		EntryDescriptor oldsRoot = null;
 		SortedMap<String, IProjectType> sm = ManagedBuildManager.getExtensionProjectTypeMap();
 		for (String s : sm.keySet()) {
-			IProjectType pt = (IProjectType)sm.get(s);
+			IProjectType pt = sm.get(s);
 			if (pt.isAbstract() || pt.isSystemObject()) continue;
 			if (supportedOnly && !pt.isSupported()) continue; // not supported
 			String nattr = pt.getNameAttribute(); 
@@ -106,11 +107,9 @@ public class ManagedBuildWizard extends AbstractCWizard {
 					items.add(oldsRoot);
 				}
 				pId = oldsRoot.getId();
-			} else { // do not group to <Others>
-				pId = null;
 			}
 			items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), false, h, IMG));
 		}
-		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);
+		return items.toArray(new EntryDescriptor[items.size()]);
 	}
 }

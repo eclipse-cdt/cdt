@@ -51,6 +51,7 @@ import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.DefaultEntryDescriptor;
 
 	public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
 		private static final Image IMG_CATEGORY = CPluginImages.get(CPluginImages.IMG_OBJS_SEARCHFOLDER);
@@ -296,7 +297,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			for (int i = 0; i < items.size(); ++i)
 			{
 				EntryDescriptor ed = items.get(i);
-				if (ed.isDefaultForCategory())
+				if (ed instanceof DefaultEntryDescriptor)
 				{
 					items.remove(i);
 					items.add(0, ed);

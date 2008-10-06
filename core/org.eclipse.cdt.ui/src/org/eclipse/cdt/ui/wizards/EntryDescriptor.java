@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 /**
  * This class stores data for each tree item
  * in "Project types" tree of New Project Wizard.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public final class EntryDescriptor {
+public class EntryDescriptor {
 	private String id = null;
 	private String name = null;
 	private boolean isCategory = false;
@@ -27,7 +29,6 @@ public final class EntryDescriptor {
 	private CWizardHandler handler = null;
 	private String path = null;
 	private EntryDescriptor parent = null;
-	private boolean isDefaultForCategory = false;
 
 	public EntryDescriptor (String _id, String _par, String _name, boolean _cat, CWizardHandler _h, Image _image) {
 		id = _id;
@@ -82,11 +83,5 @@ public final class EntryDescriptor {
 	}
 	public CWizardHandler getHandler() {
 		return handler;
-	}
-	public void setDefaultForCategory(boolean isDefaultForCategory) {
-		this.isDefaultForCategory = isDefaultForCategory;
-	}
-	public boolean isDefaultForCategory() {
-		return isDefaultForCategory;
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.internal.ui.wizards.DefaultEntryDescriptor;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -151,7 +152,7 @@ public class MBSWizardHandler extends CWizardHandler {
 					break;
 			
 				projectTypeId = path[0];
-				if(!entryDescriptor.isDefaultForCategory() && 
+				if(!(entryDescriptor instanceof DefaultEntryDescriptor) && 
 						path.length > 1 && (!path[0].equals(ManagedBuildWizard.OTHERS_LABEL))){
 					templateId = path[path.length - 1]; 
 					Template templates[] = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
@@ -337,6 +338,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return baseName;
 	}
 	
+	@Override
 	public void handleSelection() {
 		List<String> preferred = CDTPrefUtil.getPreferredTCs();
 		
@@ -344,7 +346,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			table.getAccessible().addAccessibleListener(
 					 new AccessibleAdapter() {                       
-		                 public void getName(AccessibleEvent e) {
+		                 @Override
+						public void getName(AccessibleEvent e) {
 		                	 if (e.result == null)
 		                		 e.result = head;
 		                 }
@@ -374,6 +377,7 @@ public class MBSWizardHandler extends CWizardHandler {
 				if (counter > 0) table.select(position);
 			}			
 			table.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleToolChainSelection();
 				}});
@@ -475,6 +479,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 	}
 	
+	@Override
 	public void handleUnSelection() {
 		if (table != null) {
 			table.setVisible(false);
@@ -496,6 +501,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		full_tcs.put(tc.getUniqueRealName(), tc);
 	}
 		
+	@Override
 	public void createProject(IProject project, boolean defaults, boolean onFinish) throws CoreException {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
@@ -546,6 +552,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		doCustom(project);
 	}
 	
+	@Override
 	protected void doTemplatesPostProcess(IProject prj) {
 		if(entryInfo == null)
 			return;
@@ -573,6 +580,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return fConfigPage;
 	}
 	
+	@Override
 	public IWizardPage getSpecificPage() {
 		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
 	}
@@ -582,6 +590,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	 * @
 	 */
 	
+	@Override
 	public void updatePreferred(List<String> prefs) {
 		preferredTCs.clear();
 		int x = table.getItemCount();
@@ -602,10 +611,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		return preferredTCs;
 	}
 	
+	@Override
 	public String getHeader() { return head; }
 	public boolean isDummy() { return false; }
+	@Override
 	public boolean supportsPreferred() { return true; }
 
+	@Override
 	public boolean isChanged() { 
 		if (savedToolChains == null)
 			return true;
@@ -624,6 +636,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return false;
 	}
 	
+	@Override
 	public void saveState() {
 		savedToolChains = getSelectedToolChains();
 	}
@@ -659,6 +672,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		getConfigPage(); // ensure that page is created
 		return fConfigPage.getCfgItems(defaults);
 	}
+	@Override
 	public String getErrorMessage() { 
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length == 0)
@@ -666,6 +680,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return null;
 	}
 	
+	@Override
 	protected void doCustom(IProject newProject) {
 		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
 		if(operations != null)
@@ -679,6 +694,7 @@ public class MBSWizardHandler extends CWizardHandler {
 				}
 	}
 	
+	@Override
 	public void postProcess(IProject newProject, boolean created) {
 		deleteExtraConfigs(newProject);
 		// calls are required only if the project was
@@ -722,11 +738,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		} catch (CoreException e) {}
 	}
 	
+	@Override
 	public boolean isApplicable(EntryDescriptor data) { 
 		EntryInfo info = new EntryInfo(data, full_tcs);
 		return info.isValid() && (info.getToolChainsCount() > 0);
 	}
 	
+	@Override
 	public void initialize(EntryDescriptor data) throws CoreException {
 		EntryInfo info = new EntryInfo(data, full_tcs);
 		if(!info.isValid())
@@ -738,6 +756,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	/**
 	 * Clones itself.
 	 */
+	@Override
 	public Object clone() {
 		MBSWizardHandler clone = (MBSWizardHandler)super.clone();
 		if (clone != null) {
@@ -752,6 +771,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return clone;
 	}
 
+	@Override
 	public boolean canFinish() {
 		if(entryInfo == null)
 			return false;

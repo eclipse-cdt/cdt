@@ -1287,8 +1287,7 @@ class CopyAction extends Action
 
     public void run()
     {
-        final int COLUMNS = 80; // FIXME user preference
-        final String PANE_SPACING = "  "; // preference also ? //$NON-NLS-1$
+        final String PANE_SPACING = "  "; //$NON-NLS-1$
 
         Clipboard clip = null;
         try
@@ -1329,23 +1328,7 @@ class CopyAction extends Action
                 + (fRendering.getPaneVisible(Rendering.PANE_TEXT) ? asciiCellWidth
                     : 0);
 
-            int availableWidth = COLUMNS;
-
-            if(fRendering.getPaneVisible(Rendering.PANE_ADDRESS))
-            {
-                availableWidth -= addressWidth;
-                availableWidth -= PANE_SPACING.length(); // between address
-                // and next
-            }
-
-            if(fRendering.getPaneVisible(Rendering.PANE_BINARY)
-                && fRendering.getPaneVisible(Rendering.PANE_TEXT))
-            {
-                availableWidth -= PANE_SPACING.length(); // between binary
-                // and text
-            }
-
-            final int columns = availableWidth / combindCellWidths;
+            final int columns = fRendering.getColumnCount();
 
             BigInteger lengthToRead = end.subtract(start);
 

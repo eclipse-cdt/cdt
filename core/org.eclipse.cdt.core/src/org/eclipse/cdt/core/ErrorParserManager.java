@@ -56,9 +56,9 @@ public class ErrorParserManager extends OutputStream {
 
 	private String previousLine;
 	private OutputStream outputStream;
-	private StringBuffer currentLine = new StringBuffer();
+	private StringBuilder currentLine = new StringBuilder();
 
-	private StringBuffer scratchBuffer = new StringBuffer();
+	private StringBuilder scratchBuffer = new StringBuilder();
 	
 	private boolean hasErrors = false;
 

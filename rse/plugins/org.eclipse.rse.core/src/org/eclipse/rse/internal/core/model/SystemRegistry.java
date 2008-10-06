@@ -56,6 +56,7 @@
  * David McKnight   (IBM)        - [238673] Expansion icon (plus sign) disappears from Work With Libraries entry
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
+ * David McKnight   (IBM)        - [249247] Expand New Connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -1615,7 +1616,7 @@ public class SystemRegistry implements ISystemRegistry
 		IHost host = op.getHost();
 		if (modelListenerManager.hasListeners()) {
 			ISubSystem[] subsystems = op.getSubSystems();
-			FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr);
+			FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, sr, configurators != null);
 			// FIXME bug 240991: With the current workaround, we might miss events
 			// in SystemPreferencesManager. Instead of Display.getDefault(),
 			// we should use the IRSEInteractionProvider here.
@@ -1776,13 +1777,14 @@ public class SystemRegistry implements ISystemRegistry
 		private ISubSystem[] subSystems;
 		private IHost conn;
 		private ISystemRegistry reg;
+		private boolean expandHost;
 
-
-		public FireNewHostEvents(IHost host, ISubSystem[] subSystems, ISystemRegistry registry)
+		public FireNewHostEvents(IHost host, ISubSystem[] subSystems, ISystemRegistry registry, boolean expandHost)
 		{
 			this.subSystems= subSystems;
 			this.conn = host;
 			this.reg = registry;
+			this.expandHost = expandHost;
 		}
 
 		public void run()
@@ -1810,6 +1812,12 @@ public class SystemRegistry implements ISystemRegistry
 			{
 				ISubSystem ss = subSystems[s];
 				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, ss, null);
+			}
+			
+			// for bug 249247 - expand the connection after completing the wizard
+			if (expandHost){
+				SystemResourceChangeEvent expandEvent = new SystemResourceChangeEvent(conn, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, reg);
+				fireEvent(expandEvent);
 			}
 		}
 	}

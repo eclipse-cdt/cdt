@@ -48,6 +48,7 @@
  * Martin Oberhuber (Wind River) - [235463][ftp][dstore] Incorrect case sensitivity reported on windows-remote
  * David McKnight   (IBM)        - [236039][dstore][efs] DStoreInputStream can report EOF too early - clean up how it waits for the local temp file to be created
  * David McKnight   (IBM)        - [240710] [dstore] DStoreFileService.getFile() fails with NPE for valid root files
+ * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -74,6 +75,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
+import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -457,11 +459,27 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		boolean transferSuccessful = false;
 
 		long totalBytes = file.length();
+		
+		DataElement uploadLog = findUploadLog();
+		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+		
+		DataStore ds = getDataStore();
+		DataElement result = ds.find(uploadLog, DE.A_NAME, remotePath,1);
+		if (result == null) 
+		{
+			result = ds.createObject(uploadLog, "uploadstatus", remotePath);
+			result.setAttribute(DE.A_SOURCE, "running");
+			result.setAttribute(DE.A_VALUE, "");
+			
+			DataElement cmd = getDataStore().findCommandDescriptor(DataStoreSchema.C_SET);
+			
+			DataElement setstatus = ds.command(cmd, uploadLog, true);
+		}
 
 		try
 		{
 			String byteStreamHandlerId = getByteStreamHandlerId();
-			String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+
 
 			// create an empty file and append data to it later
 			// this handles the case of uploading empty files as well
@@ -473,9 +491,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				//subMonitor = new SubProgressMonitor(monitor, (int)totalBytes);
 			}
 
-
-//			DataElement uploadLog = findUploadLog();
-			findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);
 	//		ds.getDomainNotifier().addDomainListener(listener);
 
@@ -583,6 +598,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 				available = bufInputStream.available();
 			}
+			
 	//		if (listener.uploadHasFailed())
 		//	{
 		//		showUploadFailedMessage(listener, source);
@@ -639,26 +655,18 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 			    if (transferSuccessful)
 			    {
-
-
-//					try
-//					{
-//						listener.waitForUpdate(null, 2);
-//
-//					}
-//					catch (InterruptedException e)
-//					{
-//						UniversalSystemPlugin.logError(CLASSNAME + " InterruptedException while waiting for command", e);
-//					}
-
+			    	String resultStr = result.getSource();
+			    	while (!resultStr.equals("success"))
+			    	{
+			    		// sleep until the upload is complete
+			    		try {
+			    			Thread.sleep(200);
+			    		}
+			    		catch (InterruptedException e){			    			
+			    		}
+			    		resultStr = result.getSource();
+			    	}
 			    }
-
-				//ds.getDomainNotifier().removeDomainListener(listener);
-
-//				if (listener.uploadHasFailed())
-//				{
-//					showUploadFailedMessage(listener, source);
-//				}
 			}
 		}
 	}

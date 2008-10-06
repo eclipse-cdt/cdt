@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Xuan Chen        (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
+ * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -197,16 +198,12 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             {
             	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+            	
                 fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+
                 // wait for timestamp to update before re-fetching remote file
-                try {
-                	Thread.sleep(1000);
-                }
-                catch (Exception e){
-                	
-                }
-                _remoteFile.markStale(true);
-                _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), new NullProgressMonitor());
+                _remoteFile = waitForTimestampToBeUpToDate(_remoteFile, monitor);
+
                 long ts = _remoteFile.getLastModified();
                 properties.setRemoteFileTimeStamp(ts);
                 properties.setDirty(false);
@@ -222,6 +219,47 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             }
             return Status.OK_STATUS;
 		}
+		
+		private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, IProgressMonitor monitor)
+		{
+			IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
+			String path = remoteFile.getAbsolutePath();
+			long originalTimestamp = remoteFile.getLastModified();
+			try {
+				long timestamp = originalTimestamp;
+
+				boolean fileUpdated = false;
+				boolean timestampChanging = true;
+				
+				while (timestampChanging || !fileUpdated){	// wait until the timestamp stops changing AND timestamp did change at least once		
+					try {
+						Thread.sleep(500); // sleep 
+					}
+					catch (InterruptedException e){				
+					}
+				
+					// query the remote file again
+					remoteFile.markStale(true);
+					remoteFile = fs.getRemoteFileObject(path, monitor);
+
+					// what's the timestamp now?
+					long nextTimestamp = remoteFile.getLastModified();		
+
+					timestampChanging = (timestamp != nextTimestamp);
+
+					if (!fileUpdated){	// indicate the file has changed if the timestamp has			
+						fileUpdated = timestampChanging;
+					}
+					
+					timestamp = nextTimestamp;
+				}
+			}
+			catch (SystemMessageException e){
+				
+			}
+			
+			return remoteFile;
+		}		
 	}
 
 	/**

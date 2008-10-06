@@ -23,6 +23,7 @@
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
  * Kevin Doyle 		(IBM)		 - [210389] Display error dialog when setting file not read-only fails when saving
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
+ * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -302,12 +303,10 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				}
 
 				// waiting to make sure the file's timestamp is uptodate
-				Thread.sleep(1000);
+				remoteFile = waitForTimestampToBeUpToDate(remoteFile, monitor);
 				
-				// get the remote file object again so that we have a fresh remote timestamp
-				remoteFile.markStale(true);
-				remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 				
+							
 				registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 			
 				long ts = remoteFile.getLastModified();
@@ -373,5 +372,46 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, IProgressMonitor monitor)
+	{
+		IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
+		String path = remoteFile.getAbsolutePath();
+		long originalTimestamp = remoteFile.getLastModified();
+		try {
+			long timestamp = originalTimestamp;
+
+			boolean fileUpdated = false;
+			boolean timestampChanging = true;
+			
+			while (timestampChanging || !fileUpdated){	// wait until the timestamp stops changing AND timestamp did change at least once		
+				try {
+					Thread.sleep(500); // sleep 
+				}
+				catch (InterruptedException e){				
+				}
+			
+				// query the remote file again
+				remoteFile.markStale(true);
+				remoteFile = fs.getRemoteFileObject(path, monitor);
+
+				// what's the timestamp now?
+				long nextTimestamp = remoteFile.getLastModified();		
+
+				timestampChanging = (timestamp != nextTimestamp);
+
+				if (!fileUpdated){	// indicate the file has changed if the timestamp has			
+					fileUpdated = timestampChanging;
+				}
+				
+				timestamp = nextTimestamp;
+			}
+		}
+		catch (SystemMessageException e){
+			
+		}
+		
+		return remoteFile;
 	}
 }

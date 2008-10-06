@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -590,8 +593,16 @@ public class PDOMFile implements IIndexFragmentFile {
 			Database db = pdom.getDB();
 			String raw = db.getString(db.getInt(record + LOCATION_REPRESENTATION)).getString();
 			location= pdom.getLocationConverter().fromInternalFormat(raw);
-			if (location == null)
-				throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toExternalProblem")+raw)); //$NON-NLS-1$
+			if (location == null) {
+				URI uri;
+				try {
+					int idx= raw.lastIndexOf('>');
+					uri= new URI("file", null, raw.substring(idx+1), null); //$NON-NLS-1$
+				} catch (URISyntaxException e) {
+					uri= URI.create("file:/unknown-location"); //$NON-NLS-1$
+				}
+				location= new IndexFileLocation(uri, null);
+			}
 		}
 		return location;
 	}

@@ -769,12 +769,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					continue loop;
 				}
 			}
-            if (isBin) {
-            	// The check for bin has to come before float, otherwise binary integers
-            	// with float components get flagged as BAD_FLOATING_POINT
-            	handleProblem(IProblem.SCANNER_BAD_BINARY_FORMAT, image, number.getOffset(), number.getEndOffset());
-            }
-            else if (isFloat) {
+            if (isFloat) {
             	handleProblem(IProblem.SCANNER_BAD_FLOATING_POINT, image, number.getOffset(), number.getEndOffset());
             }
             else if (isHex) {

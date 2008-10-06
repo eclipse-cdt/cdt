@@ -1356,8 +1356,11 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		initializeScanner(badbinary);
 		fullyTokenize();
 		validateProblemCount(5);
-		for (int i = 0; i < 5; i++) {
-			validateProblem(i, IProblem.SCANNER_BAD_BINARY_FORMAT, null);
+		for (int i = 0; i < 2; i++) {
+			validateProblem(i, IProblem.SCANNER_BAD_DECIMAL_FORMAT, null);
+		}
+		for (int i = 2; i < 5; i++) {
+			validateProblem(i, IProblem.SCANNER_BAD_FLOATING_POINT, null);
 		}
 	}
 }

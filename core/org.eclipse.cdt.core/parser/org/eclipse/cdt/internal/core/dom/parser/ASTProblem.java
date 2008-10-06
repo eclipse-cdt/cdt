@@ -131,8 +131,6 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unboundedString")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SCANNER_BAD_FLOATING_POINT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badFloatingPoint")); //$NON-NLS-1$
-    	errorMessages.put(new Integer(SCANNER_BAD_BINARY_FORMAT), 
-    			ParserMessages.getString("ScannerProblemFactory.error.scanner.badBinaryFormat")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SCANNER_BAD_HEX_FORMAT), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SCANNER_BAD_OCTAL_FORMAT), 

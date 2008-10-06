@@ -364,7 +364,7 @@ class ExpressionEvaluator {
         	}
         }
         if (isBin) {
-        	return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_BINARY_FORMAT);
+        	return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_DECIMAL_FORMAT);
         }
         if (isHex) {
         	return getNumber(image, 2, image.length, 16, IProblem.SCANNER_BAD_HEX_FORMAT);

@@ -34,6 +34,7 @@
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David McKnight (IBM)          - [226324] Default user ID from preferences not inherited
+ * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -50,6 +51,8 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemHostPool;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -689,6 +692,36 @@ public class SystemViewConnectionAdapter
 		return true;
 	}
 	
+	public boolean canDrop(Object element) {
+		if (element instanceof IHost){			
+			return true;
+		}
+		return false;
+	}
+	
+	public Object doDrop(Object from, Object to, boolean sameSystemType,
+			boolean sameSystem, int srcType, IProgressMonitor monitor) {
+		IHost srcHost = (IHost)from;
+		IHost tgtHost = (IHost)to;
+		if (srcHost != null && tgtHost != null && srcHost != tgtHost){
+			ISystemProfile profile = tgtHost.getSystemProfile();
+			ISystemHostPool pool = tgtHost.getHostPool();
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();		
+
+			
+			int tgtPosition = pool.getHostPosition(tgtHost);
+			int srcPosition = pool.getHostPosition(srcHost);
+			
+			int delta = tgtPosition - srcPosition;
+			
+			IHost[] conns = new IHost[1];
+			conns[0] = srcHost;
+			
+			sr.moveHosts(profile.getName(),conns,delta);			
+		}
+		return srcHost;
+	}
+	
 	/**
 	 * Returns the connection (no phyiscal operation required to drag and subsystem (because it's local)
 	 */
@@ -697,7 +730,21 @@ public class SystemViewConnectionAdapter
 		return element;	
 	}
 	
-			
+	
+	/**
+	 * Make sure that the drop of the specified src object is appropriate on target object
+	 */
+	public boolean validateDrop(Object src, Object target, boolean sameSystem)
+	{
+		 if (src instanceof IHost && target instanceof IHost && src != target){
+			// make sure they use the same profile
+			 ISystemProfile p1 = ((IHost)src).getSystemProfile();
+			 ISystemProfile p2 = ((IHost)target).getSystemProfile();
+			 return p1 == p2;
+		 }
+		 return false;
+    }
+	   
 
 	// ------------------------------------------------------------
 	// METHODS FOR SAVING AND RESTORING EXPANSION STATE OF VIEWER...

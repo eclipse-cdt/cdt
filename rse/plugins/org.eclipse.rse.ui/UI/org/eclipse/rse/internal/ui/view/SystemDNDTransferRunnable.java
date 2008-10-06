@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [232889] Dragging and dropping files from a remote unix system to a local project does not work
  * David McKnight   (IBM)        - [234721] [dnd] When dragging a file from windows file explorer into RSE, a refresh error is given.
  * David McKnight   (IBM)        - [248922]  [dnd] Remote to local overwrite copy does not work
+ * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -797,7 +798,10 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 					try
 					{
 						TreeViewer viewer = (TreeViewer) _originatingViewer;
-						viewer.setExpandedState(_target, true);
+						
+						if (!(_target instanceof IHost)){ // not sure when we'd want to expand a host 
+							viewer.setExpandedState(_target, true);
+						}
 					}
 					catch (Exception e)
 					{

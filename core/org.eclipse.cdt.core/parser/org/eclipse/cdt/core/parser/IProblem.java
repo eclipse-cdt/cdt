@@ -25,6 +25,8 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * <li> its ID : an number identifying the very nature of this problem. All possible IDs are listed
  * as constants on this interface. </li>
  * </ul>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblem
 {
@@ -329,6 +331,7 @@ public interface IProblem
 	/** 
 	 * Bad binary encountered by Scanner. 
 	 * Required attributes: none.  
+	 * @since 5.1
 	 */
 	public final static int SCANNER_BAD_BINARY_FORMAT = SCANNER_RELATED | 0x00F;
 

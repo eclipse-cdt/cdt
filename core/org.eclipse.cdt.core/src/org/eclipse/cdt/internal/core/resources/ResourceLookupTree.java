@@ -670,13 +670,17 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		while(suffix.startsWith("../")) { //$NON-NLS-1$
 			suffix= suffix.substring(3);
 		}
-		return extractMatchesForName(candidates, name, suffix, ignoreCase);
+		Set<String> prjset= new HashSet<String>();
+		for (IProject prj : projects) {
+			prjset.add(prj.getName());
+		}
+		return extractMatchesForName(candidates, name, suffix, ignoreCase, prjset);
 	}
 	
 	/**
 	 * Selects the actual matches for the list of candidate nodes.
 	 */
-	private IFile[] extractMatchesForName(Node[] candidates, String name, String suffix, boolean ignoreCase) {
+	private IFile[] extractMatchesForName(Node[] candidates, String name, String suffix, boolean ignoreCase, Set<String> prjSet) {
 		final char[] n1= name.toCharArray();
 		final int namelen = n1.length;
 		int resultIdx= 0;
@@ -691,7 +695,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		IFile[] result= null;
 		outer: for (int i = 0; i < candidates.length; i++) {
 			final Node node = candidates[i];
-			if (!node.fIsFolder) {
+			if (!node.fIsFolder && checkProject(node, prjSet)) {
 				final char[] n2= node.fResourceName;
 				if (namelen == n2.length) {
 					for (int j = 0; j < n2.length; j++) {
@@ -723,6 +727,18 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			return copy;
 		}
 		return result;
+	}
+
+	private boolean checkProject(Node node, Set<String> prjSet) {
+		while(true) {
+			final Node n= node.fParent;
+			if (n == fRootNode)
+				break;
+			if (n == null)
+				return false;
+			node= n;
+		}
+		return prjSet.contains(new String(node.fResourceName));
 	}
 
 	private IPath createPath(Node node) {

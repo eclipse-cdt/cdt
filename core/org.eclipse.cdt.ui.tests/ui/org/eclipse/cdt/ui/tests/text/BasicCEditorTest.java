@@ -16,8 +16,11 @@ import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -31,7 +34,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -114,6 +120,19 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	private void setUpEditor(File file) throws PartInitException, CModelException {
 		IEditorPart editor= EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, file.toURI(), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
+		assertNotNull(editor);
+		assertTrue(editor instanceof CEditor);
+		fEditor= (CEditor) editor;
+		fTextWidget= fEditor.getViewer().getTextWidget();
+		assertNotNull(fTextWidget);
+		fAccessor= new Accessor(fTextWidget, StyledText.class);
+		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		assertNotNull(fDocument);
+	}
+
+	private void setUpEditorUsingFileStore(File file) throws CoreException {
+		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IEditorPart editor= IDE.openEditorOnFileStore(activePage, EFS.getStore(URIUtil.toURI(file.getAbsolutePath())));
 		assertNotNull(editor);
 		assertTrue(editor instanceof CEditor);
 		fEditor= (CEditor) editor;
@@ -270,6 +289,47 @@ public class BasicCEditorTest extends BaseUITestCase {
 		tmpFile.deleteOnExit();
 		FileTool.copy(mainFile.getLocation().toFile(), tmpFile);
 		setUpEditor(tmpFile);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		String content= fDocument.get();
+		setCaret(0);
+		String newtext= "/* "+getName()+" */";
+		type(newtext);
+		type('\n');
+		String newContent= fDocument.get();
+		assertEquals("Edit failed", newtext, newContent.substring(0, newtext.length()));
+		// save
+		fEditor.doSave(new NullProgressMonitor());
+		assertFalse("Editor is still dirty", fEditor.isDirty());
+		// close and reopen
+		EditorTestHelper.closeEditor(fEditor);
+		setUpEditor(tmpFile);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		content= fDocument.get();
+		assertEquals("Save failed", newContent, content);
+		// check reconciler
+		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ICElement[] children= tUnit.getChildren();
+		assertEquals(2, children.length);
+		setCaret(content.length());
+		type('\n');
+		type("void func() {}\n");
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		children= tUnit.getChildren();
+		assertEquals(3, children.length);
+		tmpFile.delete();
+	}
+
+	public void testEditExternalTranslationUnitUsingFileStore() throws Exception {
+		final String file= "/ceditor/src/main.cpp";
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
+		IFile mainFile= ResourceTestHelper.findFile(file);
+		assertNotNull(mainFile);
+		File tmpFile= File.createTempFile("tmp", ".cpp");
+		tmpFile.deleteOnExit();
+		FileTool.copy(mainFile.getLocation().toFile(), tmpFile);
+		setUpEditorUsingFileStore(tmpFile);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		String content= fDocument.get();

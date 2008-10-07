@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.editors.text.ILocationProviderExtension;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IMarkerUpdater;
@@ -830,7 +832,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable)element;
 			ILocationProvider locationProvider= (ILocationProvider)adaptable.getAdapter(ILocationProvider.class);
-			if (locationProvider != null) {
+			if (locationProvider instanceof ILocationProviderExtension) {
+				URI uri= ((ILocationProviderExtension)locationProvider).getURI(element);
+				original= createTranslationUnit(uri);
+			}
+			if (original == null && locationProvider != null) {
 				IPath location= locationProvider.getPath(element);
 				original= createTranslationUnit(location);
 			}
@@ -883,6 +889,22 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			return null;
 		}
 		IEditorInput input= EditorUtility.getEditorInputForLocation(location, null);
+		if (input instanceof ITranslationUnitEditorInput) {
+			return ((ITranslationUnitEditorInput)input).getTranslationUnit();
+		}
+		return null;
+	}
+
+	/**
+	 * Try to synthesize an ITranslationUnit out of thin air.
+	 * @param uri  the URU of the file in question
+	 * @return a translation unit or <code>null</code>
+	 */
+	private ITranslationUnit createTranslationUnit(URI uri) {
+		if (uri == null) {
+			return null;
+		}
+		IEditorInput input= EditorUtility.getEditorInputForLocation(uri, null);
 		if (input instanceof ITranslationUnitEditorInput) {
 			return ((ITranslationUnitEditorInput)input).getTranslationUnit();
 		}

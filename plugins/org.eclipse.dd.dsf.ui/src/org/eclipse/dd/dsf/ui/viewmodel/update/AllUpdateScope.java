@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel.update;
 
-import org.eclipse.jface.viewers.TreePath;
 
 /**
  * An "automatic" update policy which causes the view model provider cache to 
@@ -22,21 +21,6 @@ import org.eclipse.jface.viewers.TreePath;
 public class AllUpdateScope implements IVMUpdateScope {
 
     public static String ALL_UPDATE_SCOPE_ID = "org.eclipse.dd.dsf.ui.viewmodel.update.allUpdateScope";  //$NON-NLS-1$
-    
-    public static IElementUpdateTester fgUpdateTester = new IElementUpdateTester() {
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
-           return 0;
-        }  
-        
-        public boolean includes(IElementUpdateTester tester) {
-            return tester.equals(this);
-        }
-
-        @Override
-        public String toString() {
-            return ViewModelUpdateMessages.AllUpdateScope_name;
-        }
-    };
     
     public String getID() {
         return ALL_UPDATE_SCOPE_ID;

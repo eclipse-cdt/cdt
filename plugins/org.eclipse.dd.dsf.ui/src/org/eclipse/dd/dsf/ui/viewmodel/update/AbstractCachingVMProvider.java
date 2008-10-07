@@ -730,16 +730,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             IVMModelProxyExtension proxyStrategyExtension = (IVMModelProxyExtension)proxyStrategy;
             if(fDelayEventHandleForViewUpdate) {
     	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, new RequestMonitor(getExecutor(), null) {
-    	        		@Override
-    	        		protected void handleCompleted() {
-    	        			AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, rm);
-    	        		}
-    	        	});
-					handler.startUpdate();
+    	            CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
+    	            countingRm.setDoneCount(2);
+  	        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategyExtension, getPresentationContext(), this, countingRm).
+  	        	        startUpdate();
+                    AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, countingRm);
     	        } else {
-    	        	// block updating only the viewport
+                    // block updating only the viewport
+                    CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
+                    countingRm.setDoneCount(2);
     	        	
     	        	TreeViewer viewer = (TreeViewer) proxyStrategyExtension.getViewer();
     	        	Tree tree = viewer.getTree();
@@ -749,14 +748,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     	        	int index = computeTreeIndex(topItem);
     	        	
     	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, new RequestMonitor(getExecutor(), null) {
-    	        		@Override
-    	        		protected void handleCompleted() {
-    	        			AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, rm);
-    	        		}
-    	        	});
+    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, countingRm);
     	        	handler.setRange(index, index + count);
 					handler.startUpdate();
+                    AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, countingRm);
     	        }
             } else {
             	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID))

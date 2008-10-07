@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
 package org.eclipse.cdt.internal.ui.util;
 
 
+import java.net.URI;
+
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.ILocationProvider;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.resources.EFSFileStorage;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
@@ -171,6 +175,20 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	 */
 	public void saveState(IMemento memento) {
 		ExternalEditorInputFactory.saveState(memento, this);
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.ILocationProviderExtension#getURI(java.lang.Object)
+	 */
+	public URI getURI(Object element) {
+		if (externalFile instanceof EFSFileStorage) {
+			return ((EFSFileStorage) externalFile).getLocationURI();
+		}
+		IPath location = getPath(element);
+		if (location != null) {
+			return URIUtil.toURI(location);
+		}
+		return null;
 	}
 	
 }

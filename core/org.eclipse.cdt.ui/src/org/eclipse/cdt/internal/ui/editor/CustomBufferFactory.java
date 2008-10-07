@@ -17,8 +17,6 @@ import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -51,12 +49,6 @@ public class CustomBufferFactory implements IBufferFactory {
 				IFile fFile = (IFile)resource;
 				DocumentAdapter adapter= new DocumentAdapter(owner, fFile);
 				return adapter;
-			}
-
-			// external file
-			IPath location= original.getLocation();
-			if (location != null) {
-				return new DocumentAdapter(owner, location);
 			}
 
 			// URI

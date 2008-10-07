@@ -137,9 +137,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		// Remove event listener
     	getSession().removeServiceEventListener(this);
 
-    	// Clear the cache
-    	fMemoryCache.reset();
-
     	// Complete the shutdown
         super.shutdown(requestMonitor);
     }
@@ -285,10 +282,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	public void eventDispatched(IResumedDMEvent e) {
     	if (e instanceof IContainerResumedDMEvent) {
     		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
-    		if (e.getReason() != StateChangeReason.STEP) {
-    			fMemoryCache.reset();
-    		}
     	}
+    	
+   		if (e.getReason() != StateChangeReason.STEP) {
+   			fMemoryCache.reset();
+   		}
 	}
    
     /**
@@ -299,8 +297,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	public void eventDispatched(ISuspendedDMEvent e) {
     	if (e instanceof IContainerSuspendedDMEvent) {
     		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
-    		fMemoryCache.reset();
     	}
+   		fMemoryCache.reset();
 	}
 
     /**
@@ -796,7 +794,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	   {
 		   // Check if we already cache part of this memory area (which means it
 		   // is used by a memory service client that will have to be updated)
-		   LinkedList<MemoryBlock> list = fMemoryCache.getListOfMissingBlocks(address, count);
+		   LinkedList<MemoryBlock> list = getListOfMissingBlocks(address, count);
 		   int sizeToRead = 0;
 		   for (MemoryBlock block : list) {
 			   sizeToRead += block.fLength;
@@ -815,12 +813,12 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		   }
 
 		   // Read the corresponding memory block
-		   fMemoryCache.fCommandCache.reset();
-		   fMemoryCache.readMemoryBlock(memoryDMC, address, 0, 1, count,
+		   fCommandCache.reset();
+		   readMemoryBlock(memoryDMC, address, 0, 1, count,
 				   new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) {
 					   @Override
 					   protected void handleSuccess() {
-						   MemoryByte[] oldBlock = fMemoryCache.getMemoryBlockFromCache(address, count);
+						   MemoryByte[] oldBlock = getMemoryBlockFromCache(address, count);
 						   MemoryByte[] newBlock = getData();
 						   boolean blocksDiffer = false;
 						   for (int i = 0; i < oldBlock.length; i++) {
@@ -830,7 +828,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						       }
 						   }
 						   if (blocksDiffer) {
-						      fMemoryCache.updateMemoryCache(address, count, newBlock);
+						      updateMemoryCache(address, count, newBlock);
 						      getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
 						      }
 						   rm.done();

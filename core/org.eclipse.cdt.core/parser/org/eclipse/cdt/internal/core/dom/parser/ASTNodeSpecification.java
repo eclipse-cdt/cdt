@@ -201,10 +201,36 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	public IASTPreprocessorMacroExpansion findLeadingMacroExpansion(ASTNodeSelector nodeSelector) {
-		return nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
+		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
+		if (fRelation == Relation.ENCLOSING)
+			return exp;
+		
+		if (exp != null) {
+			IASTFileLocation loc= exp.getFileLocation();
+			if (loc != null) {
+				final int offset= loc.getNodeOffset();
+				final int endOffset= offset+loc.getNodeLength();
+				if (offset == fFileOffset && endOffset <= fFileEndOffset)
+					return exp;
+			}
+		}
+		return null;
 	}
 
 	public IASTPreprocessorMacroExpansion findTrailingMacroExpansion(ASTNodeSelector nodeSelector) {
-		return nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
+		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fFileEndOffset==fFileOffset && !fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
+		if (fRelation == Relation.ENCLOSING)
+			return exp;
+		
+		if (exp != null) {
+			IASTFileLocation loc= exp.getFileLocation();
+			if (loc != null) {
+				final int offset= loc.getNodeOffset();
+				final int endOffset= offset+loc.getNodeLength();
+				if (endOffset == fFileEndOffset && offset >= fFileOffset)
+					return exp;
+			}
+		}
+		return null;
 	}
 }

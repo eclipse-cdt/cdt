@@ -1,4 +1,4 @@
-<project default="build">
+<project default="nightly">
 
 	<target name="hi">
 		<echo message="${eclipse.home}"/>

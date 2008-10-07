@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -45,10 +46,15 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		return false;
 	}
 
+	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, Class<T> requiredClass) {
+		return findNode(offsetInFile, lengthInFile, relation, requiredClass, false);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
 	 */
-	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, Class<T> requiredClass) {
+	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation, 
+			Class<T> requiredClass, boolean searchInExpansion) {
 		if (!fIsValid) {
 			return null;
 		}
@@ -79,10 +85,11 @@ public class ASTNodeSelector implements IASTNodeSelector {
 			}
 		}
 		final ASTNodeSpecification<T> nodeSpec= new ASTNodeSpecification<T>(relation, requiredClass, offsetInFile, lengthInFile);
-		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength);
+		nodeSpec.setRangeInSequence(sequenceNumber, sequenceLength, false);
+		nodeSpec.setSearchInExpansion(searchInExpansion);
     	getNode(nodeSpec);
     	if (altSequenceNumber != -1) {
-    		nodeSpec.setRangeInSequence(altSequenceNumber, sequenceLength);
+    		nodeSpec.setRangeInSequence(altSequenceNumber, sequenceLength, true);
         	getNode(nodeSpec);
     	}
     	return nodeSpec.getBestNode();
@@ -91,6 +98,21 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	private <T extends IASTNode> T getNode(ASTNodeSpecification<T> nodeSpec) {
 		fLocationResolver.findPreprocessorNode(nodeSpec);
     	if (!nodeSpec.requiresClass(IASTPreprocessorMacroExpansion.class)) {
+    		// adjust sequence number for search in the expansion of macros
+    		int seqbegin= nodeSpec.getSequenceStart();
+    		int seqend= nodeSpec.getSequenceEnd();
+    		IASTPreprocessorMacroExpansion expansion= nodeSpec.findLeadingMacroExpansion(this);
+    		if (expansion != null) {
+    			IASTFileLocation floc= expansion.getFileLocation();
+    			seqbegin= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength()-1)+1;
+    		}
+    		expansion= nodeSpec.findTrailingMacroExpansion(this);
+    		if (expansion != null) {
+    			IASTFileLocation floc= expansion.getFileLocation();
+    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength())-1;
+    		}
+    		nodeSpec.setRangeInSequence(seqbegin, seqend-seqbegin);
+    		
     		FindNodeForOffsetAction nodeFinder= new FindNodeForOffsetAction(nodeSpec);
     		fTu.accept(nodeFinder);
     	}
@@ -117,7 +139,28 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	public IASTNode findEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
+	 */
+	public IASTNode findFirstContainedNodeInExpansion(int offset, int length) {
+		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
+	 */
+	public IASTNode findNodeInExpansion(int offset, int length) {
+		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
+	 */
+	public IASTNode findEnclosingNodeInExpansion(int offset, int length) {
+		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class, true);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
 	 */

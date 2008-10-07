@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * for one file contained in a translation-unit, can be obtained using 
  * {@link IASTTranslationUnit#getNodeSelector(String)}.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.0
  */
 public interface IASTNodeSelector {
@@ -59,6 +60,33 @@ public interface IASTNodeSelector {
 	 */
 	IASTNode findFirstContainedNode(int offset, int length);
 	
+	/**
+	 * Returns the node for the exact given range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or the name for
+	 * an expansion. Rather than that the expansion itself is searched for a matching node.
+	 * @since 5.1
+	 */
+	IASTNode findNodeInExpansion(int offset, int length);
+
+	/**
+	 * Returns the smallest node enclosing the range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or the name for
+	 * an expansion. Rather than that the expansion itself is searched for a matching node.
+	 * @since 5.1
+	 */
+	IASTNode findEnclosingNodeInExpansion(int offset, int length);
+
+	/**
+	 * Returns the first node contained in the given expansion, or <code>null</code> if there is no such node.
+	 * <p>
+	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or the name for
+	 * an expansion. Rather than that the expansion itself is searched for a matching node.
+	 * @since 5.1
+	 */
+	IASTNode findFirstContainedNodeInExpansion(int offset, int length);
+
 	/**
 	 * Returns a macro expansion enclosing the given range, or <code>null</code>.
 	 */

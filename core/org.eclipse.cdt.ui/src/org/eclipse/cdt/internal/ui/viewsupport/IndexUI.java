@@ -32,8 +32,17 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -70,6 +79,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -386,7 +396,34 @@ public class IndexUI {
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast != null) {
-					result[0]= ast.getNodeSelector(null).findEnclosingName(offset, length);
+					final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+					IASTName name= nodeSelector.findEnclosingName(offset, length);
+					if (name != null && name.getParent() instanceof IASTPreprocessorMacroExpansion) {
+						IASTFileLocation floc= name.getParent().getFileLocation();
+						IASTNode node= nodeSelector.findEnclosingNodeInExpansion(floc.getNodeOffset(), floc.getNodeLength());
+						if (node instanceof IASTName) {
+							name= (IASTName) node;
+						} else if (node instanceof IASTFunctionCallExpression){
+							IASTExpression expr= ((IASTFunctionCallExpression) node).getFunctionNameExpression();
+							if (expr instanceof IASTIdExpression) {
+								name= ((IASTIdExpression) expr).getName();
+							}
+						} else {
+							if (node instanceof IASTSimpleDeclaration) {
+								IASTNode[] dtors= ((IASTSimpleDeclaration) node).getDeclarators();
+								if (dtors != null && dtors.length > 0) {
+									node= dtors[0];
+								}
+							} else if (node instanceof IASTFunctionDefinition) {
+								node= ((IASTFunctionDefinition) node).getDeclarator();
+							}
+							if (node instanceof IASTDeclarator) {
+								IASTDeclarator dtor= CPPVisitor.findTypeRelevantDeclarator((IASTDeclarator) node);
+								name= dtor.getName();
+							}
+						}
+					}
+					result[0]= name;
 				}
 				return Status.OK_STATUS;
 			}

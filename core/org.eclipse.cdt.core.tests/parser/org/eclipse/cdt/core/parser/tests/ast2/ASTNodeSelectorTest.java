@@ -427,4 +427,12 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		testContainedNode(x1-1, x1+2, "O");
 	}
 	
+	// #define MACRO void m
+	// MACRO();
+	public void testEnclosingAMacro() {
+		int x1= fCode.indexOf("MACRO(");
+		int x2= x1 + "MACRO(".length();
+		testContainedName(x1, x2, "MACRO");
+		testEnclosingNode(x1, x2, "MACRO();");
+	}
 }

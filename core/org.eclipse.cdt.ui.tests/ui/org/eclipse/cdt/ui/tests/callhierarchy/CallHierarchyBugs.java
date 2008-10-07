@@ -337,4 +337,34 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 
 	}
 
+	//	#define MACRO(name) void PREFIX_ ## name(char *a , char *b)
+	//	#define CALL(x) call(x)
+	//
+	//	void call(int);
+	//	MACRO(Test) {
+	//		CALL(0);
+	//	}
+	public void testMacrosHidingCall_249801() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "file249801.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+
+		// open editor, check outline
+		CEditor editor= openEditor(file);
+		int idx = content.indexOf("MACRO(Test");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, false);
+
+		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *)").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int)");
+
+		idx = content.indexOf("CALL(0");
+		editor.selectAndReveal(idx+4, 0);
+		openCallHierarchy(editor, true);
+		chTree= checkTreeNode(ch, 0, "call(int)").getParent();
+		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *)");
+	}
 }

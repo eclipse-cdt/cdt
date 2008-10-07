@@ -285,7 +285,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
        						update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
        					}
 
-       					if ( ( extractingFormattedDataIndex == -1 ) && ( extractingAddressDataIndex == 1 ) ) {
+       					if ( ( extractingFormattedDataIndex == -1 ) && ( extractingAddressDataIndex == -1 ) ) {
        						update.done();
        					} else {
        						/*

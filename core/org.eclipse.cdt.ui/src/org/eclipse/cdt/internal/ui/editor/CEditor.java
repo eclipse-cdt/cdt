@@ -2438,7 +2438,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			return;
 		}
 
-		if (selection.getLength() < 0)
+		if (selection.getLength() > 0)
 			targetOffset -= selection.getLength();
 
 		sourceViewer.setSelectedRange(targetOffset, selection.getLength());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public boolean doesIncludeFileExist(String includePath) {
-		return new File(includePath).exists();
+		return new File(includePath).isFile();
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 			} catch (IOException e) {
 				// use the original
 			}
-			//Standalone indexing stores the absolute paths of files being indexed
+			//Stand-alone indexing stores the absolute paths of files being indexed
 			result = new IndexFileLocation(URIUtil.toURI(includePath),includePath);
 			fIflCache.put(includePath, result);
 		}

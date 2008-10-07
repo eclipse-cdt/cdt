@@ -1399,4 +1399,28 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	
+	// #include "dir"
+	// #include "header.h"
+	public void testIncludsionOfFolders_Bug243682() throws Exception {
+		String contents= getContentsForTest(1)[0];
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile sol= TestSourceReader.createFile(fCProject.getProject(), "f1/header.h", "");
+		TestSourceReader.createFile(fCProject.getProject(), "dir/dummy.h", "");
+		TestSourceReader.createFile(fCProject.getProject(), "header.h/dummy.h", "");
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f1));
+			IIndexInclude[] is= f.getIncludes();
+			assertFalse(is[0].isResolved());
+			assertTrue(is[1].isResolvedByHeuristics());
+			assertEquals(sol.getFullPath().toString(), is[1].getIncludesLocation().getFullPath());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}	
 }

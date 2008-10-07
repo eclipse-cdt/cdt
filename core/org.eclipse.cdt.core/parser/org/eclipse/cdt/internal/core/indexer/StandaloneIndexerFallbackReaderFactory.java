@@ -34,7 +34,7 @@ public class StandaloneIndexerFallbackReaderFactory implements ICodeReaderFactor
 
 	public CodeReader createCodeReaderForInclusion(String path) {
 		try {
-			if (!new File(path).exists())
+			if (!new File(path).isFile())
 				return null;
 			return new CodeReader(path);
 		} catch (IOException e) {
@@ -44,7 +44,7 @@ public class StandaloneIndexerFallbackReaderFactory implements ICodeReaderFactor
 
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		try {
-			if (!new File(path).exists())
+			if (!new File(path).isFile())
 				return null;
 			return new CodeReader(path);
 		} catch (IOException e) {

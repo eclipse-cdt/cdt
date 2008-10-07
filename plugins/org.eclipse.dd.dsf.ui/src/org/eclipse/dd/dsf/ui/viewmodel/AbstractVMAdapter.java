@@ -247,6 +247,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 					}});
 			}
             crm.setDoneCount(count);
+		} else {
+		    doneHandleEvent(event);
 		}
 	}
 

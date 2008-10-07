@@ -137,7 +137,8 @@ class LocationCtxContainer extends LocationCtx {
 						addFileLocation(offset, endSequenceNumber-sequenceNumber, locations);
 						return true;
 					}
-					addFileLocation(offset, child.fOffsetInParent-offset, locations);
+					if (offset < child.fOffsetInParent)
+						addFileLocation(offset, child.fOffsetInParent-offset, locations);
 					sequenceNumber= child.fSequenceNumber;
 				}
 

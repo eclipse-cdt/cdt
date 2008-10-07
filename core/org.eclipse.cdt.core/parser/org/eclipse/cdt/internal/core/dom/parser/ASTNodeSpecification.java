@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 
 /**
  * For searching ast-nodes by offset and length, instances of this class can be used to 
@@ -32,6 +34,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	private int fBestOffset;
 	private int fBestEndOffset;
 	private T fBestNode;
+	private boolean fSearchInExpansion;
+	private boolean fZeroToLeft= false;
 	
 	public ASTNodeSpecification(Relation relation, Class<T> clazz, int fileOffset, int fileLength) {
 		fRelation= relation;
@@ -39,12 +43,21 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		fFileOffset= fileOffset;
 		fFileEndOffset= fileOffset+fileLength;
 	}
-	
+
 	public void setRangeInSequence(int offsetInSeq, int lengthInSeq) {
 		fSeqNumber= offsetInSeq;
 		fSeqEndNumber= offsetInSeq+lengthInSeq;
 	}
+
+	public void setRangeInSequence(int offsetInSeq, int lengthInSeq, boolean zeroRangeToLeft) {
+		setRangeInSequence(offsetInSeq, lengthInSeq);
+		fZeroToLeft= zeroRangeToLeft;
+	}
 	
+	public void setSearchInExpansion(boolean searchInExpansion) {
+		fSearchInExpansion= searchInExpansion;
+	}
+
 	public Relation getRelationToSelection() {
 		return fRelation;
 	}
@@ -99,7 +112,16 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	public boolean isAcceptableNode(IASTNode astNode) {
-		return astNode != null && fClass.isAssignableFrom(astNode.getClass());
+		if (astNode == null || !fClass.isAssignableFrom(astNode.getClass())) 
+			return false;
+		
+		if (fSearchInExpansion) {
+			IASTNode check= astNode instanceof IASTName ? astNode.getParent() : astNode;
+			if (check instanceof IASTPreprocessorMacroExpansion) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -176,5 +198,13 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			cand2= cand2.getParent();
 		}
 		return false;
+	}
+
+	public IASTPreprocessorMacroExpansion findLeadingMacroExpansion(ASTNodeSelector nodeSelector) {
+		return nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
+	}
+
+	public IASTPreprocessorMacroExpansion findTrailingMacroExpansion(ASTNodeSelector nodeSelector) {
+		return nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
 	}
 }

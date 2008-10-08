@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -33,7 +34,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @see CTypeHover
  * @since 5.0
  */
-public class CInformationProvider implements IInformationProvider, IInformationProviderExtension2 {
+public class CInformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
 
 	/**
 	 * Default control creator.
@@ -124,6 +125,9 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
+		if (fImplementation != null) {
+			return ((IInformationProviderExtension2) fImplementation).getInformationPresenterControlCreator();
+		}
 		if (fPresenterControlCreator == null)
 			fPresenterControlCreator= new ControlCreator();
 		return fPresenterControlCreator;

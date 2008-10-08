@@ -16,7 +16,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextViewer;
-
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
  * Aggregator of problem and doc hovers.
  * @since 5.0
  */
-public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
+public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
 	private AbstractCEditorTextHover fProblemHover;
 	private AbstractCEditorTextHover fCDocHover;
 
@@ -57,7 +57,11 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		return String.valueOf(getHoverInfo2(textViewer, hoverRegion));
+		Object info= getHoverInfo2(textViewer, hoverRegion);
+		if (info != null) {
+			return String.valueOf(info);
+		}
+		return null;
 	}
 
 	/*

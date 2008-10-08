@@ -175,7 +175,16 @@ public class SelectionListenerWithASTManager {
 							listeners= fAstListeners.getListeners();
 						}
 						for (int i= 0; i < listeners.length; i++) {
-							((ISelectionListenerWithAST) listeners[i]).selectionChanged(fPart, selection, astRoot);
+							final Object l = listeners[i];
+							try {
+								((ISelectionListenerWithAST) l).selectionChanged(fPart, selection, astRoot);
+							} catch (RuntimeException e) {
+								CUIPlugin.log(e);
+								fAstListeners.remove(l);
+							} catch (OutOfMemoryError e) {
+								CUIPlugin.log(e);
+								fAstListeners.remove(l);
+							}
 						}
 						return Status.OK_STATUS;
 					}

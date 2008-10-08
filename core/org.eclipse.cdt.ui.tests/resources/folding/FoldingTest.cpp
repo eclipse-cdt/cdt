@@ -72,7 +72,7 @@ int
 main(int argc,
      char *argv[])
 {
-int MyI = 0,j = 0;
+	int MyI = 0,j = 0;
 	if (0==0) {
 		puts("Wow ");
 	} else {
@@ -109,3 +109,20 @@ enum E {
     e2,
     e3
 };
+
+// http://bugs.eclipse.org/248613
+jungle::Monkey_ptr
+jungle::MonkeyImpl::
+Initialize()
+{
+}
+// http://bugs.eclipse.org/248716
+void foo() {
+	if (1
+			&& 2)
+	{
+	} else if (3
+			|| 4)
+	{
+	}
+}

@@ -109,7 +109,7 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvider {
 
 	/**
-	 * A visitor to collect compund statement positions.
+	 * A visitor to collect compound statement positions.
 	 *
 	 * @since 5.0
 	 */
@@ -140,25 +140,31 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					fl = ifstmt.getFileLocation();
 					if (fl==null) return PROCESS_CONTINUE;
 					int ifOffset= fl.getNodeOffset();
-					IASTStatement tmp;
+					IASTStatement thenStmt;
 					mr = createRegion();
-					tmp = ifstmt.getThenClause();
-					if (tmp==null) return PROCESS_CONTINUE;
-					fl = tmp.getFileLocation();
+					thenStmt = ifstmt.getThenClause();
+					if (thenStmt==null) return PROCESS_CONTINUE;
+					fl = thenStmt.getFileLocation();
 					mr.setLength(fl.getNodeOffset() + fl.getNodeLength() - ifOffset);
 					mr.setOffset(ifOffset);
-					mr.inclusive = !(tmp instanceof IASTCompoundStatement);
-					tmp = ifstmt.getElseClause();
-					if (tmp==null || tmp instanceof IASTIfStatement) {
+					mr.inclusive = !(thenStmt instanceof IASTCompoundStatement);
+					IASTStatement elseStmt;
+					elseStmt = ifstmt.getElseClause();
+					if (elseStmt == null) {
 						mr.inclusive = true;
+						fStatements.push(mr);
+						return PROCESS_CONTINUE;
+					}
+					IASTFileLocation elseStmtLocation = elseStmt.getFileLocation();
+					mr.inclusive = mr.inclusive || fl.getEndingLineNumber() < elseStmtLocation.getStartingLineNumber();
+					if (elseStmt instanceof IASTIfStatement) {
 						fStatements.push(mr);
 						return PROCESS_CONTINUE;
 					}
 					fStatements.push(mr);
 					mr = createRegion();
-					fl = tmp.getFileLocation();
-					mr.setLength(fl.getNodeLength());
-					mr.setOffset(fl.getNodeOffset());
+					mr.setLength(elseStmtLocation.getNodeLength());
+					mr.setOffset(elseStmtLocation.getNodeOffset());
 					mr.inclusive = true;
 					fStatements.push(mr);
 					return PROCESS_CONTINUE;
@@ -658,7 +664,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
-			int nameStart= offset;
+			int captionOffset= offset;
 			try {
 				/* The member's name range may not be correct. However,
 				 * reconciling would trigger another element delta which would
@@ -668,7 +674,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (fElement instanceof ISourceReference) {
 					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
 					if (sourceRange != null) {
-						nameStart= sourceRange.getIdStartPos();
+						// Use end of name range for the caption offset
+						// in case a qualified name is split on multiple lines (bug 248613).
+						captionOffset= sourceRange.getIdStartPos() + sourceRange.getIdLength() - 1;
 					}
 				}
 			} catch (CModelException e) {
@@ -676,7 +684,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 
 			int firstLine= document.getLineOfOffset(offset);
-			int captionLine= document.getLineOfOffset(nameStart);
+			int captionLine= document.getLineOfOffset(captionOffset);
 			int lastLine= document.getLineOfOffset(offset + length);
 
 			/* see comment above - adjust the caption line to be inside the
@@ -717,15 +725,15 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
 		public int computeCaptionOffset(IDocument document) throws BadLocationException {
-			int nameStart= offset;
+			int captionOffset= offset;
 			try {
 				// need a reconcile here?
 				if (fElement instanceof ISourceReference) {
 					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
 					if (sourceRange != null) {
-						nameStart= sourceRange.getIdStartPos();
-						if (nameStart < offset) {
-							nameStart= offset;
+						captionOffset= sourceRange.getIdStartPos() + sourceRange.getIdLength() - 1;
+						if (captionOffset < offset) {
+							captionOffset= offset;
 						}
 					}
 				}
@@ -733,7 +741,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				// ignore and use default
 			}
 
-			return nameStart - offset;
+			return captionOffset - offset;
 		}
 
 	}

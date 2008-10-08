@@ -75,6 +75,7 @@ public class FoldingTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
@@ -91,6 +92,7 @@ public class FoldingTest extends TestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 300));
 	}
 
+	@Override
 	protected void tearDown () throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 		
@@ -180,7 +182,7 @@ public class FoldingTest extends TestCase {
 		ProjectionAnnotationModel model= (ProjectionAnnotationModel)fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		for (Iterator<Annotation> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
-			Annotation ann= (Annotation)iter.next();
+			Annotation ann= iter.next();
 			Position pos= model.getPosition(ann);
 			positions.add(pos);
 		}
@@ -227,6 +229,10 @@ public class FoldingTest extends TestCase {
 				createPosition(95, 97),
 				createPosition(99, 102),
 				createPosition(106, 110),
+				createPosition(113, 117, 115),
+				createPosition(119, 127),
+				createPosition(120, 122),
+				createPosition(123, 126),
 		};
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
@@ -262,6 +268,10 @@ public class FoldingTest extends TestCase {
 				createPosition(95, 97),
 				createPosition(99, 102),
 				createPosition(106, 110),
+				createPosition(113, 117, 115),
+				createPosition(119, 127),
+				createPosition(120, 122),
+				createPosition(123, 126),
 		};
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
@@ -288,6 +298,8 @@ public class FoldingTest extends TestCase {
 				createPosition(65, 67),
 				createPosition(70, 104, 71),
 				createPosition(106, 110),
+				createPosition(113, 117, 115),
+				createPosition(119, 127),
 			};
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);

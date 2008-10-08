@@ -10,7 +10,7 @@
  *     Ericsson	AB		  - Modified for handling of multiple threads
  *******************************************************************************/
 
-package org.eclipse.dd.mi.service;
+package org.eclipse.dd.gdb.internal.provisional.service;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -35,7 +35,11 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandC
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.mi.internal.MIPlugin;
+import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.mi.service.IMIExecutionDMContext;
+import org.eclipse.dd.mi.service.IMIProcesses;
+import org.eclipse.dd.mi.service.MIRunControl;
+import org.eclipse.dd.mi.service.MIStack;
 import org.eclipse.dd.mi.service.command.commands.MIExecContinue;
 import org.eclipse.dd.mi.service.command.commands.MIExecFinish;
 import org.eclipse.dd.mi.service.command.commands.MIExecInterrupt;
@@ -71,7 +75,7 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class MIRunControlNS extends AbstractDsfService implements IRunControl, ICachingService
+public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunControl, ICachingService
 {
 	@Immutable
 	private static class ExecutionData implements IExecutionDMData {
@@ -203,7 +207,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
 
-	public MIRunControlNS(DsfSession session) {
+	public GDBRunControl_7_0_NS(DsfSession session) {
 		super(session);
 	}
 
@@ -237,7 +241,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 	@Override
 	protected BundleContext getBundleContext() {
-		return MIPlugin.getBundleContext();
+		return GdbPlugin.getBundleContext();
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -249,7 +253,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		if (dmc instanceof IExecutionDMContext) {
 			getExecutionData((IExecutionDMContext) dmc, (DataRequestMonitor<IExecutionDMData>) rm);
 		} else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
 			rm.done();
 		}
 	}
@@ -336,14 +340,14 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 
 		// Default case
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
 	private void doSuspendThread(IMIExecutionDMContext context, final RequestMonitor rm) {
 
 		if (!doCanSuspend(context)) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -385,7 +389,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 
 		// Default case
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
@@ -413,14 +417,14 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		}
 
 		// Default case
-		rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
 		rm.done();
 	}
 
 	private void doResumeThread(IMIExecutionDMContext context, final RequestMonitor rm) {
 
 		if (!doCanResume(context)) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -428,7 +432,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 		MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -479,14 +483,14 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
 
 		if (!doCanResume(context)) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Cannot resume context", null)); //$NON-NLS-1$
 			rm.done();
 			return;
@@ -494,7 +498,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 		MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -525,7 +529,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 				fConnection.queueCommand(new MIExecFinish(topFrameDmc),
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			} else {
-				rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED,
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 						"Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
 				rm.done();
 			}
@@ -539,7 +543,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			break;
 		default:
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 					INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
 			rm.done();
 		}
@@ -557,14 +561,14 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, NOT_SUPPORTED,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
 
 		if (!doCanResume(context)) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Cannot resume context", null)); //$NON-NLS-1$
 			rm.done();
 			return;
@@ -572,7 +576,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 
 		MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -597,7 +601,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 						if (getData() instanceof IExecutionDMContext[]) {
 							rm.setData((IExecutionDMContext[])getData());
 						} else {
-							rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid contexts", null)); //$NON-NLS-1$
+							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid contexts", null)); //$NON-NLS-1$
 						}
 						rm.done();
 					}
@@ -607,7 +611,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm) {
 		MIThreadRunState threadState = fThreadRunStates.get(dmc);
 		if (threadState == null) {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID,INVALID_HANDLE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,INVALID_HANDLE,
 				"Given context: " + dmc + " is not a recognized execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
@@ -616,7 +620,7 @@ public class MIRunControlNS extends AbstractDsfService implements IRunControl, I
 		if (dmc instanceof IMIExecutionDMContext) {
 			rm.setData(new ExecutionData(threadState.fSuspended ? threadState.fStateChangeReason : null));
 		} else {
-			rm.setStatus(new Status(IStatus.ERROR, MIPlugin.PLUGIN_ID, INVALID_HANDLE,
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
 				"Given context: " + dmc + " is not a recognized execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		rm.done();

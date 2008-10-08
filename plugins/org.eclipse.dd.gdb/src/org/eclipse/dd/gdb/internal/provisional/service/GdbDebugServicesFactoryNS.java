@@ -12,7 +12,6 @@ package org.eclipse.dd.gdb.internal.provisional.service;
 
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.mi.service.MIRunControlNS;
 
 public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 
@@ -22,6 +21,6 @@ public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 	
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
-		return new MIRunControlNS(session);
+		return new GDBRunControl_7_0_NS(session);
 	}
 }

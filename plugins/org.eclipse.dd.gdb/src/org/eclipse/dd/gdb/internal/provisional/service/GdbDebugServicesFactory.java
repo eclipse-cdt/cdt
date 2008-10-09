@@ -92,6 +92,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IMemory createMemoryService(DsfSession session) {
+		if ("6.8".compareTo(fVersion) < 0) { //$NON-NLS-1$
+			return new GDBMemory_7_0(session);
+		}
+
 		return new MIMemory(session);
 	}
 

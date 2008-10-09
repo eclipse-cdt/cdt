@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -75,7 +77,7 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class GDBProcesses_7_0 extends AbstractDsfService 
-    implements IMIProcesses, ICachingService, IEventListener {
+    implements IGDBProcesses, ICachingService, IEventListener {
 
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI 
@@ -393,6 +395,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),
 				IMIProcesses.class.getName(),
+				IGDBProcesses.class.getName(),
 				GDBProcesses_7_0.class.getName() },
 				new Hashtable<String, String>());
         
@@ -446,6 +449,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	String groupId = fThreadToGroupMap.get(threadId);
     	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
     	return createContainerContext(processDmc, groupId);
+    }
+
+    public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
+    	String groupId = containerDmc.getGroupId();
+    	List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>(); 
+    	Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
+    	while (iterator.hasNext()){
+    		Map.Entry<String, String> entry = iterator.next();
+    		if (entry.getValue().equals(groupId)) {
+    			String threadId = entry.getKey();
+    			IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+    			IMIExecutionDMContext execDmc = createExecutionContext(containerDmc, 
+    																   createThreadContext(procDmc, threadId),
+    																   threadId);
+    			execDmcList.add(execDmc);
+    		}
+    	}
+    	return execDmcList.toArray(new IMIExecutionDMContext[0]);
     }
 
 	/**

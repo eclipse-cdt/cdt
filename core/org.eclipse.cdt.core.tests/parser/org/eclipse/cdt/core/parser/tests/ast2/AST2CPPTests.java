@@ -112,6 +112,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -6045,5 +6046,78 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPFunction func1= helper.assertNonProblem("func(x[0])", 4, ICPPFunction.class);
 		ICPPFunction func2= helper.assertNonProblem("func(y[0])", 4, ICPPFunction.class);
 		assertNotSame(func1, func2);
+	}
+	
+	// class NonVirt {
+	//    void m();//0
+	// };
+	// class C1 : NonVirt {
+	//    virtual void m();//1
+	// };
+	// class C2 : C1 {
+	//    void m();//2
+	// };
+	// class C3 : C2 {
+	//    void m(int);
+	// };
+	// class C4 : C3 {
+	//    void m();//4
+	// };
+	// class C5 : C1 {
+	//    void m();//5
+	// };	
+	public void testOverridden_248846() throws Exception {
+		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
+		ICPPMethod m1= helper.assertNonProblem("m();//1", 1, ICPPMethod.class);
+		ICPPMethod m2= helper.assertNonProblem("m();//2", 1, ICPPMethod.class);
+		ICPPMethod m3= helper.assertNonProblem("m(int);", 1, ICPPMethod.class);
+		ICPPMethod m4= helper.assertNonProblem("m();//4", 1, ICPPMethod.class);
+		ICPPMethod m5= helper.assertNonProblem("m();//5", 1, ICPPMethod.class);
+		
+		assertFalse(ClassTypeHelper.isVirtual(m0));
+		assertFalse(ClassTypeHelper.isVirtual(m3));
+		assertTrue(ClassTypeHelper.isVirtual(m1));
+		assertTrue(ClassTypeHelper.isVirtual(m2));
+		assertTrue(ClassTypeHelper.isVirtual(m4));
+		assertTrue(ClassTypeHelper.isVirtual(m5));
+		
+		assertFalse(ClassTypeHelper.isOverrider(m0, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m2, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m4, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m5, m0));
+
+		assertFalse(ClassTypeHelper.isOverrider(m0, m1));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m1));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m2, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m4, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m5, m1));
+
+		assertFalse(ClassTypeHelper.isOverrider(m0, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m2, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m5, m2));
+		assertTrue(ClassTypeHelper.isOverrider(m4, m2));
+		
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m1);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m2);
+		assertEquals(1, ors.length);
+		assertSame(ors[0], m1);
+		ors= ClassTypeHelper.findOverridden(m3);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m4);
+		assertEquals(2, ors.length);
+		assertSame(ors[0], m2);
+		assertSame(ors[1], m1);
+		ors= ClassTypeHelper.findOverridden(m5);
+		assertEquals(1, ors.length);
+		assertSame(ors[0], m1);
 	}
 }

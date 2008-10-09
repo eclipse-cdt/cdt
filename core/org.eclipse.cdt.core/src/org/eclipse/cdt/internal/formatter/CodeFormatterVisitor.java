@@ -312,12 +312,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		return PROCESS_SKIP;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-	 */
 	@Override
 	public int visit(IASTDeclaration node) {
 		if (!startNode(node)) { return PROCESS_SKIP; }
+		try {
+			return formatDeclaration(node);
+		} finally {
+			endOfNode(node);
+		}
+	}
+
+	private int formatDeclaration(IASTDeclaration node) {
 		int indentLevel= scribe.indentationLevel;
 		try {
     		if (node instanceof IASTFunctionDefinition) {
@@ -358,8 +363,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					scribe.unIndent();
 				}
 			}
-		} finally {
-			endOfNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1252,13 +1255,30 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			formatList(declarators, align, false, false);
 		}
 		if (fExpectSemicolonAfterDeclaration) {
-			if (peekNextToken() != Token.tSEMI) {
-				scribe.skipToToken(Token.tSEMI);
+			handleNodeEndingInSemicolon(node);
+			if (peekNextToken() == Token.tSEMI) {
+				scribe.printNextToken(Token.tSEMI, fInsideFor ? preferences.insert_space_before_semicolon_in_for : preferences.insert_space_before_semicolon);
+				scribe.printTrailingComment();
 			}
-			scribe.printNextToken(Token.tSEMI, fInsideFor ? preferences.insert_space_before_semicolon_in_for : preferences.insert_space_before_semicolon);
-			scribe.printTrailingComment();
 		}
 		return PROCESS_SKIP;
+	}
+
+	private void handleNodeEndingInSemicolon(IASTSimpleDeclaration node) {
+		if (scribe.skipRange() && peekNextToken(true) == Token.tSEMI) {
+			IASTNodeLocation[] locations= node.getNodeLocations();
+			if (locations.length > 0) {
+				IASTNodeLocation lastLocation = locations[locations.length - 1];
+				if (!(lastLocation instanceof IASTMacroExpansionLocation)) {
+					IASTFileLocation fileLocation= lastLocation.asFileLocation();
+					int startOffset= fileLocation.getNodeOffset();
+					int currentPosition= scribe.scanner.getCurrentPosition();
+					if (currentPosition >= startOffset) {
+						scribe.restartAtOffset(startOffset);
+					}
+				}
+			}
+		}
 	}
 
 	private int visit(ICPPASTTemplateDeclaration node) {
@@ -1452,27 +1472,35 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.startNewLine();
 		for (int i = 0; i < memberDecls.length; i++) {
 			IASTDeclaration declaration = memberDecls[i];
+			if (preferences.indent_body_declarations_compare_to_access_specifier) {
+				scribe.indent();
+			}
+			scribe.printComment();
 			if (declaration instanceof ICPPASTVisibilityLabel) {
-				if (preferences.indent_body_declarations_compare_to_access_specifier) {
-					scribe.indent();
-				}
-				scribe.printComment();
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();
 				}
-				visit((ICPPASTVisibilityLabel)declaration);
-			} else {
-				if (preferences.indent_body_declarations_compare_to_access_specifier) {
-					scribe.indent();
+				startNode(declaration);
+				try {
+					scribe.startNewLine();
+					visit((ICPPASTVisibilityLabel)declaration);
+				} finally {
+					endOfNode(declaration);
 				}
-				declaration.accept(this);
-				scribe.printComment();
+			} else {
+				startNode(declaration);
+				try {
+					scribe.startNewLine();
+					formatDeclaration(declaration);
+				} finally {
+					endOfNode(declaration);
+				}
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();
 				}
 			}
-			scribe.startNewLine();
 		}
+		scribe.startNewLine();
 		if (preferences.indent_body_declarations_compare_to_access_specifier) {
 			scribe.indent();
 		}
@@ -2812,6 +2840,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			int endOffset= startOffset + expansionLocation.getNodeLength();
 			scribe.skipRange(startOffset, endOffset);
 			if (locations.length == 1 && endOffset <= scribe.scanner.getCurrentPosition()) {
+				endOfNode(node);
 				return false;
 			}
 		} else {
@@ -3125,7 +3154,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int peekNextToken() {
-		if (scribe.shouldSkip(scribe.scanner.getCurrentPosition())) {
+		return peekNextToken(false);
+	}
+	private int peekNextToken(boolean ignoreSkip) {
+		if (!ignoreSkip && scribe.shouldSkip(scribe.scanner.getCurrentPosition())) {
 			return Token.tBADCHAR;
 		}
 		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);

@@ -61,6 +61,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
             if (strValue.length() != 0) {
                 expression.setExpressionText(strValue);
             } else {
+                // (bug 233111) If user entered a blank string, remove the expression.
                 expressionManager.removeExpression(expression);
             }
         } else if (element instanceof NewExpressionVMC && strValue.length() != 0) {

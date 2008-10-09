@@ -53,13 +53,18 @@ public class WatchExpressionCellModifier implements ICellModifier {
     public void modify(Object element, String property, Object value) {
         if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)) return;
         if (!(value instanceof String)) return;
-
+        
+        String strValue = ((String)value).trim();
         IWatchExpression expression = getWatchExpression(element);
+        IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager(); 
         if (expression != null) {
-            expression.setExpressionText((String)value);
-        } else if (element instanceof NewExpressionVMC && ((String)value).trim().length() != 0) {
-            IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager(); 
-            IWatchExpression watchExpression = expressionManager.newWatchExpression((String)value); 
+            if (strValue.length() != 0) {
+                expression.setExpressionText(strValue);
+            } else {
+                expressionManager.removeExpression(expression);
+            }
+        } else if (element instanceof NewExpressionVMC && strValue.length() != 0) {
+            IWatchExpression watchExpression = expressionManager.newWatchExpression(strValue); 
             expressionManager.addExpression(watchExpression);            
         }
     }

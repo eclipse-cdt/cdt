@@ -396,7 +396,7 @@ public class MIVariableManager implements ICommandControl {
             if (editable != null) { 
                 rm.setData(editable);
                 rm.done();
-            } if (isComplex()) {
+            } else if (isComplex()) {
                 editable = false;
                 rm.setData(editable);
                 rm.done();

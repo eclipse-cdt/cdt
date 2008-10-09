@@ -371,10 +371,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
         					IExpressionDMAddress expression = getData();
         					IAddress expAddress = expression.getAddress();
         					if (expAddress instanceof Addr64) {
-        						update.setLabel( ((Addr64) expAddress).toHexAddressString(), labelIndex);
+        						update.setLabel( "0x" + ((Addr64) expAddress).toString(16), labelIndex);
         					}
         					else if (expAddress instanceof Addr32) {
-        						update.setLabel( ((Addr32) expAddress).toHexAddressString(), labelIndex);
+        						update.setLabel( "0x" + ((Addr32) expAddress).toString(16), labelIndex);
         					}
         					else {
         						update.setLabel( "Unknown address format", labelIndex);

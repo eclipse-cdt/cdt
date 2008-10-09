@@ -3352,4 +3352,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	public boolean isEnableScalablilityMode() {
 		return fEnableScalablilityMode;
 	}
+
+	@Override
+	protected boolean isPrefQuickDiffAlwaysOn() {
+		// enable only if not in scalability mode
+		// workaround for http://bugs.eclipse.org/75555
+		return super.isPrefQuickDiffAlwaysOn() && !isEnableScalablilityMode();
+	}
 }

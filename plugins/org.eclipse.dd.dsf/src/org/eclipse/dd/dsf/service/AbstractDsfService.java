@@ -13,6 +13,8 @@ package org.eclipse.dd.dsf.service;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
@@ -96,6 +98,36 @@ abstract public class AbstractDsfService
      */
     @SuppressWarnings("unchecked")
     protected void register(String[] classes, Dictionary properties) {
+    	
+    	/*
+    	 * If this service has already been registered, make sure we
+    	 * keep the names it has been registered with.  However, we
+    	 * must trigger a new registration or else OSGI will keep the two
+    	 * registration separate. 
+    	 */
+    	if (fRegistration != null) {
+    		String[] previousClasses = (String[])fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
+    		
+            // Use a HashSet to avoid duplicates
+        	Set<String> newClasses = new HashSet<String>();
+        	newClasses.addAll(Arrays.asList(previousClasses));
+        	newClasses.addAll(Arrays.asList(classes));
+        	classes = newClasses.toArray(new String[0]);
+
+        	/*
+        	 * Also keep all previous properties.
+        	 */
+            if (fProperties != null) {
+            	for (Enumeration e = fProperties.keys() ; e.hasMoreElements();) {
+            		Object key = e.nextElement();
+            		Object value = fProperties.get(key);
+            		properties.put(key, value);
+            	}
+            }
+            
+        	// Now, cancel the previous registration
+    		unregister();
+    	}
         /*
          * Ensure that the list of classes contains the base DSF service 
          * interface, as well as the actual class type of this object.
@@ -179,7 +211,10 @@ abstract public class AbstractDsfService
      *
      */
     protected void unregister() {
-        fRegistration.unregister();        
+    	if (fRegistration != null) {
+    		fRegistration.unregister();
+    	}
+    	fRegistration = null;
     }
 
     /** Returns the registration object that was obtained when this service was registered */

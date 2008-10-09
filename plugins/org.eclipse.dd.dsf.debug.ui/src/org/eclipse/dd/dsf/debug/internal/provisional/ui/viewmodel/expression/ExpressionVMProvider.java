@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
@@ -23,7 +22,6 @@ import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.Regis
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.RegisterVMNode;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.register.SyncRegisterDataAccess;
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.SyncVariableDataAccess;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
@@ -45,8 +43,6 @@ import org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdatePolicy;
-import org.eclipse.dd.dsf.ui.viewmodel.update.ManualUpdatePolicy;
-import org.eclipse.dd.dsf.ui.viewmodel.update.UserEditEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.core.IExpressionsListener2;
@@ -73,19 +69,6 @@ import org.eclipse.jface.viewers.TreePath;
 public class ExpressionVMProvider extends AbstractDMVMProvider 
     implements IPropertyChangeListener, IExpressionsListener2
 {
-    /**
-     * Object representing a change in configured expressions.  This event is 
-     * object is used when generating a model delta.
-     */
-    public static class ExpressionsChangedEvent extends UserEditEvent {
-        enum Type {ADDED, CHANGED, REMOVED, MOVED, INSERTED}
-        public final Type fType;
-        public ExpressionsChangedEvent(Type type, Set<Object> elements) {
-            super(elements);
-            fType = type;
-        }
-    }
- 
     private IExpressionVMNode[] fExpressionNodes;
     
     public ExpressionVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
@@ -319,7 +302,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
 
     @Override
     protected IVMUpdatePolicy[] createUpdateModes() {
-        return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new ManualUpdatePolicy(), new BreakpointHitUpdatePolicy() };
+        return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new ExpressionsManualUpdatePolicy(), 
+            new ExpressionsBreakpointHitUpdatePolicy() };
     }
 
     public void propertyChange(PropertyChangeEvent event) {
@@ -327,33 +311,31 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     }
     
     public void expressionsAdded(IExpression[] expressions) {
-        expressionsListChanged(ExpressionsChangedEvent.Type.ADDED);
+        expressionsListChanged(ExpressionsChangedEvent.Type.ADDED, expressions, -1);
     }
     
     public void expressionsRemoved(IExpression[] expressions) {
-        expressionsListChanged(ExpressionsChangedEvent.Type.REMOVED);
+        expressionsListChanged(ExpressionsChangedEvent.Type.REMOVED, expressions, -1);
     }
     
     public void expressionsInserted(IExpression[] expressions, int index) {
-        expressionsListChanged(ExpressionsChangedEvent.Type.INSERTED);
+        expressionsListChanged(ExpressionsChangedEvent.Type.INSERTED, expressions, index);
     }
 
     public void expressionsMoved(IExpression[] expressions, int index) {
-        expressionsListChanged(ExpressionsChangedEvent.Type.MOVED);
+        expressionsListChanged(ExpressionsChangedEvent.Type.MOVED, expressions, index);
     }
     
     public void expressionsChanged(IExpression[] expressions) {
-        Set<Object> expressionsSet = new HashSet<Object>();
-        expressionsSet.addAll(Arrays.asList(expressions));
-        handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.CHANGED, expressionsSet));
+        expressionsListChanged(ExpressionsChangedEvent.Type.CHANGED, expressions, -1);
     }
     
-    private void expressionsListChanged(ExpressionsChangedEvent.Type type) {
+    private void expressionsListChanged(ExpressionsChangedEvent.Type type, IExpression[] expressions, int index) {
         Set<Object> rootElements = new HashSet<Object>();
         for (IVMModelProxy proxy : getActiveModelProxies()) {
             rootElements.add(proxy.getRootElement());
         }
-        handleEvent(new ExpressionsChangedEvent(type, rootElements));
+        handleEvent(new ExpressionsChangedEvent(type, rootElements, expressions, index));
     }
     
     @Override

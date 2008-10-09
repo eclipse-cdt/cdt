@@ -545,7 +545,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy, IVMModelProxy
         // VMC.
         boolean calculateOffsets = false;
         for (int childDelta : childNodes.values()) {
-            if ( (childDelta & (IModelDelta.SELECT | IModelDelta.EXPAND)) != 0 ) {
+            if ( (childDelta & (IModelDelta.SELECT | IModelDelta.EXPAND | IModelDelta.INSERTED | IModelDelta.REMOVED)) != 0 ) {
                 calculateOffsets = true;
                 break;
             }

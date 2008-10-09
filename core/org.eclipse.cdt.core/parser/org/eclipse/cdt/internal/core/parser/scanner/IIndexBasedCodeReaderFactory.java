@@ -24,7 +24,12 @@ public interface IIndexBasedCodeReaderFactory extends ICodeReaderFactory {
 	 * Returns whether or not the file has been included.
 	 */
 	boolean hasFileBeenIncludedInCurrentTranslationUnit(String path);
-	
+
+	/**
+	 * Reports the path of the translation unit, such that it is known as included.
+	 */
+	void reportTranslationUnitFile(String path);
+
 	/**
 	 * Create an InclusionContent object for the given location.
      * return an inclusion content or <code>null</code> if the location does not exist.

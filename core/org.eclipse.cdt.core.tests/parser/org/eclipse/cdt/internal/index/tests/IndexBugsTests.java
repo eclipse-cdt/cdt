@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +25,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -1350,4 +1350,50 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	
+	// #ifndef B_H
+	// #include "b.h"
+	// #endif
+	//
+	// #ifndef A_H_
+	// #define A_H_
+	// int aOK;
+	// #endif /* A_H_ */
+
+	// #ifndef A_H_
+	// #include "a.h"
+	// #endif
+	//
+	// #ifndef B_H_
+	// #define B_H_
+	// int bOK;
+	// #endif
+
+	// #include "a.h"
+	public void testStrangeIncludeStrategy_Bug249884() throws Exception {
+		String[] contents= getContentsForTest(3);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile ah= TestSourceReader.createFile(fCProject.getProject(), "a.h", contents[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[2]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		ITranslationUnit tu= (ITranslationUnit) CoreModel.getDefault().create(ah);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("aOK".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, bindings.length);
+			fIndex.findBindings("bOK".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, bindings.length);
+			IASTTranslationUnit ast= tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			final IASTDeclaration[] decls = ast.getDeclarations();
+			assertEquals(1, decls.length);
+			IASTSimpleDeclaration decl= (IASTSimpleDeclaration) decls[0];
+			assertEquals("aOK", decl.getDeclarators()[0].getName().toString());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 }

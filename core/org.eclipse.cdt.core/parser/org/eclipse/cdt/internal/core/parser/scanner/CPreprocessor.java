@@ -180,7 +180,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
                 
         final String filePath= new String(reader.filename);
         fAllIncludedFiles.add(filePath);
-        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, reader.buffer);	
+        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, reader.buffer);
+        fCodeReaderFactory.reportTranslationUnitFile(filePath);
+        fAllIncludedFiles.add(filePath);
         fRootLexer= new Lexer(reader.buffer, fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
@@ -206,6 +208,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					return new IncludeFileContent(reader);
 				}
 				return null;
+			}
+			public void reportTranslationUnitFile(String path) {
+				fAllIncludedFiles.add(path);
 			}
 			public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
 				return fAllIncludedFiles.contains(path);

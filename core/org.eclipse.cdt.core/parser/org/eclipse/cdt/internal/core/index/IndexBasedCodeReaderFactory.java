@@ -115,6 +115,11 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		return fPathResolver.doesIncludeFileExist(path); 
 	}
 	
+	public void reportTranslationUnitFile(String path) {
+		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
+		fIncludedFiles.add(ifl);
+	}
+
 	public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
 		return fIncludedFiles.contains(ifl);

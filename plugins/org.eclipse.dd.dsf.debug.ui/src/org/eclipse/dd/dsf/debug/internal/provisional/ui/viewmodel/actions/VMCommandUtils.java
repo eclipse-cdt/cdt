@@ -87,7 +87,9 @@ public class VMCommandUtils {
             if (input instanceof IAdaptable && viewer instanceof TreeModelViewer) {
                 IPresentationContext presContext = ((TreeModelViewer)viewer).getPresentationContext();
                 IVMAdapter vmAdapter = (IVMAdapter)((IAdaptable)input).getAdapter(IVMAdapter.class);
-                return vmAdapter.getVMProvider(presContext);
+                if (vmAdapter != null) {
+                    return vmAdapter.getVMProvider(presContext);
+                }
             }
         }
         return null;

@@ -92,7 +92,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
                                 @Override
                                 protected void handleSuccess() {
                                     buildDeltaForExpressionElement(
-                                        node, getData(), expressionElementIdx, event, parentDelta, path, rm);
+                                        node, expression, getData(), expressionElementIdx, event, parentDelta, path, rm);
                                 }
                                 
                                 @Override
@@ -107,9 +107,9 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
             });
     }
     
-    private void buildDeltaForExpressionElement(final IExpressionVMNode node, Object expressionElement, 
-        final int expressionElementIdx, final Object event, final VMDelta parentDelta, final TreePath path, 
-        final RequestMonitor rm) 
+    
+    private void buildDeltaForExpressionElement(IExpressionVMNode node, IExpression expression, Object expressionElement, 
+        int expressionElementIdx, Object event, VMDelta parentDelta, TreePath path, RequestMonitor rm) 
     {
         CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
         int multiRmCount = 0;
@@ -128,7 +128,39 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
                 event, multiRm);
             multiRmCount++;
         }            
+     
+        if (event instanceof ExpressionsChangedEvent) {
+            buildDeltaForExpressionsChangedEvent(expressionElement, expressionElementIdx, 
+                (ExpressionsChangedEvent)event, parentDelta, multiRm);
+            multiRmCount++;
+        }
         
         multiRm.setDoneCount(multiRmCount);
+    }
+    
+    private void buildDeltaForExpressionsChangedEvent(Object element, int elementIdx, ExpressionsChangedEvent event, 
+        VMDelta parentDelta, final RequestMonitor rm) 
+    {
+        switch (event.getType()) {
+        case ADDED:
+            parentDelta.addNode(element, -1, IModelDelta.ADDED);            
+            break;
+        case CHANGED:
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+            break;
+        case MOVED:
+            parentDelta.addNode(element, -1, IModelDelta.REMOVED);
+            parentDelta.addNode(element, elementIdx, IModelDelta.INSERTED);
+            break;
+        case REMOVED:
+            parentDelta.addNode(element, -1, IModelDelta.REMOVED);
+            break;
+        case INSERTED:
+            parentDelta.addNode(element, elementIdx, IModelDelta.INSERTED);
+            break;
+        default:
+            break;
+        }
+        rm.done();
     }
 }

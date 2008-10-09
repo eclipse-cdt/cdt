@@ -17,7 +17,6 @@ import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.expression.ExpressionVMProvider.ExpressionsChangedEvent;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode;
@@ -291,7 +290,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         
         // Add a flag if the list of expressions in the global expression manager has changed.
         if (event instanceof ExpressionsChangedEvent) {
-            retVal |= IModelDelta.CONTENT;
+            retVal |= IModelDelta.ADDED | IModelDelta.REMOVED | IModelDelta.INSERTED | IModelDelta.CONTENT ;
         }
 
         for (IExpression expression : fManager.getExpressions()) {
@@ -302,32 +301,47 @@ public class ExpressionManagerVMNode extends AbstractVMNode
     }
 
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-        // Add a flag if the list of expressions has changed.
         if (event instanceof ExpressionsChangedEvent) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
+            buildDeltaForExpressionsChangedEvent((ExpressionsChangedEvent)event, parentDelta, nodeOffset, requestMonitor);
+        } else {
         
-        // Once again, for each expression, find its corresponding node and ask that
-        // layout node for its delta flags for given event.  If there are delta flags to be 
-        // generated, call the asynchronous method to do so.
+            // For each expression, find its corresponding node and ask that
+            // layout node for its delta flags for given event.  If there are delta flags to be 
+            // generated, call the asynchronous method to do so.
+            CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), requestMonitor);
+            
+            int buildDeltaForExpressionCallCount = 0;
+            
+            IExpression[] expressions = fManager.getExpressions();
+            for (int i = 0; i < expressions.length; i++ ) {
+                int flags = getExpressionVMProvider().getDeltaFlagsForExpression(expressions[i], event);
+                // If the given expression has no delta flags, skip it.
+                if (flags == IModelDelta.NO_CHANGE) continue;
+    
+                int elementOffset = nodeOffset >= 0 ? nodeOffset + i : -1;
+                getExpressionVMProvider().buildDeltaForExpression(
+                    expressions[i], elementOffset, event, parentDelta, getTreePathFromDelta(parentDelta), 
+                    new RequestMonitor(getExecutor(), multiRm));
+                buildDeltaForExpressionCallCount++;
+            }
+            
+            multiRm.setDoneCount(buildDeltaForExpressionCallCount);
+        }
+    }
+    
+    private void buildDeltaForExpressionsChangedEvent(ExpressionsChangedEvent event, VMDelta parentDelta, 
+        int nodeOffset, RequestMonitor requestMonitor) 
+    {
         CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), requestMonitor);
-        
-        int buildDeltaForExpressionCallCount = 0;
-        
-        IExpression[] expressions = fManager.getExpressions();
-        for (int i = 0; i < expressions.length; i++ ) {
-            int flags = getExpressionVMProvider().getDeltaFlagsForExpression(expressions[i], event);
-            // If the given expression has no delta flags, skip it.
-            if (flags == IModelDelta.NO_CHANGE) continue;
-
-            int elementOffset = nodeOffset >= 0 ? nodeOffset + i : -1;
+        for (int i = 0; i < event.getExpressions().length; i++) {
+            int expIndex = event.getIndex() != -1 
+                ? nodeOffset + event.getIndex() + i 
+                : -1; 
             getExpressionVMProvider().buildDeltaForExpression(
-                expressions[i], elementOffset, event, parentDelta, getTreePathFromDelta(parentDelta), 
-                new RequestMonitor(getExecutor(), multiRm));
-            buildDeltaForExpressionCallCount++;
+                event.getExpressions()[i], expIndex, event, parentDelta, getTreePathFromDelta(parentDelta), 
+                new RequestMonitor(getExecutor(), multiRm));                
         }
-        
-        multiRm.setDoneCount(buildDeltaForExpressionCallCount);
+        multiRm.setDoneCount(event.getExpressions().length);
     }
         
     private TreePath getTreePathFromDelta(IModelDelta delta) {

@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.dd.dsf.ui.viewmodel.update.UserEditEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
@@ -251,7 +252,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     	crm.setDoneCount(activeModelProxies.size());
 
     	for (final IVMModelProxy proxyStrategy : activeModelProxies) {
-            if (proxyStrategy.isDeltaEvent(event)) {
+            if (proxyStrategy.isDeltaEvent(event) || event instanceof UserEditEvent) {
                 if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                     DsfUIPlugin.debug("eventReceived(proxyRoot = " + proxyStrategy .getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                 }

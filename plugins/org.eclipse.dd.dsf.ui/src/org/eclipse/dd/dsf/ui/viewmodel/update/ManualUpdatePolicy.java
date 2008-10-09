@@ -97,7 +97,9 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
     public IElementUpdateTester getElementUpdateTester(Object event) {
         if (event.equals(REFRESH_EVENT)) {
             return fgRefreshUpdateTester;
-        } 
+        } else if (event instanceof UserEditEvent) {
+            return new UserEditEventUpdateTester(((UserEditEvent)event).getElements());
+        }
         return fgUpdateTester;
     }
 

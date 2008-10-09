@@ -30,10 +30,14 @@ class ExpressionsChangedUpdateTester implements IElementUpdateTester {
             return ExpressionsManualUpdatePolicy.FLUSH;
         }
         
-        // Check whether the element path contains one of the changed expressions.
-        for (int i = 0; i < path.getSegmentCount(); i++) {
-            if (eventContainsElement(path.getSegment(i))) {
-                return ExpressionsManualUpdatePolicy.FLUSH;
+        // If the expressions were modified, flush the entries which are under the 
+        // given expression. To do that, check whether the element path contains one 
+        // of the changed expressions.
+        if (fEvent.getType().equals(ExpressionsChangedEvent.Type.CHANGED)) {
+            for (int i = 0; i < path.getSegmentCount(); i++) {
+                if (eventContainsElement(path.getSegment(i))) {
+                    return ExpressionsManualUpdatePolicy.FLUSH;
+                }
             }
         }
         return 0;

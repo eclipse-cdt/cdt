@@ -313,6 +313,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fVerboseModeButton.setLayoutData(gd);
+		
+		// Grayed out until bug 249227 is resolved
+		//
+		fVerboseModeButton.setVisible(false);
+		//
+
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {

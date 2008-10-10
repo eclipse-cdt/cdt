@@ -73,6 +73,9 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
         }
     }
 
+	// Back-end commands cache
+	private CommandCache fCommandCache;
+	// Local memory cache
     private MIMemoryCache fMemoryCache;
 
 	/**
@@ -111,12 +114,16 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      * @param requestMonitor
      */
     private void doInitialize(final RequestMonitor requestMonitor) {
+    	// Create the command cache
+        ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+    	fCommandCache = new CommandCache(getSession(), commandControl);
+    	fCommandCache.setContextAvailable(commandControl.getContext(), true);
 
     	// Register this service
     	register(new String[] { MIMemory.class.getName(), IMemory.class.getName() }, new Hashtable<String, String>());
 
     	// Create the memory requests cache
-    	setMemoryCache(new MIMemoryCache());
+    	fMemoryCache = new MIMemoryCache();
 
 		// Register as service event listener
     	getSession().addServiceEventListener(this, null);
@@ -149,15 +156,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
         return MIPlugin.getBundleContext();
     }
 
-    /**
-     * This method resets the memory cache.  It allows an overriding class to provide
-     * its own overridden memory cache class.
-     * 
-	 * @since 1.1
-	 */
-    protected void setMemoryCache(MIMemoryCache cache) { fMemoryCache = cache; }
-
-    
     ///////////////////////////////////////////////////////////////////////////
     // IMemory
     ///////////////////////////////////////////////////////////////////////////
@@ -279,6 +277,86 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	fMemoryCache.setMemory(memoryDMC, address, offset, word_size, count * length, buffer, rm);
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    // Back-end functions 
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param memoryDMC
+     * @param address
+     * @param offset
+     * @param word_size
+     * @param count
+     * @param drm
+     * 
+     * @since 1.1
+     */
+    protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset,
+    		final int word_size, final int count, final DataRequestMonitor<MemoryByte[]> drm)
+    {
+    	/* To simplify the parsing of the MI result, we request the output to
+    	 * be on 1 row of [count] columns, no char interpretation.
+    	 */
+    	int mode = MIFormat.HEXADECIMAL;
+    	int nb_rows = 1;
+    	int nb_cols = count;
+    	Character asChar = null;
+
+    	fCommandCache.execute(
+    			new MIDataReadMemory(dmc, offset, address.toString(), mode, word_size, nb_rows, nb_cols, asChar),
+    			new DataRequestMonitor<MIDataReadMemoryInfo>(getExecutor(), drm) {
+    				@Override
+    				protected void handleSuccess() {
+    					// Retrieve the memory block
+    					drm.setData(getData().getMIMemoryBlock());
+    					drm.done();
+    				}
+    				@Override
+    				protected void handleFailure() {
+    					// Bug234289: If memory read fails, return a block marked as invalid
+    					MemoryByte[] block = new MemoryByte[word_size * count];
+    					for (int i = 0; i < block.length; i++)
+    						block[i] = new MemoryByte((byte) 0, (byte) 0);
+    					drm.setData(block);
+    					drm.done();
+    				}
+    			}
+    	);
+    }
+
+    /**
+     * @param memoryDMC
+     * @param address
+     * @param offset
+     * @param word_size
+     * @param count
+     * @param buffer
+     * @param rm
+     * 
+     * @since 1.1
+     */
+    protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
+    		final int word_size, final int count, final byte[] buffer, final RequestMonitor rm)
+    {
+    	// Each byte is written individually (GDB power...)
+    	// so we need to keep track of the count
+    	final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
+    	countingRM.setDoneCount(count);
+
+    	// We will format the individual bytes in decimal
+    	int format = MIFormat.DECIMAL;
+    	String baseAddress = address.toString();
+
+    	// Issue an MI request for each byte to write
+    	for (int i = 0; i < count; i++) {
+    		String value = new Byte(buffer[i]).toString();
+    		fCommandCache.execute(
+    				new MIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
+    				new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
+    		);
+    	}
+    }
+
     //////////////////////////////////////////////////////////////////////////
     // Event handlers
     //////////////////////////////////////////////////////////////////////////
@@ -290,10 +368,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     @DsfServiceEventHandler
 	public void eventDispatched(IResumedDMEvent e) {
     	if (e instanceof IContainerResumedDMEvent) {
-    		fMemoryCache.setTargetAvailable(e.getDMContext(), false);
+    		fCommandCache.setContextAvailable(e.getDMContext(), false);
     	}
     	
    		if (e.getReason() != StateChangeReason.STEP) {
+	    	fCommandCache.reset();
    			fMemoryCache.reset();
    		}
 	}
@@ -305,8 +384,9 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     @DsfServiceEventHandler
 	public void eventDispatched(ISuspendedDMEvent e) {
     	if (e instanceof IContainerSuspendedDMEvent) {
-    		fMemoryCache.setTargetAvailable(e.getDMContext(), true);
+    		fCommandCache.setContextAvailable(e.getDMContext(), true);
     	}
+    	fCommandCache.reset();
    		fMemoryCache.reset();
 	}
 
@@ -449,43 +529,19 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	// MIMemoryCache
 	///////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * This class can now be overridden.
-	 * 
-	 * @since 1.1
-	 */
-	protected class MIMemoryCache {
-
-		// Back-end commands cache
-		private CommandCache fCommandCache;
-
+	private class MIMemoryCache {
 		// The memory cache data structure
 		private SortedMemoryBlockList fMemoryBlockList;
 
 		public MIMemoryCache() {
-	    	// Create the command cache
-	        ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
-	    	fCommandCache = new CommandCache(getSession(), commandControl);
-	    	fCommandCache.setContextAvailable(commandControl.getContext(), true);
-
 	    	// Create the memory block cache
 	    	fMemoryBlockList = new SortedMemoryBlockList();
 		}
 
 		public void reset() {
-			// Clear the command cache
-	    	fCommandCache.reset();
 	    	// Clear the memory cache
 	    	fMemoryBlockList.clear();
 		}
-		
-	    public void setTargetAvailable(IDMContext dmc, boolean isAvailable) {
-	    	fCommandCache.setContextAvailable(dmc, isAvailable);
-	    }
-	    
-	    public boolean isTargetAvailable(IDMContext dmc) {
-	    	return fCommandCache.isTargetAvailable(dmc);
-	    }
 
 	    /**
  	     *  This function walks the address-sorted memory block list to identify
@@ -849,83 +905,6 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					   }
 			   });
  		}
-
-	   ///////////////////////////////////////////////////////////////////////
-	   // Back-end functions 
-	   ///////////////////////////////////////////////////////////////////////
-
-	   /**
-		* @param memoryDMC
-	    * @param address
-	    * @param offset
-	    * @param word_size
-	    * @param count
-	    * @param drm
-	    */
-	   protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset,
-	    	final int word_size, final int count, final DataRequestMonitor<MemoryByte[]> drm)
-	    {
-	    	/* To simplify the parsing of the MI result, we request the output to
-	    	 * be on 1 row of [count] columns, no char interpretation.
-	    	 */
-	    	int mode = MIFormat.HEXADECIMAL;
-	    	int nb_rows = 1;
-	    	int nb_cols = count;
-	    	Character asChar = null;
-
-	    	fCommandCache.execute(
-	    		new MIDataReadMemory(dmc, offset, address.toString(), mode, word_size, nb_rows, nb_cols, asChar),
-	    		new DataRequestMonitor<MIDataReadMemoryInfo>(getExecutor(), drm) {
-	    			@Override
-	    			protected void handleSuccess() {
-	    				// Retrieve the memory block
-	    				drm.setData(getData().getMIMemoryBlock());
-	    				drm.done();
-	    			}
-	    			@Override
-	    			protected void handleFailure() {
-	    				// Bug234289: If memory read fails, return a block marked as invalid
-	    				MemoryByte[] block = new MemoryByte[word_size * count];
-    					for (int i = 0; i < block.length; i++)
-    						block[i] = new MemoryByte((byte) 0, (byte) 0);
-	    				drm.setData(block);
-	    				drm.done();
-	    			}
-	    		}
-	    	);
-		}
-
-	   /**
-		 * @param memoryDMC
-		 * @param address
-		 * @param offset
-		 * @param word_size
-		 * @param count
-		 * @param buffer
-		 * @param rm
-		 */
-	   protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
-			final int word_size, final int count, final byte[] buffer, final RequestMonitor rm)
-	    {
-	    	// Each byte is written individually (GDB power...)
-	    	// so we need to keep track of the count
-	        final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
-	       	countingRM.setDoneCount(count);
-	
-	    	// We will format the individual bytes in decimal
-	    	int format = MIFormat.DECIMAL;
-	    	String baseAddress = address.toString();
-	
-	        // Issue an MI request for each byte to write
-	        for (int i = 0; i < count; i++) {
-	        	String value = new Byte(buffer[i]).toString();
-	        	fCommandCache.execute(
-	            		new MIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
-	            		new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
-	            	);
-	    	}
-		}
-
 	}
 
    /**
@@ -933,6 +912,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     * @since 1.1
     */
     public void flushCache(IDMContext context) {
+    	fCommandCache.reset();
         fMemoryCache.reset();
     }
 }

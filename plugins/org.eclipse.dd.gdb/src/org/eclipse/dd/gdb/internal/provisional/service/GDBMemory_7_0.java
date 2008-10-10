@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Ericsson and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Ericsson - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
 import java.util.Hashtable;
@@ -34,8 +44,6 @@ public class GDBMemory_7_0 extends MIMemory {
 		register(new String[] { MIMemory.class.getName(), IMemory.class.getName(), GDBMemory_7_0.class.getName()}, 
 				 new Hashtable<String, String>());
 
-		setMemoryCache(new GDBMemoryCache());
-
 		requestMonitor.done();
 	}
 
@@ -45,59 +53,47 @@ public class GDBMemory_7_0 extends MIMemory {
 		super.shutdown(requestMonitor);
 	}
 
-	protected class GDBMemoryCache extends MIMemoryCache {
-		@Override
-		protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset,
-				final int word_size, final int count, final DataRequestMonitor<MemoryByte[]> drm)
-		{
-			IDMContext threadOrMemoryDmc = dmc;
+	@Override
+	protected void readMemoryBlock(IDMContext dmc, IAddress address, long offset,
+			int word_size, int count, DataRequestMonitor<MemoryByte[]> drm)
+	{
+		IDMContext threadOrMemoryDmc = dmc;
 
-			IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-			if(containerCtx != null) {
-				IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+		if(containerCtx != null) {
+			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
 
-				if (procService != null) {
-					IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
-					// Return any thread... let's take the first one.
-					if (execCtxs != null && execCtxs.length > 0) {
-						threadOrMemoryDmc = execCtxs[0];
-					}
+			if (procService != null) {
+				IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
+				// Return any thread... let's take the first one.
+				if (execCtxs != null && execCtxs.length > 0) {
+					threadOrMemoryDmc = execCtxs[0];
 				}
 			}
-			
-			super.readMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, drm);
 		}
 
-		/**
-		 * @param memoryDMC
-		 * @param address
-		 * @param offset
-		 * @param word_size
-		 * @param count
-		 * @param buffer
-		 * @param rm
-		 */
-		@Override
-		protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
-				final int word_size, final int count, final byte[] buffer, final RequestMonitor rm)
-		{
-			IDMContext threadOrMemoryDmc = dmc;
-
-			IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-			if(containerCtx != null) {
-				IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
-
-				if (procService != null) {
-					IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
-					// Return any thread... let's take the first one.
-					if (execCtxs != null && execCtxs.length > 0) {
-						threadOrMemoryDmc = execCtxs[0];
-					}
-				}
-			}
-
-			super.writeMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, buffer, rm);
-		}
+		super.readMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, drm);
 	}
 
+	@Override
+	protected void writeMemoryBlock(IDMContext dmc, IAddress address, long offset,
+			int word_size, int count, byte[] buffer, RequestMonitor rm)
+	{
+		IDMContext threadOrMemoryDmc = dmc;
+
+		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+		if(containerCtx != null) {
+			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+
+			if (procService != null) {
+				IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
+				// Return any thread... let's take the first one.
+				if (execCtxs != null && execCtxs.length > 0) {
+					threadOrMemoryDmc = execCtxs[0];
+				}
+			}
+		}
+
+		super.writeMemoryBlock(threadOrMemoryDmc, address, offset, word_size, count, buffer, rm);
+	}
 }

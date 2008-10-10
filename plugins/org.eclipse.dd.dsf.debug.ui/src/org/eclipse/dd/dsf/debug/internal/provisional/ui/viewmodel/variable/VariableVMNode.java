@@ -795,7 +795,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
              (event instanceof PropertyChangeEvent && 
               ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
         {
-            return IModelDelta.STATE;
+            return IModelDelta.CONTENT;
         } 
 
         if (event instanceof ISuspendedDMEvent)
@@ -827,7 +827,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
              (event instanceof PropertyChangeEvent && 
                 ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.CURRENT_FORMAT_STORAGE) )
         {
-            parentDelta.addNode(element, IModelDelta.STATE);
+            parentDelta.addNode(element, IModelDelta.CONTENT);
         } 
 
         rm.done();

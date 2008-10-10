@@ -47,6 +47,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
     		fPath = path;
     		fChildren = children;
     		fChildIndex = 0;
+    		assert !isDone();
     	}
     	private boolean isDone() {
     		return fChildIndex == fChildren.size();
@@ -114,7 +115,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	private int fIndex = 0;
 	private TreePath fCurrentPath;
 	private int fLowIndex = 0;
-	private int fHighIndex = Integer.MAX_VALUE;
+	private int fHighIndex = Integer.MAX_VALUE - 1;
 	private int fPendingUpdates;
 	
 	public MultiLevelUpdateHandler(Executor executor, 
@@ -135,7 +136,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	}
 	void startUpdate() {
 		fContentProvider.update(new IChildrenUpdate[] {
-				new VMChildrenUpdate(fCurrentPath, fViewerInput, fPresentationContext, -1, -1, this)
+				new VMChildrenUpdate(fCurrentPath, fViewerInput, fPresentationContext, fLowIndex, fHighIndex - fLowIndex + 1, this)
 		});
 	}
 	void setRange(int low, int high) {
@@ -166,51 +167,58 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
         }
 	}
 	protected void processNext() {
-		if (fIndex > fHighIndex) {
-			fStack.clear();
-		}
-		if (fStack.isEmpty()) {
-			fRequestMonitor.setDoneCount(fPendingUpdates);
-			super.done();
-			return;
-		}
-		UpdateLevel current = fStack.peek();
-
-		TreePath path = current.fPath;
-		Object data = current.nextChild();
-		path = path.createChildPath(data);
-		
-		if (current.isDone()) {
-			fStack.pop();
-		}
-		if (fIndex >= fLowIndex && fIndex <= fHighIndex) {
-    		if(data instanceof IAdaptable) {
-    			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable)data).getAdapter(IElementLabelProvider.class);
-    			if (labelProvider != null) {
-    				++fPendingUpdates;
-        			labelProvider.update(new ILabelUpdate[] {
-        					new DummyLabelUpdate(data, path, fRequestMonitor)
-        			});
-    			}
-    		}
-		}
-		fIndex++;
-		if (fViewer instanceof TreeViewer) {
-			TreeViewer treeViewer = (TreeViewer) fViewer;
-			if (treeViewer.getExpandedState(data)) {
-				fCurrentPath = path;
-				fContentProvider.update(new IChildrenUpdate[] {
-						new VMChildrenUpdate(path, fViewerInput, fPresentationContext, -1, -1, this)
-				});
+		while (true) {
+			if (fIndex > fHighIndex) {
+				fStack.clear();
+			}
+			if (fStack.isEmpty()) {
+				fRequestMonitor.setDoneCount(fPendingUpdates);
+				super.done();
 				return;
-			} else {
-				// update also the hasChildren flag
-				++fPendingUpdates;
-				fContentProvider.update(new IHasChildrenUpdate[] {
-						new VMHasChildrenUpdate(path, fViewerInput, fPresentationContext, new DataRequestMonitor<Boolean>(fExecutor, fRequestMonitor))
-				});
+			}
+			UpdateLevel current = fStack.peek();
+			assert !current.isDone();
+	
+			TreePath path = current.fPath;
+			Object data = current.nextChild();
+			if (current.isDone()) {
+				fStack.pop();
+			}
+			if (data == null) {
+				// consider null children - http://bugs.eclipse.org/250309
+				++fIndex;
+				continue;
+			}
+			path = path.createChildPath(data);
+			
+			if (fIndex >= fLowIndex && fIndex <= fHighIndex) {
+	    		if(data instanceof IAdaptable) {
+	    			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable)data).getAdapter(IElementLabelProvider.class);
+	    			if (labelProvider != null) {
+	    				++fPendingUpdates;
+	        			labelProvider.update(new ILabelUpdate[] {
+	        					new DummyLabelUpdate(data, path, fRequestMonitor)
+	        			});
+	    			}
+	    		}
+			}
+			fIndex++;
+			if (fViewer instanceof TreeViewer) {
+				TreeViewer treeViewer = (TreeViewer) fViewer;
+				if (treeViewer.getExpandedState(data)) {
+					fCurrentPath = path;
+					fContentProvider.update(new IChildrenUpdate[] {
+							new VMChildrenUpdate(path, fViewerInput, fPresentationContext, -1, -1, this)
+					});
+					return;
+				} else {
+					// update also the hasChildren flag
+					++fPendingUpdates;
+					fContentProvider.update(new IHasChildrenUpdate[] {
+							new VMHasChildrenUpdate(path, fViewerInput, fPresentationContext, new DataRequestMonitor<Boolean>(fExecutor, fRequestMonitor))
+					});
+				}
 			}
 		}
-		processNext();
 	}
 }

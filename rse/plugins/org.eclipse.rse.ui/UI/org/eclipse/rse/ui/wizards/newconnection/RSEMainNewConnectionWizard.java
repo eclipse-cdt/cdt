@@ -230,11 +230,22 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	public void setSelection(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection)selection;
+			// Reset previous selected system type
+			selectedSystemType = null;
+			// Only if the first element of the selection is of type IRSESystemType,
+			// we re-new the selected system type from the selection
 			if (sel.getFirstElement() instanceof IRSESystemType) {
-				// update the selected system type.
-				selectedSystemType = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
-			} else {
-				selectedSystemType = null;
+				// Get the system type candidate from the selection.
+				IRSESystemType candidate = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
+				// Accept only system types as selection which are enabled or if
+				// the wizard has a restricted list of system types, is within the list
+				// of restricted system types
+				if (candidate.isEnabled() && 
+						(restrictedSystemTypes == null || 
+								restrictedSystemTypes.length == 0 || 
+								Arrays.asList(restrictedSystemTypes).contains(candidate))) {
+					selectedSystemType = candidate;
+				}
 			}
 
 			// signal the system type change

@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.dd.mi.service;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr64;
@@ -75,9 +77,18 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 	// Back-end commands cache
 	private CommandCache fCommandCache;
-	// Local memory cache
-    private MIMemoryCache fMemoryCache;
+	// Map of memory caches
+    private Map<IMemoryDMContext, MIMemoryCache> fMemoryCaches;
 
+    private MIMemoryCache getMemoryCache(IMemoryDMContext memoryDMC) {
+    	MIMemoryCache cache = fMemoryCaches.get(memoryDMC);
+    	if (cache == null) {
+    		cache = new MIMemoryCache();
+    		fMemoryCaches.put(memoryDMC, cache);
+    	}
+    	return cache;
+    }
+    
 	/**
 	 *  Constructor 
 	 */
@@ -123,7 +134,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	register(new String[] { MIMemory.class.getName(), IMemory.class.getName() }, new Hashtable<String, String>());
 
     	// Create the memory requests cache
-    	fMemoryCache = new MIMemoryCache();
+    	fMemoryCaches = new HashMap<IMemoryDMContext, MIMemoryCache>();
 
 		// Register as service event listener
     	getSession().addServiceEventListener(this, null);
@@ -189,7 +200,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
 
     	// All is clear: go for it
-    	fMemoryCache.getMemory(memoryDMC, address.add(offset), word_size, count, drm);
+    	getMemoryCache(memoryDMC).getMemory(memoryDMC, address.add(offset), word_size, count, drm);
 	}
 
     /* (non-Javadoc)
@@ -228,7 +239,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
 
     	// All is clear: go for it
-    	fMemoryCache.setMemory(memoryDMC, address, offset, word_size, count, buffer, rm);
+    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, word_size, count, buffer, rm);
     }
 
     /* (non-Javadoc)
@@ -274,7 +285,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
 
     	// All is clear: go for it
-    	fMemoryCache.setMemory(memoryDMC, address, offset, word_size, count * length, buffer, rm);
+    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, word_size, count * length, buffer, rm);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -372,8 +383,17 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
     	
    		if (e.getReason() != StateChangeReason.STEP) {
-	    	fCommandCache.reset();
-   			fMemoryCache.reset();
+	    	fCommandCache.reset(e.getDMContext());
+	    	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
+	    	if (fMemoryCaches.containsKey(memoryDMC)) {
+	    		// We do not want to use the call to getMemoryCache() here.
+	    		// This is because:
+	    		// 1- if there is not an entry already , we do not want to automatically 
+	    		//    create one, just to call reset() on it.
+	    		// 2- if memoryDMC == null, we do not want to create a cache
+	    		//    entry for which the key is 'null'
+	    		fMemoryCaches.get(memoryDMC).reset();
+	    	}
    		}
 	}
    
@@ -386,8 +406,18 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	if (e instanceof IContainerSuspendedDMEvent) {
     		fCommandCache.setContextAvailable(e.getDMContext(), true);
     	}
-    	fCommandCache.reset();
-   		fMemoryCache.reset();
+    	
+    	fCommandCache.reset(e.getDMContext());
+    	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
+    	if (fMemoryCaches.containsKey(memoryDMC)) {
+    		// We do not want to use the call to getMemoryCache() here.
+    		// This is because:
+    		// 1- if there is not an entry already , we do not want to automatically 
+    		//    create one, just to call reset() on it.
+    		// 2- if memoryDMC == null, we do not want to create a cache
+    		//    entry for which the key is 'null'
+    		fMemoryCaches.get(memoryDMC).reset();
+    	}
 	}
 
     /**
@@ -418,7 +448,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 							address = new Addr64(expAddress.getValue());
 
 						final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
-						fMemoryCache.refreshMemory(memoryDMC, address, 0, 1, count,
+						getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, 1, count,
 								new RequestMonitor(getExecutor(), null));
 						}
 			});
@@ -898,9 +928,9 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						       }
 						   }
 						   if (blocksDiffer) {
-						      updateMemoryCache(address, count, newBlock);
-						      getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
-						      }
+							   updateMemoryCache(address, count, newBlock);
+							   getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
+						   }
 						   rm.done();
 					   }
 			   });
@@ -912,7 +942,17 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     * @since 1.1
     */
     public void flushCache(IDMContext context) {
-    	fCommandCache.reset();
-        fMemoryCache.reset();
+    	fCommandCache.reset(context);
+    	
+    	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
+    	if (fMemoryCaches.containsKey(memoryDMC)) {
+    		// We do not want to use the call to getMemoryCache() here.
+    		// This is because:
+    		// 1- if there is not an entry already , we do not want to automatically 
+    		//    create one, just to call reset() on it.
+    		// 2- if memoryDMC == null, we do not want to create a cache
+    		//    entry for which the key is 'null'
+    		fMemoryCaches.get(memoryDMC).reset();
+    	}
     }
 }

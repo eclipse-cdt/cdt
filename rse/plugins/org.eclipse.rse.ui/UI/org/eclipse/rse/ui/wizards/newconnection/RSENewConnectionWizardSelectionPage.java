@@ -263,7 +263,26 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		// before initializing the selection.
 		restoreWidgetValues();
 
+		// Initialize the tree selection
+		initializeSelection(treeViewer);
+
 		// Initialize the selection in the tree
+		filteredTree.getFilterControl().setFocus();
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), helpId);
+
+	}
+
+	/**
+	 * Set the initial tree selection for the given tree viewer instance.
+	 * 
+	 * @param treeViewer The tree viewer instance.
+	 * 
+	 * @since 3.1
+	 */
+	protected void initializeSelection(TreeViewer treeViewer) {
+		if (treeViewer == null) return;
+		
 		if (getWizard() instanceof ISelectionProvider) {
 			ISelectionProvider selectionProvider = (ISelectionProvider)getWizard();
 			if (selectionProvider.getSelection() instanceof IStructuredSelection) {
@@ -275,14 +294,9 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 			}
 		}
-
-		// we put the initial focus into the filter field
-		filteredTree.getFilterControl().setFocus();
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), helpId);
-
+		
 	}
-
+	
 	/**
 	 * Called from the selection listener to propage the current
 	 * system type selection to the underlaying wizard.
@@ -338,6 +352,12 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		// if the page will become hidden, save the expansion state of
 		// the tree elements.
 		if (!visible) saveWidgetValues();
+		// If the page will become visible, refresh the viewer
+		// content -> The listed system types might have changed.
+		else if (filteredTree != null && filteredTree.getViewer() != null) {
+			filteredTree.getViewer().refresh();
+			initializeSelection(filteredTree.getViewer());
+		}
 	}
 
 	/**

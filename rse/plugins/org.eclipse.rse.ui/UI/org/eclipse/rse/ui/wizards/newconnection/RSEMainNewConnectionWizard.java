@@ -23,6 +23,7 @@
 package org.eclipse.rse.ui.wizards.newconnection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -147,6 +148,14 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		restrictedSystemTypes = systemTypes;
 		onlySystemType = restrictedSystemTypes.length == 1;
 		mainPage.restrictToSystemTypes(restrictedSystemTypes);
+		
+		if (onlySystemType && !restrictedSystemTypes[0].equals(selectedSystemType))
+			selectedSystemType = restrictedSystemTypes[0];
+		else if (restrictedSystemTypes.length > 0 && !Arrays.asList(restrictedSystemTypes).contains(selectedSystemType))
+			selectedSystemType = null;
+		else if (restrictedSystemTypes.length == 0)
+			selectedSystemType = null;
+		
 		onSelectedSystemTypeChanged();
 	}
 
@@ -329,7 +338,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		// Note: Do not call IWizard.addPages() here in case the main wizard is restricted to
 		//       a single system type. The IWizard.addPages() method will be called from the
 		//       enclosing wizard dialog directly instead!
-		if (!onlySystemType && selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
+		if ((!onlySystemType || mainPage.getPreviousPage() != null) && selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
 			selectedWizard.addPages();
 			initializedWizards.add(selectedWizard);
 		}

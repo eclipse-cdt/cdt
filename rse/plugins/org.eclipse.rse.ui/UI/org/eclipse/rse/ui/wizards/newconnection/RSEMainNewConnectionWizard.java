@@ -434,7 +434,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			String systemTypeId = dialogSettings.get(LAST_SELECTED_SYSTEM_TYPE_ID);
 			if (systemTypeId != null) {
 				IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
-				if (systemType != null) {
+				if (systemType != null && systemType.isEnabled()) {
 					setSelection(new StructuredSelection(systemType));
 				}
 			}

@@ -4931,7 +4931,7 @@ public class AST2Tests extends AST2BaseTest {
     		assertEquals(2, tu.getDeclarationsInAST(binding).length);
     	}
     }
-    
+
     //  void f() {                    
     //    int a,b;                     
     //    { b; a; int a; }              
@@ -4940,7 +4940,7 @@ public class AST2Tests extends AST2BaseTest {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
     	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
 
     		ba.assertNonProblem("b; a", 1, IVariable.class);	// fill cache of inner block
     		IVariable v3= ba.assertNonProblem("a; }", 1, IVariable.class);
@@ -4956,7 +4956,7 @@ public class AST2Tests extends AST2BaseTest {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
     	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
     		IParameter p= ba.assertNonProblem("ptr", 3, IParameter.class);
     		assertEquals("ptr", p.getName());
     	}

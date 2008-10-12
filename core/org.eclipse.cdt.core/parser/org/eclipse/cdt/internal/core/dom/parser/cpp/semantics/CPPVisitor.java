@@ -942,7 +942,11 @@ public class CPPVisitor {
 			} else if (parent instanceof ICPPASTFieldReference) {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference)parent;
 				IType type = CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldReference);
-				type= getUltimateType(type, false);
+				if (fieldReference.isPointerDereference()) {
+					type= getUltimateType(type, false);
+				} else {
+					type= getUltimateTypeUptoPointers(type);
+				}
 				if (type instanceof ICPPClassType) {
 					return ((ICPPClassType) type).getCompositeScope();
 				}
@@ -1557,9 +1561,9 @@ public class CPPVisitor {
 	    IScope scope = fnDtor.getFunctionScope();
 	    IType thisType= getThisType(scope);
 	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
-	    if(thisType == null && nested != null) {
+	    if (thisType == null && nested != null) {
 	    	IType pts= getPointerTypes(new CPPBasicType(-1,-1), nested);
-	    	if(pts instanceof ICPPPointerToMemberType) {
+	    	if (pts instanceof ICPPPointerToMemberType) {
 	    		thisType= new CPPPointerType(((ICPPPointerToMemberType)pts).getMemberOfClass());
 	    	}
 	    }
@@ -1599,9 +1603,9 @@ public class CPPVisitor {
 	    
 	    // Currently, CPPBasicType objects are also used to represent non-type template argument
 	    // values. We must ensure the initializer expression is attached to the type if available.
-	    if(declarator.getInitializer() instanceof IASTInitializerExpression) {
+	    if (declarator.getInitializer() instanceof IASTInitializerExpression) {
 	    	IType utype= getUltimateTypeUptoPointers(baseType);
-	    	if(utype instanceof CPPBasicType) {
+	    	if (utype instanceof CPPBasicType) {
 	    		((CPPBasicType)utype).setValue(((IASTInitializerExpression) declarator.getInitializer()).getExpression());
 	    	}
 	    }
@@ -2368,28 +2372,28 @@ public class CPPVisitor {
 	 */
 	public static BigInteger parseIntegral(String integral) {
 		int radix= 10;
-		if(integral.length() == 3
+		if (integral.length() == 3
 				&& integral.charAt(0) == '\''
 				&& integral.charAt(2) == '\'') {
 			String lo= Long.toString(Character.getNumericValue(integral.charAt(1)));
 			return new BigInteger(lo);
-		} else if(Keywords.TRUE.equals(integral)) {
+		} else if (Keywords.TRUE.equals(integral)) {
 			return BigInteger.ONE;
-		} else if(Keywords.FALSE.equals(integral)) {
+		} else if (Keywords.FALSE.equals(integral)) {
 			return BigInteger.ZERO;
 		}
 		
 		int start=0, end= integral.length();
 		
-		boolean negate= integral.charAt(start)=='-';
-		if(negate || integral.charAt(start)=='+') {
+		boolean negate= integral.charAt(start) == '-';
+		if (negate || integral.charAt(start) == '+') {
 			start++;
 		}
 		
-		if(start<integral.length() && integral.charAt(start) == '0') {
-			if(start+1<integral.length()) {
-				if(integral.charAt(start+1) == 'x') {
-					start+=2;
+		if (start < integral.length() && integral.charAt(start) == '0') {
+			if (start + 1 < integral.length()) {
+				if (integral.charAt(start + 1) == 'x') {
+					start += 2;
 					radix= 16;
 				} else {
 					radix= 8;
@@ -2397,14 +2401,14 @@ public class CPPVisitor {
 			}
 		}
 		
-		for(end--; end>0; end--) {
+		for (end--; end > 0; end--) {
 			final char c= integral.charAt(end);
-			if(c != 'L' && c!='l' && c!='U' && c!='u') {
+			if (c != 'L' && c != 'l' && c != 'U' && c != 'u') {
 				break;
 			}
 		}
 		
-		integral= integral.substring(start, end+1);
+		integral= integral.substring(start, end + 1);
 		
 		BigInteger result= new BigInteger(integral, radix);		
 		return negate ? result.negate() : result;
@@ -2416,16 +2420,16 @@ public class CPPVisitor {
 	 */
 	public static final IASTExpression reverseConstantPropogationLookup(IASTExpression e1) {
 		try {
-			for(int i=0; e1 instanceof IASTIdExpression && i<8; i++) {
-				IBinding b1= ((IASTIdExpression)e1).getName().resolveBinding();
-				if(b1 instanceof ICPPVariable) {
+			for (int i = 0; e1 instanceof IASTIdExpression && i < 8; i++) {
+				IBinding b1= ((IASTIdExpression) e1).getName().resolveBinding();
+				if (b1 instanceof ICPPVariable) {
 					ICPPVariable var= (ICPPVariable) b1;
 					IType t1= SemanticUtil.getUltimateTypeViaTypedefs(var.getType());
-					if(t1 instanceof IQualifierType) {
+					if (t1 instanceof IQualifierType) {
 						IQualifierType qt= (IQualifierType) t1;
-						if(qt.isConst()) {
+						if (qt.isConst()) {
 							t1= SemanticUtil.getUltimateTypeViaTypedefs(qt.getType());
-							if(t1 instanceof ICPPBasicType) {
+							if (t1 instanceof ICPPBasicType) {
 								e1= ((ICPPBasicType)t1).getValue();
 							}
 						}

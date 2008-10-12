@@ -6014,6 +6014,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNotSame(func1, func2);
 	}
 
+    //  struct A {
+    //    int a;
+    //  };
+    //
+    //  void test(A* p) {
+    //    p.a; // should not resolve
+    //  }
+    public void testPointerMemberAccess_245068() throws Exception {
+        final String comment= getAboveComment();
+        final boolean[] isCpps= {false, true};
+        for (boolean isCpp : isCpps) {
+            BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+            ba.assertProblem("a; // should not resolve", 1);
+        }
+    }
+
     //  void f();
     //  
     //  void test(int p) {

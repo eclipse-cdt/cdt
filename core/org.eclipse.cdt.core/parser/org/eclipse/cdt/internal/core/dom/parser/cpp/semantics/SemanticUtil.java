@@ -42,25 +42,23 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
  */
 public class SemanticUtil {
 	private static final char[] OPERATOR_CHARS = Keywords.OPERATOR.toCharArray();
-	/**
-	 * Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
-	 */
+	// Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
 	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
 	
 	static {
 		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
-		for(OverloadableOperator op : OverloadableOperator.values()) {
+		for (OverloadableOperator op : OverloadableOperator.values()) {
 			char[] name= op.toCharArray();
 			cas.put(CharArrayUtils.subarray(name, OPERATOR_SPC, name.length));
 		}
 	}
 	
 	/**
-	 * Returns a list of ICPPMethod objects representing all conversion operators
+	 * Returns an array of ICPPMethod objects representing all conversion operators
 	 * declared by the specified class. This does not include inherited methods. Conversion
 	 * operators cannot be implicit.
 	 * @param clazz
-	 * @return List of ICPPMethod
+	 * @return an array of conversion operators.
 	 */
 	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
 		ICPPMethod[] methods= new ICPPMethod[0];
@@ -68,9 +66,9 @@ public class SemanticUtil {
 			clazz= (ICPPClassType) ((ICPPDeferredClassInstance)clazz).getTemplateDefinition();
 		}
 		ICPPMethod[] decs= clazz.getDeclaredMethods();
-		if(decs != null) {
-			for(ICPPMethod method : decs) {
-				if(isConversionOperator(method)) {
+		if (decs != null) {
+			for (ICPPMethod method : decs) {
+				if (isConversionOperator(method)) {
 					methods= (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, methods, method);
 				}
 			}
@@ -79,16 +77,16 @@ public class SemanticUtil {
 	}
 	
 	/**
-	 * Returns a list of ICPPMethod objects representing all conversion operators
+	 * Returns an array of ICPPMethod objects representing all conversion operators
 	 * declared by the specified class and its ancestors. This includes inherited
 	 * methods. Conversion operators cannot be implicit.
 	 * @param clazz
-	 * @return List of ICPPMethod
+	 * @return an array of conversion operators.
 	 */
 	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
 		ICPPMethod[] methods= new ICPPMethod[0];
 		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
-		for(int i=0; i<ancestry.size(); i++) {
+		for (int i = 0; i < ancestry.size(); i++) {
 			methods= (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
 		}
 		return methods;
@@ -104,18 +102,18 @@ public class SemanticUtil {
 		ObjectSet<ICPPClassType> current= new ObjectSet<ICPPClassType>(2);
 		current.put(root);
 
-		for(int count=0; count < CPPSemantics.MAX_INHERITANCE_DEPTH && !current.isEmpty(); count++) {
+		for (int count = 0; count < CPPSemantics.MAX_INHERITANCE_DEPTH && !current.isEmpty(); count++) {
 			ObjectSet<ICPPClassType> next= new ObjectSet<ICPPClassType>(2);
 
-			for(int i=0; i<current.size(); i++) {
+			for (int i = 0; i < current.size(); i++) {
 				ICPPClassType clazz= current.keyAt(i);				
 				done.put(clazz);
 				
-				for(ICPPBase base : clazz.getBases()) {
+				for (ICPPBase base : clazz.getBases()) {
 					IBinding binding= base.getBaseClass();
-					if(binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
+					if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 						ICPPClassType ct= (ICPPClassType) binding;
-						if(!done.containsKey(ct)) {
+						if (!done.containsKey(ct)) {
 							next.put(ct);
 						}
 					}
@@ -134,11 +132,11 @@ public class SemanticUtil {
 	 */
 	public static final boolean isConversionOperator(ICPPMethod method) {
 		boolean result= false;
-		if(!method.isImplicit()) {
+		if (!method.isImplicit()) {
 			final char[] name= method.getNameCharArray();
 			if (name.length > OPERATOR_CHARS.length + 1 &&
 					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
-				if(name[OPERATOR_CHARS.length]==' ') {
+				if (name[OPERATOR_CHARS.length]==' ') {
 					result= !cas.containsKey(name, OPERATOR_CHARS.length+1, name.length - (OPERATOR_CHARS.length+1));
 				}
 			}
@@ -167,28 +165,29 @@ public class SemanticUtil {
 	 */
 	static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
 	    try {
-	        while( true ){
-				if( type instanceof ITypedef ) {
-					IType tt= ((ITypedef)type).getType();
+	        while (true) {
+				if (type instanceof ITypedef) {
+					IType tt= ((ITypedef) type).getType();
 					if (tt == null)
 						return type;
 					type= tt;
-				} else if( type instanceof IQualifierType ) {
-					type= ((IQualifierType)type).getType();
-				} else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
+				} else if (type instanceof IQualifierType) {
+					type= ((IQualifierType) type).getType();
+				} else if (stopAtPointerToMember && type instanceof ICPPPointerToMemberType) {
 	                return type;
-				else if( type instanceof IPointerType ) {
-					if(lastPointerType!=null) {
+				} else if (type instanceof IPointerType) {
+					if (lastPointerType!=null) {
 						lastPointerType[0]= type;
 					}
 					type= ((IPointerType) type).getType();
-				} else if( type instanceof ICPPReferenceType ) {
-					type= ((ICPPReferenceType)type).getType();
-				} else 
+				} else if (type instanceof ICPPReferenceType) {
+					type= ((ICPPReferenceType) type).getType();
+				} else { 
 					return type;
+				}
 				
 			}
-	    } catch ( DOMException e ) {
+	    } catch (DOMException e) {
 	        return e.getProblem();
 	    }
 	}
@@ -199,22 +198,23 @@ public class SemanticUtil {
 	 * @param type
 	 * @return the ultimate type contained inside the specified type
 	 */
-	public static IType getUltimateTypeUptoPointers(IType type){
+	public static IType getUltimateTypeUptoPointers(IType type) {
 	    try {
-	        while( true ){
-				if( type instanceof ITypedef ) {
-					IType tt= ((ITypedef)type).getType();
+	        while (true) {
+				if (type instanceof ITypedef) {
+					IType tt= ((ITypedef) type).getType();
 					if (tt == null)
 						return type;
 					type= tt;
-				} else if( type instanceof IQualifierType ) {
-					type = ((IQualifierType)type).getType();
-				} else if( type instanceof ICPPReferenceType ) {
-					type = ((ICPPReferenceType)type).getType();
-				} else 
+				} else if (type instanceof IQualifierType) {
+					type = ((IQualifierType) type).getType();
+				} else if (type instanceof ICPPReferenceType) {
+					type = ((ICPPReferenceType) type).getType();
+				} else {
 					return type;
+				}
 			}
-	    } catch ( DOMException e ) {
+	    } catch (DOMException e) {
 	        return e.getProblem();
 	    }
 	}
@@ -226,13 +226,13 @@ public class SemanticUtil {
 	 */
 	static IType getUltimateTypeViaTypedefs(IType type) {
 		try {
-			while(type instanceof ITypedef) {
-				IType t= ((ITypedef)type).getType();
+			while (type instanceof ITypedef) {
+				IType t= ((ITypedef) type).getType();
 				if (t == null) 
 					return type;
 				type= t;
 			}
-		} catch(DOMException e) {
+		} catch (DOMException e) {
 			type= e.getProblem();
 		}
 		return type;
@@ -292,5 +292,4 @@ public class SemanticUtil {
 		}
 		return result;
 	}
-
 }

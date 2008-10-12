@@ -925,7 +925,11 @@ public class CPPVisitor {
 			} else if (parent instanceof ICPPASTFieldReference) {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference)parent;
 				IType type = CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldReference);
-				type= getUltimateType(type, false);
+				if (fieldReference.isPointerDereference()) {
+					type= getUltimateType(type, false);
+				} else {
+					type= getUltimateTypeUptoPointers(type);
+				}
 				if (type instanceof ICPPClassType) {
 					return ((ICPPClassType) type).getCompositeScope();
 				}
@@ -2385,7 +2389,7 @@ public class CPPVisitor {
 	 */
 	public static final IASTExpression reverseConstantPropagationLookup(IASTExpression e1) {
 		try {
-			for(int i= 0; e1 instanceof IASTIdExpression && i < 8; i++) {
+			for (int i= 0; e1 instanceof IASTIdExpression && i < 8; i++) {
 				IBinding b1= ((IASTIdExpression)e1).getName().resolveBinding();
 				if (b1 instanceof ICPPVariable) {
 					ICPPVariable var= (ICPPVariable) b1;

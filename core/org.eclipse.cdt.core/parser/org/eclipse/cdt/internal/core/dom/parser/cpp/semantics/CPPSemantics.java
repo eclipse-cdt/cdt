@@ -1991,11 +1991,11 @@ public class CPPSemantics {
 			return new CPPUsingDeclaration(data.astName, fns);
 		}
 		
-		//we don't have any arguments with which to resolve the function
+		// We don't have any arguments with which to resolve the function
 		if (data.functionParameters == null) {
 		    return resolveTargetedFunction(data, fns);
 		}
-		//reduce our set of candidate functions to only those who have the right number of parameters
+		// Reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable(data, fns);
 		
 		if (data.forDefinition() || data.forExplicitInstantiation()) {
@@ -2007,29 +2007,29 @@ public class CPPSemantics {
 			return null;
 		}
 		
-		IFunction bestFn = null;					//the best function
-		IFunction currFn = null;					//the function currently under consideration
-		Cost[] bestFnCost = null;				//the cost of the best function
-		Cost[] currFnCost = null;				//the cost for the current function
+		IFunction bestFn = null;				// the best function
+		IFunction currFn = null;				// the function currently under consideration
+		Cost[] bestFnCost = null;				// the cost of the best function
+		Cost[] currFnCost = null;				// the cost for the current function
 				
 		IASTExpression sourceExp; 
-		IType source = null;					//parameter we are called with
-		IType target = null;					//function's parameter
+		IType source = null;					// parameter we are called with
+		IType target = null;					// function's parameter
 		
 		int comparison;
-		Cost cost = null;						//the cost of converting source to target
+		Cost cost = null;						// the cost of converting source to target
 				 
-		boolean hasWorse = false;				//currFn has a worse parameter fit than bestFn
-		boolean hasBetter = false;				//currFn has a better parameter fit than bestFn
-		boolean ambiguous = false;				//ambiguity, 2 functions are equally good
-		boolean currHasAmbiguousParam = false;	//currFn has an ambiguous parameter conversion (ok if not bestFn)
-		boolean bestHasAmbiguousParam = false;  //bestFn has an ambiguous parameter conversion (not ok, ambiguous)
+		boolean hasWorse = false;				// currFn has a worse parameter fit than bestFn
+		boolean hasBetter = false;				// currFn has a better parameter fit than bestFn
+		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
+		boolean currHasAmbiguousParam = false;	// currFn has an ambiguous parameter conversion (ok if not bestFn)
+		boolean bestHasAmbiguousParam = false;  // bestFn has an ambiguous parameter conversion (not ok, ambiguous)
 
-		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); //the parameters the function is being called with
+		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); // the parameters the function is being called with
 		final boolean sourceVoid = (data.functionParameters == null || data.functionParameters.length == 0);
 		final IType impliedObjectType = data.getImpliedObjectArgument();
 		
-		// loop over all functions
+		// Loop over all functions
 		function_loop: for (int fnIdx = 0; fnIdx < fns.length; fnIdx++) {
 			currFn= fns[fnIdx];
 			if (currFn == null || bestFn == currFn) {
@@ -2039,7 +2039,6 @@ public class CPPSemantics {
 			final IType[] targetParameters = getTargetParameterTypes(currFn);
 			final int useImplicitObj = (currFn instanceof ICPPMethod && !(currFn instanceof ICPPConstructor)) ? 1 : 0;
 			final int sourceLen= Math.max(sourceParameters.length + useImplicitObj, 1);
-			final int numTargetParams= Math.max(targetParameters.length, 1 + useImplicitObj);
 			
 			if (currFnCost == null || currFnCost.length != sourceLen) {
 				currFnCost= new Cost[sourceLen];	
@@ -2059,21 +2058,19 @@ public class CPPSemantics {
 			        Object se= data.functionParameters.length == 0 ? null : data.functionParameters[j];
 			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
 			    }
-		    
-				if (j < numTargetParams) {
-				    if (j == targetParameters.length) {
-				        target = VOID_TYPE;
-				    } else {
-					    target = targetParameters[j];
-					}
-				} else {
+
+			    if (j < targetParameters.length) {
+			    	target = targetParameters[j];
+			    } else if (currFn.takesVarArgs()) {
 					varArgs = true;
-				}
+			    } else {
+			        target = VOID_TYPE;
+			    }
 				
 				if (isImpliedObject && ASTInternal.isStatic(currFn, false)) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost(source, target);
-					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
+					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else if (source == null) {
 				    continue function_loop;
 				} else if (varArgs) {
@@ -2081,7 +2078,7 @@ public class CPPSemantics {
 					cost.rank = Cost.ELLIPSIS_CONVERSION;
 				} else if (source.isSameType(target) || (sourceVoid && j == useImplicitObj)) {
 					cost = new Cost(source, target);
-					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
+					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else {
 					cost= Conversions.checkImplicitConversionSequence(!data.forUserDefinedConversion, sourceExp, source, target, isImpliedObject);
 				}
@@ -2092,9 +2089,9 @@ public class CPPSemantics {
 			
 			hasWorse = false;
 			hasBetter = false;
-			//In order for this function to be better than the previous best, it must
-			//have at least one parameter match that is better that the corresponding
-			//match for the other function, and none that are worse.
+			// In order for this function to be better than the previous best, it must
+			// have at least one parameter match that is better that the corresponding
+			// match for the other function, and none that are worse.
 			int len = (bestFnCost == null || currFnCost.length < bestFnCost.length) ? currFnCost.length : bestFnCost.length;
 			for (int j = 1; j <= len; j++) {
 				Cost currCost = currFnCost[currFnCost.length - j];
@@ -2104,8 +2101,8 @@ public class CPPSemantics {
 					break;
 				}
 				
-				//an ambiguity in the user defined conversion sequence is only a problem
-				//if this function turns out to be the best.
+				// An ambiguity in the user defined conversion sequence is only a problem
+				// if this function turns out to be the best.
 				currHasAmbiguousParam = (currCost.userDefined == 1);
 				if (bestFnCost != null) {
 					comparison = currCost.compare(bestFnCost[bestFnCost.length - j]);
@@ -2116,13 +2113,13 @@ public class CPPSemantics {
 				}
 			}
 			
-			//If function has a parameter match that is better than the current best,
-			//and another that is worse (or everything was just as good, neither better nor worse).
-			//then this is an ambiguity (unless we find something better than both later)	
+			// If function has a parameter match that is better than the current best,
+			// and another that is worse (or everything was just as good, neither better nor worse),
+			// then this is an ambiguity (unless we find something better than both later).
 			ambiguous |= (hasWorse && hasBetter) || (!hasWorse && !hasBetter);
 			
 			if (!hasWorse) {
-				// if they are both template functions, we can order them that way
+				// If they are both template functions, we can order them that way
 				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
 				ICPPFunctionTemplate currAsTemplate= asTemplate(currFn);
 				if (bestAsTemplate != null && currAsTemplate != null) {
@@ -2133,7 +2130,7 @@ public class CPPSemantics {
 						ambiguous = false;
 					}
 				} else if (bestAsTemplate != null) {
-					// we prefer normal functions over template functions, unless we specified template arguments
+					// We prefer normal functions over template functions, unless we specified template arguments
 					if (data.preferTemplateFunctions())
 						ambiguous = false;
 					else
@@ -2145,7 +2142,7 @@ public class CPPSemantics {
 						ambiguous = false;
 				} 
 				if (hasBetter) {
-					//the new best function.
+					// The new best function.
 					ambiguous = false;
 					bestFnCost = currFnCost;
 					bestHasAmbiguousParam = currHasAmbiguousParam;

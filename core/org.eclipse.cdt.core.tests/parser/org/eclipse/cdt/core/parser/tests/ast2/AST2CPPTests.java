@@ -121,9 +121,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author aniefer
  */
-
 public class AST2CPPTests extends AST2BaseTest {
-	
 	
 	public AST2CPPTests() {
 	}
@@ -6120,4 +6118,38 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(1, ors.length);
 		assertSame(ors[0], m1);
 	}
+
+	//	void f(...);
+	//	
+	//	void test(int* p) {
+	//	  f(p);
+	//	}
+    public void _testVariadicFunction_2500582() throws Exception {
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+    		ba.assertNonProblem("f(p)", 1, IFunction.class);
+    	}
+    }
+    
+	//  struct Incomplete;
+	//
+	//  void f(Incomplete* p);
+	//  void f(...);
+	//
+	//  void test() {
+	//	  // Should resolve to f(Incomplete*) since 0 can be converted to Incomplete*
+	//    f(0);
+	//	}
+    public void _testVariadicFunction_2500583() throws Exception {
+    	final String comment= getAboveComment();
+    	final boolean[] isCpps= {false, true};
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+    		IFunction decl= ba.assertNonProblem("f(Incomplete* p)", 1, IFunction.class);
+    		IFunction func= ba.assertNonProblem("f(0)", 1, IFunction.class);
+    		assertSame(decl, func);
+    	}
+    }
 }

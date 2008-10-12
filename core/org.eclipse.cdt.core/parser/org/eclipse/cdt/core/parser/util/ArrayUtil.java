@@ -26,11 +26,11 @@ public class ArrayUtil {
      * If the array is null or not large enough, a larger one is allocated, using
      * the given class object.
      */
-    static public Object [] append( Class<?> c, Object[] array, Object obj ){
-    	if( obj == null )
+    static public Object[] append(Class<?> c, Object[] array, Object obj) {
+    	if (obj == null)
     		return array;
-    	if( array == null || array.length == 0){
-    		array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+    	if (array == null || array.length == 0) {
+    		array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;
     	}
@@ -41,8 +41,8 @@ public class ArrayUtil {
     		return array;
     	}
 
-    	Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
-    	System.arraycopy( array, 0, temp, 0, array.length );
+    	Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
+    	System.arraycopy(array, 0, temp, 0, array.length);
     	temp[array.length] = obj;
     	return temp;
     }
@@ -74,11 +74,11 @@ public class ArrayUtil {
      * Appends object using the current length of the array.
      * @since 4.0
      */
-    static public Object [] append(Class<?> c, Object[] array, int currentLength, Object obj ){
-    	if( obj == null )
+    static public Object[] append(Class<?> c, Object[] array, int currentLength, Object obj) {
+    	if (obj == null)
     		return array;
-    	if( array == null || array.length == 0){
-    		array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+    	if (array == null || array.length == 0) {
+    		array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;
     	}
@@ -90,8 +90,8 @@ public class ArrayUtil {
     		return array;
     	}
 
-    	Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
-    	System.arraycopy( array, 0, temp, 0, array.length );
+    	Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
+    	System.arraycopy(array, 0, temp, 0, array.length);
     	temp[array.length] = obj;
     	return temp;
     }
@@ -105,8 +105,8 @@ public class ArrayUtil {
     	return (T[]) append(c, array, currentLength, obj);
     }
 
-    static public Object [] append( Object[] array, Object obj ){
-        return append( Object.class, array, obj );
+    static public Object[] append(Object[] array, Object obj) {
+        return append(Object.class, array, obj);
     }
     
     /**
@@ -121,9 +121,9 @@ public class ArrayUtil {
      * @param array the array to be trimmed
      * @param forceNew
      */
-    static public Object [] trim( Class<?> c, Object [] array, boolean forceNew ){
-        if( array == null )
-            return (Object[]) Array.newInstance( c, 0 );
+    static public Object[] trim(Class<?> c, Object[] array, boolean forceNew) {
+        if (array == null)
+            return (Object[]) Array.newInstance(c, 0);
         
         int i = array.length;
         if (i==0 || array[i-1] != null) {
@@ -136,21 +136,21 @@ public class ArrayUtil {
         	assert i>=0;
         }
 
-        Object [] temp = (Object[]) Array.newInstance( c, i );
-        System.arraycopy( array, 0, temp, 0, i );
+        Object[] temp = (Object[]) Array.newInstance(c, i);
+        System.arraycopy(array, 0, temp, 0, i);
         return temp;
     }
 
 
-    public static Object[] trim( Class<?> c, Object[] array ) {
-        return trim( c, array, false );
+    public static Object[] trim(Class<?> c, Object[] array) {
+        return trim(c, array, false);
     }
 
     /**
      * Assumes that both arrays contain nulls at the end, only.
      */
-    public static Object[] addAll( Class<?> c, Object[] dest, Object[] source ) {
-        if( source == null || source.length == 0 )
+    public static Object[] addAll(Class<?> c, Object[] dest, Object[] source) {
+        if (source == null || source.length == 0)
             return dest;
         
         int numToAdd = findFirstNull(source);
@@ -161,9 +161,9 @@ public class ArrayUtil {
         	numToAdd= source.length;
         }
         
-        if( dest == null || dest.length == 0 ){
-            dest = (Object[]) Array.newInstance( c, numToAdd );
-            System.arraycopy( source, 0, dest, 0, numToAdd );
+        if (dest == null || dest.length == 0) {
+            dest = (Object[]) Array.newInstance(c, numToAdd);
+            System.arraycopy(source, 0, dest, 0, numToAdd);
             return dest;
         }
         
@@ -172,13 +172,13 @@ public class ArrayUtil {
         	firstFree= dest.length;
         }
         
-        if( firstFree + numToAdd <= dest.length ){
-            System.arraycopy( source, 0, dest, firstFree, numToAdd );
+        if (firstFree + numToAdd <= dest.length) {
+            System.arraycopy(source, 0, dest, firstFree, numToAdd);
             return dest;
         }
-        Object [] temp = (Object[]) Array.newInstance( c, firstFree + numToAdd );
-        System.arraycopy( dest, 0, temp, 0, firstFree );
-        System.arraycopy( source, 0, temp, firstFree, numToAdd );
+        Object[] temp = (Object[]) Array.newInstance(c, firstFree + numToAdd);
+        System.arraycopy(dest, 0, temp, 0, firstFree);
+        System.arraycopy(source, 0, temp, firstFree, numToAdd);
         return temp;
     }
     
@@ -189,7 +189,7 @@ public class ArrayUtil {
      * @param obj the object to search for
      * @return true if the specified array contains the specified object, or the specified array is null
      */
-    public static boolean contains( Object [] array, Object obj ){
+    public static boolean contains(Object[] array, Object obj) {
     	return indexOf(array, obj)!=-1;
     }
     
@@ -203,9 +203,9 @@ public class ArrayUtil {
      */
     public static int indexOf(Object[] array, Object obj) {
     	int result = -1;
-    	if(array!=null) {
-    		for(int i=0; i<array.length; i++) {
-    			if(array[i] == obj)
+    	if (array!=null) {
+    		for (int i = 0; i < array.length; i++) {
+    			if (array[i] == obj)
     				return i;
     		}
     	}
@@ -220,8 +220,8 @@ public class ArrayUtil {
      * @param obj the object to search for
      * @return true if the specified array contains the specified object, or the specified array is null
      */
-    public static boolean containsEqual( Object [] array, Object obj ){
-    	return indexOfEqual(array, obj)!=-1;
+    public static boolean containsEqual(Object[] array, Object obj) {
+    	return indexOfEqual(array, obj) != -1;
     }
 
     /**
@@ -235,9 +235,9 @@ public class ArrayUtil {
      */    
 	public static int indexOfEqual(Object[] comments, Object comment) {
     	int result = -1;
-    	if(comments!=null) {
-    		for(int i=0; (i<comments.length) && (comments[i]!=null); i++) {
-    			if(comments[i].equals(comment))
+    	if (comments!=null) {
+    		for (int i= 0; (i < comments.length) && (comments[i] != null); i++) {
+    			if (comments[i].equals(comment))
     				return i;
     		}
     	}
@@ -256,13 +256,13 @@ public class ArrayUtil {
      * array is returned.
 	 */
 	public static Object[] removeNulls(Class<?> c, Object[] array) {
-        if( array == null )
-            return (Object[]) Array.newInstance( c, 0 );
+        if (array == null)
+            return (Object[]) Array.newInstance(c, 0);
         
         int i;
 		int validEntries = 0;
-		for( i = 0; i < array.length; i++ ){
-	         if( array[i] != null ) validEntries++;
+		for (i = 0; i < array.length; i++) {
+	         if (array[i] != null) validEntries++;
 	    }
 		
 		if (array.length == validEntries) 
@@ -270,8 +270,8 @@ public class ArrayUtil {
 		
 		Object[] newArray = (Object[]) Array.newInstance(c, validEntries);
 		int j = 0;
-        for( i = 0; i < array.length; i++ ){
-            if( array[i] != null ) newArray[j++] = array[i];
+        for (i = 0; i < array.length; i++) {
+            if (array[i] != null) newArray[j++] = array[i];
         }
 		
 		return newArray;
@@ -308,22 +308,21 @@ public class ArrayUtil {
 	 * Assumes that array contains nulls at the end, only. 
 	 */
 	public static Object[] prepend(Class<?> c, Object[] array, Object obj) {
-		if( obj == null )
+		if (obj == null)
     		return array;
-        if( array == null || array.length == 0){
-            array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+        if (array == null || array.length == 0) {
+            array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
             array[0] = obj;
             return array;
         }
         
         int i = findFirstNull(array);
         if (i >= 0) {
-			System.arraycopy( array, 0, array, 1, i);
+			System.arraycopy(array, 0, array, 1, i);
 			array[0] = obj;
-        }
-        else {
-			Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
-	        System.arraycopy( array, 0, temp, 1, array.length );
+        } else {
+			Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
+	        System.arraycopy(array, 0, temp, 1, array.length);
 	        temp[0] = obj;
 	        array = temp;	
 		}
@@ -336,9 +335,9 @@ public class ArrayUtil {
 	 * @since 4.0
 	 */
 	public static void remove(Object[] array, Object element) {
-		if( array != null ) {
+		if (array != null) {
 			for (int i = 0; i < array.length; i++) {
-				if( element == array[i] ) {
+				if (element == array[i]) {
 					System.arraycopy(array, i+1, array, i, array.length-i-1);
 					array[array.length-1]= null;
 					return;
@@ -347,18 +346,19 @@ public class ArrayUtil {
 		}
 	}
 	
-    static public int [] setInt( int[] array, int idx, int val ){
-        if( array == null ){
-            array = new int [ DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
+    static public int[] setInt(int[] array, int idx, int val) {
+        if (array == null) {
+            array = new int[ DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
             array[idx] = val;
             return array;
         }
         
-        if( array.length <= idx ){
+        if (array.length <= idx) {
             int newLen = array.length * 2;
-            while( newLen <= idx ) newLen *=2;
-            int [] temp = new int [newLen];
-            System.arraycopy( array, 0, temp, 0, array.length );
+            while (newLen <= idx)
+            	newLen *= 2;
+            int[] temp = new int[newLen];
+            System.arraycopy(array, 0, temp, 0, array.length);
             
             array = temp;
         }
@@ -377,13 +377,12 @@ public class ArrayUtil {
     @SuppressWarnings("unchecked")
     public static <S,T> T[] convert(Class<T> target, S[] source) {
     	T[] result= null;
-    	if(source != null) {
+    	if (source != null) {
     		result= (T[]) Array.newInstance(target, source.length);
-    		for(int i=0; i<source.length; i++) {
+    		for (int i= 0; i < source.length; i++) {
     			result[i]= (T) source[i];
     		}
     	}
     	return result;
     }
-	
 }

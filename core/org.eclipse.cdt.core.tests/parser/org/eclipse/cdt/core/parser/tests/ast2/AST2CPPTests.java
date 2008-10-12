@@ -6014,12 +6014,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNotSame(func1, func2);
 	}
 
+    //  void f();
+    //  
+    //  void test(int p) {
+    //    f(p);
+    //  }
+    public void testFunctionExtraArgument() throws Exception {
+        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        ba.assertProblem("f(p)", 1);
+    }
+
     //  void f(...);
     //  
     //  void test(int* p) {
     //    f(p);
     //  }
-    public void _testVariadicFunction_2500582() throws Exception {
+    public void testVariadicFunction_2500582() throws Exception {
         final String comment= getAboveComment();
         final boolean[] isCpps= {false, true};
         for (boolean isCpp : isCpps) {
@@ -6027,7 +6037,7 @@ public class AST2CPPTests extends AST2BaseTest {
             ba.assertNonProblem("f(p)", 1, IFunction.class);
         }
     }
-    
+
     //  struct Incomplete;
     //
     //  void f(Incomplete* p);
@@ -6037,7 +6047,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //    // Should resolve to f(Incomplete*) since 0 can be converted to Incomplete*
     //    f(0);
     //  }
-    public void _testVariadicFunction_2500583() throws Exception {
+    public void testVariadicFunction_2500583() throws Exception {
         final String comment= getAboveComment();
         final boolean[] isCpps= {false, true};
         for (boolean isCpp : isCpps) {

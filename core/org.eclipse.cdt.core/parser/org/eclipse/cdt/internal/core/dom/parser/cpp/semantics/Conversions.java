@@ -192,7 +192,6 @@ public class Conversions {
 			}
 		} else {
 			// Non-reference binding
-			
 			cost= checkStandardConversionSequence(source, target, isImpliedObject);
 			if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
 					cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 

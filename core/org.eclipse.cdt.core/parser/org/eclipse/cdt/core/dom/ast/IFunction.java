@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -20,30 +20,30 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IFunction extends IBinding {
 
 	/**
-	 * This gets the parameters to the function
+	 * Returns the formal parameters of the function.
 	 * 
 	 * @return array of IParameter
-	 * @throws DOMException if this is a problem binding
+	 * @throws DOMException if this is a problem binding.
 	 */
-	public IParameter [] getParameters() throws DOMException;
+	public IParameter[] getParameters() throws DOMException;
 	
 	/**
 	 * Get the function scope
 	 * 
-	 * @throws DOMException if this is a problem binding
+	 * @throws DOMException if this is a problem binding.
 	 */
 	public IScope getFunctionScope() throws DOMException;
 	
 	/**
 	 * Get the IFunctionType for this function
-	 * @throws DOMException if this is a problem binding
+	 * @throws DOMException if this is a problem binding.
 	 */
 	public IFunctionType getType() throws DOMException;
 	
 	/**
-	 * Does this function have the static storage-class specifier
-	 * similarily for extern, auto, register
-	 * @throws DOMException
+	 * Returns {@code true} if the function has the static storage-class specifier
+	 * similarly for extern, auto, register.
+	 * @throws DOMException if this is a problem binding.
 	 */
 	public boolean isStatic() throws DOMException;
 	public boolean isExtern() throws DOMException;
@@ -51,14 +51,14 @@ public interface IFunction extends IBinding {
 	public boolean isRegister() throws DOMException;
 
 	/**
-	 * is this function inline
-	 * @throws DOMException
+	 * Returns {@code true} if the function is inline.
+	 * @throws DOMException if this is a problem binding.
 	 */
 	public boolean isInline() throws DOMException;
 	
 	/**
-	 * Whether or not this function takes variable arguments
-	 * @throws DOMException
+	 * Returns {@code true} if this function takes variable arguments.
+	 * @throws DOMException if this is a problem binding.
 	 */
-	public boolean takesVarArgs()throws DOMException;
+	public boolean takesVarArgs() throws DOMException;
 }

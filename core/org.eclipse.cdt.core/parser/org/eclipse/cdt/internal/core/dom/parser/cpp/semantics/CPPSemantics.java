@@ -276,8 +276,8 @@ public class CPPSemantics {
 			 */
 			if (binding instanceof ICPPClassTemplate) {
 				IASTNode parent= data.astName.getParent();
-				if(parent instanceof IASTNamedTypeSpecifier) {
-					if(parent.getParent() instanceof IASTSimpleDeclaration) {
+				if (parent instanceof IASTNamedTypeSpecifier) {
+					if (parent.getParent() instanceof IASTSimpleDeclaration) {
 						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
 					}
 				}
@@ -356,7 +356,7 @@ public class CPPSemantics {
 	        if (name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !(binding instanceof IType || binding instanceof ICPPConstructor)) {
 	        	IASTNode parent = name.getParent().getParent();
 	        	if (parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
-	        		if(!(binding instanceof IType)) {
+	        		if (!(binding instanceof IType)) {
 	        		    // a type id needs to hold a type
 	        			binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
 	        		}
@@ -547,7 +547,7 @@ public class CPPSemantics {
 	        if (results instanceof IBinding) {
 	            data.foundItems = ArrayUtil.append(Object.class, (Object[]) data.foundItems, results);
 	        } else if (results instanceof Object[]) {
-	            data.foundItems = ArrayUtil.addAll(Object.class, (Object[])data.foundItems, (Object[])results);
+	            data.foundItems = ArrayUtil.addAll(Object.class, (Object[]) data.foundItems, (Object[]) results);
 	        }
 	    } else {
 	        data.foundItems = mergePrefixResults((CharArrayObjectMap) data.foundItems, results, scoped);
@@ -801,8 +801,8 @@ public class CPPSemantics {
 			return null;
 		}
 
-		for(ICPPBase base : bases) {
-			if(base instanceof IProblemBinding)
+		for (ICPPBase base : bases) {
+			if (base instanceof IProblemBinding)
 				continue;
 			
 			IBinding b = base.getBaseClass();
@@ -811,7 +811,7 @@ public class CPPSemantics {
 
 			inherited = null;
 			
-			final ICPPClassType cls= (ICPPClassType) b;
+			final ICPPClassType cls = (ICPPClassType) b;
 			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
 			
 			if (parent == null)
@@ -2390,14 +2390,14 @@ public class CPPSemantics {
     	if (fieldReference.isPointerDereference()) {
     		IType type= getUltimateTypeUptoPointers(result);
     		boolean needCheckClassMemberAccessOperator= true;
-    		if(type instanceof IPointerType) {
+    		if (type instanceof IPointerType) {
     			type= getUltimateTypeUptoPointers(((IPointerType) type).getType());
-    			if(type instanceof ICPPClassType) {
+    			if (type instanceof ICPPClassType) {
     				needCheckClassMemberAccessOperator= false;
     			}
     		}
 
-    		if(needCheckClassMemberAccessOperator) {
+    		if (needCheckClassMemberAccessOperator) {
     			IType temp= result;
     			result= null;
 
@@ -2416,7 +2416,7 @@ public class CPPSemantics {
 
     					CPPASTName x= new CPPASTName();
     					boolean isConst= false, isVolatile= false;
-    					if(temp instanceof IQualifierType) {
+    					if (temp instanceof IQualifierType) {
     						isConst= ((IQualifierType)temp).isConst();
     						isVolatile= ((IQualifierType)temp).isVolatile();
     					}

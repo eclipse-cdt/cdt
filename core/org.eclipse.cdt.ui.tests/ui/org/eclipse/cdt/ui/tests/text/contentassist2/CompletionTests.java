@@ -334,7 +334,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C2* cLocal1; cLocal1.f/*cursor*/
+	//void f() {C2* cLocal1; cLocal1->f/*cursor*/
 	public void testDataMembers_GlobalScope() throws Exception {
 		final String[] expected= {
 				"fMySelf"
@@ -446,7 +446,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.C/*cursor*/
+	//void f() {C3* l1; l1->C/*cursor*/
 	public void testQualificationForAccess1() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -456,7 +456,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C2* l1; l1.C/*cursor*/
+	//void f() {C2* l1; l1->C/*cursor*/
 	public void testQualificationForAccess2() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -466,7 +466,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.C3::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->C3::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess1() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -476,7 +476,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.C2::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->C2::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess2() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -486,7 +486,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.C1::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->C1::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess3() throws Exception {
 		final String[] expected= {
 				"iam1(void)"
@@ -495,7 +495,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.T3::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->T3::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess_TypedefAsQualifier1() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -505,7 +505,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.T2::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->T2::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess_TypedefAsQualifier2() throws Exception {
 		// TLETODO ordering is significant here (currently ignored)
 		final String[] expected= {
@@ -515,7 +515,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 				AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
 
-	//void f() {C3* l1; l1.T1::fMySelf.iam/*cursor*/
+	//void f() {C3* l1; l1->T1::fMySelf->iam/*cursor*/
 	public void testQualifiedAccess_TypedefAsQualifier3() throws Exception {
 		final String[] expected= {
 				"iam1(void)"

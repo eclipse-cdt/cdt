@@ -46,16 +46,33 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
 @SuppressWarnings("restriction")
-public class RegisterVMProvider extends AbstractDMVMProvider
-    implements IPropertyChangeListener
+public class RegisterVMProvider extends AbstractDMVMProvider 
 {
+    private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
+                setDelayEventHandleForViewUpdate((Boolean)event.getNewValue());
+            }
+        }
+    };
+
+    private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            handleEvent(event);
+        }        
+    };
+    
     /*
      *  Current default for register formatting.
      */
     public RegisterVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
 
-        context.addPropertyChangeListener(this);
+        context.addPropertyChangeListener(fPresentationContextListener);
+        
+        IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+        store.addPropertyChangeListener(fPreferencesListener);
+        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
         
         /*
          *  Create the register data access routines.
@@ -89,15 +106,6 @@ public class RegisterVMProvider extends AbstractDMVMProvider
          *  Now set this schema set as the layout set.
          */
         setRootNode(rootNode);
-        
-        final IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
-        store.addPropertyChangeListener(new IPropertyChangeListener()
-        {
-			public void propertyChange(PropertyChangeEvent event) {
-				setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
-			}
-        });
-        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
     }
 
     /*
@@ -115,7 +123,8 @@ public class RegisterVMProvider extends AbstractDMVMProvider
      */
     @Override
     public void dispose() {
-        getPresentationContext().removePropertyChangeListener(this);
+        DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
+        getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
         super.dispose();
     }
 
@@ -135,14 +144,6 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return RegisterColumnPresentation.ID;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event) {
-        handleEvent(event);
     }
     
     /*

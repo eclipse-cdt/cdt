@@ -67,29 +67,38 @@ import org.eclipse.jface.viewers.TreePath;
  */ 
 @SuppressWarnings("restriction")
 public class ExpressionVMProvider extends AbstractDMVMProvider 
-    implements IPropertyChangeListener, IExpressionsListener2
+    implements IExpressionsListener2
 {
     private IExpressionVMNode[] fExpressionNodes;
-    
+
+    private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
+                setDelayEventHandleForViewUpdate((Boolean)event.getNewValue());
+            }
+        }
+    };
+
+    private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            handleEvent(event);
+        }        
+    };
+
     public ExpressionVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
         
-        context.addPropertyChangeListener(this);
-        
+        context.addPropertyChangeListener(fPresentationContextListener);
+
+        IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+        store.addPropertyChangeListener(fPreferencesListener);
+        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
+
         // The VM provider has to handle all events that result in model deltas.  
         // Add the provider as listener to expression changes events.
         DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
         
         configureLayout();
-        
-        final IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
-        store.addPropertyChangeListener(new IPropertyChangeListener()
-        {
-			public void propertyChange(PropertyChangeEvent event) {
-				setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
-			}
-        });
-        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
     }
 
     @Override
@@ -286,7 +295,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     @Override
     public void dispose() {
         DebugPlugin.getDefault().getExpressionManager().removeExpressionListener(this);
-        getPresentationContext().removePropertyChangeListener(this);
+        DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
+        getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
         super.dispose();
     }
     
@@ -306,10 +316,6 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
             new ExpressionsBreakpointHitUpdatePolicy() };
     }
 
-    public void propertyChange(PropertyChangeEvent event) {
-        handleEvent(event);
-    }
-    
     public void expressionsAdded(IExpression[] expressions) {
         expressionsListChanged(ExpressionsChangedEvent.Type.ADDED, expressions, -1);
     }

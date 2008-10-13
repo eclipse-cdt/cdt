@@ -40,13 +40,30 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 @SuppressWarnings("restriction")
 public class VariableVMProvider extends AbstractDMVMProvider 
-    implements IPropertyChangeListener, IColumnPresentationFactory 
+    implements IColumnPresentationFactory 
 {
+    private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
+                setDelayEventHandleForViewUpdate((Boolean)event.getNewValue());
+            }
+        }
+    };
 
+    private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            handleEvent(event);
+        }        
+    };
+    
 	public VariableVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
 
-        context.addPropertyChangeListener(this);
+        context.addPropertyChangeListener(fPresentationContextListener);
+
+        IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+        store.addPropertyChangeListener(fPreferencesListener);
+        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
 
         /*
          *  Create the variable data access routines.
@@ -68,20 +85,12 @@ public class VariableVMProvider extends AbstractDMVMProvider
         // Configure the sub-expression node to be a child of itself.  This way the content
         // provider will recursively drill-down the variable hierarchy.
         addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
-        
-        final IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
-        store.addPropertyChangeListener(new IPropertyChangeListener()
-        {
-			public void propertyChange(PropertyChangeEvent event) {
-				setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
-			}
-        });
-        setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
     }
 	
     @Override
     public void dispose() {
-        getPresentationContext().removePropertyChangeListener(this);
+        DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
+        getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
         super.dispose();
     }
 
@@ -93,10 +102,6 @@ public class VariableVMProvider extends AbstractDMVMProvider
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return VariableColumnPresentation.ID;
-    }
-    
-    public void propertyChange(PropertyChangeEvent event) {
-        handleEvent(event);
     }
     
     @Override

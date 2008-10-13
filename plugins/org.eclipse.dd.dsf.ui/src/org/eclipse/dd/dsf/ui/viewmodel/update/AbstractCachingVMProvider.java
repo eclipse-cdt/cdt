@@ -148,6 +148,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             fPrevious.fNext = fNext;
             fNext.fPrevious = fPrevious;
         }
+
+        void reinsert(Entry nextEntry) {
+            fPrevious.fNext = fNext;
+            fNext.fPrevious = fPrevious;
+
+            fNext  = nextEntry;
+            fPrevious = nextEntry.fPrevious;
+            fPrevious.fNext = this;
+            fNext.fPrevious = this;
+        }
     }
     
     /**
@@ -728,18 +738,18 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         
         if (proxyStrategy instanceof IVMModelProxyExtension) {
             IVMModelProxyExtension proxyStrategyExtension = (IVMModelProxyExtension)proxyStrategy;
+            
+            CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
+            super.handleEvent(proxyStrategy, event, multiRm);
+            int rmCount = 1;
+            
             if(fDelayEventHandleForViewUpdate) {
     	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-    	            CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
-    	            countingRm.setDoneCount(2);
-  	        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategyExtension, getPresentationContext(), this, countingRm).
+  	        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm).
   	        	        startUpdate();
-                    AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, countingRm);
-    	        } else {
+  	        	    rmCount++;
+    	        } else if (!proxyStrategy.isDisposed()) {
                     // block updating only the viewport
-                    CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
-                    countingRm.setDoneCount(2);
-    	        	
     	        	TreeViewer viewer = (TreeViewer) proxyStrategyExtension.getViewer();
     	        	Tree tree = viewer.getTree();
     	        	int count = tree.getSize().y / tree.getItemHeight();
@@ -748,26 +758,20 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     	        	int index = computeTreeIndex(topItem);
     	        	
     	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, countingRm);
+    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm);
     	        	handler.setRange(index, index + count);
 					handler.startUpdate();
-                    AbstractCachingVMProvider.super.handleEvent(proxyStrategy, event, countingRm);
+                    rmCount++;
     	        }
             } else {
-            	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID))
-    	        {
-            		final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-                    multiRm.setDoneCount(2);
-            		
+            	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
     	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
     	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm);
 					handler.startUpdate();
-
-					super.handleEvent(proxyStrategy, event, multiRm);
-    	        } else {
-    	        	super.handleEvent(proxyStrategy, event, rm);
-    	        }
+                    rmCount++;
+    	        } 
             }
+            multiRm.setDoneCount(rmCount);
         } else {
             super.handleEvent(proxyStrategy, event, rm);
         }
@@ -859,7 +863,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     /**
-     * Convenience class that searches for teh root element for the given
+     * Convenience class that searches for the root element for the given
      * update and creates an element cache entry key.
      */
     private ElementDataKey makeEntryKey(IVMNode node, IViewerUpdate update) {
@@ -896,8 +900,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             addEntry(key, entry);
         } else {
             // Entry exists, move it to the end of the list.
-            entry.remove();
-            entry.insert(fCacheListHead);
+            entry.reinsert(fCacheListHead);
         }
         
         // Update the root element marker:
@@ -914,8 +917,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
             rootMarkerEntry = new RootElementMarkerEntry(rootMarker);
             addEntry(rootMarker, rootMarkerEntry); 
         } else if (rootMarkerEntry.fNext != fCacheListHead) {
-            rootMarkerEntry.remove();
-            rootMarkerEntry.insert(fCacheListHead);
+            rootMarkerEntry.reinsert(fCacheListHead);
         }
         
         return entry;

@@ -74,10 +74,12 @@ public class AssistQuickFixTest extends BaseUITestCase {
 		public ProjectTestSetup(Test test) {
 			super(test);
 		}
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/quickFix", false, true);
 		}
+		@Override
 		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
@@ -99,6 +101,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 		return setUpTest(new TestSuite(THIS));
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
 			fProjectSetup= new ProjectTestSetup(this);
@@ -108,7 +111,8 @@ public class AssistQuickFixTest extends BaseUITestCase {
 		assertNotNull(fEditor);
 		fTextWidget= fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
-		EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 200, 20);
+		boolean ok= EditorTestHelper.joinReconciler((SourceViewer) fEditor.getViewer(), 10, 500, 20);
+		assertTrue("Reconciler did not finish in time", ok);
 		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
 		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
@@ -120,6 +124,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeAllEditors();
 		if (fProjectSetup != null) {

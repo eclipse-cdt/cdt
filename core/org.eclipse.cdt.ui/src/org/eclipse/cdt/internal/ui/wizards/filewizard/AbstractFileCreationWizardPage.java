@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -241,22 +241,24 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	}
 
 	protected void updateTemplates() {
-		Template selected= getSelectedTemplate();
-		String name = selected != null ?
-				selected.getName() :
-				getLastUsedTemplateName();
-		fTemplates= getApplicableTemplates();
-		int idx= NO_TEMPLATE.equals(name) ? 0 : 1;
-		String[] names= new String[fTemplates.length + 1];
-		for (int i = 0; i < fTemplates.length; i++) {
-			names[i + 1]= fTemplates[i].getName();
-			if (name != null && name.equals(names[i + 1])) {
-				idx= i + 1;
+		if (fTemplateDialogField != null) {
+			Template selected= getSelectedTemplate();
+			String name = selected != null ?
+					selected.getName() :
+					getLastUsedTemplateName();
+			fTemplates= getApplicableTemplates();
+			int idx= NO_TEMPLATE.equals(name) ? 0 : 1;
+			String[] names= new String[fTemplates.length + 1];
+			for (int i = 0; i < fTemplates.length; i++) {
+				names[i + 1]= fTemplates[i].getName();
+				if (name != null && name.equals(names[i + 1])) {
+					idx= i + 1;
+				}
 			}
+			names[0]= NewFileWizardMessages.AbstractFileCreationWizardPage_noTemplate;
+			fTemplateDialogField.setItems(names);
+			fTemplateDialogField.selectItem(idx);
 		}
-		names[0]= NewFileWizardMessages.AbstractFileCreationWizardPage_noTemplate;
-		fTemplateDialogField.setItems(names);
-		fTemplateDialogField.selectItem(idx);
 	}
 
 	/**

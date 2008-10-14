@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -46,6 +47,7 @@ public class ClassTests extends PDOMTestBase {
 		return suite(ClassTests.class, "_");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("classTests");
@@ -54,6 +56,7 @@ public class ClassTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
@@ -122,23 +125,25 @@ public class ClassTests extends PDOMTestBase {
 	
 	/* Test friend relationships between classes */
 	public void _testFriend() throws Exception {
-		//TODO this test is failing		
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), false, IndexFilter.ALL, NPM);
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), true, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType classA = (ICPPClassType) bindings[0];
-		IBinding[] friends = classA.getFriends();
-		assertEquals(1, friends.length);
-		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, IndexFilter.ALL, NPM);
-		assertEquals(bindings[0], friends[0]); //ClassC is a friend class of ClassA
-		
-		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, IndexFilter.ALL, NPM);
+
+		bindings = pdom.findBindings(Pattern.compile("ClassC"), true, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType classC = (ICPPClassType) bindings[0];
+
+		bindings = pdom.findBindings(Pattern.compile("functionB"), false, IndexFilter.ALL_DECLARED, NPM);
+		assertEquals(1, bindings.length);
+		ICPPFunction funcB = (ICPPFunction) bindings[0];
+
+		IBinding[] friends = classA.getFriends();
+		assertEquals(1, friends.length);
+		assertEquals(classC, friends[0]); //ClassC is a friend class of ClassA
+		
 		friends = classC.getFriends();
 		assertEquals(1, friends.length);
-		Pattern[] patterns = {Pattern.compile("ClassB"),Pattern.compile("functionB")};
-		bindings = pdom.findBindings(patterns, false, IndexFilter.ALL, NPM);
-		assertEquals(bindings[0], friends[0]); //functionB is a friend of ClassC
+		assertEquals(funcB, friends[0]); //functionB is a friend of ClassC
 	}
 	
 	public void noTest_testConstructor() throws Exception {
@@ -171,6 +176,7 @@ public class ClassTests extends PDOMTestBase {
 	
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentA() throws Exception {
 		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+			@Override
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
 			}
@@ -182,6 +188,7 @@ public class ClassTests extends PDOMTestBase {
 	
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentB() throws Exception {
 		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
+			@Override
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
 			}

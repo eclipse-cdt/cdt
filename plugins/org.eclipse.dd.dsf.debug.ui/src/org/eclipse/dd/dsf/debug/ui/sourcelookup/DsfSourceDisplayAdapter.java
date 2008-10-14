@@ -795,7 +795,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     @DsfServiceEventHandler
     public void eventDispatched(final IRunControl.ISuspendedDMEvent e) {
 		updateStepTiming();
-    	if (e.getReason() == StateChangeReason.STEP) {
+    	if (e.getReason() == StateChangeReason.STEP || e.getReason() == StateChangeReason.BREAKPOINT) {
 	        // trigger source display immediately (should be optional?)
 	        Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
@@ -808,6 +808,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				        }
 			        }
 				}});
+    	} else {
+    		doneStepping(e.getDMContext());
     	}
     }
 

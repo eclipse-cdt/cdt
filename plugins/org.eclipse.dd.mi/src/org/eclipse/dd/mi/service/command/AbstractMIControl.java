@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for handling of multiple stacks and threads
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 package org.eclipse.dd.mi.service.command;
 
@@ -109,21 +110,17 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * Flag indicating that the command control has stopped processing commands.
      */
     private boolean fStoppedCommandProcessing = false;
-
-    private String fId;
     
     public AbstractMIControl(DsfSession session) {
         super(session);
-        fId = "<no id>"; //$NON-NLS-1$
         fUseThreadAndFrameOptions = false;
     }
 
     /**
      * @since 1.1
      */
-    public AbstractMIControl(DsfSession session, String id, boolean useThreadAndFrameOptions) {
+    public AbstractMIControl(DsfSession session, boolean useThreadAndFrameOptions) {
         super(session);
-        fId = id;
         fUseThreadAndFrameOptions = useThreadAndFrameOptions;
     }
 
@@ -367,13 +364,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
     public boolean isActive() {
         return !fStoppedCommandProcessing;
-    }
-    
-    /**
-     * @since 1.1
-     */
-    public String getId() {
-        return fId;
     }
     
     /*

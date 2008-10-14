@@ -344,6 +344,12 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                         rm.done();
                     }
                 }
+                
+                @Override
+                protected void handleErrorOrWarning() {
+                    rm.setData(new String[] { NATURAL_FORMAT, STRING_FORMAT });
+                    rm.done();
+                }
             });
     }
 

@@ -18,6 +18,7 @@ import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 /**
@@ -25,13 +26,16 @@ import org.eclipse.dd.mi.service.command.MIInferiorProcess;
  */
 class GDBInferiorProcess extends MIInferiorProcess {
 
+    private IGDBBackend fBackend;
     
-    public GDBInferiorProcess(ICommandControlService commandControl, PTY p) {
+    public GDBInferiorProcess(ICommandControlService commandControl, IGDBBackend backend, PTY p) {
         super(commandControl, p);
+        fBackend = backend;
     }
 
-    public GDBInferiorProcess(ICommandControlService commandControl, OutputStream gdbOutputStream) {
+    public GDBInferiorProcess(ICommandControlService commandControl, IGDBBackend backend, OutputStream gdbOutputStream) {
         super(commandControl, gdbOutputStream);
+        fBackend = backend;
     }
 
     @Override
@@ -54,7 +58,7 @@ class GDBInferiorProcess extends MIInferiorProcess {
                     if (gdb.getIsAttachSession() == false) {
                         // Try to interrupt the inferior, first.
                         if (getState() == State.RUNNING) {
-                            gdb.interrupt();
+                            fBackend.interrupt();
                         }
                     }
                 }

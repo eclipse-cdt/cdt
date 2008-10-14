@@ -23,11 +23,6 @@ public interface IGDBControl extends ICommandControlService {
 	SessionType getSessionType();
 
 	boolean getIsAttachSession();
-	boolean canInterrupt();
-
-	void interrupt();
-
-	void destroy();
 
 	void terminate(final RequestMonitor rm);
 	void initInferiorInputOutput(final RequestMonitor requestMonitor);
@@ -41,15 +36,9 @@ public interface IGDBControl extends ICommandControlService {
 
 	void setConnected(boolean connected);
 
-	Process getGDBProcess();
-
 	AbstractCLIProcess getCLIProcess();
 
 	MIInferiorProcess getInferiorProcess();
-
-	boolean isGDBExited();
-
-	int getGDBExitCode();
 
 	IPath getExecutablePath();
 }

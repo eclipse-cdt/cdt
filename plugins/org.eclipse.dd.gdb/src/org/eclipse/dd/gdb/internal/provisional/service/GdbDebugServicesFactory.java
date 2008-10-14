@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
@@ -28,6 +29,7 @@ import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl;
 import org.eclipse.dd.gdb.internal.provisional.service.command.GDBControl_7_0;
 import org.eclipse.dd.mi.service.CSourceLookup;
 import org.eclipse.dd.mi.service.ExpressionService;
+import org.eclipse.dd.mi.service.IMIBackend;
 import org.eclipse.dd.mi.service.MIBreakpoints;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 import org.eclipse.dd.mi.service.MIDisassembly;
@@ -52,10 +54,18 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
     public <V> V createService(Class<V> clazz, DsfSession session, Object ... optionalArguments) {
 		if (MIBreakpointsManager.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointManagerService(session);
-		} else if (ICommandControl.class.isAssignableFrom(clazz)) {
+		} 
+		else if (ICommandControl.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
 					return (V)createCommandControl(session, (ILaunchConfiguration)arg);
+				}
+			}
+		}
+		else if (IMIBackend.class.isAssignableFrom(clazz)) {
+			for (Object arg : optionalArguments) {
+				if (arg instanceof ILaunchConfiguration) {
+					return (V)createBackendGDBService(session, (ILaunchConfiguration)arg);
 				}
 			}
 		}
@@ -78,6 +88,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			return new GDBControl_7_0(session, config);
 		}
 		return new GDBControl(session, config);
+	}
+
+	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {
+		return new GDBBackend(session, lc);
 	}
 
 	@Override

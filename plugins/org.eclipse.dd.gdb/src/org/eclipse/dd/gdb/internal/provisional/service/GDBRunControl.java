@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson AB		  - Modified for additional functionality	
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 
 package org.eclipse.dd.gdb.internal.provisional.service;
@@ -29,7 +30,6 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
@@ -37,7 +37,7 @@ import org.eclipse.dd.mi.service.command.events.MIEvent;
 import org.eclipse.dd.mi.service.command.events.MIThreadExitEvent;
 
 public class GDBRunControl extends MIRunControl {
-    private IGDBControl fGdb;
+    private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
 
 	// Record list of execution contexts
@@ -60,7 +60,7 @@ public class GDBRunControl extends MIRunControl {
 
     private void doInitialize(final RequestMonitor requestMonitor) {
     	
-        fGdb = getServicesTracker().getService(IGDBControl.class);
+        fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
 
         register(new String[]{IRunControl.class.getName(), 

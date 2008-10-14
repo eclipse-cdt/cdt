@@ -26,7 +26,7 @@ import org.eclipse.dd.mi.service.command.output.MIOutput;
  * `Number'
  *     number of the breakpoint
  *
- * `Type'
+ * `State'
  *     type of the breakpoint: `breakpoint' or `watchpoint'
  *
  * `Disposition'

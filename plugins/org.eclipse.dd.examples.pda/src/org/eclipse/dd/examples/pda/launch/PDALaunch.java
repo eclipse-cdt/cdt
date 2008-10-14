@@ -88,7 +88,7 @@ implements ITerminate
      * synchronization issues.  
      */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
-    public void initializeServices(String program, int requestPort, int eventPort, final RequestMonitor rm)
+    public void initializeServices(String program, final RequestMonitor rm)
     {
         // Double-check that we're being called in the correct thread.
         assert fExecutor.isInExecutorThread();
@@ -110,7 +110,7 @@ implements ITerminate
         // canceled if shutdownServices() is called before the sequence 
         // completes.
         fInitializationSequence = new PDAServicesInitSequence(
-            getSession(), program, requestPort, eventPort, 
+            getSession(), this, program, 
             new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                 @Override
                 protected void handleCompleted() {

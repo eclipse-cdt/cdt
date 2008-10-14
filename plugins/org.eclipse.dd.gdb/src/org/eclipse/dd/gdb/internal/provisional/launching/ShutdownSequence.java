@@ -30,6 +30,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
+import org.eclipse.dd.mi.service.IMIBackend;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 
 public class ShutdownSequence extends Sequence {
@@ -125,6 +126,11 @@ public class ShutdownSequence extends Sequence {
         @Override
         public void execute(RequestMonitor requestMonitor) {
             shutdownService(ICommandControl.class, requestMonitor);
+        }
+    }, new Step() {
+        @Override
+        public void execute(RequestMonitor requestMonitor) {
+            shutdownService(IMIBackend.class, requestMonitor);
         }
     }, new Step() {
         @Override

@@ -66,7 +66,7 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode
             return;
         }
         
-        update.setChild(createVMContext(commandControl.getVirtualMachineDMContext()), 0);
+        update.setChild(createVMContext(commandControl.getContext()), 0);
         update.done();
 	}
 

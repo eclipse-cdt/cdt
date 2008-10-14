@@ -323,7 +323,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		return false;
 	}
 	
-	private IDsfDebugServicesFactory newServiceFactory(String version) {
+	// A subclass can override this method and provide its own ServiceFactory.
+	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 
 		if (isNonStopSession && isNonStopSupported(version)) {
 			return new GdbDebugServicesFactoryNS(version);

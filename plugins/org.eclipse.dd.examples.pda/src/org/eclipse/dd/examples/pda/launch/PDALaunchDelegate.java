@@ -12,24 +12,18 @@
  *******************************************************************************/
 package org.eclipse.dd.examples.pda.launch;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.Query;
+import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.examples.pda.PDAPlugin;
+import org.eclipse.dd.examples.pda.service.PDABackend;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -92,79 +86,22 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
             abort("Perl program unspecified.", null);
         }
 
-        int requestPort = findFreePort();
-        int eventPort = findFreePort();
-        if (requestPort == -1 || eventPort == -1) {
-            abort("Unable to find free port", null);
-        }
-
-        launchProcess(launch, program, requestPort, eventPort);
         PDALaunch pdaLaunch = (PDALaunch)launch; 
-        initServices(pdaLaunch, program, requestPort, eventPort);
+        initServices(pdaLaunch, program);
+        createProcess(pdaLaunch);
     }
-
-    /**
-     * Launches PDA interpreter with the given program.
-     *  
-     * @param launch Launch that will contain the new process.
-     * @param program PDA program to use in the interpreter.
-     * @param requestPort The port number for connecting the request socket.
-     * @param eventPort The port number for connecting the events socket.
-     * 
-     * @throws CoreException 
-     */
-    private void launchProcess(ILaunch launch, String program, int requestPort, int eventPort) throws CoreException {
-        List<String> commandList = new ArrayList<String>();
-
-        // Get Java VM path
-        String javaVMHome = System.getProperty("java.home");
-        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
-        if (File.separatorChar == '\\') {
-            javaVMExec += ".exe";
-        }   
-        File exe = new File(javaVMExec);
-        if (!exe.exists()) {
-            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);
-        }
-        commandList.add(javaVMExec);
-        
-        commandList.add("-cp");
-        commandList.add(File.pathSeparator + PDAPlugin.getFileInPlugin(new Path("bin")));
-        
-        commandList.add("org.eclipse.dd.examples.pdavm.PDAVirtualMachine");
-
-        // Add PDA program
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
-        if (!file.exists()) {
-            abort(MessageFormat.format("PDA program {0} does not exist.", new Object[] {file.getFullPath().toString()}), null);
-        }
-
-        commandList.add(file.getLocation().toOSString());
-
-        // Add debug arguments - i.e. '-debug requestPort eventPort'
-        commandList.add("-debug");
-        commandList.add("" + requestPort);
-        commandList.add("" + eventPort);
-
-        // Launch the perl process.
-        String[] commandLine = commandList.toArray(new String[commandList.size()]);
-        Process process = DebugPlugin.exec(commandLine, null);
-
-        // Create a debug platform process object and add it to the launch.
-        DebugPlugin.newProcess(launch, process, javaVMHome);
-    }
-
+    
     /**
      * Calls the launch to initialize DSF services for this launch.
      */
-    private void initServices(final PDALaunch pdaLaunch, final String program, final int requestPort, final int eventPort) 
+    private void initServices(final PDALaunch pdaLaunch, final String program) 
     throws CoreException 
     {
         // Synchronization object to use when waiting for the services initialization.
         Query<Object> initQuery = new Query<Object>() {
             @Override
             protected void execute(DataRequestMonitor<Object> rm) {
-                pdaLaunch.initializeServices(program, requestPort, eventPort, rm);
+                pdaLaunch.initializeServices(program, rm);
             }
         };
 
@@ -180,6 +117,36 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         }
     }
 
+    private void createProcess(final PDALaunch pdaLaunch) throws CoreException {
+        // Synchronization object to use when waiting for the services initialization.
+        Query<Object[]> initQuery = new Query<Object[]>() {
+            @Override
+            protected void execute(DataRequestMonitor<Object[]> rm) {
+                DsfServicesTracker tracker = new DsfServicesTracker(PDAPlugin.getBundleContext(), pdaLaunch.getSession().getId());
+                PDABackend backend = tracker.getService(PDABackend.class);
+                if (backend == null) {
+                    PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_STATE, "PDA Backend service not available");
+                    return;
+                }
+                Object[] retVal = new Object[] { backend.getProcess(), backend.getProcessName() };
+                rm.setData(retVal);
+                rm.done();
+            }
+        };
+
+        // Submit the query to the executor.
+        pdaLaunch.getSession().getExecutor().execute(initQuery);
+        try {
+            // Block waiting for query results.
+            Object[] processData = initQuery.get();
+            DebugPlugin.newProcess(pdaLaunch, (Process)processData[0], (String)processData[1]);
+        } catch (InterruptedException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
+        } catch (ExecutionException e1) {
+            throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in launch sequence", e1.getCause())); //$NON-NLS-1$
+        }
+    }
+    
     /**
      * Throws an exception with a new status containing the given
      * message and optional exception.
@@ -191,24 +158,4 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
     private void abort(String message, Throwable e) throws CoreException {
         throw new CoreException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, 0, message, e));
     }
-
-    /**
-     * Returns a free port number on localhost, or -1 if unable to find a free port.
-     */
-    public static int findFreePort() {
-        ServerSocket socket= null;
-        try {
-            socket= new ServerSocket(0);
-            return socket.getLocalPort();
-        } catch (IOException e) { 
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return -1;		
-    }		
 }

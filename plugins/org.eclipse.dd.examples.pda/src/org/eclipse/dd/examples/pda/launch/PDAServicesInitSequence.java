@@ -14,6 +14,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.BreakpointsMediator;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.examples.pda.service.PDABackend;
 import org.eclipse.dd.examples.pda.service.PDABreakpointAttributeTranslator;
 import org.eclipse.dd.examples.pda.service.PDABreakpoints;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
@@ -40,8 +41,16 @@ public class PDAServicesInitSequence extends Sequence {
         { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-                // Create the connection to PDA debugger.
-                fCommandControl = new PDACommandControl(fSession, fProgram, fRequestPort, fEventPort);
+                // Start PDA back end debugger service.
+                new PDABackend(fSession, fLaunch, fProgram).initialize(requestMonitor);
+            }
+        },
+        new Step() 
+        { 
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                // Start PDA command control service.
+                fCommandControl = new PDACommandControl(fSession);
                 fCommandControl.initialize(requestMonitor);
             }
         },
@@ -70,7 +79,7 @@ public class PDAServicesInitSequence extends Sequence {
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override
                     protected void handleSuccess() {
-                        bpmService.startTrackingBreakpoints(fCommandControl.getVirtualMachineDMContext(), requestMonitor);
+                        bpmService.startTrackingBreakpoints(fCommandControl.getContext(), requestMonitor);
                     }
                 }); 
             }
@@ -99,28 +108,26 @@ public class PDAServicesInitSequence extends Sequence {
         new Step() { 
             @Override
             public void execute(RequestMonitor requestMonitor) {
-                fRunControl.resume(fCommandControl.getVirtualMachineDMContext(), requestMonitor);
+                fRunControl.resume(fCommandControl.getContext(), requestMonitor);
             }
         },
     };
 
     // Sequence input parameters, used in initializing services.
+    private PDALaunch  fLaunch;
     private DsfSession fSession;
     private String fProgram;
-    private int fRequestPort;
-    private int fEventPort;
 
     // Service references, initialized when created and used in initializing other services.
     private PDACommandControl fCommandControl;
     private PDARunControl fRunControl;
 
-    public PDAServicesInitSequence(DsfSession session, String program, int requestPort, int eventPort, RequestMonitor rm) 
+    public PDAServicesInitSequence(DsfSession session, PDALaunch launch, String program, RequestMonitor rm) 
     {
         super(session.getExecutor(), rm);
+        fLaunch = launch;
         fSession = session;
         fProgram = program;
-        fRequestPort = requestPort;
-        fEventPort = eventPort;
     }
 
     @Override

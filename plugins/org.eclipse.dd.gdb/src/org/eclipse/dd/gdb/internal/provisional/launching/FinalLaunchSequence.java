@@ -7,27 +7,18 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation          
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
@@ -39,6 +30,7 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.IGDBLaunchConfigurationConstants;
 import org.eclipse.dd.gdb.internal.provisional.actions.IConnect;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.CSourceLookup;
@@ -59,9 +51,6 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
 public class FinalLaunchSequence extends Sequence {
 
     Step[] fSteps = new Step[] {
-        /*
-         * Fetch the control service for later use
-         */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
@@ -73,6 +62,22 @@ public class FinalLaunchSequence extends Sequence {
             fTracker = null;
             requestMonitor.done();
         }},
+
+        /*
+         * Fetch the GDBBackend service for later use
+         */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fGDBBackend = fTracker.getService(IGDBBackend.class);
+            if (fGDBBackend == null) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain GDBBackend service", null)); //$NON-NLS-1$
+            }
+
+            requestMonitor.done();
+        }},
+        /*
+         * Fetch the control service for later use
+         */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fCommandControl = fTracker.getService(IGDBControl.class);
@@ -89,8 +94,8 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
         	try {
-        		final String gdbinitFile = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
-        				                                                           IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
+        		final String gdbinitFile = fGDBBackend.getGDBInitFile();
+        		
         		if (gdbinitFile != null && gdbinitFile.length() > 0) {
         			fCommandControl.queueCommand(
         					new CLISource(fCommandControl.getContext(), gdbinitFile), 
@@ -134,7 +139,7 @@ public class FinalLaunchSequence extends Sequence {
         	if (!noFileCommand && execPath != null && !execPath.isEmpty()) {
         		fCommandControl.queueCommand(
        				new MIFileExecAndSymbols(fCommandControl.getContext(), 
-       						                 execPath.toOSString()), 
+       						                 execPath.toPortableString()), 
        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         	} else {
         		requestMonitor.done();
@@ -146,11 +151,9 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
     		try {
-    			String args = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-    					                                                    (String)null);
+    			String args = fGDBBackend.getProgramArguments();
+    			
         		if (args != null) {
-        			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
-
         			fCommandControl.queueCommand(
         					new MIGDBSetArgs(fCommandControl.getContext(), args), 
         					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
@@ -167,58 +170,24 @@ public class FinalLaunchSequence extends Sequence {
     	 */
         new Step() {
         	
-        	private File getWorkingDirectory(RequestMonitor requestMonitor) {
+        	private IPath getWorkingDirectory(RequestMonitor requestMonitor) {
        			IPath path = null;
            		try {
-        			String location = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
-        																		    (String)null);
-            		if (location != null) {
-            			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
-            			if (expandedLocation.length() > 0) {
-            				path = new Path(expandedLocation);
-            			}
-            		}
-
-            		if (path == null) {
-            			// default working dir is the project if this config has a project
-            			ICProject cp = LaunchUtils.getCProject(fLaunch.getLaunchConfiguration());
-            			if (cp != null) {
-            				IProject p = cp.getProject();
-            				return p.getLocation().toFile();
-            			}
-            		} else {
-            			if (path.isAbsolute()) {
-            				File dir = new File(path.toOSString());
-            				if (dir.isDirectory()) {
-            					return dir;
-            				}
-            			} else {
-            				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-            				if (res instanceof IContainer && res.exists()) {
-            					return res.getLocation().toFile();
-            				}
-            			}
-
-            			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, 
-        						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
-        						new FileNotFoundException(LaunchMessages.getFormattedString(
-        								"AbstractCLaunchDelegate.WORKINGDIRECTORY_PATH_not_found", path.toOSString())))); //$NON-NLS-1$
-        				requestMonitor.done();
-            		}
+           			path = fGDBBackend.getGDBWorkingDirectory();
            		} catch (CoreException e) {
            			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
            			requestMonitor.done();
            		}
 
-        		return null;
+        		return path;
         	}
 
         @Override
         public void execute(final RequestMonitor requestMonitor) {
-        	File dir = getWorkingDirectory(requestMonitor);
+        	IPath dir = getWorkingDirectory(requestMonitor);
         	if (dir != null) {
         		fCommandControl.queueCommand(
-        				new MIEnvironmentCD(fCommandControl.getContext(), dir.getAbsolutePath()), 
+        				new MIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
         				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
         	} else {
         		requestMonitor.done();
@@ -314,9 +283,8 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
       		try {
-      		    @SuppressWarnings("unchecked")
-    			List<String> p = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
-    					                                                       new ArrayList<String>(1));
+    			List<String> p = fGDBBackend.getSharedLibraryPaths();
+      		    
    				if (p.size() > 0) {
    					String[] paths = p.toArray(new String[p.size()]);
    	                fCommandControl.queueCommand(
@@ -508,8 +476,10 @@ public class FinalLaunchSequence extends Sequence {
     SessionType fSessionType;
     boolean fAttach;
 
-    IGDBControl fCommandControl;
-    IMIProcesses fProcService;
+    private IGDBControl fCommandControl;
+    private IGDBBackend	fGDBBackend;
+    private IMIProcesses fProcService;
+
     DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach) {

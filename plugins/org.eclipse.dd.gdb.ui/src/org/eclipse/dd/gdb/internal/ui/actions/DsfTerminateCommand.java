@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.ui.actions;
 
@@ -19,8 +20,10 @@ import org.eclipse.dd.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.dd.mi.service.IMIBackend;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
@@ -62,14 +65,14 @@ public class DsfTerminateCommand implements ITerminateHandler {
             new DsfRunnable() { 
                 public void run() {
                     // Get the processes service and the exec context.
-                    IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-                    if (gdbControl == null || dmc == null) {
+                	IGDBBackend gdbBackend = fTracker.getService(IGDBBackend.class);
+                    if (gdbBackend == null || dmc == null) {
                         // Context or service already invalid.
                         request.setEnabled(false);
                         request.done();
                     } else {
-                        // Check the teriminate.
-                        request.setEnabled(!gdbControl.isGDBExited());
+                        // Check the terminate.
+                        request.setEnabled(gdbBackend.getState() == IMIBackend.State.STARTED);
                         request.done();
                     }
                 }

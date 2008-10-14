@@ -257,7 +257,7 @@ public class PDARunControl extends AbstractDsfService
     private void doInitialize(final RequestMonitor rm) {
         // Cache a reference to the command control and the virtual machine context
         fCommandControl = getServicesTracker().getService(PDACommandControl.class);
-        fDMContext = fCommandControl.getVirtualMachineDMContext();
+        fDMContext = fCommandControl.getContext();
 
         // Create the main thread context.
         fThreads.put(

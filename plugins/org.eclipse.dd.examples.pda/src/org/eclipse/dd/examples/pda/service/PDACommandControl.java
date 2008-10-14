@@ -14,8 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -36,6 +34,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.service.command.ICommand;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControl;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.debug.service.command.ICommandListener;
 import org.eclipse.dd.dsf.debug.service.command.ICommandResult;
 import org.eclipse.dd.dsf.debug.service.command.ICommandToken;
@@ -52,7 +51,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Service that handles communication with a PDA debugger back end.  
  */
-public class PDACommandControl extends AbstractDsfService implements ICommandControl {
+public class PDACommandControl extends AbstractDsfService implements ICommandControlService {
 
     // Structure used to store command information in services internal queues.
     private static class CommandHandle {
@@ -67,11 +66,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         }
     }
 
-    // Parameters that the command control is created with.
-    final private String fProgram;
-    final private int fRequestPort;
-    final private int fEventPort;
-
+    private PDABackend fBackend;
+    
     // Queue of commands waiting to be sent to the debugger.  As long as commands
     // are in this queue, they can still be removed by clients. 
     private final List<CommandHandle> fCommandQueue = new LinkedList<CommandHandle>();
@@ -98,13 +94,9 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     
     // Sockets for communicating with PDA debugger 
     @ThreadSafe
-    private Socket fRequestSocket;
-    @ThreadSafe
     private PrintWriter fRequestWriter;
     @ThreadSafe
     private BufferedReader fRequestReader;
-    @ThreadSafe
-    private Socket fEventSocket;
     @ThreadSafe
     private BufferedReader fEventReader;
 
@@ -115,14 +107,9 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     /**
      * Command control constructor. 
      * @param session The DSF session that this service is a part of. 
-     * @param requestPort Port number for sending PDA commands.
-     * @param eventPort Port for listening to PDA events.
      */
-    public PDACommandControl(DsfSession session, String program, int requestPort, int eventPort) {
+    public PDACommandControl(DsfSession session) {
         super(session);
-        fProgram = program;
-        fRequestPort = requestPort;
-        fEventPort = eventPort;
     }
     
     @Override
@@ -137,8 +124,10 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     }
 
     private void doInitialize(final RequestMonitor rm) {
+        fBackend = getServicesTracker().getService(PDABackend.class);
+
         // Create the control's data model context.
-        fDMContext = new PDAVirtualMachineDMContext(getSession().getId(), fProgram);
+        fDMContext = new PDAVirtualMachineDMContext(getSession().getId(), fBackend.getPorgramName());
 
         // Add a listener for PDA events to track the started/terminated state.
         addEventListener(new IEventListener() {
@@ -151,60 +140,25 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             }
         });
         
-        // Request monitor that will be invoked when the socket initialization is
-        // completed.  
-        final RequestMonitor socketsInitializeRm = new RequestMonitor(getExecutor(), rm) {
-            @Override
-            protected void handleSuccess() {
-                // Register the service with OSGi as the last step in initialization of 
-                // the service.
-                register(
-                    new String[]{ ICommandControl.class.getName(), PDACommandControl.class.getName() }, 
-                    new Hashtable<String,String>());
-                rm.done();
-            }
-        };
+        // Get intput/output streams from the backend service.
+        //
+        fRequestWriter = new PrintWriter(fBackend.getRequestOutputStream());
+        fRequestReader = new BufferedReader(new InputStreamReader(fBackend.getRequestInputStream()));
+        fEventReader = new BufferedReader(new InputStreamReader(fBackend.getEventInputStream()));
+
+        fEventDispatchJob = new EventDispatchJob();
+        fEventDispatchJob.schedule();
         
-        // To avoid blocking the DSF dispatch thread use a job to initialize communication sockets.  
-        new Job("PDA Initialize") {
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                try {
-                    // give interpreter a chance to start
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                    fRequestSocket = new Socket("localhost", fRequestPort);
-                    fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream());
-                    fRequestReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
-                    // give interpreter a chance to open next socket
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                    fEventSocket = new Socket("localhost", fEventPort);
-                    fEventReader = new BufferedReader(new InputStreamReader(fEventSocket.getInputStream()));
+        fCommandSendJob = new CommandSendJob();
+        fCommandSendJob.schedule();
 
-                    fEventDispatchJob = new EventDispatchJob();
-                    fEventDispatchJob.schedule();
-                    
-                    fCommandSendJob = new CommandSendJob();
-                    fCommandSendJob.schedule();
+        // Register the service with OSGi as the last step in initialization of 
+        // the service.
+        register(
+            new String[]{ ICommandControl.class.getName(), PDACommandControl.class.getName() }, 
+            new Hashtable<String,String>());
 
-                    socketsInitializeRm.done();
-                } catch (UnknownHostException e) {
-                    socketsInitializeRm.setStatus(new Status(
-                        IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED, "Unable to connect to PDA VM", e));
-                    socketsInitializeRm.done();
-                } catch (IOException e) {
-                    socketsInitializeRm.setStatus(new Status(
-                        IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED, "Unable to connect to PDA VM", e));
-                    socketsInitializeRm.done();
-                }
-                return Status.OK_STATUS;
-            }
-        }.schedule();
+        rm.done();
     }
 
     @Override
@@ -499,10 +453,14 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
      * @see PDAVirtualMachineDMContext
      */
     @ThreadSafe
-    public PDAVirtualMachineDMContext getVirtualMachineDMContext() {
+    public PDAVirtualMachineDMContext getContext() {
         return fDMContext;
     }
 
+    public String getId() {
+        return fBackend.getPorgramName();
+    }
+    
     private void setStarted() {
         // Mark the command control as started and ready to process commands.
         fStarted = true;
@@ -511,15 +469,16 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         processQueues();
 
         // Issue a data model event.
-        getSession().dispatchEvent(new PDAStartedEvent(getVirtualMachineDMContext()), getProperties());
+        getSession().dispatchEvent(new PDAStartedEvent(getContext()), getProperties());
     }
     
     /**
      * Returns whether the PDA debugger has started and is processing commands.
      */
-    public boolean isStarted() {
-        return fStarted;
+    public boolean isActive() {
+        return fStarted && !isTerminated();
     }
+    
     
     @ThreadSafe
     private synchronized void setTerminated() {
@@ -533,7 +492,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             processQueues();
             
             // Issue a data model event.
-            getSession().dispatchEvent(new PDATerminatedEvent(getVirtualMachineDMContext()), getProperties());
+            getSession().dispatchEvent(new PDATerminatedEvent(getContext()), getProperties());
         }
     }
 

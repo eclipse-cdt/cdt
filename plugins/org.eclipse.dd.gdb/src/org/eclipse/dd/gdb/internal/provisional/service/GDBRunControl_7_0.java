@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson		      - Modified for additional functionality
  *     Ericsson           - Version 7.0
+ *     Nokia - create and use backend service. 
  *******************************************************************************/
 
 package org.eclipse.dd.gdb.internal.provisional.service;
@@ -27,13 +28,12 @@ import org.eclipse.dd.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.dd.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
-import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIRunControl;
 
 public class GDBRunControl_7_0 extends MIRunControl {
-    private IGDBControl fGdb;
+    private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
 
     public GDBRunControl_7_0(DsfSession session) {
@@ -52,7 +52,7 @@ public class GDBRunControl_7_0 extends MIRunControl {
 
     private void doInitialize(final RequestMonitor requestMonitor) {
     	
-        fGdb = getServicesTracker().getService(IGDBControl.class);
+        fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
 
         register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName()}, 

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Nokia 			  - created GDBBackend service. Sep. 2008
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
@@ -27,12 +28,21 @@ import org.eclipse.dd.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.mi.service.CSourceLookup;
+import org.eclipse.dd.mi.service.IMIBackend;
 import org.eclipse.dd.mi.service.IMIProcesses;
 import org.eclipse.dd.mi.service.MIBreakpointsManager;
 
 public class ServicesLaunchSequence extends Sequence {
 
     Step[] fSteps = new Step[] {
+        new Step() { 
+            @Override
+            public void execute(RequestMonitor requestMonitor) {
+                // Create the back end GDB service.
+                //
+                fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);
+            }
+        },
         // Create and initialize the Connection service.
         new Step() { 
             @Override

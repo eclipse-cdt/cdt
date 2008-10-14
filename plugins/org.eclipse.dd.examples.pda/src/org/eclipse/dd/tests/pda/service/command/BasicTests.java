@@ -82,7 +82,7 @@ public class BasicTests extends CommandControlTestsBase {
             }
         });
         
-        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getVirtualMachineDMContext(), "data 1");
+        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getContext(), "data 1");
         
         // Test sending the command and checking all listeners were called.
         Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {

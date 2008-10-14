@@ -26,6 +26,7 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.debug.service.command.IEventListener;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.examples.pda.service.PDABackend;
 import org.eclipse.dd.examples.pda.service.PDACommandControl;
 import org.eclipse.dd.examples.pda.service.commands.PDACommandResult;
 import org.eclipse.dd.tests.pda.util.Launching;
@@ -41,7 +42,7 @@ public class CommandControlTestsBase {
     
     protected DsfExecutor fExecutor;
     protected DsfSession fSession;
-    protected Process fPDAProcess;
+    protected PDABackend fPDABackend;
     protected PDACommandControl fCommandControl;
     private BlockingQueue<Object> fEventsQueue = new LinkedBlockingQueue<Object>();
 
@@ -57,16 +58,20 @@ public class CommandControlTestsBase {
             }
         };
 
-        int requestPort = Launching.findFreePort();
-        int eventPort = Launching.findFreePort();
-
-        fPDAProcess = Launching.launchPDA(fProgram, requestPort, eventPort);
-        fOutputReader = new BufferedReader(new InputStreamReader(fPDAProcess.getInputStream()));
-        Assert.assertEquals("-debug " + requestPort + " " + eventPort, fOutputReader.readLine());
-        
         fExecutor = new DefaultDsfExecutor();
         fSession = DsfSession.startSession(fExecutor, "PDA Test");
-        fCommandControl = new PDACommandControl(fSession, fProgram, requestPort, eventPort);
+
+        Process proc = Launching.launchPDA(fSession, null, fProgram);
+        Assert.assertNotNull(proc);
+        
+        // Remember the backend service of this session.
+        // Note this must be called after the above LaunchPDA().
+        fPDABackend = Launching.getBackendService();
+        
+        fOutputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        Assert.assertTrue(fOutputReader.readLine().contains("-debug"));
+        
+        fCommandControl = new PDACommandControl(fSession);
 
         fCommandControl.addEventListener(new IEventListener() {
             public void eventReceived(Object output) {
@@ -82,8 +87,9 @@ public class CommandControlTestsBase {
     
     @After
     public void shutdown() throws CoreException, InterruptedException, ExecutionException, IOException {
-        fOutputReader.close();
-        fPDAProcess.destroy();
+    	if (fOutputReader != null) {
+    		fOutputReader.close();
+    	}
         
         class ShutdownCommandServiceQuery extends Query<Object> {
             @Override
@@ -97,6 +103,19 @@ public class CommandControlTestsBase {
             fExecutor.execute(shutdownQuery);
             shutdownQuery.get();
         }
+
+        class ShutdownBackendServiceQuery extends Query<Object> {
+            @Override
+            protected void execute(DataRequestMonitor<Object> rm) {
+                fPDABackend.shutdown(rm);
+            }
+        };
+        
+        if (fExecutor != null) {
+            ShutdownBackendServiceQuery shutdownQuery = new ShutdownBackendServiceQuery();
+            fExecutor.execute(shutdownQuery);
+            shutdownQuery.get();
+        }
     }
     
     protected void sendCommand(String command)  throws Throwable {
@@ -105,7 +124,7 @@ public class CommandControlTestsBase {
 
     protected void sendCommand(String command, String expectedResult) throws Throwable {
 
-        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getVirtualMachineDMContext(), command);
+        final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getContext(), command);
         
         // Test sending the command and checking all listeners were called.
         Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {

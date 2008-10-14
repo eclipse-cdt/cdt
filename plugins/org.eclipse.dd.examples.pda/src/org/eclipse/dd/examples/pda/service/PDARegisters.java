@@ -270,7 +270,7 @@ public class PDARegisters extends AbstractDsfService
         // only needs to be reset upon the "registers" event and is available
         // all the time.
         fNamesCache = new CommandCache(getSession(), fCommandControl);
-        fNamesCache.setContextAvailable(fCommandControl.getVirtualMachineDMContext(), true);
+        fNamesCache.setContextAvailable(fCommandControl.getContext(), true);
         
         // Add the register service as a listener to PDA events, to catch 
         // the "registers" events from the command control.

@@ -15,6 +15,7 @@ import org.eclipse.dd.dsf.datamodel.AbstractDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
@@ -38,7 +39,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * </p>
  */
 public class PDAVirtualMachineDMContext extends PlatformObject
-    implements IContainerDMContext, IBreakpointsTargetDMContext 
+    implements ICommandControlDMContext, IContainerDMContext, IBreakpointsTargetDMContext 
 {
     final static IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
     
@@ -67,6 +68,10 @@ public class PDAVirtualMachineDMContext extends PlatformObject
         return "pda[" + getSessionId() + "]";
     }
 
+    public String getCommandControlId() {
+        return getProgram();
+    }
+    
     /**
      * @see AbstractDMContext#getAdapter(Class)
      */

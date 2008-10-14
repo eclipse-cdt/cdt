@@ -164,7 +164,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
 
     public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> rm) {
         // Validate the context
-        if (!fCommandControl.getVirtualMachineDMContext().equals(context)) {
+        if (!fCommandControl.getContext().equals(context)) {
             PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid breakpoints target context");
             return;
         }
@@ -230,7 +230,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // installed already. PDA can only track a single breakpoint at a 
         // given line, attempting to set the second breakpoint should fail.
         final BreakpointDMContext breakpointCtx = 
-            new BreakpointDMContext(getSession().getId(), fCommandControl.getVirtualMachineDMContext(), line);
+            new BreakpointDMContext(getSession().getId(), fCommandControl.getContext(), line);
         if (fBreakpoints.contains(breakpointCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint already set");
             return;
@@ -244,7 +244,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // still being processed here.
         fBreakpoints.add(breakpointCtx);
         fCommandControl.queueCommand(
-            new PDASetBreakpointCommand(fCommandControl.getVirtualMachineDMContext(), line, false), 
+            new PDASetBreakpointCommand(fCommandControl.getContext(), line, false), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -286,7 +286,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // installed already. PDA can only track a single watchpoint for a given
         // function::variable, attempting to set the second breakpoint should fail.
         final WatchpointDMContext watchpointCtx = 
-            new WatchpointDMContext(getSession().getId(), fCommandControl.getVirtualMachineDMContext(), function, variable);
+            new WatchpointDMContext(getSession().getId(), fCommandControl.getContext(), function, variable);
         if (fBreakpoints.contains(watchpointCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Watchpoint already set");
             return;
@@ -310,7 +310,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // still being processed here.
         fBreakpoints.add(watchpointCtx);
         fCommandControl.queueCommand(
-            new PDAWatchCommand(fCommandControl.getVirtualMachineDMContext(), function, variable, watchOperation), 
+            new PDAWatchCommand(fCommandControl.getContext(), function, variable, watchOperation), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -350,7 +350,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         fBreakpoints.remove(bpCtx);
 
         fCommandControl.queueCommand(
-            new PDAClearBreakpointCommand(fCommandControl.getVirtualMachineDMContext(), bpCtx.fLine), 
+            new PDAClearBreakpointCommand(fCommandControl.getContext(), bpCtx.fLine), 
             new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 
@@ -360,7 +360,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         // Watchpoints are cleared using the same command, but with a "no watch" operation
         fCommandControl.queueCommand(
             new PDAWatchCommand(
-                fCommandControl.getVirtualMachineDMContext(), bpCtx.fFunction, bpCtx.fVariable, PDAWatchCommand.WatchOperation.NONE), 
+                fCommandControl.getContext(), bpCtx.fFunction, bpCtx.fVariable, PDAWatchCommand.WatchOperation.NONE), 
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 

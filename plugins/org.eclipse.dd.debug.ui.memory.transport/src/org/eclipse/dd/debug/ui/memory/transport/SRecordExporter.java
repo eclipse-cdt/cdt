@@ -193,8 +193,8 @@ public class SRecordExporter implements IMemoryExporter
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText("Choose memory export file");
-				dialog.setFilterExtensions(new String[] { "*.*" } );
-				dialog.setFilterNames(new String[] { "All Files (*.*)" } );
+				dialog.setFilterExtensions(new String[] { "*.*;*" } );
+				dialog.setFilterNames(new String[] { "All Files" } );
 				dialog.setFileName(fFileText.getText());
 				dialog.open();
 			

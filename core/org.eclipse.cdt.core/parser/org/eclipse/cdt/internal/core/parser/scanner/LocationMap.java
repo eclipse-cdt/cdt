@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 /**
  * Converts the offsets relative to various contexts to the global sequence number. Also creates and stores
@@ -43,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 public class LocationMap implements ILocationResolver {
 	private static final IASTName[] EMPTY_NAMES = {};
 	
+	private final LexerOptions fLexerOptions;
 	private String fTranslationUnitPath;
     private IASTTranslationUnit fTranslationUnit;
 
@@ -59,7 +61,15 @@ public class LocationMap implements ILocationResolver {
 	// stuff computed on demand
 	private IdentityHashMap<IBinding, IASTPreprocessorMacroDefinition> fMacroDefinitionMap= null;
 	private List<ISkippedIndexedFilesListener> fSkippedFilesListeners= new ArrayList<ISkippedIndexedFilesListener>();
-    
+
+	public LocationMap(LexerOptions lexOptions) {
+		fLexerOptions= lexOptions;
+	}
+	
+	public LexerOptions getLexerOptions() {
+		return fLexerOptions;
+	}
+
 	public void registerPredefinedMacro(IMacroBinding macro) {
 		registerPredefinedMacro(macro, null, -1);
 	}
@@ -392,7 +402,11 @@ public class LocationMap implements ILocationResolver {
 		return fRootContext.findMappedFileLocation(sequenceNumber, length);
 	}
 	
-    public char[] getUnpreprocessedSignature(IASTFileLocation loc) {
+    public int convertToSequenceEndNumber(int sequenceNumber) {
+    	return fRootContext.convertToSequenceEndNumber(sequenceNumber);
+	}
+
+	public char[] getUnpreprocessedSignature(IASTFileLocation loc) {
 		ASTFileLocation floc= convertFileLocation(loc);
 		if (floc == null) {
 			return CharArrayUtils.EMPTY;

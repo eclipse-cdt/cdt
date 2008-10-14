@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -98,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -5291,5 +5294,139 @@ public class AST2Tests extends AST2BaseTest {
 	public void testPredefinedFunctionNameGcc_Bug247747() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+	}
+	
+	//	#define IF      if
+	//	#define IF_P    if (
+	//	#define IF_P_T  if (1
+	//	#define SEMI_IF ; if 
+	//	#define IF_COND if (1)
+	//  void test() {
+	public void testLeadingSyntax_Bug250251() throws Exception {
+		String code= getAboveComment();
+
+		IASTTranslationUnit tu= parseAndCheckBindings(code + "if (1) {};}");
+		IASTFunctionDefinition f= getDeclaration(tu, 0);
+		IASTIfStatement i = getStatement(f, 0);
+		IASTExpression x= i.getConditionExpression();
+		IToken syntax= x.getLeadingSyntax();
+		checkToken(syntax, "if", -4); syntax= syntax.getNext();
+		checkToken(syntax, "(", -1);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "if(  1) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		syntax= x.getLeadingSyntax();
+		checkToken(syntax, "if", -5); syntax= syntax.getNext();
+		checkToken(syntax, "(", -3);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "if(1) ; else ;}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); IASTStatement est= i.getElseClause();
+		syntax= est.getLeadingSyntax();
+		checkToken(syntax, "else", -5); syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "IF(1) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		syntax= x.getLeadingSyntax();
+		checkToken(syntax, "IF", -3); syntax= syntax.getNext();
+		checkToken(syntax, "(", -1);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "IF_P 1) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		syntax= x.getLeadingSyntax();
+		checkToken(syntax, "IF_P", -5); syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "IF_P_T ) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		try {
+			syntax= x.getLeadingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+
+		tu= parseAndCheckBindings(code + "SEMI_IF (1) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 1); x= i.getConditionExpression();
+		try {
+			syntax= x.getLeadingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+
+		tu= parseAndCheckBindings(code + "IF_COND {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		try {
+			syntax= x.getLeadingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+	}
+
+	//  #define P(x) )
+	//	#define BLOCK() {}
+	//  #define T_P 1)
+	//  #define P_BLOCK ){}
+	//	#define IF_COND if (1)
+	//  void test() {
+	public void testTrailingSyntax_Bug250251() throws Exception {
+		String code= getAboveComment();
+
+		IASTTranslationUnit tu= parseAndCheckBindings(code + "if (1) {};}");
+		IASTFunctionDefinition f= getDeclaration(tu, 0);
+		IASTIfStatement i = getStatement(f, 0);
+		IASTExpression x= i.getConditionExpression();
+		IToken syntax= x.getTrailingSyntax();
+		checkToken(syntax, ")", 0); syntax= syntax.getNext();
+		assertNull(syntax);
+		
+		tu= parseAndCheckBindings(code + "do {} while(1 );}");
+		f= getDeclaration(tu, 0); IASTDoStatement dstmt= getStatement(f, 0); x= dstmt.getCondition();
+		syntax= x.getTrailingSyntax();
+		checkToken(syntax, ")", 1);  syntax= syntax.getNext();
+		checkToken(syntax, ";", 2);  syntax= syntax.getNext();
+		assertNull(syntax);
+		
+
+		tu= parseAndCheckBindings(code + "if(1 ) BLOCK()}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		syntax= x.getTrailingSyntax();
+		checkToken(syntax, ")", 1);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "if(1 P(0) {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		syntax= x.getTrailingSyntax();
+		checkToken(syntax, "P", 1); syntax= syntax.getNext();
+		checkToken(syntax, "(", 2); syntax= syntax.getNext();
+		checkToken(syntax, "0", 3); syntax= syntax.getNext();
+		checkToken(syntax, ")", 4); syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "if (T_P {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		try {
+			syntax= x.getTrailingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+
+		tu= parseAndCheckBindings(code + "if (1 P_BLOCK }");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		try {
+			syntax= x.getTrailingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+
+		tu= parseAndCheckBindings(code + "IF_COND {}}");
+		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
+		try {
+			syntax= x.getTrailingSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+	}
+
+	private void checkToken(IToken token, String image, int offset) {
+		assertEquals(image, token.getImage());
+		assertEquals(offset, token.getOffset());
+		assertEquals(image.length(), token.getLength());		
 	}
 }

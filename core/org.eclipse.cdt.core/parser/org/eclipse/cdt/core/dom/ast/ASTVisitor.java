@@ -116,6 +116,38 @@ public abstract class ASTVisitor {
 	 */
 	public boolean shouldVisitTemplateParameters = false;
 	
+	/**
+	 * Creates a visitor that does not visit any kind of node per default.
+	 */
+	public ASTVisitor() {
+		this(false);
+	}
+	
+	/**
+	 * Creates a visitor.
+	 * @param visitNodes whether visitor is setup to visit all nodes per default.
+	 * @since 5.1
+	 */
+	public ASTVisitor(boolean visitNodes) {
+		shouldVisitArrayModifiers= visitNodes;
+		shouldVisitBaseSpecifiers= visitNodes;
+		shouldVisitDeclarations= visitNodes;
+		shouldVisitDeclarators= visitNodes;
+		shouldVisitDeclSpecifiers= visitNodes;
+		shouldVisitDesignators= visitNodes;
+		shouldVisitEnumerators= visitNodes;
+		shouldVisitExpressions= visitNodes;
+		shouldVisitInitializers= visitNodes;
+		shouldVisitNames= visitNodes;
+		shouldVisitNamespaces= visitNodes;
+		shouldVisitParameterDeclarations= visitNodes;
+		shouldVisitProblems= visitNodes;
+		shouldVisitStatements= visitNodes;
+		shouldVisitTemplateParameters= visitNodes;
+		shouldVisitTranslationUnit= visitNodes;
+		shouldVisitTypeIds= visitNodes;
+	}
+
 	// visit methods
 	public int visit(IASTTranslationUnit tu) {
 		return PROCESS_CONTINUE;

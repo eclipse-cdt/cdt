@@ -6,16 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Doug Schaefer - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * This is the root node in the physical AST. A physical node represents a chunk
  * of text in the source program.
  * 
- * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTNode {
 	
@@ -128,4 +130,48 @@ public interface IASTNode {
      * @since 4.0
      */
 	public boolean contains(IASTNode node);
+	
+	/**
+	 * Returns the tokens that can be found between this node and its left sibling (or the
+	 * beginning of the parent, if there is no left sibling). The tokens are obtained 
+	 * from the lexer, no preprocessing is performed.
+	 * The offsets of the tokens are relative to the file-offset of this node.
+	 * <p> <b>Examples</b> looking at the condition of if-statements:
+	 * <pre>
+	 * #define IF      if
+     * #define IF_P    if (
+     * #define IF_P_T  if (true
+     * #define SEMI_IF ; if 
+     * #define IF_COND if (true)
+     * void test() {
+     *    if (true) {}       // leading syntax: 'if ('
+     *    IF (true) {}       // leading syntax: 'IF ('
+     *    IF_P true) {}      // leading syntax: 'IF_P'
+     *    IF_P_T ) {}        // throws ExpansionOverlapsBoundaryException
+     *    SEMI_IF (true) {}  // throws ExpansionOverlapsBoundaryException
+     *    IF_COND            // throws ExpansionOverlapsBoundaryException
+     * </pre>
+	 * @return a chain of tokens or <code>null</code>, if there are none.
+	 * @throws ExpansionOverlapsBoundaryException if one of the boundaries of the leading syntax is
+	 * overlapped by a macro-expansion. 
+	 * @throws UnsupportedOperationException if invoked on preprocessor nodes, or nodes that are not
+	 * part of a translation unit.
+	 * @since 5.1
+	 */
+	public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException;
+
+	/**
+	 * Returns the tokens that can be found between this node and its right sibling (or the
+	 * end of the parent, if there is no right sibling). The tokens are obtained from the lexer,
+	 * no preprocessing is performed.
+	 * The offsets of the tokens are relative to the file-offset of the end of this node.
+	 * <p> For examples see {@link #getLeadingSyntax()}.
+	 * @return a chain of tokens or <code>null</code>, if there are none.
+	 * @throws ExpansionOverlapsBoundaryException if one of the boundaries of the trailing syntax is
+	 * overlapped by a macro-expansion.
+	 * @throws UnsupportedOperationException if invoked on preprocessor nodes, or nodes that are not
+	 * part of a translation unit.
+	 * @since 5.1
+	 */
+	public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException;
 }

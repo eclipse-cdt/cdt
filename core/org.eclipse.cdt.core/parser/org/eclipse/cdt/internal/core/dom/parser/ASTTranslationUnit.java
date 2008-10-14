@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -293,6 +294,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		}
 		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
 			return fIndexFileSet;
+		}
+		if (adapter.isAssignableFrom(LexerOptions.class)) {
+			return fLocationResolver.getLexerOptions();
 		}
 		return null;
 	}

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMASTAdapter {
@@ -170,6 +172,16 @@ public class PDOMASTAdapter {
 
 		public IASTName getLastName() {
 			return this;
+		}
+
+		public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException,
+				UnsupportedOperationException {
+			return fDelegate.getLeadingSyntax();
+		}
+
+		public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException,
+				UnsupportedOperationException {
+			return fDelegate.getTrailingSyntax();
 		}
 	}
 

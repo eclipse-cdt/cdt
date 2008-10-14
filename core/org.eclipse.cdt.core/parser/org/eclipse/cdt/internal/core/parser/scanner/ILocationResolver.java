@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 
 /**
@@ -163,4 +164,16 @@ public interface ILocationResolver {
 	 * @since 5.0
 	 */
 	IASTPreprocessorMacroExpansion[] getMacroExpansions(IASTFileLocation loc);
+
+	/**
+	 * If you want to use the sequence number of an ast-node as the end of a previous node,
+	 * it needs to be adjusted, because gaps are used for the encoding of directives.
+	 * @return the adjusted sequence number, to be used as end-number
+	 */
+	int convertToSequenceEndNumber(int sequenceNumber);
+
+	/**
+	 * Returns the lexer options that have been used by the preprocessor.
+	 */
+	LexerOptions getLexerOptions();
 }

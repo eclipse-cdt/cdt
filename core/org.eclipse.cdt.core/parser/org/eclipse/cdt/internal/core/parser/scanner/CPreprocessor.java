@@ -138,7 +138,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     // state information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
-    private final LocationMap fLocationMap = new LocationMap();
+    private final LocationMap fLocationMap;
 
     /** Set of already included files */
     private final HashSet<String> fAllIncludedFiles= new HashSet<String>();
@@ -161,6 +161,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportAtSignInIdentifiers= configuration.supportAtSignInIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
+        fLocationMap= new LocationMap(fLexOptions);
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);
         configureKeywords(language, configuration);

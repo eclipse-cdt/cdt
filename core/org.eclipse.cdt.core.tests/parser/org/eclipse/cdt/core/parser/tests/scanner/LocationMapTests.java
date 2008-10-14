@@ -49,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 public class LocationMapTests extends BaseTestCase {
 	public class Loc implements IASTFileLocation {
@@ -102,7 +103,7 @@ public class LocationMapTests extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fLocationMap= new LocationMap();
+		fLocationMap= new LocationMap(new LexerOptions());
 	}
 
 	@Override

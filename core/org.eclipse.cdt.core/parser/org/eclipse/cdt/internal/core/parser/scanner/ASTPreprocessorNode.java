@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
@@ -76,6 +77,16 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	 */
 	void findNode(ASTNodeSpecification<?> nodeSpec) {
 		nodeSpec.visit(this);
+	}
+
+	@Override
+	public IToken getLeadingSyntax() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IToken getTrailingSyntax() {
+		throw new UnsupportedOperationException();
 	}
 }
 

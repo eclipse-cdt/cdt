@@ -110,6 +110,21 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	@Override
+	public int convertToSequenceEndNumber(int sequenceNumber) {
+		// try to delegate to a child.
+		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
+		if (child != null)
+			sequenceNumber= child.convertToSequenceEndNumber(sequenceNumber);
+
+		// if the potentially converted sequence number is the beginning of this context, 
+		// skip the denotation of this context in the parent.
+		if (sequenceNumber == fSequenceNumber)
+			return sequenceNumber - fEndOffsetInParent + fOffsetInParent;
+
+		return sequenceNumber;
+	}
+	
+	@Override
 	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// try to delegate to a child.
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;

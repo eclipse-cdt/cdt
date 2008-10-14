@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.text.edits.ReplaceEdit;
 
@@ -99,7 +100,8 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				fBoundaries[++bidx]= to;
 				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), 
 						refs.toArray(new IASTName[refs.size()]), fMacroLocations,
-						fFilePath, refLoc.getStartingLineNumber(), isPPCond);
+						fFilePath, refLoc.getStartingLineNumber(), isPPCond, 
+						(LexerOptions) tu.getAdapter(LexerOptions.class));
 			}
 		}
 		fBoundaries[++bidx]= fSource.length;

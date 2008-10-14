@@ -98,6 +98,14 @@ abstract class LocationCtx implements ILocationCtx {
 		return null;
 	}
 
+	public int convertToSequenceEndNumber(int sequenceNumber) {
+		// if the sequence number is the beginning of this context, skip the denotation of this
+		// context in the parent.
+		if (sequenceNumber == fSequenceNumber)
+			return sequenceNumber - fEndOffsetInParent + fOffsetInParent;
+		return sequenceNumber;
+	}
+
 	/**
 	 * Returns the minimal file location containing the specified sequence number range, assuming 
 	 * that it is contained in this context.

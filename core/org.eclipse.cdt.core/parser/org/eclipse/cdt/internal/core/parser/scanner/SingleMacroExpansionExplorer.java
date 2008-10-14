@@ -26,12 +26,6 @@ import org.eclipse.text.edits.ReplaceEdit;
  * @since 5.0
  */
 public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
-
-	private static final LexerOptions LEX_OPTIONS= new LexerOptions();
-	static {
-		LEX_OPTIONS.fCreateImageLocations= false;
-	}
-	
 	private final String fInput;
 	private final CharArrayMap<PreprocessorMacro> fDictionary;
 	private MacroExpansionStep fFullExpansion;
@@ -40,16 +34,19 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final int fLineNumber;
 	private final Map<IMacroBinding, IASTFileLocation> fMacroLocationMap;
 	private final boolean fIsPPCondition;
+	private final LexerOptions fLexerOptions;
 
 	public SingleMacroExpansionExplorer(String input, IASTName[] refs, 
 			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, 
-			String filePath, int lineNumber, boolean isPPCondition) {
+			String filePath, int lineNumber, boolean isPPCondition, LexerOptions options) {
 		fInput= input;
 		fDictionary= createDictionary(refs);
 		fMacroLocationMap= macroDefinitionLocationMap;
 		fFilePath= filePath;
 		fLineNumber= lineNumber;
 		fIsPPCondition= isPPCondition;
+		fLexerOptions= (LexerOptions) options.clone();
+		fLexerOptions.fCreateImageLocations= false;
 	}
 
 	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName[] refs) {
@@ -80,7 +77,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 
 	private void computeExpansion() {
-		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
+		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
 		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
 		
@@ -96,7 +93,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		if (step < 0 || step >= fExpansionCount) {
 			throw new IndexOutOfBoundsException();
 		}
-		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
+		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, fLexerOptions);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
 		expander.expand(fInput, tracker, fFilePath, fLineNumber, fIsPPCondition);
 		

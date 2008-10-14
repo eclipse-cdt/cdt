@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Ling Wang (Nokia)  - initial API and implementation with some code moved from GDBControl.
+ *     Nokia              - initial API and implementation with some code moved from GDBControl.
  *     Wind River System
  *     Ericsson
  *******************************************************************************/
@@ -68,11 +68,6 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	
 	private ILaunchConfiguration fLaunchConfiguration;
 	
-	/**
-	 * Command line to start GDB.
-	 */
-	private List<String> fGDBCommandLine;
-	
 	/*
 	 * Parameters for launching GDB.
 	 */
@@ -102,7 +97,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 		fLaunchConfiguration = lc;
 		
 		try {
-			ICProject cproject = LaunchUtils.verifyCProject(lc);
+			// Don't call verifyCProject, because the JUnit tests are not setting a project
+			ICProject cproject = LaunchUtils.getCProject(lc);
 			fProgramPath = LaunchUtils.verifyProgramPath(lc, cproject);
 		} catch (CoreException e) {
 			fProgramPath = new Path(""); //$NON-NLS-1$
@@ -148,37 +144,34 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 
     
     private IPath getGDBPath() {
-        IPath retVal = new Path(IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-        try {
-            retVal = new Path(fLaunchConfiguration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-            		                                                        IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
-        } catch (CoreException e) {
-        }
-        return retVal;
+        return LaunchUtils.getGDBPath(fLaunchConfiguration);
     }
 
-	public List<String> getGDBCommandLine() {
-		if (fGDBCommandLine == null)
-		{
-	        fGDBCommandLine = new ArrayList<String>();
-	        
-	        // The goal here is to keep options to an absolute minimum.
-	        // All configuration should be done in the launch sequence
-	        // to allow for easy overriding.
-	        fGDBCommandLine.add(getGDBPath().toOSString());
-	        fGDBCommandLine.add("--interpreter"); //$NON-NLS-1$
-	        fGDBCommandLine.add("mi"); //$NON-NLS-1$
-	        // Don't read the gdbinit file here.  It is read explicitly in
-	        // the LaunchSequence to make it easier to customize.
-	        fGDBCommandLine.add("--nx"); //$NON-NLS-1$
-		}
+	/*
+	 * Options for GDB process. 
+	 * Allow subclass to override.
+	 */
+	protected String getGDBCommandLine() {
+		StringBuffer gdbCommandLine = new StringBuffer(getGDBPath().toOSString());
+
+		// The goal here is to keep options to an absolute minimum.
+		// All configuration should be done in the launch sequence
+		// to allow for more flexibility.
+		gdbCommandLine.append(" --interpreter"); //$NON-NLS-1$
+		// We currently work with MI version 2.  Don't use just 'mi' because it 
+		// points to the latest MI version, while we want mi2 specifically.
+		gdbCommandLine.append(" mi2"); //$NON-NLS-1$
+		// Don't read the gdbinit file here.  It is read explicitly in
+		// the LaunchSequence to make it easier to customize.
+		gdbCommandLine.append(" --nx"); //$NON-NLS-1$
 		
-		return fGDBCommandLine;
+		return gdbCommandLine.toString();
 	}
 
 	public String getGDBInitFile() throws CoreException {
 		if (fGDBInitFile == null) {
-			fGDBInitFile = fLaunchConfiguration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ""); //$NON-NLS-1$
+			fGDBInitFile = fLaunchConfiguration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
+					                                         IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 		}
 		
 		return fGDBInitFile;
@@ -187,7 +180,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	public IPath getGDBWorkingDirectory() throws CoreException {
 		if (fGDBWorkingDirectory == null) {
 
-			// First try to use the user-sepcified working directory for the debugged program.
+			// First try to use the user-specified working directory for the debugged program.
 			// This is fine only with local debug. 
 			// For remote debug, the working dir of the debugged program will be on remote device
 			// and hence not applicable. In such case we may just use debugged program path on host
@@ -247,8 +240,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 									ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 									(String)null);
 
-			if (fProgramArguments != null)
+			if (fProgramArguments != null) {
 				fProgramArguments = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fProgramArguments);
+			}
 		}
 		
 		return fProgramArguments;
@@ -262,7 +256,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	public List<String> getSharedLibraryPaths() throws CoreException {
 		if (fSharedLibPaths == null) {
 			fSharedLibPaths = fLaunchConfiguration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, 
-																				new ArrayList<String>(0));
+																new ArrayList<String>(0));
 		}
 		
 		return fSharedLibPaths;
@@ -272,15 +266,12 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	 * Launch GDB process. 
 	 * Allow subclass to override.
 	 */
-	protected Process launchGDBProcess() throws CoreException {
-    	List<String> gdbCmdLine = getGDBCommandLine();
-        String[] commandLine = gdbCmdLine.toArray(new String[gdbCmdLine.size()]);
-        
+	protected Process launchGDBProcess(String commandLine) throws CoreException {
         Process proc = null;
 		try {
 			proc = ProcessFactory.getFactory().exec(commandLine);
 		} catch (IOException e) {
-            String message = "Error while launching command " + gdbCmdLine.toString();   //$NON-NLS-1$
+            String message = "Error while launching command " + commandLine;   //$NON-NLS-1$
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
 		}
 		
@@ -311,17 +302,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     }
 
     public void destroy() {
-    	if (getState() != State.STARTED)
-    		return;
-
-    	// destroy() should be supported even if it's not spawner. 
-    	fProcess.destroy();
- /*
-        if (fProcess instanceof Spawner) {
-            Spawner gdbSpawner = (Spawner) fProcess;
-            gdbSpawner.destroy();
-        }
- */
+		// destroy() should be supported even if it's not spawner. 
+    	if (getState() == State.STARTED) {
+    		fProcess.destroy();
+    	}
     }
 
     public State getState() {
@@ -370,25 +354,22 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
             final Job startGdbJob = new Job("Start GDB Process Job") { //$NON-NLS-1$
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
-                    List<String> commandList = getGDBCommandLine();
+                    String commandLine = getGDBCommandLine();
         
                     try {                        
-                        fProcess = launchGDBProcess();
+                        fProcess = launchGDBProcess(commandLine);
                     } catch(CoreException e) {
-                        String message = "Error while launching command " + commandList.toString();   //$NON-NLS-1$
-                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
+                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, e.getMessage(), e));
                         gdbLaunchRequestMonitor.done();
                         return Status.OK_STATUS;
                     }
                     
                     try {
-                        InputStream stream = fProcess.getInputStream();
-                        Reader r = new InputStreamReader(stream);
+                        Reader r = new InputStreamReader(getMIInputStream());
                         BufferedReader reader = new BufferedReader(r);
                         String line;
                         while ((line = reader.readLine()) != null) {
                             line = line.trim();
-                            //System.out.println("GDB " + line);
                             if (line.endsWith("(gdb)")) { //$NON-NLS-1$
                                 break;
                             }
@@ -431,7 +412,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
                     int attempts = 0;
                     while (attempts < 10) {
                         try {
-                            // Don't know if we really need the exit value... but what the hell.
+                            // Don't know if we really need the exit value... but what the heck.
                             fGDBExitValue = fProcess.exitValue(); // throws exception if process not exited
         
                             requestMonitor.done();
@@ -490,7 +471,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 			 * This event is not consumed by any one at present, instead it's
 			 * the GDBControlInitializedDMEvent that's used to indicate that GDB
 			 * back end is ready for MI commands. But we still fire the event as
-			 * it does no harm and may be needed sometime.... 09/29/08
+			 * it does no harm and may be needed sometime.... 09/29/2008
 			 */
             getSession().dispatchEvent(
                 new BackendStateChangedEvent(getSession().getId(), getId(), IMIBackend.State.STARTED), 

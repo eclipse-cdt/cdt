@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Ling Wang (Nokia) - initial version. Sep 28, 2008
+ *    Nokia - initial version. Sep 28, 2008
  *******************************************************************************/
 
 package org.eclipse.dd.examples.pda.service;

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Ling Wang (Nokia) - initial version. Sep, 2008
+ *    Nokia    - initial version
+ *    Ericsson - Minor cleanup
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service;
 
@@ -37,16 +38,6 @@ import org.eclipse.dd.mi.service.IMIBackend;
  */
 public interface IGDBBackend extends IMIBackend {
 
-    
-	/**
-	 * Return the command line that is used to launch GDB. <br>
-	 * Note it's not needed to put debugged binary in the command, as that will
-	 * be set by a MI command.
-	 *  
-	 * @return
-	 */
-	public List<String> getGDBCommandLine();
-
 	/**
 	 * Get path of the debugged program on host.
 	 * 
@@ -57,8 +48,8 @@ public interface IGDBBackend extends IMIBackend {
 	/**
 	 * Get init file for GDB.
 	 * 
-	 * @return file name, may have relative or absolute path, or empty string
-	 *         ("") indicating an init file is not specified.
+	 * @return file name, may have relative or absolute path, or empty string ("") 
+	 *         indicating an init file is not specified.
 	 * @throws CoreException
 	 *             - error in getting the option.
 	 */

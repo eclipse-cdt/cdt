@@ -81,9 +81,20 @@ public class FinalLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fCommandControl = fTracker.getService(IGDBControl.class);
+            if (fCommandControl == null) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain control service", null)); //$NON-NLS-1$
+            }
+
+            requestMonitor.done();
+        }},
+        /*
+         * Fetch the process service for later use
+         */
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
             fProcService = fTracker.getService(IMIProcesses.class);
-            if (fCommandControl == null || fProcService == null) {
-        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain service", null)); //$NON-NLS-1$
+            if (fProcService == null) {
+        		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain process service", null)); //$NON-NLS-1$
             }
 
             requestMonitor.done();
@@ -168,23 +179,17 @@ public class FinalLaunchSequence extends Sequence {
     	/*
     	 * Specify GDB's working directory
     	 */
-        new Step() {
-        	
-        	private IPath getWorkingDirectory(RequestMonitor requestMonitor) {
-       			IPath path = null;
-           		try {
-           			path = fGDBBackend.getGDBWorkingDirectory();
-           		} catch (CoreException e) {
-           			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
-           			requestMonitor.done();
-           		}
-
-        		return path;
-        	}
-
-        @Override
+        new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-        	IPath dir = getWorkingDirectory(requestMonitor);
+   			IPath dir = null;
+       		try {
+       			dir = fGDBBackend.getGDBWorkingDirectory();
+       		} catch (CoreException e) {
+       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
+       			requestMonitor.done();
+       			return;
+      		}
+
         	if (dir != null) {
         		fCommandControl.queueCommand(
         				new MIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 

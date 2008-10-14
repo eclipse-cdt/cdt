@@ -72,7 +72,7 @@ public interface IMIBackend extends IDsfService {
     public State getState();
 
     /**
-     * Returns the exit code of the backend.  Returns <code>0</code> if 
+     * Returns the exit code of the backend.  Returns <code>-1</code> if 
      * the backend exit code is not available.
      * @return
      */

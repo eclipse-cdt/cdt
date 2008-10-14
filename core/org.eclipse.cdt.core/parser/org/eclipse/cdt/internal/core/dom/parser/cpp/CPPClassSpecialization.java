@@ -64,14 +64,22 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 	
 	public IBinding specializeMember(IBinding original) {		
-		IBinding result= (IBinding) specializationMap.get(original);
-		if (result == null) {
-			result= CPPTemplates.createSpecialization(this, original, argumentMap);
+		synchronized(this) {
+			IBinding result= (IBinding) specializationMap.get(original);
+			if (result != null) 
+				return result;
+		}
+		
+		IBinding result= CPPTemplates.createSpecialization(this, original, argumentMap);
+		synchronized(this) {
+			IBinding concurrent= (IBinding) specializationMap.get(original);
+			if (concurrent != null) 
+				return concurrent;
 			if (specializationMap == ObjectMap.EMPTY_MAP)
 				specializationMap = new ObjectMap(2);
 			specializationMap.put(original, result);
+			return result;
 		}
-		return result;
 	}
 	
 	private class FindDefinitionAction extends CPPASTVisitor {

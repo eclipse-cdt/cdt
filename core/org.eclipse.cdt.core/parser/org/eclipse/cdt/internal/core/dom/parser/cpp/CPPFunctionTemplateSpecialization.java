@@ -39,13 +39,13 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return template.getTemplateParameters();
 	}
 
-	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	public synchronized final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
 		instances.put(arguments, instance);
 	}
 
-	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+	public synchronized final ICPPTemplateInstance getInstance(IType[] arguments) {
 		if (instances != null) {
 			loop: for (int i=0; i < instances.size(); i++) {
 				IType[] args = (IType[]) instances.keyAt(i);
@@ -62,7 +62,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return null;
 	}
 	
-	public ICPPTemplateInstance[] getAllInstances() {
+	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
 			for (int i=0; i < instances.size(); i++) {

@@ -14,12 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDeleteExpression extends CPPASTNode implements
+public class CPPASTDeleteExpression extends ASTNode implements
         ICPPASTDeleteExpression {
 
     private IASTExpression operand;

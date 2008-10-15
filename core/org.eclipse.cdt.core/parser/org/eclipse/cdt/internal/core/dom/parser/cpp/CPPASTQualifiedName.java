@@ -37,13 +37,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author jcamelon
  */
-public class CPPASTQualifiedName extends CPPASTNode implements
+public class CPPASTQualifiedName extends ASTNode implements
 		ICPPASTQualifiedName, IASTCompletionContext {
 
 	public CPPASTQualifiedName() {

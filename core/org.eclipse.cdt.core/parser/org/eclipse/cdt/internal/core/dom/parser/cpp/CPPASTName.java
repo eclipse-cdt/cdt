@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -39,7 +40,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * @author jcamelon
  */
-public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionContext {
+public class CPPASTName extends ASTNode implements IASTName, IASTCompletionContext {
 	/**
 	 * For test-purposes, only.
 	 */

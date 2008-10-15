@@ -17,13 +17,14 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
  */
-public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression, IASTCompletionContext {
+public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
 
 	private IASTName name;
 

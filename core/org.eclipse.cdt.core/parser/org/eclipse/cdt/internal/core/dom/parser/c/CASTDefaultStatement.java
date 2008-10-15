@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTDefaultStatement extends CASTNode implements
+public class CASTDefaultStatement extends ASTNode implements
         IASTDefaultStatement {
 
     @Override

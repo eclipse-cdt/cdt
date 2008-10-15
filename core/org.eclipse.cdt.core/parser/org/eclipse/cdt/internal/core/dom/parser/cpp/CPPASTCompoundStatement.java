@@ -17,12 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCompoundStatement extends CPPASTNode implements
+public class CPPASTCompoundStatement extends ASTNode implements
         IASTCompoundStatement, IASTAmbiguityParent {
 
     private IASTStatement [] statements = new IASTStatement[2];

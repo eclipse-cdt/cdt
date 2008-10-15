@@ -16,11 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTDesignatedInitializer extends CASTNode implements
+public class CASTDesignatedInitializer extends ASTNode implements
         ICASTDesignatedInitializer {
 
     private IASTInitializer rhs;

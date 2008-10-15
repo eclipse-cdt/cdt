@@ -12,11 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTPointer extends CASTNode implements ICASTPointer {
+public class CASTPointer extends ASTNode implements ICASTPointer {
 
     private boolean isRestrict;
     private boolean isVolatile;

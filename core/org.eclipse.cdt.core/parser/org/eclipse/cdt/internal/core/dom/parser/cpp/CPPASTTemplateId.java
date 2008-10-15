@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -32,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 /**
  * @author jcamelon
  */
-public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, IASTAmbiguityParent {
+public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
     private IASTNode[] templateArguments = null;
     private IBinding binding = null;

@@ -14,11 +14,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTInitializerList extends CPPASTNode implements IASTInitializerList {
+public class CPPASTInitializerList extends ASTNode implements IASTInitializerList {
 
     public IASTInitializer [] getInitializers() {
         if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;

@@ -14,11 +14,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-abstract class CASTProblemOwner extends CASTNode implements IASTProblemHolder {
+abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
     
     private IASTProblem problem;
 

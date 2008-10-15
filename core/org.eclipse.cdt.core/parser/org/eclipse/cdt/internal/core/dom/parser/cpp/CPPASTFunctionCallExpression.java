@@ -15,13 +15,14 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
  */
-public class CPPASTFunctionCallExpression extends CPPASTNode implements
+public class CPPASTFunctionCallExpression extends ASTNode implements
         IASTFunctionCallExpression, IASTAmbiguityParent {
 	
     private IASTExpression functionName;

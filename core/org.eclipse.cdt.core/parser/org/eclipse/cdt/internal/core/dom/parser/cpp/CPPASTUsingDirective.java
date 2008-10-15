@@ -20,12 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author jcamelon
  */
-public class CPPASTUsingDirective extends CPPASTNode implements
+public class CPPASTUsingDirective extends ASTNode implements
         ICPPASTUsingDirective, IASTCompletionContext {
 
     private IASTName name;

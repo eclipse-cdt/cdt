@@ -14,12 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCompoundStatementExpression extends CPPASTNode implements IGNUASTCompoundStatementExpression {
+public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression {
 	
     private IASTCompoundStatement statement;
 

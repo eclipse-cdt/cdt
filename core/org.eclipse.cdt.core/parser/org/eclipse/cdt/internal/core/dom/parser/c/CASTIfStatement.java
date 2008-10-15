@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTIfStatement extends CASTNode implements IASTIfStatement, IASTAmbiguityParent {
+public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmbiguityParent {
 
     private IASTExpression condition;
     private IASTStatement thenClause;

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -29,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Models a function definition without a try-block. If used for a constructor definition it may contain
  * member initializers.
  */
-public class CPPASTFunctionDefinition extends CPPASTNode implements
+public class CPPASTFunctionDefinition extends ASTNode implements
         ICPPASTFunctionDefinition, IASTAmbiguityParent {
 
     private IASTDeclSpecifier declSpecifier;

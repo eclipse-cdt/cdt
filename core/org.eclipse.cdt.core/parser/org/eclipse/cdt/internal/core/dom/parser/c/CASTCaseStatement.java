@@ -15,12 +15,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTCaseStatement extends CASTNode implements IASTCaseStatement, IASTAmbiguityParent {
+public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IASTAmbiguityParent {
 
     private IASTExpression expression;
 

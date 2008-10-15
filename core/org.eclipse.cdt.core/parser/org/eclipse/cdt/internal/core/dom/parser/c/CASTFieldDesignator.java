@@ -16,11 +16,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTFieldDesignator extends CASTNode implements
+public class CASTFieldDesignator extends ASTNode implements
         ICASTFieldDesignator {
 
     private IASTName name;

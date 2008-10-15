@@ -11,12 +11,13 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 
 /**
  * @author jcamelon
  */
-public abstract class CASTBaseDeclSpecifier extends CASTNode implements ICASTDeclSpecifier {
+public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDeclSpecifier {
 
     protected int storageClass;
     protected boolean isConst;

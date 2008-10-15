@@ -26,12 +26,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 
 /**
  * @author jcamelon
  */
-public class CASTName extends CASTNode implements IASTName, IASTCompletionContext {
+public class CASTName extends ASTNode implements IASTName, IASTCompletionContext {
 
     private final char[] name;
 

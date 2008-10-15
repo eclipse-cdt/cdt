@@ -14,11 +14,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTDeclarationStatement extends CASTNode implements IASTDeclarationStatement {
+public class CASTDeclarationStatement extends ASTNode implements IASTDeclarationStatement {
 
     private IASTDeclaration declaration;
 

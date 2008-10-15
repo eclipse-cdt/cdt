@@ -15,12 +15,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTArrayModifier extends CASTNode implements IASTArrayModifier, IASTAmbiguityParent {
+public class CASTArrayModifier extends ASTNode implements IASTArrayModifier, IASTAmbiguityParent {
 
     private IASTExpression exp;
 

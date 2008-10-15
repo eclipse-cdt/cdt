@@ -25,12 +25,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
+public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     private IASTInitializer initializer;
     private IASTName name;
     private IASTDeclarator nestedDeclarator;

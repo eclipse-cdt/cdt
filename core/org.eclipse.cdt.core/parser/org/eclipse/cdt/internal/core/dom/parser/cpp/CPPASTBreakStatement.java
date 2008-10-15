@@ -12,11 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTBreakStatement extends CPPASTNode implements
+public class CPPASTBreakStatement extends ASTNode implements
         IASTBreakStatement {
 
     @Override

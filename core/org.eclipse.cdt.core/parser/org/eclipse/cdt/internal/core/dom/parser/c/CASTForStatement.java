@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTForStatement extends CASTNode implements IASTForStatement, IASTAmbiguityParent {
+public class CASTForStatement extends ASTNode implements IASTForStatement, IASTAmbiguityParent {
     private IScope scope = null;
     
     private IASTExpression condition;

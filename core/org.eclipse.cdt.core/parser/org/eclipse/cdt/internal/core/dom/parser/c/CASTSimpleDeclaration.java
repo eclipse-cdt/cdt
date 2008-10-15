@@ -17,11 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTSimpleDeclaration extends CASTNode implements IASTSimpleDeclaration {
+public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclaration {
 
 
     public CASTSimpleDeclaration() {

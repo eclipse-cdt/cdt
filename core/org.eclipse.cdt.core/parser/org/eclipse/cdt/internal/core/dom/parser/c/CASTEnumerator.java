@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTEnumerator extends CASTNode implements IASTEnumerator, IASTAmbiguityParent {
+public class CASTEnumerator extends ASTNode implements IASTEnumerator, IASTAmbiguityParent {
 
     private IASTName name;
     private IASTExpression value;

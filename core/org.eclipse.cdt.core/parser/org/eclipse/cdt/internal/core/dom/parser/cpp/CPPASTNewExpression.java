@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * @author jcamelon
  */
-public class CPPASTNewExpression extends CPPASTNode implements
+public class CPPASTNewExpression extends ASTNode implements
         ICPPASTNewExpression, IASTAmbiguityParent {
 
     private boolean global;

@@ -14,12 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTConstructorInitializer extends CPPASTNode implements
+public class CPPASTConstructorInitializer extends ASTNode implements
         ICPPASTConstructorInitializer, IASTAmbiguityParent {
 
     private IASTExpression exp;

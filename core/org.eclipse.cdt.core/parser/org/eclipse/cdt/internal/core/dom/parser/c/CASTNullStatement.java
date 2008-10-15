@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTNullStatement extends CASTNode implements IASTNullStatement {
+public class CASTNullStatement extends ASTNode implements IASTNullStatement {
 
     @Override
 	public boolean accept( ASTVisitor action ){

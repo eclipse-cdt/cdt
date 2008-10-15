@@ -12,11 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTASMDeclaration extends CPPASTNode implements IASTASMDeclaration {
+public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
     char [] assembly = null;
 
     public CPPASTASMDeclaration() {

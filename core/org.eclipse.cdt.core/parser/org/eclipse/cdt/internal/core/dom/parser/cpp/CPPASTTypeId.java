@@ -14,11 +14,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTypeId extends CPPASTNode implements IASTTypeId {
+public class CPPASTTypeId extends ASTNode implements IASTTypeId {
 
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator absDecl;

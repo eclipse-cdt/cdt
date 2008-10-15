@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTExpressionList extends CASTNode implements IASTExpressionList,
+public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         IASTAmbiguityParent {
 
     public IASTExpression[] getExpressions() {

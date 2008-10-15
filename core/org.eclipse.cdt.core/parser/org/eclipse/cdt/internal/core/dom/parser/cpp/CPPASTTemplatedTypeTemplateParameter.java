@@ -19,12 +19,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
+public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
         ICPPASTTemplatedTypeTemplateParameter, IASTAmbiguityParent {
 
 	

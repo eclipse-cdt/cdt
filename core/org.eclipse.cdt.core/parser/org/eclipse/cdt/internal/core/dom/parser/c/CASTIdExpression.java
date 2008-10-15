@@ -22,11 +22,12 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTIdExpression extends CASTNode implements IASTIdExpression, IASTCompletionContext {
+public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
 
     private IASTName name;
 

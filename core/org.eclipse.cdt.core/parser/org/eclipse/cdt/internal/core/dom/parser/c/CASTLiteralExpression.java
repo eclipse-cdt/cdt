@@ -14,11 +14,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTLiteralExpression extends CASTNode implements IASTLiteralExpression {
+public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpression {
 
     private int kind;
     private String value = ""; //$NON-NLS-1$

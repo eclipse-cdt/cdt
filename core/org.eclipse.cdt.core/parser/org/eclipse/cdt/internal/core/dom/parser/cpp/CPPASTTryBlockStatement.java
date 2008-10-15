@@ -17,12 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTryBlockStatement extends CPPASTNode implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
+public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
 
 
     public CPPASTTryBlockStatement() {

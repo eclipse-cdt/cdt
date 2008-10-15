@@ -17,12 +17,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTemplateSpecialization extends CPPASTNode implements
+public class CPPASTTemplateSpecialization extends ASTNode implements
         ICPPASTTemplateSpecialization, ICPPASTTemplateDeclaration, IASTAmbiguityParent {
 
     private IASTDeclaration declaration;

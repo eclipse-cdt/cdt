@@ -12,11 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTReferenceOperator extends CPPASTNode implements
+public class CPPASTReferenceOperator extends ASTNode implements
         ICPPASTReferenceOperator {
     
     @Override

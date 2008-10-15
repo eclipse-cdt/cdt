@@ -16,11 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
+public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
         ICPPASTSimpleTypeTemplateParameter {
 
     private int type;

@@ -14,12 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTDeclarationStatement extends CPPASTNode implements
+public class CPPASTDeclarationStatement extends ASTNode implements
         IASTDeclarationStatement, IASTAmbiguityParent {
 
     private IASTDeclaration declaration;

@@ -16,11 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTTypeIdInitializerExpression extends CASTNode implements
+public class CASTTypeIdInitializerExpression extends ASTNode implements
         ICASTTypeIdInitializerExpression {
 
     private IASTTypeId typeId;

@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
-public class CASTASMDeclaration extends CASTNode implements IASTASMDeclaration {
+public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 
     char [] assembly = null;
 

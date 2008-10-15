@@ -13,13 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 /**
  * @author jcamelon
  */
-public class CPPASTLiteralExpression extends CPPASTNode implements ICPPASTLiteralExpression {
+public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
 
     private int kind;
     private String value = "";  //$NON-NLS-1$

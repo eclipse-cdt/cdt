@@ -20,12 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTFieldReference extends CASTNode implements IASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
+public class CASTFieldReference extends ASTNode implements IASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
 
     private IASTExpression owner;
     private IASTName name;

@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [234721] [dnd] When dragging a file from windows file explorer into RSE, a refresh error is given.
  * David McKnight   (IBM)        - [248922]  [dnd] Remote to local overwrite copy does not work
  * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
+ * David McKnight   (IBM)        - [248922]  [dnd] display error message when copy operation hits exception
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -74,6 +75,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CopyResourcesOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.progress.UIJob;
 
 
@@ -404,15 +406,29 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			} catch (ExecutionException e) {
 				if (e.getCause() instanceof CoreException) {
 					SystemBasePlugin.logError(e.getMessage(), e);
+					displayError(e.getCause().getMessage());
 				} else {
-					SystemBasePlugin.logError(e.getMessage(), e);
+					SystemBasePlugin.logError(e.getMessage(), e);		
+					displayError(e.getMessage());
 				}
+				
+				operationFailed(monitor);
+				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
+	private void displayError(final String message) {
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+		public void run() {
+			Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+			MessageDialog.openError(shell, IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyFailedTitle,
+				message);
+			}
+		});
+	}
 	private int checkOverwrite(final IResource source, final IResource destination) {
 		final int[] result = new int[1]; // using array since you can't change a final int
 

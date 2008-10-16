@@ -359,6 +359,9 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     		 */
     		int startIdx = "GRP(".length(); //$NON-NLS-1$
             int endIdx = expression.indexOf(')', startIdx);
+            if ( startIdx == -1 || endIdx == -1 ) {
+            	return null;
+            }
             String groupName = expression.substring(startIdx, endIdx);
             return groupName.trim();
         }

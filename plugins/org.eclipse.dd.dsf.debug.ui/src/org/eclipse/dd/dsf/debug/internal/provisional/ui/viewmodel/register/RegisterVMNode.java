@@ -648,6 +648,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     		 */
     		int startIdx = "GRP(".length(); //$NON-NLS-1$
             int endIdx = expression.indexOf(')', startIdx);
+            if ( startIdx == -1 || endIdx == -1 ) {
+            	return null;
+            }
             String remaining = expression.substring(endIdx+1);
             if ( ! remaining.startsWith(".REG(") ) { //$NON-NLS-1$
                 return null;
@@ -658,6 +661,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
              */
             startIdx = ".REG(".length(); //$NON-NLS-1$
             endIdx = remaining.indexOf(')', startIdx);
+            if ( startIdx == -1 || endIdx == -1 ) {
+            	return null;
+            }
             String regName = remaining.substring(startIdx,endIdx);
             return regName.trim();
         }

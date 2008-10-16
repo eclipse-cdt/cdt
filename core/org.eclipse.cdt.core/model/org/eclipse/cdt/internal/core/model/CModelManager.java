@@ -473,7 +473,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					
 					// crecoskie
 					// TODO FIXME:  include entries don't handle URIs yet
-					if (includeReference.isOnIncludeEntry(URIUtil.toPath(locationURI))) {
+					IPath path = URIUtil.toPath(locationURI);
+					if (path != null && includeReference.isOnIncludeEntry(path)) {
 						String headerContentTypeId= contentTypeId;
 						if (headerContentTypeId == null) {
 							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;

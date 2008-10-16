@@ -115,7 +115,10 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	* @see IEditorInput#getToolTipText()
 	*/
 	public String getToolTipText() {
-		return externalFile.getFullPath().toString();
+		IPath path = externalFile.getFullPath();
+		if(path != null)
+			return path.toString();
+		return unit.getLocationURI().toString();
 	}
 
 	/* (non-Javadoc)

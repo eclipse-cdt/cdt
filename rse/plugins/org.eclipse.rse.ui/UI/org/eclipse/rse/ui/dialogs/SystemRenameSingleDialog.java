@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Rupen Mardirossian (IBM)		 - [208435] When validating name, check for previously used names for multiple renaming instances
  * David Dykstal (IBM) - [231828] make rename dialog a bit wider
+ * David McKnight    (IBM)      - [251148] {0} appears in Collision Dialog
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.ui.SystemResources;
@@ -368,7 +370,8 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
 		  if (copyCollisionMode)
 		  {
-            verbiageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBIAGE, "&1", inputName)); //$NON-NLS-1$
+			  String msg = NLS.bind(SystemResources.RESID_COLLISION_RENAME_VERBIAGE, inputName);
+			  verbiageLabel.setText(msg);
 		  }
 
 

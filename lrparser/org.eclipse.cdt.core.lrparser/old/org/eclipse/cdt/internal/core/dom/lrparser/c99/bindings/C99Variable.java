@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -118,5 +119,9 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 			return null;
 		
 		return CVisitor.findDeclarationOwner((IASTNode) scope.getScopeName(), true);
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 }

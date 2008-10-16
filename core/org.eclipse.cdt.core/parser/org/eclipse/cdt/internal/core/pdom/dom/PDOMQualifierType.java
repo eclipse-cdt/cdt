@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -30,8 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Type qualifier for the index.
  */
 public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQualifierType,
 		ITypeContainer, IIndexType {
@@ -103,7 +101,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		return pdom.getDB().getByte(record + FLAGS);
 	}
 	
-	public boolean isConst() throws DOMException {
+	public boolean isConst() {
 		try {
 			return (getFlags() & CONST) != 0;
 		} catch (CoreException e) {
@@ -112,7 +110,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		}
 	}
 
-	public boolean isVolatile() throws DOMException {
+	public boolean isVolatile() {
 		try {
 			return (getFlags() & VOLATILE) != 0;
 		} catch (CoreException e) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
@@ -33,9 +34,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A parameter to a function or a method
- * 
- * @author Doug Schaefer
+ * Binding for a function parameter in the index.
  */
 class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
@@ -193,6 +192,10 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	}
 	
 	public IIndexFile getLocalToFile() throws CoreException {
+		return null;
+	}
+
+	public IValue getInitialValue() {
 		return null;
 	}
 }

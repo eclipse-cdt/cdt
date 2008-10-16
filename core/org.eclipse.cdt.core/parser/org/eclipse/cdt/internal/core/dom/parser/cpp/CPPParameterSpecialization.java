@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -14,11 +14,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * @author aniefer
+ * Binding for a specialization of a parameter.
  */
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private IType type = null;
@@ -82,5 +83,9 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 
 	public boolean isExternC() {
 		return false;
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 }

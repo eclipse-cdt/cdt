@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
@@ -24,8 +25,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Binding for a specialization of a parameter in the index.
  */
 class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements ICPPParameter {
 	/**
@@ -140,4 +140,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return false;
 	}
 
+	public IValue getInitialValue() {
+		return null;
+	}
 }

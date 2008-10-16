@@ -47,8 +47,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the
  * AST element's type.
- * 
- * @author dsteffle
  */
 public class ASTTypeUtil {
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
@@ -371,20 +369,17 @@ public class ASTTypeUtil {
 				}
 			}
 			
-			try {
-				if (((IQualifierType) type).isConst()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.CONST); needSpace = true;
+			if (((IQualifierType) type).isConst()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-				if (((IQualifierType) type).isVolatile()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.VOLATILE); needSpace = true;
+				result.append(Keywords.CONST); needSpace = true;
+			}
+			if (((IQualifierType) type).isVolatile()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-			} catch (DOMException e) {
+				result.append(Keywords.VOLATILE); needSpace = true;
 			}
 		} else if (type instanceof ITypedef) {
 			result.append(((ITypedef) type).getNameCharArray());
@@ -552,11 +547,7 @@ public class ASTTypeUtil {
 	 */
 	public static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {
-			try {
-				return ((IQualifierType) type).isConst();
-			} catch (DOMException e) {
-				return false;
-			}
+			return ((IQualifierType) type).isConst();
 		} else if (type instanceof ITypeContainer) {
 			try {
 				return isConst(((ITypeContainer) type).getType());

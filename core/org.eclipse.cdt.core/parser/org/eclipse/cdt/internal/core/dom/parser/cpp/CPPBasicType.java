@@ -6,12 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 10, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -23,28 +20,28 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * @author aniefer
+ * Integral c++ type.
  */
 public class CPPBasicType implements ICPPBasicType {
 
 	protected int qualifierBits = 0;
 	protected int type;
-	protected IASTExpression value = null;
+	protected IASTExpression expression = null;
 
-	public CPPBasicType( int t, int bits ){
+	public CPPBasicType(int t, int bits) {
 		type = t;
 		qualifierBits = bits;
 
-		if( type == IBasicType.t_unspecified ){
-			if( (qualifierBits & ( IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED )) != 0 )
+		if (type == IBasicType.t_unspecified) {
+			if ((qualifierBits & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED)) != 0)
 				type = IBasicType.t_int;
 		}
 	}
 
-	public CPPBasicType( int t, int bits, IASTExpression val ){
+	public CPPBasicType(int t, int bits, IASTExpression fromExpression) {
 		type = t;
 		qualifierBits = bits;
-		value = val;
+		expression= fromExpression;
 	}
 
 	public boolean isSameType( IType object ) {
@@ -116,17 +113,25 @@ public class CPPBasicType implements ICPPBasicType {
         return t;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getValue()
-	 */
+    /**
+     * @deprecated types don't have values
+     */
+	@Deprecated
 	public IASTExpression getValue() {
-		return value;
+		return expression;
 	}
 
-	public void setValue( IASTExpression val ){
-		value = val;
+	public void setFromExpression(IASTExpression val) {
+		expression = val;
 	}
 
+	/**
+	 * Returns the expression the type was created for, or <code>null</code>.
+	 */
+	public IASTExpression getCreatedFromExpression() {
+		return expression;
+	}
+	
 	public int getQualifierBits() {
 		return qualifierBits;
 	}

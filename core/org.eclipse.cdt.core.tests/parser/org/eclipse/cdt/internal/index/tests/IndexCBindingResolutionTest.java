@@ -19,10 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
@@ -372,5 +374,40 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	public void testTypeDefinitionWithFwdDeclaration() {
 		getBindingFromASTName("a= 1", 1);
 		getBindingFromASTName("b= 1", 1);
+	}
+	
+	// int a= 1+2-3*4+10/2; // -4
+	// int b= a+4;
+	// int* c= &b;
+	// enum X {e0, e4=4, e5, e2=2, e3};
+    
+    // void ref() {
+    // a; b; c; e0; e2; e3; e4; e5;
+    // }
+	public void testValues() throws Exception {
+		IVariable v= (IVariable) getBindingFromASTName("a;", 1);
+		checkValue(v.getInitialValue(), -4);
+		v= (IVariable) getBindingFromASTName("b;", 1);
+		checkValue(v.getInitialValue(), 0);
+		v= (IVariable) getBindingFromASTName("c;", 1);
+		assertNull(v.getInitialValue().numericalValue());
+
+		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
+		checkValue(e.getValue(), 0);
+		e= (IEnumerator) getBindingFromASTName("e2", 2);
+		checkValue(e.getValue(), 2);
+		e= (IEnumerator) getBindingFromASTName("e3", 2);
+		checkValue(e.getValue(), 3);
+		e= (IEnumerator) getBindingFromASTName("e4", 2);
+		checkValue(e.getValue(), 4);
+		e= (IEnumerator) getBindingFromASTName("e5", 2);
+		checkValue(e.getValue(), 5);
+	}
+
+	private void checkValue(IValue initialValue, int i) {
+		assertNotNull(initialValue);
+		final Long numericalValue = initialValue.numericalValue();
+		assertNotNull(numericalValue);
+		assertEquals(i, numericalValue.intValue());
 	}
 }

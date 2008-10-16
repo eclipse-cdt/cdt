@@ -32,10 +32,10 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 		}
 		return type;
 	}
-	public boolean isConst() throws DOMException {
+	public boolean isConst() {
 		return delegate.isConst();
 	}
-	public boolean isVolatile() throws DOMException {
+	public boolean isVolatile() {
 		return delegate.isVolatile();
 	}
 	public boolean isSameType(IType type) {

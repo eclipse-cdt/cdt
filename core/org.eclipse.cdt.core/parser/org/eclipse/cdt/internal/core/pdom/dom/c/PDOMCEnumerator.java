@@ -1,42 +1,49 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Binding for c enumerator in the index.
  */
 class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
+	private static final int VALUE= PDOMBinding.RECORD_SIZE + 8;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 12;
 	
 	public PDOMCEnumerator(PDOM pdom, PDOMNode parent, IEnumerator enumerator, PDOMCEnumeration enumeration)
 			throws CoreException {
 		super(pdom, parent, enumerator.getNameCharArray());
-		pdom.getDB().putInt(record + ENUMERATION, enumeration.getRecord());
+		
+		final Database db = pdom.getDB();
+		db.putInt(record + ENUMERATION, enumeration.getRecord());
+		storeValue(db, enumerator);
 		enumeration.addEnumerator(this);
 	}
 
@@ -53,6 +60,21 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	public int getNodeType() {
 		return IIndexCBindingConstants.CENUMERATOR;
 	}
+
+	private void storeValue(final Database db, IEnumerator enumerator) throws CoreException {
+		IValue value= enumerator.getValue();
+		if (value != null) {
+			Long val= value.numericalValue();
+			db.putInt(record + VALUE, val == null ? -1 : val.intValue());
+		}
+	}
+	
+	@Override
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof IEnumerator)
+			storeValue(pdom.getDB(), (IEnumerator) newBinding);
+	}
+
 
 	public PDOMCEnumerator getNextEnumerator() throws CoreException {
 		int value = pdom.getDB().getInt(record + NEXT_ENUMERATOR);
@@ -73,4 +95,13 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 		}
 	}
 
+	public IValue getValue() {
+		try {
+			int val= pdom.getDB().getInt(record + VALUE);
+			return Value.create(val);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return Value.UNKNOWN;
+	}
 }

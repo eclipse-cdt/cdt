@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -31,7 +32,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Base class for all specializations in the AST. Note the specialization may also be created on behalf
+ * of the index. The index may be concurrently be accessed (read-only) from different threads. So there
+ * is a need to synchronize non-final members.
  */
 public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
 	private IBinding owner;
@@ -53,7 +56,11 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 			return CPPTemplates.instantiateType(type, argumentMap, null);
 		}
 	}
-	
+
+	public IValue specializeValue(IValue value) {
+		return CPPTemplates.instantiateValue(value, argumentMap);
+	}
+
 	public IBinding getSpecializedBinding() {
 		return specialized;
 	}

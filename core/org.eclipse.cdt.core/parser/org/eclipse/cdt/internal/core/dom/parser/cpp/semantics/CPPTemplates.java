@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -872,6 +873,13 @@ public class CPPTemplates {
 		}
 		return spec;
 	}
+	
+	public static IValue instantiateValue(IValue value, ObjectMap argMap) {
+		if (value == null)
+			return null;
+		// mstodo instantiate values
+		return value;
+	}
 
 	/**
 	 * This method propagates the specialization of a member to the types used by the member.
@@ -1693,7 +1701,7 @@ public class CPPTemplates {
 					CPPASTLiteralExpression exp = new CPPASTLiteralExpression();
 					exp.setValue(String.valueOf(i));
 					CPPBasicType temp = (CPPBasicType) t.clone();
-					temp.setValue(exp);
+					temp.setFromExpression(exp); // mstodo is that necessary??
 					args[i] = temp;
 				}
 			} else {

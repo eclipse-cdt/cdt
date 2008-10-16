@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -73,5 +75,9 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
 		}
 		return null;
+	}
+
+	public IValue getValue() {
+		return Value.UNKNOWN;
 	}
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -34,7 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Binding for a c++ function parameter
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
@@ -73,6 +74,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
 		public boolean isExternC() {
 			return false;
+		}
+		public IValue getInitialValue() {
+			return null;
 		}
     }
 
@@ -300,5 +304,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	
 	public IBinding getOwner() throws DOMException {
 		return CPPVisitor.findEnclosingFunction(declarations[0]);
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 }

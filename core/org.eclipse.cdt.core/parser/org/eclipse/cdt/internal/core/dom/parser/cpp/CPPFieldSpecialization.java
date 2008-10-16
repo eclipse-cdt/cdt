@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -15,15 +15,17 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * @author aniefer
+ * Binding for a specialization of a field.
  */
 public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField {
 	private IType type = null;
+	private IValue value= null;
 
 	public CPPFieldSpecialization( IBinding orig, ICPPClassType owner, ObjectMap argMap ) {
 		super(orig, owner, argMap);
@@ -76,4 +78,10 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return getClassOwner();
 	}
 
+	public IValue getInitialValue() {
+		if (value == null) {
+			value= specializeValue(getField().getInitialValue());
+		}
+		return value;
+	}
 }

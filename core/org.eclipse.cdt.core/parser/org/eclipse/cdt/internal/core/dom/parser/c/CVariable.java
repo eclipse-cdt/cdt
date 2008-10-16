@@ -16,16 +16,21 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -52,6 +57,9 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
         public boolean isRegister() throws DOMException {
             throw new DOMException( this );
         }
+		public IValue getInitialValue() {
+			return null;
+		}
     }
 	private IASTName [] declarations = null;
 	private IType type = null;
@@ -151,4 +159,40 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
 		
 		return CVisitor.findDeclarationOwner(declarations[0], true);
 	}
+	
+	public IValue getInitialValue() {
+		if (declarations != null) {
+			for (IASTName decl : declarations) {
+				if (decl == null)
+					break;
+				final IValue val= getInitialValue(decl);
+				if (val != null)
+					return val;
+			}
+		}		
+		return null;
+	}
+	
+	private IValue getInitialValue(IASTName name) {
+		IASTDeclarator dtor= findDeclarator(name);
+		if (dtor != null) {
+			IASTInitializer init= dtor.getInitializer();
+			if (init instanceof IASTInitializerExpression) {
+				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
+				if (expr != null)
+					return Value.create(expr);
+			} 
+			if (init != null)
+				return Value.UNKNOWN;
+		}
+		return null;
+	}
+	
+	private IASTDeclarator findDeclarator(IASTName name) {
+	    IASTNode node = name.getParent();
+	    if (!(node instanceof IASTDeclarator))
+	        return null;
+
+	    return CVisitor.findOutermostDeclarator((IASTDeclarator) node);
+	}		
 }

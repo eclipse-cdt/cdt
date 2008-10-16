@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -5428,5 +5429,42 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(image, token.getImage());
 		assertEquals(offset, token.getOffset());
 		assertEquals(image.length(), token.getLength());		
+	}
+	
+	// int a= 1+2-3*4+10/2; // -4
+	// int b= a+4;
+	// int* c= &b;
+	// enum X {e0, e4=4, e5, e2=2, e3};
+	public void testValues() throws Exception {
+		final String code= getAboveComment();
+		boolean isCpp= false;
+		do {
+			BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+			IVariable v= (IVariable) bh.assertNonProblem("a=", 1);
+			checkValue(v.getInitialValue(), -4);
+			v= (IVariable) bh.assertNonProblem("b=", 1);
+			checkValue(v.getInitialValue(), 0);
+			v= (IVariable) bh.assertNonProblem("c=", 1);
+			assertNull(v.getInitialValue().numericalValue());
+
+			IEnumerator e= (IEnumerator) bh.assertNonProblem("e0", 2);
+			checkValue(e.getValue(), 0);
+			e= (IEnumerator) bh.assertNonProblem("e2", 2);
+			checkValue(e.getValue(), 2);
+			e= (IEnumerator) bh.assertNonProblem("e3", 2);
+			checkValue(e.getValue(), 3);
+			e= (IEnumerator) bh.assertNonProblem("e4", 2);
+			checkValue(e.getValue(), 4);
+			e= (IEnumerator) bh.assertNonProblem("e5", 2);
+			checkValue(e.getValue(), 5);
+			isCpp= !isCpp;
+		} while (isCpp);
+	}
+
+	private void checkValue(IValue initialValue, int i) {
+		assertNotNull(initialValue);
+		final Long numericalValue = initialValue.numericalValue();
+		assertNotNull(numericalValue);
+		assertEquals(i, numericalValue.intValue());
 	}
 }

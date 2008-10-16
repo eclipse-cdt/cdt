@@ -6,16 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Dec 8, 2004
- */
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author aniefer
+ * Interface for basic types.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBasicType extends IType {
 
@@ -28,11 +27,9 @@ public interface IBasicType extends IType {
 	public int getType() throws DOMException;
 	
 	/**
-	 * Returns the IASTExpression for the value of this type.  May be null.
-	 * 
-	 * @return IASTExpression or null
-	 * @throws DOMException
+	 * @deprecated, types don't have values.
 	 */
+	@Deprecated
 	public IASTExpression getValue() throws DOMException;
 	
 	public static final int t_unspecified = IASTSimpleDeclSpecifier.t_unspecified;

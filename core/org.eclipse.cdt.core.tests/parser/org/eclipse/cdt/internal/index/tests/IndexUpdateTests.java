@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -167,6 +169,27 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			IVariable var = (IVariable) findBinding(name);
 			checkVariable(var, type, modifiers);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	private void checkValue(String name, Long value) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			IBinding b = findBinding(name);
+			IValue v= null;
+			if (b instanceof IVariable) 
+				v= ((IVariable) b).getInitialValue();
+			else if (b instanceof IEnumerator) 
+				v= ((IEnumerator) b).getValue();
+			else 
+				fail();
+			
+			if (value == null)
+				assertNull(v);
+			else 
+				assertEquals(value, v.numericalValue());
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -823,5 +846,56 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	// int global;
+	// struct C {int mem;};
+	// enum E {e0};
+	
+	// int global=1;
+	// struct C {int mem=1;};
+	// enum E {e0=1};
+	
+	// int global;
+	// struct C {int mem;};
+	// enum E {e0};
+	public void testValuesC() throws Exception {
+		setupFile(3, false);
+		checkValue("global", null);
+		checkValue("C::mem", null);
+		checkValue("e0", 0L);
+		updateFile();
+		checkValue("global", 1L);
+		checkValue("C::mem", 1L);
+		checkValue("e0", 1L);
+		updateFile();
+		checkValue("global", null);
+		checkValue("C::mem", null);
+		checkValue("e0", 0L);
+	}
 
+	// int global;
+	// struct C {int mem;};
+	// enum E {e0};
+	
+	// int global=1;
+	// struct C {int mem=1;};
+	// enum E {e0=1};
+	
+	// int global;
+	// struct C {int mem;};
+	// enum E {e0};
+	public void testValuesCPP() throws Exception {
+		setupFile(3, true);
+		checkValue("global", null);
+		checkValue("C::mem", null);
+		checkValue("e0", 0L);
+		updateFile();
+		checkValue("global", 1L);
+		checkValue("C::mem", 1L);
+		checkValue("e0", 1L);
+		updateFile();
+		checkValue("global", null);
+		checkValue("C::mem", null);
+		checkValue("e0", 0L);
+	}
 }

@@ -23,12 +23,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 /**
  * Used to evaluate expressions in preprocessor directives.
  */
-class ExpressionEvaluator {
-    static class EvalException extends Exception {
+public class ExpressionEvaluator {
+    public static class EvalException extends Exception {
         private int fProblemID;
         private char[] fProblemArg;
 
-		public EvalException(int problemID, char[] problemArg) {
+		private EvalException(int problemID, char[] problemArg) {
         	fProblemID= problemID;
         	fProblemArg= problemArg;
         }
@@ -46,6 +46,9 @@ class ExpressionEvaluator {
 	private CharArrayMap<PreprocessorMacro> fDictionary;
 	private ArrayList<IASTName> fMacrosInDefinedExpressions= new ArrayList<IASTName>();
 	private LocationMap fLocationMap;
+
+	ExpressionEvaluator() {
+	}
 
 	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap map) throws EvalException {
 		fTokens= condition.first();
@@ -331,8 +334,7 @@ class ExpressionEvaluator {
     	return 1;
     }
 
-	private long getNumber(char[] image) throws EvalException {
-
+	public static long getNumber(char[] image) throws EvalException {
         // Integer constants written in binary are a non-standard extension 
         // supported by GCC since 4.3 and by some other C compilers
         // They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
@@ -409,7 +411,7 @@ class ExpressionEvaluator {
 		}
 	}
 
-	private long getNumber(char[] tokenImage, int from, int to, int base, int problemID) throws EvalException {
+	private static long getNumber(char[] tokenImage, int from, int to, int base, int problemID) throws EvalException {
 		if (from == to) {
 			throw new EvalException(problemID, tokenImage);
 		}
@@ -433,7 +435,7 @@ class ExpressionEvaluator {
 		return result;
 	}
 
-	private int getDigit(char c) {
+	private static int getDigit(char c) {
 		switch(c) {
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
 			return c-'0';

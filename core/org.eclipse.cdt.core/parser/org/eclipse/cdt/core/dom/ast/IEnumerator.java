@@ -1,21 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *******************************************************************************/
-
-/*
- * Created on Nov 23, 2004
- */
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author aniefer
+ * Interface for enumerators.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEnumerator extends IBinding {
 	/**
@@ -25,4 +23,10 @@ public interface IEnumerator extends IBinding {
 	 * @return the type of the enumeration
 	 */
 	public IType getType() throws DOMException;
+	
+	/**
+	 * Returns the value assigned to this enumerator.
+	 * @since 5.1
+	 */
+	public IValue getValue();
 }

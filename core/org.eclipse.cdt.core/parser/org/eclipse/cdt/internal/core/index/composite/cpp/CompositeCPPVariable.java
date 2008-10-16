@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -51,5 +52,9 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 
 	public boolean isStatic() throws DOMException {
 		return ((ICPPVariable)rbinding).isStatic();
+	}
+	
+	public IValue getInitialValue() {
+		return ((ICPPVariable)rbinding).getInitialValue();
 	}
 }

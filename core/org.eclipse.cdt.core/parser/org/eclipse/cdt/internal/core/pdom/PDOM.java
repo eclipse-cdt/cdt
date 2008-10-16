@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
+ *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
@@ -90,9 +90,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
 /**
- * The PDOM Database.
- * 
- * @author Doug Schaefer
+ * Database for storing semantic information for one project.
  */
 public class PDOM extends PlatformObject implements IPDOM {
 	/**
@@ -180,6 +178,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  71.0 - proper support for anonymous unions, bug 206450
 	 *  72.0 - store project-relative paths for resources that belong to the project, bug 239472
 	 *  72.1 - store flag for pure virtual methods.
+	 *  73.0 - add values for variables and enumerations, bug 
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

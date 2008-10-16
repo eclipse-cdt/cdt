@@ -6,28 +6,47 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author Doug Schaefer
+ * Interface for all sorts of variables: local, parameter, global, field.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IVariable extends IBinding {
 
 	/**
-	 * @return the type of the variable
+	 * Returns the type of the variable
 	 */
 	public IType getType() throws DOMException;
 	
+	/**
+	 * Returns the value for a variable with an initializer,
+	 * or <code>null</code> otherwise.
+	 * @since 5.1
+	 */
+	public IValue getInitialValue();
 	
 	/**
-	 * Does this function have the static storage-class specifier
-	 * similarily for extern, auto, register
-	 * @throws DOMException
+	 * Returns whether this variable is declared static.
 	 */
 	public boolean isStatic() throws DOMException;
+
+	/**
+	 * Returns whether this variable is declared extern.
+	 */
 	public boolean isExtern() throws DOMException;
+	
+	/**
+	 * Returns whether this variable is an automatic variable.
+	 */
 	public boolean isAuto() throws DOMException;
+	
+	/**
+	 * Returns whether this variable is declared register.
+	 */
 	public boolean isRegister() throws DOMException;
 }

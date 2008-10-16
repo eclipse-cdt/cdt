@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -55,6 +56,9 @@ public class CParameter extends PlatformObject implements IParameter {
         public boolean isRegister() throws DOMException {
             throw new DOMException( this );
         }
+		public IValue getInitialValue() {
+			return null;
+		}
     }
     
 	private IASTName [] declarations;
@@ -196,5 +200,9 @@ public class CParameter extends PlatformObject implements IParameter {
 			return null;
 		
 		return CVisitor.findEnclosingFunction(declarations[0]);
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 }

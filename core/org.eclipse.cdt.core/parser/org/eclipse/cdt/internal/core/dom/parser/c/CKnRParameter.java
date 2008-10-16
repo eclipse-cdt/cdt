@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
@@ -124,5 +125,9 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	
 	public IBinding getOwner() throws DOMException {
 		return CVisitor.findEnclosingFunction(declaration);
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 }

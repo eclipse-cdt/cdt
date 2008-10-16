@@ -1586,10 +1586,11 @@ public class CPPVisitor {
 	    
 	    // Currently, CPPBasicType objects are also used to represent non-type template argument
 	    // values. We must ensure the initializer expression is attached to the type if available.
+	    // mstodo can be removed
 	    if (declarator.getInitializer() instanceof IASTInitializerExpression) {
 	    	IType utype= getUltimateTypeUptoPointers(baseType);
 	    	if (utype instanceof CPPBasicType) {
-	    		((CPPBasicType)utype).setValue(((IASTInitializerExpression) declarator.getInitializer()).getExpression());
+	    		((CPPBasicType)utype).setFromExpression(((IASTInitializerExpression) declarator.getInitializer()).getExpression());
 	    	}
 	    }
 	    
@@ -1895,7 +1896,7 @@ public class CPPVisitor {
 	        case IASTBinaryExpression.op_equals:
 	        case IASTBinaryExpression.op_notequals:
 	        	CPPBasicType basicType= new CPPBasicType(ICPPBasicType.t_bool, 0);
-	        	basicType.setValue(expression);
+	        	basicType.setFromExpression(expression);
 	        	return basicType;
 	        case IASTBinaryExpression.op_plus:
 	        	IType t2 = getExpressionType(binary.getOperand2());
@@ -1921,7 +1922,7 @@ public class CPPVisitor {
 	        			} catch (DOMException e) {
 	        			}
 	        			basicType= new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
-	        			basicType.setValue(expression);
+	        			basicType.setFromExpression(expression);
 	        			return basicType;
 	        		}
 	        		return t1;
@@ -1999,7 +2000,7 @@ public class CPPVisitor {
 				}
 				return new CPPPointerType(type);
 			} else if (type instanceof CPPBasicType) {
-				((CPPBasicType) type).setValue(expression);
+				((CPPBasicType) type).setFromExpression(expression);
 			}
 			return type;
 	    } else if (expression instanceof ICPPASTFieldReference) {
@@ -2161,7 +2162,7 @@ public class CPPVisitor {
 		if (makelong > 1) {
 			flags |= ICPPBasicType.IS_LONG_LONG;
 			GPPBasicType result = new GPPBasicType(IBasicType.t_int, flags, null);
-			result.setValue(expression);
+			result.setFromExpression(expression);
 			return result;
 		} 
 		
@@ -2386,7 +2387,9 @@ public class CPPVisitor {
 	/**
 	 * @param e1
 	 * @return the first non id-expression by following values assigned to basic types.
+	 * @deprecated mstodo remove
 	 */
+	@Deprecated
 	public static final IASTExpression reverseConstantPropagationLookup(IASTExpression e1) {
 		try {
 			for (int i= 0; e1 instanceof IASTIdExpression && i < 8; i++) {

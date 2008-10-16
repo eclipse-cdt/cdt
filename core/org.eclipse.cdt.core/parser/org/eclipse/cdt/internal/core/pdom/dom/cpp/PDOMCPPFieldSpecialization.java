@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -15,19 +15,21 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Binding for a specialization of a field, used in the index.
  */
 class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		ICPPField {
@@ -35,10 +37,16 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
 	/**
+	 * Offset of pointer to value information for this variable
+	 * (relative to the beginning of the record).
+	 */
+	private static final int VALUE_OFFSET = PDOMBinding.RECORD_SIZE + 4;
+
+	/**
 	 * The size in bytes of a PDOMCPPFieldSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPFieldSpecialization(PDOM pdom, PDOMNode parent,
 			ICPPField field, PDOMBinding specialized)
@@ -46,11 +54,17 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		super(pdom, parent, (ICPPSpecialization) field, specialized);
 		
 		try {
+			final Database db = pdom.getDB();
 			IType type = field.getType();
 			PDOMNode typeNode = getLinkageImpl().addType(this, type);
 			if (typeNode != null) {
-				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+				db.putInt(record + TYPE, typeNode.getRecord());
 			}
+			IValue val= field.getInitialValue();
+			if (val != null) {
+				db.putInt(record + VALUE_OFFSET, db.newString(val.getCanonicalRepresentation()).getRecord());
+			}
+
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -88,6 +102,19 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+
+	public IValue getInitialValue() {
+		try {
+			final Database db = pdom.getDB();
+			int valRec = db.getInt(record + VALUE_OFFSET);
+			if (valRec == 0)
+				return null;
+			return Value.fromCanonicalRepresentation(db.getString(valRec).toString());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public boolean isAuto() throws DOMException {

@@ -17,13 +17,20 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -31,7 +38,9 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -74,6 +83,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         public boolean isRegister() throws DOMException {
             throw new DOMException(this);
         }
+		public IValue getInitialValue() {
+			return null;
+		}
     }
 
 	private IASTName declarations[] = null;
@@ -361,5 +373,45 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public IValue getInitialValue() {
+		if (definition != null) {
+			final IValue val= getInitialValue(definition);
+			if (val != null)
+				return val;
+		}
+		if (declarations != null) {
+			for (IASTName decl : declarations) {
+				if (decl == null)
+					break;
+				final IValue val= getInitialValue(decl);
+				if (val != null)
+					return val;
+			}
+		}		
+		return null;
+	}
+	
+	private IValue getInitialValue(IASTName name) {
+		IASTDeclarator dtor= findDeclarator(name);
+		if (dtor != null) {
+			IASTInitializer init= dtor.getInitializer();
+			if (init instanceof IASTInitializerExpression) {
+				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
+				if (expr != null)
+					return Value.create(expr);
+			} else if (init instanceof ICPPASTConstructorInitializer) {
+				IType type= SemanticUtil.getUltimateTypeUptoPointers(getType());
+				if (type instanceof IPointerType || type instanceof IBasicType) {
+					IASTExpression expr= ((ICPPASTConstructorInitializer) init).getExpression();
+					if (expr != null)
+						return Value.create(expr);
+				}
+			}
+			if (init != null)
+				return Value.UNKNOWN;
+		}
+		return null;
 	}
 }

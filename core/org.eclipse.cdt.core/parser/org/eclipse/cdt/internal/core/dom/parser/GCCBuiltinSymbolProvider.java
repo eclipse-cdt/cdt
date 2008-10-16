@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -27,17 +28,17 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
@@ -47,8 +48,6 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * This is the IBuiltinBindingsProvider used to implement the "Other" built-in GCC symbols defined:
  * http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html#Other-Builtins
- * 
- * @author dsteffle
  */
 public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	/**
@@ -2407,6 +2406,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		public IBinding getOwner() {
 			return null;
 		}
+
+		public IValue getInitialValue() {
+			return null;
+		}
 	}
     
 	static public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter {
@@ -2497,6 +2500,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		}
 
 		public IBinding getOwner() {
+			return null;
+		}
+
+		public IValue getInitialValue() {
 			return null;
 		}
     }

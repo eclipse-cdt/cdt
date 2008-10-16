@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -627,8 +628,8 @@ public class Conversions {
 				if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
 						s instanceof IQualifierType) {
 					IType qt = ((IQualifierType) s).getType();
-					if (qt instanceof IBasicType) {
-						IASTExpression val = ((IBasicType) qt).getValue();
+					if (qt instanceof CPPBasicType) {
+						IASTExpression val = ((CPPBasicType) qt).getCreatedFromExpression();
 						canConvert = (val != null && 
 								val instanceof IASTLiteralExpression && 
 								((IASTLiteralExpression)val).getKind() == IASTLiteralExpression.lk_string_literal);
@@ -738,9 +739,10 @@ public class Conversions {
 		IType t = getUltimateType(trg, tHolder, true);
 		IType sPrev= sHolder[0], tPrev= tHolder[0];
 
-		if (src instanceof IBasicType && trg instanceof IPointerType) {
+		if (src instanceof CPPBasicType && trg instanceof IPointerType) {
 			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
-			IASTExpression exp = ((IBasicType)src).getValue();
+			IASTExpression exp = ((CPPBasicType)src).getCreatedFromExpression();
+			// mstodo improve by checking evaluation
 			if (exp instanceof IASTLiteralExpression && 
 					((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant) {
 				try { 

@@ -6,29 +6,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Dec 8, 2004
- */
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author aniefer
+ * Interface used to qualify types.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQualifierType extends IType {
     /**
-     * is this a const type
-     * @throws DOMException
+     * Returns whether this is a const type
      */
-    public boolean isConst() throws DOMException;
+    public boolean isConst();
     
     /** 
-     * is this a volatile type
-     * @throws DOMException
+     * Returns whether this is a volatile type
      */
-    public boolean isVolatile() throws DOMException;
+    public boolean isVolatile();
     
     /** 
      * get the type that this is qualifying

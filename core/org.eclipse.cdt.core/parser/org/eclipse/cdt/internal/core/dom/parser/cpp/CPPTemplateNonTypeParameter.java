@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,11 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * Binding for a non-type template parameter.
  */
 public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateNonTypeParameter {
@@ -85,6 +87,10 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	public void addDeclaration(IASTNode node) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public IValue getInitialValue() {
+		return null;
 	}
 
 }

@@ -84,6 +84,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -752,7 +753,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			language = LanguageManager.getInstance().getLanguageForFile(file, configuration, contentTypeId);
 		}
 		else {
-			language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject(), configuration, contentTypeId);
+			String filename = getElementName();
+			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename), getCProject().getProject(), configuration, contentTypeId);
 		}
 		return language;
 	}

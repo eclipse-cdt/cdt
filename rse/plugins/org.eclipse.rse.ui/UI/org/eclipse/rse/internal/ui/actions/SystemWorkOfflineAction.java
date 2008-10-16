@@ -16,9 +16,13 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
+ * David McKnight (IBM)          - [251026] Work Offline requires being selected twice to turn on Offline Mode
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,9 +30,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
+import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -89,17 +96,40 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 			// to collapse 
 			sr.setHostOffline(conn, true);
 			setChecked(true);
-						
+									
 			// online going offline, disconnect all subsystems
-			ISubSystem[] subsystems = sr.getSubSystems(conn);
+			final ISubSystem[] subsystems = sr.getSubSystems(conn);
+			final List subsystemsDisconnected = new ArrayList();		
+			
 			if (subsystems != null)
 			{
+				ISystemResourceChangeListener listener = new ISystemResourceChangeListener()
+				{			
+					public void systemResourceChanged(
+							ISystemResourceChangeEvent event) {
+						Object src = event.getSource();
+						if (src instanceof SubSystem){
+							if (!((SubSystem)src).isConnected()){
+								if (!subsystemsDisconnected.contains(src))
+									subsystemsDisconnected.add(src);
+								if (subsystemsDisconnected.size() == subsystems.length){
+									sr.removeSystemResourceChangeListener(this);
+								}
+							}
+						}
+					}												
+				};
+
+				sr.addSystemResourceChangeListener(listener);
+				
 				boolean cancelled = false;				
 				for (int i = 0; i < subsystems.length && !cancelled; i++)
 				{
 					try 
 					{
+						// disconnect launches a job but doesn't wait for completion
 						subsystems[i].disconnect(false);
+						
 					} catch (InterruptedException e) {
 						// user cancelled disconnect
 						cancelled = true;
@@ -109,9 +139,18 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 				}
 			}
 			
-			Job job = new Job("Ensure Disconnected")
+			Job job = new Job("Ensure Disconnected") //$NON-NLS-1$
 			{
 				public IStatus run(IProgressMonitor monitor){
+						// while 
+						while (subsystemsDisconnected.size() < subsystems.length){
+							try {
+								Thread.sleep(1000);
+							}
+							catch (InterruptedException e){								
+							}
+						}
+					
 						// check that everything was disconnedted okay and this is not the local connection
 						if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
 						{
@@ -122,6 +161,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 						return Status.OK_STATUS;
 					}
 			};
+			job.setSystem(true);
 			job.schedule();
 		}
 	}

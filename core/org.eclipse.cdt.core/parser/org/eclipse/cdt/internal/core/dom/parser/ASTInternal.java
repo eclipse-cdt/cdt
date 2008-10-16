@@ -18,13 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
-import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
 
 /**
  * Access to methods on scopes and bindings internal to the parser.
@@ -92,16 +89,6 @@ public class ASTInternal {
 			return ((ICInternalFunction) func).isStatic(resolveAll);
 		}
 		return func.isStatic();
-	}
-
-	public static boolean isStatic(IVariable var) throws DOMException {
-		if (var instanceof ICPPInternalVariable) {
-			return ((ICPPInternalVariable)var).isStatic();
-		}
-		if (var instanceof ICInternalVariable) {
-			return ((ICInternalVariable)var).isStatic();
-		}
-		return var.isStatic();
 	}
 
 	public static void setFullyResolved(IBinding binding, boolean val) {

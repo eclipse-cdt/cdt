@@ -29,14 +29,15 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Represents a global or a local variable.
+ * Binding for a global or a local variable, serves as base class for fields.
  */
-public class CVariable extends PlatformObject implements IVariable, ICInternalVariable {
+public class CVariable extends PlatformObject implements IInternalVariable, ICInternalBinding {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
         public CVariableProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -161,11 +162,15 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
 	}
 	
 	public IValue getInitialValue() {
+		return getInitialValue(Value.MAX_RECURSION_DEPTH);
+	}
+	
+	public IValue getInitialValue(int maxDepth) {
 		if (declarations != null) {
 			for (IASTName decl : declarations) {
 				if (decl == null)
 					break;
-				final IValue val= getInitialValue(decl);
+				final IValue val= getInitialValue(decl, maxDepth);
 				if (val != null)
 					return val;
 			}
@@ -173,14 +178,14 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
 		return null;
 	}
 	
-	private IValue getInitialValue(IASTName name) {
+	private IValue getInitialValue(IASTName name, int maxDepth) {
 		IASTDeclarator dtor= findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
 			if (init instanceof IASTInitializerExpression) {
 				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
 				if (expr != null)
-					return Value.create(expr);
+					return Value.create(expr, maxDepth);
 			} 
 			if (init != null)
 				return Value.UNKNOWN;

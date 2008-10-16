@@ -6,22 +6,24 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier;
 
 /**
- * @author jcamelon
+ * AST node for c++ enumeration specifiers.
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
-		implements IASTEnumerationSpecifier {
+		implements IASTInternalEnumerationSpecifier {
 
 	private IASTName name;
+	private boolean valuesComputed= false;
 
 	
 	public CPPASTEnumerationSpecifier() {
@@ -29,6 +31,14 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 
 	public CPPASTEnumerationSpecifier(IASTName name) {
 		setName(name);
+	}
+	
+	public boolean startValueComputation() {
+		if (valuesComputed)
+			return false;
+		
+		valuesComputed= true;
+		return true;
 	}
 
 	public void addEnumerator(IASTEnumerator enumerator) {

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,14 +16,16 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier;
 
 /**
- * @author jcamelon
+ * AST node for enumeration specifiers.
  */
-public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTEnumerationSpecifier {
+public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier 
+		implements IASTInternalEnumerationSpecifier, ICASTEnumerationSpecifier {
 
     private IASTName name;
+	private boolean valuesComputed= false;
 
     
     public CASTEnumerationSpecifier() {
@@ -31,6 +33,14 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
 
 	public CASTEnumerationSpecifier(IASTName name) {
 		setName(name);
+	}
+
+	public boolean startValueComputation() {
+		if (valuesComputed)
+			return false;
+		
+		valuesComputed= true;
+		return true;
 	}
 
 	public void addEnumerator(IASTEnumerator enumerator) {

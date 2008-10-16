@@ -36,11 +36,13 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
  * is to support instantiation of templates with non-type template parameters. 
  */
 public class Value implements IValue {
+	public static final int MAX_RECURSION_DEPTH = 25;
 	public final static IValue UNKNOWN= new Value("<unknown>"); //$NON-NLS-1$
 	
 	private final static IValue[] TYPICAL= {new Value(String.valueOf(0)), 
 		new Value(String.valueOf(1)), new Value(String.valueOf(2)), new Value(String.valueOf(3)), 
 		new Value(String.valueOf(4)), new Value(String.valueOf(5)), new Value(String.valueOf(6))};
+
 	
 	private static class UnknownValueException extends Exception {}
 	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
@@ -67,9 +69,9 @@ public class Value implements IValue {
 		return new Value(String.valueOf(value));
 	}
 
-	public static IValue create(IASTExpression expr) {
+	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
 		try {
-			Object obj= evaluate(expr, 20);
+			Object obj= evaluate(expr, maxRecursionDepth);
 			if (obj instanceof Long)
 				return create(((Long) obj).longValue());
 			return new Value(obj.toString());
@@ -132,31 +134,31 @@ public class Value implements IValue {
 			return o + "," + evaluate(cexpr.getNegativeResultExpression(), maxdepth) + "," + po + '?';
 		}
 		if (e instanceof IASTIdExpression) {
-			if (e instanceof IASTIdExpression) {
-				IBinding b= ((IASTIdExpression) e).getName().resolveBinding();
-				if (b instanceof ICPPTemplateParameter) {
-					if (b instanceof ICPPTemplateNonTypeParameter) {
-						return evaluate((ICPPTemplateParameter) b);
-					}
-					throw UNKNOWN_EX;
-				} else if (b instanceof IVariable) {
-					IValue cv= ((IVariable) b).getInitialValue();
-					if (cv != null) {
-						return toObject(cv);
-					}
-				} else if (b instanceof IEnumerator) {
-					IValue cv= ((IEnumerator) b).getValue();
-					return toObject(cv);
+			IBinding b= ((IASTIdExpression) e).getName().resolveBinding();
+			if (b instanceof ICPPTemplateParameter) {
+				if (b instanceof ICPPTemplateNonTypeParameter) {
+					return evaluate((ICPPTemplateParameter) b);
 				}
-				try {
-					if (b instanceof ICPPBinding)
-						return ((ICPPBinding) b).getQualifiedName();
-					return b.getName();
-				} catch (DOMException e1) {
-					throw UNKNOWN_EX;
-				}
+				throw UNKNOWN_EX;
 			}
-			return evaluate(e, --maxdepth);	// prevent recursion
+			IValue cv= null;
+			if (b instanceof IInternalVariable) {
+				cv= ((IInternalVariable) b).getInitialValue(maxdepth-1);
+			} else if (b instanceof IVariable) {
+				cv= ((IVariable) b).getInitialValue();
+			} else if (b instanceof IEnumerator) {
+				cv= ((IEnumerator) b).getValue();
+			}
+			if (cv != null)
+				return toObject(cv);
+			
+			try {
+				if (b instanceof ICPPBinding)
+					return ((ICPPBinding) b).getQualifiedName();
+				return b.getName();
+			} catch (DOMException e1) {
+				throw UNKNOWN_EX;
+			}
 		}
 		if (e instanceof IASTLiteralExpression) {
 			if (e.getExpressionType() instanceof IBasicType) {

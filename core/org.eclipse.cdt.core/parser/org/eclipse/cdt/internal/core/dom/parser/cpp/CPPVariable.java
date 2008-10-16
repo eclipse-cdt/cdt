@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -46,7 +47,7 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalVariable {
+public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
         public CPPVariableProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
@@ -376,8 +377,12 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 
 	public IValue getInitialValue() {
+		return getInitialValue(Value.MAX_RECURSION_DEPTH);
+	}
+	
+	public IValue getInitialValue(int maxDepth) {
 		if (definition != null) {
-			final IValue val= getInitialValue(definition);
+			final IValue val= getInitialValue(definition, maxDepth);
 			if (val != null)
 				return val;
 		}
@@ -385,7 +390,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 			for (IASTName decl : declarations) {
 				if (decl == null)
 					break;
-				final IValue val= getInitialValue(decl);
+				final IValue val= getInitialValue(decl, maxDepth);
 				if (val != null)
 					return val;
 			}
@@ -393,20 +398,20 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		return null;
 	}
 	
-	private IValue getInitialValue(IASTName name) {
+	private IValue getInitialValue(IASTName name, int maxDepth) {
 		IASTDeclarator dtor= findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
 			if (init instanceof IASTInitializerExpression) {
 				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
 				if (expr != null)
-					return Value.create(expr);
+					return Value.create(expr, maxDepth);
 			} else if (init instanceof ICPPASTConstructorInitializer) {
 				IType type= SemanticUtil.getUltimateTypeUptoPointers(getType());
 				if (type instanceof IPointerType || type instanceof IBasicType) {
 					IASTExpression expr= ((ICPPASTConstructorInitializer) init).getExpression();
 					if (expr != null)
-						return Value.create(expr);
+						return Value.create(expr, maxDepth);
 				}
 			}
 			if (init != null)

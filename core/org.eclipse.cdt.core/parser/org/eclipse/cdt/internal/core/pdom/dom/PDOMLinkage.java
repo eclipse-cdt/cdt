@@ -229,7 +229,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				boolean requireDefinition= false;
 				if (binding instanceof IVariable) {
 					if (!(binding instanceof IField)) {
-						checkInSourceOnly= ASTInternal.isStatic((IVariable) binding);
+						checkInSourceOnly= ((IVariable) binding).isStatic();
 					}
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;

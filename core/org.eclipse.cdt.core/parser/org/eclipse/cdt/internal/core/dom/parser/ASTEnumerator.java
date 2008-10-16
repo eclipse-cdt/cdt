@@ -101,8 +101,12 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	public IValue getIntegralValue() {
 		if (integralValue == null) {
 			IASTNode parent= getParent();
-			if (parent instanceof IASTEnumerationSpecifier) 
-				createEnumValues((IASTEnumerationSpecifier) parent);
+			if (parent instanceof IASTInternalEnumerationSpecifier) {
+				IASTInternalEnumerationSpecifier ies= (IASTInternalEnumerationSpecifier) parent;
+				if (ies.startValueComputation()) { // prevents infinite recursions
+					createEnumValues((IASTEnumerationSpecifier) parent);
+				}
+			}		
 			if (integralValue == null) {
 				integralValue= Value.UNKNOWN;
 			}
@@ -118,7 +122,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 			cv++;
 			IASTExpression expr= etor.getValue();
 			if (expr != null) {
-				IValue val= Value.create(expr);
+				IValue val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
 				Long nv= val.numericalValue();
 				isknown= false;
 				if (nv != null) {

@@ -19,11 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 
 /**
  * Binding for a specialization of a field.
  */
-public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField {
+public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField, IInternalVariable {
 	private IType type = null;
 	private IValue value= null;
 
@@ -79,8 +81,19 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 	}
 
 	public IValue getInitialValue() {
+		return getInitialValue(Value.MAX_RECURSION_DEPTH);
+	}
+
+	public IValue getInitialValue(int maxRecursionDepth) {
 		if (value == null) {
-			value= specializeValue(getField().getInitialValue());
+			ICPPField field= getField();
+			IValue v;
+			if (field instanceof IInternalVariable) {
+				v= ((IInternalVariable) field).getInitialValue(maxRecursionDepth);
+			} else {
+				v= specializeValue(getField().getInitialValue());
+			}
+			value= specializeValue(v);
 		}
 		return value;
 	}

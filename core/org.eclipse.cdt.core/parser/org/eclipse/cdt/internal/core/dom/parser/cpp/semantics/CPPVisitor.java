@@ -2227,8 +2227,7 @@ public class CPPVisitor {
 	public static String[] getQualifiedName(IBinding binding) {
 		String[] ns = null;
 	    try {
-	    	IBinding owner= binding.getOwner();
-            while (owner != null) {
+	    	for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {
             	String n= owner.getName();
             	if (n == null)
             		break;
@@ -2238,7 +2237,6 @@ public class CPPVisitor {
                 	continue;
             
                 ns = (String[]) ArrayUtil.append(String.class, ns, n);
-                owner = owner.getOwner();
             }
         } catch (DOMException e) {
         }

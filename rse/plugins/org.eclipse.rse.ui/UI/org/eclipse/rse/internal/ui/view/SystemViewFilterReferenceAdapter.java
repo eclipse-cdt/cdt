@@ -30,6 +30,7 @@
  * David McKnight    (IBM)  - [233494] Show in Table Action should be removed from promptable filters
  * David McKnight   (IBM)        - [238507] Promptable Filters refreshed after modifying filter strings
  * David McKnight   (IBM)        - [244824] filter not refreshed if child is "empty list" or system message node
+ * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -754,7 +755,8 @@ public class SystemViewFilterReferenceAdapter
 	public boolean showOpenViewActions(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return !filter.isPromptable();
+		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
+		return !filter.isPromptable() && !ssParentFactory.supportsCommands();
 	}
 
 
@@ -765,7 +767,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		ISystemFilter filter = getFilter(element);
 		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
-		return ssParentFactory.showGenericShowInTableOnFilter() && !filter.isPromptable();
+		return ssParentFactory.showGenericShowInTableOnFilter() && !filter.isPromptable() && !ssParentFactory.supportsCommands();
 	}
 
 	/**
@@ -775,7 +777,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		ISystemFilter filter = getFilter(element);
 		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
-		return ssParentFactory.showRefreshOnFilter() && !filter.isPromptable();
+		return ssParentFactory.showRefreshOnFilter() && !filter.isPromptable() && !ssParentFactory.supportsCommands();
 	}
 
 	// ------------------------------------------------------------

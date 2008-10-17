@@ -64,6 +64,7 @@
  * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
  * David Dykstal (IBM) - [233530] Not Prompted on Promptable Filters after using once by double click
  * David McKnight   (IBM)        - [241744] Refresh collapse low level nodes which is expended before.
+ * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1017,7 +1018,7 @@ public class SystemView extends SafeTreeViewer
 					if (singleSelection) {
 						// dkm - first find out if the selection will have children
 						//      only add this action if there are children
-						if (hasChildren)
+						if (hasChildren && showOpenViewActions())
 						{
 							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 						}

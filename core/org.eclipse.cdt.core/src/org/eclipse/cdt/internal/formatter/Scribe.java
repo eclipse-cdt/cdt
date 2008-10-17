@@ -1708,6 +1708,7 @@ public class Scribe {
 				fSkippedIndentations++;
 			}
 			if (offset > currentPosition) {
+				space();
 				printRaw(currentPosition, offset - currentPosition);
 				scanner.resetTo(offset, scannerEndPosition - 1);
 			}

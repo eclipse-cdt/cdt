@@ -852,5 +852,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveSpaceBetweenPointerModifierAndIdentifier_Bug243056() throws Exception {
 		assertFormatterResult();
 	}
-	
+
+	//#define FUNCTION_NAME myFunc
+	//#define VARIABLE_NAME myVar
+	//
+	//void FUNCTION_NAME( void );
+	//void FUNCTION_NAME( void )
+	//{
+	//int VARIABLE_NAME;
+	//}
+
+	//#define FUNCTION_NAME myFunc
+	//#define VARIABLE_NAME myVar
+	//
+	//void FUNCTION_NAME(void);
+	//void FUNCTION_NAME(void) {
+	//	int VARIABLE_NAME;
+	//}
+	public void testPreserveNecessarySpace_Bug250969() throws Exception {
+		assertFormatterResult();
+	}
 }

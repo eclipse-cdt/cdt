@@ -470,10 +470,14 @@ public class CPPTemplates {
 			parent = parent.getParent();
 		}
 
-		IASTNode decl = parent.getParent();
-		while (!(decl instanceof IASTDeclaration))
-			decl = decl.getParent();
-		decl = decl.getParent();
+		IASTNode decl= parent;
+		while (decl != null) {
+			if (decl instanceof IASTDeclaration) {
+				decl= decl.getParent();
+				break;
+			}
+			decl= decl.getParent();
+		}
 
 		try {
 			if (decl instanceof ICPPASTExplicitTemplateInstantiation &&

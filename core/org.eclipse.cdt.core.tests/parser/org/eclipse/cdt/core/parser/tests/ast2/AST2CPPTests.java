@@ -6134,6 +6134,14 @@ public class AST2CPPTests extends AST2BaseTest {
             ba.assertProblem("a; // should not resolve", 1);
         }
     }
+    
+    //    namespace ns {
+    //    	template<typename T> class CT {};
+    //    }
+    //    using ns::CT<int>;
+    public void testTemplateIDInUsingDecl_251199() throws Exception {
+        parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
 
 	//	void f();
 	//	

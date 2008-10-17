@@ -11,6 +11,9 @@
 package org.eclipse.cdt.internal.core.resources;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -112,6 +115,35 @@ public class ResourceLookup {
 			}
 		}
 		return best;
+	}
+
+	/**
+	 * Sorts files by relevance for CDT, by the criteria listed below. The most relevant files
+	 * is listed first.
+	 * <br> Accessible files
+	 * <br> Files of preferred project
+	 * <br> Files of CDT projects
+	 * <br> Files on a source root of a CDT project
+	 */
+	public static void sortFilesByRelevance(IFile[] filesToSort, final IProject preferredProject) {
+		Collections.sort(Arrays.asList(filesToSort), new Comparator<IFile>() {
+			public int compare(IFile f1, IFile f2) {
+				boolean a1= f1.isAccessible();
+				boolean a2= f2.isAccessible();
+				if (a1 != a2) 
+					return a1 ? -1 : 1;
+		
+				int r1= FileRelevance.getRelevance(f1, preferredProject);
+				int r2= FileRelevance.getRelevance(f2, preferredProject);
+				
+				if (r1 > r2)
+					return -1;
+				if (r1 < r2)
+					return 1;
+				
+				return f1.getFullPath().toString().compareTo(f2.getFullPath().toString());
+			}
+		});
 	}
 
 	/** 

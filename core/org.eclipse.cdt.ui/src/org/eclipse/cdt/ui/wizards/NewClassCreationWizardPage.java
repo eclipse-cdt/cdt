@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -911,6 +911,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         public void focusGained(FocusEvent e) {
             if (fLastFocusedField != this.fieldID) {
                 fLastFocusedField = this.fieldID;
+            	if( isFirstTime ) {
+            		isFirstTime = false;
+            		return;
+            	}
                 doStatusUpdate();
             }
         }
@@ -1340,10 +1344,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             fNamespaceStatus = namespaceChanged();
         }
         if (fieldChanged(fields, CLASS_NAME_ID)) {
-        	if( isFirstTime ) {
-        		isFirstTime = false;
-        		return;
-        	}
             fClassNameStatus = classNameChanged();
         }
         if (fieldChanged(fields, BASE_CLASSES_ID)) {
@@ -1374,21 +1374,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         // do the last focused field first
         IStatus lastStatus = getLastFocusedStatus();
 
+        final boolean isClassNameWarning = fClassNameStatus.getSeverity() == IStatus.WARNING;
         // status of all used components
-        IStatus[] status = new IStatus[] {
-        	// give priority to file-level warnings over
-        	// class name warnings
-            (fHeaderFileStatus != lastStatus && fClassNameStatus == lastStatus) ? fHeaderFileStatus : STATUS_OK,
-            (fSourceFileStatus != lastStatus && fClassNameStatus == lastStatus) ? fSourceFileStatus : STATUS_OK,
-            
+		IStatus[] status = new IStatus[] {
             lastStatus,
             (fSourceFolderStatus != lastStatus) ? fSourceFolderStatus : STATUS_OK,
-            (fHeaderFileStatus != lastStatus) ? fHeaderFileStatus : STATUS_OK,
-            (fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
             (fNamespaceStatus != lastStatus) ? fNamespaceStatus : STATUS_OK,
+
+            // give priority to file-level warnings over
+        	// class name warnings
+            (fHeaderFileStatus != lastStatus && isClassNameWarning) ? fHeaderFileStatus : STATUS_OK,
+            (fSourceFileStatus != lastStatus && isClassNameWarning) ? fSourceFileStatus : STATUS_OK,
+                    
             (fClassNameStatus != lastStatus) ? fClassNameStatus : STATUS_OK,
             (fBaseClassesStatus != lastStatus) ? fBaseClassesStatus : STATUS_OK,
             (fMethodStubsStatus != lastStatus) ? fMethodStubsStatus : STATUS_OK,
+            (fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
+            (fHeaderFileStatus != lastStatus) ? fHeaderFileStatus : STATUS_OK,
         };
         
         // the mode severe status will be displayed and the ok button enabled/disabled.

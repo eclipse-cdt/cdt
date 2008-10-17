@@ -805,7 +805,26 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveSpaceInParameterDecl_Bug241967() throws Exception {
 		assertFormatterResult();
 	}
-	
+
+	//#define FUNCTION_NAME myFunc
+	//#define VARIABLE_NAME myVar
+	//
+	//void FUNCTION_NAME( void );
+	//void FUNCTION_NAME( void )
+	//{
+	//int VARIABLE_NAME;
+	//}
+
+	//#define FUNCTION_NAME myFunc
+	//#define VARIABLE_NAME myVar
+	//
+	//void FUNCTION_NAME(void);
+	//void FUNCTION_NAME(void) {
+	//	int VARIABLE_NAME;
+	//}
+	public void testPreserveNecessarySpace_Bug250969() throws Exception {
+		assertFormatterResult();
+	}
 	//#define MY_MACRO int a; \
 	//    int b; \
 	//    int c();

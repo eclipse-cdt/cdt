@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
@@ -37,5 +38,11 @@ public class CCProjectWizard extends CDTCommonProjectWizard {
 		} catch (CoreException e) {}
 		return prj;
 	}
+	
+	@Override
+	public String[] getContentTypeIDs() {
+		return new String[] { CCorePlugin.CONTENT_TYPE_CXXSOURCE, CCorePlugin.CONTENT_TYPE_CXXHEADER };
+	}
+	
 
 }

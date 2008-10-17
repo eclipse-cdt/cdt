@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -119,10 +120,16 @@ public class MBSWizardHandler extends CWizardHandler {
 		private IWizardPage[] templatePages;
 		private IWizardPage predatingPage;
 		private IWizardPage followingPage;
+		private IWizard wizard;
 		
 		public EntryInfo(EntryDescriptor dr, SortedMap<String, IToolChain> _tcs){
 			entryDescriptor = dr;
 			tcs = _tcs;
+		}
+	
+		public EntryInfo(EntryDescriptor dr, SortedMap<String, IToolChain> _tcs, IWizard w){
+			this(dr, _tcs);
+			wizard = w;
 		}
 		
 		public boolean isValid(){
@@ -154,8 +161,25 @@ public class MBSWizardHandler extends CWizardHandler {
 				if(!entryDescriptor.isDefaultForCategory() && 
 						path.length > 1 && (!path[0].equals(ManagedBuildWizard.OTHERS_LABEL))){
 					templateId = path[path.length - 1]; 
-					Template templates[] = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
-					if(templates.length == 0)
+					Template templates[] = null; 
+					if(wizard instanceof CDTCommonProjectWizard) {
+						CDTCommonProjectWizard wz = (CDTCommonProjectWizard)wizard;
+						String[] langIDs = wz.getLanguageIDs();
+						if(langIDs.length > 0) {
+							List<Template> lstTemplates = new ArrayList<Template>();
+							for(int i = 0; i < langIDs.length; ++i) {
+								lstTemplates.addAll(Arrays.asList(TemplateEngineUI.getDefault().
+									getTemplates(projectTypeId, null, langIDs[i])));
+							} 
+							templates = lstTemplates.toArray(new Template[lstTemplates.size()]);
+						}
+					} 
+					if(null == templates) {
+						 templates = 
+							TemplateEngineUI.getDefault().
+								getTemplates(projectTypeId);
+					}
+					if((null == templates) || (templates.length == 0))
 						break;
 					
 					for(int i = 0; i < templates.length; i++){
@@ -723,12 +747,12 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	public boolean isApplicable(EntryDescriptor data) { 
-		EntryInfo info = new EntryInfo(data, full_tcs);
+		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		return info.isValid() && (info.getToolChainsCount() > 0);
 	}
 	
 	public void initialize(EntryDescriptor data) throws CoreException {
-		EntryInfo info = new EntryInfo(data, full_tcs);
+		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		if(!info.isValid())
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor")); //$NON-NLS-1$
 		

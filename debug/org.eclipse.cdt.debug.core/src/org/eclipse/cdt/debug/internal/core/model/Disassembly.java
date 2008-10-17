@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     oyvind.harboe@zylin.com - http://bugs.eclipse.org/250638
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -65,7 +66,9 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 			String fileName = frame.getFile();
 			int lineNumber = frame.getLineNumber();
 			ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
-			IAddress address = frame.getAddress();				
+			IAddress address = frame.getAddress();
+			if (address==null)
+				return null;
 			if ( fileName != null && fileName.length() > 0 ) {
 				try {
 					mixedInstrs = target.getMixedInstructions( fileName, 
@@ -133,6 +136,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( IExecFileInfo.class.equals( adapter ) )
 			return getDebugTarget().getAdapter( adapter );

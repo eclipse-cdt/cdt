@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Anton Leherbauer (Wind River Systems)
+ *     oyvind.harboe@zylin.com - http://bugs.eclipse.org/250638
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -566,6 +567,8 @@ public class CCorePlugin extends Plugin {
 		if (project != null) {
 			try {
 				ICDescriptor cdesc = getCProjectDescription(project, false);
+				if (cdesc==null)
+					return ext;
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions != null && cextensions.length > 0)
 					ext = cextensions;

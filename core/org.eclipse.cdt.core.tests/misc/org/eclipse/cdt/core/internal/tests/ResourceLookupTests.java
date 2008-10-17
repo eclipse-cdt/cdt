@@ -207,4 +207,27 @@ public class ResourceLookupTests extends TestCase {
 			assertEquals(1, files.length);
 		}		
 	}
+	
+	public void testLinkedResourceFiles() throws Exception {
+		IProject[] prjs= new IProject[]{fProject};
+
+		fProject.create(new NullProgressMonitor());
+		fProject.open(new NullProgressMonitor());
+		createFolder(fProject, "folder1");
+		File f= File.createTempFile("extern", "h");
+		IPath location= Path.fromOSString(f.getAbsolutePath());
+		IFile file1= fProject.getFile("linked1");
+		IFile file2= fProject.getFile("linked2.h");
+		file1.createLink(location, 0, new NullProgressMonitor());
+		file2.createLink(location, 0, new NullProgressMonitor());
+
+		IFile[] files = ResourceLookup.findFilesForLocation(location);
+		assertEquals(2, files.length);
+		
+		files= ResourceLookup.findFilesByName(new Path(location.lastSegment()), prjs, false);
+		assertEquals(2, files.length);
+
+		files= ResourceLookup.findFilesByName(new Path("linked2.h"), prjs, false);
+		assertEquals(0, files.length);
+	}
 }

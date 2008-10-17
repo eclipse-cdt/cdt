@@ -100,7 +100,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
      * that the file creation wizard has just been 
      * created.
      */
-    private boolean isFirstTime = false;
+    private boolean isFirstTime = true;
 
 	private Template[] fTemplates;
 
@@ -128,9 +128,6 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		fSourceFolderStatus = STATUS_OK;
 		fNewFileStatus = STATUS_OK;
 		fLastFocusedField = 0;
-		
-		isFirstTime = true;
-		
 	}
 	
 	// -------- UI Creation ---------
@@ -458,7 +455,11 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
         
         public void focusGained(FocusEvent e) {
             fLastFocusedField = this.fieldID;
-            doStatusUpdate();
+            if (isFirstTime) {
+            	isFirstTime = false;
+            	return;
+            }
+        	doStatusUpdate();
         }
         
         public void focusLost(FocusEvent e) {
@@ -547,10 +548,6 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			fSourceFolderStatus = sourceFolderChanged();
 	    }
 	    if (fieldChanged(fields, NEW_FILE_ID)) {
-	    	if( isFirstTime ){
-	    		isFirstTime = false;
-	    		return;
-	    	}
 	    	fNewFileStatus = fileNameChanged();
 	    }
 		doStatusUpdate();

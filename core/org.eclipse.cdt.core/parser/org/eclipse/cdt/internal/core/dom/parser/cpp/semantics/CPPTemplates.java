@@ -273,11 +273,15 @@ public class CPPTemplates {
 			parent = parent.getParent();
 		}
 
-		IASTNode decl = parent.getParent();
-		while (!(decl instanceof IASTDeclaration))
-			decl = decl.getParent();
-		decl = decl.getParent();
-
+		IASTNode decl= parent;
+		while (decl != null) {
+			if (decl instanceof IASTDeclaration) {
+				decl= decl.getParent();
+				break;
+			}
+			decl= decl.getParent();
+		}
+		
 		if (decl instanceof ICPPASTExplicitTemplateInstantiation &&
 				parent instanceof ICPPASTElaboratedTypeSpecifier && segment != 0) {
 		    return createClassExplicitInstantiation((ICPPASTElaboratedTypeSpecifier) parent);

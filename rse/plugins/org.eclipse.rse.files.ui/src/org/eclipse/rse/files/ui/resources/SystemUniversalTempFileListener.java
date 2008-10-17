@@ -303,7 +303,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				}
 
 				// waiting to make sure the file's timestamp is uptodate
-				remoteFile = waitForTimestampToBeUpToDate(remoteFile, monitor);
+				remoteFile = waitForTimestampToBeUpToDate(remoteFile,remoteModifiedStamp, monitor);
 				
 				
 							
@@ -374,18 +374,20 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 		}
 	}
 	
-	private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, IProgressMonitor monitor)
+	private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, long originalTimestamp, IProgressMonitor monitor)
 	{
 		IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
 		String path = remoteFile.getAbsolutePath();
-		long originalTimestamp = remoteFile.getLastModified();
 		try {
 			long timestamp = originalTimestamp;
 
 			boolean fileUpdated = false;
 			boolean timestampChanging = true;
 			
-			while (timestampChanging || !fileUpdated){	// wait until the timestamp stops changing AND timestamp did change at least once		
+			int MAX_TIMES_CHECKED = 100; // make sure we don't wait indefinitely
+			int timesChecked = 0;  
+			
+			while ((timestampChanging || !fileUpdated) && !monitor.isCanceled()){	// wait until the timestamp stops changing AND timestamp did change at least once		
 				try {
 					Thread.sleep(500); // sleep 
 				}
@@ -406,6 +408,12 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				}
 				
 				timestamp = nextTimestamp;
+				timesChecked++;
+				
+				if (timesChecked >= MAX_TIMES_CHECKED){ // we're not expecting this, but it's better to timeout than to hang on this
+					SystemBasePlugin.logError("timeout waiting for timestamp after upload of "+ path); //$NON-NLS-1$
+					return remoteFile;
+				}
 			}
 		}
 		catch (SystemMessageException e){

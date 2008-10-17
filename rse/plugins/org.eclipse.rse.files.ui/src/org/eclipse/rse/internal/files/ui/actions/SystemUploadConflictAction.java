@@ -234,7 +234,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 				int MAX_TIMES_CHECKED = 100; // make sure we don't wait indefinitely
 				int timesChecked = 0;  
 				
-				while (timestampChanging || !fileUpdated){	// wait until the timestamp stops changing AND timestamp did change at least once		
+				while ((timestampChanging || !fileUpdated) && !monitor.isCanceled()){	// wait until the timestamp stops changing AND timestamp did change at least once		
 					try {
 						Thread.sleep(500); // sleep 
 					}
@@ -268,7 +268,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 			}
 			
 			return remoteFile;
-		}
+		}	
 	}
 
 	/**

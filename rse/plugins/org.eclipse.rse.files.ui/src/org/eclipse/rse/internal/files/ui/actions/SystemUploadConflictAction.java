@@ -198,11 +198,12 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             {
             	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+            	long originalTimestamp = _remoteFile.getLastModified();
             	
                 fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
 
                 // wait for timestamp to update before re-fetching remote file
-                _remoteFile = waitForTimestampToBeUpToDate(_remoteFile, monitor);
+                _remoteFile = waitForTimestampToBeUpToDate(_remoteFile, originalTimestamp, monitor);
 
                 long ts = _remoteFile.getLastModified();
                 properties.setRemoteFileTimeStamp(ts);
@@ -220,16 +221,18 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             return Status.OK_STATUS;
 		}
 		
-		private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, IProgressMonitor monitor)
+		private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, long originalTimestamp, IProgressMonitor monitor)
 		{
 			IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
 			String path = remoteFile.getAbsolutePath();
-			long originalTimestamp = remoteFile.getLastModified();
 			try {
 				long timestamp = originalTimestamp;
 
 				boolean fileUpdated = false;
 				boolean timestampChanging = true;
+				
+				int MAX_TIMES_CHECKED = 100; // make sure we don't wait indefinitely
+				int timesChecked = 0;  
 				
 				while (timestampChanging || !fileUpdated){	// wait until the timestamp stops changing AND timestamp did change at least once		
 					try {
@@ -252,6 +255,12 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 					}
 					
 					timestamp = nextTimestamp;
+					timesChecked++;
+					
+					if (timesChecked >= MAX_TIMES_CHECKED){ // we're not expecting this, but it's better to timeout than to hang on this
+						SystemBasePlugin.logError("timeout waiting for timestamp after upload of "+ path); //$NON-NLS-1$
+						return remoteFile;
+					}
 				}
 			}
 			catch (SystemMessageException e){
@@ -259,7 +268,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 			}
 			
 			return remoteFile;
-		}		
+		}
 	}
 
 	/**

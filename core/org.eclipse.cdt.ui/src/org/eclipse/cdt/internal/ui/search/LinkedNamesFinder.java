@@ -68,10 +68,12 @@ public class LinkedNamesFinder {
 			if (target instanceof ICPPClassType) {
 				try {
 					ICPPConstructor[] constructors = ((ICPPClassType) target).getConstructors();
-					for (IBinding ctor : constructors) {
-						findBinding(ctor);
+					for (ICPPConstructor ctor : constructors) {
+						if (!ctor.isImplicit()) {
+							findBinding(ctor);
+						}
 					}
-					ICPPMethod[] methods = ((ICPPClassType) target).getMethods();
+					ICPPMethod[] methods = ((ICPPClassType) target).getDeclaredMethods();
 					for (ICPPMethod method : methods) {
 						if (method.isDestructor()) {
 							findBinding(method);

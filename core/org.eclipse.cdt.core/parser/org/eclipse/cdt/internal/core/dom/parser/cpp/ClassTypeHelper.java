@@ -68,40 +68,40 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ClassTypeHelper {
 	public static IBinding[] getFriends(ICPPInternalClassTypeMixinHost host) {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if(  host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new IBinding [] { new ProblemBinding( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
 		ObjectSet<IBinding> resultSet = new ObjectSet<IBinding>(2);
-		IASTDeclaration [] members = host.getCompositeTypeSpecifier().getMembers();
+		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : members) {
-			while( decl instanceof ICPPASTTemplateDeclaration )
+			while (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 
-			if( decl instanceof IASTSimpleDeclaration ){
+			if (decl instanceof IASTSimpleDeclaration) {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
-				if( declSpec.isFriend() ){
-					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-					if( declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0 ){
-						resultSet.put( ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() );
+				if (declSpec.isFriend()) {
+					IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+					if (declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0) {
+						resultSet.put(((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding());
 					} else {
 						for (IASTDeclarator dtor : dtors) {
-							if( dtor == null ) break;
+							if (dtor == null) break;
 							dtor= CPPVisitor.findInnermostDeclarator(dtor);
-							resultSet.put( dtor.getName().resolveBinding() );
+							resultSet.put(dtor.getName().resolveBinding());
 						}    
 					}
 				}
-			} else if( decl instanceof IASTFunctionDefinition ){
+			} else if (decl instanceof IASTFunctionDefinition) {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
-				if( declSpec.isFriend() ){
+				if (declSpec.isFriend()) {
 					IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
 					dtor= CPPVisitor.findInnermostDeclarator(dtor);
-					resultSet.put( dtor.getName().resolveBinding() );
+					resultSet.put(dtor.getName().resolveBinding());
 				}
 			}
 		}
@@ -110,62 +110,62 @@ public class ClassTypeHelper {
 	}
 
 	public static ICPPBase[] getBases(ICPPInternalClassTypeMixinHost host) {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if(  host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new ICPPBase[] { new CPPBaseClause.CPPBaseProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
-		ICPPASTBaseSpecifier [] bases = host.getCompositeTypeSpecifier().getBaseSpecifiers();
-		if( bases.length == 0 )
+		ICPPASTBaseSpecifier[] bases = host.getCompositeTypeSpecifier().getBaseSpecifiers();
+		if (bases.length == 0)
 			return ICPPBase.EMPTY_BASE_ARRAY;
 
-		ICPPBase [] bindings = new ICPPBase[ bases.length ];
-		for( int i = 0; i < bases.length; i++ ){
-			bindings[i] = new CPPBaseClause( bases[i] );
+		ICPPBase[] bindings = new ICPPBase[bases.length];
+		for (int i = 0; i < bases.length; i++) {
+			bindings[i] = new CPPBaseClause(bases[i]);
 		}
 
 		return bindings; 
 	}
 
 	public static ICPPField[] getDeclaredFields(ICPPInternalClassTypeMixinHost host) throws DOMException {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if(  host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPField[] { new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new ICPPField[] { new CPPField.CPPFieldProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
 		IBinding binding = null;
-		ICPPField [] result = null;
+		ICPPField[] result = null;
 
-		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
+		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
-			if( decl instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+			if (decl instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
 					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
-					if( binding instanceof ICPPField )
-						result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
+					if (binding instanceof ICPPField)
+						result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, binding);
 				}
-			} else if( decl instanceof ICPPASTUsingDeclaration ){
+			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
 				binding = n.resolveBinding();
-				if( binding instanceof ICPPUsingDeclaration ){
-					IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
+				if (binding instanceof ICPPUsingDeclaration) {
+					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
 					for (IBinding element : bs) {
-						if( element instanceof ICPPField )
-							result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, element );
+						if (element instanceof ICPPField)
+							result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, element);
 					}
-				} else if( binding instanceof ICPPField ) {
-					result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
+				} else if (binding instanceof ICPPField) {
+					result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, binding);
 				}
 			}
 		}
-		return (ICPPField[]) ArrayUtil.trim( ICPPField.class, result );
+		return (ICPPField[]) ArrayUtil.trim(ICPPField.class, result);
 	}
 	
 	public static ICPPClassType[] getAllBases(ICPPClassType ct) throws DOMException {
@@ -177,7 +177,7 @@ public class ClassTypeHelper {
 	}
 	
 	private static void getAllBases(ICPPClassType ct, HashSet<ICPPClassType> result) throws DOMException {
-		ICPPBase [] bases= ct.getBases();
+		ICPPBase[] bases= ct.getBases();
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
@@ -195,7 +195,7 @@ public class ClassTypeHelper {
 		for (ICPPClassType base : bases) {
 			methods = (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
 		}
-		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, methods );
+		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, methods);
 	}
 	
 	public static ICPPMethod[] getMethods(ICPPClassType ct) throws DOMException {
@@ -214,121 +214,120 @@ public class ClassTypeHelper {
 	}
 	
 	public static ICPPMethod[] getDeclaredMethods(ICPPInternalClassTypeMixinHost host) throws DOMException {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if( host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new ICPPMethod[] { new CPPMethod.CPPMethodProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
 		IBinding binding = null;
-		ICPPMethod [] result = null;
+		ICPPMethod[] result = null;
 
-		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
+		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
-			while( decl instanceof ICPPASTTemplateDeclaration )
+			while (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
-			if( decl instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+			if (decl instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
 					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
-					if( binding instanceof ICPPMethod)
-						result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+					if (binding instanceof ICPPMethod)
+						result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
 				}
-			} else if( decl instanceof IASTFunctionDefinition ){
+			} else if (decl instanceof IASTFunctionDefinition) {
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
 				dtor = CPPVisitor.findInnermostDeclarator(dtor);
 				binding = dtor.getName().resolveBinding();
-				if( binding instanceof ICPPMethod ){
-					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+				if (binding instanceof ICPPMethod) {
+					result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
 				}
-			} else if( decl instanceof ICPPASTUsingDeclaration ){
+			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
 				binding = n.resolveBinding();
-				if( binding instanceof ICPPUsingDeclaration ){
-					IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
+				if (binding instanceof ICPPUsingDeclaration) {
+					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
 					for (IBinding element : bs) {
-						if( element instanceof ICPPMethod )
-							result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, element );
+						if (element instanceof ICPPMethod)
+							result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, element);
 					}
-				} else if( binding instanceof ICPPMethod ) {
-					result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+				} else if (binding instanceof ICPPMethod) {
+					result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
 				}
 			}
 		}
-		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
+		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, result);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) throws DOMException {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if( host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new ICPPConstructor[] { new CPPConstructor.CPPConstructorProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
 
 		ICPPClassScope scope = (ICPPClassScope) host.getCompositeScope();
-		if(ASTInternal.isFullyCached(scope))
-			return ((CPPClassScope)scope).getConstructors( true );
+		if (ASTInternal.isFullyCached(scope))
+			return ((CPPClassScope)scope).getConstructors(true);
 
-		IASTDeclaration [] members = host.getCompositeTypeSpecifier().getMembers();
+		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : members) {
-			if( decl instanceof ICPPASTTemplateDeclaration )
+			if (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
-			if( decl instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+			if (decl instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
-					if( dtor == null ) break;
+					if (dtor == null) break;
 					dtor= CPPVisitor.findInnermostDeclarator(dtor);
-					ASTInternal.addName(scope,  dtor.getName() );
+					ASTInternal.addName(scope,  dtor.getName());
 				}
-			} else if( decl instanceof IASTFunctionDefinition ){
+			} else if (decl instanceof IASTFunctionDefinition) {
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
 				dtor= CPPVisitor.findInnermostDeclarator(dtor);
-				ASTInternal.addName(scope,  dtor.getName() );
+				ASTInternal.addName(scope,  dtor.getName());
 			}
 		}
 
-		return ((CPPClassScope)scope).getConstructors( true );
+		return ((CPPClassScope)scope).getConstructors(true);
 	}
 
 	public static ICPPClassType[] getNestedClasses(ICPPInternalClassTypeMixinHost host) {
-		if( host.getDefinition() == null ){
+		if (host.getDefinition() == null) {
 			host.checkForDefinition();
-			if( host.getDefinition() == null ){
+			if (host.getDefinition() == null) {
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPClassType[] { new CPPClassTypeProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray() ) };
+				return new ICPPClassType[] { new CPPClassTypeProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
 
-		ICPPClassType [] result = null;
+		ICPPClassType[] result = null;
 
-		IASTDeclaration [] decls = host.getCompositeTypeSpecifier().getMembers();
+		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
-			while( decl instanceof ICPPASTTemplateDeclaration )
+			while (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
-			if( decl instanceof IASTSimpleDeclaration ){
+			if (decl instanceof IASTSimpleDeclaration) {
 				IBinding binding = null;
 				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
-				if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
+				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 					binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
-				} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
-						((IASTSimpleDeclaration)decl).getDeclarators().length == 0 )
-				{
+				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
+						((IASTSimpleDeclaration)decl).getDeclarators().length == 0) {
 					binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
 				}
-				if( binding instanceof ICPPClassType )
-					result = (ICPPClassType[])ArrayUtil.append( ICPPClassType.class, result, binding );
+				if (binding instanceof ICPPClassType)
+					result = (ICPPClassType[])ArrayUtil.append(ICPPClassType.class, result, binding);
 			} 
 		}
-		return (ICPPClassType[]) ArrayUtil.trim( ICPPClassType.class, result );
+		return (ICPPClassType[]) ArrayUtil.trim(ICPPClassType.class, result);
 	}
 
 	public static IField[] getFields(ICPPClassType ct) throws DOMException {

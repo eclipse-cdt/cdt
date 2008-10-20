@@ -358,7 +358,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                              *  return these requests without ever sending them to the debug engine.
                              *  
                              */
-                            String[] localColumns = update.getPresentationContext().getColumns();
+                            String[] localColumns = update.getColumnIds();
                             if (localColumns == null)
                                 localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                             

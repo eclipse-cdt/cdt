@@ -146,7 +146,7 @@ public class FinalLaunchSequence extends Sequence {
     			return;
     		}
 
-        	final IPath execPath = fCommandControl.getExecutablePath();
+        	final IPath execPath = fGDBBackend.getProgramPath();
         	if (!noFileCommand && execPath != null && !execPath.isEmpty()) {
         		fCommandControl.queueCommand(
        				new MIFileExecAndSymbols(fCommandControl.getContext(), 

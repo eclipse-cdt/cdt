@@ -141,7 +141,10 @@ public class GDBProcesses extends MIProcesses {
 			
 			String name = fProcessNames.get(pid);
 			// If we still don't find the name in our list, return the default name of our program
-			if (name == null) name = fGdb.getExecutablePath().lastSegment();
+			if (name == null) {
+				IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+				name = backend.getProgramPath().lastSegment();
+			}
 			rm.setData(new MIThreadDMData(name, pidStr));
 			rm.done();
 		} else {
@@ -230,7 +233,8 @@ public class GDBProcesses extends MIProcesses {
 	@Override
 	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-		if (fGdb.getSessionType() == SessionType.LOCAL) {
+		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+		if (backend.getSessionType() == SessionType.LOCAL) {
 			IProcessList list = null;
 			try {
 				list = CCorePlugin.getDefault().getProcessList();

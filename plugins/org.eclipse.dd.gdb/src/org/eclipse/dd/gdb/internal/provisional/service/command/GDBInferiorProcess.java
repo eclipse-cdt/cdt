@@ -45,8 +45,6 @@ class GDBInferiorProcess extends MIInferiorProcess {
             getSession().getExecutor().submit(new DsfRunnable() {
                 public void run() {
                     if (isDisposed() || !getSession().isActive()) return;
-                    IGDBControl gdb = (IGDBControl)getCommandControlService();
-                    if (gdb == null) return;
                     
                     // An inferior will be destroy():interrupt and kill if
                     // - For attach session:
@@ -55,7 +53,7 @@ class GDBInferiorProcess extends MIInferiorProcess {
                     //   if the inferior is still running.
                     // - For PostMortem(Core): send event
                     // else noop
-                    if (gdb.getIsAttachSession() == false) {
+                    if (fBackend.getIsAttachSession() == false) {
                         // Try to interrupt the inferior, first.
                         if (getState() == State.RUNNING) {
                             fBackend.interrupt();

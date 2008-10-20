@@ -77,6 +77,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	private List<String> fSharedLibPaths;
 	private String fProgramArguments;
 	
+	private SessionType fSessionType;
+    private Boolean fAttach;
+
 	/**
      * Unique ID of this service instance.
      */
@@ -322,6 +325,20 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         return fGDBExitValue;
     }
     
+    public 	SessionType getSessionType() {
+        if (fSessionType == null) {
+        	fSessionType = LaunchUtils.getSessionType(fLaunchConfiguration);
+        }
+        return fSessionType;
+    }
+
+	public boolean getIsAttachSession() {
+        if (fAttach == null) {
+        	fAttach = LaunchUtils.getIsAttach(fLaunchConfiguration);
+        }
+        return fAttach;
+	}
+
 	@Override
 	protected BundleContext getBundleContext() {
         return GdbPlugin.getBundleContext();

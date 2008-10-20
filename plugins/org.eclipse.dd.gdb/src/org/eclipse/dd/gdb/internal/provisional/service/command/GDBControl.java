@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -38,7 +37,6 @@ import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.GdbPlugin;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.launching.LaunchUtils;
 import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.mi.service.IMIBackend;
@@ -98,10 +96,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     private GDBControlDMContext fControlDmc;
 
-    private SessionType fSessionType;
-    
-    private boolean fAttach;
-
     private IGDBBackend fMIBackend;
     
     private boolean fConnected = true;
@@ -115,8 +109,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     public GDBControl(DsfSession session, ILaunchConfiguration config) { 
         super(session, false);
-        fSessionType = LaunchUtils.getSessionType(config);
-        fAttach = LaunchUtils.getIsAttach(config);
     }
 
     @Override
@@ -183,14 +175,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fControlDmc;
     }
     
-    public SessionType getSessionType() { 
-        return fSessionType; 
-    }
-
-    public boolean getIsAttachSession() { 
-        return fAttach; 
-    }
-
     public void terminate(final RequestMonitor rm) {
         // Schedule a runnable to be executed 2 seconds from now.
         // If we don't get a response to the quit command, this 
@@ -233,7 +217,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      * be used instead; this decision is based on the type of session.
      */
     public void initInferiorInputOutput(final RequestMonitor requestMonitor) {
-    	if (fSessionType == SessionType.REMOTE || fAttach) {
+    	if (fMIBackend.getSessionType() == SessionType.REMOTE || fMIBackend.getIsAttachSession()) {
     		// These types do not use a PTY
     		fPty = null;
     		requestMonitor.done();
@@ -263,7 +247,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 
     public boolean canRestart() {
-    	if (fAttach) return false;
+    	if (fMIBackend.getIsAttachSession()) return false;
     	
     	// Before GDB6.8, the Linux gdbserver would restart a new
     	// process when getting a -exec-run but the communication
@@ -271,7 +255,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	// with GDB6.8 the program restarts properly one time,
     	// but on a second attempt, gdbserver crashes.
     	// So, lets just turn off the Restart for Remote debugging
-    	if (fSessionType == SessionType.REMOTE) return false;
+    	if (fMIBackend.getSessionType() == SessionType.REMOTE) return false;
     	
     	return true;
     }
@@ -295,7 +279,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      * Insert breakpoint at entry if set, and start or restart the program.
      */
     protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
-    	if (fAttach) {
+    	if (fMIBackend.getIsAttachSession()) {
     		// When attaching to a running process, we do not need to set a breakpoint or
     		// start the program; it is left up to the user.
     		requestMonitor.done();
@@ -309,7 +293,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
    		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
     	final MICommand<MIInfo> execCommand;
-    	if (fSessionType == SessionType.REMOTE) {
+    	if (fMIBackend.getSessionType() == SessionType.REMOTE) {
     		// When doing remote debugging, we use -exec-continue instead of -exec-run 
     		execCommand = new MIExecContinue(containerDmc);
     	} else {
@@ -386,9 +370,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fInferiorProcess;
     }
     
-    public IPath getExecutablePath() { return fMIBackend.getProgramPath(); }
-
- 
     @DsfServiceEventHandler 
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.

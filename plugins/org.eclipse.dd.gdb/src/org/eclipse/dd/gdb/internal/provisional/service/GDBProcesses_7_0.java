@@ -543,7 +543,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(fCommandControl.getIsAttachSession());
+    	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+    	rm.setData(backend.getIsAttachSession());
     	rm.done();
     }
 
@@ -571,7 +572,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 	
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-    	rm.setData(fCommandControl.getIsAttachSession() && fCommandControl.isConnected());
+    	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+    	rm.setData(backend.getIsAttachSession() && fCommandControl.isConnected());
     	rm.done();
     }
 

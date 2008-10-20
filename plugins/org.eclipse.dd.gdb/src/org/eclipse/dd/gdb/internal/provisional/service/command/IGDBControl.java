@@ -10,19 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.gdb.internal.provisional.service.command;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.SessionType;
 import org.eclipse.dd.mi.service.command.AbstractCLIProcess;
 import org.eclipse.dd.mi.service.command.MIInferiorProcess;
 
 public interface IGDBControl extends ICommandControlService {
-
-	SessionType getSessionType();
-
-	boolean getIsAttachSession();
 
 	void terminate(final RequestMonitor rm);
 	void initInferiorInputOutput(final RequestMonitor requestMonitor);
@@ -39,6 +33,4 @@ public interface IGDBControl extends ICommandControlService {
 	AbstractCLIProcess getCLIProcess();
 
 	MIInferiorProcess getInferiorProcess();
-
-	IPath getExecutablePath();
 }

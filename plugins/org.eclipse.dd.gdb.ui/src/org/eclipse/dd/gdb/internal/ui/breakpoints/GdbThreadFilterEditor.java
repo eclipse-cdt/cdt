@@ -35,7 +35,7 @@ import org.eclipse.dd.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
-import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.dd.mi.service.IMIExecutionDMContext;
 import org.eclipse.dd.mi.service.IMIProcesses;
@@ -468,14 +468,14 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBControl.class
+                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBBackend.class
                     .getName(), null);
                 tracker.open();
-                IGDBControl gdbControl = (IGDBControl) tracker.getService();
-                if (gdbControl != null) {
-                    rm.setData(gdbControl.getExecutablePath().toOSString());
+                IGDBBackend backend = (IGDBBackend) tracker.getService();
+                if (backend != null) {
+                    rm.setData(backend.getProgramPath().toOSString());
                 } else {
-                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Backend not accessible.")); //$NON-NLS-1$
                 }
                 rm.done();
                 tracker.close();

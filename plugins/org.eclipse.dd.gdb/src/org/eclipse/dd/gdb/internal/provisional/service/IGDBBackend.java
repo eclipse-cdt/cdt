@@ -84,4 +84,14 @@ public interface IGDBBackend extends IMIBackend {
 	 * Sends an interrupt signal to the GDB process.
 	 */
 	public void interrupt();
+	
+	/**
+	 * @return The type of the session currently ongoing with the backend
+	 */
+	public SessionType getSessionType();
+
+	/**
+	 * @return true if the ongoing session is attaching to a remote target.
+	 */	
+	public boolean getIsAttachSession();
 }

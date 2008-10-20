@@ -23,6 +23,7 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
+import org.eclipse.dd.gdb.internal.provisional.service.IGDBBackend;
 import org.eclipse.dd.gdb.internal.provisional.service.command.IGDBControl;
 import org.eclipse.dd.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -76,8 +77,9 @@ public class GdbRestartCommand implements IRestart {
     		@Override
     		protected void execute(final DataRequestMonitor<Object> rm) {
     			final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-				if (gdbControl != null) {
-                    execPathRef.set(gdbControl.getExecutablePath());
+    			final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+				if (gdbControl != null && backend != null) {		
+                    execPathRef.set(backend.getProgramPath());
                     gdbControl.initInferiorInputOutput(new RequestMonitor(fExecutor, rm) {
                     	@Override
                     	protected void handleSuccess() {

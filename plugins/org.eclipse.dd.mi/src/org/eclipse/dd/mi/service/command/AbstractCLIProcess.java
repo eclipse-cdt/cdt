@@ -264,6 +264,18 @@ public abstract class AbstractCLIProcess extends Process
     public boolean inSecondaryPrompt() {
         return fPrompt == 2;
     }
+    
+    private boolean isMIOperation(String operation) {
+    	// The definition of an MI command states that it starts with
+    	//  [ token ] "-"
+    	// where 'token' is optional and a sequence of digits.
+    	// However, we don't accept a token from the user, because
+    	// we will be adding our own token when actually sending the command.
+    	if (operation.startsWith("-")) { //$NON-NLS-1$
+    		return true;
+    	}
+    	return false;
+    }
 
     private class CLIOutputStream extends OutputStream {
         private final StringBuffer buf = new StringBuffer();
@@ -298,15 +310,17 @@ public abstract class AbstractCLIProcess extends Process
             // if We have the secondary prompt it means
             // that GDB is waiting for more feedback, use a RawCommand
             // 2-
-            // Do not use the interpreterexec for stepping operation
-            // the UI will fall out of step.
+            // Do not use the interpreter-exec for stepping operation
+            // the UI will fall out of step.  
+            // Also, do not use "interpreter-exec console" for MI commands.
             // 3-
             // Normal Command Line Interface.
             boolean secondary = inSecondaryPrompt();
             if (secondary) {
                 cmd = new RawCommand(getCommandControlService().getContext(), str);
             }
-            else if (! CLIEventProcessor.isSteppingOperation(str)) 
+            else if (! isMIOperation(str) &&
+            		 ! CLIEventProcessor.isSteppingOperation(str))
             {
                 cmd = new ProcessMIInterpreterExecConsole(getCommandControlService().getContext(), str);
             } 

@@ -8,12 +8,12 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMCommandUtils;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.update.ICachingVMProviderExtension;
 import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdateScope;
@@ -61,7 +61,7 @@ public class UpdateScopesContribution extends CompoundContributionItem implement
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.NONE);
 				item.setEnabled(false);
-				item.setText(MessagesForVMUpdateActions.UpdateScopesContribution_EmptyScopesList_label);
+				item.setText(MessagesForVMActions.UpdateScopesContribution_EmptyScopesList_label);
 			}
 	
             @Override
@@ -73,7 +73,7 @@ public class UpdateScopesContribution extends CompoundContributionItem implement
     
     @Override
     protected IContributionItem[] getContributionItems() {
-        IVMProvider provider = VMCommandUtils.getActiveVMProvider(fServiceLocator);
+        IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
 
         // If no part or selection, disable all.
         if (provider == null || !(provider instanceof ICachingVMProviderExtension)) {

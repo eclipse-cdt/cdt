@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMCommandUtils;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
@@ -65,7 +65,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
                 return testProvider(provider, property, expectedValue);
             }
         } else if (receiver instanceof IDebugView) {
-            IVMProvider provider = VMCommandUtils.getVMProviderForPart((IDebugView)receiver);
+            IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView)receiver);
             if (provider != null) {
                 return testProvider(provider, property, expectedValue);                    
             }

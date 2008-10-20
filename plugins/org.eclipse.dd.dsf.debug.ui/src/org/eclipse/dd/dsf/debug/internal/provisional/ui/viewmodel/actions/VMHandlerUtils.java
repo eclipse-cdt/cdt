@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions;
 
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -27,6 +28,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -36,7 +38,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 1.1
  */
 @SuppressWarnings("restriction")
-public class VMCommandUtils {
+public class VMHandlerUtils {
 
     /**
      * Retrieves the active VM provider based on the currently active
@@ -67,7 +69,25 @@ public class VMCommandUtils {
             return getVMProviderForPart(part);
         }
     }
-    
+
+    /**
+     * Retrieves the active VM provider based on the given execution event.
+     * @param event The execution event which is usually given as an argument 
+     * to the command handler execution call.
+     * 
+     * @return The active VM provder.
+     */
+    static public IVMProvider getActiveVMProvider(ExecutionEvent event) {
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
+        if (selection != null && !selection.isEmpty()) {
+            return getVMProviderForSelection(selection);
+        }
+        else {
+            IWorkbenchPart part = HandlerUtil.getActivePart(event);        
+            return getVMProviderForPart(part);
+        }
+    }
+
     public static IVMProvider getVMProviderForPart(IWorkbenchPart part) {
         IDebugContextService contextService = 
             DebugUITools.getDebugContextManager().getContextService(part.getSite().getWorkbenchWindow());

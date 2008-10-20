@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMCommandUtils;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -87,7 +87,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
     
     @Override
     protected IContributionItem[] getContributionItems() {
-        IVMProvider provider = VMCommandUtils.getActiveVMProvider(fServiceLocator);
+        IVMProvider provider = VMHandlerUtils.getActiveVMProvider(fServiceLocator);
 
         // If no part or selection, disable all.
         if (provider == null) {

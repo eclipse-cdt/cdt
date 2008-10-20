@@ -55,61 +55,6 @@
       </specification>
    </extension>
 
-   <extension
-         point="org.eclipse.ui.viewActions">
-      <!-- Variables View menu contributions -->
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
-            targetID="org.eclipse.debug.ui.VariableView">
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-
-      <!-- Registers View menu contributions -->
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
-            targetID="org.eclipse.debug.ui.RegisterView">
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-      
-      <!-- Expressions View menu contributions -->
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
-            targetID="org.eclipse.debug.ui.ExpressionView">
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-
-      <!-- Debug View menu contributions -->
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.debugView.Refresh"
-            targetID="org.eclipse.debug.ui.DebugView">
-         <action
-               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-   </extension>
-
    <extension 
          point="org.eclipse.ui.menus">
 	   <!-- Debug view menu commands -->
@@ -140,9 +85,21 @@
                </visibleWhen>    
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicies"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
-            </menu>         
+            </menu>
+       </menuContribution>
+       <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+	              icon="icons/refresh.gif"
+                  style="push"
+                  label="%command.refresh.name">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+            </command>
        </menuContribution>
 
 	   <!-- Registers view menu commands -->
@@ -162,7 +119,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.registersUpdatePolicies"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
             <menu 
@@ -173,7 +130,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.registersUpdateScopes"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
             </menu>         
        </menuContribution>
@@ -190,6 +147,18 @@
 	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
             </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.RegisterView?after=additions">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+	              icon="icons/refresh.gif"
+                  style="push"
+                  label="%command.refresh.name">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+            </command>
        </menuContribution>
 
 	   <!-- Variables view menu commands  -->
@@ -209,7 +178,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdatePolicies"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
             <menu 
@@ -220,7 +189,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdateScopes"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
             </menu>         
        </menuContribution>
@@ -237,6 +206,18 @@
 	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
             </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.VariableView?after=additions">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+	              icon="icons/refresh.gif"
+                  style="push"
+                  label="%command.refresh.name">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+            </command>
        </menuContribution>
 
 	   <!-- Expressions view menu commands  -->
@@ -256,7 +237,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdatePolicies"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
             <menu 
@@ -267,7 +248,7 @@
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdateScopes"
-	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesContribution">
+	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
             </menu>         
        </menuContribution>
@@ -285,7 +266,29 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
+       <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.ExpressionView?after=additions">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+	              icon="icons/refresh.gif"
+                  style="push"
+                  label="%command.refresh.name">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+               </visibleWhen>
+            </command>
+       </menuContribution>
    </extension>  
+
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshHandler"
+            commandId="org.eclipse.ui.file.refresh">
+         <activeWhen>
+            <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+         </activeWhen>
+      </handler>
+   </extension>
 
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -296,6 +299,11 @@
                <test property="org.eclipse.core.runtime.bundleState"
             	   args="org.eclipse.dd.dsf.debug.ui"
                    value="ACTIVE"/>
+            </with>
+            <with variable="activeContexts">
+               <iterate operator="or">
+                  <equals value="org.eclipse.dd.dsf.debug.ui.updateModes"/>
+               </iterate>               
             </with>
             <or>
 			   <with variable="activePart">
@@ -314,6 +322,11 @@
                <test property="org.eclipse.core.runtime.bundleState"
             	   args="org.eclipse.dd.dsf.debug.ui"
                    value="ACTIVE"/>
+            </with>
+            <with variable="activeContexts">
+               <iterate operator="or">
+                  <equals value="org.eclipse.dd.dsf.debug.ui.updateModes"/>
+               </iterate>               
             </with>
             <or>
 			   <with variable="activePart">
@@ -348,14 +361,14 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesPropertyTester"
+            class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesPropertyTester"
             id="org.eclipse.dd.dsf.debug.ui.selectionUpdatePoliciesTester"
             namespace="org.eclipse.dd.dsf.debug.ui"
             properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
             type="org.eclipse.dd.dsf.ui.viewmodel.IVMContext">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdatePoliciesPropertyTester"
+            class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesPropertyTester"
             id="org.eclipse.dd.dsf.debug.ui.partUpdatePoliciesTester"
             namespace="org.eclipse.dd.dsf.debug.ui"
             properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
@@ -363,14 +376,14 @@
       </propertyTester>
 
       <propertyTester
-            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesPropertyTester"
+            class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesPropertyTester"
             id="org.eclipse.dd.dsf.debug.ui.selectionUpdateScopesTester"
             namespace="org.eclipse.dd.dsf.debug.ui"
             properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
             type="org.eclipse.dd.dsf.ui.viewmodel.IVMContext">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.UpdateScopesPropertyTester"
+            class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesPropertyTester"
             id="org.eclipse.dd.dsf.debug.ui.partUpdateScopesTester"
             namespace="org.eclipse.dd.dsf.debug.ui"
             properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
@@ -552,5 +565,22 @@
          </action>
       </objectContribution>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.dd.dsf.debug.ui.updateModes"
+            label="Debug Update Modes">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshAllRetargetAction"
+               definitionId="org.eclipse.dd.dsf.debug.ui.refreshAll"
+               helpContextId="org.eclipse.dd.dsf.debug.ui.refreshAll_context"
+               icon="icons/refreshall.gif"
+               id="org.eclipse.dd.dsf.debug.ui.refreshAll"
+               label="%action.refreshAll.name"
+               menubarPath="window/additions"
+               toolbarPath="org.eclipse.ui.dd.dsf.debug.ui.actionSet.update_modes/debugUpdateModes">
+         </action>
+      </actionSet>
+   </extension>
+ 
 </plugin>

@@ -9,21 +9,24 @@
  *     Wind River Systems, Inc. - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions;
 
 import org.eclipse.osgi.util.NLS;
 
-public class MessagesForVMUpdateActions extends NLS {
+public class MessagesForVMActions extends NLS {
 	
-    private static final String BUNDLE_NAME = "org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.messages"; //$NON-NLS-1$
 
+    public static String RetargetDebugContextAction_ErrorDialog_title;
+    public static String RetargetDebugContextAction_ErrorDialog_message;
+    
     public static String UpdatePoliciesContribution_EmptyPoliciesList_label;
     public static String UpdateScopesContribution_EmptyScopesList_label;
-    
+
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForVMUpdateActions.class);
+        NLS.initializeMessages(BUNDLE_NAME, MessagesForVMActions.class);
     }
 
-    private MessagesForVMUpdateActions() {}
+    private MessagesForVMActions() {}
 }

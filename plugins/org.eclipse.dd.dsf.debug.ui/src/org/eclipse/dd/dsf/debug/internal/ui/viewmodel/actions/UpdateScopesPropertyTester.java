@@ -8,10 +8,10 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.update.actions;
+package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMCommandUtils;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.update.ICachingVMProviderExtension;
@@ -51,7 +51,7 @@ public class UpdateScopesPropertyTester extends PropertyTester {
                 return testProvider((ICachingVMProviderExtension)provider, property, expectedValue);
             }
         } else if (receiver instanceof IDebugView) {
-            IVMProvider provider = VMCommandUtils.getVMProviderForPart((IDebugView)receiver);
+            IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView)receiver);
             if (provider instanceof ICachingVMProviderExtension) {
                 return testProvider((ICachingVMProviderExtension)provider, property, expectedValue);                    
             }

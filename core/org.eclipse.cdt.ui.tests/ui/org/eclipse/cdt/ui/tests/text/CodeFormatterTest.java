@@ -872,4 +872,79 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveNecessarySpace_Bug250969() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define FOREVER1 for(;;)
+	//#define FOREVER2 while(1)
+	//
+	//int main(int argc, char **argv) {
+	//	FOREVER1 {
+	//		doSomething();
+	//	}
+	//	FOREVER2 {
+	//		doSomething();
+	//	}
+	//}
+
+	//#define FOREVER1 for(;;)
+	//#define FOREVER2 while(1)
+	//
+	//int main(int argc, char **argv) {
+	//	FOREVER1 {
+	//		doSomething();
+	//	}
+	//	FOREVER2 {
+	//		doSomething();
+	//	}
+	//}
+	public void testFormatterProblemsWithForeverMacro() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define BLOCK { }
+	//#define DOIT1() { }
+	//#define DOIT2() do { } while(false)
+	//#define ALWAYS if(true)
+	//#define NEVER if(false)
+	//#define FOREVER for(;;)
+	//
+	//void foo() {
+	//	int i=0;
+	//  if (true) DOIT1();
+	//  if (true) DOIT2();
+	//	for (;;) BLOCK
+	//	ALWAYS BLOCK
+	//	NEVER FOREVER BLOCK
+	//	switch(i) {
+	//	case 0: BLOCK
+	//	}
+	//}
+
+	//#define BLOCK { }
+	//#define DOIT1() { }
+	//#define DOIT2() do { } while(false)
+	//#define ALWAYS if(true)
+	//#define NEVER if(false)
+	//#define FOREVER for(;;)
+	//
+	//void foo() {
+	//	int i = 0;
+	//	if (true)
+	//		DOIT1();
+	//	if (true)
+	//		DOIT2();
+	//	for (;;)
+	//		BLOCK
+	//	ALWAYS
+	//		BLOCK
+	//	NEVER
+	//		FOREVER
+	//			BLOCK
+	//	switch (i) {
+	//	case 0:
+	//		BLOCK
+	//	}
+	//}
+	public void testCompoundStatementAsMacro_Bug244928() throws Exception {
+		assertFormatterResult();
+	}
 }

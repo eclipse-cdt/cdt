@@ -18,6 +18,7 @@
  * David McKnight   (IBM)  - [214378] canonical path not required - problem is in the client
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight  (IBM)  - [250168] handle malformed binary and always resolve canonical paths
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -25,7 +26,6 @@ package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 
@@ -138,7 +138,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			// search isn't finished.
 			// _miner.statusDone(_status);
 			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
-	        _dataStore.refresh(_status, true);	// true indicates refresh immediately
+	        _dataStore.refresh(_status);	// true indicates refresh immediately
 
 		}
 	}
@@ -155,137 +155,125 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		_isCancelled = true;
 	}
 
-	protected boolean hasSearchedDirectory(File file)
+	protected boolean hasSearched(File file)
 	{
-		try
-		{
-			return _alreadySearched.contains(file.getCanonicalFile());
-		}
-		catch (IOException e)
-		{
-			_dataStore.trace(e);
-			return _alreadySearched.contains(file);
-		}
+		return _alreadySearched.contains(file);
 	}
 
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
-
-		// is it a directory?
-		boolean isDirectory = theFile.isDirectory();
-
-		// is it an archive?
-		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
-
-		String absPath = theFile.getAbsolutePath();
-
-
-		String compareStr = theFile.getName();
-
-		// is it a virtual file?
-		boolean isVirtual = ArchiveHandlerManager.isVirtual(absPath);
-
-		// is it a virtual directory?
-		boolean isVirtualDirectory = false;
-
-		// if it is a virtual object, then get a reference to it
-		if (isVirtual) {
-			VirtualChild vc = ArchiveHandlerManager.getInstance().getVirtualObject(absPath);
-			isVirtualDirectory = isVirtual && vc.isDirectory;
+		try {
+			theFile = theFile.getCanonicalFile();
 		}
+		catch (Exception e)
+		{			
+		}
+		
+		if (!hasSearched(theFile)) {
 
-		// base case for the recursive method call
-		// if the file is not a directory, an archive or a virtual directory,
-		// and we get a match with the file name, then we can search for match within the file
-		if (!isDirectory &&
-				(!isArchive || _isFileSearch) &&
-				!isVirtualDirectory &&
-				doesFilePatternMatch(compareStr) &&
-				doesClassificationMatch(absPath))
-		{
-			DataElement deObj = null;
-
-			// if the file is a virtual file, then get matches from the archive handler
-			if (ArchiveHandlerManager.isVirtual(absPath)) {
+			_alreadySearched.add(theFile);
+			
+			// is it a directory?
+			boolean isDirectory = theFile.isDirectory();
+	
+			// is it an archive?
+			boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
+	
+			String absPath = theFile.getAbsolutePath();
+	
+			String compareStr = theFile.getName();
+	
+			// is it a virtual file?
+			boolean isVirtual = ArchiveHandlerManager.isVirtual(absPath);
+	
+			// is it a virtual directory?
+			boolean isVirtualDirectory = false;
+	
+			// if it is a virtual object, then get a reference to it
+			if (isVirtual) {
 				VirtualChild vc = ArchiveHandlerManager.getInstance().getVirtualObject(absPath);
-
-				if (!vc.isDirectory) {
-					deObj = _dataStore.createObject(null, _deVirtualFile, compareStr);
-
-					// if parent of virtual child is archive, then create it this way
-					if (vc.path.equals("")) { //$NON-NLS-1$
-						deObj.setAttribute(DE.A_VALUE, vc.getContainingArchive().getAbsolutePath());
-					}
-					else {
-						deObj.setAttribute(DE.A_VALUE, vc.getContainingArchive().getAbsolutePath() +
-								ArchiveHandlerManager.VIRTUAL_SEPARATOR + vc.path);
-					}
-
-					deObj.setAttribute(DE.A_SOURCE, _miner.setProperties(vc));
-
-					SystemSearchLineMatch[] results = null;
-
-					// if it's not a file search, call the handler method to search
-					if (!_isFileSearch) {
-						results = vc.getHandler().search(vc.fullName, _stringMatcher, null);
-
-						// if at least one match found, then send back the remote file with matches
-						if (results != null && results.length > 0) {
-							convert(deObj, absPath, results);
+				isVirtualDirectory = isVirtual && vc.isDirectory;
+			}
+	
+			// base case for the recursive method call
+			// if the file is not a directory, an archive or a virtual directory,
+			// and we get a match with the file name, then we can search for match within the file
+			if (!isDirectory &&
+					(!isArchive || _isFileSearch) &&
+					!isVirtualDirectory &&
+					doesFilePatternMatch(compareStr) &&
+					doesClassificationMatch(absPath))
+			{
+				DataElement deObj = null;
+	
+				// if the file is a virtual file, then get matches from the archive handler
+				if (ArchiveHandlerManager.isVirtual(absPath)) {
+					VirtualChild vc = ArchiveHandlerManager.getInstance().getVirtualObject(absPath);
+	
+					if (!vc.isDirectory) {
+						deObj = _dataStore.createObject(null, _deVirtualFile, compareStr);
+	
+						// if parent of virtual child is archive, then create it this way
+						if (vc.path.equals("")) { //$NON-NLS-1$
+							deObj.setAttribute(DE.A_VALUE, vc.getContainingArchive().getAbsolutePath());
+						}
+						else {
+							deObj.setAttribute(DE.A_VALUE, vc.getContainingArchive().getAbsolutePath() +
+									ArchiveHandlerManager.VIRTUAL_SEPARATOR + vc.path);
+						}
+	
+						deObj.setAttribute(DE.A_SOURCE, _miner.setProperties(vc));
+	
+						SystemSearchLineMatch[] results = null;
+	
+						// if it's not a file search, call the handler method to search
+						if (!_isFileSearch) {
+							results = vc.getHandler().search(vc.fullName, _stringMatcher, null);
+	
+							// if at least one match found, then send back the remote file with matches
+							if (results != null && results.length > 0) {
+								convert(deObj, absPath, results);
+								deObj.setParent(_status);
+								_status.addNestedData(deObj, false);
+							}
+						}
+						// otherwise if it is a file search, return the remote file back with no children
+						else {
 							deObj.setParent(_status);
 							_status.addNestedData(deObj, false);
 						}
 					}
-					// otherwise if it is a file search, return the remote file back with no children
+				}
+				// otherwise, search the file
+				else {
+					if (!isArchive) {
+						deObj = _dataStore.createObject(null, _deFile, compareStr);
+					}
 					else {
+						deObj = _dataStore.createObject(null, _deArchiveFile, compareStr);
+					}
+	
+					deObj.setAttribute(DE.A_VALUE, theFile.getParentFile().getAbsolutePath());
+					deObj.setAttribute(DE.A_SOURCE, _miner.setProperties(theFile));
+	
+					// if it is a file search, we send the remote file back
+					// otherwise search within the file and see if there is at least one match
+					if (_isFileSearch || internalSearchWithinFile(deObj, absPath, theFile)) {
 						deObj.setParent(_status);
 						_status.addNestedData(deObj, false);
 					}
 				}
+	
+				// do a refresh
+				//_dataStore.refresh(_status, true);
 			}
-			// otherwise, search the file
-			else {
-				if (!isArchive) {
-					deObj = _dataStore.createObject(null, _deFile, compareStr);
-				}
-				else {
-					deObj = _dataStore.createObject(null, _deArchiveFile, compareStr);
-				}
-
-				deObj.setAttribute(DE.A_VALUE, theFile.getParentFile().getAbsolutePath());
-				deObj.setAttribute(DE.A_SOURCE, _miner.setProperties(theFile));
-
-				// if it is a file search, we send the remote file back
-				// otherwise search within the file and see if there is at least one match
-				if (_isFileSearch || internalSearchWithinFile(deObj, absPath, theFile)) {
-					deObj.setParent(_status);
-					_status.addNestedData(deObj, false);
-				}
-			}
-
-			// do a refresh
-			//_dataStore.refresh(_status, true);
-		}
-
-		// if the depth is not 0, then we need to recursively search
-		if (depth != 0) {
-
-			// if it is a directory, or an archive, or a virtual directory, then we need to get the
-			// children and search those
-			if (isDirectory || ((isArchive || isVirtualDirectory) && _searchString.isIncludeArchives()))
-			{
-
-				if (!hasSearchedDirectory(theFile)) {
-
-					try
-					{
-						_alreadySearched.add(theFile.getCanonicalFile());
-					}
-					catch (IOException e)
-					{
-						_dataStore.trace(e);
-						_alreadySearched.add(theFile);
-					}
-
+	
+			// if the depth is not 0, then we need to recursively search
+			if (depth != 0) {
+	
+				// if it is a directory, or an archive, or a virtual directory, then we need to get the
+				// children and search those
+				if (isDirectory || ((isArchive || isVirtualDirectory) && _searchString.isIncludeArchives()))
+				{			
 					File[] children = null;
 
 					// if the file is an archive or a virtual directory, then get the children from
@@ -348,26 +336,62 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 		try {
 			inputStream = new FileInputStream(theFile);
-			InputStreamReader reader = new InputStreamReader(inputStream);
+			InputStreamReader reader = new InputStreamReader(inputStream);		
 			BufferedReader bufReader = new BufferedReader(reader);
-
-			SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);
-
-			SystemSearchLineMatch[] matches = locator.locateMatches();
-
-			boolean foundMatches = ((matches != null) && (matches.length > 0));
-
-			if (foundMatches) {
-				convert(remoteFile, absPath, matches);
+			
+			// test for unreadable binary
+			if (isUnreadableBinary(bufReader)){
+				// search some other way?
+				long size = theFile.length();
+				if (simpleSearch(inputStream, size, _stringMatcher)){
+					return true;
+				}
+				return false;
 			}
+			else {
+				SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);
+						
+				SystemSearchLineMatch[] matches = locator.locateMatches();									
+				boolean foundMatches = ((matches != null) && (matches.length > 0));
 
-			return foundMatches;
+				if (foundMatches) {
+					convert(remoteFile, absPath, matches);
+				}
+
+				return foundMatches;
+			}
 		}
 		catch (Exception e) {
 			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e, _dataStore); //$NON-NLS-1$
 			remoteFile.setAttribute(DE.A_VALUE, e.getMessage());
 			return false;
 		}
+	}
+	
+	private boolean simpleSearch(FileInputStream stream, long size, SystemSearchStringMatcher matcher)
+	{
+		byte[] bytes = new byte[(int)size];
+		try {
+			stream.read(bytes, 0, (int)size);
+		}
+		catch (Exception e){			
+		}
+		
+		String str = new String(bytes);
+		return _stringMatcher.matches(str);
+		
+	}
+	
+	private boolean isUnreadableBinary(BufferedReader reader){
+		try {
+			reader.mark(1);
+			reader.read();
+			reader.reset();
+		}
+		catch (Exception e){
+			return true;
+		}
+		return false;
 	}
 
 	protected boolean doesFilePatternMatch(String compareStr) {

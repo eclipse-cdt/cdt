@@ -49,7 +49,7 @@
  * David McKnight   (IBM)        - [236039][dstore][efs] DStoreInputStream can report EOF too early - clean up how it waits for the local temp file to be created
  * David McKnight   (IBM)        - [240710] [dstore] DStoreFileService.getFile() fails with NPE for valid root files
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
- * David McKnight   (IBM)        - [249544] some backward compatibility issues with old IBM dstore server
+ * David McKnight   (IBM)        - [250168] some backward compatibility issues with old IBM dstore server
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;

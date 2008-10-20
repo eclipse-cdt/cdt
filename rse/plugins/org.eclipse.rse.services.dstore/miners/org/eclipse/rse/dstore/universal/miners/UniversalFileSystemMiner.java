@@ -37,6 +37,7 @@
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight  (IBM)  - [244277] [dstore] NPE on file save from old client
  * David McKnight  (IBM)  - [246234] Change of file permissions changes the file owner
+ * David McKnight  (IBM)  - [250168] handleCommand should not blindly set the status to "done"
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -62,6 +63,7 @@ import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CopySingleThr
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFileThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFolderThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.DeleteThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileClassifier;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileDescriptors;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.RenameThread;
@@ -234,7 +236,8 @@ public class UniversalFileSystemMiner extends Miner {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query to handlecommand", null, _dataStore); //$NON-NLS-1$
 		}
-		return statusDone(status);
+		//return statusDone(status);
+		return status; // can't assume operation is done since it could be done via a thread
 	}
 
 	private DataElement handleCopyBatch(DataElement targetFolder, DataElement theElement, DataElement status)
@@ -315,7 +318,7 @@ public class UniversalFileSystemMiner extends Miner {
 			//return status;
 		}
 
-		return statusDone(status);
+		return status; // search is in the thread, so it's not done yet
 	}
 
 	public DataElement handleCancel(DataElement subject, DataElement status) {
@@ -1101,11 +1104,10 @@ public class UniversalFileSystemMiner extends Miner {
 
 
 	/**
-	 * Method to obtain the classificatoin string of file or folder.
+	 * Method to obtain the classification string of file or folder.
 	 */
 	protected String getClassificationString(String s) {
 
-		//StringTokenizer tokenizer = new StringTokenizer(s, IServiceConstants.TOKEN_SEPARATOR);
 		String[] str = s.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
 		if (tokens < 10)
@@ -1904,8 +1906,47 @@ public class UniversalFileSystemMiner extends Miner {
 
 		String result = getFilePermission(file, PERMISSION_ALL);
         status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-
+ 
+    	
+    	// for z/os, also need to update the classification if this is a symbolic link
+    	String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+    	boolean isZ = theOS.toLowerCase().startsWith("z");//$NON-NLS-1$	
+    	if (isZ){
+			String path = file.getAbsolutePath();
+			try {
+				String canonical = file.getCanonicalPath();
+				if (!path.equals(canonical)){
+					// reset the properties    					
+					String properties = setProperties(file, false);
+					
+					// fileType
+					String fileType = file.isFile() ? "file" : "directory";  //$NON-NLS-1$//$NON-NLS-2$
+					
+					// classification
+					StringBuffer type = new StringBuffer(FileClassifier.STR_SYMBOLIC_LINK);
+					type.append('(');
+	                type.append(fileType);
+	                type.append(')');
+	                type.append(':');
+	                type.append(canonical);
+	                
+				    StringBuffer classifiedProperties = new StringBuffer(properties);
+				    classifiedProperties.append('|');
+                    classifiedProperties.append(type);
+					    					    					
+	                subject.setAttribute(DE.A_SOURCE, classifiedProperties.toString());
+	                _dataStore.refresh(subject);
+				}
+			}
+			catch (SystemMessageException e)
+			{    				
+			}
+			catch (IOException e)
+			{    				
+			}
+    	}
+    	
+       	statusDone(status);
 		return status;
 	}
 	

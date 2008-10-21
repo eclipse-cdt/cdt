@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     John Camelon (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *     Ed Swartz (Nokia)
@@ -164,8 +164,6 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  * This is our implementation of the IParser interface, serving as a parser for
  * GNU C and C++. From time to time we will make reference to the ANSI ISO
  * specifications.
- * 
- * @author jcamelon
  */
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
@@ -1431,11 +1429,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             t = consume();
             int finalOffset= 0;
             IASTExpression lhs= expression();
-            if (LT(1) == IToken.tRPAREN) {
-            	finalOffset = consume().getEndOffset();
-            } else {
-            	// missing parenthesis, assume it's there and keep going.
-            	finalOffset = LA(1).getOffset();
+            switch (LT(1)) {
+            case IToken.tRPAREN:
+            case IToken.tEOC:
+                finalOffset = consume().getEndOffset();
+                break;
+            default:
+                throwBacktrack(LA(1));
             }
             return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
         case IToken.tIDENTIFIER:

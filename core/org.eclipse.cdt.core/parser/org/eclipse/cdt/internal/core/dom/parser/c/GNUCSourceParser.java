@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Ed Swartz (Nokia)
  *    Mike Kucera (IBM) - bug #206952
@@ -837,9 +837,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (supportStatementsInExpressions && LT(2) == IToken.tLBRACE) {
         		return compoundStatementExpression();
         	}
-
             t = consume();
-            // TODO - do we need to return a wrapper?
             IASTExpression lhs = expression();
             int finalOffset = 0;
             switch (LT(1)) {
@@ -850,9 +848,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 throwBacktrack(LA(1));
             }
-            
-            return buildUnaryExpression(
-                    IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
+            return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
         case IToken.tIDENTIFIER:
         case IToken.tCOMPLETION:
         case IToken.tEOC:

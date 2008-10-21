@@ -12,11 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)  [251619] [dstore] shell output readers not cleaned up on disconnect
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
 
+import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
@@ -71,9 +72,12 @@ public class DStoreHostShell extends AbstractHostShell implements IHostShell
 
 	public void exit()
 	{
-		writeToShell("exit"); //$NON-NLS-1$
+		writeToShell("exit"); //$NON-NLS-1$		
+		_status.setAttribute(DE.A_VALUE, "done"); //$NON-NLS-1$
 		_stdoutHandler.finish();
 		_stderrHandler.finish();
+		
+		
 	}
 
 	

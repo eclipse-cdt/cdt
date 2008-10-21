@@ -191,6 +191,8 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 								remoteFile, false, new NullProgressMonitor());
 					}	
 					
+					boolean openEditorAfterUpload = false;
+					
 					// get associated editable
 					SystemEditableRemoteFile editable = getEditedFile(remoteFile);
 					if (editable != null && storedModifiedStamp == 0)
@@ -209,7 +211,15 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 						{
 							editable = new SystemEditableRemoteFile(remoteFile);
 						}
+						
+						openEditorAfterUpload = true;
+						editable.setLocalResourceProperties();
+					}
 
+					upload(fs, remoteFile, tempFile, properties, storedModifiedStamp, editable, monitor);	
+					
+					if (openEditorAfterUpload){ 
+						// moving this to after the upload because otherwise it queries the remote file and that messes up the timestamps needed by upload						
 						final SystemEditableRemoteFile fEditable = editable;
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
@@ -223,7 +233,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 									if (fEditable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN)
 									{
 										try {
-											fEditable.openEditor();
+											fEditable.openEditor(); // open e
 										}
 										catch (PartInitException e) {
 										}
@@ -232,10 +242,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 									fEditable.addAsListener();
 								} 				
 						});
-						editable.setLocalResourceProperties();
 					}
-
-					upload(fs, remoteFile, tempFile, properties, storedModifiedStamp, editable, monitor);				
 				}
 			} 
 			catch (SystemMessageException e) {
@@ -255,8 +262,12 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 	{
 		try
 		{
+			// make sure the remote file is the current cached version			
+			remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
+			
 			// get the remote modified timestamp
 			long remoteModifiedStamp = remoteFile.getLastModified();
+			
 
 			boolean remoteFileDeleted = !remoteFile.exists();
 			// compare timestamps
@@ -276,7 +287,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				}
 
 				catch (RemoteFileSecurityException e)
-				{
+				{				
 					DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(e.getSystemMessage());
 					Display.getDefault().syncExec(msgAction);
 				}
@@ -292,28 +303,28 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					Display.getDefault().syncExec(msgAction);
 				}
 
+				// requery the file so get the new timestamp
+				remoteFile.markStale(true);
+				remoteFile =fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 				
 				IRemoteFile parent = remoteFile.getParentRemoteFile();
-	
+
+
+				long ts = remoteFile.getLastModified();
+				
+				// set the stored timestamp to be the same as the remote timestamp
+				properties.setRemoteFileTimeStamp(ts);
+
 				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 				// refresh
 				if (parent != null)
 				{
 					registry.fireEvent(new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 				}
-
-				// waiting to make sure the file's timestamp is uptodate
-				remoteFile = waitForTimestampToBeUpToDate(remoteFile,remoteModifiedStamp, monitor);
-				
-				
-							
+			
 				registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
 			
-				long ts = remoteFile.getLastModified();
 				
-				// set the stored timestamp to be the same as the remote timestamp
-				properties.setRemoteFileTimeStamp(ts);
-
 				// indicate that the temp file is no longer dirty
 				properties.setDirty(false);
 				editable.updateDirtyIndicator();
@@ -372,54 +383,5 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, long originalTimestamp, IProgressMonitor monitor)
-	{
-		IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
-		String path = remoteFile.getAbsolutePath();
-		try {
-			long timestamp = originalTimestamp;
-
-			boolean fileUpdated = false;
-			boolean timestampChanging = true;
-			
-			int MAX_TIMES_CHECKED = 100; // make sure we don't wait indefinitely
-			int timesChecked = 0;  
-			
-			while ((timestampChanging || !fileUpdated) && !monitor.isCanceled()){	// wait until the timestamp stops changing AND timestamp did change at least once		
-				try {
-					Thread.sleep(500); // sleep 
-				}
-				catch (InterruptedException e){				
-				}
-			
-				// query the remote file again
-				remoteFile.markStale(true);
-				remoteFile = fs.getRemoteFileObject(path, monitor);
-
-				// what's the timestamp now?
-				long nextTimestamp = remoteFile.getLastModified();		
-
-				timestampChanging = (timestamp != nextTimestamp);
-
-				if (!fileUpdated){	// indicate the file has changed if the timestamp has			
-					fileUpdated = timestampChanging;
-				}
-				
-				timestamp = nextTimestamp;
-				timesChecked++;
-				
-				if (timesChecked >= MAX_TIMES_CHECKED){ // we're not expecting this, but it's better to timeout than to hang on this
-					SystemBasePlugin.logError("timeout waiting for timestamp after upload of "+ path); //$NON-NLS-1$
-					return remoteFile;
-				}
-			}
-		}
-		catch (SystemMessageException e){
-			
-		}
-		
-		return remoteFile;
 	}
 }

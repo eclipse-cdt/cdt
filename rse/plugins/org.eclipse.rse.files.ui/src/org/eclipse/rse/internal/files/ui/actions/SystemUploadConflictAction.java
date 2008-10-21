@@ -198,12 +198,15 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             {
             	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
             	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
-            	long originalTimestamp = _remoteFile.getLastModified();
+            	
+            	// making sure we have the same version as is in the cache
+            	_remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), monitor);
             	
                 fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
 
                 // wait for timestamp to update before re-fetching remote file
-                _remoteFile = waitForTimestampToBeUpToDate(_remoteFile, originalTimestamp, monitor);
+                _remoteFile.markStale(true);
+                _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), monitor);
 
                 long ts = _remoteFile.getLastModified();
                 properties.setRemoteFileTimeStamp(ts);
@@ -220,56 +223,8 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             }
             return Status.OK_STATUS;
 		}
-		
-		private IRemoteFile waitForTimestampToBeUpToDate(IRemoteFile remoteFile, long originalTimestamp, IProgressMonitor monitor)
-		{
-			IRemoteFileSubSystem fs = remoteFile.getParentRemoteFileSubSystem();
-			String path = remoteFile.getAbsolutePath();
-			try {
-				long timestamp = originalTimestamp;
-
-				boolean fileUpdated = false;
-				boolean timestampChanging = true;
-				
-				int MAX_TIMES_CHECKED = 100; // make sure we don't wait indefinitely
-				int timesChecked = 0;  
-				
-				while ((timestampChanging || !fileUpdated) && !monitor.isCanceled()){	// wait until the timestamp stops changing AND timestamp did change at least once		
-					try {
-						Thread.sleep(500); // sleep 
-					}
-					catch (InterruptedException e){				
-					}
-				
-					// query the remote file again
-					remoteFile.markStale(true);
-					remoteFile = fs.getRemoteFileObject(path, monitor);
-
-					// what's the timestamp now?
-					long nextTimestamp = remoteFile.getLastModified();		
-
-					timestampChanging = (timestamp != nextTimestamp);
-
-					if (!fileUpdated){	// indicate the file has changed if the timestamp has			
-						fileUpdated = timestampChanging;
-					}
-					
-					timestamp = nextTimestamp;
-					timesChecked++;
-					
-					if (timesChecked >= MAX_TIMES_CHECKED){ // we're not expecting this, but it's better to timeout than to hang on this
-						SystemBasePlugin.logError("timeout waiting for timestamp after upload of "+ path); //$NON-NLS-1$
-						return remoteFile;
-					}
-				}
-			}
-			catch (SystemMessageException e){
-				
-			}
-			
-			return remoteFile;
-		}	
 	}
+		
 
 	/**
 	 * This is the default dialog used to handle upload conflicts

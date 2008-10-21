@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -176,7 +177,11 @@ public class ScannerConfigBuilder extends ACBuilder {
             	env = calcEnvironment(cfg);
             
             // get scanner info from all external providers
-            SCProfileInstance instance = CfgSCJobsUtil.getProviderScannerInfo(project, context, null, buildInfo2, env, new SubProgressMonitor(monitor, 70));
+            SCProfileInstance instance = ScannerConfigProfileManager.getInstance().
+        		getSCProfileInstance(project, context.toInfoContext(), buildInfo2.getSelectedProfileId());
+            // if there are any providers call job to pull scanner info
+            if ((instance == null) || !buildInfo2.getProviderIdList().isEmpty()) 
+            	instance = CfgSCJobsUtil.getProviderScannerInfo(project, context, instance, buildInfo2, env, new SubProgressMonitor(monitor, 70));
 
             // update and persist scanner configuration
             CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, new SubProgressMonitor(monitor, 30));

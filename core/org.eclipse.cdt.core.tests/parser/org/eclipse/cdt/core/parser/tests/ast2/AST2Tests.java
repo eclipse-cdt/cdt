@@ -5274,4 +5274,12 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 	}
+	
+	//	int foo = 42;
+	//  typedef char StupidType;
+	//  StupidType const *bar = (StupidType const*)&foo;
+	public void testUnusualDeclSpecOrdering_Bug251514() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+	}
 }

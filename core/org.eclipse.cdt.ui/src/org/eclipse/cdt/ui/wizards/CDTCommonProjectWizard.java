@@ -14,6 +14,9 @@ package org.eclipse.cdt.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -30,6 +33,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
@@ -38,6 +44,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -306,12 +314,40 @@ implements IExecutableExtension, IWizardWithMemory
 
 	// Methods below should provide data for language check
 	public String[] getLanguageIDs (){
+		String[] contentTypeIds = getContentTypeIDs();
+		if(contentTypeIds.length > 0) {
+			IContentTypeManager manager = Platform.getContentTypeManager();
+			List<String> languageIDs = new ArrayList<String>();
+			for(int i = 0; i < contentTypeIds.length; ++i) {
+				IContentType contentType = manager.getContentType(contentTypeIds[i]);
+				if(null != contentType) {
+					ILanguage language = LanguageManager.getInstance().getLanguage(contentType);
+					if(!languageIDs.contains(language.getId())) {
+						languageIDs.add(language.getId());
+					}
+				}
+			}
+			return languageIDs.toArray(new String[languageIDs.size()]);
+		}
 		return EMPTY_ARR;
 	}
 	public String[] getContentTypeIDs (){
 		return EMPTY_ARR;
 	}
 	public String[] getExtensions (){
+		String[] contentTypeIds = getContentTypeIDs();
+		if(contentTypeIds.length > 0) {
+			IContentTypeManager manager = Platform.getContentTypeManager();
+			List<String> extensions = new ArrayList<String>();
+			for(int i = 0; i < contentTypeIds.length; ++i) {
+				IContentType contentType = manager.getContentType(contentTypeIds[i]);
+				if(null != contentType) {
+					String[] thisTypeExtensions = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+					extensions.addAll(Arrays.asList(thisTypeExtensions));
+				}
+			}
+			return extensions.toArray(new String[extensions.size()]);
+		}
 		return EMPTY_ARR;
 	}
 	

@@ -50,6 +50,7 @@
  * David McKnight   (IBM)        - [240710] [dstore] DStoreFileService.getFile() fails with NPE for valid root files
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * David McKnight   (IBM)        - [250168] some backward compatibility issues with old IBM dstore server
+ * David McKnight   (IBM)        - [251429] Pasting local folder to remote does not work in some case
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1995,10 +1996,25 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		String normalizedPath = PathUtility.normalizeUnknown(path);
 		DataElement element = (DataElement)_fileElementMap.get(normalizedPath);
-		if (element != null && element.isDeleted())
+		if (element != null)
 		{
-			_fileElementMap.remove(normalizedPath);
-			element = null;
+			if (element.isDeleted()){
+				_fileElementMap.remove(normalizedPath);
+				element = null;
+			}
+			else {
+				// make sure the mapping is still correct
+				// the file could have been renamed before as in bug 251429
+				String fparent = element.getValue();
+				StringBuffer pathBuf = new StringBuffer(fparent);
+				String sep = PathUtility.getSeparator(fparent);
+				pathBuf.append(sep);
+				pathBuf.append(element.getName());
+				if (!normalizedPath.equals(pathBuf.toString())){
+					_fileElementMap.remove(normalizedPath);
+					element = null;
+				}
+			}
 		}
 		if (element == null || element.isDeleted())
 		{

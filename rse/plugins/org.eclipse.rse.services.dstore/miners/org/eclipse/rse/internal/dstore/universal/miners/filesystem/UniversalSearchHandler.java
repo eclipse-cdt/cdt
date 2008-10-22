@@ -161,12 +161,6 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	}
 
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
-		try {
-			theFile = theFile.getCanonicalFile();
-		}
-		catch (Exception e)
-		{			
-		}
 		
 		if (!hasSearched(theFile)) {
 

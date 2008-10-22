@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -226,19 +227,55 @@ implements IExecutableExtension, IWizardWithMemory
 		fConfigElement= config;
 	}
 
+	private IProgressMonitor createProjectMonitor;
+
 	private IRunnableWithProgress getRunnable(boolean _defaults, final boolean onFinish) {
 		final boolean defaults = _defaults;
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
+				final Exception except[] = new Exception[1];
 				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() { 
+					public void run() {
+						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								final IProgressMonitor fMonitor;
+								if (monitor == null) {
+									fMonitor= new NullProgressMonitor();
+								} else {
+									fMonitor = monitor;
+								}
+								fMonitor.beginTask(CUIPlugin.getResourceString("CProjectWizard.op_description"), 100); //$NON-NLS-1$
+								fMonitor.worked(10);
+								try {		
+									createProjectMonitor = new SubProgressMonitor(fMonitor, 60);
+									newProject = createIProject(lastProjectName, lastProjectLocation);
+									if (newProject != null)
+										fMainPage.h_selected.createProject(newProject, defaults, onFinish);
+									fMonitor.worked(30);
+								} catch (CoreException e) {	CUIPlugin.log(e); }
+								finally {
+									fMonitor.done();
+								}
+							}
+						});
 						try {
-							newProject = createIProject(lastProjectName, lastProjectLocation);
-							if (newProject != null) 
-								fMainPage.h_selected.createProject(newProject, defaults, onFinish);
-						} catch (CoreException e) {	CUIPlugin.log(e); }
+							getContainer().run(false, true, op);
+						} catch (InvocationTargetException e) {
+							except[0] = e;
+						} catch (InterruptedException e) {
+							except[0] = e;
+						}
 					}
 				});
+				if (except[0] != null) {
+					if (except[0] instanceof InvocationTargetException) {
+						throw (InvocationTargetException)except[0];
+					}
+					if (except[0] instanceof InterruptedException) {
+						throw (InterruptedException)except[0];
+					}
+					throw new InvocationTargetException(except[0]);
+				}					
 			}
 		};
 	}
@@ -247,6 +284,12 @@ implements IExecutableExtension, IWizardWithMemory
 	 * 
 	 */	
 	public IProject createIProject(final String name, final URI location) throws CoreException{
+		IProgressMonitor monitor = new NullProgressMonitor();
+		if (createProjectMonitor != null)
+			monitor = createProjectMonitor;
+		
+		monitor.beginTask("createIProject", 100); //$NON-NLS-1$
+		
 		if (newProject != null)	return newProject;
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -260,26 +303,32 @@ implements IExecutableExtension, IWizardWithMemory
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			if(location != null)
 				description.setLocationURI(location);
-			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
+			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new SubProgressMonitor(monitor,25));
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				}
 			};
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, new SubProgressMonitor(monitor,25));
 			newProject = newProjectHandle;
 		}
         
 		// Open the project if we have to
 		if (!newProject.isOpen()) {
-			newProject.open(new NullProgressMonitor());
+			newProject.open(new SubProgressMonitor(monitor,25));
 		}
-		return continueCreation(newProject);	
+		
+		IProject proj = continueCreation(newProject);
+		monitor.worked(25);
+		
+		monitor.done();
+		
+		return proj;	
 	}
-	
+
 	protected abstract IProject continueCreation(IProject prj); 
+	
 	public abstract String[] getNatures();
 	
 	@Override

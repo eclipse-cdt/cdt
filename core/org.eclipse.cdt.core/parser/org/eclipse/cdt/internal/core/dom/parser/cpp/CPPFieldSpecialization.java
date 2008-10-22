@@ -16,9 +16,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 
@@ -29,8 +29,8 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 	private IType type = null;
 	private IValue value= null;
 
-	public CPPFieldSpecialization( IBinding orig, ICPPClassType owner, ObjectMap argMap ) {
-		super(orig, owner, argMap);
+	public CPPFieldSpecialization( IBinding orig, ICPPClassType owner, CPPTemplateParameterMap tpmap) {
+		super(orig, owner, tpmap);
 	}
 
 	private ICPPField getField() {

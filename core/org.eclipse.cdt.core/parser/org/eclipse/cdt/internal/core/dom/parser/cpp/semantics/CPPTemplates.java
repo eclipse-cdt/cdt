@@ -14,6 +14,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -45,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -75,10 +79,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -114,6 +120,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
@@ -303,12 +310,12 @@ public class CPPTemplates {
 			return instance;
 
 		if (template instanceof ICPPClassTemplate) {
-			instance = new CPPDeferredClassInstance((ICPPClassTemplate) template, arguments);
+			instance = new CPPDeferredClassInstance((ICPPClassTemplate) template, convert(arguments));
 			addInstance(template, arguments, instance);
 			return instance;
 		}
 		if (template instanceof ICPPFunctionTemplate) {
-			instance = new CPPDeferredFunctionInstance((ICPPFunctionTemplate) template, arguments);
+			instance = new CPPDeferredFunctionInstance((ICPPFunctionTemplate) template, convert(arguments));
 			addInstance(template, arguments, instance);
 			return instance;
 		}
@@ -590,7 +597,7 @@ public class CPPTemplates {
 			inst= getInstance(template, args);
 			if (inst == null) {
 				IBinding owner= binding.getOwner();
-				inst= new CPPClassInstance(owner, template, argMap, args);
+				inst= new CPPClassInstance(owner, template, convert(argMap), convert(args));
 				addInstance(template, args, inst);
 			}
 			if (inst instanceof ICPPInternalBinding) {
@@ -833,15 +840,15 @@ public class CPPTemplates {
 		
 		ICPPTemplateInstance instance = null;
 		if (template instanceof ICPPClassType) {
-			instance = new CPPClassInstance(owner, (ICPPClassType) template, argMap, args);
+			instance = new CPPClassInstance(owner, (ICPPClassType) template, convert(argMap), convert(args));
 		} else if (owner instanceof ICPPClassType && template instanceof ICPPMethod) {
 			if (template instanceof ICPPConstructor) {
-				instance = new CPPConstructorInstance((ICPPClassType) owner, (ICPPConstructor) template, argMap, args);
+				instance = new CPPConstructorInstance((ICPPClassType) owner, (ICPPConstructor) template, convert(argMap), convert(args));
 			} else {
-				instance = new CPPMethodInstance((ICPPClassType) owner, (ICPPMethod) template, argMap, args);
+				instance = new CPPMethodInstance((ICPPClassType) owner, (ICPPMethod) template, convert(argMap), convert(args));
 			}
 		} else if (template instanceof ICPPFunction) {
-			instance = new CPPFunctionInstance(owner, (ICPPFunction) template, argMap, args);
+			instance = new CPPFunctionInstance(owner, (ICPPFunction) template, convert(argMap), convert(args));
 		}
 		return instance;
 	}
@@ -854,26 +861,26 @@ public class CPPTemplates {
 
 		ICPPSpecialization spec = null;
 		if (decl instanceof ICPPClassTemplate) {
-			spec = new CPPClassTemplateSpecialization((ICPPClassTemplate) decl, owner, argMap);
+			spec = new CPPClassTemplateSpecialization((ICPPClassTemplate) decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPClassType) {
-			spec = new CPPClassSpecialization((ICPPClassType) decl, owner, argMap);
+			spec = new CPPClassSpecialization((ICPPClassType) decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPField) {
-			spec = new CPPFieldSpecialization(decl, owner, argMap);
+			spec = new CPPFieldSpecialization(decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPFunctionTemplate) {
 			if (decl instanceof ICPPConstructor)
-				spec = new CPPConstructorTemplateSpecialization(decl, owner, argMap);
+				spec = new CPPConstructorTemplateSpecialization(decl, owner, convert(argMap));
 			else if (decl instanceof ICPPMethod)
-				spec = new CPPMethodTemplateSpecialization(decl, owner, argMap);
+				spec = new CPPMethodTemplateSpecialization(decl, owner, convert(argMap));
 			else
-				spec = new CPPFunctionTemplateSpecialization(decl, owner, argMap);
+				spec = new CPPFunctionTemplateSpecialization(decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPConstructor) {
-			spec = new CPPConstructorSpecialization(decl, owner, argMap);
+			spec = new CPPConstructorSpecialization(decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPMethod) {
-			spec = new CPPMethodSpecialization(decl, owner, argMap);
+			spec = new CPPMethodSpecialization(decl, owner, convert(argMap));
 		} else if (decl instanceof ICPPFunction) {
-			spec = new CPPFunctionSpecialization(decl, owner, argMap);
+			spec = new CPPFunctionSpecialization(decl, owner, convert(argMap));
 		} else if (decl instanceof ITypedef) {
-		    spec = new CPPTypedefSpecialization(decl, owner, argMap);
+		    spec = new CPPTypedefSpecialization(decl, owner, convert(argMap));
 		}
 		return spec;
 	}
@@ -881,7 +888,7 @@ public class CPPTemplates {
 	public static IValue instantiateValue(IValue value, ObjectMap argMap) {
 		if (value == null)
 			return null;
-		// mstodo instantiate values
+		// mstodo- instantiate values
 		return value;
 	}
 
@@ -1263,7 +1270,9 @@ public class CPPTemplates {
 	 * @param argA may be null
 	 * @param argB may be null
 	 * @return whether the two specified template arguments are the same
+	 * @deprecated use {@link ICPPTemplateArgument#isSameValue(ICPPTemplateArgument)}
 	 */
+	@Deprecated
 	public static final boolean isSameTemplateArgument(IType argA, IType argB) {
 		if (argA == argB)
 			return true;
@@ -1705,7 +1714,7 @@ public class CPPTemplates {
 					CPPASTLiteralExpression exp = new CPPASTLiteralExpression();
 					exp.setValue(String.valueOf(i));
 					CPPBasicType temp = (CPPBasicType) t.clone();
-					temp.setFromExpression(exp); // mstodo is that necessary??
+					temp.setFromExpression(exp); // mstodo- is that necessary??
 					args[i] = temp;
 				}
 			} else {
@@ -2075,5 +2084,120 @@ public class CPPTemplates {
 				return inst;
 		}
 		return dci;
+	}
+
+	public static boolean haveSameArguments(ICPPTemplateInstance i1, ICPPTemplateInstance i2) {
+		final ICPPTemplateArgument[] m1= i1.getTemplateArguments();
+		final ICPPTemplateArgument[] m2= i2.getTemplateArguments();
+		
+		if (m1 == null || m2 == null || m1.length != m2.length)
+			return false;
+
+		for (int i = 0; i < m1.length; i++) {
+			if (!m1[i].isSameValue(m2[i])) { 
+				return false;
+			}
+
+			// backwards compatibility, mstodo remove
+			if (!m1[i].isNonTypeValue() && !m2[i].isNonTypeValue()) {
+				if (!isSameTemplateArgument(m1[i].getTypeValue(), m2[i].getTypeValue())) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * @deprecated for backwards compatibility, only.
+	 */
+	@Deprecated
+	public static IType[] getArguments(ICPPTemplateArgument[] arguments) {
+		IType[] types= new IType[arguments.length];
+		for (int i = 0; i < types.length; i++) {
+			final ICPPTemplateArgument arg = arguments[i];
+			if (arg.isNonTypeValue()) {
+				types[i]= arg.getTypeOfNonTypeValue();
+			} else { 
+				types[i]= arg.getTypeValue();
+			}
+		}
+		return types;
+	}
+	
+	
+	/**
+	 * @deprecated for backwards compatibility, only.
+	 */
+	@Deprecated
+	public static ObjectMap getArgumentMap(IBinding b, ICPPTemplateParameterMap tpmap) {
+		// backwards compatibility
+		Integer[] keys= tpmap.getAllParameterPositions();
+		if (keys.length == 0)
+			return ObjectMap.EMPTY_MAP;
+		
+		try {
+			List<ICPPTemplateDefinition> defs= new ArrayList<ICPPTemplateDefinition>();
+			IBinding owner= b;
+			while (owner != null) {
+				if (owner instanceof ICPPTemplateDefinition) {
+					defs.add((ICPPTemplateDefinition) owner);
+				} else if (owner instanceof ICPPTemplateInstance) {
+					defs.add(((ICPPTemplateInstance) owner).getTemplateDefinition());
+				}
+				owner= owner.getOwner();
+			}
+			Collections.reverse(defs);
+
+			ObjectMap result= new ObjectMap(keys.length);
+			for (int key: keys) {
+				int nestingLevel= key >> 16;
+				int numParam= key & 0xffff;
+
+				if (0 <= numParam && 0 <= nestingLevel && nestingLevel < defs.size()) {
+					ICPPTemplateDefinition tdef= defs.get(nestingLevel);
+					ICPPTemplateParameter[] tps= tdef.getTemplateParameters();
+					if (numParam < tps.length) {
+						ICPPTemplateArgument arg= tpmap.getArgument(key);
+						IType type= arg.isNonTypeValue() ? arg.getTypeOfNonTypeValue() : arg.getTypeValue();
+						result.put(tps[numParam], type);
+					}
+				}
+			}
+			return result;
+		} catch (DOMException e) {
+		}
+		return ObjectMap.EMPTY_MAP;
+	}
+
+	/**
+	 * mstodo for intermediate use only.
+	 * @deprecated
+	 */
+	@Deprecated
+	public static CPPTemplateParameterMap convert(ObjectMap argMap) {
+		CPPTemplateParameterMap tpmap= new CPPTemplateParameterMap();
+		Object[] tps= argMap.keyArray();
+		for (Object tp : tps) {
+			if (tp instanceof ICPPTemplateParameter) {
+				IType t= (IType) argMap.get(tp);
+				tpmap.put((ICPPTemplateParameter) tp, new CPPTemplateArgument(t));
+			}
+		}
+		return tpmap;
+	}
+	
+	/**
+	 * mstodo for intermediate use only.
+	 * @deprecated
+	 */
+	@Deprecated
+	public static ICPPTemplateArgument[] convert(IType[] args) {
+		ICPPTemplateArgument[] targs= new ICPPTemplateArgument[args.length];
+		for (int i = 0; i < targs.length; i++) {
+			targs[i]= new CPPTemplateArgument(args[i]);
+		}
+		return targs;
 	}
 }

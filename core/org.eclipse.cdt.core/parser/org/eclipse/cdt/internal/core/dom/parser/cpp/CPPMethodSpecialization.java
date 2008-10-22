@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -17,19 +17,18 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
- * @author aniefer
- *
+ * The specialization of a method in the context of a class-specialization.
  */
 public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		implements ICPPMethod {
 
-	public CPPMethodSpecialization(IBinding orig, ICPPClassType owner, ObjectMap argMap ) {
+	public CPPMethodSpecialization(IBinding orig, ICPPClassType owner, CPPTemplateParameterMap argMap ) {
 		super(orig, owner, argMap );
 	}
 

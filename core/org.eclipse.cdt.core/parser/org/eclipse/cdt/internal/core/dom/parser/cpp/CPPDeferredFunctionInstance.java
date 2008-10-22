@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -19,10 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -31,17 +33,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * The deferred function instance collects information about the instantiation until it can
+ * be carried out.
  */
 public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements ICPPFunction, ICPPInternalFunction, ICPPDeferredTemplateInstance {
-	private IType[] fArguments;
+	private ICPPTemplateArgument[] fArguments;
 	private ICPPFunctionTemplate fFunctionTemplate;
 
-	private ObjectMap fArgmap;
+	private CPPTemplateParameterMap fArgmap;
 	private IParameter [] fParameters;
 	private IFunctionType fFunctionType;
 
-	public CPPDeferredFunctionInstance( ICPPFunctionTemplate template, IType[] arguments ) throws DOMException {
+	public CPPDeferredFunctionInstance(ICPPFunctionTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
 		super(template.getOwner(), new CPPASTName(template.getNameCharArray()));
 		fArguments= arguments;
 		fFunctionTemplate= template;
@@ -55,38 +58,45 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 		return fFunctionTemplate;
 	}
 
+	@Deprecated
 	public ObjectMap getArgumentMap() {
+		return CPPTemplates.getArgumentMap(fFunctionTemplate, getTemplateParameterMap());
+	}
+	
+	public CPPTemplateParameterMap getTemplateParameterMap() {
+		// mstodo- deferred function instance and tpmap
 		if (fArgmap == null) {
-			fArgmap= ObjectMap.EMPTY_MAP;
+			CPPTemplateParameterMap argmap= new CPPTemplateParameterMap();
 			try {
 				ICPPTemplateParameter[] params= fFunctionTemplate.getTemplateParameters();
-				ObjectMap result= new ObjectMap(params.length);
-				for (int i=0; i < params.length; i++) {
-					if (i < fArguments.length) {
-						result.put(params[i], fArguments[i]);
-					}
+				ICPPTemplateArgument[] args= fArguments;
+				int len= Math.min(params.length, args.length);
+				for (int i = 0; i < len; i++) {
+					argmap.put(params[i], args[i]);
 				}
-				fArgmap= result;
 			} catch (DOMException e) {
 			}
+			fArgmap= argmap;
 		}
 		return fArgmap;
 	}
 
+	@Deprecated
 	public IType[] getArguments() {
+		return CPPTemplates.getArguments(getTemplateArguments());
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
 	
 	public IParameter[] getParameters() throws DOMException {
-		ObjectMap map= getArgumentMap();
-		if (map == null || map.isEmpty()) {
-			return ((ICPPFunction)getTemplateDefinition()).getParameters();
-		}
+		// mstodo- deferred function instance and tpmap
 		if( fParameters == null ){
 			IParameter [] params = ((ICPPFunction)getTemplateDefinition()).getParameters();
 			fParameters = new IParameter[ params.length ];
 			for (int i = 0; i < params.length; i++) {
-				fParameters[i] = new CPPParameterSpecialization( (ICPPParameter)params[i], null, getArgumentMap() );
+				fParameters[i] = new CPPParameterSpecialization( (ICPPParameter)params[i], null, CPPTemplateParameterMap.EMPTY);
 			}
 		}
 		return fParameters;
@@ -100,11 +110,9 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 		if( fFunctionType == null ){
             IFunctionType ft = ((ICPPFunction)getTemplateDefinition()).getType(); 
             IType returnType = ft.getReturnType();
-            // mstodo- is that necessary?
-			returnType = CPPTemplates.instantiateType( returnType, getArgumentMap(), null);
+			returnType = CPPTemplates.instantiateType(returnType, getArgumentMap(), null);
 			fFunctionType = CPPVisitor.createImplicitFunctionType( returnType, getParameters(), null);
         }
-        
         return fFunctionType;
 	}
 

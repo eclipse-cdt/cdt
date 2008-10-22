@@ -77,7 +77,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
 		IValue val= variable.getInitialValue();
-		db.putInt(record + VALUE_OFFSET, val == null ? 0 : db.newString(val.getCanonicalRepresentation()).getRecord());
+		int valueRec= val == null ? 0 : db.newString(val.getCanonicalRepresentation()).getRecord();
+		db.putInt(record + VALUE_OFFSET, valueRec);
 	}
 
 	@Override

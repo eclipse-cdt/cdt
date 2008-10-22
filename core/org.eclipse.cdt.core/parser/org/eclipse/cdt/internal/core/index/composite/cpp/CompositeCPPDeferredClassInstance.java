@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -42,10 +44,14 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
-		
-	public IType[] getArguments() { return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);	}
-	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
-	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
+
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	public IBinding getSpecializedBinding() {
+		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
+	}
 
 	public IASTName getUnknownName() {
 		return ((ICPPDeferredClassInstance) rbinding).getUnknownName();
@@ -60,5 +66,20 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 
 	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPDeferredClassInstance) rbinding).getClassTemplate());
+	}
+	
+	@Deprecated
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	@Deprecated
+	public IType[] getArguments() {
+		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	@Deprecated
+	public ObjectMap getArgumentMap() {
+		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

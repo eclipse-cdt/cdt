@@ -148,9 +148,7 @@ public class CBasicType implements ICBasicType {
         return t;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getValue()
-	 */
+    @Deprecated
 	public IASTExpression getValue() {
 		return value;
 	}

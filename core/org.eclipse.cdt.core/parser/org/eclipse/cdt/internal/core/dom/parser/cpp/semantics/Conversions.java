@@ -742,7 +742,7 @@ public class Conversions {
 		if (src instanceof CPPBasicType && trg instanceof IPointerType) {
 			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
 			IASTExpression exp = ((CPPBasicType)src).getCreatedFromExpression();
-			// mstodo improve by checking evaluation
+			// mstodo- improve by checking evaluation
 			if (exp instanceof IASTLiteralExpression && 
 					((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant) {
 				try { 

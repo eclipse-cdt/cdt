@@ -6,16 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,8 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -46,7 +42,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
+ * Deferred class instances collect information about an instantiation until it can be
+ * carried out.
  */
 class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
 
@@ -64,13 +61,8 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			throws CoreException {
 		super(pdom, parent, classType, instantiated);
 
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
-		IType[] args = ((ICPPTemplateInstance) classType).getArguments();
-		for (int i = 0; i < args.length; i++) {
-			PDOMNode typeNode = getLinkageImpl().addType(this, args[i]);
-			if (typeNode != null)
-				list.addMember(typeNode);
-		}
+		final int argListRec= PDOMCPPArgumentList.putArguments(this, classType.getTemplateArguments());
+		pdom.getDB().putInt(record+ARGUMENTS, argListRec);
 	}
 
 	public PDOMCPPDeferredClassInstance(PDOM pdom, int bindingRecord) {
@@ -109,21 +101,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding())) 
 				return false;
 			
-			IType[] lhsArgs= getArguments();
-			IType[] rhsArgs= rhs.getArguments();
-			if (lhsArgs != rhsArgs) {
-				if (lhsArgs == null || rhsArgs == null)
-					return false;
-
-				if (lhsArgs.length != rhsArgs.length)
-					return false;
-
-				for (int i= 0; i < lhsArgs.length; i++) {
-					if (!CPPTemplates.isSameTemplateArgument(lhsArgs[i], rhsArgs[i])) 
-						return false;
-				}
-			}
-			return true;
+			return CPPTemplates.haveSameArguments(this, rhs);
 		} 
 		return false;
 	}
@@ -207,31 +185,19 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
-	private static class TemplateArgumentCollector implements IPDOMVisitor {
-		private List<IType> args = new ArrayList<IType>();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof IType)
-				args.add((IType) node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public IType[] getTemplateArguments() {
-			return args.toArray(new IType[args.size()]);
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		try {
+			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			return PDOMCPPArgumentList.getArguments(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
 	
+	@Deprecated
 	public IType[] getArguments() {
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
-			TemplateArgumentCollector visitor = new TemplateArgumentCollector();
-			list.accept(visitor);
-			
-			return visitor.getTemplateArguments();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return IType.EMPTY_TYPE_ARRAY;
-		}
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	public boolean isAnonymous() {

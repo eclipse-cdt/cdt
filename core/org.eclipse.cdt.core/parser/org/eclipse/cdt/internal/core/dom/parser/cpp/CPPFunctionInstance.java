@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -16,30 +16,36 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author aniefer
+ * The instantiation of a function template.
  */
 public class CPPFunctionInstance extends CPPFunctionSpecialization implements ICPPTemplateInstance {
-	private IType[] arguments;
+	private ICPPTemplateArgument[] fArguments;
 
-	public CPPFunctionInstance(IBinding owner, ICPPFunction orig, ObjectMap argMap, IType[] args) {
+	public CPPFunctionInstance(IBinding owner, ICPPFunction orig, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args) {
 		super(orig, owner, argMap);
-		this.arguments = args;
+		fArguments = args;
 	}
 
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 
+	@Deprecated
 	public IType[] getArguments() {
-		return arguments;
+		return CPPTemplates.getArguments(fArguments);
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return fArguments;
 	}
 
 	/* (non-Javadoc)
@@ -47,28 +53,20 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	 */
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getTypeListString(arguments) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " <" + ASTTypeUtil.getArgumentListString(fArguments, true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
     @Override
 	public boolean equals(Object obj) {
     	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
     		try {
+    			final ICPPTemplateInstance inst = (ICPPTemplateInstance)obj;
     			ICPPFunctionType ct1= (ICPPFunctionType) ((ICPPFunction)getSpecializedBinding()).getType();
-    			ICPPFunctionType ct2= (ICPPFunctionType) ((ICPPFunction)((ICPPTemplateInstance)obj).getTemplateDefinition()).getType();
+				ICPPFunctionType ct2= (ICPPFunctionType) ((ICPPFunction)inst.getTemplateDefinition()).getType();
     			if(!ct1.isSameType(ct2))
     				return false;
 
-    			ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)obj).getArgumentMap();
-    			if( m1 == null || m2 == null || m1.size() != m2.size())
-    				return false;
-    			for( int i = 0; i < m1.size(); i++ ){
-    				IType t1 = (IType) m1.getAt( i );
-    				IType t2 = (IType) m2.getAt( i );
-    				if(!CPPTemplates.isSameTemplateArgument(t1, t2))
-    					return false;
-    			}
-    			return true;
+    			return CPPTemplates.haveSameArguments(this, inst);
     		} catch(DOMException de) {
     			CCorePlugin.log(de);
     		}

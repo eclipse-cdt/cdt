@@ -6,24 +6,24 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 
 /**
- * @author aniefer
+ * The result of instantiating a method template.
  */
 public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod {
 
-	public CPPMethodInstance(ICPPClassType owner, ICPPMethod orig, ObjectMap argMap, IType[] args) {
-		super(owner, orig, argMap, args);
+	public CPPMethodInstance(ICPPClassType owner, ICPPMethod orig, CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args) {
+		super(owner, orig, tpmap, args);
 	}
 
 	/* (non-Javadoc)

@@ -16,12 +16,15 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
@@ -44,12 +47,19 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		return cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 
-	public ObjectMap getArgumentMap() {
-		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
-	}
-
 	public ICPPClassType getSpecializedBinding() {
 		return (ICPPClassType) TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
+	}
+	
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		try {
+			IBinding owner= getOwner();
+			if (owner instanceof ICPPSpecialization) {
+				return ((ICPPSpecialization) owner).getTemplateParameterMap();
+			}
+		} catch (DOMException e) {
+		}
+		return CPPTemplateParameterMap.EMPTY;
 	}
 
 	public IBinding specializeMember(IBinding original) {
@@ -174,5 +184,10 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	@Override
 	public ICPPMethod[] getMethods() throws DOMException {
 		return ClassTypeHelper.getMethods(this);
+	}
+	
+	@Deprecated
+	public ObjectMap getArgumentMap() {
+		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 }

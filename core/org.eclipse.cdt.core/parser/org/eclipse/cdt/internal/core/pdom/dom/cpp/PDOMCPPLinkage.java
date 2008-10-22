@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *    Sergey Prigogin (Google)
@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -86,7 +87,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Container for c++-entities.
  */
 class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
@@ -160,13 +161,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		public void run() {
 			try {
-				IType[] args = binding.getArguments();
-				for (IType arg : args) {
-					partial.addArgument(arg);
-				}
+				ICPPTemplateArgument[] args = binding.getTemplateArguments();
+				partial.setArguments(args);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			} finally {
 				partial = null;

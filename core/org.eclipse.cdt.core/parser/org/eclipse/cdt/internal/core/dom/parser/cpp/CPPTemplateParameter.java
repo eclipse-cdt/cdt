@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -18,7 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -28,13 +30,47 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Base implementation for template parameter bindings in the AST.
  */
-public class CPPTemplateParameter extends PlatformObject implements ICPPTemplateParameter, ICPPInternalBinding {
+public abstract class CPPTemplateParameter extends PlatformObject implements ICPPTemplateParameter, ICPPInternalBinding {
 	private IASTName [] declarations;
+	private final int position;
 	
 	public CPPTemplateParameter(IASTName name) {
-		declarations = new IASTName[] { name };
+		declarations = new IASTName[] {name};
+		
+		int pos= -1;
+		int nesting= -1;
+		ICPPASTTemplateParameter tp= null;
+		for (IASTNode node= name.getParent(); node != null; node= node.getParent()) {
+			ICPPASTTemplateParameter[] tps= null;
+			if (node instanceof ICPPASTTemplateParameter) {
+				tp= (ICPPASTTemplateParameter) node;
+			} else if (node instanceof ICPPASTTemplateDeclaration) {
+				if (++nesting == 0) {
+					tps= ((ICPPASTTemplateDeclaration) node).getTemplateParameters();
+				}
+			} else if (node instanceof ICPPASTTemplatedTypeTemplateParameter) {
+				if (++nesting == 0) {
+					tps= ((ICPPASTTemplatedTypeTemplateParameter) node).getTemplateParameters();
+				}
+			}
+			
+			if (pos == -1 && tps != null && tp != null) {
+				for (int i = 0; i < tps.length; i++) {
+					if (tps[i] == tp) {
+						pos= i;
+						break;
+					}
+				}
+			}
+		}
+		if (nesting < 0)
+			nesting= 0;
+		if (pos < 0)
+			pos= 0;
+		
+		position= (nesting << 16) + pos;
 	}
 
 	@Override
@@ -60,6 +96,11 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 */
 	public char[] getNameCharArray() {
 		return declarations[0].toCharArray();
+	}
+
+	
+	public int getParameterPosition() {
+		return position;
 	}
 
 	public IASTName getPrimaryDeclaration () {

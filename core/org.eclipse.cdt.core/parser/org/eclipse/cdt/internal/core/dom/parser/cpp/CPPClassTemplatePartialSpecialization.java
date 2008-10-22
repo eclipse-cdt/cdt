@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -14,37 +14,43 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author aniefer
+ * A partial class template specialization.
  */
-public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate implements
-		ICPPClassTemplatePartialSpecialization, ICPPSpecialization {
+public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate 
+		implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization {
 
-	private IType [] arguments;
-	/**
-	 * @param name
-	 */
+	private ICPPTemplateArgument[] arguments;
+
 	public CPPClassTemplatePartialSpecialization(ICPPASTTemplateId name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization#getArguments()
-	 */
-	public IType[] getArguments() {
-		if( arguments == null ){
-			ICPPASTTemplateId id= (ICPPASTTemplateId) getTemplateName();
-			arguments = CPPTemplates.createTemplateArgumentArray(id);
-		}
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		createArguments();
 		return arguments;
+	}
+
+	private void createArguments() {
+		if (arguments == null) {
+			arguments= CPPTemplates.convert(
+					CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName()));
+		}
+	}
+
+	@Deprecated
+	public IType[] getArguments() {
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	/* (non-Javadoc)
@@ -59,25 +65,22 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		return getPrimaryClassTemplate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization#getArgumentMap()
-	 */
-	public ObjectMap getArgumentMap() {
-		IType[] arg= getArguments();
-		ICPPTemplateParameter[] params;
+	public CPPTemplateParameterMap getTemplateParameterMap() {
+		CPPTemplateParameterMap result= new CPPTemplateParameterMap();
 		try {
-			params = getPrimaryClassTemplate().getTemplateParameters();
+			ICPPTemplateParameter[] params = getPrimaryClassTemplate().getTemplateParameters();
+			ICPPTemplateArgument[] args= getTemplateArguments();
+			int len= Math.min(params.length, args.length);
+			for (int i = 0; i < len; i++) {
+				result.put(params[i], args[i]);
+			}
 		} catch (DOMException e) {
-			return ObjectMap.EMPTY_MAP;
 		}
-		// lengths should be equal, be defensive
-		final int len= Math.min(params.length, arg.length);
-		ObjectMap map = new ObjectMap(len);
-		for (int i = 0; i < len; i++) {
-			map.put(params[i], arg[i]);
-		}
+		return result;
+	}
 
-		return map;
+	@Deprecated
+	public ObjectMap getArgumentMap() {
+		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
 	}
 }

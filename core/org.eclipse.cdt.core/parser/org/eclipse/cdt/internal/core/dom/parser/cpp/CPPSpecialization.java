@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -39,11 +40,11 @@ import org.eclipse.core.runtime.PlatformObject;
 public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
 	private IBinding owner;
 	private IBinding specialized;
-	protected ObjectMap argumentMap;
+	private CPPTemplateParameterMap argumentMap;
 	protected IASTNode definition;
 	private IASTNode[] declarations;
 	
-	public CPPSpecialization(IBinding specialized, IBinding owner, ObjectMap argumentMap) {
+	public CPPSpecialization(IBinding specialized, IBinding owner, CPPTemplateParameterMap argumentMap) {
 		this.specialized = specialized;
 		this.owner = owner;
 		this.argumentMap = argumentMap;
@@ -51,14 +52,14 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 
 	public IType specializeType(IType type) throws DOMException {
 		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateType(type, argumentMap, (ICPPClassSpecialization) owner);
+			return CPPTemplates.instantiateType(type, getArgumentMap(), (ICPPClassSpecialization) owner);
 		} else {
-			return CPPTemplates.instantiateType(type, argumentMap, null);
+			return CPPTemplates.instantiateType(type, getArgumentMap(), null);
 		}
 	}
-
+	
 	public IValue specializeValue(IValue value) {
-		return CPPTemplates.instantiateValue(value, argumentMap);
+		return CPPTemplates.instantiateValue(value, getArgumentMap());
 	}
 
 	public IBinding getSpecializedBinding() {
@@ -143,7 +144,12 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Deprecated
 	public ObjectMap getArgumentMap() {
+		return CPPTemplates.getArgumentMap(this, getTemplateParameterMap());
+	}
+	
+	public CPPTemplateParameterMap getTemplateParameterMap() {
 		return argumentMap;
 	}
 	

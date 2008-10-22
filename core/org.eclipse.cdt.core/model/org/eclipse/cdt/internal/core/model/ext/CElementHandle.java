@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.model.ext;
 
 import java.net.URI;
@@ -271,7 +270,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		String[] parameterTypes= new String[params.length];
 		for (int i = 0; i < params.length; i++) {
 			IParameter param = params[i];
-			parameterTypes[i]= ASTTypeUtil.getType(param.getType());
+			parameterTypes[i]= ASTTypeUtil.getType(param.getType(), false);
 		}
 		if (parameterTypes.length == 1 && parameterTypes[0].equals("void")) { //$NON-NLS-1$
 			return EMPTY_STRING_ARRAY;

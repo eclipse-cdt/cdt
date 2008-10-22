@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.cpp;
@@ -35,7 +35,14 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	public ICPPTemplateDefinition getTemplateDefinition();
 	
 	/**
-	 * get the types of the arguments the template was instantiated with.
+	 * Returns the template arguments of this instance.
+	 * @since 5.1
 	 */
+	public ICPPTemplateArgument[] getTemplateArguments();
+	
+	/**
+	 * @deprecated use {@link #getTemplateArguments()}, instead.
+	 */
+	@Deprecated
 	public IType[] getArguments();
 }

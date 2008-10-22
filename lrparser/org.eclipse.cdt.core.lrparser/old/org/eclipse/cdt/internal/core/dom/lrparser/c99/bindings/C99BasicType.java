@@ -99,6 +99,7 @@ public class C99BasicType implements ICBasicType {
 		this.isLongLong = isLongLong;
 	}
 
+	@Deprecated
 	public IASTExpression getValue() {
 		return null;
 	}

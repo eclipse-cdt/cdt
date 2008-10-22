@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -24,21 +24,22 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * The specialization of a friend function in the context of a class specialization,
+ * also used as base class for function instances.
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
 	private IFunctionType type = null;
 	private IParameter[] specializedParams = null;
 
-	public CPPFunctionSpecialization(IBinding orig, IBinding owner, ObjectMap argMap) {
+	public CPPFunctionSpecialization(IBinding orig, IBinding owner, CPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
 	}
 	
@@ -53,7 +54,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			specializedParams = new IParameter[params.length];
 			for (int i = 0; i < params.length; i++) {
 				specializedParams[i] = new CPPParameterSpecialization((ICPPParameter)params[i],
-						this, argumentMap);
+						this, getTemplateParameterMap());
 			}
 		}
 		return specializedParams;
@@ -241,9 +242,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		} catch (DOMException e) {
 		}
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
-		if (argumentMap != null) {
+		CPPTemplateParameterMap tpmap= getTemplateParameterMap();
+		if (tpmap != null) {
 			result.append(" "); //$NON-NLS-1$
-			result.append(argumentMap.toString());
+			result.append(tpmap.toString());
 		}
 		return result.toString();
 	}

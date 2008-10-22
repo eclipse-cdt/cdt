@@ -6,40 +6,46 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
+ * Binding for template non-type parameter in the index.
  */
 class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMemberOwner,
 		ICPPTemplateNonTypeParameter {
 
 	private static final int MEMBERLIST = PDOMCPPVariable.RECORD_SIZE;
+	private static final int PARAMETERPOS= PDOMCPPVariable.RECORD_SIZE + 4;
+
 
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPVariable.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMCPPVariable.RECORD_SIZE + 8;
 	
 	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {
 		super(pdom, parent, param);
+		final Database db = pdom.getDB();
+		db.putInt(record + PARAMETERPOS, param.getParameterPosition());
 	}
 
 	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, int bindingRecord) {
@@ -56,6 +62,16 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_NON_TYPE_PARAMETER;
 	}
 	
+	public int getParameterPosition() {
+		try {
+			final Database db = pdom.getDB();
+			return db.getInt(record + PARAMETERPOS);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return -1;
+		}
+	}
+
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());

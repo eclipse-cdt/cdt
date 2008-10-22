@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization implements ICPPTemplateInstance {
@@ -23,11 +25,21 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 		super(cf, rbinding);
 	}
 
-	public IType[] getArguments() {
-		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
-	}
-
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding);
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	@Override
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
+	}
+
+	@Deprecated
+	public IType[] getArguments() {
+		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 }

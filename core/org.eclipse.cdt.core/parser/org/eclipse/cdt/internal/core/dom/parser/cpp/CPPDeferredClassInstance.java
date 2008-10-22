@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -27,10 +29,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDeferredClassInstance {
 	
-	private final IType[] fArguments;
+	private final ICPPTemplateArgument[] fArguments;
 	private final ICPPClassTemplate fClassTemplate;
 
-	public CPPDeferredClassInstance(ICPPClassTemplate template, IType[] arguments) throws DOMException {
+	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
 		super(template.getOwner(), new CPPASTName(template.getNameCharArray()));
 
 		fArguments= arguments;
@@ -62,21 +64,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 			if (!classTemplate.isSameType((IType) rhs.getSpecializedBinding())) 
 				return false;
 			
-			IType[] lhsArgs= getArguments();
-			IType[] rhsArgs= rhs.getArguments();
-			if (lhsArgs != rhsArgs) {
-				if (lhsArgs == null || rhsArgs == null)
-					return false;
-
-				if (lhsArgs.length != rhsArgs.length)
-					return false;
-
-				for (int i= 0; i < lhsArgs.length; i++) {
-					if (!CPPTemplates.isSameTemplateArgument(lhsArgs[i],rhsArgs[i])) 
-						return false;
-				}
-			}
-			return true;
+			return CPPTemplates.haveSameArguments(this, rhs);
 		} 
 		return false;
 	}
@@ -85,8 +73,13 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	public int getKey() throws DOMException {
     	return getClassTemplate().getKey();
     }
-
+    
+	@Deprecated
 	public IType[] getArguments() {
+		return CPPTemplates.getArguments(getTemplateArguments());
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
 
@@ -95,8 +88,11 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 
 	public ObjectMap getArgumentMap() {
-		// mstodo- compute argmap
-		return null;
+		return ObjectMap.EMPTY_MAP;
+	}
+	
+	public CPPTemplateParameterMap getTemplateParameterMap() {
+		return CPPTemplateParameterMap.EMPTY;
 	}
 
 	public IBinding getSpecializedBinding() {

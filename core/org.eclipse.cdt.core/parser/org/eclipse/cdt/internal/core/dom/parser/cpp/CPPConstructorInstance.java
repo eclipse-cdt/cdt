@@ -6,26 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 
 /**
- * @author Bryan Wilkinson
- *
+ * Instantiation of a constructor template
  */
-public class CPPConstructorInstance extends CPPMethodInstance implements
-		ICPPConstructor {
+public class CPPConstructorInstance extends CPPMethodInstance implements ICPPConstructor {
 
-	public CPPConstructorInstance(ICPPClassType owner, ICPPConstructor orig, ObjectMap argMap, IType[] args) {
-		super(owner, orig, argMap, args);
+	public CPPConstructorInstance(ICPPClassType owner, ICPPConstructor orig, 
+			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args) {
+		super(owner, orig, tpmap, args);
 	}
 	
 	public boolean isExplicit() throws DOMException {

@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
@@ -56,13 +56,9 @@ public class ASTTypeUtil {
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
 	/**
-	 * Returns a String representation of the parameter type of an IFunctionType.
-	 * 
-	 * This function calls ASTTypeUtil#getParameterTypeStringArray(IFunctionType) and wraps the
-	 * results in "()" with a comma separated list.
-	 * 
-	 * @param type
-	 * @return the representation of the parameter type of an IFunctionType
+	 * Returns a string representation for the parameters of the given function type. The 
+	 * representation contains the comma-separated list of the normalized parameter type
+	 * representations wrapped in parenthesis. 
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuilder result = new StringBuilder();
@@ -81,28 +77,74 @@ public class ASTTypeUtil {
 	}
 	
 	/**
+	 * Returns a string representation for the type array. The representation is
+	 * a comma-separated list of the normalized string representations of the 
+	 * provided types.
+	 * @see #getTypeListString(IType[], boolean)
+	 */
+	public static String getTypeListString(IType[] types) {
+		return getTypeListString(types, true);
+	}
+
+	/**
 	 * Returns a String representation of the type array as a
 	 * comma-separated list.
 	 * @param types
 	 * @return representation of the type array as a comma-separated list 
+	 * @since 5.1
 	 */
-	public static String getTypeListString(IType[] types) {
+	public static String getTypeListString(IType[] types, boolean normalize) {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] != null) {
-				result.append(getTypeString(types[i]));
+				result.append(getType(types[i], normalize));
 				if (i < types.length - 1)
 					result.append(COMMA_SPACE);
 			}
 		}
 		return result.toString();
 	}
+	
+	/**
+	 * Returns a comma-separated list of the string representations of the arguments. 
+	 * Optionally normalization is performed:
+	 * <br> template parameter names are represented by their parameter position,
+	 * <br> further normalization may be performed in future versions.
+	 * @param normalize indicates whether normalization shall be performed
+	 * @since 5.1
+	 */
+	public static String getArgumentListString(ICPPTemplateArgument[] args, boolean normalize) {
+		StringBuilder result= new StringBuilder();
+		boolean first= true;
+		for (ICPPTemplateArgument arg : args) {
+			if (!first) {
+				result.append(',');
+			}
+			first= false;
+			result.append(getArgumentString(arg, normalize));
+		}
+		return result.toString();
+	}
 
 	/**
-	 * Returns String[] corresponding to the types of the parameters for the IFunctionType.
-	 * 
-	 * @param type
-	 * @return the types of the parameters for the IFunctionType
+	 * Returns a string representation for an template argument. Optionally 
+	 * normalization is performed:
+	 * <br> template parameter names are represented by their parameter position,
+	 * <br> further normalization may be performed in future versions.
+	 * @param normalize indicates whether normalization shall be performed
+	 * @since 5.1
+	 */
+	public static String getArgumentString(ICPPTemplateArgument arg, boolean normalize) {
+		if (arg.isNonTypeValue()) 
+			return arg.getNonTypeValue().getCanonicalRepresentation();
+
+		return getTypeString(arg.getTypeValue(), normalize);
+	}
+
+	/**
+	 * Returns an array of normalized string representations for the parameter types of the
+	 * given function type.
+	 * @see #getType(IType, boolean)
 	 */
 	public static String[] getParameterTypeStringArray(IFunctionType type) {
 		IType[] parms = null;
@@ -123,7 +165,7 @@ public class ASTTypeUtil {
 		return result;
 	}
 	
-	private static String getTypeString(IType type) {
+	private static String getTypeString(IType type, boolean normalize) {
 		StringBuilder result = new StringBuilder();
 		boolean needSpace = false;
 		
@@ -269,29 +311,16 @@ public class ASTTypeUtil {
 				}
 			} catch (DOMException e) {
 			}
+		} else if (type instanceof ICPPTemplateParameter) {
+			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
+			if (normalize) {
+				result.append('#');
+				result.append(Integer.toString(tpar.getParameterPosition(), 16));
+			} else {
+				result.append(tpar.getName());
+			}
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
-//			if (type instanceof ICPPClassType) {
-//				try {
-//					switch(((ICPPClassType) type).getKey()) {
-//						case ICPPClassType.k_class:
-//							result.append(Keywords.CLASS);
-//							break;
-//					}
-//				} catch (DOMException e) {}
-//			}
-//			
-//			try {
-//				switch(((ICompositeType) type).getKey()) {
-//					case ICompositeType.k_struct:
-//						result.append(Keywords.STRUCT);
-//						break;
-//					case ICompositeType.k_union:
-//						result.append(Keywords.UNION);
-//						break;
-//				}
-//			} catch (DOMException e) {}
-//			result.append(SPACE);
 			if (type instanceof ICPPClassType) {
 				try {
 					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type));
@@ -304,17 +333,13 @@ public class ASTTypeUtil {
 			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
-		} else if (type instanceof ICPPTemplateTypeParameter) {
-			result.append(((ICPPTemplateTypeParameter) type).getName());
-		} else if (type instanceof ICPPTemplateTemplateParameter) {
-			result.append(((ICPPTemplateTemplateParameter) type).getName());
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);
 			result.append(getNameForAnonymous((IEnumeration) type));
 		} else if (type instanceof IFunctionType) {
 			try {
-				String temp = getType(((IFunctionType) type).getReturnType());
+				String temp = getType(((IFunctionType) type).getReturnType(), normalize);
 				if (temp != null && !temp.equals(EMPTY_STRING)) {
 					result.append(temp); needSpace = true;
 				}
@@ -389,23 +414,24 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Returns the type representation of the IType as a String.  This function uses the IType interfaces to build the 
-	 * String representation of the IType. Resolves typedefs.
-	 * @param type
-	 * @return the type representation of the IType
+	 * Returns the normalized string representation of the type. 
+	 * @see #getType(IType, boolean)
 	 */
 	public static String getType(IType type) {
 		return getType(type, true);
 	}
 		
 	/**
-	 * Returns the type representation of the IType as a String.  This function uses the IType interfaces to build the 
-	 * String representation of the IType.
-	 * @param type
-	 * @param resolveTypedefs whether or not typedefs shall be resolved to their real types
+	 * Returns a string representation of a type.  
+	 * Optionally the representation is normalized:
+	 * <br> typedefs are resolved
+	 * <br> template parameter names are represented by their parameter position
+	 * <br> further normalization may be performed in the future.
+	 * @param type a type to compute the string representation for.
+	 * @param normalize whether or not normalization should be performed.
 	 * @return the type representation of the IType
 	 */
-	public static String getType(IType type, boolean resolveTypedefs) {
+	public static String getType(IType type, boolean normalize) {
 		StringBuilder result = new StringBuilder();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
@@ -413,10 +439,10 @@ public class ASTTypeUtil {
 		int i = 0;
 		while (type != null && ++i < 100) {
 			final boolean isTypedef= type instanceof ITypedef;
-			if (!resolveTypedefs || !isTypedef) { 
+			if (!normalize || !isTypedef) { 
 			    types = (IType[]) ArrayUtil.append(IType.class, types, type);
 			}
-			if (!resolveTypedefs && isTypedef) {
+			if (!normalize && isTypedef) {
 				type= null;	// stop here
 			} else if (type instanceof ITypeContainer) {
 				try {
@@ -436,12 +462,12 @@ public class ASTTypeUtil {
 
 			if (types[j] != null) {
                 if (j > 0 && types[j - 1] instanceof IQualifierType) {
-                    result.append(getTypeString(types[j - 1]));
+                    result.append(getTypeString(types[j - 1], normalize));
                     result.append(SPACE);
-                    result.append(getTypeString(types[j]));
+                    result.append(getTypeString(types[j], normalize));
                     --j;
                 } else {
-                    result.append(getTypeString(types[j]));
+                    result.append(getTypeString(types[j], normalize));
                 }
             }
 		}
@@ -450,10 +476,10 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Returns the type representation of the declarator (including parameters) as a String.
-	 * 
-	 * @param decltor
-	 * @return the type representation of the IASTDeclarator (including parameters)
+	 * For testing purposes, only.
+	 * Returns the normalized string representation of the type defined by the given declarator.
+	 *  
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static String getType(IASTDeclarator decltor) {
 		// get the most nested declarator
@@ -485,13 +511,10 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Return's the String representation of a node's type (if available).  This is
-	 * currently only being used for testing.
+	 * For testing purposes, only.
+	 * Return's the String representation of a node's type (if available).  
 	 * 
-	 * TODO Remove this function when done testing if it is no longer needed
-	 * 
-	 * @param node
-	 * @return the String representation of a node's type (if available)
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static String getNodeType(IASTNode node) {
 		try {
@@ -511,7 +534,7 @@ public class ASTTypeUtil {
 	}
 	
 	/**
-	 * Retuns the type representation of the IASTTypeId as a String.
+	 * Returns the type representation of the IASTTypeId as a String.
 	 * 
 	 * @param typeId
 	 * @return the type representation of the IASTTypeId as a String

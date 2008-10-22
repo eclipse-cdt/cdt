@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -30,7 +31,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 
 	private ObjectMap instances = null;
 
-	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassType owner, ObjectMap argumentMap) {
+	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassType owner, CPPTemplateParameterMap argumentMap) {
 		super(orig, owner, argumentMap);
 	}
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -18,14 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * @author aniefer
+ * Specialization of a typedef in the context of a class-specialization.
  */
 public class CPPTypedefSpecialization extends CPPSpecialization implements ITypedef, ITypeContainer {
 	final static class RecursionResolvingBinding extends ProblemBinding {
@@ -40,8 +42,9 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	private IType type;
     private int fResolutionDepth;
 
-    public CPPTypedefSpecialization(IBinding specialized, ICPPClassType owner, ObjectMap argumentMap) {
-        super(specialized, owner, argumentMap);
+    public CPPTypedefSpecialization(IBinding specialized, ICPPClassType owner, 
+    		CPPTemplateParameterMap tpmap) {
+        super(specialized, owner, tpmap);
     }
 
     private ITypedef getTypedef() {
@@ -60,10 +63,16 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		            type= specializeType(getTypedef().getType());
 		        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
 		            // with a problem binding.
-		            if (type instanceof CPPTypedefSpecialization &&
-		            		((CPPTypedefSpecialization) type).getSpecializedBinding().equals(getSpecializedBinding()) &&
-		            		((CPPTypedefSpecialization) type).getArgumentMap().isEquivalent(argumentMap, IType.TYPE_MATCHER)) {
-		        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+		            if (type instanceof ITypedef && type instanceof ICPPSpecialization) {
+		            	ITypedef td= (ITypedef) type;
+		            	if (CharArrayUtils.equals(td.getNameCharArray(), getNameCharArray())) {
+			            	IBinding owner= ((ICPPSpecialization) type).getOwner();
+			            	if (owner instanceof IType) {
+			            		if (((IType)owner).isSameType((ICPPClassType) getOwner())) {
+					        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+			            		}
+			            	}
+		            	}
 		            }
 	        	}
         	} finally {

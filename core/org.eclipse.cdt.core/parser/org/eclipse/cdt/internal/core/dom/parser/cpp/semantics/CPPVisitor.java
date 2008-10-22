@@ -1586,7 +1586,7 @@ public class CPPVisitor {
 	    
 	    // Currently, CPPBasicType objects are also used to represent non-type template argument
 	    // values. We must ensure the initializer expression is attached to the type if available.
-	    // mstodo can be removed
+	    // mstodo- can be removed
 	    if (declarator.getInitializer() instanceof IASTInitializerExpression) {
 	    	IType utype= getUltimateTypeUptoPointers(baseType);
 	    	if (utype instanceof CPPBasicType) {
@@ -2385,7 +2385,7 @@ public class CPPVisitor {
 	/**
 	 * @param e1
 	 * @return the first non id-expression by following values assigned to basic types.
-	 * @deprecated mstodo remove
+	 * @deprecated mstodo- remove
 	 */
 	@Deprecated
 	public static final IASTExpression reverseConstantPropagationLookup(IASTExpression e1) {

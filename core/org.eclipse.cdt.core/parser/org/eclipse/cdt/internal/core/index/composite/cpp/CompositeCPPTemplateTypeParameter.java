@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -32,6 +34,10 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 	public IType getDefault() throws DOMException {
 		IIndexType preresult= (IIndexType) ((ICPPTemplateTypeParameter)rbinding).getDefault();
 		return cf.getCompositeType(preresult);
+	}
+
+	public int getParameterPosition() {
+		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
 	}
 
 	public boolean isSameType(IType type) {

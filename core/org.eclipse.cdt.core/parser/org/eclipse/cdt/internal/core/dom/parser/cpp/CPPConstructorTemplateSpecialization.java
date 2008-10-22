@@ -13,18 +13,19 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * Specialization of a constructor template
  */
-public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpecialization implements ICPPConstructor {
-
+public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpecialization 
+		implements ICPPConstructor {
+	
 	public CPPConstructorTemplateSpecialization(IBinding specialized,
-			ICPPClassType owner, ObjectMap argumentMap) {
-		super(specialized, owner, argumentMap);
+			ICPPClassType owner, CPPTemplateParameterMap tpmap) {
+		super(specialized, owner, tpmap);
 	}
 
 	/* (non-Javadoc)

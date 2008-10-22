@@ -1,39 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Result of instantiating a function template.
  */
 class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements ICPPTemplateInstance {
 	private static final int ARGUMENTS = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
@@ -44,13 +39,9 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 			throws CoreException {
 		super(pdom, parent, function, orig);
 
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
-		IType[] args = ((ICPPTemplateInstance) function).getArguments();
-		for (int i = 0; i < args.length; i++) {
-			PDOMNode typeNode = getLinkageImpl().addType(this, args[i]);
-			if (typeNode != null)
-				list.addMember(typeNode);
-		}
+		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
+		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
+		pdom.getDB().putInt(record+ARGUMENTS, argListRec);
 	}
 
 	public PDOMCPPFunctionInstance(PDOM pdom, int bindingRecord) {
@@ -72,31 +63,19 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
-	private static class TemplateArgumentCollector implements IPDOMVisitor {
-		private List<IType> args = new ArrayList<IType>();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof IType)
-				args.add((IType) node);
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public IType[] getTemplateArguments() {
-			return args.toArray(new IType[args.size()]);
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		try {
+			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			return PDOMCPPArgumentList.getArguments(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
 	
+	@Deprecated
 	public IType[] getArguments() {
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + ARGUMENTS, getLinkageImpl());
-			TemplateArgumentCollector visitor = new TemplateArgumentCollector();
-			list.accept(visitor);
-			
-			return visitor.getTemplateArguments();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return IType.EMPTY_TYPE_ARRAY;
-		}
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 	
 	/*

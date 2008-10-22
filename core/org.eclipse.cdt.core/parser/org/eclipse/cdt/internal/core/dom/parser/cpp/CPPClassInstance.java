@@ -6,28 +6,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   IBM - Initial API and implementation
+ * 	   Andrew Niefer (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author aniefer
+ * The result of instantiating a class template.
  */
 public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemplateInstance {
-	private IType[] arguments;
+	private ICPPTemplateArgument[] arguments;
 
-	public CPPClassInstance(IBinding owner, ICPPClassType orig, ObjectMap argMap, IType[] args) {
+	public CPPClassInstance(IBinding owner, ICPPClassType orig, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args) {
 		super(orig, owner, argMap);
 		this.arguments= args;
 	}
@@ -35,9 +38,14 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
-
-	public IType[] getArguments() {
+	
+	public ICPPTemplateArgument[] getTemplateArguments() {
 		return arguments;
+	}
+
+	@Deprecated
+	public IType[] getArguments() {
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +53,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	 */
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getTypeListString(arguments) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " <" + ASTTypeUtil.getArgumentListString(arguments, true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override

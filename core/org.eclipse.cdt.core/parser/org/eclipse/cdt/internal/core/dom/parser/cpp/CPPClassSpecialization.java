@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -53,7 +54,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
 	private boolean checked;
 
-	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ObjectMap argumentMap) {
+	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, CPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
 	}
 
@@ -70,7 +71,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 				return result;
 		}
 		
-		IBinding result= CPPTemplates.createSpecialization(this, original, argumentMap);
+		IBinding result= CPPTemplates.createSpecialization(this, original, getArgumentMap());
 		synchronized(this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null) 

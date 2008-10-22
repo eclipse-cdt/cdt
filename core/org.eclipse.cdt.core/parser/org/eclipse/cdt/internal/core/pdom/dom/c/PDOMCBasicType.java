@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
- * Markus Schorn (Wind River Systems)
+ *    Doug Schaefer (QNX) - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,8 +27,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Models integral c-types.
  */
 class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 
@@ -93,9 +91,8 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		}
 	}
 
+	@Deprecated
 	public IASTExpression getValue() throws DOMException {
-		// Returning null for now, not sure what needs to be here if anything
-		// Values only seem to be used at type resolution time.
 		return null;
 	}
 	

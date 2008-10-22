@@ -49,6 +49,7 @@ public class Value implements IValue {
 
 	private final String fValue;
 	private Value(String rep) {
+		assert rep != null;
 		fValue= rep;
 	}
 	public String getCanonicalRepresentation() {
@@ -61,6 +62,18 @@ public class Value implements IValue {
 		} catch (NumberFormatException e) {
 		}
 		return null;
+	}
+	
+	@Override
+	public int hashCode() {
+		return fValue.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof IValue)) {
+			return false;
+		}
+		return fValue.equals(((IValue) obj).getCanonicalRepresentation());
 	}
 
 	public static IValue create(long value) {
@@ -185,8 +198,7 @@ public class Value implements IValue {
 	
 	@SuppressWarnings("nls")
 	private static String evaluate(ICPPTemplateParameter param) {
-		// mstodo add support for parameter positions first.
-		return "#" ;//+Integer.toHexString(param.getParameterPosition());
+		return "#" + Integer.toHexString(param.getParameterPosition());
 	}
 	
 	@SuppressWarnings("nls")

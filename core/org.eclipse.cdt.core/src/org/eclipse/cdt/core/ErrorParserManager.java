@@ -206,9 +206,7 @@ public class ErrorParserManager extends OutputStream {
 		if (line.length() > 1000)
 			return;
 
-		for (Iterator<String> items = fErrorParsers.keySet().iterator();items.hasNext();) {
-			String parserId = items.next();
-			IErrorParser[] parsers = fErrorParsers.get(parserId);
+		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser curr : parsers) {
 				if (curr.processLine(line, this)) {
 					return;

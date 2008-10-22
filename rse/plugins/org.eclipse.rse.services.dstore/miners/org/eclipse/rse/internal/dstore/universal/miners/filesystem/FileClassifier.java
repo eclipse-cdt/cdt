@@ -17,6 +17,7 @@
  * Xuan Chen        (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  * Xuan Chen        (IBM)        - [215863]] NPE when Expanding Empty Zip File
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight   (IBM)        - [251729][dstore] problems querying symbolic link folder
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -540,7 +541,7 @@ public class FileClassifier extends Thread
 
         try
         {
-            String referencedFile = aFile.getCanonicalPath();
+            String referencedFile = aFile.getAbsolutePath();
 
             // DKM - not sure why this was commented out but keeping it that way for now
             String specialEncoding = null;//System.getProperty("dstore.stdin.encoding");

@@ -38,6 +38,7 @@
  * David McKnight  (IBM)  - [244277] [dstore] NPE on file save from old client
  * David McKnight  (IBM)  - [246234] Change of file permissions changes the file owner
  * David McKnight  (IBM)  - [250168] handleCommand should not blindly set the status to "done"
+ * David McKnight  (IBM)  - [251729][dstore] problems querying symbolic link folder
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -897,6 +898,7 @@ public class UniversalFileSystemMiner extends Miner {
 	 */
 	public DataElement handleQueryGetRemoteObject(DataElement subject,
 			DataElement status, String queryType) throws SystemMessageException {
+		
 		File fileobj = null;
 		boolean isVirtual = false;
 		boolean isFilter = false;
@@ -914,11 +916,20 @@ public class UniversalFileSystemMiner extends Miner {
 				}
 				else {
 					filterValue = System.getProperty("user.home"); //$NON-NLS-1$
+				}				
+				try {
+					// "." needs canonical file
+					fileobj = new File(filterValue).getCanonicalFile();
 				}
+				catch (Exception e){
+					fileobj = new File(filterValue);
+				}
+				
 				subject.setAttribute(DE.A_VALUE, filterValue);
 			}
-			if (!isVirtual)
+			else if (!isVirtual){
 				fileobj = new File(filterValue);
+			}
 		}
 		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
 		{
@@ -950,19 +961,26 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 
 		if (!isVirtual && fileobj != null && fileobj.exists()) {
-
-			// Get the canonical path name so that we preserve case for Windows
-			// systems.
-			// Even though Windows is case insensitive, we still want to
-			// preserve case
-			// when we show the path as a property to the user
-			try {
-				fullName = fileobj.getCanonicalPath();
-
-			} catch (IOException e) {
-				return statusDone(status);
+			
+			String oldProperties = subject.getAttribute(DE.A_SOURCE);
+			boolean isSymlink = oldProperties != null && (oldProperties.indexOf("symbolic link") > 0);//$NON-NLS-1$
+			fullName = fileobj.getAbsolutePath();
+			
+			/* should not need canonical path here.  It causes bug 251729
+			{
+				// Get the canonical path name so that we preserve case for Windows
+				// systems.
+				// Even though Windows is case insensitive, we still want to
+				// preserve case
+				// when we show the path as a property to the user
+				try {
+					fullName = fileobj.getCanonicalPath();
+				} catch (IOException e) {
+					return statusDone(status);
+				}
 			}
-
+			 */
+			
 			if (fileobj.isFile())
 			{
 				if (_archiveHandlerManager.isArchive(fileobj)) {
@@ -996,22 +1014,20 @@ public class UniversalFileSystemMiner extends Miner {
 			subject.setAttribute(DE.A_NAME, name);
 			subject.setAttribute(DE.A_VALUE, path);
 
-
-
-			// DKM - do basic property stuff here
-			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
-
-
-			/*
-			// classify the file too
-			if (fileobj.isFile()) {
-				subject.setAttribute(DE.A_SOURCE, subject
-						.getAttribute(DE.A_SOURCE)
-						+ "|" + FileClassifier.classifyFile(fileobj));
+			String properties = setProperties(fileobj);
+			
+			// if this is a symbolic link or a file, reclassify
+			if (fileobj.isFile() || isSymlink){								 //$NON-NLS-1$
+				// classify the file too
+				FileClassifier classifier = new FileClassifier(subject);
+				subject.setAttribute(DE.A_SOURCE, properties + "|" + classifier.classifyFile(fileobj)); //$NON-NLS-1$
 			}
-			*/
+			else {
+				subject.setAttribute(DE.A_SOURCE, properties + "|" + "directory");  //$NON-NLS-1$//$NON-NLS-2$
+			}
 
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
+
 		} else if (isVirtual) {
 			try {
 				String goodFullPath = ArchiveHandlerManager
@@ -1114,7 +1130,7 @@ public class UniversalFileSystemMiner extends Miner {
 		    return null;
 
 
-		return (str[10]);
+		return (str[11]);
 	}
 	/**
 	 * Method to obtain the filter string of file or folder.

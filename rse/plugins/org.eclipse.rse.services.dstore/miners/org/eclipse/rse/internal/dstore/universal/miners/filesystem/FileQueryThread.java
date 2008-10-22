@@ -14,6 +14,7 @@
  * David McKnight (IBM) - [209387] Should not delete elements for files that still exist (but are filtered out)
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight  (IBM)  - [251650] [dstore] Multiple copies of symbolic link file show in Table view
+ * David McKnight  (IBM)  - [251729][dstore] problems querying symbolic link folder
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -116,10 +117,12 @@ public class FileQueryThread extends QueryThread
 				if (list != null)
 				{
 					createDataElement(_dataStore, _subject, list, _queryType, _filter,_inclusion);
-					String folderProperties = setProperties(_fileobj);
-					if (_subject.getSource() == null || _subject.getSource().equals("")) //$NON-NLS-1$
+
+					if (_subject.getSource() == null || _subject.getSource().equals("")){ //$NON-NLS-1$
+						String folderProperties = setProperties(_fileobj);
 						_subject.setAttribute(DE.A_SOURCE, folderProperties);
-	
+					}
+					
 					if (!_isCancelled)
 					{
 						FileClassifier clsfy = getFileClassifier(_subject);
@@ -151,7 +154,6 @@ public class FileQueryThread extends QueryThread
 	protected void createDataElement(DataStore ds, DataElement subject,
 			File[] list, String queryType, String filter, int include, String types[]) 
 	{
-
 		HashMap filteredChildren = new HashMap();
 		List children = subject.getNestedData();
 		if (children != null)

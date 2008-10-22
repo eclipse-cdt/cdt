@@ -205,15 +205,10 @@ public class ErrorParserManager extends OutputStream {
 		// Don't process it since it'll probably be really slow and won't find an error anyway
 		if (line.length() > 1000)
 			return;
-		
-		String[] parserIDs = new String[fErrorParsers.size()];
-		Iterator<String> items = fErrorParsers.keySet().iterator();
-		for (int i = 0; items.hasNext(); i++) {
-			parserIDs[i] = items.next();
-		}
 
-		for (int i = 0; i < parserIDs.length; ++i) {
-			IErrorParser[] parsers = fErrorParsers.get(parserIDs[i]);
+		for (Iterator<String> items = fErrorParsers.keySet().iterator();items.hasNext();) {
+			String parserId = items.next();
+			IErrorParser[] parsers = fErrorParsers.get(parserId);
 			for (IErrorParser curr : parsers) {
 				if (curr.processLine(line, this)) {
 					return;

@@ -122,6 +122,7 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
             <menu 
                  id="org.eclipse.dd.dsf.debug.ui.registersView_updateScopes" 
             	 label="%menu.updateScope">
@@ -132,7 +133,8 @@
 	               id="org.eclipse.dd.dsf.debug.ui.registersUpdateScopes"
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
-            </menu>         
+            </menu> 
+            -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.RegisterView?after=formatting">
@@ -181,6 +183,7 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
             <menu 
                  id="org.eclipse.dd.dsf.debug.ui.variablesView_updateScopes" 
             	 label="%menu.updateScope">
@@ -192,6 +195,7 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
             </menu>         
+            -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.VariableView?after=formatting">
@@ -240,6 +244,7 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
             <menu 
                  id="org.eclipse.dd.dsf.debug.ui.expressionsView_updateScopes" 
             	 label="%menu.updateScope">
@@ -251,6 +256,7 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
 	           </dynamic>
             </menu>         
+            -->
        </menuContribution>
        <menuContribution
             locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=formatting">

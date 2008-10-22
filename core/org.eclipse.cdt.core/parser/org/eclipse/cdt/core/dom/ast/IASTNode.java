@@ -34,7 +34,7 @@ public interface IASTNode {
 	/**
 	 * Get the location of this node. In cases not involving macro expansions,
 	 * the IASTNodeLocation [] result will only have one element in it, and it
-	 * will be an IASTFileLocation or sub-interface.
+	 * will be an IASTFileLocation.
 	 * 
 	 * Where the node is completely generated within a macro expansion,
 	 * IASTNodeLocation [] result will have one element in it, and it will be an
@@ -44,7 +44,11 @@ public interface IASTNode {
 	 * of the macro expansion again) result in an IASTNodeLocation [] result
 	 * that is of length > 1.
 	 * 
-	 * @return <code>IASTNodeLocation []</code>
+	 * We do not provide meaningful node locations for nested macro references
+	 * (see {@link IASTPreprocessorMacroExpansion#getNestedMacroReferences()}).
+	 * For those, the file location of the enclosing explicit macro reference is 
+	 * returned. You can however compute their image-location using
+	 * {@link IASTName#getImageLocation()}
 	 */
 	public IASTNodeLocation[] getNodeLocations();
 	

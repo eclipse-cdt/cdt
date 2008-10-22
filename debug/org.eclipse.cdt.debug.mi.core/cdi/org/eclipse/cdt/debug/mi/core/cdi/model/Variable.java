@@ -256,7 +256,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 				} else if (t instanceof ICDIArrayType) {
 					// For Array gdb varobj only return the index, override here.
 					int index = castingIndex + i;
-					fn = "(" + fn + ")[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					fn = "(" + fn + ")[" + i + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (t instanceof ICDIPointerType) {
 					ICDIType subType = ((ICDIPointerType) t).getComponentType();

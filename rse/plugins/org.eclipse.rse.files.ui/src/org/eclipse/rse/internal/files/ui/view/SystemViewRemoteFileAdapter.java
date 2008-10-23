@@ -3216,7 +3216,7 @@ public class SystemViewRemoteFileAdapter
 		// changed to do the same as the new file wizards since
 		// as per bug 251860, we can't use the cache and we need to bypass the hidden preference
 		IRemoteFile parentFolder = file.getParentRemoteFile();
-		IRemoteFile[] children = parentFolder.getParentRemoteFileSubSystem().list(parentFolder, null);
+		IRemoteFile[] children = parentFolder.getParentRemoteFileSubSystem().list(parentFolder, monitor);
 
 		if ((children == null) || (children.length == 0))
 			return names;

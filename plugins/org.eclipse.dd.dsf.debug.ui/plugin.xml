@@ -538,7 +538,6 @@
            icon="icons/refresh.gif"
            id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
            label="Refresh"
-           state="false"
            toolbarPath="additions">
          </action>
          </viewContribution>

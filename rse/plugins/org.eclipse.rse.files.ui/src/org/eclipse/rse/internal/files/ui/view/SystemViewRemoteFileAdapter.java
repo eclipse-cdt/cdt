@@ -57,6 +57,7 @@
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
  * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
+ * David McKnight     (IBM)      - [251860] Rename a file/folder to a hidden file causes problems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3205,16 +3206,18 @@ public class SystemViewRemoteFileAdapter
 	 * @return an array of all file and folder names in the parent of the given IRemoteFile object
 	 */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
-	{
-		String[] names = EMPTY_STRING_LIST;
+	{		String[] names = EMPTY_STRING_LIST;
 
 		IRemoteFile file = (IRemoteFile) element;
 		String parentName = file.getParentPath();
 		if (parentName == null) // given a root?
 			return names; // not much we can do. Should never happen: you can't rename a root!
 
-		// DKM - changed this so that we can take advantage of caching
-		Object[] children = getChildren(file.getParentRemoteFile());
+		// changed to do the same as the new file wizards since
+		// as per bug 251860, we can't use the cache and we need to bypass the hidden preference
+		IRemoteFile parentFolder = file.getParentRemoteFile();
+		IRemoteFile[] children = parentFolder.getParentRemoteFileSubSystem().list(parentFolder, null);
+
 		if ((children == null) || (children.length == 0))
 			return names;
 

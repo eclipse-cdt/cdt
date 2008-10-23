@@ -17,15 +17,12 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CreateRendering;
-import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
@@ -37,10 +34,14 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 
@@ -64,7 +65,7 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 		
 		Composite fGotoAddressContainer = parent;
 		
-		final GoToAddressComposite fGotoAddress = new GoToAddressComposite();
+		final GoToAddressWidget fGotoAddress = new GoToAddressWidget();
 		Control fGotoAddressControl = fGotoAddress.createControl(fGotoAddressContainer);
 		
 		fControl = fGotoAddressControl;
@@ -73,87 +74,7 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 		{
 			public void run()
 			{
-				String expression = fGotoAddress.getExpressionText();
-				int radix = 10;
-				if(expression.toUpperCase().startsWith("0X"))
-				{
-					expression = expression.substring(2);
-					radix = 16;
-				}
-				else if(fGotoAddress.isHex())
-				{
-					radix = 16;
-				}
-				
-				BigInteger address = null;
-				try
-				{
-					address = new BigInteger(expression, radix);
-				}
-				catch(NumberFormatException nfe)
-				{
-					MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
-							DebugUIMessages.GoToAddressAction_Address_is_invalid, nfe);
-				}
-	
-				IMemoryRenderingContainer containers[] = fSite.getMemoryRenderingContainers();
-				for(int i = 0; i < containers.length; i++)
-				{
-					if(containers[i] instanceof RenderingViewPane)
-					{
-						BigInteger absoluteAddress = null;
-						if(fGotoAddress.isGoToAddress())
-							absoluteAddress = address;
-						
-						IMemoryBlock activeMemoryBlock = null;
-						
-						if(address != null && containers[i] != null)
-						{
-							IMemoryRendering activeRendering = containers[i].getActiveRendering();
-							if(activeRendering != null)
-							{
-								activeMemoryBlock = activeRendering.getMemoryBlock();
-								IMemoryBlockExtension blockExtension = (IMemoryBlockExtension) activeMemoryBlock.getAdapter(IMemoryBlockExtension.class);
-								if(blockExtension != null)
-								{
-									BigInteger baseAddress = null;
-									BigInteger addressableSize = null;
-									try
-									{
-										baseAddress = blockExtension.getBigBaseAddress();
-										addressableSize = BigInteger.valueOf(blockExtension.getAddressableSize());
-									}
-									catch(DebugException de)
-									{
-										// TODO
-									}
-									
-									if(baseAddress != null)
-									{
-										if(fGotoAddress.isOffset())
-											absoluteAddress = baseAddress.add(address);
-										else if(fGotoAddress.isJump() && addressableSize != null)
-											absoluteAddress = baseAddress.add(address.multiply(addressableSize));
-									}
-								}
-								
-								// 1) Try to reposition the renderings using the IRepositionableMemoryRendering interface
-								if(absoluteAddress != null && activeRendering instanceof IRepositionableMemoryRendering)
-								{
-									try
-									{
-										((IRepositionableMemoryRendering) activeRendering).goToAddress(absoluteAddress);
-									}
-									catch(DebugException de)
-									{
-										// do nothing
-									}
-								}
-							}
-						}
-					}
-				}
-				
+				go(fGotoAddress.getExpressionText(), false);
 			}
 		};
 		
@@ -163,6 +84,16 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					goHandler.run();
+				}
+			});
+		}
+		
+		button = fGotoAddress.getButton(GoToAddressWidget.ID_GO_NEW_TAB);
+		if (button != null)
+		{
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					go(fGotoAddress.getExpressionText(), true);
 				}
 			});
 		}
@@ -182,5 +113,158 @@ public class TraditionalGoToAddressRendering extends AbstractMemoryRendering {
 	public Control getControl() {
 		return fControl;
 	}
+	
+	private void go(final String expression, final boolean inNewTab)
+	{
+		IMemoryRenderingContainer containers[] = fSite.getMemoryRenderingContainers();
+		for(int i = 0; i < containers.length; i++)
+		{
+			if(containers[i] instanceof RenderingViewPane)
+			{
+				final IMemoryRenderingContainer container = containers[i];
+				if(containers[i] != null)
+				{
+					final IMemoryRendering activeRendering = containers[i].getActiveRendering();
+					if(activeRendering != null)
+					{
+						new Thread() {
+							public void run()
+							{
+								IMemoryBlock activeMemoryBlock = activeRendering.getMemoryBlock();
+								IMemoryBlockExtension blockExtension = (IMemoryBlockExtension) activeMemoryBlock.getAdapter(IMemoryBlockExtension.class);
+								
+								if(inNewTab)
+								{
+									try {
+										final IMemoryRendering rendering = new CreateRendering(container);
+										IMemoryBlock newBlock = null;
+										if(activeMemoryBlock.getDebugTarget() instanceof IMemoryBlockRetrievalExtension)
+										{
+											newBlock = ((IMemoryBlockRetrievalExtension) activeMemoryBlock.getDebugTarget())
+												.getExtendedMemoryBlock(expression, activeMemoryBlock.getDebugTarget());
+											
+										}
+										else
+										{
+											BigInteger newAddress;
+											if(expression.toUpperCase().startsWith("0X"))
+												newAddress = new BigInteger(expression.substring(2), 16);
+											else
+												newAddress = new BigInteger(expression, 16);
+											
+											newBlock = activeMemoryBlock.getDebugTarget().getMemoryBlock(newAddress.longValue(), 
+												activeMemoryBlock.getLength());
+										}
+										
+										final IMemoryBlock finalNewBlock = newBlock;
+										Display.getDefault().asyncExec(new Runnable(){
+											public void run()
+											{
+												rendering.init(container, finalNewBlock);
+												container.addMemoryRendering(rendering);
+											}
+										});
+										
+									} catch (DebugException e) {
+										MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+												DebugUIMessages.GoToAddressAction_Address_is_invalid, e);
+									}
+								}
+								else if(activeRendering instanceof IRepositionableMemoryRendering)
+								{	
+									try
+									{
+										if(activeMemoryBlock.getDebugTarget() instanceof IMemoryBlockRetrievalExtension)
+										{
+											IMemoryBlockExtension resolveExpressionBlock = ((IMemoryBlockRetrievalExtension) activeMemoryBlock.getDebugTarget())
+												.getExtendedMemoryBlock(expression, activeMemoryBlock.getDebugTarget());
+											((IRepositionableMemoryRendering) activeRendering).goToAddress(resolveExpressionBlock.getBigBaseAddress());
+										}
+										else
+										{
+											BigInteger newAddress;
+											if(expression.toUpperCase().startsWith("0X"))
+												newAddress = new BigInteger(expression.substring(2), 16);
+											else
+												newAddress = new BigInteger(expression, 16);
+											
+											((IRepositionableMemoryRendering) activeRendering).goToAddress(newAddress);
+										}
+									}
+									catch(DebugException de)
+									{
+										MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+												DebugUIMessages.GoToAddressAction_Address_is_invalid, de);
+									}
+								}
+								
+							}
+						}.start();
+					}
+				}
+			}
+		}
+	}
+}
 
+class GoToAddressWidget {
+	
+	private Text fExpression;
+	private Button fOKButton;
+	private Button fOKNewTabButton;
+	private Composite fComposite;
+	
+	protected static int ID_GO_NEW_TAB = 2000;
+
+	/**
+	 * @param parent
+	 * @return
+	 */
+	public Control createControl(Composite parent)
+	{
+		fComposite = new Composite(parent, SWT.NONE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, DebugUIPlugin.getUniqueIdentifier() + ".GoToAddressComposite_context"); //$NON-NLS-1$
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 6;
+		layout.makeColumnsEqualWidth = false;
+		layout.marginHeight = 0;
+		layout.marginLeft = 0;
+		fComposite.setLayout(layout);
+	
+		fExpression = new Text(fComposite, SWT.SINGLE | SWT.BORDER);
+		fExpression.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fOKButton = new Button(fComposite, SWT.NONE);
+		fOKButton.setText("Go");
+		
+//		fOKNewTabButton = new Button(fComposite, SWT.NONE);
+//		fOKNewTabButton.setText("New Tab");
+		
+		return fComposite;
+	}
+	
+	public int getHeight()
+	{
+		int height = fComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		return height;
+	}
+	
+	public Button getButton(int id)
+	{
+		if (id == IDialogConstants.OK_ID)
+			return fOKButton;
+		if (id == ID_GO_NEW_TAB)
+			return fOKNewTabButton;
+		return null;
+	}
+	
+	public String getExpressionText()
+	{
+		return fExpression.getText().trim();
+	}
+	
+	public Text getExpressionWidget()
+	{
+		return fExpression;
+	}
 }

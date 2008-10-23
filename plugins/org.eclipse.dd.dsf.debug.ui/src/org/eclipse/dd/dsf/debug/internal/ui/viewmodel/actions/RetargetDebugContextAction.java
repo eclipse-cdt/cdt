@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Wind River Systems, Inc. - initial implementation
  *******************************************************************************/
 
 package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions;
@@ -29,6 +29,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
+ * Base class for actions which delegate functionality to an adapter retrieved
+ * from the current debug context.
+ * 
  * @since 1.1
  */
 abstract public class RetargetDebugContextAction implements IWorkbenchWindowActionDelegate, IDebugContextListener, IActionDelegate2  {

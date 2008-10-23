@@ -201,14 +201,29 @@ public class ErrorParserManager extends OutputStream {
 		if (fErrorParsers.size() == 0)
 			return;
 
-		// If the line is too long, it is most likely a command line and not an error message
-		// Don't process it since it'll probably be really slow and won't find an error anyway
-		if (line.length() > 1000)
-			return;
 
+		String lineTrimmed = line.trim();
+		
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser curr : parsers) {
-				if (curr.processLine(line, this)) {
+				int types = IErrorParser2.NONE;
+				if (curr instanceof IErrorParser2) {
+					types = ((IErrorParser2) curr).getProcessLineBehaviour();
+				}
+				if ((types & IErrorParser2.KEEP_LONGLINES) == 0) {
+					// long lines are not given to parsers, unless it wants it
+					if (lineTrimmed.length() > 1000)
+						continue;
+				}
+				if ((types & IErrorParser2.KEEP_UNTRIMMED) !=0 ) {
+					// untrimmed lines
+					if (curr.processLine(line, this)) {
+						return;
+					}
+					continue;
+				}
+				// standard behavior (pre 5.1)
+				if (curr.processLine(lineTrimmed, this)) {
 					return;
 				}
 			}
@@ -445,7 +460,10 @@ public class ErrorParserManager extends OutputStream {
 		String buffer = currentLine.toString();
 		int i = 0;
 		while ((i = buffer.indexOf('\n')) != -1) {
-			String line = buffer.substring(0, i).trim(); // get rid of any trailing \r
+			String line = buffer.substring(0, i); 
+			// get rid of any trailing '\r'
+			if (line.endsWith("\r"))  //$NON-NLS-1$
+				line=line.substring(0,line.length()-1);
 			processLine(line);
 			previousLine = line;
 			buffer = buffer.substring(i + 1); // skip the \n and advance

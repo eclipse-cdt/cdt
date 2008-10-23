@@ -10,8 +10,7 @@
           enablesFor="1"
           id="org.eclipse.dd.debug.ui.memory.search.FindAction"
           label="Find Next"
-          menubarPath="additions"
-          state="false">
+          menubarPath="additions">
     </action>
  </viewContribution>
  <viewContribution
@@ -22,8 +21,7 @@
           enablesFor="1"
           id="org.eclipse.dd.debug.ui.memory.search.FindAction"
           label="Find/Replace..."
-          menubarPath="additions"
-          state="false">
+          menubarPath="additions">
     </action>
  </viewContribution>
 </extension>

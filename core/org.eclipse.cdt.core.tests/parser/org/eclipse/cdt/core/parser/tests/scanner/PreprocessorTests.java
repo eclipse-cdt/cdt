@@ -87,6 +87,8 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	public void testMissingParenthesis() throws Exception {
 		initializeScanner();
 		validateEOF();
+		validateProblemCount(1);
+		validateProblem(0, IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, "f");
 	}
 	
 	// #define b(x) ok

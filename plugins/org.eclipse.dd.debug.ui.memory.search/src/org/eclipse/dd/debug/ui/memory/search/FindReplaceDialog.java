@@ -334,9 +334,9 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fProperties.setProperty(SEARCH_FORMAT_FORWARD, "" + fForwardButton.getSelection());
 		
-		fProperties.setProperty(FindReplaceDialog.SEARCH_FORMAT_CASEINSENSTIVE, "" + fCaseInSensitiveCheckbox.getSelection());
+		fProperties.setProperty(SEARCH_FORMAT_CASEINSENSTIVE, "" + fCaseInSensitiveCheckbox.getSelection());
 		
-		fProperties.setProperty(FindReplaceDialog.SEARCH_FORMAT_WRAP, "" + fWrapCheckbox.getSelection());
+		fProperties.setProperty(SEARCH_FORMAT_WRAP, "" + fWrapCheckbox.getSelection());
 
 		fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "false");
 		
@@ -532,7 +532,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(fReplaceText, 0, SWT.LEFT);
 		data.width = 260;
 		fFindText.setLayoutData(data);
-		fFindText.setText(fProperties.getProperty(FindReplaceDialog.SEARCH_FIND, ""));
+		fFindText.setText(fProperties.getProperty(SEARCH_FIND, ""));
 		
 		data = new FormData();
 		data.top = new FormAttachment(fFindText, 0, SWT.CENTER);
@@ -550,7 +550,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(replaceLabel);
 		data.width = 260;
 		fReplaceText.setLayoutData(data);
-		fReplaceText.setText(fProperties.getProperty(FindReplaceDialog.SEARCH_REPLACE, ""));
+		fReplaceText.setText(fProperties.getProperty(SEARCH_REPLACE, ""));
 		
 		// group direction
 		
@@ -567,7 +567,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fForwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
 		final Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
-		final boolean isForward = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true");
+		final boolean isForward = fProperties.getProperty(SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true");
 		fForwardButton.setSelection(isForward);
 		backwardButton.setSelection(!isForward);
 		
@@ -616,10 +616,10 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fStartText.setItems(removeNullElements(new String[] { getViewportStart(), getStart(), getEnd(), getMemoryBlockBaseAddress() }));
 		fEndText.setItems(removeNullElements(new String[] { getEnd(), getStart(), getMemoryBlockBaseAddress(), getViewportStart() }));
-		if(fProperties.getProperty(FindReplaceDialog.SEARCH_START) != null)
-			fStartText.add(fProperties.getProperty(FindReplaceDialog.SEARCH_START), 0);
-		if(fProperties.getProperty(FindReplaceDialog.SEARCH_END) != null)
-			fEndText.add(fProperties.getProperty(FindReplaceDialog.SEARCH_END), 0);
+		if(fProperties.getProperty(SEARCH_START) != null)
+			fStartText.add(fProperties.getProperty(SEARCH_START), 0);
+		if(fProperties.getProperty(SEARCH_END) != null)
+			fEndText.add(fProperties.getProperty(SEARCH_END), 0);
 		fStartText.select(0);
 		fEndText.select(0);
 		
@@ -648,14 +648,14 @@ public class FindReplaceDialog extends SelectionDialog
 		fFormatByteSequenceButton = new Button(formatGroup, SWT.RADIO);
 		fFormatByteSequenceButton.setText(Messages.getString("FindReplaceDialog.ButtonByteSequence")); //$NON-NLS-1$
 		
-		final String format = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT, FindReplaceDialog.SEARCH_FORMAT_ASCII);
+		final String format = fProperties.getProperty(SEARCH_FORMAT, FindReplaceDialog.SEARCH_FORMAT_ASCII);
 		
-		fFormatAsciiButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_ASCII));
-		fFormatOctalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_OCTAL));
-		fFormatBinaryButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BINARY));
-		fFormatDecimalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_DECIMAL));
-		fFormatHexButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_HEX));
-		fFormatByteSequenceButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BYTESEQUENCE));
+		fFormatAsciiButton.setSelection(format.equals(SEARCH_FORMAT_ASCII));
+		fFormatOctalButton.setSelection(format.equals(SEARCH_FORMAT_OCTAL));
+		fFormatBinaryButton.setSelection(format.equals(SEARCH_FORMAT_BINARY));
+		fFormatDecimalButton.setSelection(format.equals(SEARCH_FORMAT_DECIMAL));
+		fFormatHexButton.setSelection(format.equals(SEARCH_FORMAT_HEX));
+		fFormatByteSequenceButton.setSelection(format.equals(SEARCH_FORMAT_BYTESEQUENCE));
 			
 		
 		data = new FormData();

@@ -565,10 +565,13 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fForwardButton = new Button(directionGroup, SWT.RADIO);
 		fForwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
-		Button backwardButton = new Button(directionGroup, SWT.RADIO);
+		final Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
-		fForwardButton.setSelection(fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true"));
-		backwardButton.setSelection(!fForwardButton.getSelection());
+		final boolean isForward = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true");
+		Display.getDefault().asyncExec(new Runnable() { public void run() {
+			fForwardButton.setSelection(isForward);
+			backwardButton.setSelection(!isForward);
+		}});
 		
 		data = new FormData();
 		data.top = new FormAttachment(fReplaceText);

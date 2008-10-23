@@ -568,10 +568,8 @@ public class FindReplaceDialog extends SelectionDialog
 		final Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
 		final boolean isForward = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true");
-		Display.getDefault().asyncExec(new Runnable() { public void run() {
-			fForwardButton.setSelection(isForward);
-			backwardButton.setSelection(!isForward);
-		}});
+		fForwardButton.setSelection(isForward);
+		backwardButton.setSelection(!isForward);
 		
 		data = new FormData();
 		data.top = new FormAttachment(fReplaceText);
@@ -652,16 +650,13 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		final String format = fProperties.getProperty(FindReplaceDialog.SEARCH_FORMAT, FindReplaceDialog.SEARCH_FORMAT_ASCII);
 		
-		Display.getDefault().asyncExec(new Runnable(){
-			public void run() {
-				fFormatAsciiButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_ASCII));
-				fFormatOctalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_OCTAL));
-				fFormatBinaryButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BINARY));
-				fFormatDecimalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_DECIMAL));
-				fFormatHexButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_HEX));
-				fFormatByteSequenceButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BYTESEQUENCE));
-			}
-		});
+		fFormatAsciiButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_ASCII));
+		fFormatOctalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_OCTAL));
+		fFormatBinaryButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BINARY));
+		fFormatDecimalButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_DECIMAL));
+		fFormatHexButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_HEX));
+		fFormatByteSequenceButton.setSelection(format.equals(FindReplaceDialog.SEARCH_FORMAT_BYTESEQUENCE));
+			
 		
 		data = new FormData();
 		data.top = new FormAttachment(rangeGroup);
@@ -766,9 +761,6 @@ public class FindReplaceDialog extends SelectionDialog
 				validate();
 			}
 		});
-		
-		fForwardButton.setSelection(true);
-		fFormatAsciiButton.setSelection(true);
 		
 		composite.setTabList(new Control[] {
 			fFindText, 

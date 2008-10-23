@@ -13,7 +13,6 @@ package org.eclipse.dd.dsf.debug.internal.ui.viewmodel.detailsupport;
 
 import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -130,7 +129,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	protected void okPressed() {
 		String text = getValue();
 		try {
-			DsfDebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
+			DsfDebugUIPlugin.getDefault().getPreferenceStore().setValue(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
 		} 
 		catch (NumberFormatException e) {
 			DsfDebugUIPlugin.log(e);

@@ -32,6 +32,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.TokenP
  * @since 5.0
  */
 public class MacroExpander {
+	private static final class AbortMacroExpansionException extends Exception {}
+
 	private static final int ORIGIN = OffsetLimitReachedException.ORIGIN_MACRO_EXPANSION;
 	private static final Token END_TOKEN = new Token(IToken.tEND_OF_INPUT, null, 0, 0);	
 	private static final TokenList EMPTY_TOKEN_LIST = new TokenList();	
@@ -179,8 +181,7 @@ public class MacroExpander {
 			input.prepend(firstExpansion);
 
 			result= expandAll(input, forbidden, isPPCondition, null);
-		}
-		catch (CompletionInMacroExpansionException e) {
+		} catch (CompletionInMacroExpansionException e) {
 			// for content assist in macro expansions, we return the list of tokens of the 
 			// parameter at the current cursor position and hope that they make sense if 
 			// they are inserted at the position of the expansion.
@@ -243,6 +244,7 @@ public class MacroExpander {
 	 * tokens from the input (to read the parameters) and stores the resulting tokens together
 	 * with boundary markers in the result token list.
 	 * Returns the last token of the expansion.
+	 * @throws AbortMacroExpansionException 
 	 */
 	private Token expandOne(Token lastConsumed, PreprocessorMacro macro, 
 			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result,
@@ -255,7 +257,28 @@ public class MacroExpander {
 			if (tracker != null) {
 				tracker.startFunctionStyleMacro((Token) lastConsumed.clone());
 			}
-			lastConsumed= parseArguments(input, (FunctionStyleMacro) macro, forbidden, argInputs, tracker);
+			try {
+				lastConsumed= parseArguments(input, (FunctionStyleMacro) macro, forbidden, argInputs, tracker);
+			} catch (AbortMacroExpansionException e) {
+				// ignore this macro expansion
+				for (int i = 0; i < argInputs.length; i++) {
+					TokenSource argInput= argInputs[i];
+					executeScopeMarkers(argInput, forbidden);
+					if (tracker != null) {
+						tracker.setExpandedMacroArgument(null);
+					}
+				}			
+				if (tracker != null) {
+					if (tracker.isRequestedStep()) {
+						tracker.storeFunctionStyleMacroReplacement(macro, new TokenList(), result);
+					} else if (tracker.isDone()) {
+						tracker.appendFunctionStyleMacro(result);
+					}
+					tracker.endFunctionStyleMacro();
+				}
+				return null;
+			}
+			
 			TokenList[] clonedArgs= new TokenList[paramCount];
 			TokenList[] expandedArgs= new TokenList[paramCount];
 			for (int i = 0; i < paramCount; i++) {
@@ -278,17 +301,14 @@ public class MacroExpander {
 			}
 			if (tracker == null) {
 				replaceArgs(macro, clonedArgs, expandedArgs, result);
-			}
-			else {
+			} else {
 				if (tracker.isRequestedStep()) {
 					TokenList replacement= new TokenList();
 					replaceArgs(macro, clonedArgs, expandedArgs, replacement);
 					tracker.storeFunctionStyleMacroReplacement(macro, replacement, result);
-				}
-				else if (tracker.isDone()) {
+				} else if (tracker.isDone()) {
 					tracker.appendFunctionStyleMacro(result);
-				}
-				else {
+				} else {
 					replaceArgs(macro, clonedArgs, expandedArgs, result);
 				}
 				tracker.endFunctionStyleMacro();
@@ -424,12 +444,9 @@ public class MacroExpander {
 	
 	/**
 	 * Expects that the identifier has been consumed.
-	 * @param forbidden 
-	 * @param tracker 
-	 * @throws OffsetLimitReachedException 
 	 */
-	private Token parseArguments(TokenSource input, FunctionStyleMacro macro, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource[] result, 
-			MacroExpansionTracker tracker) throws OffsetLimitReachedException {
+	private Token parseArguments(TokenSource input, FunctionStyleMacro macro, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, 
+			TokenSource[] result, MacroExpansionTracker tracker) throws OffsetLimitReachedException, AbortMacroExpansionException {
 		final int argCount= macro.getParameterPlaceholderList().length;
 		final boolean hasVarargs= macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS;
 		final int requiredArgs= hasVarargs ? argCount-1 : argCount;
@@ -439,13 +456,16 @@ public class MacroExpander {
 			result[i]= new TokenSource(null, false);
 		}
 		
-		boolean complete= false;
+		boolean missingRParenthesis= false;
+		boolean tooManyArgs= false;
+		
 		boolean isFirstOfArg= true;
 		Token lastToken= null;
 		TokenList spaceMarkers= new TokenList();
         loop: while (true) {
     		Token t= input.fetchFirst();
     		if (t == null) {
+    			missingRParenthesis= true;
     			break loop;
     		}
     		if (tracker != null) {
@@ -470,6 +490,7 @@ public class MacroExpander {
             		}
         			throw new OffsetLimitReachedException(ORIGIN, null);
         		}
+        		missingRParenthesis= true;
         		break loop;
         	case IToken.tCOMPLETION:
         		if (idx < result.length) {
@@ -491,7 +512,6 @@ public class MacroExpander {
         	case IToken.tRPAREN:
         		assert nesting >= 0;
         		if (--nesting < 0) {
-        			complete= true;
         			break loop;
         		}
         		break;
@@ -506,6 +526,7 @@ public class MacroExpander {
             			continue loop;
         			}
         			else if (!hasVarargs) {
+        				tooManyArgs= true;
         				break loop;
         			}
         		}
@@ -531,6 +552,7 @@ public class MacroExpander {
         		assert nesting >= 0;
         	}
     		if (argCount == 0) {
+    			tooManyArgs= true;
     			break loop;
     		}
     		result[idx].appendAll(spaceMarkers);
@@ -538,7 +560,15 @@ public class MacroExpander {
     		isFirstOfArg= false;
         }
 
-		if (!complete || idx+1 < requiredArgs) {
+
+		if (missingRParenthesis) {
+			handleProblem(IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, macro.getNameCharArray());
+			throw new AbortMacroExpansionException();
+		}
+		
+		if (tooManyArgs)
+			handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getNameCharArray());
+		else if (idx+1 < requiredArgs) {
 			handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getNameCharArray());
 		}
         return lastToken;

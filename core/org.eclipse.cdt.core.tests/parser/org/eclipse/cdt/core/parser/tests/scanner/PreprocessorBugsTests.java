@@ -18,7 +18,8 @@ import org.eclipse.cdt.core.parser.IToken;
 
 
 /**
- * Scanner2Tests ported to use the CPreprocessor
+ * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in 
+ * the CPreprocessor, afterwards.
  */
 public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	
@@ -165,4 +166,25 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblemCount(1);
 		validateProblem(0, IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
 	}
+	
+	//	#define BAR1_RX_BLOCK_SIZE 1
+	//	#define MAX(__x,__y) ((__x)>(__y)?(__x):(__y))
+	//	#define BAR_BLOCK_SIZE    (MAX(BAR1_RX_BLOCK_SIZE, 
+	//	int main(void) {
+	//	   BAR_BLOCK_SIZE;
+	//	}
+	public void testMissingClosingParenthesis_Bug251734() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_int);
+		validateIdentifier("main");
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.t_void);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tLBRACE);
+		validateToken(IToken.tLPAREN);
+		validateEOF();
+		validateProblemCount(1);
+		validateProblem(0, IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, null);
+	}
+
 }

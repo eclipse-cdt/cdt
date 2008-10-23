@@ -166,7 +166,7 @@ public class SRecordImporter implements IMemoryImporter {
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
-				dialog.setText("Choose memory export file");
+				dialog.setText("Choose memory import file");
 				dialog.setFilterExtensions(new String[] { "*.*;*" } );
 				dialog.setFilterNames(new String[] { "All Files" } );
 				dialog.setFileName(fFileText.getText());
@@ -268,7 +268,7 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	public String getId()
 	{
-		return "snfimporter";
+		return "srecord";
 	}
 	
 	public String getName()
@@ -277,7 +277,7 @@ public class SRecordImporter implements IMemoryImporter {
 	}
 	
 	public void importMemory() {
-		Job job = new Job("Memory Download from S-Record File"){ //$NON-NLS-1$
+		Job job = new Job("Memory Import from S-Record File"){ //$NON-NLS-1$
 			
 			public IStatus run(IProgressMonitor monitor) {
 				

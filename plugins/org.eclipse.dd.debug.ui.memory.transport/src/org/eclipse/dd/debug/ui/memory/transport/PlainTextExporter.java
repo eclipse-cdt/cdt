@@ -381,7 +381,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	}
 	
 	public void exportMemory() {
-		Job job = new Job("Memory Export to S-Record File"){ //$NON-NLS-1$
+		Job job = new Job("Memory Export to Plain Text File"){ //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				
 				try

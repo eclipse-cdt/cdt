@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -31,6 +32,9 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -908,6 +912,32 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				CCorePlugin.log(e);
 			}
 		}
+		else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
+			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
+			if (elaboratedSpecifier.isFriend()) {
+				pdomName.setIsFriendSpecifier(true);
+				PDOMName enclClassName= (PDOMName) pdomName.getEnclosingDefinition();
+				PDOMBinding enclClassBinding= enclClassName.getBinding();
+				if (enclClassBinding instanceof PDOMCPPClassType) {
+					((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(pdom, pdomName));
+				}
+			}
+		}
+		else if (parentNode instanceof ICPPASTFunctionDeclarator) {			
+			if (parentNode.getParent() instanceof IASTSimpleDeclaration) {
+				IASTSimpleDeclaration grandparentNode = (IASTSimpleDeclaration) parentNode.getParent();
+				if (grandparentNode.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
+					if (((ICPPASTDeclSpecifier)grandparentNode.getDeclSpecifier()).isFriend()) {
+						pdomName.setIsFriendSpecifier(true);
+						PDOMName enclClassName= (PDOMName) pdomName.getEnclosingDefinition();
+						PDOMBinding enclClassBinding= enclClassName.getBinding();
+						if (enclClassBinding instanceof PDOMCPPClassType) {
+							((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(pdom, pdomName));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -944,6 +974,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization)derivedClassBinding;
 					ownerClass.removeBase(pdomName);
 				}
+			}
+		}
+		if (pdomName.isFriendSpecifier()) {
+			PDOMName enclClassName= (PDOMName) pdomName.getEnclosingDefinition();
+			PDOMBinding enclClassBinding= enclClassName.getBinding();
+			if (enclClassBinding instanceof PDOMCPPClassType) {
+				PDOMCPPClassType ownerClass = (PDOMCPPClassType)enclClassBinding;
+				ownerClass.removeFriend(pdomName);
 			}
 		}
 	}

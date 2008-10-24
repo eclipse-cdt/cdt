@@ -164,11 +164,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  72.1 - store flag for pure virtual methods.
 	 *  73.0 - add values for variables and enumerations, bug 250788
 	 *  74.0 - changes for proper template argument support, bug 242668
+	 *  75.0 - support for friends, bug 250167
 	 */
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 74; 
+	public static final int MAJOR_VERSION = 75; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);

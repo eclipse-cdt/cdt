@@ -52,9 +52,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public static final int IS_REFERENCE 						= IS_DECLARATION | IS_DEFINITION;
 	public static final int DECL_DEF_REF_MASK					= IS_DECLARATION | IS_DEFINITION | IS_REFERENCE;
 	public static final int IS_INHERITANCE_SPEC 				= 0x04;
-	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x08;
-	public static final int READ_ACCESS 						= 0x10;
-	public static final int WRITE_ACCESS 						= 0x20;
+	public static final int IS_FRIEND_SPEC						= 0x08;
+	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x10;
+	public static final int READ_ACCESS 						= 0x20;
+	public static final int WRITE_ACCESS 						= 0x40;
 
 	
 	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
@@ -209,6 +210,15 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return pdom.getDB().getByte(record + FLAGS) & mask;
 	}
 
+	public void setIsFriendSpecifier(boolean val) throws CoreException {
+		int flags= pdom.getDB().getByte(record + FLAGS) & 0xff;
+		if (val) 
+			flags |= IS_FRIEND_SPEC;
+		else
+			flags &= ~IS_FRIEND_SPEC;
+		pdom.getDB().putByte(record + FLAGS, (byte) flags);
+	}
+
 	public void setIsBaseSpecifier(boolean val) throws CoreException {
 		int flags= pdom.getDB().getByte(record + FLAGS) & 0xff;
 		if (val) 
@@ -216,6 +226,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		else
 			flags &= ~IS_INHERITANCE_SPEC;
 		pdom.getDB().putByte(record + FLAGS, (byte) flags);
+	}
+
+	public boolean isFriendSpecifier() throws CoreException {
+		return getFlags(IS_FRIEND_SPEC) == IS_FRIEND_SPEC;
 	}
 
 	public boolean isBaseSpecifier() throws CoreException {

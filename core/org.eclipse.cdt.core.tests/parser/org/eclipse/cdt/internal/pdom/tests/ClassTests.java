@@ -124,7 +124,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	/* Test friend relationships between classes */
-	public void _testFriend() throws Exception {
+	public void testFriend() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), true, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType classA = (ICPPClassType) bindings[0];

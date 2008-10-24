@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -897,5 +898,59 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkValue("global", null);
 		checkValue("C::mem", null);
 		checkValue("e0", 0L);
+	}
+	
+	//class A {};
+	//class B {friend class A;};
+
+	//class B {};
+	public void testFriendClass() throws Exception {
+		setupFile(2, true);
+		assertFriendRemoval("B", "A");
+	}
+	
+	// class X {public: char* foo(int);};
+	// class Y {friend char* X::foo(int);};
+
+	// class Y {};
+	public void testFriendMethod() throws Exception {
+		setupFile(2, true);
+		assertFriendRemoval("Y", "X::foo");
+	}
+	
+	// class X {friend void friend_set(X*, int);};
+	// void friend_set(X* p, int i) {}
+
+	// class X {};
+	public void testFriendFunction() throws Exception {
+		setupFile(2, true);
+		assertFriendRemoval("X", "friend_set");
+	}
+	
+	private void assertFriendRemoval(String clientClassBinding, String supplierBinding) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			IBinding client = findBinding(clientClassBinding);
+			IBinding supplier = findBinding(supplierBinding);
+			assertNotNull("Unable to find binding with name \""+clientClassBinding+"\"", client);
+			assertTrue("Unable to find binding with name \""+clientClassBinding+"\"", client instanceof ICPPClassType);
+			assertNotNull("Unable to find binding with name \""+supplierBinding+"\"", supplier);
+			assertTrue(((ICPPClassType)client).getFriends().length == 1);
+			assertTrue(((ICPPClassType)client).getFriends()[0].equals(supplier));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+
+		fIndex.acquireReadLock();
+		try {
+			IBinding client = findBinding(clientClassBinding);
+			assertNotNull("Unable to find binding with name \""+clientClassBinding+"\"", client);
+			assertTrue("Unable to find binding with name \""+clientClassBinding+"\"", client instanceof ICPPClassType);
+			assertTrue(((ICPPClassType)client).getFriends().length == 0);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 }

@@ -56,11 +56,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
 
-	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 8; // byte
-	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 9; // byte
+	private static final int FIRSTFRIEND = PDOMCPPBinding.RECORD_SIZE + 8;
+	
+	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 12; // byte
+	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 13; // byte
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 10;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
 
 	private ICPPClassScope fScope;
 
@@ -180,6 +182,45 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 				setFirstBase(base.getNextBase());
 			}
 			base.delete();
+		}
+	}
+	
+	public void addFriend(PDOMCPPFriend friend) throws CoreException {
+		PDOMCPPFriend firstFriend = getFirstFriend();
+		friend.setNextFriend(firstFriend);
+		setFirstFriend(friend);
+	}
+
+	private PDOMCPPFriend getFirstFriend() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRSTFRIEND);
+		return rec != 0 ? new PDOMCPPFriend(pdom, rec) : null;
+	}
+
+	private void setFirstFriend(PDOMCPPFriend friend) throws CoreException {
+		int rec = friend != null ? friend.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRSTFRIEND, rec);
+	}
+
+	public void removeFriend(PDOMName pdomName) throws CoreException {
+		PDOMCPPFriend friend = getFirstFriend();
+		PDOMCPPFriend predecessor= null;
+		int nameRec= pdomName.getRecord();
+		while (friend != null) {
+			PDOMName name = friend.getSpecifierName();
+			if (name != null && name.getRecord() == nameRec) {
+				break;
+			}
+			predecessor= friend;
+			friend= friend.getNextFriend();
+		}
+		if (friend != null) {
+			if (predecessor != null) {
+				predecessor.setNextFriend(friend.getNextFriend());
+			}
+			else {
+				setFirstFriend(friend.getNextFriend());
+			}
+			friend.delete();
 		}
 	}
 
@@ -309,8 +350,15 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	public IBinding[] getFriends() throws DOMException {
-		// not yet supported.
-		return IBinding.EMPTY_BINDING_ARRAY;
+		try {
+			final List<IBinding> list = new ArrayList<IBinding>();
+			for (PDOMCPPFriend friend = getFirstFriend();
+				friend != null; friend = friend.getNextFriend()) list.add(0,friend.getFriendSpecifier());
+			return list.toArray(new IBinding[list.size()]);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IBinding[0];
+		}
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException { 

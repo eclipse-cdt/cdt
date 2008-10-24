@@ -75,6 +75,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 
@@ -216,7 +217,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
     	}
     }
 
-    
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             
@@ -432,7 +432,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     /*
                      *  See if the desired format is supported.
                      */
-                    String[] formatIds = getData();
+                    final String[] formatIds = getData();
                     String   finalFormatId = IFormattedValues.NATURAL_FORMAT;
                     boolean  requestedFormatIsSupported = false;
                     
@@ -469,55 +469,153 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     final FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(dmc, finalFormatId);
                     
                     getDMVMProvider().getModelData(
-                        VariableVMNode.this, update,
-                        expressionService,
-                        valueDmc, 
-                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), monitor) {
-                            @Override
-                            public void handleCompleted() {
-                                if (!isSuccess()) {
-                                	monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, getStatus().getMessage(), null));
-                                    monitor.done();
-                                    return;
-                                }
+                    	VariableVMNode.this, 
+                    	update,
+                    	expressionService,
+                    	valueDmc, 
+                    	new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), monitor) {
+                    		@Override
+                    		public void handleCompleted() {
+                    			if (!isSuccess()) {
+                    				monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, getStatus().getMessage(), null));
+                    				monitor.done();
+                    				return;
+                    			}
 
-                                // Fill the label/column with the properly formatted data value. 
-                                /* Commented out, to be replaced.  See bug 225612.
-                                StringBuffer stringValueBuf = new StringBuffer(getData().getFormattedValue());
-                                String stringValue = expressionDMData.getStringValue();
-                                if(stringValue != null && stringValue.length() > 0)
-                                {
-                                	stringValueBuf.append(" ");
-                                	stringValueBuf.append(stringValue.length() > MAX_STRING_VALUE_LENGTH ? stringValue.substring(0, MAX_STRING_VALUE_LENGTH) : stringValue);
-                                }
-                                update.setLabel(stringValueBuf.toString(), labelIndex);*/
-                                update.setLabel(getData().getFormattedValue(), labelIndex);
-                                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
-                                
-                                // Color based on change history
-                                FormattedValueDMData oldData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, valueDmc);
+                    			final String formattedValue = getData().getFormattedValue();
+                    			final String formattedStringId = valueDmc.getFormatID();
 
-                        		IExpressionDMData oldDMData = (IExpressionDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, dmc); 
-                                /* Commented out, to be replaced.  See bug 225612.
-                                String oldStringValue = oldDMData == null ? null : oldDMData.getStringValue();*/
-                                
-                                // highlight the value if either the value (address) has changed or the string (memory at the value) has changed
-                        		if ((oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue()))) {
-                        			/* Commented out, to be replaced.  See bug 225612.
-                        			|| (oldStringValue != null && !oldStringValue.equals(stringValue))) {*/
-                                    update.setBackground(
-                                        DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(), labelIndex);
-                                }
+                    			if ( formattedStringId.equals(IFormattedValues.STRING_FORMAT) ) {
+                    				/*
+                    				 *  In this case we are being asked to fill in the value information with STRING_FORMAT.
+                    				 *  So we do not need to append it to the value as we did in the past.
+                    				 */
+                    				completeFillinInUpdateWithValue(update,	labelIndex, valueDmc, formattedValue, null, null, monitor);
+                    			}
+                    			else {
+                    				/*
+                    				 *  The format specified is not STRING_FORMAT and as we did before we need to append 
+                    				 *  the string information to the value ( if it exists ). So first see if STRING_FORMAT 
+                    				 *  is supported by the service.
+                    				 */
+                   					boolean foundStringFormat = false;
 
-                                monitor.done();
-                            }
-                        },
-                        getExecutor()
+                   					for ( String format : formatIds ) {
+                   						if ( format.equals(IFormattedValues.STRING_FORMAT) ) {
+                   							foundStringFormat = true;
+                   						}
+                   					}
+
+                   					if ( foundStringFormat ) {
+                   						/*
+                   						 *  So STRING_FORMAT is supported so we can go get it and append it to the value.
+                   						 * 
+                   						 *  Note : Currently the Reference Model MI Expression Service  does not support the
+                   						 *         STRING_FORMAT. The view still pretty much looks the same however,  to one
+                   						 *         where the STRING_FORMAT is supplied.  This is because when GDB is ask  to
+                   						 *         evaluate a variable it will return the STRING_FORMAT information appended
+                   						 *         to the address so it looks good. GDB appends all kinds of usefull info to
+                   						 *         requests for data values, based on the value types. So the expressions do
+                   						 *         look good. If the Reference Model Expression Service  ever does implement
+                   						 *         STRING_FORMAT  this will need  to be revisited.  There would be duplicate
+                   						 *         information displayed and the view would look broken.  However this needs
+                   						 *         to be put back in to satisfy Bugzilla defect "225612", which represents a
+                   						 *         regression in the display of data from 0.9 to 1.x.
+                   						 */
+                   						final FormattedValueDMContext stringDmc = expressionService.getFormattedValueContext(dmc, IFormattedValues.STRING_FORMAT);
+                    	                    
+                   	                    getDMVMProvider().getModelData(
+                  	                   		VariableVMNode.this, 
+                  	                   		update,
+                    	               		expressionService,
+                    	               		stringDmc, 
+                    	               		new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), monitor) {
+                    	               			@Override
+                    	               			public void handleCompleted() {
+                    	               				if (!isSuccess()) {
+                    	               					monitor.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, getStatus().getMessage(), null));
+                    	               					monitor.done();
+                    	               					return;
+                    	               				}
+
+                    	               				String stringValue = getData().getFormattedValue();
+                    	                    				
+                    	                    		completeFillinInUpdateWithValue(update,	labelIndex, valueDmc, formattedValue, stringDmc, stringValue, monitor);
+                    	               			}
+                    	               		},
+                    	               		getExecutor()
+                   	                    );
+                   					}
+                    				else {
+                    					/*
+                    					 * The STRING_FORMAT is not supported. So all we can do is fill it in without it.
+                    					 */
+                    					completeFillinInUpdateWithValue(update,	labelIndex, valueDmc, formattedValue, null, null, monitor);
+                    				}
+                    			}
+                    		}
+                    	},
+                    	getExecutor()
                     );
                 }
             }
         );
     }
+    
+    private void completeFillinInUpdateWithValue(ILabelUpdate update,
+    		                                     int labelIndex,
+                                                 FormattedValueDMContext valueDmc,
+                                                 String value,
+                                                 FormattedValueDMContext stringFormatDmc,
+                                                 String stringFormatValue,
+                                                 RequestMonitor monitor)
+    {
+    	/*
+    	 * Complete filling in the VALUE. The form is
+    	 * 
+    	 *    "Numerical value" "STRING_FORMAT value"
+    	 *    
+    	 * This makes it so if the value is a pointer to something else we conveniently
+    	 * fill in the something else ( typically a string ).
+    	 */
+
+    	StringBuffer stringValueBuf = new StringBuffer(value);
+    	if(stringFormatValue != null && stringFormatValue.length() > 0)
+    	{
+    		stringValueBuf.append(" ");
+    		stringValueBuf.append(stringFormatValue);
+    	}
+    	update.setLabel(stringValueBuf.toString(), labelIndex);
+    	update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], labelIndex);
+
+    	/*
+    	 * Get old values for comparison ( if available ).
+    	 */
+    	FormattedValueDMData oldStringData = null;
+    	FormattedValueDMData oldData = 
+    		
+    		(FormattedValueDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, valueDmc);
+    	
+    	if ( stringFormatDmc != null) {
+    		oldStringData = (FormattedValueDMData) getDMVMProvider().getArchivedModelData(VariableVMNode.this, update, stringFormatDmc);
+    	}
+
+    	/*
+    	 *  Highlight the value if either the value (address) has changed or the string (memory at the value) has changed
+    	 */
+    	if ( ( oldData != null       && ! oldData.getFormattedValue().equals(value)                   ) ||
+       	     ( oldStringData != null && ! oldStringData.getFormattedValue().equals(stringFormatValue) )    
+       	   ) {
+       		RGB rgb = DebugUIPlugin.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB();
+       		update.setBackground(rgb, labelIndex);
+       	}
+
+    	/*
+    	 * Now we finally can complete this one.
+    	 */
+    	monitor.done();
+    }
+
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
             return new TextCellEditor(parent);

@@ -71,7 +71,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	}
 
 	private void launchDebugger( ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
-		monitor.beginTask("Launching debugger session", 10); //$NON-NLS-1$
+		monitor.beginTask("Launching debugger session", 10); 
 		if ( monitor.isCanceled() ) {
 			return;
 		}
@@ -95,9 +95,9 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         final GdbLaunch launch = (GdbLaunch)l;
 
         if (sessionType == SessionType.REMOTE) {
-            monitor.subTask( "Debugging remote C/C++ application" ); //$NON-NLS-1$    	
+            monitor.subTask( "Debugging remote C/C++ application" );     	
         } else {
-            monitor.subTask( "Debugging local C/C++ application" ); //$NON-NLS-1$
+            monitor.subTask( "Debugging local C/C++ application" ); 
         }
         
         IPath exePath = new Path(""); //$NON-NLS-1$

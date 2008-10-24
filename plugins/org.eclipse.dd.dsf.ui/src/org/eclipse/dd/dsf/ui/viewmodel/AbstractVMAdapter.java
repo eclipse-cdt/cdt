@@ -42,7 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 @ThreadSafe
 @SuppressWarnings("restriction")
-abstract public class AbstractVMAdapter implements IVMAdapter
+abstract public class AbstractVMAdapter implements IVMAdapterExtension
 {
  
 	private boolean fDisposed;
@@ -83,8 +83,10 @@ abstract public class AbstractVMAdapter implements IVMAdapter
      * 
 	 * @since 1.1
 	 */
-    protected Iterable<IVMProvider> getVMProviderIterable() {
-    	return fViewModelProviders.values();
+    public IVMProvider[] getActiveProviders() {
+        synchronized(fViewModelProviders) {
+            return fViewModelProviders.values().toArray(new IVMProvider[fViewModelProviders.size()]);
+        }
     }
 
     public void dispose() {
@@ -213,7 +215,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 
     	aboutToHandleEvent(event);
     	
-		for (IVMProvider vmProvider : getVMProviderIterable()) {
+		for (IVMProvider vmProvider : getActiveProviders()) {
 			if (vmProvider instanceof IVMEventListener) {
 				eventListeners.add((IVMEventListener)vmProvider);
 			}

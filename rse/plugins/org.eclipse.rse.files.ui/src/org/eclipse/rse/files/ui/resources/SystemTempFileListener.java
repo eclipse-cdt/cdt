@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
+ * David McKnight   (IBM)        - [251631] NullPointerException in SystemTempFileListener
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -155,20 +156,27 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	    }
 	    else
 	    {
-	        String path = file.getLocation().toString().toLowerCase();
+	    	if (file.isLinked()){
+	    		return true;
+	    	}
+	    	else {
+	    		String path = file.getLocation().toString().toLowerCase();
 	        
-	        for (int i = 0; i < _ignoredFiles.size(); i++)
-	        {
-	            IFile cfile = (IFile)_ignoredFiles.get(i);
-	            String cpath = cfile.getLocation().toString().toLowerCase();
-	            if (path.equals(cpath))
-	            {
-	                return true;
-	            }
-	        }
+	    		for (int i = 0; i < _ignoredFiles.size(); i++)
+	    		{
+	    			IFile cfile = (IFile)_ignoredFiles.get(i);
+	    			String cpath = cfile.getLocation().toString().toLowerCase();
+	    			if (path.equals(cpath))
+	    			{
+	    				return true;
+	    			}
+	    		}
+	    	}
 	    }
 	    return false;
 	}
+
+
 	
 	/**
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)

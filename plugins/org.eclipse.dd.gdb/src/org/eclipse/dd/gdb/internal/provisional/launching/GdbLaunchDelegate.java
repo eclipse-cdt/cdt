@@ -29,7 +29,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.service.IDsfDebugServicesFactory;
@@ -169,12 +171,41 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         	getFinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach, subMon2);
 
         launch.getSession().getExecutor().execute(finalLaunchSequence);
+        boolean succeed = false;
         try {
         	finalLaunchSequence.get();
+        	succeed = true;
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+        } finally {
+            if (!succeed) {
+                // finalLaunchSequence failed. Shutdown the session so that all started
+                // services including any GDB process are shutdown.
+                //
+                final GdbLaunch gdbLaunch = launch;
+                
+                Query<Object> launchShutdownQuery = new Query<Object>() {
+                    @Override
+                    protected void execute(DataRequestMonitor<Object> rm) {
+                        gdbLaunch.shutdownSession(rm);
+                    }
+                };
+                    
+                gdbLaunch.getSession().getExecutor().execute(launchShutdownQuery);
+                
+                // wait for the shutdown to finish.
+                // The Query.get() method is a synchronous call which blocks until the 
+                // query completes.  
+                try {
+                    launchShutdownQuery.get();
+                } catch (InterruptedException e) { 
+                    throw new DebugException( new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "InterruptedException while shutting down debugger launch " + gdbLaunch, e)); //$NON-NLS-1$ 
+                } catch (ExecutionException e) {
+                    throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in shutting down debugger launch " + gdbLaunch, e)); //$NON-NLS-1$
+                }
+            }        
         }
 	}
 

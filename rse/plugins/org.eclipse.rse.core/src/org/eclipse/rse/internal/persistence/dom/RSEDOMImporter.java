@@ -23,6 +23,7 @@
  * David Dykstal (IBM) - [232126] retrieve persisted filter type attribute
  * David Dykstal (IBM) - [233876] filters lost after restart
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
+ * David McKniht (IBM) - [245198] [dstore] ServerLauncherProperties not restored
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -189,22 +190,26 @@ public class RSEDOMImporter {
 		// but currently we're still using old way of creating subsystem first
 		IConnectorService service = null;
 
-		// get attributes of the service
+	// get attributes of the service
 		//		String name = connectorServiceNode.getName();
 		//		String type = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 		//		String group = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP).getValue();
 		boolean useSSL = getBooleanValue(connectorServiceNode, IRSEDOMConstants.ATTRIBUTE_USE_SSL);
 		int port = getIntegerValue(connectorServiceNode, IRSEDOMConstants.ATTRIBUTE_PORT);
-
+		
+		boolean setServerLauncherProperties = false;
+		
 		// first restore subsystems (since right now we need subsystem to get at service
 		RSEDOMNode[] ssChildren = connectorServiceNode.getChildren(IRSEDOMConstants.TYPE_SUBSYSTEM);
 		for (int s = 0; s < ssChildren.length; s++) {
 			RSEDOMNode ssChild = ssChildren[s];
 			ISubSystem subSystem = restoreSubSystem(host, ssChild);
-			if (subSystem != null && service == null) {
+			if (subSystem != null) {
 				ISubSystemConfiguration subsystemConfiguration = subSystem.getSubSystemConfiguration();
-				service = subsystemConfiguration.getConnectorService(host);
-				if (service != null) {
+				if (service == null){					
+					service = subsystemConfiguration.getConnectorService(host);
+				}				
+				if (service != null && !setServerLauncherProperties) {
 					if (subsystemConfiguration.supportsServerLaunchProperties(host)) {
 						IServerLauncherProperties sl = subsystemConfiguration.createServerLauncher(service);
 						if (sl != null) {
@@ -215,12 +220,13 @@ public class RSEDOMImporter {
 							if (slChildren != null && slChildren.length > 0) {
 								serverLauncherPropertiesNode = slChildren[0];
 								restoreServerLauncher(service, serverLauncherPropertiesNode, sl);
+								setServerLauncherProperties = true;
 							}
 						}
 					}
 					service.setPort(port);
 					service.setIsUsingSSL(useSSL);
-				}
+				}				
 			}
 			if (service != null && subSystem != null) {
 				subSystem.setConnectorService(service);

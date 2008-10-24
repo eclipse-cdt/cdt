@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
@@ -134,8 +135,10 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         launch.setServiceFactory(newServiceFactory(gdbVersion));
 
         // Create and invoke the launch sequence to create the debug control and services
+        IProgressMonitor subMon1 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch);
+            new ServicesLaunchSequence(launch.getSession(), launch, subMon1);
+        
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();
@@ -144,6 +147,9 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
         }
+        
+        if (monitor.isCanceled())
+        	return;
         
         // The initializeControl method should be called after the ICommandControlService
         // be initialized in the ServicesLaunchSequence above.  This is because it is that
@@ -155,9 +161,13 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         launch.addCLIProcess("gdb"); //$NON-NLS-1$
         launch.addInferiorProcess(exePath.lastSegment());
 
+        monitor.worked(1);
+        
         // Create and invoke the final launch sequence to setup GDB
+        IProgressMonitor subMon2 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
         final Sequence finalLaunchSequence = 
-        	getFinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach);
+        	getFinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach, subMon2);
+
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();
@@ -172,8 +182,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	 * This method can be overridden by subclasses to allow to change the final launch sequence without
 	 * having to change the entire GdbLaunchDelegate
 	 */
-	protected Sequence getFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type, boolean attach) {
-		return new FinalLaunchSequence(executor, launch, type, attach);
+	protected Sequence getFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type, boolean attach, IProgressMonitor pm) {
+		return new FinalLaunchSequence(executor, launch, type, attach, pm);
 	}
 	
 

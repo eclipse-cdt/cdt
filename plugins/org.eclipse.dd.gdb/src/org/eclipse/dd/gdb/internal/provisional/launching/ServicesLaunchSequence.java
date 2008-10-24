@@ -12,6 +12,7 @@
 package org.eclipse.dd.gdb.internal.provisional.launching;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Sequence;
 import org.eclipse.dd.dsf.debug.service.IBreakpoints;
@@ -118,8 +119,8 @@ public class ServicesLaunchSequence extends Sequence {
     IMIProcesses fProcService;
     CSourceLookup fSourceLookup;
     
-    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch) {
-        super(session.getExecutor());
+    public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
+        super(session.getExecutor(), pm, "Initializing debugger services", "Aborting debugger services initialization", null);  
         fSession = session;
         fLaunch = launch;
     }

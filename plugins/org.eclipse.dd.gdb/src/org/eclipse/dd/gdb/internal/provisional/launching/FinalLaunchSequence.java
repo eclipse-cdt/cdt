@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -487,8 +488,8 @@ public class FinalLaunchSequence extends Sequence {
 
     DsfServicesTracker fTracker;
         
-    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach) {
-        super(executor);
+    public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, IProgressMonitor pm) {
+        super(executor, pm, "Configuring GDB", "Aborting configuring GDB", null);  
         fLaunch = launch;
         fSessionType = sessionType;
         fAttach = attach;

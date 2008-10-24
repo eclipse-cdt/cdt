@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.gdb.internal.provisional.launching.FinalLaunchSequence;
 import org.eclipse.dd.gdb.internal.provisional.launching.GdbLaunch;
@@ -84,8 +85,9 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
         
         launch.setServiceFactory(new GdbDebugServicesFactory(LaunchUtils.getGDBVersion(config)));
 
+        IProgressMonitor subMon1 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
         final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch);
+            new ServicesLaunchSequence(launch.getSession(), launch, subMon1);
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         try {
             servicesLaunchSequence.get();
@@ -102,8 +104,9 @@ public class TestLaunchDelegate extends LaunchConfigurationDelegate
         launch.addInferiorProcess(exePath.lastSegment());
 
         // Create and invoke the final launch sequence to setup GDB
+        IProgressMonitor subMon2 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
         final FinalLaunchSequence finalLaunchSequence = 
-        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, SessionType.LOCAL, false);
+        	new FinalLaunchSequence(launch.getSession().getExecutor(), launch, SessionType.LOCAL, false, subMon2);
         launch.getSession().getExecutor().execute(finalLaunchSequence);
         try {
         	finalLaunchSequence.get();

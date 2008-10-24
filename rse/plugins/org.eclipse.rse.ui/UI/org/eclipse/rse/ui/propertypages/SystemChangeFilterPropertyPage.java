@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [252011] NPE On Promptable Filter's Filter Strings Property Page when Clicking Okay
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
@@ -208,6 +209,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		ISystemFilter selectedFilter = getFilter();
 		if (selectedFilter.isPromptable())
 		{
+			changeFilterPane.setEditable(false); // for bug 252011 - we don't verify promptable filters
 			int nbrColumns = 1;
 			Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 			/*Label test =*/ SystemWidgetHelpers.createLabel(composite_prompts, SystemPropertyResources.RESID_TERM_NOTAPPLICABLE, nbrColumns, false);

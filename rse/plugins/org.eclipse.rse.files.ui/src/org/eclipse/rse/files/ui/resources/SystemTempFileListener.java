@@ -156,7 +156,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	    }
 	    else
 	    {
-	    	if (file.isLinked()){
+	    	if (file.isLinked(IResource.CHECK_ANCESTORS)){
 	    		return true;
 	    	}
 	    	else {

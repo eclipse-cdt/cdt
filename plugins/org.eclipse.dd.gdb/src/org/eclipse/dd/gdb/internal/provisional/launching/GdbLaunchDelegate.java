@@ -182,7 +182,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         } finally {
             if (!succeed) {
                 // finalLaunchSequence failed. Shutdown the session so that all started
-                // services including any GDB process are shutdown.
+                // services including any GDB process are shutdown. (bug 251486)
                 //
                 final GdbLaunch gdbLaunch = launch;
                 

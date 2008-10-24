@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -31,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -98,16 +98,16 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 	}
 	
-	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
 		instances.put(arguments, instance);
 	}
 
-	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+	public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			loop: for (int i=0; i < instances.size(); i++) {
-				IType[] args = (IType[]) instances.keyAt(i);
+				ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) instances.keyAt(i);
 				if (args.length == arguments.length) {
 					for (int j=0; j < args.length; j++) {
 						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {

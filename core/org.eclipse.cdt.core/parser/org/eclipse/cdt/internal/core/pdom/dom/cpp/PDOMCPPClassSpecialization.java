@@ -120,7 +120,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			if (result != null) 
 				return result;
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original, getArgumentMap());
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, getTemplateParameterMap());
 		synchronized (specializationMap) {
 			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
 			if (oldSpec != null) {
@@ -372,11 +372,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	@Override
 	public String toString() {
-		String result= super.toString();
-		ObjectMap map= getArgumentMap();
-		for(int i=0; i<map.size(); i++)
-			result+=" <"+map.keyAt(i)+"=>"+getArgumentMap().getAt(i)+">";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		return result;
+		return super.toString() + " <"+ getTemplateParameterMap().toString() + ">";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public boolean isAnonymous() {

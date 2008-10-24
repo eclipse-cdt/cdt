@@ -15,8 +15,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * Binding for a specialization of a parameter.
@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private IType type = null;
 	
-	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, CPPTemplateParameterMap tpmap) {
+	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
 	}
 

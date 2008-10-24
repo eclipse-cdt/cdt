@@ -8,19 +8,28 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.core.dom.ast.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * Maps template parameters to values.
- * @since 5.1
  */
 public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
-	public static final CPPTemplateParameterMap EMPTY = new CPPTemplateParameterMap();
+	public static final CPPTemplateParameterMap EMPTY = new CPPTemplateParameterMap(0);
 	
-	private ObjectMap fMap= new ObjectMap(2);
+	private final ObjectMap fMap;
+
+	/**
+	 * Constructs an empty parameter map.
+	 */
+	public CPPTemplateParameterMap(int initialSize) {
+		fMap= new ObjectMap(initialSize);
+	}
 
 	/**
 	 * Returns whether the map contains the given parameter
@@ -61,13 +70,26 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	/**
 	 * Puts all mappings from the supplied map into this map.
 	 */
-	public void putAll(CPPTemplateParameterMap map) {
-		final ObjectMap omap= map.fMap;
-		for (int i = 0; i < omap.size(); i++) {
-			fMap.put(omap.keyAt(i), omap.getAt(i));
+	public void putAll(ICPPTemplateParameterMap map) {
+		
+		if (map instanceof CPPTemplateParameterMap) {
+			final ObjectMap omap= ((CPPTemplateParameterMap) map).fMap;
+			for (int i = 0; i < omap.size(); i++) {
+				fMap.put(omap.keyAt(i), omap.getAt(i));
+			}
+		} else {
+			assert false;
 		}
 	}
-	
+
+	public ICPPTemplateArgument[] values() {
+		ICPPTemplateArgument[] result= new ICPPTemplateArgument[fMap.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i]= (ICPPTemplateArgument) fMap.getAt(i);
+		}
+		return result;
+	}
+
 	/**
 	 * Returns the array of template parameter positions, for which a mapping exists.
 	 */

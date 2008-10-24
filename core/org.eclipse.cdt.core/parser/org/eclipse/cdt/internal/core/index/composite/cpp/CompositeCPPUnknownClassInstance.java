@@ -11,11 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 /**
@@ -29,15 +26,8 @@ class CompositeCPPUnknownClassInstance extends CompositeCPPUnknownClassType
 		super(cf, rbinding);
 	}
 
-	public IType[] getArguments() {
-		IType[] arguments = ((ICPPUnknownClassInstance) rbinding).getArguments();
-		try {
-			for (int i = 0; i < arguments.length; i++) {
-				arguments[i] = cf.getCompositeType((IIndexType) arguments[i]);
-			}
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-		}
-		return arguments;
+	public ICPPTemplateArgument[] getArguments() {
+		ICPPTemplateArgument[] arguments = ((ICPPUnknownClassInstance) rbinding).getArguments();
+		return TemplateInstanceUtil.convert(cf, arguments);
 	}
 }

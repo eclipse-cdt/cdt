@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -37,13 +35,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -103,11 +100,11 @@ public class IndexLabelProvider extends LabelProvider {
 					}
 					buffer.append(result);
 					buffer.append('<');
-					IType[] types = ((ICPPTemplateInstance) element).getArguments();
+					ICPPTemplateArgument[] types = ((ICPPTemplateInstance) element).getTemplateArguments();
 					for (int i = 0; i < types.length; i++) {
 						if (i > 0)
 							buffer.append(',');
-						buffer.append(ASTTypeUtil.getType(types[i]));
+						buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
 					}
 					buffer.append('>');
 					result = buffer.toString();
@@ -115,14 +112,11 @@ public class IndexLabelProvider extends LabelProvider {
 					StringBuffer buffer = new StringBuffer("Part: "); //$NON-NLS-1$
 					buffer.append(result);
 					buffer.append('<');
-					try {
-						IType[] types = ((ICPPClassTemplatePartialSpecialization) element).getArguments();
-						for (int i = 0; i < types.length; i++) {
-							if (i > 0)
-								buffer.append(',');
-							buffer.append(ASTTypeUtil.getType(types[i]));
-						}
-					} catch (DOMException e) {
+					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
+					for (int i = 0; i < types.length; i++) {
+						if (i > 0)
+							buffer.append(',');
+						buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
 					}
 					buffer.append('>');
 					result = buffer.toString();
@@ -135,19 +129,9 @@ public class IndexLabelProvider extends LabelProvider {
 					
 					if (!(spec instanceof ICPPTemplateDefinition)
 							&& spec.getSpecializedBinding() instanceof ICPPTemplateDefinition) {
-						ICPPTemplateDefinition template = (ICPPTemplateDefinition) spec.getSpecializedBinding();
-						try {
-							ICPPTemplateParameter[] params = template.getTemplateParameters();
-							buffer.append('<');
-							ObjectMap argMap = ((ICPPSpecialization) element).getArgumentMap();
-							for (int i = 0; i < params.length; i++) {
-								if (i > 0)
-									buffer.append(',');
-								buffer.append(ASTTypeUtil.getType((IType) argMap.get(params[i])));
-							}
-							buffer.append('>');
-						} catch (DOMException e) {
-						}
+						buffer.append('<');
+						buffer.append(((ICPPSpecialization) element).getTemplateParameterMap().toString());
+						buffer.append('>');
 					}
 					
 					result = buffer.toString();

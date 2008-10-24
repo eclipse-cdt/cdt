@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -58,5 +59,13 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
+	}
+	
+	public ICPPTemplateArgument getDefaultValue() {
+		try {
+			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTypeParameter)rbinding).getDefaultValue());
+		} catch (DOMException e) {
+			return null;
+		}
 	}
 }

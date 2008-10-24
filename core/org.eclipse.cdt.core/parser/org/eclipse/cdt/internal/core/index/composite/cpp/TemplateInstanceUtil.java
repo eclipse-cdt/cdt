@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -26,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -36,8 +36,8 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class TemplateInstanceUtil {
 	public static ICPPTemplateParameterMap getTemplateParameterMap(ICompositesFactory cf, ICPPTemplateInstance rbinding) {
 		ICPPTemplateParameterMap preresult= rbinding.getTemplateParameterMap();
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap();
 		Integer[] keys= preresult.getAllParameterPositions();
+		CPPTemplateParameterMap result= new CPPTemplateParameterMap(keys.length);
 		
 		try {
 			for(int i = 0; i < keys.length; i++) {

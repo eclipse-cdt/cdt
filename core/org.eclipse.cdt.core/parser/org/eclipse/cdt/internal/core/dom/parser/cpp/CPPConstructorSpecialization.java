@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * Specialization of a constructor for a class-template or class-template specialization
@@ -24,7 +24,7 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 		implements ICPPConstructor {
 
 	public CPPConstructorSpecialization(IBinding orig, ICPPClassType owner,
-			CPPTemplateParameterMap argMap) {
+			ICPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
 	}
 

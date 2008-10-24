@@ -28,12 +28,6 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_PARTIAL_SPECIALIZATION_ARRAY = new ICPPClassTemplatePartialSpecialization[0];
 	
 	/**
-	 * get the arguments to this specialization
-	 */
-	public IType [] getArguments() throws DOMException;
-	
-	
-	/**
 	 * get the ICPPTemplateDefinition which this is a specialization of
 	 */
 	public ICPPClassTemplate getPrimaryClassTemplate() throws DOMException;
@@ -44,4 +38,10 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 * @since 5.1
 	 */
 	public ICPPTemplateArgument[] getTemplateArguments();
+	
+	/**
+	 * @deprecated use {@link #getTemplateArguments()}, instead.
+	 */
+	@Deprecated
+	public IType [] getArguments() throws DOMException;
 }

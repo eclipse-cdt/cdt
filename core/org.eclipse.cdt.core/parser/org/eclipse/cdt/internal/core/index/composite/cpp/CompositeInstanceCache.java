@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -44,7 +44,7 @@ public class CompositeInstanceCache {
 		fMap= new HashMap<String, ICPPTemplateInstance>();
 	}
 	
-	synchronized public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	synchronized public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		try {
 			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
 			fMap.put(key, instance);
@@ -54,7 +54,7 @@ public class CompositeInstanceCache {
 		}
 	}
 
-	synchronized public final ICPPTemplateInstance getInstance(IType[] arguments) {
+	synchronized public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		try {
 			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
 			return fMap.get(key);
@@ -71,7 +71,7 @@ public class CompositeInstanceCache {
 			for (ICPPTemplateInstance ti : insts) {
 				if (ti instanceof IIndexFragmentBinding) {
 					ICPPTemplateInstance comp= (ICPPTemplateInstance) cf.getCompositeBinding((IIndexFragmentBinding) ti);
-					IType[] args= comp.getArguments();
+					ICPPTemplateArgument[] args= comp.getTemplateArguments();
 					addInstance(args, comp);
 				}
 			}

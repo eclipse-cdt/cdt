@@ -11,16 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -43,14 +42,8 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 
 	private void createArguments() {
 		if (arguments == null) {
-			arguments= CPPTemplates.convert(
-					CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName()));
+			arguments= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName());
 		}
-	}
-
-	@Deprecated
-	public IType[] getArguments() {
-		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
 	/* (non-Javadoc)
@@ -65,22 +58,22 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 		return getPrimaryClassTemplate();
 	}
 
-	public CPPTemplateParameterMap getTemplateParameterMap() {
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap();
-		try {
-			ICPPTemplateParameter[] params = getPrimaryClassTemplate().getTemplateParameters();
-			ICPPTemplateArgument[] args= getTemplateArguments();
-			int len= Math.min(params.length, args.length);
-			for (int i = 0; i < len; i++) {
-				result.put(params[i], args[i]);
-			}
-		} catch (DOMException e) {
-		}
-		return result;
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		return CPPTemplates.createParameterMap(getPrimaryClassTemplate(), getTemplateArguments());
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + '<' + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true) + '>';
+	}
+	
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
+	}
+	
+	@Deprecated
+	public IType[] getArguments() {
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 }

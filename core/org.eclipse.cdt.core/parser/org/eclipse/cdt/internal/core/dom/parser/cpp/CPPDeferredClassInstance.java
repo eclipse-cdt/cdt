@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -102,5 +102,10 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	@Override
 	public IScope getScope() throws DOMException {
 		return fClassTemplate.getScope();
+	}
+
+	@Override
+	public String toString() {
+		return getName() + ASTTypeUtil.getArgumentListString(fArguments, true);
 	}
 }

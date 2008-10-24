@@ -81,6 +81,21 @@ public class Value implements IValue {
 			return TYPICAL[(int) value];
 		return new Value(String.valueOf(value));
 	}
+	
+	public static IValue create(ICPPTemplateNonTypeParameter tntp) {
+		return new Value(evaluate(tntp));
+	}
+
+	public static int isTemplateParameter(IValue tval) {
+		final String rep= tval.getCanonicalRepresentation();
+		if (rep.indexOf('#') == 0 && rep.indexOf(',') == -1) {
+			try {
+				return Integer.parseInt(rep.substring(1), 16);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return -1;
+	}
 
 	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
 		try {

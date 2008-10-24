@@ -33,13 +33,17 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 		fType= type;
 		fValue= null;
 	}
-	
+
+	public boolean isTypeValue() {
+		return fValue == null;
+	}
+
 	public boolean isNonTypeValue() {
 		return fValue != null;
 	}
 
 	public IType getTypeValue() {
-		return isNonTypeValue() ? null : fType;
+		return isTypeValue() ? fType : null;
 	}
 
 	public IValue getNonTypeValue() {
@@ -55,5 +59,12 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 			return fValue.equals(arg.getNonTypeValue()) && fType.equals(arg.getTypeOfNonTypeValue());
 		}
 		return fType.isSameType(arg.getTypeValue());
+	}
+
+	@Override
+	public String toString() {
+		if (fValue != null)
+			return fValue.toString();
+		return fType.toString();
 	}
 }

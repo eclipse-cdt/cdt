@@ -24,10 +24,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -39,7 +39,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	private IFunctionType type = null;
 	private IParameter[] specializedParams = null;
 
-	public CPPFunctionSpecialization(IBinding orig, IBinding owner, CPPTemplateParameterMap argMap) {
+	public CPPFunctionSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
 	}
 	
@@ -242,7 +242,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		} catch (DOMException e) {
 		}
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
-		CPPTemplateParameterMap tpmap= getTemplateParameterMap();
+		ICPPTemplateParameterMap tpmap= getTemplateParameterMap();
 		if (tpmap != null) {
 			result.append(" "); //$NON-NLS-1$
 			result.append(tpmap.toString());

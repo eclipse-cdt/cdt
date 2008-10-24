@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -55,10 +56,10 @@ public class IndexCPPSignatureUtil {
 		StringBuffer buffer = new StringBuffer();
 		if (binding instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) binding;
-			buffer.append(getTemplateArgString(inst.getArguments(), true));
+			buffer.append(getTemplateArgString(inst.getTemplateArguments(), true));
 		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 			ICPPClassTemplatePartialSpecialization partial = (ICPPClassTemplatePartialSpecialization) binding;
-			buffer.append(getTemplateArgString(partial.getArguments(), false));
+			buffer.append(getTemplateArgString(partial.getTemplateArguments(), false));
 		} 
 		
 		if (binding instanceof IFunction) {
@@ -73,43 +74,49 @@ public class IndexCPPSignatureUtil {
 	 * Constructs a string in the format:
 	 *   <typeName1,typeName2,...>
 	 */
-	public static String getTemplateArgString(IType[] types, boolean qualifyTemplateParameters) throws CoreException, DOMException {
+	public static String getTemplateArgString(ICPPTemplateArgument[] args, boolean qualifyTemplateParameters) throws CoreException, DOMException {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append('<');
-		for (int i = 0; i < types.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			if (i>0) {
 				buffer.append(',');
 			}
-			final IType type = types[i];
-			if (qualifyTemplateParameters && type instanceof ICPPTemplateParameter) {
-				List<IBinding> parents = new ArrayList<IBinding>();
-				IBinding parent= ((ICPPTemplateParameter) type).getOwner();
-				while (parent != null) {
-					parents.add(parent);
-					parent= parent.getOwner();
-				}
-				//identical template parameters from different template specializations must have unique signatures
-				Collections.reverse(parents);
-				for (IBinding binding : parents) {
-					if (binding != null) {
-						buffer.append(binding.getNameCharArray());
-						if (binding instanceof ICPPTemplateInstance) {
-							ICPPTemplateInstance inst= (ICPPTemplateInstance) binding;
-							appendTemplateArgs(inst.getArguments(), buffer);
-						}
-						buffer.append("::"); //$NON-NLS-1$
+			final ICPPTemplateArgument arg= args[i];
+			if (arg.isNonTypeValue()) {
+				buffer.append(arg.getNonTypeValue().getCanonicalRepresentation());
+			} else {
+				final IType type= arg.getTypeValue();
+				if (qualifyTemplateParameters && type instanceof ICPPTemplateParameter) {
+					List<IBinding> parents = new ArrayList<IBinding>();
+					IBinding parent= ((ICPPTemplateParameter) type).getOwner();
+					while (parent != null) {
+						parents.add(parent);
+						parent= parent.getOwner();
 					}
-				}
-				buffer.append(((ICPPTemplateParameter)type).getName());
-			} else if (type instanceof ICPPBasicType){
-				IASTExpression expr= ((ICPPBasicType) type).getValue();
-				if (expr != null) {
-					buffer.append(getValueString(expr));
+					//identical template parameters from different template specializations must have unique signatures
+					Collections.reverse(parents);
+					for (IBinding binding : parents) {
+						if (binding != null) {
+							buffer.append(binding.getNameCharArray());
+							if (binding instanceof ICPPTemplateInstance) {
+								ICPPTemplateInstance inst= (ICPPTemplateInstance) binding;
+								appendTemplateArgs(inst.getTemplateArguments(), buffer);
+							}
+							buffer.append("::"); //$NON-NLS-1$
+						}
+					}
+					buffer.append(((ICPPTemplateParameter)type).getName());
+				} else if (type instanceof ICPPBasicType){
+					// mstodo remove 
+					IASTExpression expr= ((ICPPBasicType) type).getValue();
+					if (expr != null) {
+						buffer.append(getValueString(expr));
+					} else {
+						buffer.append(ASTTypeUtil.getType(type));
+					}
 				} else {
 					buffer.append(ASTTypeUtil.getType(type));
 				}
-			} else {
-				buffer.append(ASTTypeUtil.getType(type));
 			}
 		}
 		buffer.append('>');
@@ -134,16 +141,14 @@ public class IndexCPPSignatureUtil {
 	}
 	
 
-	private static void appendTemplateArgs(Object[] values, StringBuilder buffer) {
+	private static void appendTemplateArgs(ICPPTemplateArgument[] values, StringBuilder buffer) {
 		boolean needcomma= false;
 		buffer.append('<');
-		for (final Object val : values) {
-			if (val instanceof IType) {
-				if (needcomma)
-					buffer.append(',');
-				needcomma= true;
-				buffer.append(ASTTypeUtil.getType((IType) val));
-			}
+		for (final ICPPTemplateArgument val : values) {
+			if (needcomma)
+				buffer.append(',');
+			buffer.append(ASTTypeUtil.getArgumentString(val, true));
+			needcomma= true;
 		}
 		buffer.append('>');
 	}

@@ -99,22 +99,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	private static int version(int major, int minor) {
-		return major << 16 + minor;
-	}
-	public static final int MAJOR_VERSION = 72; 
-	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
-	
-	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
-	public static final int MIN_SUPPORTED_VERSION= version(MAJOR_VERSION, 0);
-	public static final int MAX_SUPPORTED_VERSION= version(MAJOR_VERSION+1, 0)-1;
-
-	public static String versionString(int version) {
-		final int major= version >> 16;
-		final int minor= version & 0xffff;
-		return "" + major + '.' + minor; //$NON-NLS-1$
-	}
-
 	/* 
 	 * PDOM internal format history
 	 * 
@@ -178,8 +162,24 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  71.0 - proper support for anonymous unions, bug 206450
 	 *  72.0 - store project-relative paths for resources that belong to the project, bug 239472
 	 *  72.1 - store flag for pure virtual methods.
-	 *  73.0 - add values for variables and enumerations, bug 
+	 *  73.0 - add values for variables and enumerations, bug 250788
+	 *  74.0 - changes for proper template argument support, bug 242668
 	 */
+	private static int version(int major, int minor) {
+		return major << 16 + minor;
+	}
+	public static final int MAJOR_VERSION = 74; 
+	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
+	
+	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
+	public static final int MIN_SUPPORTED_VERSION= version(MAJOR_VERSION, 0);
+	public static final int MAX_SUPPORTED_VERSION= version(MAJOR_VERSION+1, 0)-1;
+
+	public static String versionString(int version) {
+		final int major= version >> 16;
+		final int minor= version & 0xffff;
+		return "" + major + '.' + minor; //$NON-NLS-1$
+	}
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

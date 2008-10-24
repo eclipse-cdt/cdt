@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -50,11 +50,11 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 public class CPPClassSpecialization extends CPPSpecialization 
 		implements ICPPClassSpecialization, ICPPInternalClassTypeMixinHost {
 
-	private CPPClassSpecializationScope specScope;
+	private ICPPClassSpecializationScope specScope;
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
 	private boolean checked;
 
-	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, CPPTemplateParameterMap argumentMap) {
+	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ICPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
 	}
 
@@ -71,7 +71,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 				return result;
 		}
 		
-		IBinding result= CPPTemplates.createSpecialization(this, original, getArgumentMap());
+		IBinding result= CPPTemplates.createSpecialization(this, original, getTemplateParameterMap());
 		synchronized(this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null) 

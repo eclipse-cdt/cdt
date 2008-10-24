@@ -8,10 +8,11 @@
  * Contributors:
  * 	   QNX - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 
 
@@ -23,12 +24,12 @@ public interface ICPPInstanceCache {
 	/**
 	 * Attempts to cache an instance with this template
 	 */
-	public void addInstance(IType[] arguments, ICPPTemplateInstance instance);
+	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance);
 
 	/**
 	 * Attempts to get a cached instance from this template
 	 */
-	public ICPPTemplateInstance getInstance(IType[] arguments);
+	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments);
 
 	/**
 	 * Returns an array of all cached instances

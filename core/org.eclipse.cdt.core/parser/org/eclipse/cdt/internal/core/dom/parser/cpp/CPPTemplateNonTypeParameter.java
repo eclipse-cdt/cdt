@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -46,6 +48,16 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 			return ((IASTInitializerExpression) initializer).getExpression();
 
 		return null;
+	}
+	
+	public ICPPTemplateArgument getDefaultValue() {
+		IASTExpression d= getDefault();
+		if (d == null)
+			return null;
+		
+		IValue val= Value.create(d, Value.MAX_RECURSION_DEPTH);
+		IType t= CPPVisitor.createType(d);
+		return new CPPTemplateArgument(val, t);
 	}
 
 	public IType getType() {

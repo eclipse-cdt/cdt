@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -16,13 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 /**
  * @author Doug Schaefer
  */
-public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter,
-		IVariable {
+public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter, IVariable {
 
-	/**
-	 * The default value for this parameter.
-	 * 
+	/** 
+	 * @deprecated, use {@link ICPPTemplateParameter#getDefaultValue()}.
 	 */
+	@Deprecated
 	public IASTExpression getDefault();
-
 }

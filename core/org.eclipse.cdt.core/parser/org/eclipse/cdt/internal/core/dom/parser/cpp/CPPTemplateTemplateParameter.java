@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
@@ -106,7 +107,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
-	public IType getDefault() throws DOMException {
+	public IType getDefault() {
 		IASTNode[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
 		    return null;
@@ -116,6 +117,14 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		if (defaultValue != null)
 		    return CPPVisitor.createType(defaultValue);
 		return null;
+	}
+	
+	public ICPPTemplateArgument getDefaultValue() {
+		IType d= getDefault();
+		if (d == null)
+			return null;
+		
+		return new CPPTemplateArgument(d);
 	}
 
 	public ICPPBase[] getBases() {
@@ -177,16 +186,16 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
-	public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
 		instances.put(arguments, instance);
 	}
 
-	public final ICPPTemplateInstance getInstance(IType[] arguments) {
+	public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			loop: for (int i=0; i < instances.size(); i++) {
-				IType[] args = (IType[]) instances.keyAt(i);
+				ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) instances.keyAt(i);
 				if (args.length == arguments.length) {
 					for (int j=0; j < args.length; j++) {
 						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {

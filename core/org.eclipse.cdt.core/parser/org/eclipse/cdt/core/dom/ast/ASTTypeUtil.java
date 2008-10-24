@@ -138,7 +138,7 @@ public class ASTTypeUtil {
 		if (arg.isNonTypeValue()) 
 			return arg.getNonTypeValue().getCanonicalRepresentation();
 
-		return getTypeString(arg.getTypeValue(), normalize);
+		return getType(arg.getTypeValue(), normalize);
 	}
 
 	/**

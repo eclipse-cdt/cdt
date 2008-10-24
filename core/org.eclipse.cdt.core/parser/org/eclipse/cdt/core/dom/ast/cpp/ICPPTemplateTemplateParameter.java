@@ -6,26 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Apr 13, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * @author aniefer
+ * Template parameters of type template
  */
 public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, ICPPClassTemplate {
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
 	
 	/**
-	 * The default type for this parameter. May be null
-	 * 
+	 * Return the default value for this parameter, or <code>null</code>.
 	 */
 	public IType getDefault() throws DOMException;
 }

@@ -17,10 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * The specialization of a method in the context of a class-specialization.
@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		implements ICPPMethod {
 
-	public CPPMethodSpecialization(IBinding orig, ICPPClassType owner, CPPTemplateParameterMap argMap ) {
+	public CPPMethodSpecialization(IBinding orig, ICPPClassType owner, ICPPTemplateParameterMap argMap ) {
 		super(orig, owner, argMap );
 	}
 

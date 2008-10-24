@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -288,6 +290,34 @@ public class SemanticUtil {
 					System.arraycopy(types, 0, result, 0, i);
 				}
 				result[i]= newType;
+			}
+		}
+		return result;
+	}
+
+	public static ICPPTemplateArgument[] getSimplifiedArguments(ICPPTemplateArgument[] args) {
+		// Don't create a new array until it's really needed.
+		ICPPTemplateArgument[] result = args;
+		for (int i = 0; i < args.length; i++) {
+			final ICPPTemplateArgument arg= args[i];
+			ICPPTemplateArgument newArg= arg;
+			if (arg != null) {
+				if (arg.isTypeValue()) {
+					final IType type= arg.getTypeValue();
+					final IType newType= getSimplifiedType(type);
+					if (newType != type) {
+						newArg= new CPPTemplateArgument(newType);
+					}
+				}
+				if (result != args) {
+					result[i]= newArg;
+				} else if (arg != newArg) {
+					result = new ICPPTemplateArgument[args.length];
+					if (i > 0) {
+						System.arraycopy(args, 0, result, 0, i);
+					}
+					result[i]= newArg;
+				}
 			}
 		}
 		return result;

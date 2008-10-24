@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -43,7 +43,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     private int fResolutionDepth;
 
     public CPPTypedefSpecialization(IBinding specialized, ICPPClassType owner, 
-    		CPPTemplateParameterMap tpmap) {
+    		ICPPTemplateParameterMap tpmap) {
         super(specialized, owner, tpmap);
     }
 

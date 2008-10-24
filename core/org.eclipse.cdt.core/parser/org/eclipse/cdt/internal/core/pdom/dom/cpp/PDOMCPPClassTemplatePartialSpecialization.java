@@ -16,13 +16,13 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -154,18 +154,8 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		return cmp;
 	}
 	
-	public CPPTemplateParameterMap getTemplateParameterMap() {
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap();
-		try {
-			ICPPTemplateParameter[] params = getPrimaryClassTemplate().getTemplateParameters();
-			ICPPTemplateArgument[] args= getTemplateArguments();
-			int len= Math.min(params.length, args.length);
-			for (int i = 0; i < len; i++) {
-				result.put(params[i], args[i]);
-			}
-		} catch (DOMException e) {
-		}
-		return result;
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
+		return CPPTemplates.createParameterMap(getPrimaryClassTemplate(), getTemplateArguments());
 	}
 	
 	@Override

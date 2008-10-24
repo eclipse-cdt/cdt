@@ -29,4 +29,10 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 * @since 5.1
 	 */
 	int getParameterPosition();
+
+	/**
+	 * Returns the default value for this template parameter, or <code>null</code>.
+	 * @since 5.1
+	 */
+	ICPPTemplateArgument getDefaultValue();
 }

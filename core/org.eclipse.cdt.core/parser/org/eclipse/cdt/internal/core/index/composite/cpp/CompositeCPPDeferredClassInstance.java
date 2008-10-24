@@ -68,7 +68,6 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPDeferredClassInstance) rbinding).getClassTemplate());
 	}
 	
-	@Deprecated
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
 	}

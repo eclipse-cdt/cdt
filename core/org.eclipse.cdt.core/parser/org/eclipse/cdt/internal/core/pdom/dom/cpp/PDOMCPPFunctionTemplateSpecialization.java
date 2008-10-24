@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
@@ -51,11 +51,11 @@ class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecializatio
 		return template.getTemplateParameters();
 	}
 
-	public ICPPTemplateInstance getInstance(IType[] arguments) {
+	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
 	}
 
-	public void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
 	}
 	

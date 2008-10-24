@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -52,7 +52,7 @@ public class PDOMInstanceCache {
 		fMap= new HashMap<String, ICPPTemplateInstance>();
 	}
 	
-	synchronized public final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	synchronized public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		try {
 			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
 			fMap.put(key, instance);
@@ -62,7 +62,7 @@ public class PDOMInstanceCache {
 		}
 	}
 
-	synchronized public final ICPPTemplateInstance getInstance(IType[] arguments) {		
+	synchronized public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {		
 		try {
 			String key= IndexCPPSignatureUtil.getTemplateArgString(arguments, true);
 			return fMap.get(key);
@@ -85,7 +85,7 @@ public class PDOMInstanceCache {
 			if (node instanceof ICPPTemplateInstance) {
 				ICPPTemplateInstance inst= (ICPPTemplateInstance) node;
 				if (binding.equals(inst.getTemplateDefinition())) {
-					IType[] args= inst.getArguments();
+					ICPPTemplateArgument[] args= inst.getTemplateArguments();
 					addInstance(args, inst);
 				}
 			}

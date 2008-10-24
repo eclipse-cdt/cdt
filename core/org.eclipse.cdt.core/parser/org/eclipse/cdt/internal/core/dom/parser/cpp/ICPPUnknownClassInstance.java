@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ * 	  Sergey Prigogin (Google) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 
 /**
  * Represents a partially instantiated C++ class template, declaration of which is not yet available.
@@ -22,5 +23,5 @@ public interface ICPPUnknownClassInstance extends ICPPUnknownClassType {
 	/**
 	 * Returns the arguments of the instantiation
 	 */
-	public IType[] getArguments();
+	public ICPPTemplateArgument[] getArguments();
 }

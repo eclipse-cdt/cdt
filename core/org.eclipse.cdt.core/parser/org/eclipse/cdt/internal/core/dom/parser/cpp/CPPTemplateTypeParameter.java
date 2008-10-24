@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -54,6 +55,14 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		if (typeId != null)
 		    return CPPVisitor.createType(typeId);
 		return null;
+	}
+	
+	public ICPPTemplateArgument getDefaultValue() {
+		IType t= getDefault();
+		if (t == null)
+			return null;
+		
+		return new CPPTemplateArgument(t);
 	}
 
     public boolean isSameType(IType type) {

@@ -20,10 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -111,7 +111,7 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         IBinding b;
         IASTNode parent = name.getParent();
         if (parent instanceof ICPPASTTemplateId) {
-			IType[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
+        	ICPPTemplateArgument[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
         	b = new CPPUnknownClassInstance(binding, name, arguments);
         } else {
         	b = new CPPUnknownClass(binding, name);

@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * The specialization of a method template in the context of a class specialization.
@@ -24,7 +24,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		implements ICPPMethod {
 
 	public CPPMethodTemplateSpecialization(IBinding specialized, ICPPClassType owner, 
-			CPPTemplateParameterMap ctmap) {
+			ICPPTemplateParameterMap ctmap) {
 		super(specialized, owner, ctmap);
 	}
 

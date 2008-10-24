@@ -13,12 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -30,7 +30,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 
 	private ObjectMap instances = null;
 	
-	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPClassType owner, CPPTemplateParameterMap argumentMap) {
+	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
 	}
 
@@ -39,16 +39,16 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return template.getTemplateParameters();
 	}
 
-	public synchronized final void addInstance(IType[] arguments, ICPPTemplateInstance instance) {
+	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
 		instances.put(arguments, instance);
 	}
 
-	public synchronized final ICPPTemplateInstance getInstance(IType[] arguments) {
+	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			loop: for (int i=0; i < instances.size(); i++) {
-				IType[] args = (IType[]) instances.keyAt(i);
+				ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) instances.keyAt(i);
 				if (args.length == arguments.length) {
 					for (int j=0; j < args.length; j++) {
 						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {

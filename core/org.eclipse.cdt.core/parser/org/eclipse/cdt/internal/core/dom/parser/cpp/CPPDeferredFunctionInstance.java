@@ -19,14 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -40,7 +39,7 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 	private ICPPTemplateArgument[] fArguments;
 	private ICPPFunctionTemplate fFunctionTemplate;
 
-	private CPPTemplateParameterMap fArgmap;
+	private ICPPTemplateParameterMap fArgmap;
 	private IParameter [] fParameters;
 	private IFunctionType fFunctionType;
 
@@ -63,20 +62,10 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 		return CPPTemplates.getArgumentMap(fFunctionTemplate, getTemplateParameterMap());
 	}
 	
-	public CPPTemplateParameterMap getTemplateParameterMap() {
+	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		// mstodo- deferred function instance and tpmap
 		if (fArgmap == null) {
-			CPPTemplateParameterMap argmap= new CPPTemplateParameterMap();
-			try {
-				ICPPTemplateParameter[] params= fFunctionTemplate.getTemplateParameters();
-				ICPPTemplateArgument[] args= fArguments;
-				int len= Math.min(params.length, args.length);
-				for (int i = 0; i < len; i++) {
-					argmap.put(params[i], args[i]);
-				}
-			} catch (DOMException e) {
-			}
-			fArgmap= argmap;
+			fArgmap= CPPTemplates.createParameterMap(fFunctionTemplate, getTemplateArguments());
 		}
 		return fArgmap;
 	}
@@ -110,7 +99,7 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 		if( fFunctionType == null ){
             IFunctionType ft = ((ICPPFunction)getTemplateDefinition()).getType(); 
             IType returnType = ft.getReturnType();
-			returnType = CPPTemplates.instantiateType(returnType, getArgumentMap(), null);
+			returnType = CPPTemplates.instantiateType(returnType, getTemplateParameterMap(), null);
 			fFunctionType = CPPVisitor.createImplicitFunctionType( returnType, getParameters(), null);
         }
         return fFunctionType;

@@ -28,6 +28,12 @@ public interface ICPPTemplateArgument {
 	boolean isNonTypeValue();
 
 	/**
+	 * Returns whether this is a type value, suitable for either a template type or a 
+	 * template template parameter. 
+	 */
+	boolean isTypeValue();
+
+	/**
 	 * If this is a type value (suitable for a template type and template template parameters), 
 	 * the type used as a value is returned. 
 	 * For non-type values, <code>null</code> is returned. 

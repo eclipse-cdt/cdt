@@ -110,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -125,7 +126,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -287,7 +287,7 @@ public class CPPSemantics {
         	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
         		if (data.tu != null) {
         			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
-        			IType[] args = CPPTemplates.createTemplateArgumentArray(id);
+        			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
         			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
         			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
         		}
@@ -307,28 +307,50 @@ public class CPPSemantics {
 		    
 		}
         
+        // mstodo this looks like a hack?
         // in template declarations the template-ids get instantiated to deferred instances, revert that.
 		IASTName name = data.astName;
 		if (name instanceof ICPPASTTemplateId) {
-			if (CPPTemplates.getTemplateDeclaration(name) != null && binding instanceof ICPPDeferredTemplateInstance) {
+			if (binding instanceof ICPPDeferredTemplateInstance && CPPTemplates.getTemplateDeclaration(name) != null ) {
 				ICPPDeferredTemplateInstance deferred= (ICPPDeferredTemplateInstance) binding;
-				boolean useOriginal= true;
-				final ObjectMap argMap = deferred.getArgumentMap();
-				if (argMap != null) {
-					for (int i = 0; useOriginal && i < argMap.size(); i++) {
-						final Object key = argMap.keyAt(i);
-						if (!key.equals(argMap.getAt(i))) {
-							// bug 231868 non type parameters are modeled via their type :-(
-							if (key instanceof ICPPTemplateNonTypeParameter == false) {
-								useOriginal= false;
-								break;
+				IBinding spec= deferred.getSpecializedBinding();
+				if (spec instanceof ICPPTemplateDefinition) {
+					try {
+						ICPPTemplateArgument[] args= deferred.getTemplateArguments();
+						ICPPTemplateParameter[] pars= ((ICPPTemplateDefinition) spec).getTemplateParameters();
+						if (args.length == pars.length) {
+							boolean useOriginal= true;
+							for (int i = 0; useOriginal && i < pars.length; i++) {
+								ICPPTemplateParameter par= pars[i];
+								if (par instanceof ICPPTemplateNonTypeParameter) {
+									// mstodo change this
+								} else {
+									if (!((IType) par).isSameType(args[i].getTypeValue())) {
+										useOriginal= false;
+									}
+								}
+							}
+							if (useOriginal) {
+								binding= spec;
 							}
 						}
+					} catch (DOMException e) {
 					}
 				}
-				if (useOriginal) {
-					binding= deferred.getSpecializedBinding();
-				}
+				// mstodo+ remove
+//				final ObjectMap argMap = deferred.getArgumentMap();
+//				if (argMap != null) {
+//					for (int i = 0; useOriginal && i < argMap.size(); i++) {
+//						final Object key = argMap.keyAt(i);
+//						if (!key.equals(argMap.getAt(i))) {
+//							// bug 231868 non type parameters are modeled via their type :-(
+//							if (key instanceof ICPPTemplateNonTypeParameter == false) {
+//								useOriginal= false;
+//								break;
+//							}
+//						}
+//					}
+//				}
 			}
 		}
 		if (name.getParent() instanceof ICPPASTTemplateId) {

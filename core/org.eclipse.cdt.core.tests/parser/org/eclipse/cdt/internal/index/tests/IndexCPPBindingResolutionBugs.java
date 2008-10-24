@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.core.runtime.CoreException;
 
@@ -218,7 +220,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
         assertInstance(b1, ICPPInstanceCache.class);
         
         ICPPInstanceCache ct= (ICPPInstanceCache) b1;
-        ICPPSpecialization inst= ct.getInstance(new IType[]{(IType)b0});
+        ICPPSpecialization inst= ct.getInstance(new ICPPTemplateArgument[]{new CPPTemplateArgument((IType)b0)});
         assertInstance(inst, ICPPClassType.class);
         ICPPClassType c2t= (ICPPClassType) inst;
         ICPPBase[] bases= c2t.getBases();

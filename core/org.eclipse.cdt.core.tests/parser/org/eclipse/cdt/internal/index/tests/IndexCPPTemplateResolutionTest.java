@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -1480,11 +1482,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		
 		ICPPTemplateInstance inst= (ICPPTemplateInstance) t1;
 		final ICPPTemplateDefinition tmplDef = inst.getTemplateDefinition();
-		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getArguments());
+		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments());
 		assertSame(inst, inst2);
 		
-		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new IType[] {new CPPBasicType(IBasicType.t_char, 0)});
-		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new IType[] {new CPPBasicType(IBasicType.t_char, 0)});
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(IBasicType.t_char, 0))});
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(IBasicType.t_char, 0))});
 		assertSame(charInst1, charInst2);
 	}
 }

@@ -11,12 +11,12 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -99,11 +99,11 @@ public class PDOMCPPTemplateParameterMap {
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/12);
 		if (len == 0) {
-			return new CPPTemplateParameterMap();
+			return CPPTemplateParameterMap.EMPTY;
 		}
 		
 		rec+=2;
-		CPPTemplateParameterMap result= new CPPTemplateParameterMap();
+		CPPTemplateParameterMap result= new CPPTemplateParameterMap(len);
 		for (int i=0; i<len; i++) {
 			final int parPos= db.getInt(rec);
 			final int typeRec= db.getInt(rec+4);

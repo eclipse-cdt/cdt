@@ -29,10 +29,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -112,12 +112,12 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	public ICPPBase[] getBases() throws DOMException {
 		ICPPBase[] result = null;
 		ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
-		final ObjectMap argmap = specialClass.getArgumentMap();
+		final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 		for (ICPPBase base : bases) {
 			ICPPBase specBase = base.clone();
 			IBinding origClass = base.getBaseClass();
 			if (origClass instanceof IType) {
-				IType specClass= CPPTemplates.instantiateType((IType) origClass, argmap, specialClass);
+				IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, specialClass);
 				specClass = SemanticUtil.getUltimateType(specClass, false);
 				if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 					specBase.setBaseClass((IBinding) specClass);

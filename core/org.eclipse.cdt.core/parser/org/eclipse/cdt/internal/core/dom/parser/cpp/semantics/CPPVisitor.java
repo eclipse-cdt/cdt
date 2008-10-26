@@ -840,6 +840,13 @@ public class CPPVisitor {
 			            IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
 			            return getContainingScope(ns[ns.length - 1]);
 			        }
+			    } else if (parent instanceof ICPPASTTemplateId &&
+			    		node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
+					node= parent; // template-id
+					while (node instanceof IASTName) { 
+						node= node.getParent();
+					}
+					continue;
 			    }
 		    } else if (node instanceof ICPPASTTemplateParameter) {
 		    	return CPPTemplates.getContainingScope(node);

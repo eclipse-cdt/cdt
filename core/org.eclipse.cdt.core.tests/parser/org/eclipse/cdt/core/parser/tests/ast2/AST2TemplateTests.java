@@ -3212,4 +3212,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPVariable b= ba.assertNonProblem("b =", 1, ICPPVariable.class);
 		ICPPFunction func= ba.assertNonProblem("func(cb)", 4, ICPPFunction.class);
 	}
+
+	//	class Incomplete;
+	//
+	//	char probe(Incomplete* p);
+	//	char (&probe(...))[2];
+	//
+	//	namespace ns1 {
+	//
+	//	template<bool VAL>
+	//	class A {
+	//	 public:
+	//	  static bool m(int a) {}
+	//	};
+	//	}
+	//
+	//	void test() {
+	//	  int x;
+	//	  ns1::A<(sizeof(probe(x)) == 1)>::m(x);
+	//	}
+    public void testNonTypeTemplateParameter_252108() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("x))", 1, ICPPVariable.class);
+    }
 }

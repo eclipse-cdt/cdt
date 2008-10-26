@@ -16,12 +16,12 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.ImmediateExecutor;
-import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -217,8 +217,19 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	for ( final QueuedValueUpdate up : updates ) {
     		
     		final ILabelUpdate update = up.getUpdate();
-    		final int idx = up.getIndex();
     		final FormattedValueDMContext valueDmc = up.getValueDmc();
+    		
+    		/*
+    		 *  It is possible that we could not get a formatted DMC. In this case the setup
+    		 *  logic puts a null as the value. So in this case we just complete this one
+    		 *  with nothing.
+    		 */
+    		if ( valueDmc == null ) {
+    			update.done();
+    			continue;
+    		}
+    		
+    		final int idx = up.getIndex();
     		
     		getDMVMProvider().getModelData(
     			RegisterVMNode.this, 
@@ -358,8 +369,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	final ArrayList<QueuedValueUpdate> valueUpdatesToProcess = new ArrayList<QueuedValueUpdate>();
     	
     	final DsfExecutor dsfExecutor = getSession().getExecutor();
-    	final MultiRequestMonitor<RequestMonitor> mrm =
-            new MultiRequestMonitor<RequestMonitor>(dsfExecutor, null) {
+    	final CountingRequestMonitor crm =
+            new CountingRequestMonitor(dsfExecutor, null) {
                 @Override
                 public void handleCompleted() {
                     if (!isSuccess()) {
@@ -376,6 +387,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     retrieveAllFormattedDataValues( valueUpdatesToProcess );
                 }
             };
+            
+        crm.setDoneCount( calculateTheNumberOfRowsWithValueColumns(updates) );
+        
         /*
          * Process each update request, creating a QUEUE of requests which need further processing
          * for the formatted values. 
@@ -485,18 +499,23 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         	valueUpdatesToProcess.add(valueUpdate);
                         	
                         	/*
-                        	 * Fetch the associated formatted DMC for this field. This is added to the multi-request
-                        	 * monitor so they can all be gathered and processed in a single set.
+                        	 * Fetch the associated formatted DMC for this field. Note that every time we
+                        	 * complete the request for a Formatted DMC we tell the Counting Request Monitor
+                        	 * we have completed one in the list.
                         	 */
                         	DataRequestMonitor<FormattedValueDMContext> rm = new DataRequestMonitor<FormattedValueDMContext>(dsfExecutor, null) {
                         		@Override
                         		public void handleCompleted() {
-                        			valueUpdate.setValueDmc(getData());
-                        			mrm.requestMonitorDone(this);
+                        			if ( getStatus().isOK() ) {
+                        				valueUpdate.setValueDmc(getData());
+                        			}
+                        			else {
+                        				valueUpdate.setValueDmc(null);
+                        			}
+                        			crm.done();
                         		}
                         	};
 
-                        	mrm.add(rm);
                         	getFormattedDmcForReqister(update, dmc, rm);
                         } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
                             IRegisterDMData data = getData();
@@ -536,6 +555,21 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         }
     }
 
+    private int calculateTheNumberOfRowsWithValueColumns( ILabelUpdate updates[] ) {
+    	int count = 0;
+    	for (final ILabelUpdate update : updates) {
+    		String[] columns = update.getColumnIds();
+    		if (columns == null) columns = new String[] { IDebugVMConstants.COLUMN_ID__NAME }; 
+
+    		for (int idx = 0; idx < columns.length; idx++) {
+    			if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columns[idx])) {
+    				count ++;
+    			}
+    		}
+    	}
+    	return count;
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.dd.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])

@@ -537,7 +537,7 @@ public class CPPSemantics {
         return (ICPPNamespaceScope) scope;
     }
     
-	static private ICPPScope getLookupScope(IASTName name) throws DOMException{
+	static private ICPPScope getLookupScope(IASTName name) throws DOMException {
 	    IASTNode parent = name.getParent();
 	    IScope scope = null;
     	if (parent instanceof ICPPASTBaseSpecifier) {
@@ -546,7 +546,6 @@ public class CPPSemantics {
     	    if (n instanceof ICPPASTQualifiedName) {
     	        n = ((ICPPASTQualifiedName) n).getLastName();
     	    }
-    	    
 	        scope = CPPVisitor.getContainingScope(n);
 	    } else if (parent instanceof ICPPASTConstructorChainInitializer) {
 	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
@@ -560,7 +559,7 @@ public class CPPSemantics {
     	if (scope instanceof ICPPScope)
     		return (ICPPScope)scope;
     	else if (scope instanceof IProblemBinding)
-    		return new CPPScope.CPPScopeProblem(((IProblemBinding)scope).getASTNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
+    		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
     	return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray());
 	}
 

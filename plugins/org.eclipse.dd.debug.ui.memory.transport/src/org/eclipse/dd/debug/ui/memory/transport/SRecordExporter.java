@@ -198,9 +198,10 @@ public class SRecordExporter implements IMemoryExporter
 				dialog.setFileName(fFileText.getText());
 				dialog.open();
 			
-				if(dialog.getFileName() != null)
+				String filename = dialog.getFileName();
+				if(filename != null && filename.length() != 0 )
 				{
-					fFileText.setText(dialog.getFilterPath() + File.separator + dialog.getFileName());
+					fFileText.setText(dialog.getFilterPath() + File.separator + filename);
 				}
 				
 				validate();

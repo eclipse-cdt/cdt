@@ -47,11 +47,11 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			return names;
 		}
 	}
-    
+
     /**
      * Return the alternative nodes for this ambiguity.
      */
-    protected abstract IASTNode [] getNodes();
+    protected abstract IASTNode[] getNodes();
 
     /**
      * Returns the scope that may get polluted by alternatives of this ambiguity.
@@ -63,7 +63,6 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		final IScope scope= getAffectedScope();
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
-
 
 		final IASTNode[] alternatives= getNodes();
 		IASTNode bestAlternative= null;

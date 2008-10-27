@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.*;
 import org.eclipse.debug.core.DebugPlugin;
 
 public class StandardExecutableImporter implements IExecutableImporter {
@@ -141,12 +142,30 @@ public class StandardExecutableImporter implements IExecutableImporter {
 		String executableName = location.toFile().getName();
 		try {
 			IContainer fileContainer = createFromRoot(exeProject, location);
-			IFile exeFile = fileContainer.getFile(new Path(executableName));
+			Path exectuableFilePath = new Path(executableName);
+			IFile exeFile = fileContainer.getFile(exectuableFilePath);
 			if (!exeFile.exists() && validateBinaryParsers(exeProject, new File(path))) {
+				ensureBinaryType(exectuableFilePath);
 				exeFile.createLink(location, 0, null);
 			}
 		} catch (CoreException e) {
 			CDebugCorePlugin.log(e);
+		}
+	}
+
+	private void ensureBinaryType(IPath exectuableFilePath) {
+		if (Executable.isExecutableFile(exectuableFilePath))
+			return;
+		String ext = exectuableFilePath.getFileExtension();
+		if (ext != null) {
+			// add the extension to the content type manager as a binary
+			final IContentTypeManager ctm = Platform.getContentTypeManager();
+			final IContentType ctbin = ctm.getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
+			try {
+				ctbin.addFileSpec(ext, IContentTypeSettings.FILE_EXTENSION_SPEC);
+			} catch (CoreException e) {
+				CDebugCorePlugin.log(e);
+			}
 		}
 	}
 

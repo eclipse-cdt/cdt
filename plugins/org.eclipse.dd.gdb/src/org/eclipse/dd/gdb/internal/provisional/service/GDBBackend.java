@@ -355,7 +355,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
             }
             final GDBLaunchMonitor fGDBLaunchMonitor = new GDBLaunchMonitor(); 
 
-            final RequestMonitor gdbLaunchRequestMonitor = new RequestMonitor(getExecutor(), null) {
+            final RequestMonitor gdbLaunchRequestMonitor = new RequestMonitor(getExecutor(), requestMonitor) {
                 @Override
                 protected void handleCompleted() {
                     if (!fGDBLaunchMonitor.fTimedOut) {
@@ -369,8 +369,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
             };
             
             final Job startGdbJob = new Job("Start GDB Process Job") { //$NON-NLS-1$
+                {
+                    setSystem(true);
+                }
+
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
+                    if (gdbLaunchRequestMonitor.isCanceled()) {
+                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.CANCEL, GdbPlugin.PLUGIN_ID, -1, "Canceled starting GDB", null)); //$NON-NLS-1$
+                        gdbLaunchRequestMonitor.done();
+                        return Status.OK_STATUS;
+                    }
+                    
                     String commandLine = getGDBCommandLine();
         
                     try {                        
@@ -422,6 +432,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         @Override
         protected void shutdown(final RequestMonitor requestMonitor) {
             new Job("Terminating GDB process.") {  //$NON-NLS-1$
+                {
+                    setSystem(true);
+                }
+                
                 @Override
                 protected IStatus run(IProgressMonitor monitor) {
                     destroy();

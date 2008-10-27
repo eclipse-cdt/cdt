@@ -65,6 +65,8 @@ public class PlainTextImporter implements IMemoryImporter {
 	
 	private Properties fProperties;
 	
+	private static final int BUFFER_LENGTH = 64 * 1024;
+	
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
@@ -291,6 +293,8 @@ public class PlainTextImporter implements IMemoryImporter {
 				{
 					try
 					{	
+						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+						
 						BigInteger offset = null;
 						if(!fUseCustomAddress)
 							offset = BigInteger.ZERO;
@@ -329,7 +333,7 @@ public class PlainTextImporter implements IMemoryImporter {
 								if(scrollToAddress == null)
 									scrollToAddress = recordAddress;
 								
-								((IMemoryBlockExtension) fMemoryBlock).setValue(recordAddress.subtract(((IMemoryBlockExtension) 
+								memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) 
 									fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead)), data);
 								
 								bytesRead += data.length;
@@ -347,6 +351,7 @@ public class PlainTextImporter implements IMemoryImporter {
 							line = reader.readLine();
  						}
 						
+						memoryWriter.flush();
 						reader.close();
 						monitor.done();
 						

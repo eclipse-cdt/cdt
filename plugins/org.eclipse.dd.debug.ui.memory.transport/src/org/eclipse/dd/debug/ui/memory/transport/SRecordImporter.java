@@ -47,7 +47,6 @@ public class SRecordImporter implements IMemoryImporter {
 
 	File fInputFile;
 	BigInteger fStartAddress;
-	boolean fUseCustomAddress; 
 	Boolean fScrollToStart;
 	
 	private Text fStartText;
@@ -64,6 +63,8 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	private Properties fProperties;
 	
+	private static final int BUFFER_LENGTH = 64 * 1024;
+	
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
@@ -77,6 +78,7 @@ public class SRecordImporter implements IMemoryImporter {
 				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
 				fProperties.setProperty(TRANSFER_START, fStartText.getText());
 				fProperties.setProperty(TRANSFER_SCROLL_TO_START, fScrollToStart.toString());
+				fProperties.setProperty(TRANSFER_CUSTOM_START_ADDRESS, "" + fComboRestoreToThisAddress.getSelection());
 				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
@@ -94,12 +96,14 @@ public class SRecordImporter implements IMemoryImporter {
 		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToFileAddress.setSelection(true);
 		fComboRestoreToFileAddress.setText("Restore to address specified in the file");
+		fComboRestoreToFileAddress.setSelection(!new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "true")).booleanValue());
 		//comboRestoreToFileAddress.setLayoutData(data);
 		
 		// restore to this address
 		
 		fComboRestoreToThisAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToThisAddress.setText("Restore to this address: "); 
+		fComboRestoreToThisAddress.setSelection(new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "true")).booleanValue());
 		FormData data = new FormData();
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		fComboRestoreToThisAddress.setLayoutData(data);
@@ -286,6 +290,8 @@ public class SRecordImporter implements IMemoryImporter {
 				{
 					try
 					{	
+						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+						
 						// FIXME 4 byte default
 						
 						final int CHECKSUM_LENGTH = 1;
@@ -293,7 +299,7 @@ public class SRecordImporter implements IMemoryImporter {
 						BigInteger scrollToAddress = null;
 						
 						BigInteger offset = null;
-						if(!fUseCustomAddress)
+						if(!fProperties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false").equals("true"))
 							offset = BigInteger.ZERO;
 						
 						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
@@ -372,7 +378,7 @@ public class SRecordImporter implements IMemoryImporter {
 							
 							// FIXME error on incorrect checksum
 							
-							((IMemoryBlockExtension) fMemoryBlock).setValue(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
+							memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
 
 							jobCount = jobCount.add(BigInteger.valueOf(bytesRead));
 							while(jobCount.compareTo(factor) >= 0)
@@ -384,6 +390,7 @@ public class SRecordImporter implements IMemoryImporter {
 							line = reader.readLine();
  						}
 						
+						memoryWriter.flush();
 						reader.close();
 						monitor.done();
 						

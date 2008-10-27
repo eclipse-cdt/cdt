@@ -503,20 +503,20 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         	 * complete the request for a Formatted DMC we tell the Counting Request Monitor
                         	 * we have completed one in the list.
                         	 */
-                        	DataRequestMonitor<FormattedValueDMContext> rm = new DataRequestMonitor<FormattedValueDMContext>(dsfExecutor, null) {
-                        		@Override
-                        		public void handleCompleted() {
-                        			if ( getStatus().isOK() ) {
-                        				valueUpdate.setValueDmc(getData());
-                        			}
-                        			else {
-                        				valueUpdate.setValueDmc(null);
-                        			}
-                        			crm.done();
-                        		}
-                        	};
-
-                        	getFormattedDmcForReqister(update, dmc, rm);
+                        	getFormattedDmcForReqister(
+                        	    update, dmc, 
+                        	    new ViewerDataRequestMonitor<FormattedValueDMContext>(dsfExecutor, update) {
+                                    @Override
+                                    public void handleCompleted() {
+                                        if ( getStatus().isOK() ) {
+                                            valueUpdate.setValueDmc(getData());
+                                        }
+                                        else {
+                                            valueUpdate.setValueDmc(null);
+                                        }
+                                        crm.done();
+                                    }
+                        	    });
                         } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
                             IRegisterDMData data = getData();
                             String typeStr      = "Unsigned"; //$NON-NLS-1$

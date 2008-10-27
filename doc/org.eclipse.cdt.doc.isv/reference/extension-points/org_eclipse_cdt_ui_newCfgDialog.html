@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>newCfgDialog</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">newCfgDialog</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.ui.newCfgDialog<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>4.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>Contributions to this extension point define specific dialog for new configuration creation. This dialog will be called from "Manage configurations" screen instead of standard (independent of managed build system) dialog. <br>
+Contributed extension is usually provided with whole managed build system (MBS), so new dialog may be able to handle some MBS-specific features.<br>
+To disinguish numerous dialogs for separate MBSs, mbs_id element should be the same as corresponding MBS Id.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.dialog">dialog</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.dialog">dialog</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST dialog</p>
+<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">title&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">mbs_id&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>class</b> - class -  New configuration dialog class.<br> 
+Should implement org.eclipse.cdt.ui.newui.INewCfgDialog interface</li>
+<li><b>title</b> - title - initial title of New configuration dialog.</li>
+<li><b>mbs_id</b> - This element should contain ID of corresponding managed buld system (MBS).<br>
+Dialog will be displayed only if MBS Id for current project equals to mbs_id.</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6><extension
+        point="org.eclipse.cdt.ui.newCfgDialog">
+        <dialog
+            class="org.eclipse.cdt.managedbuilder.ui.newui.NewCfgDialog"
+            mbs_id="org.eclipse.cdt.managedbuilder.core.configurationDataProvider"
+            title="MBS: create configuration"/>
+  </extension>
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>org.eclipse.cdt.managedbuilder.ui.newui.NewCfgDialog
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+/*******************************************************************************
+ * Copyright (c) 2007 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Intel Corporation - initial API and implementation
+ *******************************************************************************/
+
+</p>
+</BODY>
+</HTML>

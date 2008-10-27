@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Converter</title>
+<style type="text/css">@import url("../../book.css");</style>
+<style type="text/css">@import url("../../schema.css");</style>
+</HEAD>
+<BODY>
+<H1 style="text-align:center">Converter</H1>
+<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Identifier: </h6>org.eclipse.cdt.managedbuilder.core.Converter<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Since: </h6>CDT version 3.0
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Description: </h6>This extension point allows a tool integrator to contribute a project-type/tool-chain/tool/builder converter to MBS.<p></p>
+<h6 class="CaptionFigColumn SchemaHeader">Configuration Markup:</h6>
+<p></p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.converter">converter</a>+)&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST extension</p>
+<p class="code SchemaDtdAttlist">point&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p></p>
+<ul class="ConfigMarkupAttlistDesc">
+</ul>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.converter">converter</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST converter</p>
+<p class="code SchemaDtdAttlist">fromId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">toId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">mbsVersion&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class="ConfigMarkupElementDesc">
+This extension point allows a tool integrator to contribute a project-type/tool-chain/tool/builder converter to MBS. Converters can be used to upgrade to newer versions, change the project-type, or to perform conversions between different tool chains/tools/buiders.</p>
+<br>
+<ul class="ConfigMarkupAttlistDesc">
+<li><b>fromId</b> - The 'fromId' is project-type/tool-chain/tool/builder id - a regular expression.</li>
+<li><b>toId</b> - The 'toId' is project-type/tool-chain/tool/builder id - a regular expression.</li>
+<li><b>mbsVersion</b> - The MBS version the converter was written for.</li>
+<li><b>class</b> - The class that implements the IConvertManagedBuildObject interface</li>
+<li><b>id</b> - The id of the converter</li>
+<li><b>name</b> - The name of the converter that is used in User Interface to display to the user</li>
+</ul>
+<br><h6 class="CaptionFigColumn SchemaHeader">Examples: </h6><p>
+   <pre class="Example"><span class="code SchemaTag">
+      &lt;extension point=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.managedbuilder.core.converter&quot;</span><span class="code SchemaTag">&gt;
+         &lt;converter
+            fromId=</span><span class="code SchemaCstring">&quot;project-type/tool-chain/tool/builder id&quot;</span><span class="code SchemaTag">
+            toId=</span><span class="code SchemaCstring">&quot;project-type/tool-chain/tool/builder id&quot;</span><span class="code SchemaTag">
+            mbsVersion=</span><span class="code SchemaCstring">&quot;The MBS version the converter was written for&quot;</span><span class="code SchemaTag">
+            class=</span><span class="code SchemaCstring">&quot;org.eclipse.cdt.managedbuilder.core.GccConverter&quot;</span><span class="code SchemaTag">&gt;
+         &lt;/converter&gt;
+      &lt;/extension&gt;
+   </span></pre>
+   </p>
+<p></p>
+
+<h6 class="CaptionFigColumn SchemaHeader">Supplied Implementation: </h6>"Example plugin" has default implementation of the converter
+<p></p>
+
+<br>
+<p class="note SchemaCopyright">
+Copyright (c) 2005 Intel Corporation and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+Intel Corporation - Initial API and implementation
+
+</p>
+</BODY>
+</HTML>

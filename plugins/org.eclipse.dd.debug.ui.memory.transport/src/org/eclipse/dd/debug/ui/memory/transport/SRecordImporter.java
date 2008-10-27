@@ -96,14 +96,14 @@ public class SRecordImporter implements IMemoryImporter {
 		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToFileAddress.setSelection(true);
 		fComboRestoreToFileAddress.setText("Restore to address specified in the file");
-		fComboRestoreToFileAddress.setSelection(!new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "true")).booleanValue());
+		fComboRestoreToFileAddress.setSelection(!new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false")).booleanValue());
 		//comboRestoreToFileAddress.setLayoutData(data);
 		
 		// restore to this address
 		
 		fComboRestoreToThisAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToThisAddress.setText("Restore to this address: "); 
-		fComboRestoreToThisAddress.setSelection(new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "true")).booleanValue());
+		fComboRestoreToThisAddress.setSelection(new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false")).booleanValue());
 		FormData data = new FormData();
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		fComboRestoreToThisAddress.setLayoutData(data);

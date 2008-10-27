@@ -658,7 +658,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *            The project to search
 	 * @return true if compile errors exist, otherwise false
 	 */
-	private boolean existsErrors(IProject proj) throws CoreException {
+	protected boolean existsErrors(IProject proj) throws CoreException {
 		IMarker[] markers = proj.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
 		if (markers.length > 0) {

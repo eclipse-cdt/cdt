@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.SteppingController;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.IRefreshAllTarget;
+import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.actions.DefaultRefreshAllTarget;
 import org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.dd.dsf.debug.ui.actions.DsfStepIntoCommand;
@@ -88,6 +90,7 @@ public class GdbAdapterFactory
 		final DsfSteppingModeTarget fSteppingModeTarget;
 		final IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
 		final SteppingController fSteppingController;
+        final DefaultRefreshAllTarget fRefreshAllTarget;
 
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -118,7 +121,8 @@ public class GdbAdapterFactory
             fDisconnectCommand = new GdbDisconnectCommand(session);
             fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
             fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
-
+            fRefreshAllTarget = new DefaultRefreshAllTarget();
+            
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
             session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);
@@ -130,6 +134,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IConnect.class, fConnectCommand);
             session.registerModelAdapter(IDisconnectHandler.class, fDisconnectCommand);
             session.registerModelAdapter(IModelSelectionPolicyFactory.class, fModelSelectionPolicyFactory);
+            session.registerModelAdapter(IRefreshAllTarget.class, fRefreshAllTarget);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -169,6 +174,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IConnect.class);
             session.unregisterModelAdapter(IDisconnectHandler.class);
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
+            session.unregisterModelAdapter(IRefreshAllTarget.class);
             
             fStepIntoCommand.dispose();
             fStepOverCommand.dispose();
@@ -181,8 +187,6 @@ public class GdbAdapterFactory
             fDisconnectCommand.dispose();
             fSuspendTrigger.dispose();
         }
-        
-        
     }
 
     /**

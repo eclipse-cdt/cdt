@@ -18,6 +18,8 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -55,8 +57,10 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -154,12 +158,29 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 					if ( path.isValidPath( handle ) ) {
 						IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
 						if ( files.length > 0 ) {
+							// default to the first file found in the workspace
 							file = files[0];
+							
+							// now try to match any finding to the project in the breakpoint
+							IProject project = b.getMarker().getResource().getProject();
+							for (IFile f : files) {
+								if (f.getProject().equals(project)) {
+									file = f;
+									break;
+								}
+							}
 						}
 						else {
 							File fsfile = new File( handle );
 							if ( fsfile.isFile() && fsfile.exists() ) {
-								return new ExternalEditorInput( new LocalFileStorage( fsfile ) );
+								// create an ExternalEditorInput with an external tu so when you
+								// open the file from the breakpoints view it opens in the
+								// proper editor.
+								IProject project = b.getMarker().getResource().getProject();
+								ICProject cproject = CoreModel.getDefault().create(project);
+								String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
+								ExternalTranslationUnit tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(path), id);
+								return new ExternalEditorInput( tu, new LocalFileStorage( fsfile ) );
 							}
 						}
 					}

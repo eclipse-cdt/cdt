@@ -501,7 +501,7 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
              id="org.eclipse.rse.ui.SubSystemPropertyTester"
              type="org.eclipse.core.runtime.IAdaptable"
              namespace="org.eclipse.rse.core"
-             properties="hasSubSystemCategory"
+             properties="hasSubSystemCategory, isOffline"
              class="org.eclipse.rse.internal.ui.subsystems.SubSystemPropertyTester">
         </propertyTester>
     </extension>

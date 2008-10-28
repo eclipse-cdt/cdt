@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Anna Dushistova (MontaVista)  - [149285] [ssh] multiple prompts and errors in case of incorrect username
+ * Anna Dushistova (MontaVista)  - [252058] Actions for shells subsystem should be contributed declaratively
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -715,6 +716,14 @@ public class SystemCommandAction extends SystemBaseAction
 				{
 					enable = checkObjectType(_selected);
 				}
+			} else if (selected instanceof IRemoteCmdSubSystem){
+				_cmdSubSystem = (IRemoteCmdSubSystem)selected;
+				_selected = null;
+				enable = true;
+			} else if (selected instanceof IRemoteFileSubSystem){
+				_cmdSubSystem = RemoteCommandHelpers.getCmdSubSystem(((IRemoteFileSubSystem)selected).getHost());
+				_selected = null;
+				enable = true;
 			}
 		}
 

@@ -6,6 +6,7 @@
  *
  * Contributors:
  * Anna Dushistova (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
+ * Anna Dushistova (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
  ********************************************************************************/
 package org.eclipse.rse.internal.ui.subsystems;
 
@@ -42,6 +43,22 @@ public class SubSystemPropertyTester extends PropertyTester {
 								.appliesToSystemType(host.getSystemType())) {
 							return test;
 						}
+					}
+				}
+				return !test;
+			} else {
+				return !test;
+			}
+		}else if (property.toLowerCase().equals("isoffline")){ //$NON-NLS-1$
+			boolean test = ((Boolean) expectedValue).booleanValue();
+
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) receiver)
+					.getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null) {
+				ISubSystem subsystem = adapter.getSubSystem(receiver);
+				if (subsystem != null) {
+					if(subsystem.isOffline()){
+						return test;
 					}
 				}
 				return !test;

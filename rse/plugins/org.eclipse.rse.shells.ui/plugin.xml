@@ -18,6 +18,8 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
 Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
+Anna Dushistova (MontaVista)  - [252058] Actions for shells subsystem should be contributed declaratively
+Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -148,28 +150,39 @@ Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled 
              <visibleWhen>
                <with variable="selection">
 			     <count value="1" />
-               <iterate>
-               <and>
-                  <test
-                        args="shells"
-                        property="org.eclipse.rse.core.hasSubSystemCategory"
-                        value="true">
-                  </test>
-                  <instanceof
-                        value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
-                  </instanceof>
-                  <test
-                        property="org.eclipse.rse.subsystems.files.isdirectory"
-                        value="true">
-                  </test>
-                  </and>
+                 <iterate>
+                     <and>
+                         <test
+                               property="org.eclipse.rse.core.isOffline"
+                               value="false">
+                         </test>
+                         <or>
+                             <and>
+                                  <test
+                                        args="shells"
+                                        property="org.eclipse.rse.core.hasSubSystemCategory"
+                                        value="true">
+                                  </test>
+                                  <instanceof
+                                      value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                                  </instanceof>
+                                  <test
+                                      property="org.eclipse.rse.subsystems.files.isdirectory"
+                                      value="true">
+                                  </test>
+                             </and>
+                             <instanceof
+                                  value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem">
+                             </instanceof>
+                         </or>
+                     </and>
                  </iterate> 
-                 </with> 
-                 </visibleWhen>
-               </command> 
-             </menuContribution>  
-            </extension>      
-     <extension point="org.eclipse.ui.commands">
+                </with> 
+              </visibleWhen>
+            </command> 
+        </menuContribution>  
+    </extension>      
+    <extension point="org.eclipse.ui.commands">
         <command
               categoryId="org.eclipse.rse.ui.commands.category"
               id="org.eclipse.rse.shells.ui.actions.LaunchShellCommand"

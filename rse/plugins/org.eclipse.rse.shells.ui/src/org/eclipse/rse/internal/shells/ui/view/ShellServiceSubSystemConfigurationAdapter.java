@@ -12,26 +12,16 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
+ * Anna Dushistova  (MontaVista) - [252058] Actions for shells subsystem should be contributed declaratively
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
-import org.eclipse.rse.internal.shells.ui.actions.SystemCommandAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemExportShellHistoryAction;
 import org.eclipse.rse.internal.shells.ui.actions.SystemExportShellOutputAction;
-import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
@@ -40,51 +30,8 @@ public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigur
 {
     protected IAction _exportShellHistoryAction;
     protected IAction _exportShellOutputAction;
-    protected SystemCommandAction _commandAction;
     protected ImageDescriptor _activeShellImageDescriptor;
     protected ImageDescriptor _inactiveShellImageDescriptor;
-    
-  public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
-	{
-		List allActions = new ArrayList();
-		IAction[] baseActions = super.getSubSystemActions(menu, selection, shell, menuGroup, factory, selectedSubSystem);
-		for (int i = 0; i < baseActions.length; i++)
-		{
-			allActions.add(baseActions[i]);
-		}
-		
-		//launching shells and finding files
-		if (selectedSubSystem instanceof IRemoteFileSubSystem)
-		{
-			IRemoteFileSubSystem fs = (IRemoteFileSubSystem) selectedSubSystem;
-			IRemoteCmdSubSystem cmdSubSystem = RemoteCommandHelpers.getCmdSubSystem(fs.getHost());
-			if (cmdSubSystem != null)
-			{
-			    allActions.add(getCommandShellAction(cmdSubSystem, shell));
-			}
-		}
-		else if (selectedSubSystem instanceof IRemoteCmdSubSystem)
-		{
-			allActions.add(getCommandShellAction((IRemoteCmdSubSystem)selectedSubSystem, shell));
-		}
-		
-		return (IAction[])allActions.toArray(new IAction[allActions.size()]);
-	}
-
-	
-    
-    public IAction getCommandShellAction(IRemoteCmdSubSystem selectedSubSystem, Shell shell)
-    {
-    	if (_commandAction == null)
-    	{
-    		_commandAction = new SystemCommandAction(shell, true, selectedSubSystem);
-    	}
-    	else
-    	{
-    		_commandAction.setSubSystem(selectedSubSystem);
-    	}
-    	return _commandAction;
-    }
 
     /**
      * Return the command shell history export action for the subsystem.  If there is none, return null

@@ -19,9 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
-/*
+/**
  * Represents a partially instantiated C++ class template, declaration of which is not yet available.
  *
  * @author Sergey Prigogin
@@ -65,7 +64,7 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 						return false;
 				
 					for (int i= 0; i < lhsArgs.length; i++) {
-						if (!CPPTemplates.isSameTemplateArgument(lhsArgs[i],rhsArgs[i])) 
+						if (!lhsArgs[i].isSameValue(rhsArgs[i])) 
 							return false;
 					}
 				}

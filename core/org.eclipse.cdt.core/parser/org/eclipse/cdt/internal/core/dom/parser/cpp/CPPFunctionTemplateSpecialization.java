@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * The specialization of a friend function template in the context of a class specialization.
@@ -51,7 +50,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 				ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) instances.keyAt(i);
 				if (args.length == arguments.length) {
 					for (int j=0; j < args.length; j++) {
-						if (!CPPTemplates.isSameTemplateArgument(args[j], arguments[j])) {
+						if (!args[j].isSameValue(arguments[j])) {
 							continue loop;
 						}
 					}

@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -742,17 +743,11 @@ public class Conversions {
 		if (src instanceof CPPBasicType && trg instanceof IPointerType) {
 			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
 			IASTExpression exp = ((CPPBasicType)src).getCreatedFromExpression();
-			// mstodo- improve by checking evaluation
-			if (exp instanceof IASTLiteralExpression && 
-					((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant) {
-				try { 
-					String val = exp.toString().toLowerCase().replace('u', '0');
-					val.replace('l', '0');
-					if (Integer.decode(val).intValue() == 0) {
-						cost.rank = Cost.CONVERSION_RANK;
-						cost.conversion = 1;
-					}
-				} catch(NumberFormatException e) {
+			if (exp != null) {
+				Long val= Value.create(exp, Value.MAX_RECURSION_DEPTH).numericalValue();
+				if (val != null && val == 0) {
+					cost.rank = Cost.CONVERSION_RANK;
+					cost.conversion = 1;
 				}
 			}
 		} else if (sPrev instanceof IPointerType) {

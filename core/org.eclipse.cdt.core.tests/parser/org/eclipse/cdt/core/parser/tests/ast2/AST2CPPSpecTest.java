@@ -18,10 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
@@ -1765,16 +1767,17 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// S<int()> x; // typeid
 	// S<int(1)> y; // expression (illformed)
 	public void test8_2s4() throws Exception {
-		//test is only for syntax, semantics are not checked here.
-		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
 		
 		assertInstance(col.getName(4), ICPPASTTemplateId.class);
 		assertInstance(((ICPPASTTemplateId)col.getName(4)).getTemplateArguments()[0], IASTTypeId.class);
 		
-		assertInstance(col.getName(7), ICPPASTTemplateId.class);
-		assertInstance(((ICPPASTTemplateId)col.getName(7)).getTemplateArguments()[0], IASTExpression.class);
+		final IASTName S_int_1 = col.getName(7);
+		assertInstance(S_int_1, ICPPASTTemplateId.class);
+		assertInstance(((ICPPASTTemplateId)S_int_1).getTemplateArguments()[0], IASTExpression.class);
+		assertInstance(S_int_1.getBinding(), IProblemBinding.class);
 	}
 
 	// void foo()
@@ -4672,6 +4675,15 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// A<int*, int*, 2> a5; // ambiguous: matches #3 and #5 : expect problem 
 	public void test14_5_4_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
+	}
+
+	// template<int I, int J, class T> class X { };
+	// template<int I, int J>          class X<I, J, int> { }; // #1
+	// template<int I>                 class X<I, I, int> { }; // #2
+	// template<int I, int J> void f(X<I, J, int>); // #A
+	// template<int I>        void f(X<I, I, int>); // #B
+	public void test14_5_4_2s2() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// // primary template

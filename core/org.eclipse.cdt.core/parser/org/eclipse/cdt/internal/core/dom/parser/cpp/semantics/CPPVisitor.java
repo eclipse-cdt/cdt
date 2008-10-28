@@ -16,9 +16,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
-import java.math.BigInteger;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -139,14 +136,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -1590,17 +1585,6 @@ public class CPPVisitor {
 	    if (nested != null) {
 	    	return createType(type, nested);
 	    }
-	    
-	    // Currently, CPPBasicType objects are also used to represent non-type template argument
-	    // values. We must ensure the initializer expression is attached to the type if available.
-	    // mstodo- can be removed
-	    if (declarator.getInitializer() instanceof IASTInitializerExpression) {
-	    	IType utype= getUltimateTypeUptoPointers(baseType);
-	    	if (utype instanceof CPPBasicType) {
-	    		((CPPBasicType)utype).setFromExpression(((IASTInitializerExpression) declarator.getInitializer()).getExpression());
-	    	}
-	    }
-	    
 	    return type;
 	}
 
@@ -2334,89 +2318,6 @@ public class CPPVisitor {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * @param integral
-	 * @return the (non-null) integer value of the specified literal
-	 * @throws NumberFormatException
-	 */
-	/*
-	 * Currently unsigned (U,u) is stripped and ignored.
-	 */
-	public static BigInteger parseIntegral(String integral) {
-		int radix= 10;
-		if (integral.length() == 3
-				&& integral.charAt(0) == '\''
-				&& integral.charAt(2) == '\'') {
-			String lo= Long.toString(Character.getNumericValue(integral.charAt(1)));
-			return new BigInteger(lo);
-		} else if (Keywords.TRUE.equals(integral)) {
-			return BigInteger.ONE;
-		} else if (Keywords.FALSE.equals(integral)) {
-			return BigInteger.ZERO;
-		}
-		
-		int start=0;
-		int end= integral.length();
-		
-		boolean negate= integral.charAt(start) == '-';
-		if (negate || integral.charAt(start) == '+') {
-			start++;
-		}
-		
-		if (start < integral.length() && integral.charAt(start) == '0') {
-			if (start + 1 < integral.length()) {
-				if (integral.charAt(start + 1) == 'x') {
-					start += 2;
-					radix= 16;
-				} else {
-					radix= 8;
-				}
-			}
-		}
-		
-		for (end--; end > 0; end--) {
-			final char c= integral.charAt(end);
-			if (c != 'L' && c!='l' && c!='U' && c!='u') {
-				break;
-			}
-		}
-		
-		integral= integral.substring(start, end+1);
-		
-		BigInteger result= new BigInteger(integral, radix);		
-		return negate ? result.negate() : result;
-	}
-
-	/**
-	 * @param e1
-	 * @return the first non id-expression by following values assigned to basic types.
-	 * @deprecated mstodo- remove
-	 */
-	@Deprecated
-	public static final IASTExpression reverseConstantPropagationLookup(IASTExpression e1) {
-		try {
-			for (int i= 0; e1 instanceof IASTIdExpression && i < 8; i++) {
-				IBinding b1= ((IASTIdExpression)e1).getName().resolveBinding();
-				if (b1 instanceof ICPPVariable) {
-					ICPPVariable var= (ICPPVariable) b1;
-					IType t1= SemanticUtil.getUltimateTypeViaTypedefs(var.getType());
-					if (t1 instanceof IQualifierType) {
-						IQualifierType qt= (IQualifierType) t1;
-						if (qt.isConst()) {
-							t1= SemanticUtil.getUltimateTypeViaTypedefs(qt.getType());
-							if (t1 instanceof ICPPBasicType) {
-								e1= ((ICPPBasicType) t1).getValue();
-							}
-						}
-					}
-				}
-			}
-		} catch (DOMException de) {
-			CCorePlugin.log(de);
-		}
-		return e1;
 	}
 	
 	/** 

@@ -95,15 +95,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// template<int I, int J, class T> class X { };
-	// template<int I, int J>          class X<I, J, int> { }; // #1
-	// template<int I>                 class X<I, I, int> { }; // #2
-	// template<int I, int J> void f(X<I, J, int>); // #A
-	// template<int I>        void f(X<I, I, int>); // #B
-	public void _test14_5_4_2s2() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
 	// template <int I, int J> A<I+J> f(A<I>, A<J>); // #1
 	// template <int K, int L> A<K+L> f(A<K>, A<L>); // same as #1
 	// template <int I, int J> A<I-J> f(A<I>, A<J>); // different from #1

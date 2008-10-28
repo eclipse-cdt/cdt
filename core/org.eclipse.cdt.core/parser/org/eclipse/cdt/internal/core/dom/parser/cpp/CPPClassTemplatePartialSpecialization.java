@@ -36,14 +36,10 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	}
 
 	public ICPPTemplateArgument[] getTemplateArguments() {
-		createArguments();
-		return arguments;
-	}
-
-	private void createArguments() {
 		if (arguments == null) {
 			arguments= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName());
 		}
+		return arguments;
 	}
 
 	/* (non-Javadoc)

@@ -377,7 +377,7 @@ public class ExpressionEvaluator {
     	return getNumber(image, 0, image.length, 10, IProblem.SCANNER_BAD_DECIMAL_FORMAT);
     }
 
-	private long getChar(char[] tokenImage, int i) throws EvalException {
+	public static long getChar(char[] tokenImage, int i) throws EvalException {
 		if (i>=tokenImage.length) {
 			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
 		}

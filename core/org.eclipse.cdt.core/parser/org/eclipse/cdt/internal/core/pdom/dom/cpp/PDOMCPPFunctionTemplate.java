@@ -18,24 +18,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.EScopeKind;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -45,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
-		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IIndexScope {
+		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
 
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
 	
@@ -62,10 +54,6 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 
 	public PDOMCPPFunctionTemplate(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
-	}
-
-	public EScopeKind getKind() {
-		return EScopeKind.eLocal;
 	}
 
 	@Override
@@ -123,45 +111,6 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
 		list.accept(visitor);
-	}
-
-	public IBinding[] find(String name) throws DOMException {
-		return CPPSemantics.findBindings( this, name, false );
-	}
-
-	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
-			throws DOMException {
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.accept(visitor);
-			
-			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-	
-	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-			throws DOMException {
-		IBinding[] result = null;
-		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null,
-					prefixLookup, !prefixLookup);
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.accept(visitor);
-			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
-	}
-
-	public IIndexBinding getScopeBinding() {
-		return this;
 	}
 
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {

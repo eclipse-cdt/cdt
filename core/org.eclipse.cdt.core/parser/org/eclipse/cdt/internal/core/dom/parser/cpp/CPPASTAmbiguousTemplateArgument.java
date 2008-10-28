@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
@@ -34,7 +35,7 @@ public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements 
 	 * in the future
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
-		fNodes= new ArrayList<IASTNode>();
+		fNodes= new ArrayList<IASTNode>(2);
 		for(IASTNode node : nodes) {
 			if(node instanceof IASTTypeId || node instanceof IASTIdExpression) {
 				fNodes.add(node);
@@ -62,7 +63,7 @@ public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements 
 	private void addNode(IASTNode node) {
 		fNodes.add(node);
 		node.setParent(this);
-		node.setPropertyInParent(CPPASTTemplateId.TEMPLATE_ID_ARGUMENT);
+		node.setPropertyInParent(ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT);
 	}
 }
 

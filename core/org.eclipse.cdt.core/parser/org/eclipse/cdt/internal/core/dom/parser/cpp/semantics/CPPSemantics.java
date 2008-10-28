@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -131,6 +132,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -323,7 +325,10 @@ public class CPPSemantics {
 							for (int i = 0; useOriginal && i < pars.length; i++) {
 								ICPPTemplateParameter par= pars[i];
 								if (par instanceof ICPPTemplateNonTypeParameter) {
-									// mstodo change this
+									IValue val= args[i].getNonTypeValue();
+									if (val == null || par.getParameterPosition() != Value.isTemplateParameter(val)) {
+										useOriginal= false;
+									}
 								} else {
 									if (!((IType) par).isSameType(args[i].getTypeValue())) {
 										useOriginal= false;
@@ -337,20 +342,6 @@ public class CPPSemantics {
 					} catch (DOMException e) {
 					}
 				}
-				// mstodo+ remove
-//				final ObjectMap argMap = deferred.getArgumentMap();
-//				if (argMap != null) {
-//					for (int i = 0; useOriginal && i < argMap.size(); i++) {
-//						final Object key = argMap.keyAt(i);
-//						if (!key.equals(argMap.getAt(i))) {
-//							// bug 231868 non type parameters are modeled via their type :-(
-//							if (key instanceof ICPPTemplateNonTypeParameter == false) {
-//								useOriginal= false;
-//								break;
-//							}
-//						}
-//					}
-//				}
 			}
 		}
 		if (name.getParent() instanceof ICPPASTTemplateId) {

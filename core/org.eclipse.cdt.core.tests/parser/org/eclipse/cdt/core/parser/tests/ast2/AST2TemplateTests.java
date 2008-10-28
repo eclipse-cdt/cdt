@@ -764,30 +764,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame(g1, g2);
 	}
 	
-	// template <class T, class U = T > U f(T);   
-	// void g() {                                   
-	//    f(1);                                   
-	// }                                            
-	public void testBug76951_1() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-		
-		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
-		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(2).resolveBinding();
-		assertSame(T, T2);
-		
-		ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(4).resolveBinding();
-		ICPPFunction f2 = (ICPPFunction) col.getName(8).resolveBinding();
-		
-		assertTrue(f2 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance)f2).getTemplateDefinition(), f1);
-		
-		IFunctionType ft = f2.getType();
-		assertTrue(ft.getReturnType() instanceof IBasicType);
-		assertEquals(((IBasicType)ft.getReturnType()).getType(), IBasicType.t_int);
-	}
-	
 	// template <class T, class U = T > class A {   
 	//    U u;                                      
 	// };                                           
@@ -2891,7 +2867,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPVariable _256= ba.assertNonProblem("_256=0x100", 4, ICPPVariable.class);
 		IQualifierType qt1= assertInstance(_256.getType(), IQualifierType.class);
 		ICPPBasicType bt1= assertInstance(qt1.getType(), ICPPBasicType.class);
-		assertEquals(256, CPPVisitor.parseIntegral(bt1.getValue().toString()).intValue());
+		assertEquals(256, _256.getInitialValue().numericalValue().intValue());
 		
 		ICPPVariable t= ba.assertNonProblem("t;", 1, ICPPVariable.class);
 		ICPPTemplateInstance ci1= assertInstance(t.getType(), ICPPTemplateInstance.class, ICPPClassType.class);
@@ -2902,7 +2878,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		// non-type arguments are currently modelled as a type with attached expression
 		ICPPBasicType bt0= assertInstance(args1.getAt(0), ICPPBasicType.class);
 		assertEquals(bt0.getType(), IBasicType.t_int);
-		assertEquals(256, CPPVisitor.parseIntegral(bt0.getValue().toString()).intValue());
+		assertEquals(256, ci1.getTemplateArguments()[0].getNonTypeValue().numericalValue().intValue());
 		
 		ICPPTemplateInstance ct= ba.assertNonProblem("C<_256> ", 7, ICPPTemplateInstance.class, ICPPClassType.class);
 		ObjectMap args= ct.getArgumentMap();
@@ -2912,7 +2888,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		// non-type arguments are currently modelled as a type with attached expression
 		ICPPBasicType bt= assertInstance(args.getAt(0), ICPPBasicType.class);
 		assertEquals(bt.getType(), IBasicType.t_int);
-		assertEquals(256, CPPVisitor.parseIntegral(bt.getValue().toString()).intValue());
+		assertEquals(256, ct.getTemplateArguments()[0].getNonTypeValue().numericalValue().intValue());
 		
 		ba.assertNonProblem("foo(t)", 3);
 		ba.assertNonProblem("bar(t)", 3);
@@ -2939,7 +2915,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	class A {};
 	//
 	//	A<int> aint; // should be an error
-	public void _testTypeArgumentToNonTypeParameter() throws Exception {
+	public void testTypeArgumentToNonTypeParameter() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("A<int>", 6);
 	}

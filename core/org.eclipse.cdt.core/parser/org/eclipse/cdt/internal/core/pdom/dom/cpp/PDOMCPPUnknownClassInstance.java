@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -104,7 +103,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 						return false;
 				
 					for (int i= 0; i < lhsArgs.length; i++) {
-						if (!CPPTemplates.isSameTemplateArgument(lhsArgs[i], rhsArgs[i])) 
+						if (!lhsArgs[i].isSameValue(rhsArgs[i])) 
 							return false;
 					}
 				}

@@ -39,7 +39,6 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 	private ICPPTemplateArgument[] fArguments;
 	private ICPPFunctionTemplate fFunctionTemplate;
 
-	private ICPPTemplateParameterMap fArgmap;
 	private IParameter [] fParameters;
 	private IFunctionType fFunctionType;
 
@@ -59,15 +58,11 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 
 	@Deprecated
 	public ObjectMap getArgumentMap() {
-		return CPPTemplates.getArgumentMap(fFunctionTemplate, getTemplateParameterMap());
+		return ObjectMap.EMPTY_MAP;
 	}
 	
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		// mstodo- deferred function instance and tpmap
-		if (fArgmap == null) {
-			fArgmap= CPPTemplates.createParameterMap(fFunctionTemplate, getTemplateArguments());
-		}
-		return fArgmap;
+		return CPPTemplateParameterMap.EMPTY;
 	}
 
 	@Deprecated
@@ -80,7 +75,6 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
 	}
 	
 	public IParameter[] getParameters() throws DOMException {
-		// mstodo- deferred function instance and tpmap
 		if( fParameters == null ){
 			IParameter [] params = ((ICPPFunction)getTemplateDefinition()).getParameters();
 			fParameters = new IParameter[ params.length ];

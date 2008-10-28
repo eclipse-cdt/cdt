@@ -20,11 +20,11 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -46,6 +46,7 @@ public class Value implements IValue {
 	
 	private static class UnknownValueException extends Exception {}
 	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
+	private static int sUnique=0;
 
 	private final String fValue;
 	private Value(String rep) {
@@ -75,17 +76,32 @@ public class Value implements IValue {
 		}
 		return fValue.equals(((IValue) obj).getCanonicalRepresentation());
 	}
+	
+	@Override
+	public String toString() {
+		return fValue;
+	}
 
+	/**
+	 * Creates a value representing the given number.
+	 */
 	public static IValue create(long value) {
 		if (value >=0 && value < TYPICAL.length)
 			return TYPICAL[(int) value];
 		return new Value(String.valueOf(value));
 	}
 	
+	/**
+	 * Creates a value representing the given template parameter.
+	 */
 	public static IValue create(ICPPTemplateNonTypeParameter tntp) {
 		return new Value(evaluate(tntp));
 	}
 
+	/**
+	 * Tests whether the value is a template parameter, returns the parameter position of the
+	 * parameter, or <code>null</code> if it is not a template parameter.
+	 */
 	public static int isTemplateParameter(IValue tval) {
 		final String rep= tval.getCanonicalRepresentation();
 		if (rep.indexOf('#') == 0 && rep.indexOf(',') == -1) {
@@ -97,6 +113,17 @@ public class Value implements IValue {
 		return -1;
 	}
 
+	/**
+	 * Tests whether the value depends on a template parameter.
+	 */
+	public static boolean isDependentValue(IValue nonTypeValue) {
+		final String rep= nonTypeValue.getCanonicalRepresentation();
+		return rep.indexOf('#') >= 0;
+	}
+
+	/**
+	 * Creates the value for an expression.
+	 */
 	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
 		try {
 			Object obj= evaluate(expr, maxRecursionDepth);
@@ -108,6 +135,9 @@ public class Value implements IValue {
 		return UNKNOWN;
 	}
 	
+	/**
+	 * Creates a value off its canonical representation.
+	 */
 	public static IValue fromCanonicalRepresentation(String rep) {
 		if (rep.equals(UNKNOWN.getCanonicalRepresentation()))
 			return UNKNOWN;
@@ -117,6 +147,13 @@ public class Value implements IValue {
 		} catch (NumberFormatException e) {}
 	
 		return new Value(rep);
+	}
+
+	/**
+	 * Creates a unique value needed during template instantiation.
+	 */
+	public static IValue unique() {
+		return new Value("@" + (++sUnique)); //$NON-NLS-1$
 	}
 
 	/**
@@ -189,14 +226,29 @@ public class Value implements IValue {
 			}
 		}
 		if (e instanceof IASTLiteralExpression) {
-			if (e.getExpressionType() instanceof IBasicType) {
+			IASTLiteralExpression litEx= (IASTLiteralExpression) e;
+			switch (litEx.getKind()) {
+			case ICPPASTLiteralExpression.lk_false:
+				return "0";
+			case ICPPASTLiteralExpression.lk_true:
+				return "1";
+			case IASTLiteralExpression.lk_integer_constant:
 				try {
 					return ExpressionEvaluator.getNumber(e.toString().toCharArray());
 				} catch (EvalException e1) {
 					throw UNKNOWN_EX;
 				}
+			case IASTLiteralExpression.lk_char_constant:
+				try {
+					final char[] image= e.toString().toCharArray();
+					if (image.length > 1)
+						if (image[0] == 'L') 
+							return ExpressionEvaluator.getChar(image, 2);
+						return ExpressionEvaluator.getChar(image, 1);
+				} catch (EvalException e1) {
+					throw UNKNOWN_EX;
+				}
 			}
-			return e.toString();
 		}
 		throw UNKNOWN_EX;
 	}

@@ -56,7 +56,7 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 
 	public boolean isSameValue(ICPPTemplateArgument arg) {
 		if (fValue != null) {
-			return fValue.equals(arg.getNonTypeValue()) && fType.equals(arg.getTypeOfNonTypeValue());
+			return fValue.equals(arg.getNonTypeValue());
 		}
 		return fType.isSameType(arg.getTypeValue());
 	}

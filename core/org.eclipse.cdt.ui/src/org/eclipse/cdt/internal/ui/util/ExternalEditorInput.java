@@ -53,8 +53,9 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 		if (!(obj instanceof IStorageEditorInput))
 			return false;
 		IStorageEditorInput other = (IStorageEditorInput)obj;
+		// externalFile storage type may not be the same so compare the paths
 		try {
-			return externalFile.equals(other.getStorage());
+			return externalFile.getFullPath().equals(other.getStorage().getFullPath());
 		} catch (CoreException exc) {
 			return false;
 		}

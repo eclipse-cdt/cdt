@@ -150,7 +150,8 @@ public class NodeCommenter {
 				return true;
 			}
 			IPath path = new Path(node.getContainingFilename());
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			IFile file = files.length > 0 ? files[0] : null; // NPE thrown below, like original behavior
 			
 			//XXX HSR Guido: Possible Performance Issue (File access)
 			try {

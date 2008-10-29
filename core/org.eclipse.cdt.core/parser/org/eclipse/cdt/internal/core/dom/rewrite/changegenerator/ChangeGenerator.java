@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -230,10 +231,13 @@ public class ChangeGenerator extends CPPASTVisitor {
 			targetLocation = getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
-			IFile relevantFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(implPath);
-			if (relevantFile == null) { // if not in workspace
+			IFile[] relevantFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(implPath);
+			if (relevantFiles.length == 0) { // if not in workspace or local file system
 			    throw new UnhandledASTModificationException(modification);
 			}
+			// There may be multiple links to the same file, but since their contents are the
+			// same, just use the first one.
+			IFile relevantFile = relevantFiles[0];
 			MultiTextEdit edit;
 			if (changes.containsKey(relevantFile)) {
 				edit = changes.get(relevantFile);

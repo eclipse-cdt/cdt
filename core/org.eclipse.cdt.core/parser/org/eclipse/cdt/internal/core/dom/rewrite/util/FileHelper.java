@@ -36,7 +36,8 @@ public class FileHelper {
 
 	public static IFile getIFilefromIASTNode(IASTNode node) {
 		IPath implPath = new Path(node.getContainingFilename());
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(implPath);
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(implPath);
+		return files.length > 0 ? files[0] : null;
 	}
 	
 	public static boolean isFirstWithinSecondLocation(IASTFileLocation loc1, IASTFileLocation loc2){

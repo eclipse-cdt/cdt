@@ -36,6 +36,7 @@ import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
+import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -94,7 +95,7 @@ import org.eclipse.ui.progress.UIJob;
  *  </p>
  */
 
-public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering
+public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering
 {
 	protected Rendering fRendering;
     protected Action displayEndianBigAction;
@@ -1202,6 +1203,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
         return super.getAdapter(adapter);
     }
+
+	public void resetRendering() throws DebugException {
+		fRendering.gotoAddress(fRendering.fBaseAddress);
+	}
 }
 
 

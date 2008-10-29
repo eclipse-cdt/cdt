@@ -117,7 +117,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	public IBinding[] find(String name) {
 		try {
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(),  name.toCharArray(),
-					IndexFilter.ALL_DECLARED_OR_IMPLICIT,false, true);
+					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -101,22 +102,14 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
-		instances.put(arguments, instance);
+		String key= ASTTypeUtil.getArgumentListString(arguments, true);
+		instances.put(key, instance);
 	}
 
 	public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
-			loop: for (int i=0; i < instances.size(); i++) {
-				ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) instances.keyAt(i);
-				if (args.length == arguments.length) {
-					for (int j=0; j < args.length; j++) {
-						if (!args[j].isSameValue(arguments[j])) {
-							continue loop;
-						}
-					}
-					return (ICPPTemplateInstance) instances.getAt(i);
-				}
-			}
+			String key= ASTTypeUtil.getArgumentListString(arguments, true);
+			return (ICPPTemplateInstance) instances.get(key);
 		}
 		return null;
 	}

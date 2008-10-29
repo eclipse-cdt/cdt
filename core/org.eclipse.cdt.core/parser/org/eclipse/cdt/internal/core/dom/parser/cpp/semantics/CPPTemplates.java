@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -63,7 +64,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -141,6 +141,7 @@ public class CPPTemplates {
 	 */
 	public static IBinding instantiate(ICPPTemplateDefinition template, ICPPTemplateArgument[] arguments) {
 		try {
+			arguments= SemanticUtil.getSimplifiedArguments(arguments);
 			if (template instanceof ICPPTemplateTemplateParameter) {
 				return deferredInstance(template, arguments);
 			}
@@ -167,7 +168,6 @@ public class CPPTemplates {
 	 * Instantiates a partial class template specialization.
 	 */
 	private static IBinding instantiatePartialSpecialization(ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args) throws DOMException {
-		args= SemanticUtil.getSimplifiedArguments(args);
 		ICPPTemplateInstance instance= getInstance(partialSpec, args);
 		if (instance != null)
 			return instance;
@@ -209,7 +209,6 @@ public class CPPTemplates {
 		ICPPTemplateArgument[] actualArgs = new ICPPTemplateArgument[numParams];
 		boolean argsContainDependentType = false;
 
-		arguments= SemanticUtil.getSimplifiedArguments(arguments);
 		for (int i = 0; i < numParams; i++) {
 			arg= null;
 			param= parameters[i];
@@ -400,6 +399,7 @@ public class CPPTemplates {
 	}
 
 	public static IBinding createBinding(ICPPASTTemplateParameter templateParameter) {
+		// mstodo allow incomplete bindings
 		ICPPTemplateDefinition template = getContainingTemplate(templateParameter);
 
 		IBinding binding = null;
@@ -572,6 +572,7 @@ public class CPPTemplates {
 			if (templateParams.length != args.length) {
 				return null; // mstodo problem or use default args?
 			}
+			args= SemanticUtil.getSimplifiedArguments(args);
 			for (int i = 0; i < templateParams.length; i++) {
 				tpMap.put(templateParams[i], args[i]);
 			}
@@ -773,6 +774,7 @@ public class CPPTemplates {
 		ICPPTemplateArgument[] arguments= createTemplateArgumentArray(id);
 		ICPPTemplateArgument[] result = new ICPPTemplateArgument[templateParameters.length];
 
+		arguments= SemanticUtil.getSimplifiedArguments(arguments);
 		if (arguments.length == result.length) {
 			for (int i = 0; i < templateParameters.length; i++) {
 				result[i] = arguments[i];
@@ -1725,7 +1727,6 @@ public class CPPTemplates {
 			return null;
 		}
 
-		args= SemanticUtil.getSimplifiedArguments(args);
 		ICPPClassTemplatePartialSpecialization[] specializations = template.getPartialSpecializations();
 		if (specializations == null) {
 			return template;
@@ -1978,7 +1979,7 @@ public class CPPTemplates {
 	 * Attempts to (partially) resolve an unknown binding with the given arguments.
 	 */
 	private static IBinding resolveUnknown(ICPPUnknownBinding unknown, ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) throws DOMException {
-        if (unknown instanceof ICPPDeferredTemplateInstance) {
+        if (unknown instanceof ICPPDeferredClassInstance) {
         	return resolveDeferredClassInstance((ICPPDeferredClassInstance) unknown, tpMap, within);
         }
 
@@ -2069,12 +2070,9 @@ public class CPPTemplates {
 		if (m1 == null || m2 == null || m1.length != m2.length)
 			return false;
 
-		for (int i = 0; i < m1.length; i++) {
-			if (!m1[i].isSameValue(m2[i]))
-				return false;
-		}
-		
-		return true;
+		String s1 = ASTTypeUtil.getArgumentListString(m1, true);
+		String s2 = ASTTypeUtil.getArgumentListString(m2, true);
+		return s1.equals(s2);
 	}
 
 	public static ICPPTemplateParameterMap createParameterMap(ICPPTemplateDefinition tdef, ICPPTemplateArgument[] args) {

@@ -330,7 +330,10 @@ public class CPPSemantics {
 										useOriginal= false;
 									}
 								} else {
-									if (!((IType) par).isSameType(args[i].getTypeValue())) {
+									IType other= args[i].getTypeValue();
+									if (!(other instanceof ICPPTemplateParameter)) {
+										useOriginal= false;
+									} else if (par.getParameterPosition() != ((ICPPTemplateParameter) other).getParameterPosition()) {
 										useOriginal= false;
 									}
 								}
@@ -2010,7 +2013,15 @@ public class CPPSemantics {
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable(data, fns);
 		
-		if (data.forDefinition() || data.forExplicitInstantiation()) {
+		// deferred function instances cannot be disambiguated.
+		boolean deferredOnly= true;
+		for (int i = 0; deferredOnly && i < fns.length; i++) {
+			final IFunction f = fns[i];
+			if (f != null && !(f instanceof ICPPDeferredTemplateInstance)) {
+				deferredOnly= false;
+			}
+		}
+		if (deferredOnly || data.forDefinition() || data.forExplicitInstantiation()) {
 			for (IFunction fn : fns) {
 				if (fn != null) {
 					return fn;

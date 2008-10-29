@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [237970]  Subsystem.connect( ) fails for substituting host name when isOffline( ) is true
  * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
  * Don Yantzi       (IBM)        - [244807] Delay connecting if resolving filters while restoring from cache
+ * David McKnight   (IBM)        - [226787] [services] Dstore processes subsystem is empty after switching from shell processes
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -3289,10 +3290,27 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 * @param newConfig
 	 */
 	private void doSwitchServiceConfiguration(ISubSystemConfiguration newConfig) {
-		try {
-			disconnect();
-		} catch (Exception e) {
+		
+		// only disconnect the connector service if there are no only services that use it
+		IConnectorService oldConnectorService = getConnectorService();
+		if (oldConnectorService.isConnected()){
+			ISubSystem[] associatedSubSystems = oldConnectorService.getSubSystems();
+			if (associatedSubSystems != null && associatedSubSystems.length > 1){
+				// at least one other subsystem still using this connector service so don't disconnect
+				// instead uninitialize this subsystem
+				uninitializeSubSystem(new NullProgressMonitor());
+			}
+			else {
+				// no more associated subsystems
+				try {
+					disconnect();
+				} catch (Exception e) {
+				}
+			}
 		}
+		
+		
+		
 		IHost host = getHost();
 		// remove the old references and store them for later use
 		ISubSystemConfiguration oldConfig = getSubSystemConfiguration();
@@ -3339,7 +3357,8 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		}
 
 		// switch the connector service
-		IConnectorService oldConnectorService = getConnectorService();
+
+		
 		oldConnectorService.deregisterSubSystem(this);
 		IConnectorService newConnectorService = newConfig.getConnectorService(host);
 		setConnectorService(newConnectorService);
@@ -3348,6 +3367,13 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 
 		// call the subsystem specfic switching support
 		internalSwitchSubSystemConfiguration(newConfig);
+	
+		if (newConnectorService.isConnected()){
+			// make sure that the new service is initialized properly
+			// since we're already connected and normally it's done as part of connect
+			initializeSubSystem(new NullProgressMonitor());
+		}
+		
 
 		// commit the subsystem
 		setDirty(true);

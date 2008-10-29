@@ -14,9 +14,12 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -43,6 +47,8 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -61,6 +67,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
@@ -222,7 +229,36 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				final ICProject project = fWorkingCopy.getCProject();
 				final char[] name = fSelectedText.toCharArray();
 				List<ICElement> elems= new ArrayList<ICElement>();
+								
+				// bug 252549, search for names in the AST first
+				Set<IBinding> bindings= new HashSet<IBinding>();
+				Set<IBinding> ignoreIndexBindings= new HashSet<IBinding>();
+				ASTNameCollector nc= new ASTNameCollector(fSelectedText);
+				ast.accept(nc);
+				IASTName[] candidates= nc.getNames();
+				for (IASTName astName : candidates) {
+					try {
+						IBinding b= astName.resolveBinding();
+						if (b!=null && !(b instanceof IProblemBinding)) {
+							if (bindings.add(b)) {
+								ignoreIndexBindings.add(fIndex.adaptBinding(b));
+							}
+						}
+					} catch (RuntimeException e) {
+						CCorePlugin.log(e);
+					}
+				}
+				
+				// search the index, also
 				final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
+				final IIndexBinding[] idxBindings = fIndex.findBindings(name, false, filter, fMonitor);
+				for (IIndexBinding idxBinding : idxBindings) {
+					if (!ignoreIndexBindings.contains(idxBinding)) {
+						bindings.add(idxBinding);
+					}
+				}
+				
+				// search for a macro in the index
 				IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
 				for (IIndexMacro macro : macros) {
 					ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
@@ -230,7 +266,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						elems.add(elem);
 					}
 				}
-				IIndexBinding[] bindings = fIndex.findBindings(name, false, filter, fMonitor);
+				
+				// convert bindings to CElements
 				for (IBinding binding : bindings) {
 					final IName[] names = findNames(fIndex, ast, KIND_OTHER, binding);
 					convertToCElements(project, fIndex, names, elems);
@@ -465,5 +502,45 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			}
 		}
 	}
+	
+	private final static class ASTNameCollector extends ASTVisitor {
+		
+		private char[] fName;
+		private ArrayList<IASTName> fFound= new ArrayList<IASTName>(4);
+
+		/**
+		 * Construct a name collector for the given name.
+		 */
+		public ASTNameCollector(char[] name) {
+			Assert.isNotNull(name);
+			fName= name;
+			shouldVisitNames = true;
+		}
+		
+		/**
+		 * Construct a name collector for the given name.
+		 */
+		public ASTNameCollector(String name) {
+			this(name.toCharArray());
+		}
+		
+		@Override
+		public int visit(IASTName name) {
+			if (name != null && !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId)) {
+				if (CharArrayUtils.equals(fName, name.toCharArray())) {
+					fFound.add(name);
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		/**
+		 * Return the array of matching names.
+		 */
+		public IASTName[] getNames() {
+			return fFound.toArray(new IASTName[fFound.size()]);
+		}
+	}
+
 }
 

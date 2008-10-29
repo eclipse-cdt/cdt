@@ -1032,4 +1032,22 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     		assertEquals(((ASTNode)decl).getOffset(), od1);
     	}
     }
+    
+    // static int myFunc(int) {}
+    // #define USE_FUNC(x) (myFunc(x) == 0)
+    public void testFallBackForStaticFuncs_Bug252549() throws Exception {
+        String code= getContentsForTest(1)[0].toString();
+    	String[] filenames= {"testBug252549.c", "testBug252549.cpp"};
+    	for (int i=0; i<2; i++) {
+    		OpenDeclarationsAction.sAllowFallback= true; 
+    		IFile file = importFile(filenames[i], code); 
+    		int offset= code.indexOf("myFunc(x)");
+    		IASTNode decl= testF3(file, offset);
+    		assertTrue(decl instanceof IASTName);
+    		final IASTName name = (IASTName) decl;
+    		assertTrue(name.isDefinition());
+    		assertEquals("myFunc", name.toString());
+    	}
+    }
+
 }

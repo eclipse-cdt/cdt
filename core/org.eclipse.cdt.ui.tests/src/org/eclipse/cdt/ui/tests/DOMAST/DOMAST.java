@@ -805,7 +805,11 @@ public class DOMAST extends ViewPart {
    private void makeActions() {
 	   loadActiveEditorAction = new Action() {
 		   public void run() {
-			   openDOMASTView(getActiveEditor());
+			   // first make sure there is an open editor
+			   IEditorPart editor = getActiveEditor();
+			   if (editor != null) {
+				   openDOMASTView(getActiveEditor());
+			   }
 		   }
 	   };
 	   loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);

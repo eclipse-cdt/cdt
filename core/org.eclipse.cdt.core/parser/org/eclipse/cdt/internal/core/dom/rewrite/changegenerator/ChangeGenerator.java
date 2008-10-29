@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;

@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [188863] fix job conflict problems for save jobs, ignore bad profiles on restore
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
+ * David Dykstal (IBM) - [252357] made nested property sets and properties embedded nodes in the persistent form
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -527,11 +528,16 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 	 * @return true if the node is to be embedded.
 	 */
 	private boolean isNodeEmbedded(RSEDOMNode node) {
-		Set embeddedTypes = new HashSet();
-		embeddedTypes.add(IRSEDOMConstants.TYPE_FILTER);
-		embeddedTypes.add(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE);
-		boolean result = embeddedTypes.contains(node.getType());
-		return result;
+		String nodeType = node.getType();
+		if (nodeType.equals(IRSEDOMConstants.TYPE_FILTER)) return true;
+		if (nodeType.equals(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE)) return true;
+		if (nodeType.equals(IRSEDOMConstants.TYPE_PROPERTY)) return true;
+		if (nodeType.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)) {
+			RSEDOMNode parent = node.getParent();
+			String parentType = parent.getType();
+			if (parentType.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)) return true;
+		}
+		return false;
 	}
 
 	/**

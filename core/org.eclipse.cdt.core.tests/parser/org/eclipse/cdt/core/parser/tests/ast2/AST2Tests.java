@@ -5475,4 +5475,19 @@ public class AST2Tests extends AST2BaseTest {
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}
+	
+	//	void myfunc(char *arg){}
+	//	void (*funcVar2)(char *) = myfunc;
+	//	void caller() {
+	//	   myfunc("");
+	//	}
+	public void testReferencesInInitializer_Bug251514() throws Exception {
+		final String code = getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+			IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+			IASTName name= fdef.getDeclarator().getName();
+			assertEquals(2, tu.getReferences(name.resolveBinding()).length);
+		}
+	}
 }

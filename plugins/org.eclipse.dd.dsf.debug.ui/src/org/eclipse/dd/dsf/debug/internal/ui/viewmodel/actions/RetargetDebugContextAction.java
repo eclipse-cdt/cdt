@@ -111,11 +111,19 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
         if (fAction == null) {
             return;
         }
-        if (fTargetAdapter != null) {
-            fAction.setEnabled(canPerformAction(fTargetAdapter, fDebugContext));
-        } else {
-            fAction.setEnabled(false);
+        fTargetAdapter = null;
+        if (fDebugContext instanceof IStructuredSelection) {
+            IStructuredSelection ss = (IStructuredSelection) fDebugContext;
+            if (!ss.isEmpty()) {
+                Object object = ss.getFirstElement();
+                if (object instanceof IAdaptable) {
+                    fTargetAdapter = getAdapter((IAdaptable) object);
+                    fAction.setEnabled(canPerformAction(fTargetAdapter, fDebugContext));
+                    return;
+                }
+            }
         }
+        fAction.setEnabled(false);
     }
 
     public void dispose() {
@@ -125,16 +133,6 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
     
     public void debugContextChanged(DebugContextEvent event) {
         fDebugContext = event.getContext();
-        fTargetAdapter = null;
-        if (fDebugContext instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) fDebugContext;
-            if (!ss.isEmpty()) {
-                Object object = ss.getFirstElement();
-                if (object instanceof IAdaptable) {
-                    fTargetAdapter = getAdapter((IAdaptable) object);
-                }
-            }
-        }
         update();
     }
     

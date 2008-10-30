@@ -206,6 +206,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportLongLong = config.supportLongLongs();
+        functionCallCanBeLValue= true;
         this.index= index;
     }
 

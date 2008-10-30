@@ -6081,4 +6081,25 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testTemplateIDInUsingDecl_251199() throws Exception {
         parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
+    
+    //    class MyClass{
+    //    public:
+    //       int v;
+    //       int& operator () (int i){ return v; }
+    //       int& operator () (int i, int j){ return v; }
+    //    };
+    //
+    //    int main(MyClass c, int i){
+    //      c(i,i)= 0;
+    //    	c(i) = 0;
+    //    }
+    public void testFunctionCallOnLHS_252695() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP, true);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 1);
+		IASTExpressionStatement exstmt= getStatement(fdef, 0);
+		assertInstance(exstmt.getExpression(), IASTBinaryExpression.class);
+		exstmt= getStatement(fdef, 1);
+		assertInstance(exstmt.getExpression(), IASTBinaryExpression.class);
+    }
 }

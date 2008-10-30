@@ -100,6 +100,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected boolean supportExtendedSizeofOperator; 
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
     
+    protected boolean functionCallCanBeLValue= false;
+    
     /**
      *  Marks the beginning of the current declaration. It is important to clear the mark whenever we
      *  enter a nested declaration, in order to avoid holding on to all the tokens.
@@ -1660,9 +1662,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         // At this point we know we have an ambiguity.
         // Attempt to resolve some ambiguities that are easy to detect.
         
-        // A * B = C;
-        // foo() = x;
-        // These can get parsed as expressions but the lvalue doesn't make sense
+        // A * B = C;  // A*B cannot be a lvalue.
+        // foo() = x;  // foo() cannot be a lvalue in c, in c++ it can.
         if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
             IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement.getExpression();
             if (exp.getOperator() == IASTBinaryExpression.op_assign) {
@@ -1671,7 +1672,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                         && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_multiply) {
                     return ds;
                 }
-                if (lhs instanceof IASTFunctionCallExpression) {
+                if (lhs instanceof IASTFunctionCallExpression && !functionCallCanBeLValue) {
                     return ds;
                 }
             }

@@ -206,6 +206,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportParameterInfoBlock= config.supportParameterInfoBlock();
         supportExtendedSizeofOperator= config.supportExtendedSizeofOperator();
         supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
+        functionCallCanBeLValue= true;
         this.index= index;
     }
 

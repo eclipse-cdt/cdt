@@ -117,8 +117,14 @@ public class IndexBugsTests extends BaseTestCase {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
 
-	private void waitForIndexer() {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEX_WAIT_TIME, NPM));
+	private void waitForIndexer() throws InterruptedException {
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		long waitms= 1;
+		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(fCProject)) {
+			Thread.sleep(waitms);
+			waitms*=2;
+		}
+		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, NPM));
 	}
 
 	protected Pattern[] getPattern(String qname) {

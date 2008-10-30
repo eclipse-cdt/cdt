@@ -55,13 +55,13 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
  
     private IServiceLocator fServiceLocator;
 
-    private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
+    private static IContributionItem[] NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
     	new ContributionItem() {
             @Override
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.NONE);
 				item.setEnabled(false);
-				item.setText(MessagesForVMActions.UpdateScopesContribution_EmptyScopesList_label);
+				item.setText(MessagesForVMActions.UpdatePoliciesContribution_EmptyPoliciesList_label);
 			}
 	
             @Override
@@ -77,7 +77,7 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
 
         // If no part or selection, disable all.
         if (provider == null || !(provider instanceof ICachingVMProvider)) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+            return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
         }
         ICachingVMProvider cachingProvider = (ICachingVMProvider)provider;
         
@@ -94,7 +94,7 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
         }
         
         if ( actions.isEmpty() ) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+            return NO_UPDATE_POLICIES_CONTRIBUTION_ITEMS;
         }
         
         IContributionItem[] items = new IContributionItem[actions.size()];

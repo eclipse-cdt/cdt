@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -62,6 +63,10 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         for ( int i = 0; i < params.length; i++ ) {
             if( !params[i].accept( action ) ) return false;
         }
+        
+        IASTInitializer initializer = getInitializer();
+        if (initializer != null && !initializer.accept(action)) return false;
+
         return true;
     }
 

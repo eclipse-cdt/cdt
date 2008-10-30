@@ -5282,4 +5282,19 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
 	}
+	
+	//	void myfunc(char *arg){}
+	//	void (*funcVar2)(char *) = myfunc;
+	//	void caller() {
+	//	   myfunc("");
+	//	}
+	public void testReferencesInInitializer_Bug251514() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), lang, true);
+			IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+			IASTName name= fdef.getDeclarator().getName();
+			assertEquals(2, tu.getReferences(name.resolveBinding()).length);
+		}
+	}
+
 }

@@ -69,19 +69,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.debugView_updatePolicies" 
             	 label="%menu.threadsUpdatePolicy">
                <visibleWhen checkEnabled="false">
-                  <and>
-                     <with variable="org.eclipse.core.runtime.Platform">
-                        <test property="org.eclipse.core.runtime.bundleState"
-                             args="org.eclipse.dd.dsf.debug.ui"
-                             value="ACTIVE"/>
-                     </with>
-					 <with variable="selection">
-					    <count value="+"/>
-					    <iterate>
-                           <test property="org.eclipse.dd.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
-					    </iterate>
-         			 </with>
-                  </and>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>    
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.UpdatePolicies"
@@ -97,7 +85,7 @@
                   style="push"
                   label="%command.refresh.name">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
             </command>
        </menuContribution>
@@ -115,7 +103,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.registersView_updatePolicies" 
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.registersUpdatePolicies"
@@ -127,7 +115,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.registersView_updateScopes" 
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.registersUpdateScopes"
@@ -158,7 +146,7 @@
                   style="push"
                   label="%command.refresh.name">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
             </command>
        </menuContribution>
@@ -176,7 +164,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.variablesView_updatePolicies" 
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdatePolicies"
@@ -188,7 +176,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.variablesView_updateScopes" 
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.variablesUpdateScopes"
@@ -219,7 +207,7 @@
                   style="push"
                   label="%command.refresh.name">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
             </command>
        </menuContribution>
@@ -237,7 +225,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.expressionsView_updatePolicies" 
             	 label="%menu.updatePolicy">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdatePolicies"
@@ -249,7 +237,7 @@
                  id="org.eclipse.dd.dsf.debug.ui.expressionsView_updateScopes" 
             	 label="%menu.updateScope">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
                <dynamic
 	               id="org.eclipse.dd.dsf.debug.ui.expressionUpdateScopes"
@@ -280,7 +268,7 @@
                   style="push"
                   label="%command.refresh.name">
                <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
                </visibleWhen>
             </command>
        </menuContribution>
@@ -296,20 +284,22 @@
       </handler>
    </extension>
 
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported">
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive">
+         <and>
+            <with variable="activeContexts">
+               <iterate operator="or">
+                  <equals value="org.eclipse.dd.dsf.debug.ui.updateModes"/>
+               </iterate>               
+            </with>
+         </and>
+      </definition>
+      <definition id="org.eclipse.dd.dsf.debug.ui.testAreUpdatePoliciesSupported">
          <and>
             <with variable="org.eclipse.core.runtime.Platform">
                <test property="org.eclipse.core.runtime.bundleState"
             	   args="org.eclipse.dd.dsf.debug.ui"
                    value="ACTIVE"/>
-            </with>
-            <with variable="activeContexts">
-               <iterate operator="or">
-                  <equals value="org.eclipse.dd.dsf.debug.ui.updateModes"/>
-               </iterate>               
             </with>
             <or>
 			   <with variable="activePart">
@@ -321,18 +311,12 @@
 			</or>
 	     </and>
       </definition>
-      <definition
-            id="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported">
+      <definition id="org.eclipse.dd.dsf.debug.ui.testAreUpdateScopesSupported">
          <and>
             <with variable="org.eclipse.core.runtime.Platform">
                <test property="org.eclipse.core.runtime.bundleState"
             	   args="org.eclipse.dd.dsf.debug.ui"
                    value="ACTIVE"/>
-            </with>
-            <with variable="activeContexts">
-               <iterate operator="or">
-                  <equals value="org.eclipse.dd.dsf.debug.ui.updateModes"/>
-               </iterate>               
             </with>
             <or>
 			   <with variable="activePart">

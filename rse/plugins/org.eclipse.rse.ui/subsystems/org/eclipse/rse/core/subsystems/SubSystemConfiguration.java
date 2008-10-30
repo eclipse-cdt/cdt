@@ -36,6 +36,7 @@
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
+ * Martin Oberhuber (Wind River) - [218309] ConcurrentModificationException during workbench startup
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -89,12 +89,11 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
-
 /**
  * Abstract base class for subsystem configuration extension points.
  * Child classes must implement the methods:
  * <ul>
- *  <li>#createSubSystemInternal(SystemConnection conn)
+ * <li>#createSubSystemInternal(SystemConnection conn)
  * </ul>
  * Child classes can optionally override:
  * <ul>
@@ -111,17 +110,18 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
  *  <li>SubSystemConfiguration#getSubSystemActions() if they wish to supply actions for the right-click menu when
  *       the user right clicks on a subsystem object created by this subsystem configuration.
  *  <li>CreateDefaultFilterPool() to create any default filter pool when a new profile is created.
- *  <li>#initializeSubSystem(SubSystem ss, configurarators[])
+ * <li>#initializeSubSystem(SubSystem ss, configurarators[])
  * </ul>
  * <p>
- * A subsystem configuration will maintain in memory a list of all subsystem objects it has. This
- *  list should be initialize from disk at restore time, and maintained as the subsystems are
- *  created and deleted throughout the session. At save time, each subsystem in the list
- *  is asked to save itself. The getSubSystems method should return this list.
+ * A subsystem configuration will maintain in memory a list of all subsystem
+ * objects it has. This list should be initialized from disk at restore time,
+ * and maintained as the subsystems are created and deleted throughout the
+ * session. At save time, each subsystem in the list is asked to save itself.
+ * The getSubSystems method should return this list.
  * <p>
- * To help with maintaining this list, this base class contains a Vector instance variable
- *  named subsystems. It is returned by the getSubSystems method in this base class. For this
- *  to be accurate you though, you should:
+ * To help with maintaining this list, this base class contains a List instance
+ * variable named subsystems. It is returned by the getSubSystems method in this
+ * base class. For this to be accurate you though, you should:
  * <ul>
  *   <li>Not implement createSubSystem directly, but rather let this class handle it. Instead
  *         implement the method createSubSystemInternal. This is called by createSubSystem in this
@@ -155,8 +155,25 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	protected static IHost currentlyProcessingConnection;
 	protected static SubSystemConfiguration currentlyProcessingSubSystemConfiguration;
 
-	protected java.util.List subSystemList = null;
-	protected java.util.List filterPoolManagerList = null;
+	/**
+	 * Internal list of subsystems. Must always be accessed in synchronized
+	 * blocks to protect against concurrent modification. For API compliance,
+	 * clients should always call {@link #getSubSystemList()} instead of
+	 * accessing this field directly.
+	 *
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+	protected List subSystemList = new ArrayList();
+
+	/**
+	 * Internal list of filter pool managers. Must always be accessed in
+	 * synchronized blocks. For API compliance, clients should always call
+	 * {@link #getFilterPoolManagerList()} instead of accessing this field
+	 * directly.
+	 *
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+	protected List filterPoolManagerList = new ArrayList();
 
 //	protected boolean _isDirty;
 
@@ -805,23 +822,20 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			allSubSystemsRestored = true;
 			subsystems = null; // force re-gen
 		}
-		if ((subsystems == null) || (subsystems.length != getSubSystemList().size()))
-		{
-			List alist = null;
-			if (SystemProfileManager.getDefault().getSize() > 0) // 42913
-				alist = getSubSystemList();
-			if (alist == null)
-				return new ISubSystem[0];
-			Iterator i = alist.iterator();
-			subsystems = new ISubSystem[alist.size()];
-			int idx = 0;
-			while (i.hasNext())
+		// compute cache in local variable in order to avoid modification by other Thread
+		ISubSystem[] result = subsystems;
+		List subSysList = getSubSystemList();
+		synchronized (subSysList) {
+			if ((result == null) || (result.length != subSysList.size()))
 			{
-				ISubSystem subsys = (ISubSystem) i.next();
-				subsystems[idx++] = subsys;
+				// TODO Huh? I do not understand this...
+				if (SystemProfileManager.getDefault().getSize() <= 0) // 42913
+					return EMPTY_SUBSYSTEM_ARRAY;
+				result = (ISubSystem[]) subSysList.toArray(new ISubSystem[subSysList.size()]);
+				subsystems = result;
 			}
 		}
-		return subsystems;
+		return result;
 	}
 
 	/**
@@ -879,19 +893,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected ISubSystem[] internalGetSubSystems(IHost conn)
 	{
-		java.util.List mofList = getSubSystemList();
-		Iterator i = mofList.iterator();
-		Vector v = new Vector();
-		while (i.hasNext())
-		{
-			ISubSystem subsys = (ISubSystem) i.next();
-			if (subsys.getHost() == conn)
-				v.addElement(subsys);
+		List subSysList = getSubSystemList();
+		synchronized (subSysList) {
+			List result = new ArrayList();
+			for (Iterator i = subSysList.iterator(); i.hasNext();) {
+				ISubSystem subsys = (ISubSystem) i.next();
+				// TODO why == and not equals() here?
+				if (subsys.getHost() == conn)
+					result.add(subsys);
+			}
+			return (ISubSystem[]) result.toArray(new ISubSystem[result.size()]);
 		}
-		ISubSystem[] array = new ISubSystem[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			array[idx] = (ISubSystem) v.elementAt(idx);
-		return array;
 	}
 	/**
 	 * Returns a list of subsystem objects existing for all the connections in the
@@ -900,16 +912,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public ISubSystem[] getSubSystems(ISystemProfile profile)
 	{
 		ISubSystem[] allSubSystems = getSubSystems(true);
-		Vector v = new Vector();
+		List l = new ArrayList();
 		for (int idx = 0; idx < allSubSystems.length; idx++)
 		{
 			ISubSystem ss = allSubSystems[idx];
+			// TODO why == and not equals() here?
 			if (ss.getSystemProfile() == profile)
-				v.addElement(ss);
+				l.add(ss);
 		}
-		ISubSystem[] subsystems = new ISubSystem[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			subsystems[idx] = (ISubSystem) v.elementAt(idx);
+		ISubSystem[] subsystems = (ISubSystem[]) l.toArray(new ISubSystem[l.size()]);
 		return subsystems;
 	}
 	/**
@@ -919,18 +930,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public ISubSystem[] getSubSystems(ISystemFilterPool pool)
 	{
 		ISubSystem[] allSubSystems = getSubSystems(false); // // false=> lazy get; don't restore from disk if not already
-		Vector v = new Vector();
+		List l = new ArrayList();
 		for (int idx = 0; idx < allSubSystems.length; idx++)
 		{
-			ISystemFilterPoolReferenceManager mgr = subsystems[idx].getSystemFilterPoolReferenceManager();
+			ISystemFilterPoolReferenceManager mgr = allSubSystems[idx].getSystemFilterPoolReferenceManager();
 			if ((mgr != null) && (mgr.isSystemFilterPoolReferenced(pool)))
 			{
-				v.addElement(allSubSystems[idx]);
+				l.add(allSubSystems[idx]);
 			}
 		}
-		ISubSystem[] subsystems = new ISubSystem[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			subsystems[idx] = (ISubSystem) v.elementAt(idx);
+		ISubSystem[] subsystems = (ISubSystem[]) l.toArray(new ISubSystem[l.size()]);
 		return subsystems;
 	}
 
@@ -940,7 +949,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void addSubSystem(ISubSystem subsys)
 	{
-		getSubSystemList().add(subsys);
+		List subSysList = getSubSystemList();
+		synchronized (subSysList) {
+			subSysList.add(subsys);
+		}
 	}
 
 	/**
@@ -949,15 +961,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void removeSubSystem(ISubSystem subsys)
 	{
-		getSubSystemList().remove(subsys);
-		/* FIXME
-		// now in EMF, the profiles are "owned" by the Resource, and only referenced by the profile manager,
-		//  so I don't think just removing it from the manager is enough... it must also be removed from its
-		//  resource. Phil.
-		Resource res = subsys.eResource();
-		if (res != null)
-			res.getContents().remove(subsys);
-			*/
+		List subSysList = getSubSystemList();
+		synchronized (subSysList) {
+			subSysList.remove(subsys);
+		}
 	}
 
 	/**
@@ -1580,13 +1587,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemFilterPoolManager[] getFilterPoolManagers()
 	{
-		if ((filterPoolManagers == null) || (filterPoolManagers.length != getFilterPoolManagerList().size()))
-		{
-			filterPoolManagers = new ISystemFilterPoolManager[getFilterPoolManagerList().size()];
-			Iterator i = getFilterPoolManagerList().iterator();
-			int idx = 0;
-			while (i.hasNext())
-				filterPoolManagers[idx++] = (ISystemFilterPoolManager) i.next();
+		List fpManagers = getFilterPoolManagerList();
+		synchronized (fpManagers) {
+			if ((filterPoolManagers == null) || (filterPoolManagers.length != fpManagers.size())) {
+				filterPoolManagers = (ISystemFilterPoolManager[]) fpManagers.toArray(new ISystemFilterPoolManager[fpManagers.size()]);
+			}
 		}
 		return filterPoolManagers;
 	}
@@ -1771,8 +1776,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void addFilterPoolManager(ISystemProfile profile, ISystemFilterPoolManager mgr)
 	{
-		filterPoolManagersPerProfile.put(profile, mgr);
-		getFilterPoolManagerList().add(mgr); // MOF generated list
+		List fpManagers = getFilterPoolManagerList();
+		synchronized (fpManagers) {
+			filterPoolManagersPerProfile.put(profile, mgr);
+			fpManagers.add(mgr);
+		}
 		invalidateFilterCache(); // force regen of any cached lists
 	}
 	/**
@@ -1827,10 +1835,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		if (mgr != null)
 		{
 			mgr.deleteAllSystemFilterPools(); // blow 'em all away, and de-reference anybody referencing any of them
-			filterPoolManagersPerProfile.remove(profile);
+			List fpManagers = getFilterPoolManagerList();
+			synchronized (fpManagers) {
+				filterPoolManagersPerProfile.remove(profile);
+				fpManagers.remove(mgr);
+			}
+			invalidateFilterCache();
 		}
-		getFilterPoolManagerList().remove(mgr);
-		invalidateFilterCache();
 	}
 	/**
 	 * Rename the filter pool manager associated with the given profile
@@ -2248,7 +2259,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISubSystem[] testForActiveReferences(ISystemProfile profile)
 	{
-		Vector v = new Vector();
+		List l = new ArrayList();
 		ISystemProfileManager profileMgr = SystemProfileManager.getDefault();
 		ISystemFilterPoolManager sfpm = getFilterPoolManager(profile);
 		String profileName = profile.getName();
@@ -2272,7 +2283,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 								String ssProfileName = subsystem.getSystemProfileName();
 								if ((!ssProfileName.equals(profileName)) && (profileMgr.isSystemProfileActive(ssProfileName)))
 								{
-									v.addElement(subsystem);
+									l.add(subsystem);
 								}
 							}
 						}
@@ -2282,11 +2293,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 
 		ISubSystem[] referencingSubSystems = null;
-		if (v.size() > 0)
+		if (l.size() > 0)
 		{
-			referencingSubSystems = new ISubSystem[v.size()];
-			for (int idx = 0; idx < referencingSubSystems.length; idx++)
-				referencingSubSystems[idx] = (ISubSystem) v.elementAt(idx);
+			referencingSubSystems = (ISubSystem[]) l.toArray(new ISubSystem[l.size()]);
 		}
 
 		return referencingSubSystems;
@@ -2709,28 +2718,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return proxy.toString();
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation
-	 */
-	public java.util.List getSubSystemList()
+	public List getSubSystemList()
 	{
-		if (subSystemList == null)
-		{
-			subSystemList = new ArrayList();
-			//FIXME new EObjectResolvingeList(SubSystem.class, this, SubsystemsPackage.SUB_SYSTEM_FACTORY__SUB_SYSTEM_LIST);
-		}
 		return subSystemList;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation
-	 */
-	public java.util.List getFilterPoolManagerList()
+	public List getFilterPoolManagerList()
 	{
-		if (filterPoolManagerList == null)
-		{
-			filterPoolManagerList = new ArrayList();
-		}
 		return filterPoolManagerList;
 	}
 

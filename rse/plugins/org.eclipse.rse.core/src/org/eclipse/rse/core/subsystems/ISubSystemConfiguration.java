@@ -21,9 +21,12 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * Martin Oberhuber (Wind River) - [218309] ConcurrentModificationException during workbench startup
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
+import java.util.List;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -70,14 +73,14 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Test whether subsystems managed by this configuration support custom
 	 * encodings.
-	 * 
+	 *
 	 * Encodings specify the way how binary data on the remote system is
 	 * translated into Java Unicode Strings. RSE provides some means for the
 	 * User to specify a particular encoding to use; typically, all subsystems
 	 * that do support custom encodings specified should use the same encoding
 	 * such that they can interoperate. Therefore, encodings are usually
 	 * obtained from {@link IHost#getDefaultEncoding(boolean)}.
-	 * 
+	 *
 	 * It's possible, however, that a particular subsystem "knows" that its
 	 * resources are always encoded in a particular way, and there is no
 	 * possibility to ever change that. The Subsystem Configuration would return
@@ -88,11 +91,11 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * underlying system type such that existing subsystem configurations can be
 	 * re-used in an environment where the encoding to use is pre-defined by the
 	 * system type or host connection.
-	 * 
+	 *
 	 * If no subsystem registered against a given host supports encodings, the
 	 * corresponding UI controls on the IHost level are disabled in order to
 	 * avoid confusion to the user.
-	 * 
+	 *
 	 * @return <code>true<code> if the RSE mechanisms for specifying custom
 	 *     encodings are observed and supported by the subsystems managed
 	 *     by this configuration for the given host.
@@ -696,18 +699,30 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	public void saveSubSystem(ISubSystem subsys) throws Exception;
 
 	/**
-	 * <i><b>Private</b>. Do not call or use.</i><br>
-	 * @generated This field/method will be replaced during code generation
-	 * @return The list of SubSystemList references
+	 * Return the internal list of subsystems instantiated for this
+	 * configuration. Internal use only, do not call or use. Use
+	 * {@link #getSubSystems(boolean)} with a <code>false</code> argument
+	 * instead.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @return The internal list of SubSystem instances for this configuration.
+	 *         Any operations on this list (such as iterating, adding or
+	 *         removing members) must always be synchronized against the list,
+	 *         in order to protect against concurrent modification.
 	 */
-	java.util.List getSubSystemList();
+	List getSubSystemList();
 
 	/**
-	 * <i><b>Private</b>. Do not call or use.</i><br>
-	 * @generated This field/method will be replaced during code generation
-	 * @return The list of FilterPoolManagerList references
+	 * Return the internal list of filter pool managers associated with this
+	 * configuration. Internal use only, do not call or use.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @return The internal list of filter pool Managers associated with this
+	 *         configuration. Any operations on this list (such as iterating,
+	 *         adding or removing members) must always be synchronized against
+	 *         the list, in order to protect against concurrent modification.
 	 */
-	java.util.List getFilterPoolManagerList();
+	List getFilterPoolManagerList();
 
 	public ISystemFilterPool getDefaultFilterPool(ISystemProfile profile, String oldProfileName);
 

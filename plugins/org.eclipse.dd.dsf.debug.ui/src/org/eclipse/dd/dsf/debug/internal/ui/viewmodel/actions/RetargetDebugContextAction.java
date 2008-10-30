@@ -118,8 +118,10 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
                 Object object = ss.getFirstElement();
                 if (object instanceof IAdaptable) {
                     fTargetAdapter = getAdapter((IAdaptable) object);
-                    fAction.setEnabled(canPerformAction(fTargetAdapter, fDebugContext));
-                    return;
+                    if (fTargetAdapter != null) {
+                        fAction.setEnabled(canPerformAction(fTargetAdapter, fDebugContext));
+                        return;
+                    }
                 }
             }
         }

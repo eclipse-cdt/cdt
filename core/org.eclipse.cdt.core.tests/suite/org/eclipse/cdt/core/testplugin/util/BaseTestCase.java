@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPASTName;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,6 +57,7 @@ public class BaseTestCase extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		AbstractCPPASTName.sAllowRecursionBindings= true;
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding(IASTNode node, char[] arg) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
-			Assert.isTrue(CPPASTName.fAllowRecursionBindings, getMessage());
+			Assert.isTrue(CPPASTName.sAllowRecursionBindings, getMessage());
 		}
 	}
 	

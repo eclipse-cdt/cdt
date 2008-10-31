@@ -111,7 +111,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -1671,25 +1671,20 @@ public class AST2CPPTests extends AST2BaseTest {
 	// };                     
 	public void testBug84692() throws Exception {
 		// also tests bug 234042.
-		boolean old= CPPASTName.fAllowRecursionBindings;
-		CPPASTName.fAllowRecursionBindings= false;
-		try {
-			IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-			CPPNameCollector col = new CPPNameCollector();
-			tu.accept(col);
+		AbstractCPPASTName.sAllowRecursionBindings= false;
+		
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
 
-			assertEquals(col.size(), 9);
+		assertEquals(col.size(), 9);
 
-			ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
-			ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
-			assertSame(Data.getScope(), tu.getScope());
+		ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
+		ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
+		assertSame(Data.getScope(), tu.getScope());
 
-			assertInstances(col, Node, 3);
-			assertInstances(col, Data, 2);
-		}
-		finally {
-			CPPASTName.fAllowRecursionBindings= old;
-		}
+		assertInstances(col, Node, 3);
+		assertInstances(col, Data, 2);
 	}
 	
 	// namespace B { int b; }                        

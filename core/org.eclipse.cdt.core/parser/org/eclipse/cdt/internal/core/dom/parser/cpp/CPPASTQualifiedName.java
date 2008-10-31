@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -37,24 +37,52 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.core.runtime.Assert;
 
 /**
- * @author jcamelon
+ * Qualified name, which can contain any other name (unqualified, operator-name, conversion name, 
+ * template id).
  */
-public class CPPASTQualifiedName extends ASTNode implements
-		ICPPASTQualifiedName, IASTCompletionContext {
+public class CPPASTQualifiedName extends AbstractCPPASTName 
+		implements ICPPASTQualifiedName, IASTCompletionContext {
+
+	private IASTName[] names = null;
+	private int namesPos= -1;
+	private boolean isFullyQualified;
+	private String signature;
 
 	public CPPASTQualifiedName() {
 	}
 
+	@Override
+	public final IBinding resolveIntermediateBinding() {
+		// The full qualified name resolves to the same thing as the last name
+		return resolveIntermediateBinding(getLastName());
+	}
+
+	@Override
 	public IBinding resolveBinding() {
 		// The full qualified name resolves to the same thing as the last name
-		removeNullNames();
-		IASTName lastName = getLastName();
+		IASTName lastName= getLastName();
 		return lastName == null ? null : lastName.resolveBinding();
+	}
+
+    @Override
+	public final IBinding getIntermediateBinding() {
+		// The full qualified name resolves to the same thing as the last name
+		return getIntermediateBinding(getLastName());
+    }
+    
+	@Override
+	public IBinding getBinding() {
+		return getLastName().getBinding();
+	}
+
+	@Override
+	public void setBinding(IBinding binding) {
+		getLastName().setBinding(binding);
 	}
 
 	public IASTCompletionContext getCompletionContext() {
@@ -75,6 +103,7 @@ public class CPPASTQualifiedName extends ASTNode implements
 	}
 
 	public void addName(IASTName name) {
+		assert !(name instanceof ICPPASTQualifiedName);
 		if (name != null) {
 			names = (IASTName[]) ArrayUtil.append(IASTName.class, names, ++namesPos, name);
 			name.setParent(this);
@@ -82,23 +111,15 @@ public class CPPASTQualifiedName extends ASTNode implements
 		}
 	}
 
-	private void removeNullNames() {
-        names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
-	}
-
-	private IASTName[] names = null;
-	private int namesPos= -1;
-	private boolean isFullyQualified;
-	private String signature;
-
-
 	public IASTName[] getNames() {
-		if (names == null)
+		if (namesPos < 0)
 			return IASTName.EMPTY_NAME_ARRAY;
-		removeNullNames();
+        
+		names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
 		return names;
 	}
 
+	@Override
 	public IASTName getLastName() {
 		if (namesPos < 0)
 			return null;
@@ -107,31 +128,29 @@ public class CPPASTQualifiedName extends ASTNode implements
 	}
 	
 	public char[] toCharArray() {
-		if (names == null)
+		if (namesPos < 0)
 			return new char[0];
-		removeNullNames();
 
 		// count first
-		int len = 0;
-		for (int i = 0; i < names.length; ++i) {
+		int len = -2;
+		for (int i = 0; i <= namesPos; ++i) {
 			char[] n = names[i].toCharArray();
 			if (n == null)
 				return null;
-			len += n.length;
-			if (i != names.length - 1)
-				len += 2;
+			len+= 2;
+			len+= n.length;
 		}
-
+		
 		char[] nameArray = new char[len];
 		int pos = 0;
-		for (int i = 0; i < names.length; i++) {
-			char[] n = names[i].toCharArray();
-			System.arraycopy(n, 0, nameArray, pos, n.length);
-			pos += n.length;
-			if (i != names.length - 1) {
+		for (int i = 0; i <= namesPos; i++) {
+			if (i != 0) {
 				nameArray[pos++] = ':';
 				nameArray[pos++] = ':';
 			}
+			final char[] n = names[i].toCharArray();
+			System.arraycopy(n, 0, nameArray, pos, n.length);
+			pos += n.length;
 		}
 		return nameArray;
 	}
@@ -161,9 +180,8 @@ public class CPPASTQualifiedName extends ASTNode implements
 				break;
 			}
 		}
-		IASTName[] ns = getNames();
-		for (int i = 0; i < ns.length; i++) {
-			if (i == names.length - 1) {
+		for (int i = 0; i <= namesPos; i++) {
+			if (i == namesPos) {
 				// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
 				if (names[i].toCharArray().length > 0 && !names[i].accept(action))
 					return false;
@@ -217,41 +235,28 @@ public class CPPASTQualifiedName extends ASTNode implements
 	}
 
 	public int getRoleForName(IASTName n) {
-		IASTName[] namez = getNames();
-		for(int i = 0; i < names.length; ++i)
-			if (namez[i] == n)
-			{
-				if (i < names.length - 1)
-					return r_reference;
-				IASTNode p = getParent();
-				if (i == names.length - 1 && p instanceof IASTNameOwner)
-					return ((IASTNameOwner)p).getRoleForName(this);
-				return r_unclear;
+		for (int i=0; i < namesPos; ++i) {
+			if (names[i] == n) 
+				return r_reference;
+		}
+		if (getLastName() == n) {
+			IASTNode p = getParent();
+			if (p instanceof IASTNameOwner) {
+				return ((IASTNameOwner)p).getRoleForName(this);
 			}
+		}
 		return r_unclear;
 	}
-
-	public IBinding getBinding() {
-		removeNullNames();
-		return names[names.length - 1].getBinding();
-	}
-
-	public void setBinding(IBinding binding) {
-		removeNullNames();
-		names[names.length - 1].setBinding(binding);
-	}
-
+	
 	public boolean isConversionOrOperator() {
-		IASTName[] nonNullNames = getNames(); // ensure no null names
-		
-		int len=nonNullNames.length;
-		if (nonNullNames[len - 1] instanceof ICPPASTConversionName || nonNullNames[len - 1] instanceof ICPPASTOperatorName) {
+		final IASTName lastName= getLastName();
+		if (lastName instanceof ICPPASTConversionName || lastName instanceof ICPPASTOperatorName) {
 			return true;
 		}
 		
 		// check templateId's name
-		if (nonNullNames[len - 1] instanceof ICPPASTTemplateId) {
-			IASTName tempName = ((ICPPASTTemplateId)nonNullNames[len - 1]).getTemplateName();
+		if (lastName instanceof ICPPASTTemplateId) {
+			IASTName tempName = ((ICPPASTTemplateId)lastName).getTemplateName();
 			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) {
 				return true;
 			}
@@ -273,8 +278,8 @@ public class CPPASTQualifiedName extends ASTNode implements
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		
-		if (names.length - 2 >= 0) {
-			IBinding binding = names[names.length - 2].resolveBinding();
+		if (namesPos > 0) {
+			IBinding binding = names[namesPos-1].resolveBinding();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) binding;
 				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
@@ -343,5 +348,11 @@ public class CPPASTQualifiedName extends ASTNode implements
 	 */
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	@Override
+	protected IBinding createIntermediateBinding() {
+		Assert.isLegal(false);
+		return null;
 	}
 }

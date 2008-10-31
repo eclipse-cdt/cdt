@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
@@ -22,23 +22,21 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author jcamelon
+ * Template ids consist of an unqualified name (or operator or conversion name) 
+ * and an array of template arguments. 
  */
-public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IASTAmbiguityParent {
+public class CPPASTTemplateId extends AbstractCPPASTName implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
     private IASTNode[] templateArguments = null;
-    private IBinding binding = null;
-	private int fResolutionDepth = 0;
-
     public CPPASTTemplateId() {
 	}
 
@@ -51,6 +49,7 @@ public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IAST
     }
 
     public void setTemplateName(IASTName name) {
+    	assert !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId);
         templateName = name;
         if (name != null) {
 			name.setParent(this);
@@ -87,17 +86,9 @@ public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IAST
         return (IASTNode[]) ArrayUtil.trim(IASTNode.class, templateArguments);
     }
 
-    public IBinding resolveBinding() {
-    	if (binding == null) {
-    		// protect for infinite recursion
-        	if (++fResolutionDepth > CPPASTName.MAX_RESOLUTION_DEPTH) {
-        		binding= new CPPASTName.RecursionResolvingBinding(this);
-        	} else {
-        		binding = CPPTemplates.createBinding(this);
-        	}
-    	}
-
-        return binding;
+    @Override
+	protected IBinding createIntermediateBinding() {
+       return CPPTemplates.createBinding(this);
     }
 
 	public IASTCompletionContext getCompletionContext() {
@@ -152,15 +143,6 @@ public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IAST
 		return r_unclear;
 	}
 
-	public IBinding getBinding() {
-		return binding;
-	}
-
-	public void setBinding(IBinding binding) {
-		this.binding = binding;
-		fResolutionDepth = 0;
-	}
-
     public void replace(IASTNode child, IASTNode other) {
         if (templateArguments == null) return;
         for (int i = 0; i < templateArguments.length; ++i) {
@@ -192,17 +174,7 @@ public class CPPASTTemplateId extends ASTNode implements ICPPASTTemplateId, IAST
         return false;
     }
 
-	public void incResolutionDepth() {
-		if (binding == null && ++fResolutionDepth > CPPASTName.MAX_RESOLUTION_DEPTH) {
-			binding = new CPPASTName.RecursionResolvingBinding(this);
-		}
-	}
-
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
-	}
-
-	public IASTName getLastName() {
-		return this;
 	}
 }

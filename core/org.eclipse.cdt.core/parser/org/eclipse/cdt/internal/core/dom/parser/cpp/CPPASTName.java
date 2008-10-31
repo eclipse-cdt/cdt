@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon(IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Bryan Wilkinson (QNX)
  *    Anton Leherbauer (Wind River Systems)
@@ -24,67 +24,32 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.core.runtime.Assert;
 
 /**
- * @author jcamelon
+ * Unqualified name, also base class for operator and conversion name.
  */
-public class CPPASTName extends ASTNode implements IASTName, IASTCompletionContext {
-	/**
-	 * For test-purposes, only.
-	 */
-	public static boolean fAllowRecursionBindings= true;
-	
-	final static class RecursionResolvingBinding extends ProblemBinding {
-		public RecursionResolvingBinding(IASTName node) {
-			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
-			Assert.isTrue(fAllowRecursionBindings, getMessage());
-		}
-	}
-
-    private static final char[] EMPTY_CHAR_ARRAY = {};
-	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
-
-	static final int MAX_RESOLUTION_DEPTH = 5;
-	
+public class CPPASTName extends AbstractCPPASTName implements IASTCompletionContext {
 	private char[] name;
-    private IBinding binding = null;
-    private int fResolutionDepth= 0;
-
     public CPPASTName(char[] name) {
         this.name = name;
     }
 
     public CPPASTName() {
-        name = EMPTY_CHAR_ARRAY;
+        name = CharArrayUtils.EMPTY;
     }
 
-    public IBinding resolveBinding() {
-        if (binding == null) {
-        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-        		binding = new RecursionResolvingBinding(this);
-        	} else {
-        		binding = CPPVisitor.createBinding(this);
-        	}
-        }
-        return binding;
-    }
-
-	public void incResolutionDepth() {
-		if (binding == null && ++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    		binding = new RecursionResolvingBinding(this);
-		}
+	@Override
+	protected IBinding createIntermediateBinding() {
+		return CPPVisitor.createBinding(this);
 	}
 
     public IASTCompletionContext getCompletionContext() {
@@ -164,19 +129,10 @@ public class CPPASTName extends ASTNode implements IASTName, IASTCompletionConte
 		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
-	public void setBinding(IBinding binding) {
-        this.binding = binding;
-        fResolutionDepth= 0;
-    }
-
-    public IBinding getBinding() {
-        return binding;
-    }
-
     @Override
 	public String toString() {
-        if (name == EMPTY_CHAR_ARRAY)
-            return EMPTY_STRING;
+        if (name.length == 0)
+            return ""; //$NON-NLS-1$
         return new String(name);
     }
 
@@ -274,9 +230,5 @@ public class CPPASTName extends ASTNode implements IASTName, IASTCompletionConte
 	 */
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
-	}
-
-	public IASTName getLastName() {
-		return this;
 	}
 }

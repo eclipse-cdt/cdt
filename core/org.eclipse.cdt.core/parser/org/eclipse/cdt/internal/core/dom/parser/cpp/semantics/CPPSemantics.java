@@ -133,6 +133,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -174,6 +175,10 @@ public class CPPSemantics {
 		if (traceBindingResolution) {
 			System.out.println("Resolving " + name); //$NON-NLS-1$
 		}
+		if (name instanceof AbstractCPPASTName) {
+			((AbstractCPPASTName) name).incResolutionDepth();
+		}
+
 		// 1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData(name, true);
 		

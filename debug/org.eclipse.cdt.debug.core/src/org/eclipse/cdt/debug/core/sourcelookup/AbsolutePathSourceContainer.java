@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Nokia and others.
+ * Copyright (c) 2006, 2008 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Nokia - Initial implementation (159833)
+ *     Nokia - Initial implementation (159833)
+ *     Broadcom - http://bugs.eclipse.org/247853
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.core.sourcelookup;
@@ -53,11 +54,11 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 			ISourceLookupDirector director = getDirector();
 			if (director != null)
 			{
-				ILaunchConfiguration launch = director.getLaunchConfiguration();
-				if (launch != null)
+				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
+				if (launchConfiguration != null)
 				{
-					String projectName = getDirector().getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-					if (projectName != "") {
+					String projectName = launchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+					if (projectName.length() > 0) {
 						ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
 						if (project != null)
 						{
@@ -107,10 +108,12 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 		return getSourceContainerType( TYPE_ID );
 	}
 
+	@Override
 	public int hashCode() {
 		return TYPE_ID.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 	    if (!(obj instanceof AbsolutePathSourceContainer))
 		    return false;

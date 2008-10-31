@@ -13,10 +13,10 @@ package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 @SuppressWarnings("restriction")
-public class UPCASTSynchronizationStatement extends CASTNode implements IUPCASTSynchronizationStatement {
+public class UPCASTSynchronizationStatement extends ASTNode implements IUPCASTSynchronizationStatement {
 
 	private int statmentKind;
 	private IASTExpression barrierExpression = null;

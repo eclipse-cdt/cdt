@@ -14,11 +14,11 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 
 @SuppressWarnings("restriction")
-public class UPCASTKeywordExpression extends CASTNode implements IUPCASTKeywordExpression {
+public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordExpression {
 
 	
 	private int keywordKind;

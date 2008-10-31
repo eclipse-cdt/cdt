@@ -74,7 +74,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 			path= fileInput.getFile().getLocation();
 		} else if (input instanceof ExternalEditorInput) {
 			final ExternalEditorInput extInput = (ExternalEditorInput)input;
-			path= extInput.getStorage().getFullPath();
+			path= extInput.getPath();
 		} else if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage= ((IStorageEditorInput)input).getStorage();

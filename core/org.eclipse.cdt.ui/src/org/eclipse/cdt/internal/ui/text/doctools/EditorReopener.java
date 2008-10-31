@@ -160,7 +160,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 						} else if(oldInput instanceof ExternalEditorInput) {
 							ExternalEditorInput eei= (ExternalEditorInput) oldInput;
 							ICElement element= CoreModel.getDefault().create(eei.getMarkerResource());
-							newPart= EditorUtility.openInEditor(eei.getPath(null), element);
+							newPart= EditorUtility.openInEditor(eei.getPath(), element);
 						}
 						if(oldPart == oldActive)
 							newActive= newPart;

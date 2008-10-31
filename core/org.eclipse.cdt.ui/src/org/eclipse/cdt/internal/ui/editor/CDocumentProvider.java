@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -49,7 +48,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.ILocationProviderExtension;
@@ -856,15 +854,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
 		tuInfo.fCopy = original.getSharedWorkingCopy(getProgressMonitor(), factory, requestor);
 
-		if (tuInfo.fModel == null && element instanceof IStorageEditorInput) {
-			IStorage storage= ((IStorageEditorInput)element).getStorage();
-			IResource markerResource= original.getCProject().getProject();
-			tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, storage);
-			IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
-			if (fileBufferAnnotationModel != null) {
-				((AnnotationModel)tuInfo.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
+		if (tuInfo.fModel == null) {
+			IPath location = original.getLocation();
+			if (location != null) {
+				IResource markerResource= original.getCProject().getProject();
+				tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, location);
+				IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
+				if (fileBufferAnnotationModel != null) {
+					((AnnotationModel)tuInfo.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
+				}
+				tuInfo.fCachedReadOnlyState= true;
 			}
-			tuInfo.fCachedReadOnlyState= true;
 		}
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;

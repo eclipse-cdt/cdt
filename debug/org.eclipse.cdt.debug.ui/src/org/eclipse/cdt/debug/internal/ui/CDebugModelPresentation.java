@@ -180,7 +180,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 								ICProject cproject = CoreModel.getDefault().create(project);
 								String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
 								ExternalTranslationUnit tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(path), id);
-								return new ExternalEditorInput( tu, new LocalFileStorage( fsfile ) );
+								return new ExternalEditorInput( tu );
 							}
 						}
 					}
@@ -194,15 +194,15 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				return new FileEditorInput( file );
 		}
 		if ( element instanceof FileStorage || element instanceof LocalFileStorage ) {
-			return new ExternalEditorInput( (IStorage)element );
+			return new ExternalEditorInput( ((IStorage) element).getFullPath() );
 		}
 		if ( element instanceof ExternalTranslationUnit ) {
 			ExternalTranslationUnit etu = (ExternalTranslationUnit) element;
-			return new ExternalEditorInput( etu , new LocalFileStorage( etu.getLocation().toFile() ) );
+			return new ExternalEditorInput( etu );
 		}
 		if (element instanceof CSourceNotFoundElement)
 		{
-			return new CSourceNotFoundEditorInput((CSourceNotFoundElement) element);
+			return new CSourceNotFoundEditorInput(element);
 		}
 		return null;
 	}
@@ -222,6 +222,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return id;
 	}
 
+	@Override
 	public Image getImage( Object element ) {
 		Image baseImage = getBaseImage( element );
 		if ( baseImage != null ) {
@@ -367,6 +368,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( watchpoint ) ) );
 	}
 
+	@Override
 	public String getText( Object element ) {
 		String bt = getBaseText( element );
 		if ( bt == null )

@@ -65,7 +65,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.resources.EFSFileStorage;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -253,7 +252,7 @@ public class EditorUtility {
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
-				return new ExternalEditorInput(unit, new EFSFileStorage(unit.getLocationURI()));
+				return new ExternalEditorInput(unit);
 			}
 
 			if (element instanceof IBinary) {
@@ -277,7 +276,10 @@ public class EditorUtility {
 			return new FileEditorInput((IFile) input);
 		}
 		if (input instanceof IStorage) {
-			return new ExternalEditorInput((IStorage)input);
+			final IPath location= ((IStorage)input).getFullPath();
+			if (location != null) {
+				return new ExternalEditorInput(location);
+			}
 		}
 		return null;
 	}
@@ -361,15 +363,15 @@ public class EditorUtility {
 					}
 					
 					if(fileStore != null)
-						return new ExternalEditorInput(unit, new EFSFileStorage(locationURI));
+						return new ExternalEditorInput(unit);
 				}
 				// no translation unit - still try to get a sensible marker resource
 				// from the associated element
 				IResource markerResource= cproject.getProject();
-				return new ExternalEditorInput(new EFSFileStorage(locationURI), markerResource);
+				return new ExternalEditorInput(locationURI, markerResource);
 			}
 		}
-		return new ExternalEditorInput(new EFSFileStorage(locationURI));
+		return new ExternalEditorInput(locationURI);
 	}
 
 
@@ -407,15 +409,15 @@ public class EditorUtility {
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
 				if (unit != null) {
-					return new ExternalEditorInput(unit, new FileStorage(location));
+					return new ExternalEditorInput(unit);
 				}
 				// no translation unit - still try to get a sensible marker resource
 				// from the associated element
 				IResource markerResource= cproject.getProject();
-				return new ExternalEditorInput(new FileStorage(location), markerResource);
+				return new ExternalEditorInput(location, markerResource);
 			}
 		}
-		return new ExternalEditorInput(new FileStorage(location));
+		return new ExternalEditorInput(location);
 	}
 
 	

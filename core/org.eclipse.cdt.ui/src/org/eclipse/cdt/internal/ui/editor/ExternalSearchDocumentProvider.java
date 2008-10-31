@@ -10,11 +10,11 @@
  *     Norbert Ploett (Siemens AG)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.net.URI;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -28,8 +28,6 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.ILocationProviderExtension;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
-import org.eclipse.cdt.core.resources.EFSFileStorage;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -67,29 +65,31 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 		if (element instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput)element).getStorage();
 			if (storage.getFullPath() != null) {
-				return createExternalSearchAnnotationModel(storage, null);
+				return createExternalSearchAnnotationModel(storage.getFullPath(), null);
 			}
 		}
 		if (element instanceof IPathEditorInput) {
-			IPath path= ((IPathEditorInput)element).getPath();
-			IStorage storage= new FileStorage(path);
-			return createExternalSearchAnnotationModel(storage, null);
+			IPath location = ((IPathEditorInput) element).getPath();
+			if (location != null) {
+				return createExternalSearchAnnotationModel(location, null);
+			}
 		}
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			
-			ILocationProviderExtension extendedProvider = (ILocationProviderExtension) adaptable.getAdapter(ILocationProviderExtension.class);
-			
-			if(extendedProvider != null) {
-				URI uri = extendedProvider.getURI(element);
-				IStorage storage = new EFSFileStorage(uri);
-				return createExternalSearchAnnotationModel(storage, null);
-			}
 			ILocationProvider provider = (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
 			if (provider != null) {
-				IPath path = provider.getPath(element);
-				IStorage storage = new FileStorage(path);
-				return createExternalSearchAnnotationModel(storage, null);
+				IPath location = provider.getPath(element);
+				if (location != null) {
+					return createExternalSearchAnnotationModel(location, null);
+				}
+				if (provider instanceof ILocationProviderExtension) {
+					ILocationProviderExtension extendedProvider = (ILocationProviderExtension) provider;
+					URI uri = extendedProvider.getURI(element);
+					location = URIUtil.toPath(uri);
+					if (location != null) {
+						return createExternalSearchAnnotationModel(location, null);
+					}
+				}
 			}
 		}
 		return null;
@@ -102,26 +102,29 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	 * @return  a new annotation model for the external editor input
 	 */
 	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
-		IStorage storage = externalInput.getStorage();
-		IResource markerResource = externalInput.getMarkerResource();
-		return createExternalSearchAnnotationModel(storage, markerResource);
+		IPath location = externalInput.getPath();
+		if (location != null) {
+			IResource markerResource = externalInput.getMarkerResource();
+			return createExternalSearchAnnotationModel(location, markerResource);
+		}
+		return null;
 	}
 	
 	/**
 	 * Create an annotation model for the given file and associated resource marker.
 	 * 
-	 * @param storage  the file in the form of a <code>IStorage</code>
+	 * @param location  the local file system location
 	 * @param markerResource  the resource to retrieve markers from, may be <code>null</code>
 	 * @return  a new annotation model for the file
 	 */
-	private IAnnotationModel createExternalSearchAnnotationModel(IStorage storage, IResource markerResource) {
+	private IAnnotationModel createExternalSearchAnnotationModel(IPath location, IResource markerResource) {
 		AnnotationModel model= null;
 		if (markerResource != null){
-			model = new ExternalSearchAnnotationModel(markerResource, storage);
+			model = new ExternalSearchAnnotationModel(markerResource, location);
 		} else {
 			// no marker resource available - search workspace root and all project resources (depth one)
 			markerResource= CUIPlugin.getWorkspace().getRoot();
-			model = new ExternalSearchAnnotationModel(markerResource, storage, IResource.DEPTH_ONE);
+			model = new ExternalSearchAnnotationModel(markerResource, location, IResource.DEPTH_ONE);
 		}
 		return model;
 	}

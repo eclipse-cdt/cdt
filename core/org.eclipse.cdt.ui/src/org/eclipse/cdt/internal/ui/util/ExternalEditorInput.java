@@ -14,22 +14,18 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.net.URI;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.EFSFileStorage;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
@@ -37,127 +33,77 @@ import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 /**
  * An EditorInput for an external (non-workspace) file.
  */
-public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersistableElement {
+public final class ExternalEditorInput extends FileStoreEditorInput implements ITranslationUnitEditorInput {
            
-	private IStorage externalFile;
-	private IResource markerResource;
+	private final IPath location;
+	private final IResource markerResource;
 	private ITranslationUnit unit;
-	private IPath location;
 
-	/*
-	*/
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof IStorageEditorInput))
-			return false;
-		IStorageEditorInput other = (IStorageEditorInput)obj;
-		// externalFile storage type may not be the same so compare the paths
+	/**
+	 * Create an editor input for an external translation unit.
+	 * 
+	 * @param unit  the translation unit
+	 */
+	public ExternalEditorInput(ITranslationUnit unit) {
+		this(unit.getLocationURI(), unit.getCProject().getProject());
+		Assert.isNotNull(unit);
+		this.unit = unit;
+	}
+
+	/**
+	 * Create an editor input for an external file of the local file system.
+	 * 
+	 * @param location  the file system location
+	 */
+	public ExternalEditorInput(IPath location) {
+		this(URIUtil.toURI(location), null);
+	}
+
+	/**
+	 * Create an editor input for an external file of the local file system.
+	 * 
+	 * @param location  the file system location
+	 * @param markerResource  the associated marker resource, may be <code>null</code>
+	 */
+	public ExternalEditorInput(IPath location, IResource markerResource) {
+		this(URIUtil.toURI(location), markerResource);
+	}
+
+	/**
+	 * Create an editor input for a location URI.
+	 * 
+	 * @param locationURI  the location URI
+	 */
+	public ExternalEditorInput(URI locationURI) {
+		this(locationURI, null);
+	}
+
+	/**
+	 * Create an editor input for a location URI.
+	 * 
+	 * @param locationURI  the location URI
+	 * @param markerResource  the associated marker resource, may be <code>null</code>
+	 */
+	public ExternalEditorInput(URI locationURI, IResource markerResource) {
+		super(getFileStore(locationURI));
+		this.location = URIUtil.toPath(locationURI);
+		this.markerResource = markerResource;
+	}
+
+	private static IFileStore getFileStore(URI locationURI) {
 		try {
-			return externalFile.getFullPath().equals(other.getStorage().getFullPath());
+			return EFS.getStore(locationURI);
 		} catch (CoreException exc) {
-			return false;
-		}
-	}
-
-	/*
-	* @see IEditorInput#exists()
-	*/
-	public boolean exists() {
-		// External file can not be deleted
-		return true;
-	}
-
-	/*
-	* @see IAdaptable#getAdapter(Class)
-	*/
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		if (ILocationProvider.class.equals(adapter)) {
-			return this;
-		}
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-
-	/*
-	* @see IEditorInput#getImageDescriptor()
-	*/
-	public ImageDescriptor getImageDescriptor() {
-		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
-		return registry.getImageDescriptor(externalFile.getFullPath().getFileExtension());
-	}
-
-	/*
-	* @see IEditorInput#getName()
-	*/
-	public String getName() {
-		return externalFile.getName();
-	}
-
-	/*
-	* @see IEditorInput#getPersistable()
-	*/
-	public IPersistableElement getPersistable() {
-		if (location != null) {
-			return this;
+			CUIPlugin.log(exc);
 		}
 		return null;
 	}
 
 	/*
-	* see IStorageEditorInput#getStorage()
-	*/
-	public IStorage getStorage() {
-		return externalFile;
-	}
-
-	/*
-	* @see IEditorInput#getToolTipText()
-	*/
-	public String getToolTipText() {
-		IPath path = externalFile.getFullPath();
-		if(path != null)
-			return path.toString();
-		return unit.getLocationURI().toString();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput#getTranslationUnit()
 	 */
 	public ITranslationUnit getTranslationUnit() {
 		return unit;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
-	 */
-	public IPath getPath(Object element) {
-		return location;
-	}
-
-	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
-		this(exFile, exFile.getFullPath());
-		this.unit = unit;
-		markerResource= unit.getCProject().getProject();
-	}
-
-	public ExternalEditorInput(IStorage exFile) {
-		this(exFile, exFile.getFullPath());
-	}
-
-	public ExternalEditorInput(IStorage exFile, IPath location) {
-		externalFile = exFile;
-		this.location = location;
-	}
-	
-	/**
-	 * This constructor accepts the storage for the editor
-	 * and a reference to a resource which holds the markers for the external file.
-	 */
-	public ExternalEditorInput(IStorage exFile, IResource markerResource)  {
-		this(exFile, exFile.getFullPath());
-		this.markerResource = markerResource ;
 	}
 
 	/**
@@ -170,29 +116,32 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	/*
 	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
 	 */
+	@Override
 	public String getFactoryId() {
-		return ExternalEditorInputFactory.ID;
+		if (getPath() != null) {
+			return ExternalEditorInputFactory.ID;
+		}
+		return super.getFactoryId();
 	}
 
 	/*
 	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
-		ExternalEditorInputFactory.saveState(memento, this);
+		if (getPath() != null) {
+			ExternalEditorInputFactory.saveState(memento, this);
+		} else {
+			super.saveState(memento);
+		}
 	}
 
 	/*
-	 * @see org.eclipse.ui.editors.text.ILocationProviderExtension#getURI(java.lang.Object)
+	 * @see org.eclipse.ui.IPathEditorInput#getPath()
+	 * Note: ExternalEditorInput must not implement IPathEditorInput!
 	 */
-	public URI getURI(Object element) {
-		if (externalFile instanceof EFSFileStorage) {
-			return ((EFSFileStorage) externalFile).getLocationURI();
-		}
-		IPath location = getPath(element);
-		if (location != null) {
-			return URIUtil.toURI(location);
-		}
-		return null;
+	public IPath getPath() {
+		return location;
 	}
 	
 }

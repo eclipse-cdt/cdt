@@ -227,7 +227,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 	/**
-	 * Recuse in the project.
+	 * Recurse in the project.
 	 * @param parent
 	 * @param name
 	 * @param list
@@ -239,15 +239,17 @@ public class OpenIncludeAction extends Action {
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
 					IPath rPath = proxy.requestResource().getLocation();
-					int numSegToRemove = rPath.segmentCount() - name.segmentCount();
-					IPath sPath = rPath.removeFirstSegments(numSegToRemove);
-					sPath = sPath.setDevice(name.getDevice());
-					if (Platform.getOS().equals(Platform.OS_WIN32) ?
-							sPath.toOSString().equalsIgnoreCase(name.toOSString()) :
-							sPath.equals(name)) {
-						list.add(rPath);
+					if (rPath != null) {
+						int numSegToRemove = rPath.segmentCount() - name.segmentCount();
+						IPath sPath = rPath.removeFirstSegments(numSegToRemove);
+						sPath = sPath.setDevice(name.getDevice());
+						if (Platform.getOS().equals(Platform.OS_WIN32) ?
+								sPath.toOSString().equalsIgnoreCase(name.toOSString()) :
+								sPath.equals(name)) {
+							list.add(rPath);
+						}
+						return false;
 					}
-					return false;
 				}
 				return true;
 			}

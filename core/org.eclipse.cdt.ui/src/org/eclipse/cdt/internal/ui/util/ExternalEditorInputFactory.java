@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.core.resources.IProject;
@@ -72,7 +71,7 @@ public class ExternalEditorInputFactory implements IElementFactory {
 	 * @param input  the element
 	 */
 	static void saveState(IMemento memento, ExternalEditorInput input) {
-		IPath location= input.getPath(input);
+		IPath location= input.getPath();
 		if (location != null) {
 			memento.putString(TAG_PATH, location.toOSString());
 		}

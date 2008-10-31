@@ -10,12 +10,10 @@
  *     Norbert Ploett (Siemens AG)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -25,37 +23,37 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 
 public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel {
 
-	private final IStorage fStorage;
+	private final IPath fLocation;
 	private final int fDepth;
 	private final String fLocationAttribute;
 	
 	/**
 	 * @param markerResource
-	 * @param storage
+	 * @param location
 	 */
-	public ExternalSearchAnnotationModel(IResource markerResource, IStorage storage) {
-		this(markerResource, storage, IResource.DEPTH_ZERO, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
+	public ExternalSearchAnnotationModel(IResource markerResource, IPath location) {
+		this(markerResource, location, IResource.DEPTH_ZERO, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
 
 	/**
 	 * @param markerResource
-	 * @param storage
+	 * @param location
 	 * @param depth
 	 */
-	ExternalSearchAnnotationModel(IResource markerResource, IStorage storage, int depth) {
-		this(markerResource, storage, depth, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
+	ExternalSearchAnnotationModel(IResource markerResource, IPath location, int depth) {
+		this(markerResource, location, depth, ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 	}
 
 	/**
 	 * @param markerResource
-	 * @param storage
+	 * @param location
 	 * @param depth
 	 * @param locationAttribute
 	 */
 	ExternalSearchAnnotationModel(IResource markerResource,
-			IStorage storage, int depth, String locationAttribute) {
+			IPath location, int depth, String locationAttribute) {
 		super(markerResource);
-		fStorage= storage;
+		fLocation= location;
 		fDepth= depth;
 		fLocationAttribute= locationAttribute;
 	}
@@ -76,8 +74,7 @@ public class ExternalSearchAnnotationModel extends ResourceMarkerAnnotationModel
 		if (externalFileName != null) { // Only accept markers with external
 										// paths set
 			IPath externalPath = new Path(externalFileName);
-			IPath storagePath = fStorage.getFullPath();
-			acceptable = externalPath.equals(storagePath); // Only accept
+			acceptable = externalPath.equals(fLocation); // Only accept
 															// markers for this
 															// annotation
 															// model's external

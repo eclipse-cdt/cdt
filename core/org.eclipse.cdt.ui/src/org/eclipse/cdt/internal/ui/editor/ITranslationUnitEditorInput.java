@@ -8,19 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
-
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.editors.text.ILocationProvider;
-import org.eclipse.ui.editors.text.ILocationProviderExtension;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * ITranslationUnitEditorInput
  */
-public interface ITranslationUnitEditorInput extends IStorageEditorInput, ILocationProvider, ILocationProviderExtension {
+public interface ITranslationUnitEditorInput {
 
 	ITranslationUnit getTranslationUnit();
 

@@ -11,7 +11,7 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 /**
- * Extension to the IVMAdapter interface which allows access to the arra of active
+ * Extension to the IVMAdapter interface which allows access to the array of active
  * providers. 
  * 
  * @since 1.1

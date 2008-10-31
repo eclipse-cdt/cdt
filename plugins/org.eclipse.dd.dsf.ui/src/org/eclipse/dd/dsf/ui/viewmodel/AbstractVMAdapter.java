@@ -78,8 +78,7 @@ abstract public class AbstractVMAdapter implements IVMAdapterExtension
     }
 
     /**
-     * Enumerate the VM providers.
-     * @return An instance of {@link Iterable<IVMProvider>}
+     * {@inheritDoc}
      * 
 	 * @since 1.1
 	 */

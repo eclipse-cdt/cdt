@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.sdk"
       label="%featureName"
-      version="5.0.0.qualifier"
+      version="5.1.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -20,11 +20,11 @@
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
    </url>
-   
+
    <includes
          id="org.eclipse.cdt.platform.source"
          version="0.0.0"/>
-         
+
    <requires>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
       <import feature="org.eclipse.cdt" version="5.0.0" match="compatible"/>
@@ -43,13 +43,17 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.eclipse.cdt.gnu.build.source"
+         download-size="0"
+         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.gnu.debug.source"
+         download-size="0"
+         install-size="0"
          version="0.0.0"/>
 
 </feature>

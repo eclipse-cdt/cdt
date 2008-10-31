@@ -13,9 +13,9 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.4RC4-200806091311/eclipse-SDK-3.4RC4-linux-gtk-ppc.tar.gz"/>
-		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.I20080526-0000-e3.4.zip"/>
-		<property name="branchVersion" value="5.1.0"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.4-200806172000/eclipse-SDK-3.4-linux-gtk-ppc.tar.gz"/>
+		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/ganymede/mylyn-3.0.0.v20080619-1900-e3.4.zip"/>
+		<property name="branchVersion" value="6.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -29,6 +29,7 @@
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
+		<property name="cdtTest" value="org.eclipse.cdt.testing_5.0.0.${timestamp}"/>
 		<property name="eclipseTest" value="org.eclipse.test_3.2.0"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="vivkong@ca.ibm.com"/>
@@ -125,7 +126,8 @@
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/notice.html" todir="${buildDirectory}/site/eclipse"/>
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
 		<replace file="${buildDirectory}/site/eclipse/site.xml">
-			<replacefilter token="@buildVersion@" value="${branchVersion}.${timestamp}"/>
+			<replacefilter token="@buildVersion@" value="${branchVersion}"/>
+			<replacefilter token="@timeStamp@" value="${timestamp}"/>
 		</replace>
 		<copy file="pack.properties" todir="${buildDirectory}/site/eclipse"/>
 		<!-- for some reason LPG isn't getting picked up-->		
@@ -142,7 +144,7 @@
 		<unzip src="${mylynDist}" dest="${testDirectory}/eclipse"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${testDirectory}/eclipse"/>
-		<unzip src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
+		<unzip src="${testDirectory}/eclipse/plugins/${cdtTest}.jar"
 			dest="${testDirectory}/test/cdt"/>
 		<unzip src="${testDirectory}/eclipse/plugins/${eclipseTest}.jar"
 			dest="${testDirectory}/test/eclipse"/>		
@@ -213,11 +215,11 @@
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>
 		</copy>
+		
 		<!-- Create symlink to latest build -->
-		<!--
 		<symlink action="delete" link="${copyToDir}/latest" failonerror="false"/>
 		<symlink link="${copyToDir}/latest" resource="${copyToDir}/${buildType}.${buildId}" overwrite="true"/>
-		--> 
+
 	</target>
 
 	<target name="mail" depends="init">

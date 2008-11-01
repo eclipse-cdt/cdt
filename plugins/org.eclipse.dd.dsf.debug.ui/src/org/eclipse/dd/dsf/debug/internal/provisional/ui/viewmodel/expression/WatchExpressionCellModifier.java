@@ -49,23 +49,23 @@ public class WatchExpressionCellModifier implements ICellModifier {
         return ""; //$NON-NLS-1$
     }
 
-    
     public void modify(Object element, String property, Object value) {
         if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)) return;
         if (!(value instanceof String)) return;
         
-        String strValue = ((String)value).trim();
+        String origStrValue = (String) value;
+        String strValue = origStrValue.trim();
         IWatchExpression expression = getWatchExpression(element);
         IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager(); 
         if (expression != null) {
             if (strValue.length() != 0) {
-                expression.setExpressionText(strValue);
+                expression.setExpressionText(origStrValue);
             } else {
                 // (bug 233111) If user entered a blank string, remove the expression.
                 expressionManager.removeExpression(expression);
             }
         } else if (element instanceof NewExpressionVMC && strValue.length() != 0) {
-            IWatchExpression watchExpression = expressionManager.newWatchExpression(strValue); 
+            IWatchExpression watchExpression = expressionManager.newWatchExpression(origStrValue); 
             expressionManager.addExpression(watchExpression);            
         }
     }

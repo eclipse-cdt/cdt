@@ -977,12 +977,27 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     newColumnCount = Integer.parseInt(inputDialog.getValue());
                 } catch (NumberFormatException x) { assert false; }
             	
-            	TraditionalRendering.this.fRendering.setColumnsSetting(newColumnCount);
-            	this.setChecked(false);
-            	
-            	displayColumnCountCustomValue.setChecked(true);
-            	displayColumnCountCustomValue.setText(Integer.valueOf(
-            		fRendering.getColumnsSetting()).toString());
+                boolean customIsOneOfStandardListChoices = false;
+                
+                for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT; i++, j*=2) {
+                	if ( newColumnCount == j ) {
+                		customIsOneOfStandardListChoices = true;
+                		TraditionalRendering.this.fRendering.setColumnsSetting(newColumnCount);
+                    	this.setChecked(false);
+                    	displayColumnCountCustomValue.setChecked(false);
+                    	displayColumnCounts[i].setChecked(true);
+                    	break;
+                	}
+                }
+                
+                if ( ! customIsOneOfStandardListChoices ) {
+                	TraditionalRendering.this.fRendering.setColumnsSetting(newColumnCount);
+                	this.setChecked(false);
+
+                	displayColumnCountCustomValue.setChecked(true);
+                	displayColumnCountCustomValue.setText(Integer.valueOf(
+                			fRendering.getColumnsSetting()).toString());
+                }
             }
         }; 
         

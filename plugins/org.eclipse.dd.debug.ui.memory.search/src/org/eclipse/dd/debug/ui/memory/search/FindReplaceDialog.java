@@ -194,6 +194,10 @@ public class FindReplaceDialog extends SelectionDialog
 				BigInteger value;
 				if(element.toUpperCase().startsWith("0X")) //$NON-NLS-1$
 					value = new BigInteger(element.substring(2), 16);
+				else if(element.toUpperCase().startsWith("0B")) //$NON-NLS-1$
+					value = new BigInteger(element.substring(2), 2);
+				else if(element.toUpperCase().startsWith("0")) //$NON-NLS-1$
+					value = new BigInteger(element.substring(1), 8);
 				else
 					value = new BigInteger(element, 10);
 				Byte b = new Byte(value.byteValue());
@@ -383,11 +387,25 @@ public class FindReplaceDialog extends SelectionDialog
 		{
 			BigInteger endAddress = getEndAddress();
 			BigInteger startAddress = getStartAddress();
-			if(getSearchPhrase() != null && getSearchPhrase().getByteLength() > 0)
-				valid = true;
 			
-			if(getReplaceData() != null && getReplaceData().length > 0)
-				replaceValid = true;
+			/*
+			 * The end-address must be larger that the start-address.
+			 */
+			if ( startAddress.compareTo(endAddress) == -1 ) {
+				/*
+				 * Validate the search phrase.
+				 */
+				if(getSearchPhrase() != null && getSearchPhrase().getByteLength() > 0) {
+					valid = true;
+				}
+				
+				/*
+				 * Validate the replacement phrase.
+				 */
+				if(getReplaceData() != null && getReplaceData().length > 0) {
+					replaceValid = true;
+				}
+			}
 		}
 		catch(Throwable ex)
 		{
@@ -703,6 +721,7 @@ public class FindReplaceDialog extends SelectionDialog
 
 			public void widgetSelected(SelectionEvent e) {
 				fCaseInSensitiveCheckbox.setEnabled(false);
+				validate();
 			}
 		};
 		fFormatHexButton.addSelectionListener(nonAsciiListener);
@@ -1090,7 +1109,12 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		public int getByteLength()
 		{
-			return fBytes.length;
+			if ( fBytes != null ) {
+				return fBytes.length;
+			}
+			else {
+				return 0;
+			}
 		}
 		
 		public String toString()
@@ -1105,6 +1129,8 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		public boolean isMatch(MemoryByte[] bytes)
 		{
+			if ( fBytes == null )
+				return false;
 			for(int i = 0; i < bytes.length; i++)
 				if(bytes[i].getValue() != fBytes[i])
 					return false;

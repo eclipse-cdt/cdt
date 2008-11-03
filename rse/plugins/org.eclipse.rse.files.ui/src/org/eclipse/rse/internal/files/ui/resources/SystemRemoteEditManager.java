@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM) - [195285] mount path mapper changes
  * David McKnight   (IBM)        - [228343] RSE unable to recover after RemoteSystemsTempfiles deletion
+ * David McKnight   (IBM)        - [253262] Cache Cleanup is removing .settings directory
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -536,7 +537,9 @@ public class SystemRemoteEditManager
 				IResource child = children[i];
 				if (child instanceof IFolder)
 				{
-					candidate = getLeastRecentlyChangedFile((IFolder) child, deletedList);
+					if (!child.getName().equals(".settings")){  //$NON-NLS-1$
+						candidate = getLeastRecentlyChangedFile((IFolder) child, deletedList);
+					}
 				}
 				else
 				{

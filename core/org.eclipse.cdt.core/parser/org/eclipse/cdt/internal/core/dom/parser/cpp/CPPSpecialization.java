@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -116,7 +117,9 @@ public abstract class CPPSpecialization extends PlatformObject
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
-		return ((ICPPInternalBinding) specialized).isGloballyQualified();
+		if (specialized instanceof ICPPBinding)
+			return ((ICPPBinding) specialized).isGloballyQualified();
+		return false;
 	}
 
 	public ILinkage getLinkage() {

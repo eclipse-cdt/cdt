@@ -11,6 +11,8 @@
 
 package org.eclipse.dd.debug.memory.renderings.traditional;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -625,6 +627,17 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 {
                     public void run()
                     {
+                    	// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
+                    	// platform interface or the caching will move out of the data layer
+                    	try {
+							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]);
+							if(m != null)
+	                    		m.invoke(fRendering.getMemoryBlock(), new Object[0]);
+						} 
+						catch (Exception e) 
+						{
+						}
+                    	
                         TraditionalRendering.this.fRendering.refresh();
                     }
                 });

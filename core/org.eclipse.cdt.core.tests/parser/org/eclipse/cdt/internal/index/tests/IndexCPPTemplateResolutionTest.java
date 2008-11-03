@@ -1374,7 +1374,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//    A<5> a5d;
 	//    A<1> a1;
 	// }
-	public void testConstantPropogationFromHeader() throws Exception {
+	public void testConstantPropagationFromHeader() throws Exception {
 		ICPPClassType a5a= getBindingFromASTName("A<FIVE>", 7, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType a5b= getBindingFromASTName("A<CINQ>", 7, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType a5c= getBindingFromASTName("A<FUNF>", 7, ICPPClassType.class, ICPPSpecialization.class);

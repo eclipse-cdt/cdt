@@ -5490,4 +5490,14 @@ public class AST2Tests extends AST2BaseTest {
 			assertEquals(2, tu.getReferences(name.resolveBinding()).length);
 		}
 	}
+
+	// void test() {
+	//    const void* p = &"string";
+	// }
+	public void testAdressOfStringLiteral_Bug252970() throws Exception {
+		final String code = getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			parseAndCheckBindings(code, lang);
+		}
+	}
 }

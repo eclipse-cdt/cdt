@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -137,7 +138,9 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
-		return ((ICPPInternalBinding) specialized).isGloballyQualified();
+		if (specialized instanceof ICPPBinding)
+			return ((ICPPBinding) specialized).isGloballyQualified();
+		return false;
 	}
 
 	public ILinkage getLinkage() {

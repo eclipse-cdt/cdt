@@ -5289,12 +5289,22 @@ public class AST2Tests extends AST2BaseTest {
 	//	   myfunc("");
 	//	}
 	public void testReferencesInInitializer_Bug251514() throws Exception {
+		final String code = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), lang, true);
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
 			IASTFunctionDefinition fdef= getDeclaration(tu, 0);
 			IASTName name= fdef.getDeclarator().getName();
 			assertEquals(2, tu.getReferences(name.resolveBinding()).length);
 		}
 	}
 
+	// void test() {
+	//    const void* p = &"string";
+	// }
+	public void testAdressOfStringLiteral_Bug252970() throws Exception {
+		final String code = getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			parseAndCheckBindings(code, lang);
+		}
+	}
 }

@@ -594,21 +594,21 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_star);
+            return unarayExpression(IASTUnaryExpression.op_star);
         case IToken.tAMPER:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);
+            return unarayExpression(IASTUnaryExpression.op_amper);
         case IToken.tPLUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus);
+            return unarayExpression(IASTUnaryExpression.op_plus);
         case IToken.tMINUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);
+            return unarayExpression(IASTUnaryExpression.op_minus);
         case IToken.tNOT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_not);
+            return unarayExpression(IASTUnaryExpression.op_not);
         case IToken.tBITCOMPLEMENT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);
+            return unarayExpression(IASTUnaryExpression.op_tilde);
         case IToken.tINCR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);
+            return unarayExpression(IASTUnaryExpression.op_prefixIncr);
         case IToken.tDECR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);
+            return unarayExpression(IASTUnaryExpression.op_prefixDecr);
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
@@ -2396,22 +2396,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    protected IASTExpression unaryOperatorCastExpression(int operator) throws EndOfFileException, BacktrackException {
-        IToken mark = mark();
-        int offset = consume().getOffset();
-        IASTExpression castExpression = castExpression();
-        if( castExpression instanceof IASTLiteralExpression ) {
-        	IASTLiteralExpression lit= (IASTLiteralExpression) castExpression;
-        	if ( operator == IASTUnaryExpression.op_amper || 
-        			(operator == IASTUnaryExpression.op_star && lit.getKind() != IASTLiteralExpression.lk_string_literal) )
-        	{
-        		backup( mark );
-        		throwBacktrack( mark );
-        	}
-        }
-        return buildUnaryExpression(operator, castExpression, offset,
-                calculateEndOffset(castExpression));
-    }
 
     protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {
         int startOffset;

@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -1173,10 +1175,28 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected abstract IASTConditionalExpression createConditionalExpression();
 
-    protected IASTExpression buildUnaryExpression(int operator,
-            IASTExpression operand, int offset, int lastOffset) {
+    protected IASTExpression unarayExpression(int operator) throws EndOfFileException, BacktrackException {
+    	final IToken operatorToken= consume();
+        final IASTExpression operand= castExpression();
+        
+        if (operator == IASTUnaryExpression.op_star && operand instanceof IASTLiteralExpression) {
+        	IASTLiteralExpression lit= (IASTLiteralExpression) operand;
+        	switch(lit.getKind()) {
+        	case IASTLiteralExpression.lk_char_constant:
+        	case IASTLiteralExpression.lk_float_constant:
+        	case IASTLiteralExpression.lk_integer_constant:
+        	case ICPPASTLiteralExpression.lk_true:
+        	case ICPPASTLiteralExpression.lk_false:
+				throwBacktrack(operatorToken);
+        	}
+        }
+        
+        return buildUnaryExpression(operator, operand, operatorToken.getOffset(), calculateEndOffset(operand));
+    }
+
+    protected IASTExpression buildUnaryExpression(int operator, IASTExpression operand, int offset, int lastOffset) {
         IASTUnaryExpression result = createUnaryExpression();
-        ((ASTNode) result).setOffsetAndLength(offset, lastOffset - offset);
+        setRange(result, offset, lastOffset);
         result.setOperator(operator);
         result.setOperand(operand);
         return result;

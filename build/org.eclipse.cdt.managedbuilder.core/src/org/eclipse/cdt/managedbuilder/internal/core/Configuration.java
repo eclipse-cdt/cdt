@@ -2331,7 +2331,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setErrorParserList(String[] ids) {
 		if(ids == null){
 			//reset

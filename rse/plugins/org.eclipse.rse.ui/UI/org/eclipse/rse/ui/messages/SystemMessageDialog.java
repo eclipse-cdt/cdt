@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - Adding Javadoc
  * David McKnight   (IBM)        - [232670] SystemMessageDialog should not throw IndicatorExceptions
  * David McKnight   (IBM)        - [238585] SystemMessageDialog's details area is always scrolled to the bottom
+ * David McKnight   (IBM)        - [253042] SystemMessageDialog.displayHostErrorMessage(shell, string, string) is broken 
  *******************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -37,13 +38,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -748,8 +749,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static void displayHostErrorMessage(Shell shell, String hostMsg)
 	{
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
-		msg.makeSubstitution(hostMsg);
+		SystemMessage msg = new SimpleSystemMessage(RSEUIPlugin.PLUGIN_ID, ISystemMessages.MSG_GENERIC_E, IStatus.ERROR, hostMsg);
+
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
 	}
@@ -760,8 +761,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static void displayHostErrorMessage(Shell shell, String hostMsg, String levelTwo)
 	{
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E_HELP);
-		msg.makeSubstitution(hostMsg,levelTwo);
+		SystemMessage msg = new SimpleSystemMessage(RSEUIPlugin.PLUGIN_ID, ISystemMessages.MSG_GENERIC_E, IStatus.ERROR, hostMsg, levelTwo);
+		
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
 	}
@@ -771,8 +772,8 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static void displayHostWarningMessage(Shell shell, String hostMsg)
 	{
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W);
-		msg.makeSubstitution(hostMsg);
+		SystemMessage msg = new SimpleSystemMessage(RSEUIPlugin.PLUGIN_ID, ISystemMessages.MSG_GENERIC_W, IStatus.WARNING, hostMsg);
+		
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
 	}
@@ -783,8 +784,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 */
 	public static void displayHostWarningMessage(Shell shell, String hostMsg, String levelTwo)
 	{
-		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W_HELP);
-		msg.makeSubstitution(hostMsg,levelTwo);
+		SystemMessage msg = new SimpleSystemMessage(RSEUIPlugin.PLUGIN_ID, ISystemMessages.MSG_GENERIC_W_HELP, IStatus.WARNING, hostMsg, levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		openInUIThread(msgDlg);
 	}

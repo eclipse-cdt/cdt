@@ -2339,19 +2339,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		} else {
 			resetErrorParsers();
 			Set<String> oldSet = contributeErrorParsers(null, true);
-			if(oldSet == null)
-				oldSet = new LinkedHashSet<String>();
-			LinkedHashSet<String> newSet = new LinkedHashSet<String>();
-			newSet.addAll(Arrays.asList(ids));
-			newSet.remove(null);
-			LinkedHashSet<String> newCopy = (LinkedHashSet<String>)newSet.clone();
-			newSet.removeAll(oldSet);
-			oldSet.removeAll(newCopy);
-			Set<String> removed = oldSet;
-			Set<String> added = newSet;
-			
-			removeErrorParsers(removed);
-			setErrorParserAttribute((String[])added.toArray(new String[added.size()]));
+			if(oldSet != null) {
+				oldSet.removeAll(Arrays.asList(ids));						
+				removeErrorParsers(oldSet);
+			}			
+			setErrorParserAttribute(ids);
 		}
 	}
 	

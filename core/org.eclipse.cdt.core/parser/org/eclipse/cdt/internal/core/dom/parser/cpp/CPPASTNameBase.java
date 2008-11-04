@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
  * Common base class for all sorts of c++ names: unqualified, qualified, operator and conversion
  * names plus template-ids
  */
-public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
+public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 
 	/**
 	 * For test-purposes, only.
@@ -39,23 +39,25 @@ public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
 	/**
 	 * Helper method to resolve intermediate bindings without casting the name.
 	 */
-	public static IBinding resolveIntermediateBinding(IASTName name) {
+	public static IBinding resolvePreBinding(IASTName name) {
 		if (name == null)
 			return null;
-		if (name instanceof AbstractCPPASTName)
-			return ((AbstractCPPASTName) name).resolveIntermediateBinding();
+		if (name instanceof CPPASTNameBase)
+			return ((CPPASTNameBase) name).resolvePreBinding();
+		
 		return name.resolveBinding();
 	}
 
 	/**
 	 * Helper method to get intermediate bindings without casting the name.
 	 */
-	public static IBinding getIntermediateBinding(IASTName name) {
+	public static IBinding getPreBinding(IASTName name) {
 		if (name == null)
 			return null;
-		if (name instanceof AbstractCPPASTName)
-			return ((AbstractCPPASTName) name).getIntermediateBinding();
-		return name.resolveBinding();
+		if (name instanceof CPPASTNameBase)
+			return ((CPPASTNameBase) name).getPreBinding();
+		
+		return name.getBinding();
 	}
 
 	private IBinding fBinding = null;
@@ -78,7 +80,7 @@ public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
 	 * Resolves the name at least up to the intermediate binding and returns it.
 	 * @see ICPPTwoPhaseBinding
 	 */
-	public IBinding resolveIntermediateBinding() {
+	public IBinding resolvePreBinding() {
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			fBinding= new RecursionResolvingBinding(this);
@@ -94,11 +96,12 @@ public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			fBinding= new RecursionResolvingBinding(this);
     		} else {
+    			fIsFinal= false;
     			fBinding= createIntermediateBinding();
     		}
     	}
     	if (!fIsFinal)
-    		resolveFinalBinding();
+    		resolveFinalBinding(this);
     	
     	return fBinding;
     }
@@ -108,7 +111,7 @@ public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
      * Otherwise the intermediate or final binding for this name is returned.
      * @see ICPPTwoPhaseBinding
      */
-    public IBinding getIntermediateBinding() {
+    public IBinding getPreBinding() {
     	final IBinding cand= fBinding;
         if (cand == null)
         	return null;
@@ -122,23 +125,22 @@ public abstract class AbstractCPPASTName extends ASTNode implements IASTName {
         	return null;
         
         if (!fIsFinal)
-        	resolveFinalBinding();
+        	resolveFinalBinding(this);
         
         return fBinding;
     }
 
-	private void resolveFinalBinding() {
+	private void resolveFinalBinding(CPPASTNameBase astName) {
 		if (fBinding instanceof ICPPTwoPhaseBinding) {
-    		ICPPTwoPhaseBinding lazyBinding= (ICPPTwoPhaseBinding) fBinding;
+    		ICPPTwoPhaseBinding intermediateBinding= (ICPPTwoPhaseBinding) fBinding;
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
     			fBinding= new RecursionResolvingBinding(this);
     		} else {
-    			IBinding finalBinding= lazyBinding.resolveFinalBinding();
-    			assert finalBinding.getClass().equals(lazyBinding.getClass());
-    			
+    			IBinding finalBinding= intermediateBinding.resolveFinalBinding(astName);
     			fBinding= finalBinding;
     		}
     	}
+	
 		fIsFinal= true;
 	}
 	

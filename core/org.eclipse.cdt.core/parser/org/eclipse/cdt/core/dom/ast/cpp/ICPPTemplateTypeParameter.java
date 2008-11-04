@@ -24,4 +24,13 @@ public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType 
 	 */
 	public IType getDefault() throws DOMException;
 
+	/**
+	 * Types containing template parameters need to be compared even before it is known to which
+	 * binding the template parameter belongs to. Therefore {@link #isSameType(IType)} compares the
+	 * kind and the parameter position of the template parameter, only. The name and the owner
+	 * is ignored.
+	 * 
+	 * @since 5.1
+	 */
+	public boolean isSameType(IType type);
 }

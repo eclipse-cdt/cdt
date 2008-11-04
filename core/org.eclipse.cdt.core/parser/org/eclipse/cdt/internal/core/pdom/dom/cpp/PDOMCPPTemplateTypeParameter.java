@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -111,24 +111,11 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
-		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
-			if (node.getPDOM() == getPDOM()) {
-				return node.getRecord() == getRecord();
-			}
-		}
-		
-		if (type instanceof ICPPTemplateTypeParameter && !(type instanceof ProblemBinding)) {
-			ICPPTemplateTypeParameter ttp= (ICPPTemplateTypeParameter) type;
-			try {
-				char[][] ttpName= ttp.getQualifiedNameCharArray();
-				return hasQualifiedName(ttpName, ttpName.length - 1);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-		}
-		return false;
+
+        if (!(type instanceof ICPPTemplateTypeParameter))
+        	return false;
+        
+        return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
 	}
 
 	public IType getDefault() {

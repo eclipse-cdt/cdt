@@ -2940,16 +2940,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		// These intermediate assertions will not hold until deferred non-type arguments are
 		// correctly modelled
-		/*
 		ICPPClassType tid= ba.assertNonProblem("This<I>::T", 7, ICPPClassType.class);
 		assertFalse(tid instanceof ICPPSpecialization);
 		ICPPConstructor th1sCtor= ba.assertNonProblem("This() :", 4, ICPPConstructor.class);
-		assertFalse(th1sCtor instanceof ICPPSpecialization);ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
-		*/
+		assertFalse(th1sCtor instanceof ICPPSpecialization);
 		
-		ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
+		ICPPTemplateNonTypeParameter np = ba.assertNonProblem("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
 		ICPPClassType clazz= ba.assertNonProblem("That<I>(I)", 4, ICPPClassType.class);
 		ICPPConstructor ctor= ba.assertNonProblem("That<I>(I)", 7, ICPPConstructor.class);
+
+		ICPPTemplateNonTypeParameter np1 = ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
+		assertSame(np, np1);
 	}
 	
 	//	template<typename I>

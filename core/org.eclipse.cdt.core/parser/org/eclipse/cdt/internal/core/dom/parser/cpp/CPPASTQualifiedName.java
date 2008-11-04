@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.Assert;
  * Qualified name, which can contain any other name (unqualified, operator-name, conversion name, 
  * template id).
  */
-public class CPPASTQualifiedName extends AbstractCPPASTName 
+public class CPPASTQualifiedName extends CPPASTNameBase 
 		implements ICPPASTQualifiedName, IASTCompletionContext {
 
 	private IASTName[] names = null;
@@ -57,9 +57,9 @@ public class CPPASTQualifiedName extends AbstractCPPASTName
 	}
 
 	@Override
-	public final IBinding resolveIntermediateBinding() {
+	public final IBinding resolvePreBinding() {
 		// The full qualified name resolves to the same thing as the last name
-		return resolveIntermediateBinding(getLastName());
+		return resolvePreBinding(getLastName());
 	}
 
 	@Override
@@ -70,9 +70,9 @@ public class CPPASTQualifiedName extends AbstractCPPASTName
 	}
 
     @Override
-	public final IBinding getIntermediateBinding() {
+	public final IBinding getPreBinding() {
 		// The full qualified name resolves to the same thing as the last name
-		return getIntermediateBinding(getLastName());
+		return getPreBinding(getLastName());
     }
     
 	@Override

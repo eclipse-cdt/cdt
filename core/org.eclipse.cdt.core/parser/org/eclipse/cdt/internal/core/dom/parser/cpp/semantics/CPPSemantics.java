@@ -133,10 +133,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
@@ -170,13 +170,17 @@ public class CPPSemantics {
 
 	// Set to true for debugging.
 	public static boolean traceBindingResolution = false;
+	public static int traceIndent= 0;
 	
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
-			System.out.println("Resolving " + name); //$NON-NLS-1$
+			for (int i = 0; i < traceIndent; i++) 
+				System.out.print("  "); //$NON-NLS-1$
+			System.out.println("Resolving " + name + ':' + ((ASTNode)name).getOffset()); //$NON-NLS-1$
+			traceIndent++;
 		}
-		if (name instanceof AbstractCPPASTName) {
-			((AbstractCPPASTName) name).incResolutionDepth();
+		if (name instanceof CPPASTNameBase) {
+			((CPPASTNameBase) name).incResolutionDepth();
 		}
 
 		// 1: get some context info off of the name to figure out what kind of lookup we want
@@ -202,7 +206,11 @@ public class CPPSemantics {
         // 4: post processing
 		binding = postResolution(binding, data);
 		if (traceBindingResolution) {
-			System.out.println("Resolved " + name + " to " + DebugUtil.toStringWithClass(binding)); //$NON-NLS-1$ //$NON-NLS-2$
+			traceIndent--;
+			for (int i = 0; i < traceIndent; i++) 
+				System.out.print("  "); //$NON-NLS-1$
+			System.out.println("Resolved  " + name + ':' + ((ASTNode)name).getOffset() +  //$NON-NLS-1$
+					" to " + DebugUtil.toStringWithClass(binding) + ':' + System.identityHashCode(binding)); //$NON-NLS-1$
 		}
 		return binding;
 	}
@@ -290,28 +298,27 @@ public class CPPSemantics {
 		}
 		
         if (binding instanceof ICPPClassType && data.considerConstructors) {
-        	ICPPClassType cls = (ICPPClassType) binding;
-        	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
-        		if (data.tu != null) {
-        			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
-        			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
-        			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
-        			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
-        		}
-        	}
-		    if (cls != null) {
-			    try {
-	                //force resolution of constructor bindings
-	                IBinding[] ctors = cls.getConstructors();
-	                if (ctors.length > 0 && !(ctors[0] instanceof IProblemBinding)) {
-		                //then use the class scope to resolve which one.
-		    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding(data.astName, true);
-	                }
-	            } catch (DOMException e) {
-	                binding = e.getProblem();
-	            }
-		    }
-		    
+		    try {
+		    	ICPPClassType cls = (ICPPClassType) binding;
+		    	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
+		    		if (data.tu != null) {
+		    			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
+		    			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
+		    			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
+		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
+		    		}
+		    	}
+		    	if (cls != null) {
+		    		//force resolution of constructor bindings
+		    		IBinding[] ctors = cls.getConstructors();
+		    		if (ctors.length > 0 && !(ctors[0] instanceof IProblemBinding)) {
+		    			//then use the class scope to resolve which one.
+		    			binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding(data.astName, true);
+		    		}
+		    	}
+            } catch (DOMException e) {
+                binding = e.getProblem();
+            }
 		}
         
         // mstodo this looks like a hack?
@@ -1563,7 +1570,7 @@ public class CPPSemantics {
 	        if (bindings[0] instanceof IBinding) {
 	        	candidate= (IBinding) bindings[0];
 	        } else if (bindings[0] instanceof IASTName) {
-	    		candidate= ((IASTName) bindings[0]).getBinding();
+	    		candidate= CPPASTNameBase.getPreBinding((IASTName) bindings[0]);
 	    	} else {
 	    		return null;
 	    	}
@@ -1718,7 +1725,11 @@ public class CPPSemantics {
 	        }
 	        if (o instanceof IASTName) {
 	        	IASTName on= (IASTName) o;
-	            temp = checkResolvedNamesOnly ? on.getBinding() : on.resolveBinding();
+	        	if (checkResolvedNamesOnly) {
+	        		temp = CPPASTNameBase.getPreBinding(on);
+	        	} else {
+	        		temp= CPPASTNameBase.resolvePreBinding(on);
+	        	}
 	            if (temp == null)
 	                continue;
 	        } else if (o instanceof IBinding) {

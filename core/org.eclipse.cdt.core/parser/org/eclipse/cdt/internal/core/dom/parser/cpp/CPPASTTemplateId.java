@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * Template ids consist of an unqualified name (or operator or conversion name) 
  * and an array of template arguments. 
  */
-public class CPPASTTemplateId extends AbstractCPPASTName implements ICPPASTTemplateId, IASTAmbiguityParent {
+public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
     private IASTNode[] templateArguments = null;
     public CPPASTTemplateId() {

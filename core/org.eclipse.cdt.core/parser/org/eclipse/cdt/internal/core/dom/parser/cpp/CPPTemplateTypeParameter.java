@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -19,12 +19,12 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * @author aniefer
+ * The standard template parameter (template<typename T> or template<class T>).
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateTypeParameter, IType, ICPPUnknownBinding {
@@ -68,9 +68,12 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
     public boolean isSameType(IType type) {
         if (type == this)
             return true;
-        if (type instanceof ITypedef || type instanceof IIndexType)
+        if (type instanceof ITypedef)
             return type.isSameType(this);
-        return false;
+        if (!(type instanceof ICPPTemplateTypeParameter))
+        	return false;
+        
+        return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
     }
 
 	public IASTName getUnknownName() {

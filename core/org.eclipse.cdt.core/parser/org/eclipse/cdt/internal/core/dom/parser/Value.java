@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 
@@ -199,7 +200,7 @@ public class Value implements IValue {
 			return o + "," + evaluate(cexpr.getNegativeResultExpression(), maxdepth) + "," + po + '?';
 		}
 		if (e instanceof IASTIdExpression) {
-			IBinding b= ((IASTIdExpression) e).getName().resolveBinding();
+			IBinding b= CPPASTNameBase.resolvePreBinding(((IASTIdExpression) e).getName());
 			if (b instanceof ICPPTemplateParameter) {
 				if (b instanceof ICPPTemplateNonTypeParameter) {
 					return evaluate((ICPPTemplateParameter) b);

@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+
 
 /**
  * Interface for templates from the ast.
  */
 public interface ICPPInternalTemplate extends ICPPInternalBinding, ICPPInstanceCache {
+
+	IBinding resolveTemplateParameter(ICPPTemplateParameter param);
 }

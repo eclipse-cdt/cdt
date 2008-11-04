@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -39,6 +40,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate#getPartialSpecializations()
 	 */
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+		// mstodo the partial specializations need to be specialized
 		return ((ICPPClassTemplate) getSpecializedBinding()).getPartialSpecializations();
 	}
 
@@ -77,11 +79,25 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-		//should not occur mstodo- why not??
+		// mstodo partial specializations for class template specializations. 
+		// this is legal code:
+		//		template<typename T> class CT {
+		//			template<typename S> class NT {
+		//			};
+		//		};
+		//      // creates a partial spec for the specialization of CT::NT
+		//		template<> template<typename S>  class CT<char>::NT<S*> { 
+		//		public:
+		//			int spec;
+		//		};
 	}
 
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
+		return param;
 	}
 }

@@ -147,6 +147,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
@@ -1032,7 +1033,7 @@ public class CPPVisitor {
 		}
 		if (name != null) {
 			name= name.getLastName();
-			IBinding binding = name.getBinding();
+			IBinding binding = CPPASTNameBase.getPreBinding(name);
 			if (binding == null) {
 				binding = CPPSemantics.resolveBinding(name);
 				name.setBinding(binding);
@@ -1678,7 +1679,7 @@ public class CPPVisitor {
 			}
 		}
 		if (name != null) {
-			IBinding binding = name.resolveBinding();
+			IBinding binding = CPPASTNameBase.resolvePreBinding(name);
 			if (binding instanceof ICPPConstructor) {
 				try {
 					type= ((ICPPConstructor) binding).getClassOwner();

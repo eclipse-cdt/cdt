@@ -64,4 +64,8 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
+	
+	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
+		return param;
+	}
 }

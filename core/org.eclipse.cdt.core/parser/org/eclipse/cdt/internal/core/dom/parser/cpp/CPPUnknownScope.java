@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
@@ -31,7 +31,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author aniefer
+ * Models the scope represented by an unknown binding such (e.g.: template type parameter). Used within
+ * the context of templates, only.
  */
 public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     private final ICPPUnknownBinding binding;
@@ -111,8 +112,12 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         IBinding b;
         IASTNode parent = name.getParent();
         if (parent instanceof ICPPASTTemplateId) {
-        	ICPPTemplateArgument[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
-        	b = new CPPUnknownClassInstance(binding, name, arguments);
+        	try {
+				ICPPTemplateArgument[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
+				b = new CPPUnknownClassInstance(binding, name, arguments);
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
         } else {
         	b = new CPPUnknownClass(binding, name);
         }

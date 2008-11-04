@@ -169,6 +169,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				partial.setArguments(args);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
 			} finally {
 				partial = null;
 				binding = null;

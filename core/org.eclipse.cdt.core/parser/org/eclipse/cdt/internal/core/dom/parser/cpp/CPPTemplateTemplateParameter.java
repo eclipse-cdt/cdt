@@ -22,8 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -87,21 +85,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return templateParameters;
 	}
 
-	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
-		IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
-		
-		IBinding binding = name.getBinding();
-		if (binding == null) {
-			//create a new binding and set it for the corresponding parameter in all known decls
-	    	if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter)
-	    		binding = new CPPTemplateTypeParameter(name);
-	    	else if (templateParameter instanceof ICPPASTParameterDeclaration)
-	    		binding = new CPPTemplateNonTypeParameter(name);
-	    	else 
-	    		binding = new CPPTemplateTemplateParameter(name);
-	    	name.setBinding(binding);
-		}
-		return binding;
+	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
+		return templateParameter;
 	}
 
 	public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
@@ -176,12 +161,15 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	}
 
     public boolean isSameType(IType type) {
-        if (type == this)
-            return true;
-        if (type instanceof ITypedef)
-            return ((ITypedef)type).isSameType(this);
-        return false;
-    }
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
+		if (!(type instanceof ICPPTemplateTemplateParameter))
+			return false;
+
+		return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
+	}
 
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;

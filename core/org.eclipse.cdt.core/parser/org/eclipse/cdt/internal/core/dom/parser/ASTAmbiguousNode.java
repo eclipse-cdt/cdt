@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 /**
  * Base implementation for all ambiguous nodes.
@@ -94,7 +95,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			int issues= 0;
 			for (IASTName name : names) {
 				try {
-					IBinding b = name.resolveBinding();
+					IBinding b= CPPASTNameBase.resolvePreBinding(name);
 					if (b instanceof IProblemBinding) {
 						issues++;
 					}

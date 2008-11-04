@@ -37,7 +37,7 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 * Returns the arguments of this partial specialization.
 	 * @since 5.1
 	 */
-	public ICPPTemplateArgument[] getTemplateArguments();
+	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException;
 	
 	/**
 	 * @deprecated use {@link #getTemplateArguments()}, instead.

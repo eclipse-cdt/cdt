@@ -16,15 +16,18 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -32,13 +35,17 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Base implementation for template parameter bindings in the AST.
  */
-public abstract class CPPTemplateParameter extends PlatformObject implements ICPPTemplateParameter, ICPPInternalBinding {
+public abstract class CPPTemplateParameter extends PlatformObject 
+		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
 	private IASTName [] declarations;
 	private final int position;
 	
 	public CPPTemplateParameter(IASTName name) {
 		declarations = new IASTName[] {name};
-		
+		position= computeParameterPosition(name);
+	}
+
+	private int computeParameterPosition(IASTName name) {
 		int pos= -1;
 		int nesting= -1;
 		ICPPASTTemplateParameter tp= null;
@@ -70,7 +77,7 @@ public abstract class CPPTemplateParameter extends PlatformObject implements ICP
 		if (pos < 0)
 			pos= 0;
 		
-		position= (nesting << 16) + pos;
+		return (nesting << 16) + pos;
 	}
 
 	@Override
@@ -106,6 +113,15 @@ public abstract class CPPTemplateParameter extends PlatformObject implements ICP
 	public IASTName getPrimaryDeclaration () {
 		return declarations[0];
 	}
+	
+	private ICPPASTTemplateParameter getASTTemplateParameter() {
+		IASTNode node= declarations[0];
+		while (node != null && !(node instanceof ICPPASTTemplateParameter))
+			node= node.getParent();
+		assert node != null;
+		return (ICPPASTTemplateParameter) node;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
@@ -203,5 +219,33 @@ public abstract class CPPTemplateParameter extends PlatformObject implements ICP
 		}
 		
 		return CPPTemplates.getContainingTemplate((ICPPASTTemplateParameter) node);
+	}
+	
+	public IBinding resolveFinalBinding(CPPASTNameBase name) {
+		// check if the binding has been updated.
+		IBinding current= name.getPreBinding();
+		if (current != this)
+			return current;
+		
+		ICPPTemplateDefinition template= CPPTemplates.getContainingTemplate(getASTTemplateParameter());
+		if (template instanceof ICPPInternalTemplate) {
+			return ((ICPPInternalTemplate) template).resolveTemplateParameter(this);
+		}
+
+		// problem finding the containing template
+		if (template == null) {
+			return this;
+		}
+		
+		// use parameter from the index
+		try {
+			ICPPTemplateParameter[] params = template.getTemplateParameters();
+			final int pos= position & 0xff;
+			if (pos < params.length) 
+				return params[pos];
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		return new ProblemBinding(getPrimaryDeclaration(), IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray());
 	}
 }

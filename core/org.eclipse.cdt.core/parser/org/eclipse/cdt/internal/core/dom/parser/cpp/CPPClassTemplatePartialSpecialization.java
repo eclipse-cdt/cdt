@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -35,7 +36,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 		super(name);
 	}
 
-	public ICPPTemplateArgument[] getTemplateArguments() {
+	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
 		if (arguments == null) {
 			arguments= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName());
 		}
@@ -55,12 +56,20 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	}
 
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		return CPPTemplates.createParameterMap(getPrimaryClassTemplate(), getTemplateArguments());
+		try {
+			return CPPTemplates.createParameterMap(getPrimaryClassTemplate(), getTemplateArguments());
+		} catch (DOMException e) {
+			return CPPTemplateParameterMap.EMPTY;
+		}
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + '<' + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true) + '>';
+		try {
+			return super.toString() + '<' + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true) + '>';
+		} catch (DOMException e) {
+			return super.toString() + '<' + e.getProblem().toString() + '>';
+		}
 	}
 	
 	@Deprecated
@@ -69,7 +78,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	}
 	
 	@Deprecated
-	public IType[] getArguments() {
+	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 }

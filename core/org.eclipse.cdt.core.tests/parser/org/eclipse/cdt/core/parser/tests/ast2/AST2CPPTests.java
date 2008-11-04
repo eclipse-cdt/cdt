@@ -111,7 +111,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -1671,7 +1671,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// };                     
 	public void testBug84692() throws Exception {
 		// also tests bug 234042.
-		AbstractCPPASTName.sAllowRecursionBindings= false;
+		CPPASTNameBase.sAllowRecursionBindings= false;
 		
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();

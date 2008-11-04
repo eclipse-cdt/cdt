@@ -17,7 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * by the first step is an intermediate binding that can be replaced in a second
  * step before the binding is exposed via public API. 
  * <p> 
- * The bindings of the two phases may not be equal, but they must have the <b> same type</b>.
+ * The bindings of the two phases may not be equal, but they must implement the
+ * same public interfaces.
  * <p> 
  * This allows for having multiple bindings for one final binding and deferring
  * the act of unifying them to a later point in time.
@@ -30,7 +31,7 @@ public interface ICPPTwoPhaseBinding extends IBinding {
 	 * {@code this} must be returned.
 	 * <p> Note, that the result of this operation is an instance of 
 	 * {@link ICPPTwoPhaseBinding}, however it must resolve to itself using 
-	 * {@link #resolveFinalBinding()}.
+	 * {@link #resolveFinalBinding(CPPASTNameBase)}.
 	 */
-	ICPPTwoPhaseBinding resolveFinalBinding();
+	IBinding resolveFinalBinding(CPPASTNameBase astName);
 }

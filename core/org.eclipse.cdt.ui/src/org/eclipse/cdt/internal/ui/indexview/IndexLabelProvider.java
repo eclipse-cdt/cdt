@@ -112,11 +112,15 @@ public class IndexLabelProvider extends LabelProvider {
 					StringBuffer buffer = new StringBuffer("Part: "); //$NON-NLS-1$
 					buffer.append(result);
 					buffer.append('<');
-					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
-					for (int i = 0; i < types.length; i++) {
-						if (i > 0)
-							buffer.append(',');
-						buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
+					try {
+						ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
+						for (int i = 0; i < types.length; i++) {
+							if (i > 0)
+								buffer.append(',');
+							buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
+						}
+					} catch (DOMException e) {
+						buffer.append(e.getProblem().toString());
 					}
 					buffer.append('>');
 					result = buffer.toString();

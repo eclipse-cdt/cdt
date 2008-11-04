@@ -25,9 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -123,71 +121,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			return result;
 		}
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
-	}
-
-	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
-	   	IASTName name = CPPTemplates.getTemplateParameterName(templateParameter);
-    	IASTName preferredName= name;
-	   	IBinding binding = name.getBinding();
-    	if (binding != null)
-    		return binding;
-			
-    	ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) templateParameter.getParent();
-    	ICPPASTTemplateParameter[] ps = templateDecl.getTemplateParameters();
-
-    	int i = 0;
-    	for (; i < ps.length; i++) {
-    		if (templateParameter == ps[i])
-    			break;
-    	}
-    	
-    	if (definition != null || (declarations != null && declarations.length > 0)) {
-    	    IASTName templateName = (definition != null) ? definition : declarations[0];
-    	    ICPPASTTemplateDeclaration temp = CPPTemplates.getTemplateDeclaration(templateName);
-    	    ICPPASTTemplateParameter[] params = temp.getTemplateParameters();
-    	    if (params.length > i) {
-    	        IASTName paramName = CPPTemplates.getTemplateParameterName(params[i]);
-    	        preferredName= paramName;
-    	        if (paramName.getBinding() != null) {
-    	            binding = paramName.getBinding();
-    	            name.setBinding(binding);
-    	            if(binding instanceof ICPPInternalBinding)
-    	                ((ICPPInternalBinding)binding).addDeclaration(name);
-    	            return binding;
-    	        }
-    	    }
-    	}
-    	//create a new binding and set it for the corresponding parameter in all known decls
-    	if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
-    		binding = new CPPTemplateTypeParameter(preferredName);
-    	} else if (templateParameter instanceof ICPPASTParameterDeclaration) {
-    		binding = new CPPTemplateNonTypeParameter(preferredName);
-    	} else {
-    		binding = new CPPTemplateTemplateParameter(preferredName);
-    	}
-    	
-    	int length = (declarations != null) ? declarations.length : 0;
-		int j = (definition != null) ? -1 : 0;
-		for (; j < length; j++) {
-	    	ICPPASTTemplateDeclaration template	= (j == -1)
-	    		? CPPTemplates.getTemplateDeclaration(definition)
-				: CPPTemplates.getTemplateDeclaration(declarations[j]);
-			if (template == null)
-				continue;
-			
-			ICPPASTTemplateParameter[] temp = template.getTemplateParameters();
-			if (temp.length <= i)
-				continue;
-
-    		IASTName n = CPPTemplates.getTemplateParameterName(temp[i]);
-    		if (n != null && n != name && n.getBinding() == null) {
-    		    n.setBinding(binding);
-    		    if (binding instanceof ICPPInternalBinding)
-	                ((ICPPInternalBinding)binding).addDeclaration(n);
-    		}
-
-		}
-    	return binding;
 	}
 	
 	public IASTName getTemplateName() {
@@ -313,20 +246,59 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 		ArrayUtil.remove(declarations, node);
 	}
-	protected void updateTemplateParameterBindings(IASTName name) {
-    	IASTName orig = definition != null ? definition : declarations[0];
-    	ICPPASTTemplateDeclaration origTemplate = CPPTemplates.getTemplateDeclaration(orig);
-    	ICPPASTTemplateDeclaration newTemplate = CPPTemplates.getTemplateDeclaration(name);
-    	ICPPASTTemplateParameter[] ops = origTemplate.getTemplateParameters();
-    	ICPPASTTemplateParameter[] nps = newTemplate.getTemplateParameters();
-    	ICPPInternalBinding temp = null;
-    	int end= Math.min(ops.length, nps.length);
-    	for (int i = 0; i < end; i++) {
-    		temp = (ICPPInternalBinding) CPPTemplates.getTemplateParameterName(ops[i]).getBinding();
-    		if (temp != null) {
-    		    IASTName n = CPPTemplates.getTemplateParameterName(nps[i]);
-    			n.setBinding(temp);
-    			temp.addDeclaration(n);
+	
+	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
+		int pos= templateParameter.getParameterPosition() & 0xff;
+		
+    	int tdeclLen= declarations == null ? 0 : declarations.length;
+    	for (int i=-1; i<tdeclLen; i++) {
+    		IASTName tdecl;
+    		if (i == -1) {
+    			tdecl= definition;
+    			if (tdecl == null)
+    				continue;
+    		} else {
+    			tdecl= declarations[i];
+    			if (tdecl == null)
+    				break;
+    		}
+    		
+    		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(tdecl).getTemplateParameters();
+    		if (pos < params.length) {
+    			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);
+    			return CPPASTNameBase.resolvePreBinding(oName);
+    		}
+    	}
+    	return templateParameter;
+	}
+
+	final protected void updateTemplateParameterBindings(IASTName name) {
+    	ICPPASTTemplateParameter[] updateParams = CPPTemplates.getTemplateDeclaration(name).getTemplateParameters();
+
+    	int k=0;
+    	int tdeclLen= declarations == null ? 0 : declarations.length;
+    	for (int i=-1; i<tdeclLen && k<updateParams.length; i++) {
+    		IASTName tdecl;
+    		if (i == -1) {
+    			tdecl= definition;
+    			if (tdecl == null)
+    				continue;
+    		} else {
+    			tdecl= declarations[i];
+    			if (tdecl == null)
+    				break;
+    		}
+    		
+    		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(tdecl).getTemplateParameters();
+    		int end= Math.min(params.length, updateParams.length);
+    		for (; k < end; k++) {
+    			final IASTName oName = CPPTemplates.getTemplateParameterName(params[k]);
+    			IBinding b= CPPASTNameBase.resolvePreBinding(oName);
+    			IASTName n = CPPTemplates.getTemplateParameterName(updateParams[k]);
+    			n.setBinding(b);
+    			if (b instanceof ICPPInternalBinding) {
+    				((ICPPInternalBinding) b).addDeclaration(n);
+    			}
     		}
     	}
     }

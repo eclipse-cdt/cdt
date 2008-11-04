@@ -6,13 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+
 /**
- * @author Doug Schaefer
+ * Interface for all c- and c++ types.
  */
 public interface IType extends Cloneable {
 	public static final IType[] EMPTY_TYPE_ARRAY = new IType[0];
@@ -21,8 +25,10 @@ public interface IType extends Cloneable {
     public Object clone();
 
     /**
-     * is the given type the same as this type?
-     * @param type
+     * Test whether this type is the same as the given one. A typedef is considered to be the same type as
+     * it's target type.
+     * See {@link ICPPTemplateTemplateParameter#isSameType(IType)} or {@link ICPPTemplateTypeParameter#isSameType(IType)}
+     * for the semantics of comparing template parameters denoting types.
      */
     public boolean isSameType(IType type);
 }

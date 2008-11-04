@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * Ambiguity node for deciding between type-id and id-expression in a template argument.
  */
 public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements ICPPASTAmbiguousTemplateArgument {
+
 	private List<IASTNode> fNodes;
 	
 	/**
@@ -46,7 +48,13 @@ public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements 
 			}
 		}
 	}
-	
+
+	@Override
+	protected IScope getAffectedScope() {
+    	// a template argument does not introduce names to a parent scope.
+		return null;
+	}
+
 	@Override
 	protected IASTNode[] getNodes() {
 		return fNodes.toArray(new IASTNode[fNodes.size()]);

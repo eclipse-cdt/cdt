@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Unqualified name, also base class for operator and conversion name.
  */
-public class CPPASTName extends AbstractCPPASTName implements IASTCompletionContext {
+public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext {
 	private char[] name;
     public CPPASTName(char[] name) {
         this.name = name;

@@ -15,9 +15,13 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [252912] SystemRemoteFileDialog shows Local contents even when specifying a SystemType
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -44,10 +48,45 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	public SystemResourceSelectionInputProvider()
 	{
 		// choose random host
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		IHost[] hosts = registry.getHosts();
+		IHost[] hosts = getValidHosts();
 		if (hosts != null && hosts.length>0) {
 			_connection = hosts[0];
+		}
+	}
+	
+	private boolean validHost(IHost host){
+		if (_systemTypes != null){
+			IRSESystemType hostType = host.getSystemType();
+			for (int t = 0; t < _systemTypes.length; t++){
+				IRSESystemType type = _systemTypes[t];
+				if (hostType == type){
+					return true;
+				}
+			}
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	private IHost[] getValidHosts() {
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		IHost[] hosts = registry.getHosts();
+		
+		// make sure the hosts are valid for the specified system types
+		if (_systemTypes != null){
+			List hostList = new ArrayList();
+			for (int i = 0; i < hosts.length; i++){
+				IHost host = hosts[i];
+				if (validHost(host)){
+					hostList.add(host);
+				}
+			}
+			return (IHost[])hostList.toArray(new IHost[hostList.size()]);
+		}
+		else {
+			return hosts;
 		}
 	}
 	
@@ -85,16 +124,20 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	public void setSystemTypes(IRSESystemType[] types)
 	{
 		_systemTypes = types;
+		if (_connection != null){ // reset the connection if isn't valid
+			if (!validHost(_connection)){
+				_connection = null;
+			}
+		}
 	}
 	
 	public Object[] getSystemViewRoots()
 	{
 		if (_connection == null)
 		{
-			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			IHost[] hosts = registry.getHosts();
+			IHost[] hosts = getValidHosts();
 			if (hosts!=null && hosts.length!=0) {
-				_connection = registry.getHosts()[0];
+				_connection = hosts[0];
 			}
 		}
 		return getConnectionChildren(_connection);

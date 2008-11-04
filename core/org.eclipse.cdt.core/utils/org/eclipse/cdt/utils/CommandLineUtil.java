@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @since 5.1
  */
 public class CommandLineUtil {
-	
+
 	/**
 	 * Parsing arguments in a shell style.
 	 * i.e.
@@ -29,10 +29,10 @@ public class CommandLineUtil {
 		final int IN_SINGLE_QUOTES = 4;
 		final int IN_ARG = 5;
 
-		if (line == null) { 
+		if (line == null) {
 			line = ""; //$NON-NLS-1$
 		}
-				
+
 		char[] array = line.trim().toCharArray();
 		ArrayList<String> aList = new ArrayList<String>();
 		StringBuilder buffer = new StringBuilder();
@@ -102,7 +102,7 @@ public class CommandLineUtil {
 						default:
 							buffer.append('\\');
 							buffer.append(c);
-						break;
+							break;
 					}
 					state = IN_DOUBLE_QUOTES;
 					break;
@@ -112,8 +112,8 @@ public class CommandLineUtil {
 					break;
 			}
 		}
-		
-		if (state!=INITIAL) { // this allow to process empty string as an argument
+
+		if (state != INITIAL) { // this allow to process empty string as an argument
 			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);

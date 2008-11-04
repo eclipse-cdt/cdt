@@ -76,6 +76,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -1897,21 +1898,12 @@ public class CommonBuilder extends ACBuilder {
 				// Set the environment
 				String[] env = calcEnvironment(builder);
 				String[] buildArguments = targets;
-//				if (builder.isDefaultBuildCmd()) {
-//					if (!builder.isStopOnError()) {
-//						buildArguments = new String[targets.length + 1];
-//						buildArguments[0] = "-k"; //$NON-NLS-1$
-//						System.arraycopy(targets, 0, buildArguments, 1, targets.length);
-//					}
-//				} else {
-					String args = builder.getBuildArguments();
-					if (args != null && !(args = args.trim()).equals("")) { //$NON-NLS-1$
-						String[] newArgs = makeArray(args);
-						buildArguments = new String[targets.length + newArgs.length];
-						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
-						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
-					}
-//				}
+
+				String[] newArgs = argumentsToArray(builder.getBuildArguments());
+				buildArguments = new String[targets.length + newArgs.length];
+				System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
+				System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
+	
 //					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
 //					recon.invokeMakeRecon();
 //					cos = recon;
@@ -2060,50 +2052,19 @@ public class CommonBuilder extends ACBuilder {
 					break;
 			}
 			
-			targetsArray = makeArray(targets);
+			targetsArray = argumentsToArray(targets);
 		}
 		
 		return targetsArray;
 	}
 
-	// Turn the string into an array.
-	private String[] makeArray(String string) {
-		string = string.trim();
-		char[] array = string.toCharArray();
-		ArrayList<String> aList = new ArrayList<String>();
-		StringBuilder buffer = new StringBuilder();
-		boolean inComment = false;
-		for (int i = 0; i < array.length; i++) {
-			char c = array[i];
-			boolean needsToAdd = true;
-			if (array[i] == '"' || array[i] == '\'') {
-				if (i > 0 && array[i - 1] == '\\') {
-					inComment = false;
-				} else {
-					inComment = !inComment;
-					needsToAdd = false; // skip it
-				}
-			}
-			if (c == ' ' && !inComment) {
-				if (buffer.length() > 0){
-					String str = buffer.toString().trim();
-					if(str.length() > 0){
-						aList.add(str);
-					}
-				}
-				buffer = new StringBuilder();
-			} else {
-				if (needsToAdd)
-					buffer.append(c);
-			}
-		}
-		if (buffer.length() > 0){
-			String str = buffer.toString().trim();
-			if(str.length() > 0){
-				aList.add(str);
-			}
-		}
-		return aList.toArray(new String[aList.size()]);
+	/**
+	 * Parsing arguments in a shell style
+	 * @param builder
+	 * @return
+	 */
+	private String[] argumentsToArray(String args) {
+		return CommandLineUtil.argumentsToArray(args);
 	}
 
 	private void removeAllMarkers(IProject currProject) throws CoreException {

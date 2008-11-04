@@ -30,6 +30,8 @@ import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
+import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.CommandLineUtilTest;
 
 /**
  * @author vhirsl
@@ -66,6 +68,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
         suite.addTest(StringBuilderTest.suite());
         suite.addTest(AllLanguageTests.suite());
         suite.addTest(RewriteTests.suite());
+		suite.addTest(CommandLineUtilTest.suite());
 				
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

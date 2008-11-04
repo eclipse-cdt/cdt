@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -302,30 +303,7 @@ public class MakeBuilder extends ACBuilder {
 
 	// Turn the string into an array.
 	private String[] makeArray(String string) {
-		string.trim();
-		char[] array = string.toCharArray();
-		ArrayList aList = new ArrayList();
-		StringBuffer buffer = new StringBuffer();
-		boolean inComment = false;
-		for (int i = 0; i < array.length; i++) {
-			char c = array[i];
-			if (array[i] == '"' || array[i] == '\'') {
-				if (i > 0 && array[i - 1] == '\\') {
-					inComment = false;
-				} else {
-					inComment = !inComment;
-				}
-			}
-			if (c == ' ' && !inComment) {
-				aList.add(buffer.toString());
-				buffer = new StringBuffer();
-			} else {
-				buffer.append(c);
-			}
-		}
-		if (buffer.length() > 0)
-			aList.add(buffer.toString());
-		return (String[]) aList.toArray(new String[aList.size()]);
+		return CommandLineUtil.argumentsToArray(string);
 	}
 
 	private void removeAllMarkers(IProject currProject) throws CoreException {

@@ -817,7 +817,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					IPath path = convertPath( handle );
 					ICDILineLocation location = cdiTarget.createLineLocation( path.toPortableString(), breakpoint.getLineNumber() );
 					ICDICondition condition = createCondition( breakpoint );
-					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+					IMarker marker = BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
 						b = bpManager2.setLineBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
 					else

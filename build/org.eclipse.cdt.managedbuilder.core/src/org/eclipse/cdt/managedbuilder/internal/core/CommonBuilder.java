@@ -2067,41 +2067,101 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	// Turn the string into an array.
-	private String[] makeArray(String string) {
-		string = string.trim();
-		char[] array = string.toCharArray();
+	private String[] makeArray(String line) {
+		// this method is extracted as CommandLineUtil.argumentsToArray on HEAD
+		final int INITIAL = 0;
+		final int IN_DOUBLE_QUOTES = 1;
+		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
+		final int ESCAPED = 3;
+		final int IN_SINGLE_QUOTES = 4;
+		final int IN_ARG = 5;
+
+		if (line == null) { 
+			line = ""; //$NON-NLS-1$
+		}
+				
+		char[] array = line.trim().toCharArray();
 		ArrayList<String> aList = new ArrayList<String>();
 		StringBuilder buffer = new StringBuilder();
-		boolean inComment = false;
+		int state = INITIAL;
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
-			boolean needsToAdd = true;
-			if (array[i] == '"' || array[i] == '\'') {
-				if (i > 0 && array[i - 1] == '\\') {
-					inComment = false;
-				} else {
-					inComment = !inComment;
-					needsToAdd = false; // skip it
-				}
-			}
-			if (c == ' ' && !inComment) {
-				if (buffer.length() > 0){
-					String str = buffer.toString().trim();
-					if(str.length() > 0){
-						aList.add(str);
+			switch (state) {
+				case IN_ARG:
+					// fall through
+				case INITIAL:
+					switch (c) {
+						case ' ':
+							if (state == INITIAL) break; // ignore extra spaces
+							// add argument
+							state = INITIAL;
+							String arg = buffer.toString();
+							buffer = new StringBuilder();
+							aList.add(arg);
+							break;
+						case '\\':
+							state = ESCAPED;
+							break;
+						case '\'':
+							state = IN_SINGLE_QUOTES;
+							break;
+						case '\"':
+							state = IN_DOUBLE_QUOTES;
+							break;
+						default:
+							state = IN_ARG;
+							buffer.append(c);
+							break;
 					}
-				}
-				buffer = new StringBuilder();
-			} else {
-				if (needsToAdd)
+					break;
+				case IN_DOUBLE_QUOTES:
+					switch (c) {
+						case '\\':
+							state = IN_DOUBLE_QUOTES_ESCAPED;
+							break;
+						case '\"':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_SINGLE_QUOTES:
+					switch (c) {
+						case '\'':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_DOUBLE_QUOTES_ESCAPED:
+					switch (c) {
+						case '\"':
+						case '\\':
+							buffer.append(c);
+							break;
+						case 'n':
+							buffer.append('\n');
+							break;
+						default:
+							buffer.append('\\');
+							buffer.append(c);
+						break;
+					}
+					state = IN_DOUBLE_QUOTES;
+					break;
+				case ESCAPED:
 					buffer.append(c);
+					state = IN_ARG;
+					break;
 			}
 		}
-		if (buffer.length() > 0){
-			String str = buffer.toString().trim();
-			if(str.length() > 0){
-				aList.add(str);
-			}
+		
+		if (state!=INITIAL) { // this allow to process empty string as an argument
+			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);
 	}

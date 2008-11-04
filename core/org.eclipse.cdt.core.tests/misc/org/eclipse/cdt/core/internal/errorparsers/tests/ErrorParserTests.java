@@ -23,6 +23,7 @@ public class ErrorParserTests {
         // each class being tested
 		suite.addTest(GCCErrorParserTests.suite());
         suite.addTest(FileBasedErrorParserTests.suite());
+        suite.addTest(ErrorParserManagerTest.suite());
         return suite;
 	}
 

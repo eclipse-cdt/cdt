@@ -9,7 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.core.model.tests;
+package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;

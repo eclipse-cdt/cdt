@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.core.filesystem.EFS;
@@ -39,7 +40,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.debug.core.DebugPlugin;
 
 public class StandardExecutableImporter implements IExecutableImporter {
@@ -96,7 +99,12 @@ public class StandardExecutableImporter implements IExecutableImporter {
 							store = store.getChild(newProjectHandle.getName());
 							for (String deleteName : ignoreList) {
 								IFileStore projFile = store.getChild(deleteName);
-								projFile.delete(EFS.NONE, null);
+								projFile.delete(EFS.NONE, new NullProgressMonitor());
+							}
+							IFileStore[] children = store.childStores(EFS.NONE, new NullProgressMonitor());
+							for (IFileStore fileStore : children) {
+								if (fileStore.fetchInfo().isDirectory())
+									fileStore.delete(EFS.NONE, new NullProgressMonitor());
 							}
 							exeProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, null, DEBUG_PROJECT_ID);
 						} catch (OperationCanceledException e) {
@@ -224,8 +232,20 @@ public class StandardExecutableImporter implements IExecutableImporter {
 					// Make sure the project has this parser
 					ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(exeProject);
 					try {
-						pd.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserID);
-						CCorePlugin.getDefault().setProjectDescription(exeProject, pd, true, new NullProgressMonitor());
+						boolean existsAlready = false;
+						ICConfigExtensionReference[] parsers = pd.getDefaultSettingConfiguration().get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+						for (ICConfigExtensionReference configExtensionReference : parsers) {
+							if (configExtensionReference.getID().equals(parserID))
+							{
+								existsAlready = true;
+								break;
+							}
+						}
+						if (!existsAlready)
+						{
+							pd.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserID);
+							CCorePlugin.getDefault().setProjectDescription(exeProject, pd, true, new NullProgressMonitor());							
+						}
 					} catch (CoreException e) {
 					}
 					return true;

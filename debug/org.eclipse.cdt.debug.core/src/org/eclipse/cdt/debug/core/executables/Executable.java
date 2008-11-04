@@ -71,6 +71,15 @@ public class Executable extends PlatformObject {
 		return true;
 	}
 
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof Executable)
+		{
+			Executable exe = (Executable)arg0;
+			return exe.getPath().equals(this.getPath());
+		}
+		return super.equals(arg0);
+	}
+
 	private IPath path;
 	private IProject project;
 	private String name;
@@ -143,7 +152,7 @@ public class Executable extends PlatformObject {
 				String filename = symReaderSources[i];
 				String orgPath = filename;
 
-				filename = ExecutablesManager.getExecutablesManager().remapSourceFile(filename);
+				filename = ExecutablesManager.getExecutablesManager().remapSourceFile(this, filename);
 
 				// Sometimes the path in the symbolics will have a
 				// different
@@ -222,7 +231,7 @@ public class Executable extends PlatformObject {
 	public String getOriginalLocation(ITranslationUnit tu) {
 		String orgLocation = remappedPaths.get(tu);
 		if (orgLocation == null)
-			orgLocation = tu.getPath().toOSString();
+			orgLocation = tu.getLocation().toOSString();
 		return orgLocation;
 	}
 

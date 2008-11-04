@@ -19,6 +19,6 @@ package org.eclipse.cdt.debug.core.executables;
  */
 public interface ISourceFileRemapping {
 
-	String remapSourceFile(String filePath);
+	String remapSourceFile(Executable executable, String filePath);
 
 }

@@ -170,14 +170,18 @@ public class ExecutablesManager extends PlatformObject {
 				DebugPlugin.log( e );
 			}
 		}
-		Collection<Executable> exes = executables.values();
-		return exes.toArray(new Executable[exes.size()]);
+		
+		synchronized (executables)
+		{
+			Collection<Executable> exes = executables.values();
+			return exes.toArray(new Executable[exes.size()]);
+		}
 	}
 
-	public String remapSourceFile(String filePath) {
+	public String remapSourceFile(Executable executable, String filePath) {
 		synchronized (sourceFileRemappings) {
 			for (ISourceFileRemapping remapping : sourceFileRemappings) {
-				String remappedPath = remapping.remapSourceFile(filePath);
+				String remappedPath = remapping.remapSourceFile(executable, filePath);
 				if (!remappedPath.equals(filePath))
 					return remappedPath;
 			}
@@ -245,7 +249,9 @@ public class ExecutablesManager extends PlatformObject {
 	}
 	
 	public boolean executableExists(IPath exePath) {
-		return executables.containsKey(exePath.toOSString());
+		synchronized (executables) {
+			return executables.containsKey(exePath.toOSString());			
+		}
 	}
 
 	public String[] getSourceFiles(final Executable executable,
@@ -318,6 +324,10 @@ public class ExecutablesManager extends PlatformObject {
 		monitor.done();
 		
 		return result;
+	}
+
+	public void setRefreshNeeded(boolean refresh) {
+		refreshNeeded = true;
 	}
 
 }

@@ -23,7 +23,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 public class StandardSourceFileRemapping implements ISourceFileRemapping {
 
-	public String remapSourceFile(String filePath) {
+	public String remapSourceFile(Executable executable, String filePath) {
 
 		try {
 			Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);

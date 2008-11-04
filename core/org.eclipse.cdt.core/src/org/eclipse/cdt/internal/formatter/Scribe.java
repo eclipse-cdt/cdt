@@ -1687,8 +1687,8 @@ public class Scribe {
 			return;
 		}
 		final int currentPosition= scanner.getCurrentPosition();
-		if (currentPosition >= offset && currentPosition < endOffset) {
-			printRaw(offset, endOffset - offset);
+		if (offset > currentPosition) {
+			printRaw(currentPosition, currentPosition - offset);
 		}
 		fSkipStartOffset= offset;
 		fSkipEndOffset= endOffset;
@@ -1708,7 +1708,6 @@ public class Scribe {
 				fSkippedIndentations++;
 			}
 			if (offset > currentPosition) {
-				space();
 				printRaw(currentPosition, offset - currentPosition);
 				scanner.resetTo(offset, scannerEndPosition - 1);
 			}

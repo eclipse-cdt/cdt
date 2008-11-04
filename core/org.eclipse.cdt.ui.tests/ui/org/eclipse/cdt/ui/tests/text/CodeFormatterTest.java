@@ -947,4 +947,41 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testCompoundStatementAsMacro_Bug244928() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define A (0)
+	//#define B (1)
+	//#define ARGS (A, B)
+	//#define CALL foo ARGS
+	//void zoo(void) {
+	//        foo(A,B);
+	//foo ARGS;
+	//CALL;
+	//#if X
+	//                        if (1)
+	//                        {
+	//                                t = 1;
+	//                        }
+	//#endif
+	//                }
+
+	//#define A (0)
+	//#define B (1)
+	//#define ARGS (A, B)
+	//#define CALL foo ARGS
+	//void zoo(void) {
+	//	foo(A, B);
+	//	foo ARGS;
+	//	CALL;
+	//#if X
+	//	if (1)
+	//	{
+	//		t = 1;
+	//	}
+	//#endif
+	//}
+
+	public void testMacroAsFunctionArguments_Bug253039() throws Exception {
+		assertFormatterResult();
+	}
+
 }

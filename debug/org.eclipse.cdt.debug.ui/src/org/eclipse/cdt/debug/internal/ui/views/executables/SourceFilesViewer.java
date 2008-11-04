@@ -207,6 +207,7 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				Object input = getInput();
 				if (input != null && input instanceof Executable) {
+					((Executable)input).setRefreshSourceFiles(true);
 					refresh(true);
 				}
 				return Status.OK_STATUS;

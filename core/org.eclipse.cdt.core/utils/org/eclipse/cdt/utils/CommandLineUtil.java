@@ -39,32 +39,34 @@ public class CommandLineUtil {
 		int state = INITIAL;
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
+
 			switch (state) {
 				case IN_ARG:
 					// fall through
 				case INITIAL:
-					switch (c) {
-						case ' ':
-							if (state == INITIAL) break; // ignore extra spaces
-							// add argument
-							state = INITIAL;
-							String arg = buffer.toString();
-							buffer = new StringBuilder();
-							aList.add(arg);
-							break;
-						case '\\':
-							state = ESCAPED;
-							break;
-						case '\'':
-							state = IN_SINGLE_QUOTES;
-							break;
-						case '\"':
-							state = IN_DOUBLE_QUOTES;
-							break;
-						default:
-							state = IN_ARG;
-							buffer.append(c);
-							break;
+					if (Character.isWhitespace(c)) {
+						if (state == INITIAL) break; // ignore extra spaces
+						// add argument
+						state = INITIAL;
+						String arg = buffer.toString();
+						buffer = new StringBuilder();
+						aList.add(arg);
+					} else {
+						switch (c) {
+							case '\\':
+								state = ESCAPED;
+								break;
+							case '\'':
+								state = IN_SINGLE_QUOTES;
+								break;
+							case '\"':
+								state = IN_DOUBLE_QUOTES;
+								break;
+							default:
+								state = IN_ARG;
+								buffer.append(c);
+								break;
+						}
 					}
 					break;
 				case IN_DOUBLE_QUOTES:
@@ -97,7 +99,7 @@ public class CommandLineUtil {
 							buffer.append(c);
 							break;
 						case 'n':
-							buffer.append('\n');
+							buffer.append("\n"); //$NON-NLS-1$
 							break;
 						default:
 							buffer.append('\\');
@@ -118,5 +120,4 @@ public class CommandLineUtil {
 		}
 		return aList.toArray(new String[aList.size()]);
 	}
-
 }

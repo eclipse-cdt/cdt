@@ -12,6 +12,7 @@ package org.eclipse.cdt.launch;
 
 import java.util.ArrayList;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -21,90 +22,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Utility methods.
  */
 public class LaunchUtils {
-
-	private static class ArgumentParser {
-
-		private String fArgs;
-
-		private int fIndex = 0;
-
-		private int ch = -1;
-
-		public ArgumentParser( String args ) {
-			fArgs = args;
-		}
-
-		public String[] parseArguments() {
-			ArrayList v = new ArrayList();
-			ch = getNext();
-			while( ch > 0 ) {
-				while( Character.isWhitespace( (char)ch ) )
-					ch = getNext();
-				if ( ch == '"' ) {
-					v.add( parseString() );
-				}
-				else {
-					v.add( parseToken() );
-				}
-			}
-			String[] result = new String[v.size()];
-			v.toArray( result );
-			return result;
-		}
-
-		private int getNext() {
-			if ( fIndex < fArgs.length() )
-				return fArgs.charAt( fIndex++ );
-			return -1;
-		}
-
-		private String parseString() {
-			StringBuffer buf = new StringBuffer();
-			ch = getNext();
-			while( ch > 0 && ch != '"' ) {
-				if ( ch == '\\' ) {
-					ch = getNext();
-					if ( ch != '"' ) { // Only escape double quotes
-						buf.append( '\\' );
-					}
-				}
-				if ( ch > 0 ) {
-					buf.append( (char)ch );
-					ch = getNext();
-				}
-			}
-			ch = getNext();
-			return buf.toString();
-		}
-
-		private String parseToken() {
-			StringBuffer buf = new StringBuffer();
-			while( ch > 0 && !Character.isWhitespace( (char)ch ) ) {
-				if ( ch == '\\' ) {
-					ch = getNext();
-					if ( ch > 0 ) {
-						if ( ch != '"' ) { // Only escape double quotes
-							buf.append( '\\' );
-						}
-						buf.append( (char)ch );
-						ch = getNext();
-					}
-					else if ( ch == -1 ) { // Don't lose a trailing backslash
-						buf.append( '\\' );
-					}
-				}
-				else if ( ch == '"' ) {
-					buf.append( parseString() );
-				}
-				else {
-					buf.append( (char)ch );
-					ch = getNext();
-				}
-			}
-			return buf.toString();
-		}
-	}
-
 	/**
 	 * For given launch configuration returns the program arguments as 
 	 * an array of individual arguments.
@@ -132,10 +49,122 @@ public class LaunchUtils {
 	}
 
 	private static String[] parseArguments( String args ) {
-		if ( args == null )
-			return new String[0];
-		ArgumentParser parser = new ArgumentParser( args );
-		String[] res = parser.parseArguments();
-		return res;
+		return argumentsToArray(args);
+	}
+	
+	/**
+	 * 
+	 * Parsing arguments in a shell style.
+	 * i.e.
+	 * <code>
+	 * ["a b c" d] -> [[a b c],[d]]
+	 * [a   d] -> [[a],[d]]
+	 * ['"quoted"'] -> [["quoted"]]
+	 * [\\ \" \a] -> [[\],["],[a]]
+	 * ["str\\str\a"] -> [[str\str\a]]
+	 * </code>
+	 * @param line
+	 * @return array of arguments, or empty array if line is null or empty
+	 * 
+	 *  This function is included in {@link CommandLineUtil} class on HEAD
+	 */
+	private static String[] argumentsToArray(String line) {
+		final int INITIAL = 0;
+		final int IN_DOUBLE_QUOTES = 1;
+		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
+		final int ESCAPED = 3;
+		final int IN_SINGLE_QUOTES = 4;
+		final int IN_ARG = 5;
+
+		if (line == null) {
+			line = ""; //$NON-NLS-1$
+		}
+
+		char[] array = line.trim().toCharArray();
+		ArrayList<String> aList = new ArrayList<String>();
+		StringBuilder buffer = new StringBuilder();
+		int state = INITIAL;
+		for (int i = 0; i < array.length; i++) {
+			char c = array[i];
+
+			switch (state) {
+				case IN_ARG:
+					// fall through
+				case INITIAL:
+					if (Character.isWhitespace(c)) {
+						if (state == INITIAL) break; // ignore extra spaces
+						// add argument
+						state = INITIAL;
+						String arg = buffer.toString();
+						buffer = new StringBuilder();
+						aList.add(arg);
+					} else {
+						switch (c) {
+							case '\\':
+								state = ESCAPED;
+								break;
+							case '\'':
+								state = IN_SINGLE_QUOTES;
+								break;
+							case '\"':
+								state = IN_DOUBLE_QUOTES;
+								break;
+							default:
+								state = IN_ARG;
+								buffer.append(c);
+								break;
+						}
+					}
+					break;
+				case IN_DOUBLE_QUOTES:
+					switch (c) {
+						case '\\':
+							state = IN_DOUBLE_QUOTES_ESCAPED;
+							break;
+						case '\"':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_SINGLE_QUOTES:
+					switch (c) {
+						case '\'':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_DOUBLE_QUOTES_ESCAPED:
+					switch (c) {
+						case '\"':
+						case '\\':
+							buffer.append(c);
+							break;
+						case 'n':
+							buffer.append("\n"); //$NON-NLS-1$
+							break;
+						default:
+							buffer.append('\\');
+							buffer.append(c);
+							break;
+					}
+					state = IN_DOUBLE_QUOTES;
+					break;
+				case ESCAPED:
+					buffer.append(c);
+					state = IN_ARG;
+					break;
+			}
+		}
+
+		if (state != INITIAL) { // this allow to process empty string as an argument
+			aList.add(buffer.toString());
+		}
+		return aList.toArray(new String[aList.size()]);
 	}
 }

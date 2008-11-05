@@ -74,9 +74,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitDeclarators= true;
 			shouldVisitNamespaces= true;
 		}
-//	tletodo
-//		private boolean shouldVisitCatchHandlers= true;
-		
+
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
 		private int fMinLocation;

@@ -47,6 +47,7 @@ import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.corext.fix.LinkedProposalModel;
 import org.eclipse.cdt.internal.corext.fix.LinkedProposalPositionGroup;
+import org.eclipse.cdt.internal.corext.util.Resources;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
 import org.eclipse.cdt.internal.ui.CUIStatus;
@@ -54,7 +55,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.Resources;
 import org.eclipse.cdt.internal.ui.viewsupport.LinkedProposalModelPresenter;
 
 /**

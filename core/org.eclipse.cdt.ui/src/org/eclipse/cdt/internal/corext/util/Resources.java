@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.util;
+package org.eclipse.cdt.internal.corext.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

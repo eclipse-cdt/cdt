@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -228,7 +228,7 @@ public final class CompletionProposalComputerRegistry {
 				}
 				all.add(desc);
 				
-			} catch (InvalidRegistryObjectException x) {
+			} catch (CoreException x) {
 				/*
 				 * Element is not valid any longer as the contributing plug-in was unloaded or for
 				 * some other reason. Do not include the extension in the list and inform the user
@@ -300,7 +300,7 @@ public final class CompletionProposalComputerRegistry {
 						category.setSortOrder(r);
 					}
 				}
-			} catch (InvalidRegistryObjectException x) {
+			} catch (CoreException x) {
 				/*
 				 * Element is not valid any longer as the contributing plug-in was unloaded or for
 				 * some other reason. Do not include the extension in the list and inform the user

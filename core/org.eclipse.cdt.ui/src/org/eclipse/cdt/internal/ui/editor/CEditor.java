@@ -111,15 +111,10 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -133,7 +128,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -151,7 +145,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.ITextEditorDropTargetListener;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -200,8 +193,6 @@ import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -1230,12 +1221,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private SemanticHighlightingManager fSemanticManager;
 
-	/**
-	 * Custom text drag source listener overriding platform implementation.
-	 * @since 4.0
-	 */
-	private TextViewerDragAdapter fTextViewerDragAdapter;
-	
 	/**
 	 * True if editor is opening a large file.
 	 * @since 5.0
@@ -2301,44 +2286,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		if (isMarkingOccurrences())
 			installOccurrencesFinder(false);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	@Override
-	protected void installTextDragAndDrop(ISourceViewer viewer) {
-		if (fTextViewerDragAdapter != null) {
-			// already installed, enable it
-			fTextViewerDragAdapter.setEnabled(true);
-			return;
-		}
-		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
-		if (dndService == null || viewer == null) {
-			return;
-		}
-		Control control = viewer.getTextWidget();
-		int operations = DND.DROP_MOVE | DND.DROP_COPY;
-
-		DragSource dragSource = new DragSource(control, operations);
-		Transfer[] dragTypes = new Transfer[] { TextTransfer.getInstance() };
-		dragSource.setTransfer(dragTypes);
-		fTextViewerDragAdapter = new TextViewerDragAdapter(viewer, this);
-		dragSource.addDragListener(fTextViewerDragAdapter);
-
-		ITextEditorDropTargetListener dropTargetListener = new TextEditorDropAdapter(viewer, this);
-		dndService.addMergedDropTarget(control, operations, dropTargetListener.getTransfers(), dropTargetListener);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#uninstallTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	@Override
-	protected void uninstallTextDragAndDrop(ISourceViewer viewer) {
-		if (fTextViewerDragAdapter != null) {
-			// uninstall not possible, disable instead
-			fTextViewerDragAdapter.setEnabled(false);
-		}
 	}
 
 	/*

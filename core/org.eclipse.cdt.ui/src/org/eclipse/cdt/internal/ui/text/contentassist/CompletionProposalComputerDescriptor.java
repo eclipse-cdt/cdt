@@ -126,8 +126,11 @@ final class CompletionProposalComputerDescriptor {
 	 * 
 	 * @param element the configuration element to read
 	 * @param registry the computer registry creating this descriptor
+	 * @param categories the categories
+	 * @throws InvalidRegistryObjectException if this extension is no longer valid
+	 * @throws CoreException if the configuration element is invalid
 	 */
-	CompletionProposalComputerDescriptor(IConfigurationElement element, CompletionProposalComputerRegistry registry, List<CompletionProposalCategory> categories) throws InvalidRegistryObjectException {
+	CompletionProposalComputerDescriptor(IConfigurationElement element, CompletionProposalComputerRegistry registry, List<CompletionProposalCategory> categories) throws InvalidRegistryObjectException, CoreException {
 		Assert.isNotNull(registry);
 		Assert.isNotNull(element);
 		
@@ -182,18 +185,19 @@ final class CompletionProposalComputerDescriptor {
 	}
 
 	/**
-	 * Checks an element that must be defined according to the extension
-	 * point schema. Throws an
-	 * <code>InvalidRegistryObjectException</code> if <code>obj</code>
-	 * is <code>null</code>.
+	 * Checks that the given attribute value is not <code>null</code>.
+	 *
+	 * @param value the element to be checked
+	 * @param attribute the attribute
+	 * @throws CoreException if <code>value</code> is <code>null</code>
 	 */
-	private void checkNotNull(Object obj, String attribute) throws InvalidRegistryObjectException {
+	private void checkNotNull(Object obj, String attribute) throws CoreException {
 		if (obj == null) {
 			Object[] args= { getId(), fElement.getContributor().getName(), attribute };
 			String message= Messages.format(ContentAssistMessages.CompletionProposalComputerDescriptor_illegal_attribute_message, args);
 			IStatus status= new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null);
 			CUIPlugin.log(status);
-			throw new InvalidRegistryObjectException();
+			throw new CoreException(status);
 		}
 	}
 

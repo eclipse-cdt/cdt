@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +46,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -89,7 +92,7 @@ public class StubUtility {
 		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.DECLARATIONS, declarations != null ? declarations : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.TYPENAME, new Path(tu.getElementName()).removeFileExtension().toString());
-		String includeGuardSymbol= generateIncludeGuardSymbol(tu.getElementName());
+		String includeGuardSymbol= generateIncludeGuardSymbol(tu.getElementName(), project);
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT, CodeTemplateContextType.TYPE_COMMENT, CodeTemplateContextType.DECLARATIONS };
@@ -127,7 +130,8 @@ public class StubUtility {
 		FileTemplateContext context= new FileTemplateContext(template.getContextTypeId(), lineDelimiter);
 		String fileComment= getFileComment(file, lineDelimiter);
 		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
-		String includeGuardSymbol= generateIncludeGuardSymbol(file.getName());
+		ICProject cproject = CoreModel.getDefault().create(file.getProject());
+		String includeGuardSymbol= generateIncludeGuardSymbol(file.getName(), cproject);
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		context.setResourceVariables(file);
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT };
@@ -475,7 +479,7 @@ public class StubUtility {
 	}
 	
 	public static boolean doAddComments(ICProject project) {
-		return Boolean.valueOf(PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_ADD_COMMENTS, project)).booleanValue(); 
+		return PreferenceConstants.getPreference(PreferenceConstants.CODEGEN_ADD_COMMENTS, project, false); 
 	}
 	
 	private static Template getDefaultFileTemplate(ITranslationUnit tu) {
@@ -513,29 +517,77 @@ public class StubUtility {
 		return projectStore.findTemplateById(id);
 	}
 
-    private static String generateIncludeGuardSymbol(String fileName) {
-        //TODO eventually make this a prefs option - filename pattern or
-        // unique id/incremental value
-        String name = fileName;
-        if (name != null) {
-            //convert to upper case and remove invalid characters
-            //eg convert foo.h --> FOO_H_
-            StringBuffer buf = new StringBuffer();
-            // Do not do this, leading underscores are discourage by the std.
-            //buf.append('_');
-            for (int i = 0; i < name.length(); ++i) {
-                char ch = name.charAt(i);
-                if (Character.isLetterOrDigit(ch)) {
-                    buf.append(Character.toUpperCase(ch));
-                } else if (ch == '.' || ch == '_') {
-                    buf.append('_');
-                }
-            }
-            buf.append('_');
-            return buf.toString();
-        }
-        return null;
+	private static int getIncludeGuardScheme(ICProject cproject) {
+		return PreferenceConstants.getPreference(
+				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
+				cproject,
+				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
+	}
+
+	private static String generateIncludeGuardSymbol(String fileName, ICProject cproject) {
+
+		int preferenceValue = getIncludeGuardScheme(cproject);
+		
+		switch (preferenceValue) {
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME:
+			if (fileName != null) {
+				return generateIncludeGuardSymbolFromFileName(fileName);
+			} else {
+				return null;
+			}
+			
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID:
+    		return generateIncludeGuardSymbolFromUUID();
+			
+		default:
+			CUIPlugin.log("Unknown preference value " + preferenceValue + "for include guard scheme", null); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		}
     }
+
+	private static String generateIncludeGuardSymbolFromFileName(String fileName) {
+		String name = fileName;
+		//convert to upper case and remove invalid characters
+		//eg convert foo.h --> FOO_H_
+		StringBuffer buf = new StringBuffer();
+		// Do not do this, leading underscores are discouraged by the std.
+		//buf.append('_');
+		for (int i = 0; i < name.length(); ++i) {
+			char ch = name.charAt(i);
+			if (Character.isLetterOrDigit(ch)) {
+				buf.append(Character.toUpperCase(ch));
+			} else if (ch == '.' || ch == '_') {
+				buf.append('_');
+			}
+		}
+		buf.append('_');
+		return buf.toString();
+	}
+
+	private static String generateIncludeGuardSymbolFromUUID() {
+		String uuid = UUID.randomUUID().toString();
+		
+		// 1) Make sure the guard always starts with a letter.
+		// 2) Convert to upper case and remove invalid characters
+		// 
+		// e.g. convert
+		//         067e6162-3b6f-4ae2-a171-2470b63dff00 to
+		//        H067E6162-3b6F-4AE2-A171-2470B63DFF00
+		StringBuffer buf = new StringBuffer();
+		
+		buf.append('H');
+		
+		for (int i = 0; i < uuid.length(); ++i) {
+			char ch = uuid.charAt(i);
+			if (Character.isLetterOrDigit(ch)) {
+				buf.append(Character.toUpperCase(ch));
+			} else {
+				buf.append('_');
+			}
+		}
+
+		return buf.toString();
+	}
 
 	/**
 	 * Get a set of file templates for the given content types.

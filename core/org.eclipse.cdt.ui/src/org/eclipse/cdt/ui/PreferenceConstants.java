@@ -11,6 +11,7 @@
  *     Anton Leherbauer (Wind River Systems)
  * 	   Sergey Prigogin (Google)
  *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
+ *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -18,6 +19,7 @@ import java.util.Locale;
 
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -1380,6 +1382,32 @@ public class PreferenceConstants {
 	 */
 	public static final String SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION = "scalability.contentAssistAutoActivation"; //$NON-NLS-1$
 	
+	/**
+	 * A named preference that controls how an include guard symbol is created.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 *
+	 * @since 5.1
+	 */
+	public static final String CODE_TEMPLATES_INCLUDE_GUARD_SCHEME = "codetemplates.includeGuardGenerationScheme"; //$NON-NLS-1$
+
+	/**
+	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
+	 * specifying that the include guard symbol is to be derived from the
+	 * include file's name.
+	 * 
+	 * @since 5.1
+	 */
+	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME = 0;
+	
+	/**
+	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
+	 * specifying that the include guard symbol is to be derived from a UUID.
+	 * 
+	 * @since 5.1
+	 */
+	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID = 1;
 	
 	/**
 	 * Returns the CDT-UI preference store.
@@ -1572,11 +1600,39 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
+		
+		//Code Templates
+		store.setDefault(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
+				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
     }
 
+    /**
+     * Returns the node in the preference in the given context.
+     * @param key The preference key.
+     * @param project The current context or <code>null</code> if no context is available and the
+	 * workspace setting should be taken. Note that passing <code>null</code> should
+	 * be avoided.
+     * @return Returns the node matching the given context.
+     */
+	private static IEclipsePreferences getPreferenceNode(String key, ICProject project) {
+		IEclipsePreferences node = null;
+		
+		if (project != null) {
+			node = new ProjectScope(project.getProject()).getNode(CUIPlugin.PLUGIN_ID);
+			if (node.get(key, null) != null) {
+				return node;
+			}
+		}
+		node = new InstanceScope().getNode(CUIPlugin.PLUGIN_ID);
+		if (node.get(key, null) != null) {
+			return node;
+		}
+		
+		return new DefaultScope().getNode(CUIPlugin.PLUGIN_ID);
+	}
 
 	/**
-	 * Returns the value for the given key in the given context.
+	 * Returns the string value for the given key in the given context.
 	 * @param key The preference key
 	 * @param project The current context or <code>null</code> if no context is available and the
 	 * workspace setting should be taken. Note that passing <code>null</code> should
@@ -1585,20 +1641,36 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static String getPreference(String key, ICProject project) {
-		String val;
-		if (project != null) {
-			val= new ProjectScope(project.getProject()).getNode(CUIPlugin.PLUGIN_ID).get(key, null);
-			if (val != null) {
-				return val;
-			}
-		}
-		val= new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).get(key, null);
-		if (val != null) {
-			return val;
-		}
-		return new DefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(key, null);
+		return getPreferenceNode(key, project).get(key, null);
 	}
 
+	/**
+	 * Returns the integer value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or <code>null</code> if no context is available and the
+	 * workspace setting should be taken. Note that passing <code>null</code> should
+	 * be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value for the string.
+	 * @since 5.1
+	 */
+	public static int getPreference(String key, ICProject project, int defaultValue) {
+		return getPreferenceNode(key, project).getInt(key, defaultValue);
+	}
+
+	/**
+	 * Returns the boolean value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or <code>null</code> if no context is available and the
+	 * workspace setting should be taken. Note that passing <code>null</code> should
+	 * be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value for the string.
+	 * @since 5.1
+	 */
+	public static boolean getPreference(String key, ICProject project, boolean defaultValue) {
+		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
+	}
 
 	/**
 	 * Sets the default value and fires a property

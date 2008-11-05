@@ -303,7 +303,7 @@ public class TemplateEngine {
 						if (toolChains[j].equals(toolChain)) {
 							if ((usageFilter != null) && (filterPattern != null) && usageFilter.matches(filterPattern)) {
 								matchedTemplateInfoList.add(templateInfo);
-							} else if (usageFilter == null) {
+							} else if (usageFilter == null || filterPattern==null) {
 								matchedTemplateInfoList.add(templateInfo);
 							}
 							continue;
@@ -312,7 +312,7 @@ public class TemplateEngine {
 				} else {
 					if ((usageFilter != null) && (filterPattern != null) && usageFilter.matches(filterPattern)) {
 						matchedTemplateInfoList.add(templateInfo);
-					} else if (usageFilter == null) {
+					} else if (usageFilter == null || filterPattern==null) {
 						matchedTemplateInfoList.add(templateInfo);
 					}
 				}

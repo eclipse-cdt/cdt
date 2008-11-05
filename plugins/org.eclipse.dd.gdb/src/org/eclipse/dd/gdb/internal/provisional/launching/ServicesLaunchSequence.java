@@ -120,7 +120,7 @@ public class ServicesLaunchSequence extends Sequence {
     CSourceLookup fSourceLookup;
     
     public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
-        super(session.getExecutor(), pm, "Initializing debugger services", "Aborting debugger services initialization", null);  
+        super(session.getExecutor(), pm, "Initializing debugger services", "Aborting debugger services initialization");  
         fSession = session;
         fLaunch = launch;
     }

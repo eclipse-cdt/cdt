@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Nokia			  - added StepWithProgress. Oct, 2008
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor.ICanceledListener;
 import org.eclipse.dd.dsf.internal.DsfPlugin;
 
@@ -91,8 +93,53 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
          * step.
          */
         public int getTicks() { return 1; }
+
+        /**
+         * Task name for this step. This will be displayed in the label of the
+         * progress monitor of the owner sequence.
+         * 
+         * @return name of the task carried out by the step, can be 
+         * <code>null</code>, in which case the overall task name will be used.
+         * 
+         * @since 1.1
+         */
+        public String getTaskName() {
+            return ""; //$NON-NLS-1$
+        }
     }
-    
+
+    /**
+     * A step that will report execution progress by itself on the progress
+     * monitor of the owner sequence.<br>
+     * <br>
+     * Note we don't offer a rollBack(rm, pm) as we don't want end user to be
+     * able to cancel the rollback.
+     * 
+     * @since 1.1
+     */
+    abstract public static class StepWithProgress extends Step {
+
+        @Override
+        // don't allow subclass to implement this by "final" it.
+        final public void execute(RequestMonitor rm) {
+            assert false : "execute(RequestMonitor rm, IProgressMonitor pm) should be called instead"; //$NON-NLS-1$
+        }
+
+        /**
+         * Execute the step with a progress monitor. Note the given progress
+         * monitor is a sub progress monitor of the owner sequence which is
+         * supposed to be fully controlled by the step. Namely the step should
+         * call beginTask() and done() of the monitor.
+         * 
+         * @param rm
+         * @param pm
+         */
+        public void execute(RequestMonitor rm, IProgressMonitor pm) {
+            rm.done();
+            pm.done();
+        }
+    }
+
     /** The synchronization object for this future */
     final Sync fSync = new Sync();
 
@@ -125,28 +172,84 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
     
     final private IProgressMonitor fProgressMonitor;
     
-    
-    
     /** Convenience constructor with limited arguments. */
     public Sequence(DsfExecutor executor) {
         this(executor, new NullProgressMonitor(), "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /** Convenience constructor with limited arguments. */
+    /** 
+     * Creates a sequence with a request monitor.  If the client cancels the 
+     * request monitor, then the request monitors in the 
+     * {@link Step#execute(RequestMonitor)}
+     * implementations will immediately call the cancel listeners to notify.
+     * 
+     * @param executor The DSF executor which will be used to invoke all 
+     * steps. 
+     * @param rm The request monitor which will be invoked when the sequence
+     * is completed.
+     */
     public Sequence(DsfExecutor executor, RequestMonitor rm) {
         this(executor, new NullProgressMonitor(), "", "", rm); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
+     * Creates a sequence with a progress monitor.  If the progress monitor is
+     * canceled, then request monitors in the 
+     * {@link Step#execute(RequestMonitor)} implementations will need to call 
+     * rm.isCanceled() to discover the cancellation.
+     * @param executor The DSF executor which will be used to invoke all 
+     * steps. 
+     * @param pm Progress monitor for monitoring this sequence.  
+     * @param taskName Name that will be used in call to 
+     * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+     * started.
+     * @param rollbackTaskName Name that will be used in call to 
+     * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
+     * aborted. 
+     * 
+     * @since 1.1
+     */
+    public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName) {
+        this(executor, pm, "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Creates a sequence with a request monitor that includes a progress 
+     * monitor.  
+     * @param executor The DSF executor which will be used to invoke all 
+     * steps. 
+     * @param rm The request monitor containing the progress monitor
+     * @param taskName Name that will be used in call to 
+     * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+     * started.
+     * @param rollbackTaskName Name that will be used in call to 
+     * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
+     * aborted. 
+     * 
+     * @since 1.1
+     */
+    public Sequence(DsfExecutor executor, RequestMonitorWithProgress rm, String taskName, String rollbackTaskName) {
+        this(executor, rm.getProgressMonitor(), "", "", rm); //$NON-NLS-1$ //$NON-NLS-2$
+    }    
+    
+    /**
      * Constructor that initialized the steps and the result callback.
-     * @param executor The DSF executor which will be used to invoke all steps. 
-     * @param pm Progress monitor for monitoring this sequence.  This parameter cannot be null.
-     * @param taskName Name that will be used in call to {@link IProgressMonitor#beginTask(String, int)}, 
-     * when the task is started.
-     * @param rollbackTaskName Name that will be used in call to {@link IProgressMonitor#subTask(String)}
-     * if the task is cancelled or aborted. 
-     * @param Result that will be submitted to executor when sequence is finished.  Can be null if calling from 
-     * non-executor thread and using {@link Future#get()} method to wait for the sequence result. 
+     * @param executor The DSF executor which will be used to invoke all 
+     * steps. 
+     * @param pm Progress monitor for monitoring this sequence.  This 
+     * parameter cannot be null.
+     * @param taskName Name that will be used in call to 
+     * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+     * started.
+     * @param rollbackTaskName Name that will be used in call to 
+     * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
+     * aborted. 
+     * @param Result that will be submitted to executor when sequence is 
+     * finished.  Can be null if calling from non-executor thread and using 
+     * {@link Future#get()} method to wait for the sequence result.
+     * 
+     * @deprecated This constructor should not be used because it creates a 
+     * potential ambiguity when one of the two monitors is canceled.
      */
     public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, RequestMonitor rm) {
         fExecutor = executor;
@@ -283,31 +386,59 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
             finish();
             return;
         }
-        
+
         // Proceed with executing next step.
         fCurrentStepIdx = nextStepIndex;
         try {
-            getSteps()[fCurrentStepIdx].execute(new RequestMonitor(fExecutor, null) {
+            Step currentStep = getSteps()[fCurrentStepIdx];
+            final boolean stepControlsProgress = (currentStep instanceof StepWithProgress);
+
+            RequestMonitor rm = new RequestMonitor(fExecutor, fRequestMonitor) {
                 final private int fStepIdx = fCurrentStepIdx;
+
                 @Override
-                public void handleCompleted() {
+                public void handleSuccess() {
                     // Check if we're still the correct step.
                     assert fStepIdx == fCurrentStepIdx;
-                    
-                    // Proceed to the next step.
-                    if (isSuccess()) {
+                    if (!stepControlsProgress) {
+                        // then sequence handles the progress report.
                         fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
-                        executeStep(fStepIdx + 1);
-                    } else {
-                        abortExecution(getStatus());
                     }
+                    executeStep(fStepIdx + 1);
+
                 }
+                
+                @Override
+                protected void handleCancel() {
+                    Sequence.this.cancel(false);
+                    cancelExecution();
+                };
+                
+                @Override
+                protected void handleErrorOrWarning() {
+                    abortExecution(getStatus());                    
+                };
+
                 @Override
                 public String toString() {
                     return "Sequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
-            });
-        } catch(Throwable t) {
+            };
+
+            fProgressMonitor.subTask(currentStep.getTaskName());
+            
+            if (stepControlsProgress) {
+
+                // Create a sub-monitor that will be controlled by the step.
+                SubProgressMonitor subMon = new SubProgressMonitor(fProgressMonitor, currentStep.getTicks(),
+                    SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+
+                ((StepWithProgress) currentStep).execute(rm, subMon);
+            } else { // regular Step
+                currentStep.execute(rm);
+            }
+
+        } catch (Throwable t) {
             /*
              * Catching the exception here will only work if the exception 
              * happens within the execute method.  It will not work in cases 
@@ -350,7 +481,11 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
              
                     // Proceed to the next step.
                     if (isSuccess()) {
+                        // NOTE: The getTicks() is ticks for executing the step,
+                        // not for rollBack,
+                        // though it does not really hurt to use it here.
                         fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
+
                         rollBackStep(fStepIdx - 1);
                     } else {
                         abortRollBack(getStatus());

@@ -289,7 +289,7 @@ public class DsfSequenceTests {
         IProgressMonitor pm = new NullProgressMonitor();
         
         // Create the seqeunce with our steps.
-        Sequence sequence = new Sequence(fExecutor, pm, "", "", null) { //$NON-NLS-1$ //$NON-NLS-2$
+        Sequence sequence = new Sequence(fExecutor, pm, "", "") { //$NON-NLS-1$ //$NON-NLS-2$
             @Override public Step[] getSteps() { return steps; }
         };
 

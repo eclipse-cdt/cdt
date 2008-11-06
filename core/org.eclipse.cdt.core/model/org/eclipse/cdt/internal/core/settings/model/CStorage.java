@@ -152,8 +152,16 @@ public class CStorage implements ICSettingsStorage{
 				throw ExceptionFactory.createIsReadOnlyException();
 
 			fIsDirty = true;
+			Node nextSibling = se.fElement.getNextSibling();
 			fElement.removeChild(se.fElement);
 			se.removed();
+			if (nextSibling != null && nextSibling.getNodeType() == Node.TEXT_NODE) {
+				String value = nextSibling.getNodeValue();
+				if (value != null && value.trim().length() == 0) {
+					// remove whitespace
+					fElement.removeChild(nextSibling);
+				}
+			}
 		}
 	}
 	

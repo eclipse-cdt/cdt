@@ -52,10 +52,10 @@ public class XmlStorageElement implements ICStorageElement {
 		fParentRefAlowed = alowReferencingParent;
 		
 		if(attributeFilters != null && attributeFilters.length != 0)
-			fAttributeFilters = (String[])attributeFilters.clone();
+			fAttributeFilters = attributeFilters.clone();
 		
 		if(childFilters != null && childFilters.length != 0)
-			fChildFilters = (String[])childFilters.clone();
+			fChildFilters = childFilters.clone();
 	}
 	
 //	public String[] getAttributeFilters(){
@@ -310,13 +310,13 @@ public class XmlStorageElement implements ICStorageElement {
 	
 	public String[] getAttributeFilters(){
 		if(fAttributeFilters != null)
-			return (String[])fAttributeFilters.clone();
+			return fAttributeFilters.clone();
 		return new String[0];
 	}
 
 	public String[] getChildFilters(){
 		if(fChildFilters != null)
-			return (String[])fChildFilters.clone();
+			return fChildFilters.clone();
 		return new String[0];
 	}
 
@@ -328,11 +328,7 @@ public class XmlStorageElement implements ICStorageElement {
 		if(!getName().equals(el.getName()))
 			return false;
 		
-		String value = getValue();
-		if(value == null){
-			if(el.getValue() != null)
-				return false;
-		} else if(!value.equals(el.getValue()))
+		if (!valuesMatch(getValue(), el.getValue()))
 			return false;
 
 		
@@ -369,6 +365,16 @@ public class XmlStorageElement implements ICStorageElement {
 		}
 		
 		return true;
+	}
+
+	private static boolean valuesMatch(String value, String other) {
+		if(value == null) {
+			return other == null || other.trim().length() == 0;
+		} else if (other == null) {
+			return value.trim().length() == 0;
+		} else {
+			return value.trim().equals(other.trim());
+		}
 	}
 
 	public String[] getAttributeNames() {

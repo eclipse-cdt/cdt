@@ -15,20 +15,24 @@ using namespace std;
 
 void step_loop() {
 	int i = 0;
+	int values[1000];
 	while (i < 1000) {
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
-		i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
+		values[i] = i++;
 	}
 }
 
@@ -87,11 +91,17 @@ void variables() {
     bool *lBoolPtr2 = (bool*)0x123ABCDE;
 }
 
+int step_over_sleep() {
+        int a = 1;
+        sleep(1);
+        return 1;
+}
 
 int main() {
 	step_loop();
 	descend_stack(50);
 	variables();
+	step_over_sleep();
 	return 0;
 }
 

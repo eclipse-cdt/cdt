@@ -11,13 +11,13 @@
 package org.eclipse.cdt.launch; 
 
 import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
- 
+
 /**
  * Utility methods.
  */

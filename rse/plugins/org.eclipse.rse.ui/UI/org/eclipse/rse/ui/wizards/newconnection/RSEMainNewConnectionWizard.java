@@ -18,6 +18,9 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Uwe Stieber (Wind River) - [189426] System File/Folder Dialogs - New Connection Not Added to Drop Down
  * Martin Oberhuber (Wind River) - [235197][api] Unusable wizard after cancelling on first page
+ * Uwe Stieber (Wind River) - [237816][api] restrictToSystemType does not work for RSEMainNewConnectionWizard
+ * Uwe Stieber (Wind River) - [235084] New connection wizard can create connections of disabled type
+ * Uwe Stieber (Wind River) - [248685] new connection wizard does not check the default selection against the restricted system type list
  *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -148,14 +151,14 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		restrictedSystemTypes = systemTypes;
 		onlySystemType = restrictedSystemTypes.length == 1;
 		mainPage.restrictToSystemTypes(restrictedSystemTypes);
-		
+
 		if (onlySystemType && !restrictedSystemTypes[0].equals(selectedSystemType))
 			selectedSystemType = restrictedSystemTypes[0];
 		else if (restrictedSystemTypes.length > 0 && !Arrays.asList(restrictedSystemTypes).contains(selectedSystemType))
 			selectedSystemType = null;
 		else if (restrictedSystemTypes.length == 0)
 			selectedSystemType = null;
-		
+
 		onSelectedSystemTypeChanged();
 	}
 
@@ -240,9 +243,9 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 				// Accept only system types as selection which are enabled or if
 				// the wizard has a restricted list of system types, is within the list
 				// of restricted system types
-				if (candidate.isEnabled() && 
-						(restrictedSystemTypes == null || 
-								restrictedSystemTypes.length == 0 || 
+				if (candidate.isEnabled() &&
+						(restrictedSystemTypes == null ||
+								restrictedSystemTypes.length == 0 ||
 								Arrays.asList(restrictedSystemTypes).contains(candidate))) {
 					selectedSystemType = candidate;
 				}
@@ -310,7 +313,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (selectedWizard instanceof ISelectionChangedListener) removeSelectionChangedListener((ISelectionChangedListener)selectedWizard);
 
 		// Check if a wizard is registered for the selected system type
-		IRSENewConnectionWizardDescriptor descriptor = getSelection() != null ? 
+		IRSENewConnectionWizardDescriptor descriptor = getSelection() != null ?
 			wizardRegistry.getWizardForSelection((IStructuredSelection) getSelection())
 			: null;
 		if (descriptor != null) {

@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Uwe Stieber      (Wind River) - [209193] RSE new connection wizard shows empty categories if typing something into the filter
  * Martin Oberhuber (Wind River) - [235197][api] Unusable wizard after cancelling on first page
+ * Uwe Stieber (Wind River) - [237816][api] restrictToSystemType does not work for RSEMainNewConnectionWizard
  *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -275,14 +276,14 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 
 	/**
 	 * Set the initial tree selection for the given tree viewer instance.
-	 * 
+	 *
 	 * @param treeViewer The tree viewer instance.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected void initializeSelection(TreeViewer treeViewer) {
 		if (treeViewer == null) return;
-		
+
 		if (getWizard() instanceof ISelectionProvider) {
 			ISelectionProvider selectionProvider = (ISelectionProvider)getWizard();
 			if (selectionProvider.getSelection() instanceof IStructuredSelection) {
@@ -294,9 +295,9 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Called from the selection listener to propage the current
 	 * system type selection to the underlaying wizard.

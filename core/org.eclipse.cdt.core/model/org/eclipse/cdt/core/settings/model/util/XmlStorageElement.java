@@ -180,7 +180,15 @@ public class XmlStorageElement implements ICStorageElement {
 			for(int i = 0; i < children.length; i++){
 				if(children[i] == el){
 					XmlStorageElement xmlEl = (XmlStorageElement)el;
+					Node nextSibling = xmlEl.fElement.getNextSibling();
 					fElement.removeChild(xmlEl.fElement);
+					if (nextSibling != null && nextSibling.getNodeType() == Node.TEXT_NODE) {
+						String value = nextSibling.getNodeValue();
+						if (value != null && value.trim().length() == 0) {
+							// remove whitespace
+							fElement.removeChild(nextSibling);
+						}
+					}
 					fChildList.remove(el);
 					xmlEl.removed();
 				}

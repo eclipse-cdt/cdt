@@ -140,7 +140,12 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 				_connection = hosts[0];
 			}
 		}
-		return getConnectionChildren(_connection);
+		if (_connection != null){
+			return getConnectionChildren(_connection);
+		}
+		else {
+			return new Object[0];
+		}
 	}
 
 	public boolean hasSystemViewRoots()

@@ -156,11 +156,14 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	    }
 	    else
 	    {
-	    	if (file.isLinked(IResource.CHECK_ANCESTORS)){
+	    	IPath location = file.getLocation();
+	    
+	    	if (location == null){
+	    		// linked into remote file system -- ignore in tempfile listener 
 	    		return true;
 	    	}
 	    	else {
-	    		String path = file.getLocation().toString().toLowerCase();
+	    		String path = location.toString().toLowerCase();
 	        
 	    		for (int i = 0; i < _ignoredFiles.size(); i++)
 	    		{

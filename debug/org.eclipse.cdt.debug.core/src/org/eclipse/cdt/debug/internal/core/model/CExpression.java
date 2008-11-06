@@ -180,6 +180,21 @@ public class CExpression extends CLocalVariable implements IExpression {
 	protected void resetValue() {
 		if ( fValue instanceof AbstractCValue ) {
 			((AbstractCValue)fValue).reset();
+			
+			// We can't just reset the value and toss the reference we've been
+			// holding. Those things have a dispose() method and that needs to be
+			// called when there is no further use for it (so debugger-engine
+			// objects tied to the value can be freed). We return the AbstractCValue
+			// as an IValue to the platform, which means the platform certainly
+			// isn't going to dispose of it (there is no IValue.dispose method).
+			// Notice that we call AbstractCValue.dispose in our dispose method
+			// above. So, naturally, we need to do the same here. But then what is
+			// the purpose of calling AbstractCValue.reset() if we just dispose of
+			// the object, anyway? This whole thing seems a bit screwy. We should
+			// either be holding on to the AbstractCValue and resetting it, or just
+			// discarding it. The reset above doesn't hurt, but it sure seems
+			// pointless.
+			((AbstractCValue) fValue).dispose();
 		}
 		fValue = CValueFactory.NULL_VALUE;
 	}

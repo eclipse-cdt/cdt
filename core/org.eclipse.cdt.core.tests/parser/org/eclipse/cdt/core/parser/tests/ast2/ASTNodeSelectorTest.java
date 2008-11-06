@@ -55,7 +55,7 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		fCode= getContents(1)[0].toString();
         CodeReader codeReader = new CodeReader(fCode.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo, false);
+        IScanner scanner= AST2BaseTest.createScanner(codeReader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
         GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, new NullLogService(), new GPPParserExtensionConfiguration());
         fTu= parser.parse();
         fSelector= fTu.getNodeSelector(null);

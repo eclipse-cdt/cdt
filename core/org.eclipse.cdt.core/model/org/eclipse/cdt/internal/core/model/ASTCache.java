@@ -40,7 +40,8 @@ public class ASTCache {
 	/** Full parse mode (no PDOM) */
 	public static int PARSE_MODE_FULL= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_ALL_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
+	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_ALL_HEADERS | ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+		| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
 
 	/**
 	 * Do something with an AST.

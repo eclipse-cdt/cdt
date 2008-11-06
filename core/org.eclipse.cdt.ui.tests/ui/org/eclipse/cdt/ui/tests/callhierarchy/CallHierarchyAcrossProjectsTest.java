@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -41,6 +40,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		return suite(CallHierarchyAcrossProjectsTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -51,6 +51,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject2 != null) {
 			CProjectHelper.delete(fCProject2);
@@ -89,7 +90,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		IFile sourceFile= createFile(fCProject2.getProject(), "testMethods.cpp", source);
 		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
+		CEditor editor= openEditor(sourceFile);
 		
 		
 		editor.selectAndReveal(source.indexOf("method"), 2);
@@ -162,7 +163,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(fCProject.getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(fCProject2.getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile1);
+		CEditor editor= openEditor(sourceFile1);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
@@ -212,7 +213,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(fCProject2.getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile1);
+		CEditor editor= openEditor(sourceFile1);
 		waitForIndexer(fIndex, sourceFile1, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
@@ -273,7 +274,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile2);
+		CEditor editor= openEditor(sourceFile2);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source2.indexOf("main"), 2);

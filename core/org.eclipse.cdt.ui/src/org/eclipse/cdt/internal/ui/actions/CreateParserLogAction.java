@@ -188,9 +188,11 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	private void createLog(final PrintStream out, final ITranslationUnit tu, IProgressMonitor pm) {
-		ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, pm, new ASTCache.ASTRunnable() {
+		ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, pm, new ASTCache.ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-				return createLog(out, tu, lang, ast);
+				if (ast != null)
+					return createLog(out, tu, lang, ast);
+				return Status.CANCEL_STATUS;
 			}
 		});
 	}

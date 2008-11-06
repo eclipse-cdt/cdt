@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,17 +14,10 @@ package org.eclipse.cdt.internal.ui.text.correction.proposals;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.StyledString;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -39,7 +32,12 @@ import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
-
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
@@ -136,10 +134,13 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			final int secectionOffset = selection.x;
 			final int selectionLength = selection.y;
 
-			ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_YES,
+			ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
 
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
+					if (astRoot == null)
+						return Status.CANCEL_STATUS;
+					
 					IASTNodeSelector selector= astRoot.getNodeSelector(null);
 					IASTName name= selector.findEnclosingName(secectionOffset, selectionLength);
 					if (name != null) {
@@ -249,7 +250,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			return CorrectionMessages.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
+			return NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
 					fLabel, shortCutString);
 		}
 		return fLabel;
@@ -263,7 +264,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			String decorated= CorrectionMessages.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
+			String decorated= NLS.bind(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
 					fLabel, shortCutString);
 			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER); 
 		}

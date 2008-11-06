@@ -1370,7 +1370,8 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/header.h", "#define ID three\n");
 		TestSourceReader.createFile(fCProject.getProject(), "f1/g/source.cpp", contents + "int CONCAT(one, ID);\n");
 		TestSourceReader.createFile(fCProject.getProject(), "f2/g/source.cpp", contents + "int CONCAT(two, ID);\n");
-		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/source.cpp", contents + "int CONCAT(three, ID);\n");
+		IFile f= TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/source.cpp", contents + "int CONCAT(three, ID);\n");
+		waitUntilFileIsIndexed(f, 4000);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();

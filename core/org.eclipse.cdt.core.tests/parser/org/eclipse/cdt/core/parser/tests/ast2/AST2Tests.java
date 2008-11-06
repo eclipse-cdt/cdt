@@ -5500,4 +5500,35 @@ public class AST2Tests extends AST2BaseTest {
 			parseAndCheckBindings(code, lang);
 		}
 	}
+	
+	// int a[]= {
+	
+	// 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	
+	// };
+	public void testScalabilityOfLargeTrivialInitializer_Bug252970() throws Exception {
+		final StringBuffer[] input = getContents(3);
+		StringBuilder buf= new StringBuilder();
+		buf.append(input[0].toString());
+		final String line= input[1].toString();
+		for (int i = 0; i < 25000; i++) { // 250K values
+			buf.append(line);
+		}
+		buf.append(input[2].toString());
+		final String code= buf.toString();
+		long mem= memoryUsed();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			long diff= memoryUsed()-mem;
+			final int expected = 1024*10 + code.length()*2; // a copy of the buffer + some
+			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+		}
+	}
+
+	private long memoryUsed() {
+		System.gc();System.gc();System.gc();
+		final Runtime runtime = Runtime.getRuntime();
+		return runtime.totalMemory()-runtime.freeMemory();
+	}
+
 }

@@ -43,7 +43,7 @@ public class CompletionTestBase extends TestCase {
 	protected IASTCompletionNode getCompletionNode(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
         CodeReader codeReader = new CodeReader(code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo, false);
+        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser = null;
         if( lang == ParserLanguage.CPP )

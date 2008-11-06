@@ -219,7 +219,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		fTodoTaskUpdater= createTodoTaskUpdater();
 		
-		fASTOptions= ILanguage.OPTION_ADD_COMMENTS | ILanguage.OPTION_NO_IMAGE_LOCATIONS;
+		fASTOptions= ILanguage.OPTION_ADD_COMMENTS | ILanguage.OPTION_NO_IMAGE_LOCATIONS 
+				| ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
 		if (getSkipReferences() == SKIP_ALL_REFERENCES) {
 			fASTOptions |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
 		}

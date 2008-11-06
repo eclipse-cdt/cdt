@@ -95,7 +95,7 @@ public class ASTWriterTest extends RewriteBaseTest {
         ParserLanguage language = getLanguage(testFile);
     	boolean useGNUExtensions = getGNUExtension(testFile);
                 
-        IScanner scanner = AST2BaseTest.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo, true);
+        IScanner scanner = AST2BaseTest.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
         if( language == ParserLanguage.CPP ) {

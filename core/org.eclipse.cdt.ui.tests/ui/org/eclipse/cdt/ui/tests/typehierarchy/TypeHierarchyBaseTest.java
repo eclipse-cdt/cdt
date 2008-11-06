@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import org.eclipse.core.resources.IFile;
@@ -37,6 +36,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
@@ -52,6 +52,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -59,6 +60,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		closeAllEditors();
 		if (fCProject != null) {
@@ -71,9 +73,10 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		return fCProject.getProject();
 	}
 	
-	protected CEditor openFile(IFile file) throws PartInitException {
+	protected CEditor openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
 		return editor;
 	}	
 

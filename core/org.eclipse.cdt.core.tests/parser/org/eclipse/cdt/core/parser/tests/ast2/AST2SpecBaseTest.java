@@ -100,7 +100,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, 
 			boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings, String[] problems) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo, false);
+        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )

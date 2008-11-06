@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
@@ -513,7 +512,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						
 						final Job me= this;
 						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
+						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
 							public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 								reconciled(ast, true, monitor);
 								synchronized (fJobLock) {

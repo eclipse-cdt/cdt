@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
  *******************************************************************************/
@@ -27,7 +27,8 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * Models differences between languages. The interface is not supposed to be implemented directly.
  * Rather than that clients may subclass {@link AbstractLanguage}.
- * @author Doug Schaefer
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILanguage extends IAdaptable {
 
@@ -35,27 +36,35 @@ public interface ILanguage extends IAdaptable {
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
 	 * Instructs the parser to skip function and method bodies.
 	 */
-	public final static int OPTION_SKIP_FUNCTION_BODIES= 1;
+	public final static int OPTION_SKIP_FUNCTION_BODIES= 0x1;
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
 	 * Instructs the parser to add comment nodes to the ast.
 	 */
-	public final static int OPTION_ADD_COMMENTS= 2;
+	public final static int OPTION_ADD_COMMENTS= 0x2;
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
 	 * Performance optimization, instructs the parser not to create image-locations. 
 	 * When using this option {@link IASTName#getImageLocation()} will always return <code>null</code>.
 	 */
-	public final static int OPTION_NO_IMAGE_LOCATIONS= 4;
+	public final static int OPTION_NO_IMAGE_LOCATIONS= 0x4;
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
 	 * Marks the ast as being based on a source-file rather than a header-file. This makes a difference
 	 * when bindings from the AST are used for searching the index, e.g. for static variables. 
 	 */
-	public final static int OPTION_IS_SOURCE_UNIT= 8;
+	public final static int OPTION_IS_SOURCE_UNIT= 0x8;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
+	 * when they do not contain names.
+	 * @since 5.1
+	 */
+	public final static int OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 0x10;
 
 	/**
 	 * Return the language id for this language.

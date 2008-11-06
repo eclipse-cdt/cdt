@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import org.eclipse.core.resources.IFile;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
@@ -46,6 +46,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		CallHierarchyUI.setIsJUnitTest(true);
@@ -61,6 +62,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		}
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		closeAllEditors();
 		if (fCProject != null) {
@@ -73,9 +75,10 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		return fCProject.getProject();
 	}
 	
-	protected CEditor openFile(IFile file) throws PartInitException {
+	protected CEditor openEditor(IFile file) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
 		return editor;
 	}	
 

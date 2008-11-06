@@ -65,17 +65,19 @@ public final class ASTProvider {
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
-	 * wants to wait until an AST is ready.
+	 * wants to wait until an AST is ready. If the translation unit is not open no ast will
+	 * be provided.
 	 * <p>
-	 * An AST will be created by this AST provider if the shared
-	 * AST is not for the given C element.
+	 * If not yet cached and if the translation unit is open, an AST will be created by 
+	 * this AST provider.
 	 * </p>
 	 */
-	public static final WAIT_FLAG WAIT_YES= new WAIT_FLAG("wait yes"); //$NON-NLS-1$
+	public static final WAIT_FLAG WAIT_IF_OPEN= new WAIT_FLAG("wait if open"); //$NON-NLS-1$
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
-	 * only wants to wait for the shared AST of the active editor.
+	 * only wants to wait for the shared AST of the active editor. 
+	 * If the translation unit is not open no ast will be provided.
 	 * <p>
 	 * No AST will be created by the AST provider.
 	 * </p>
@@ -262,17 +264,6 @@ public final class ASTProvider {
 	}
 
 	/**
-	 * Returns whether this AST provider is active on the given
-	 * translation unit.
-	 *
-	 * @param tu the translation unit
-	 * @return <code>true</code> if the given translation unit is the active one
-	 */
-	public boolean isActive(ITranslationUnit tu) {
-		return fCache.isActiveElement(tu) && tu.isOpen();
-	}
-
-	/**
 	 * Informs that reconciling for the given element is about to be started.
 	 *
 	 * @param cElement the C element
@@ -339,13 +330,17 @@ public final class ASTProvider {
 	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
 			ASTCache.ASTRunnable astRunnable) {
 		Assert.isTrue(cElement instanceof ITranslationUnit);
-		boolean isActive= isActive((ITranslationUnit)cElement);
+		final ITranslationUnit tu = (ITranslationUnit)cElement;
+		if (!tu.isOpen())
+			return Status.CANCEL_STATUS;
+		
+		final boolean isActive= fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return Status.CANCEL_STATUS;
 		}
 		if (isActive && updateModificationStamp()) {
 			fCache.disposeAST();
 		}
-		return fCache.runOnAST((ITranslationUnit)cElement, waitFlag != WAIT_NO, monitor, astRunnable);
+		return fCache.runOnAST(tu, waitFlag != WAIT_NO, monitor, astRunnable);
 	}
 }

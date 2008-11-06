@@ -135,7 +135,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			else {
 				parseFlags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			}
-			
+			parseFlags |= ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
 			final IASTTranslationUnit ast;
 			try {
 				ast= fTranslationUnit.getAST(index, parseFlags, fProgressMonitor);

@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * If a <code>.c</code> file cannot be parsed, its structure remains unknown.
  * Use <code>ICElement.isStructureKnown</code> to determine whether this is 
  * the case.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
 	
@@ -38,21 +40,21 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Meaning: Skip function and method bodies.
 	 * @since 4.0
 	 */
-	public static final int AST_SKIP_FUNCTION_BODIES= 1;
+	public static final int AST_SKIP_FUNCTION_BODIES= 0x1;
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Skip over headers that are found in the index, parse all others.
 	 * Macro definitions and bindings are taken from index for skipped files.
 	 */
-	public static final int AST_SKIP_INDEXED_HEADERS = 2;
+	public static final int AST_SKIP_INDEXED_HEADERS = 0x2;
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Skip headers even if they are not found in the index. 
 	 * Makes practically only sense in combination with {@link #AST_SKIP_INDEXED_HEADERS}.
 	 */
-	public static final int AST_SKIP_NONINDEXED_HEADERS = 4;
+	public static final int AST_SKIP_NONINDEXED_HEADERS = 0x4;
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
@@ -66,14 +68,14 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Don't parse the file if there is no build information for it.
 	 */
-	public static final int AST_SKIP_IF_NO_BUILD_INFO = 8;
+	public static final int AST_SKIP_IF_NO_BUILD_INFO = 0x8;
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Add nodes for comments to the ast.
 	 * @since 4.0
 	 */
-	public static final int AST_CREATE_COMMENT_NODES = 16;
+	public static final int AST_CREATE_COMMENT_NODES = 0x10;
 	
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
@@ -82,7 +84,15 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * the flag is ignored.
 	 * @since 4.0
 	 */
-	public static final int AST_CONFIGURE_USING_SOURCE_CONTEXT= 32;
+	public static final int AST_CONFIGURE_USING_SOURCE_CONTEXT= 0x20;
+
+	/**
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
+	 * when they do not contain names.
+	 * @since 5.1
+	 */
+	public final static int AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 0x40;
 
 	/**
 	 * Creates and returns an include declaration in this translation unit

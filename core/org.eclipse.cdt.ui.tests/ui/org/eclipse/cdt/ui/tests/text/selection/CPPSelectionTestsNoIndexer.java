@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
@@ -248,6 +249,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         IEditorPart part = null;
         try {
             part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer((AbstractTextEditor) part), 100, 500, 10);
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -266,7 +268,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             if (sel instanceof ITextSelection) {
             	final ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
         				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());        	
         				return Status.OK_STATUS;

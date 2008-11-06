@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -35,7 +34,7 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("intvar");
 		IFile file= createFile(getProject(), "intvar.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		CEditor editor = openFile(file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a"), 1);
 		openCallHierarchy(editor);

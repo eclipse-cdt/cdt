@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.correction;
 
 import java.util.ArrayList;
@@ -120,7 +119,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	private ICompletionProposal getLocalRenameProposal(final IInvocationContext context) {
 		final ICCompletionProposal[] proposals= new ICCompletionProposal[1];
 
-		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_YES,
+		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_ACTIVE_ONLY,
 				new NullProgressMonitor(), new ASTRunnable() {
 
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {

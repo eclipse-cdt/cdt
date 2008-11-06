@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,12 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -56,8 +52,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testMethods");
 		IFile file= createFile(getProject(), "testMethods.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
 		openCallHierarchy(editor);
@@ -140,8 +135,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testStaticMethods");
 		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
 		openCallHierarchy(editor);
@@ -229,8 +223,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testFields");
 		IFile file= createFile(getProject(), "testFields.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("field"), 2);
 		openCallHierarchy(editor);
@@ -304,8 +297,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
 		openCallHierarchy(editor);
@@ -334,8 +326,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
 		openCallHierarchy(editor);
@@ -348,8 +339,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("~MyClass()"), 2);
 		openCallHierarchy(editor);
@@ -384,8 +374,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("var"), 2);
 		openCallHierarchy(editor);
@@ -442,8 +431,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("var; // r1"), 2);
 		openCallHierarchy(editor);

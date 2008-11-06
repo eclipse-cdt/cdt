@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Ed Swartz (Nokia)
  *    Mike Kucera (IBM) - bug #206952
@@ -81,10 +81,52 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
- * @author jcamelon
+ * Base class for the c- and c++ parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
-    protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
+	protected static class FoundAggregateInitializer extends Exception {
+		public final IASTDeclarator fDeclarator;
+		public IASTDeclSpecifier fDeclSpec;
+		public FoundAggregateInitializer(IASTDeclarator d) {
+			fDeclarator= d;
+		}
+	}
+    protected static class FoundDeclaratorException extends Exception {
+    	private static final long serialVersionUID = 0;
+    	
+        public IASTDeclSpecifier declSpec;
+        public IASTDeclarator declarator;
+
+		public IASTDeclSpecifier altSpec;
+		public IASTDeclarator altDeclarator;
+        
+        public IToken currToken;
+
+        public FoundDeclaratorException(IASTDeclarator d, IToken t) {
+            this.declarator = d;
+            this.currToken =t;
+        }
+    }
+
+	protected static class NameChecker extends ASTVisitor {
+		private boolean fFound;
+		protected NameChecker() {
+			shouldVisitNames= true;
+		}
+		@Override
+		public int visit(IASTName name) {
+			fFound= true;
+			return PROCESS_ABORT;
+		}
+		public boolean containsName(IASTNode node) {
+			fFound= false;
+			node.accept(this);
+			return fFound;
+		}
+	}
+	protected NameChecker NAME_CHECKER= new NameChecker();
+
+	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
     protected static int parseCount = 0;
 
 	protected final AbstractParserLogService log;
@@ -103,6 +145,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final IBuiltinBindingsProvider builtinBindingsProvider;
     
     protected boolean functionCallCanBeLValue= false;
+	protected boolean skipTrivialExpressionsInAggregateInitializers= false; 
+
     
     /**
      *  Marks the beginning of the current declaration. It is important to clear the mark whenever we
@@ -141,6 +185,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.builtinBindingsProvider= builtinBindingsProvider;
     }
     
+	/**
+	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
+	 * when they do not contain names.
+	 */
+	public void setSkipTrivialExpressionsInAggregateInitializers(boolean val) {
+		skipTrivialExpressionsInAggregateInitializers= val;
+	}
+
     private AbstractParserLogService wrapLogService(IParserLogService logService) {
 		if (logService instanceof AbstractParserLogService) {
 			return (AbstractParserLogService) logService;
@@ -1225,13 +1277,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return compoundStatement();
     }
 
-    protected abstract IASTDeclarator initDeclarator(DeclarationOptions option) throws EndOfFileException, BacktrackException;
+    protected abstract IASTDeclarator initDeclarator(DeclarationOptions option) 
+    		throws EndOfFileException, BacktrackException, FoundAggregateInitializer;
 
     /**
      * @param option the options with which to parse the declaration
      * @throws FoundDeclaratorException encountered EOF while looking ahead
+     * @throws FoundAggregateInitializer found aggregate initializer, needs special treatment
+     *   because of scalability.
      */
-    protected void lookAheadForDeclarator(final DeclarationOptions option) throws FoundDeclaratorException {
+    protected void lookAheadForDeclarator(final DeclarationOptions option) 
+    		throws FoundDeclaratorException, FoundAggregateInitializer {
         IToken mark = null;
         try {
             mark = mark();
@@ -1251,23 +1307,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
 	protected abstract boolean verifyLookaheadDeclarator(DeclarationOptions option, IASTDeclarator d, IToken nextToken);
-
-    public static class FoundDeclaratorException extends Exception {
-    	private static final long serialVersionUID = 0;
-    	
-        public IASTDeclSpecifier declSpec;
-        public IASTDeclarator declarator;
-
-		public IASTDeclSpecifier altSpec;
-		public IASTDeclarator altDeclarator;
-        
-        public IToken currToken;
-
-        public FoundDeclaratorException(IASTDeclarator d, IToken t) {
-            this.declarator = d;
-            this.currToken =t;
-        }
-    }
     
     /**
      * Parse an enumeration specifier, as according to the ANSI specs in C &
@@ -1439,7 +1478,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTCaseStatement createCaseStatement();
 
     protected abstract IASTDeclaration declaration(DeclarationOptions option) throws BacktrackException, EndOfFileException;
-    protected abstract IASTDeclSpecifier declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException, FoundDeclaratorException;
+    protected abstract IASTDeclSpecifier declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException, FoundDeclaratorException, FoundAggregateInitializer;
 
     protected IASTDeclaration[] problemDeclaration(int offset, BacktrackException bt, DeclarationOptions option) {
     	failParse();
@@ -1523,7 +1562,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected IASTDeclaration functionStyleAsmDeclaration() throws BacktrackException, EndOfFileException {
 
 		final int offset= LA(1).getOffset();
-		IASTDeclSpecifier declSpec;
+		IASTDeclSpecifier declSpec= null;
 		IASTDeclarator dtor;
     	try {
 			declSpec = declSpecifierSeq(DeclarationOptions.FUNCTION_STYLE_ASM);
@@ -1537,6 +1576,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		dtor= e.declarator;
         	}
             backup( e.currToken );
+        } catch (FoundAggregateInitializer lie) {
+        	if (declSpec == null)
+        		declSpec= lie.fDeclSpec;
+        	dtor= addInitializer(lie);
     	}
 
     	if (LT(1) != IToken.tLBRACE)
@@ -1560,6 +1603,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     	return funcDefinition;
 	}
+
+	protected abstract IASTDeclarator addInitializer(FoundAggregateInitializer lie) throws EndOfFileException;
 
 	protected IToken asmExpression(StringBuilder content) throws EndOfFileException, BacktrackException {
 		IToken t= consume(IToken.tLPAREN);

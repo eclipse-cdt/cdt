@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
@@ -75,6 +74,7 @@ import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
@@ -116,17 +116,17 @@ public class AST2BaseTest extends BaseTestCase {
     }
     
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
-    		boolean expectNoProblems, boolean parseComments) throws ParserException {
+    		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
-        		new ScannerInfo(), parseComments);
-        ISourceCodeParser parser2 = null;
+        		new ScannerInfo());
+        AbstractGNUSourceCodeParser parser = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (useGNUExtensions)
             	config = new GPPParserExtensionConfiguration();
             else
             	config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,config, null);
+            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,config, null);
         } else {
             ICParserExtensionConfiguration config = null;
 
@@ -135,12 +135,14 @@ public class AST2BaseTest extends BaseTestCase {
             else
             	config = new ANSICParserExtensionConfiguration();
             
-            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
+            parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         }
+        if (skipTrivialInitializers)
+        	parser.setSkipTrivialExpressionsInAggregateInitializers(true);
         
-        IASTTranslationUnit tu = parser2.parse();
+        IASTTranslationUnit tu = parser.parse();
 
-        if (parser2.encounteredError() && expectNoProblems)
+        if (parser.encounteredError() && expectNoProblems)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
          
         if (lang == ParserLanguage.C && expectNoProblems) {
@@ -157,7 +159,7 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
 	public static IScanner createScanner(CodeReader codeReader, ParserLanguage lang, ParserMode mode,
-			IScannerInfo scannerInfo, boolean parseComments) {
+			IScannerInfo scannerInfo) {
 		IScannerExtensionConfiguration configuration = null;
         if (lang == ParserLanguage.C)
             configuration= GCCScannerExtensionConfiguration.getInstance();

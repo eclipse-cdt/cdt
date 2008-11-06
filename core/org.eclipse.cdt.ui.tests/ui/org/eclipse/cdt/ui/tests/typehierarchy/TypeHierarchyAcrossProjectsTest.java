@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import junit.framework.Test;
@@ -19,9 +18,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -44,6 +40,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		return suite(TypeHierarchyAcrossProjectsTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -57,6 +54,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject2 != null) {
 			CProjectHelper.delete(fCProject2);
@@ -92,10 +90,9 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "simpleHeader.h", header);
 		IFile sourceFile= createFile(fCProject2.getProject(), "simple.cpp", source);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		waitForIndexer(fIndex, sourceFile, TypeHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
-		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
+		CEditor editor= openEditor(sourceFile);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import junit.framework.Test;
@@ -16,9 +15,6 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -41,8 +37,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
 		
@@ -78,8 +73,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enummem.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
 		
@@ -115,8 +109,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
 		
@@ -152,8 +145,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enummem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
 		
@@ -197,8 +189,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "struct.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("S1"), 1);
 		openTypeHierarchy(editor);
@@ -252,8 +243,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "structmem.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
 		openTypeHierarchy(editor);
@@ -287,8 +277,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "struct.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("S1"), 1);
 		openTypeHierarchy(editor);
@@ -343,8 +332,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "structmem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
 		openTypeHierarchy(editor);
@@ -378,8 +366,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "union.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("U1"), 1);
 		openTypeHierarchy(editor);
@@ -429,8 +416,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "unionmem.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
 		openTypeHierarchy(editor);
@@ -456,8 +442,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "union.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("U1"), 1);
 		openTypeHierarchy(editor);
@@ -516,8 +501,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "unionmem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
 		openTypeHierarchy(editor);

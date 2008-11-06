@@ -19,15 +19,19 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 
 public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
+	private String originalMessage;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -35,8 +39,34 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		
 		Composite parent = getFieldEditorParent();
 		
-		fPathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, 
-				Messages.XLCompilerPropertyPage_0, parent);
+		fPathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, Messages.XLCompilerPropertyPage_0, parent) 
+		{
+			protected boolean doCheckState() 
+			{
+				// always return true, as we don't want to fail cases when compiler is installed remotely
+				// just warn user
+				if (getPage() != null)
+				{
+					if (!super.doCheckState())
+					{
+						getPage().setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
+					}
+					else
+					{
+						getPage().setMessage(originalMessage, 0);
+					}
+				}
+				
+				return true;
+			}
+
+			protected boolean checkState() 
+			{
+				return doCheckState();
+			}
+			
+		};
+
 		addField(fPathEditor);
 		
 		IProject project = ((IResource) getElement()).getProject();
@@ -101,6 +131,8 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 	 */
 	public XLCompilerPropertyPage() {
 		super(FieldEditorPreferencePage.FLAT);
+		
+		originalMessage = getMessage();
 	}
 
 	

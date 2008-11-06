@@ -59,7 +59,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 			IRSESystemType hostType = host.getSystemType();
 			for (int t = 0; t < _systemTypes.length; t++){
 				IRSESystemType type = _systemTypes[t];
-				if (hostType == type){
+				if (hostType.equals(type)){
 					return true;
 				}
 			}

@@ -821,6 +821,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				if ((style & AST_CREATE_COMMENT_NODES) != 0) {
 					options |= ILanguage.OPTION_ADD_COMMENTS;
 				}
+				if ((style & 0x40 /*ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS*/) != 0) {
+					options |= 0x10 /*ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS*/;
+				}
 				if (isSourceUnit()) {
 					options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 				}

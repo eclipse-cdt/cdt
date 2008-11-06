@@ -170,7 +170,7 @@ public class QuickAssistLightBulbUpdater {
 				if (workingCopy != null) {
 					installSelectionListener();
 					final Point point= fViewer.getSelectedRange();
-					ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+					ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
 						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
 							if (astRoot != null) {
 								doSelectionChanged(point.x, point.y, astRoot);

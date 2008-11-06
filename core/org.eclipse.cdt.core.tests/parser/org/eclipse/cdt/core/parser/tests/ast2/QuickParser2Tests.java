@@ -1355,7 +1355,7 @@ public class QuickParser2Tests extends TestCase {
 
         CodeReader codeReader = new CodeReader( code.toCharArray() );
         IScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo, false);
+        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;

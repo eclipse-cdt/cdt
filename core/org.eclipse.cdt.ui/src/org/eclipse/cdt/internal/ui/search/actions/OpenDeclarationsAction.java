@@ -64,7 +64,6 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -107,7 +106,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	
 	ITextSelection fTextSelection;
 	private String fSelectedText;
-	private IWorkingCopy fWorkingCopy;
+	private ITranslationUnit fWorkingCopy;
 	private IIndex fIndex;
 	private IProgressMonitor fMonitor;
 
@@ -126,10 +125,11 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		clearStatusLine();
 
 		fMonitor= monitor;
-		fWorkingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-		if (fWorkingCopy == null)
+		ICElement celem= fEditor.getInputCElement();
+		if (!(celem instanceof ITranslationUnit)) 
 			return Status.CANCEL_STATUS;
 
+		fWorkingCopy= (ITranslationUnit) celem;
 		fIndex= CCorePlugin.getIndexManager().getIndex(fWorkingCopy.getCProject(),
 				IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
@@ -140,7 +140,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 
 		try {
-			return ASTProvider.getASTProvider().runOnAST(fWorkingCopy, ASTProvider.WAIT_YES, monitor, this);
+			return ASTProvider.getASTProvider().runOnAST(fWorkingCopy, ASTProvider.WAIT_ACTIVE_ONLY, monitor, this);
 		} finally {
 			fIndex.releaseReadLock();
 		}

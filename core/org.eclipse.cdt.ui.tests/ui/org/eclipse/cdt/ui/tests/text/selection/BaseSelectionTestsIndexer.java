@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.selection;
 
@@ -36,6 +36,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -46,17 +47,18 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
@@ -74,10 +76,17 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		OpenDeclarationsAction.sIsJUnitTest= true;
 		OpenDeclarationsAction.sAllowFallback= false;
+		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewReference[] refs= page.getViewReferences();
+		for (int i = 0; i < refs.length; i++) {
+			IViewReference viewReference = refs[i];
+			page.setPartState(viewReference, IWorkbenchPage.STATE_RESTORED);
+		}
 	}
 	
 	public void waitForIndex(int maxSec) throws Exception {
@@ -192,34 +201,33 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor", true); //$NON-NLS-1$
         } catch (PartInitException e) {
             assertFalse(true);
         }
         
-        if (part instanceof AbstractTextEditor) {
+        if (part instanceof CEditor) {
+        	CEditor editor= (CEditor) part;
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
             action.runSync();
         
         	// update the file/part to point to the newly opened IFile/IEditorPart
             part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
-            IEditorInput input = part.getEditorInput(); 
-            if (input instanceof FileEditorInput) {
-            	file = ((FileEditorInput)input).getFile();
-            } else {
-            	assertFalse(true); // bail!
-            }             
-            
-            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
-            ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
+            assertTrue (part instanceof CEditor);
+            editor= (CEditor) part;
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
+
+    		// the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
+            ISelection sel= editor.getSelectionProvider().getSelection();
             
             final IASTName[] result= {null};
             if (sel instanceof ITextSelection) {
             	final ITextSelection textSel = (ITextSelection)sel;
-            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+            	ITranslationUnit tu = (ITranslationUnit)editor.getInputCElement();
+        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
         				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());
         				return Status.OK_STATUS;

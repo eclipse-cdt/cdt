@@ -68,7 +68,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		}
 
 		final IHyperlink[] result= {null};
-		IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
+		IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast != null) {
 					final int offset= region.getOffset();

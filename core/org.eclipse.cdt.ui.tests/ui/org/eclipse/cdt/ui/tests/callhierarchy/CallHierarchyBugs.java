@@ -15,14 +15,9 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -143,13 +138,6 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		Object obj= node1.getData();
 		assertTrue(obj instanceof ICElement);
 		CallHierarchyUI.open(workbenchWindow, (ICElement) obj);
-	}
-
-	private CEditor openEditor(IFile file) throws WorkbenchException {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorPart editor= IDE.openEditor(page, file, true);
-		runEventQueue(0);
-		return (CEditor) editor;
 	}
 	
 	// class Base {
@@ -345,26 +333,46 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		CALL(0);
 	//	}
 	public void testMacrosHidingCall_249801() throws Exception {
+		long t= System.currentTimeMillis();
 		String content= getContentsForTest(1)[0].toString();
+		t= printTime("contents", t);
 		IFile file= createFile(getProject(), "file249801.cpp", content);
+		t= printTime("file", t);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		t= printTime("indexer", t);
 
 		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
-		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+		t= printTime("view", t);
 
 		// open editor, check outline
 		CEditor editor= openEditor(file);
+		t= printTime("editor", t);
 		int idx = content.indexOf("MACRO(Test");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
+		t= printTime("ch1", t);
 
 		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *)").getParent();
 		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int)");
+		t= printTime("checked", t);
 
 		idx = content.indexOf("CALL(0");
 		editor.selectAndReveal(idx+4, 0);
 		openCallHierarchy(editor, true);
+		t= printTime("ch2",t );
 		chTree= checkTreeNode(ch, 0, "call(int)").getParent();
 		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *)");
+		t= printTime("checked", t);
+	}
+
+	/**
+	 * mstodo
+	 * @param string
+	 * @return
+	 */
+	private long printTime(String string, long off) {
+		long t= System.currentTimeMillis();
+		System.out.println(string + (t-off));
+		return t;
 	}
 }

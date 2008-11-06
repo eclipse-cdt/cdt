@@ -147,7 +147,7 @@ public class LanguageExtensionsTest extends AST2BaseTest {
     
 	protected IASTTranslationUnit parseWithSizeofExtension(String code, ICPPParserExtensionConfiguration ext) throws Exception {
 		IScanner scanner= createScanner(new CodeReader(code.toCharArray()), ParserLanguage.CPP, 
-				ParserMode.COMPLETE_PARSE, new ScannerInfo(), true);
+				ParserMode.COMPLETE_PARSE, new ScannerInfo());
 		GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, ext);
 		parser.setSupportExtendedSizeofOperator(true);
 		IASTTranslationUnit tu = parse(parser);
@@ -156,7 +156,7 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 
 	protected IASTTranslationUnit parseWithSizeofExtension(String code, ICParserExtensionConfiguration ext) throws Exception {
 		IScanner scanner= createScanner(new CodeReader(code.toCharArray()), ParserLanguage.C, 
-				ParserMode.COMPLETE_PARSE, new ScannerInfo(), true);
+				ParserMode.COMPLETE_PARSE, new ScannerInfo());
 		GNUCSourceParser parser= new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, ext);
 		parser.setSupportExtendedSizeofOperator(true);
 		IASTTranslationUnit tu = parse(parser);
@@ -191,7 +191,7 @@ public class LanguageExtensionsTest extends AST2BaseTest {
     
 	protected IASTTranslationUnit parseWithAsmExtension(String code, ICPPParserExtensionConfiguration ext) throws Exception {
 		IScanner scanner= createScanner(new CodeReader(code.toCharArray()), ParserLanguage.CPP, 
-				ParserMode.COMPLETE_PARSE, new ScannerInfo(), true);
+				ParserMode.COMPLETE_PARSE, new ScannerInfo());
 		GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, ext);
 		parser.setSupportFunctionStyleAssembler(true);
 		IASTTranslationUnit tu = parse(parser);
@@ -200,7 +200,7 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 
 	protected IASTTranslationUnit parseWithAsmExtension(String code, ICParserExtensionConfiguration ext) throws Exception {
 		IScanner scanner= createScanner(new CodeReader(code.toCharArray()), ParserLanguage.C, 
-				ParserMode.COMPLETE_PARSE, new ScannerInfo(), true);
+				ParserMode.COMPLETE_PARSE, new ScannerInfo());
 		GNUCSourceParser parser= new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, ext);
 		parser.setSupportFunctionStyleAssembler(true);
 		IASTTranslationUnit tu = parse(parser);

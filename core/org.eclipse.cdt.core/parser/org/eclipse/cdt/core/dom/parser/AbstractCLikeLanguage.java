@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.util.ICancelable;
@@ -181,7 +182,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		else
 			mode= ParserMode.COMPLETE_PARSE;
 
-		return createParser(scanner, mode, log, index);
+		ISourceCodeParser parser= createParser(scanner, mode, log, index);
+		if ((options & 0x10 /*OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS*/) != 0) {
+			if (parser instanceof AbstractGNUSourceCodeParser) {
+				((AbstractGNUSourceCodeParser) parser).setSkipTrivialExpressionsInAggregateInitializers(true);
+			}
+		}
+		return parser;
 	}
 	
 	

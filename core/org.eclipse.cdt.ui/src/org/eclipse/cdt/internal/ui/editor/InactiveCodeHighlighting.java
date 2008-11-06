@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 						IStatus result = Status.OK_STATUS;
 						if (fTranslationUnit != null) {
 							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor, new ASTCache.ASTRunnable() {
+							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
 								public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 									reconciled(ast, true, monitor);
 									return Status.OK_STATUS;

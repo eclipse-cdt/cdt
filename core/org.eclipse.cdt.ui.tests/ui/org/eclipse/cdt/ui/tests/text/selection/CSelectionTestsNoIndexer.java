@@ -44,19 +44,20 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
 /**
@@ -275,10 +276,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
             assertFalse(true);
         }
         
-        if (part instanceof AbstractTextEditor) {
-            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
+        if (part instanceof CEditor) {
+        	CEditor editor= (CEditor) part;
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
+            editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
             action.runSync();
         
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
@@ -287,8 +290,8 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
             final IASTName[] result= {null};
             if (sel instanceof ITextSelection) {
             	final ITextSelection textSel = (ITextSelection)sel;
-            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+            	ITranslationUnit tu = (ITranslationUnit) editor.getInputCElement();
+        		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
         				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());
         				return Status.OK_STATUS;

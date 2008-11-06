@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.typehierarchy;
 
 import junit.framework.Test;
@@ -17,9 +16,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -58,8 +54,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "class.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -154,8 +150,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "classmem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -251,8 +247,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "multi.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -362,8 +358,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "multimem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -473,8 +469,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "diamond.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -584,8 +580,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "diamondmem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -689,8 +685,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "viaTypedef.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		
@@ -783,8 +779,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "viaTypedefmem.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item1, item2, item3, item4;
 		

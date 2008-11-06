@@ -874,6 +874,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	declSpecifier= e.declSpec;
         	declarator= e.declarator;
         	backup(e.currToken);
+        } catch (FoundAggregateInitializer lie) {
+            // type-ids have no initializers
+        	return null;
         } catch (BacktrackException bt) {
         	return null;
         }
@@ -2245,23 +2248,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         final int firstOffset= LA(1).getOffset();
         int endOffset= firstOffset;
+        boolean insertSemi= false;
+        boolean parseDtors= true;
 
-        ICPPASTDeclSpecifier declSpec;
+        ICPPASTDeclSpecifier declSpec= null;
         IASTDeclarator dtor= null;
         IToken markBeforDtor= null;
         try {
             declSpec = declSpecifierSeq(declOption);
-            switch(LTcatchEOF(1)) {
+            final int lt1= LTcatchEOF(1);
+            switch(lt1) {
             case 0: // eof
+            case IToken.tEOC:
             case IToken.tSEMI:
-            	if (!validWithoutDtor(declOption, declSpec)) {
+            	if (lt1 != IToken.tEOC && !validWithoutDtor(declOption, declSpec)) 
                 	throwBacktrack(LA(1));
-            	}
+            	
+            	parseDtors= false;
+            	insertSemi= lt1==0;
+            	if (lt1 == IToken.tSEMI)
+            		endOffset= consume().getEndOffset();
+            	else 
+            		endOffset= calculateEndOffset(declSpec);
             	break;
+
             case IToken.tCOMMA:
             	throwBacktrack(LA(1));
-            	break;
-            case IToken.tEOC:
             	break;
             default:
             	markBeforDtor= mark();
@@ -2278,6 +2290,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	}
             	break;
             }
+        } catch (FoundAggregateInitializer lie) {
+        	if (declSpec == null)
+        		declSpec= (ICPPASTDeclSpecifier) lie.fDeclSpec;
+        	// scalability: don't keep references to tokens, initializer may be large
+        	declarationMark= null;
+        	markBeforDtor= null;
+        	dtor= addInitializer(lie);
         } catch (FoundDeclaratorException e) {
         	declSpec= (ICPPASTDeclSpecifier) e.declSpec;
         	dtor= e.declarator;
@@ -2293,55 +2312,64 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	throw e;
         }
         
-        IASTDeclarator[] declarators= {dtor};
-        while (LTcatchEOF(1) == IToken.tCOMMA) {
-        	consume();
-        	declarators= (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, initDeclarator(declSpec, declOption));
-        }
-
-        declarators= (IASTDeclarator[]) ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
-
-        boolean insertSemi= false;
-        final int lt1= LTcatchEOF(1);
-        switch (lt1) {
-        case IToken.tEOC:
-        	endOffset= figureEndOffset(declSpec, declarators);
-            break;
-        case IToken.tSEMI:
-            endOffset= consume().getEndOffset();
-            break;
-        case IToken.t_try:
-            consume();
-            return functionDefinition(firstOffset, declSpec, declarators, true);
-        case IToken.tCOLON:
-        case IToken.tLBRACE:
-            return functionDefinition(firstOffset, declSpec, declarators, false);
-        default:
-        	if (declOption != DeclarationOptions.LOCAL) {
-        		insertSemi= true;
-        		if (validWithoutDtor(declOption, declSpec)) {
-        			// class definition without semicolon
-        			if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
-        				if (markBeforDtor != null) {
-        					backup(markBeforDtor);
+        IASTDeclarator[] declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        if (parseDtors) {
+        	declarators= new IASTDeclarator[]{dtor};
+        	while (LTcatchEOF(1) == IToken.tCOMMA) {
+        		consume();
+        		try {
+        			dtor= initDeclarator(declSpec, declOption);
+        		} catch (FoundAggregateInitializer e) {
+        			// scalability: don't keep references to tokens, initializer may be large
+        			declarationMark= null;
+        			markBeforDtor= null;
+        			dtor= addInitializer(e);
+        		}
+        		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
+        	}
+        	declarators = (IASTDeclarator[]) ArrayUtil.removeNulls(IASTDeclarator.class, declarators);
+        
+        	final int lt1= LTcatchEOF(1);
+        	switch (lt1) {
+        	case IToken.tEOC:
+        		endOffset= figureEndOffset(declSpec, declarators);
+        		break;
+        	case IToken.tSEMI:
+        		endOffset= consume().getEndOffset();
+        		break;
+        	case IToken.t_try:
+        		consume();
+        		return functionDefinition(firstOffset, declSpec, declarators, true);
+        	case IToken.tCOLON:
+        	case IToken.tLBRACE:
+        		return functionDefinition(firstOffset, declSpec, declarators, false);
+        	default:
+        		if (declOption != DeclarationOptions.LOCAL) {
+        			insertSemi= true;
+        			if (validWithoutDtor(declOption, declSpec)) {
+        				// class definition without semicolon
+        				if (markBeforDtor == null || !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
+        					if (markBeforDtor != null) {
+        						backup(markBeforDtor);
+        					}
+        					declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        					endOffset= calculateEndOffset(declSpec);
+        					break;
         				}
-        				declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        				endOffset= calculateEndOffset(declSpec);
+        			} 
+        			endOffset= figureEndOffset(declSpec, declarators);
+        			if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
+        				insertSemi= true;
         				break;
         			}
-        		} 
-        		endOffset= figureEndOffset(declSpec, declarators);
-        		if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
-        			insertSemi= true;
-        			break;
+        			if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
+        				break;
+        			}
         		}
-        		if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
-        			break;
-        		}
+        		throwBacktrack(LA(1));
         	}
-        	throwBacktrack(LA(1));
         }
-
+        
         // no function body
         IASTSimpleDeclaration simpleDeclaration= createSimpleDeclaration();
         simpleDeclaration.setDeclSpecifier(declSpec);
@@ -2522,7 +2550,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
 		}
 		
-        IASTDeclSpecifier declSpec;
+        IASTDeclSpecifier declSpec= null;
         IASTDeclarator declarator;
         try {
         	declSpec= declSpecifierSeq(DeclarationOptions.PARAMETER);
@@ -2531,6 +2559,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	declSpec= e.declSpec;
         	declarator= e.declarator;
         	backup(e.currToken);
+        } catch (FoundAggregateInitializer lie) {
+        	if (declSpec == null)
+        		declSpec= lie.fDeclSpec;
+        	declarator= addInitializer(lie);
         }
 
         final ICPPASTParameterDeclaration parm = createParameterDeclaration();
@@ -2565,10 +2597,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * 		("typename")? name | 
      * 		{ "class" | "struct" | "union" } classSpecifier | 
      * 		{"enum"} enumSpecifier
+     * @throws FoundAggregateInitializer 
      */
     @Override
 	protected ICPPASTDeclSpecifier declSpecifierSeq(final DeclarationOptions option)
-    		throws BacktrackException, EndOfFileException, FoundDeclaratorException {
+    		throws BacktrackException, EndOfFileException, FoundDeclaratorException, FoundAggregateInitializer {
         int storageClass = IASTDeclSpecifier.sc_unspecified;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
         int options= 0;
@@ -2755,7 +2788,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 	if (option.fAllowEmptySpecifier && LT(1) != IToken.tCOMPLETION) {
                 		lookAheadForDeclarator(option);
                 	}
-                } catch (FoundDeclaratorException e) {
+                } catch (FoundAggregateInitializer e) {
+                	e.fDeclSpec= createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
+                	throw e;
+                }catch (FoundDeclaratorException e) {
                 	if (e.currToken.getType() == IToken.tEOC || option == DeclarationOptions.FUNCTION_STYLE_ASM 
                 			|| canBeConstructorDestructorOrConversion(option, storageClass, options, e.declarator)) {
                 		e.declSpec= createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
@@ -3053,12 +3089,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTDeclarator initDeclarator(DeclarationOptions option) throws EndOfFileException, BacktrackException {
+	protected IASTDeclarator initDeclarator(DeclarationOptions option) 
+    		throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
     	// called from the lookahead, only.
     	return initDeclarator(DtorStrategy.PREFER_FUNCTION, option);
     }
     
-	protected IASTDeclarator initDeclarator(IASTDeclSpecifier declspec, DeclarationOptions option) throws EndOfFileException, BacktrackException {
+	protected IASTDeclarator initDeclarator(IASTDeclSpecifier declspec, DeclarationOptions option) 
+			throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
     	final IToken mark= mark();
     	IASTDeclarator dtor1= null;
     	IToken end1= null;
@@ -3083,7 +3121,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		}
     	} catch (BacktrackException e) {
     		bt= e;
-    	}
+    	} 
     	
     	if (!option.fAllowConstructorInitializer || !canHaveConstructorInitializer(declspec)) {
     		if (bt != null)
@@ -3103,7 +3141,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     			return dtor1;
     		}
     		throw e;
-    	}
+    	} 
     	
 		// we have an ambiguity
 		if (end1 != null && LA(1).getEndOffset() != end1.getEndOffset()) {
@@ -3151,11 +3189,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
+	 * @throws FoundAggregateInitializer 
      */
     protected IASTDeclarator initDeclarator(DtorStrategy strategy, DeclarationOptions option)
-            throws EndOfFileException, BacktrackException {
+            throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
     	final IASTDeclarator dtor= declarator(strategy, option);
         if (option.fAllowInitializer) {
+            if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tLBRACE) 
+            	throw new FoundAggregateInitializer(dtor);
+
         	IASTInitializer initializer= optionalCPPInitializer(dtor);
         	if (initializer != null) {
         		dtor.setInitializer(initializer);
@@ -3163,6 +3205,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
         }
         return dtor;
+    }
+    
+    @Override
+	protected IASTDeclarator addInitializer(FoundAggregateInitializer e) throws EndOfFileException {
+	    final IASTDeclarator d = e.fDeclarator;
+        try {
+			IASTInitializer i = optionalCPPInitializer(e.fDeclarator);
+			if (i != null) {
+				d.setInitializer(i);
+			    ((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
+			}
+		} catch (BacktrackException e1) {
+			// mstodo add problem node
+		}
+		return d;
     }
 
     protected IASTInitializer optionalCPPInitializer(IASTDeclarator d)
@@ -3172,7 +3229,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) == IToken.tASSIGN) {
             consume();
             try {
-                return initializerClause();
+                return initializerClause(false);
             } catch (EndOfFileException eof) {
                 failParse();
                 throw eof;
@@ -3207,7 +3264,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 
-    protected IASTInitializer initializerClause() throws EndOfFileException, BacktrackException {
+    protected IASTInitializer initializerClause(boolean inAggregateInitializer) throws EndOfFileException, BacktrackException {
         if (LT(1) == IToken.tLBRACE) {
             int startingOffset = consume().getOffset();
 
@@ -3226,7 +3283,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (LT(1) == IToken.tRBRACE)
                     break;
 
-                IASTInitializer clause = initializerClause();
+                IASTInitializer clause = initializerClause(true);
                 if (clause != null) {
                     result.addInitializer(clause);
                 }
@@ -3243,6 +3300,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         // try this now instead
         // assignmentExpression
         IASTExpression assignmentExpression = assignmentExpression();
+        if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
+        	if (!NAME_CHECKER.containsName(assignmentExpression))
+        		return null;
+        }
+
         IASTInitializerExpression result = createInitializerExpression();
         ((ASTNode) result).setOffsetAndLength(((ASTNode) assignmentExpression));
         result.setExpression(assignmentExpression);
@@ -4022,7 +4084,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private IASTSimpleDeclaration simpleSingleDeclaration(DeclarationOptions options) throws BacktrackException,	EndOfFileException {
         final int startOffset= LA(1).getOffset();
-    	IASTDeclSpecifier declSpec;
+    	IASTDeclSpecifier declSpec= null;
     	IASTDeclarator declarator;
 
     	try {
@@ -4032,6 +4094,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		declSpec= e.declSpec;
     		declarator= e.declarator;
     		backup(e.currToken);
+        } catch (FoundAggregateInitializer lie) {
+        	if (declSpec == null)
+        		declSpec= lie.fDeclSpec;
+        	declarator= addInitializer(lie);
     	}
 
     	final int endOffset = figureEndOffset(declSpec, declarator);

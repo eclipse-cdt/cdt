@@ -92,8 +92,10 @@ public class HyperlinkTest extends TestCase {
 		assertNotNull(file);
 		assertTrue(file.exists());
 		editor = (CEditor)EditorTestHelper.openInEditor(file, true);
+		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(editor);
 		CProjectHelper.delete(project);

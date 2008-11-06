@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -19,7 +18,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 
@@ -64,10 +62,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source = content[1].toString();
 		IFile headerFile= createFile(getProject(), "testMethods.h", header);
 		IFile sourceFile= createFile(getProject(), "testMethods.cpp", source);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
-		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
+		CEditor editor= openEditor(sourceFile);
 		editor.selectAndReveal(source.indexOf("method"), 2);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -138,7 +135,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile1);
+		CEditor editor= openEditor(sourceFile1);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
@@ -190,7 +187,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
-		CEditor editor= openFile(sourceFile1);
+		CEditor editor= openEditor(sourceFile1);
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
 		openCallHierarchy(editor);
 		TreeViewer tv = getCHTreeViewer();
@@ -248,7 +245,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile2);
+		CEditor editor= openEditor(sourceFile2);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source2.indexOf("main"), 2);
@@ -302,8 +299,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String cppSource = content[1].toString();
 		IFile cFile= createFile(getProject(), "s.c", cSource);
 		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, cFile);
+		CEditor editor= openEditor(cFile);
 		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		
@@ -320,7 +316,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(node, 1, null);
 		
 
-		editor= (CEditor) IDE.openEditor(page, cppFile);
+		editor= openEditor(cppFile);
 		editor.selectAndReveal(cppSource.indexOf("cppfunc"), 2);
 		openCallHierarchy(editor, false);
 		tree = getCHTreeViewer().getTree();
@@ -349,7 +345,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile cFile= createFile(getProject(), "s.c", cSource);
 		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, cFile);
+		CEditor editor= openEditor(cFile);
 		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		
@@ -366,7 +362,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(node, 1, null);
 		
 
-		editor= (CEditor) IDE.openEditor(page, cppFile);
+		editor= openEditor(cppFile);
 		editor.selectAndReveal(cppSource.indexOf("cppfunc"), 2);
 		openCallHierarchy(editor, true);
 		tree = getCHTreeViewer().getTree();

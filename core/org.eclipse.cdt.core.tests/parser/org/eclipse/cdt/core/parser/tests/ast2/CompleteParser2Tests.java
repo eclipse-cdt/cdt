@@ -180,7 +180,7 @@ public class CompleteParser2Tests extends BaseTestCase {
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         ISourceCodeParser parser2 = null;
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo, false);
+        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (gcc)

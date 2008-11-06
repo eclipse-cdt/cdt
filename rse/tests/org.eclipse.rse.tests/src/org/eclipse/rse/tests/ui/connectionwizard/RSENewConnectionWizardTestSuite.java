@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Uwe Stieber (Wind River) - initial API and implementation.
  *******************************************************************************/
 package org.eclipse.rse.tests.ui.connectionwizard;
@@ -38,13 +38,14 @@ public class RSENewConnectionWizardTestSuite extends DelegatingTestSuiteHolder {
 	 * @return The test suite instance.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite("RSE Registries Test Suite"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("RSE New Connection Wizard Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
+		//Attention: MANUAL testcase below! Not for unattended nightly builds!
 		suite.addTestSuite(RSENewConnectionWizardTestCase.class);
-		
+
 		return suite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
 	 */

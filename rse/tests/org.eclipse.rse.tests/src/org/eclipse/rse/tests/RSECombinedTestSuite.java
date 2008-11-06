@@ -58,6 +58,8 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 		suite.addTest(org.eclipse.rse.tests.subsystems.testsubsystem.RSETestSubsystemTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.ui.mnemonics.MnemonicsTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.ui.preferences.PreferencesTestSuite.suite());
+		// //Manual test below -- cannot be run in unattended builds
+		// suite.addTest(org.eclipse.rse.tests.ui.connectionwizard.RSENewConnectionWizardTestSuite.suite());
 		return suite;
 	}
 

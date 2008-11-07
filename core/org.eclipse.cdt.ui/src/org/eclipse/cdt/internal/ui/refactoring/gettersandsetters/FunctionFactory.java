@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.parser.Keywords;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
@@ -89,7 +90,7 @@ public class FunctionFactory {
 		CPPASTBinaryExpression binExpr = new CPPASTBinaryExpression();
 		CPPASTFieldReference fieldRef = new CPPASTFieldReference();
 		CPPASTLiteralExpression litExpr = new CPPASTLiteralExpression();
-		litExpr.setValue("this"); //$NON-NLS-1$
+		litExpr.setValue(Keywords.cTHIS); 
 		fieldRef.setFieldOwner(litExpr);
 		fieldRef.setFieldName(fieldDeclaration.getDeclarators()[0].getName());
 		fieldRef.setIsPointerDereference(true);

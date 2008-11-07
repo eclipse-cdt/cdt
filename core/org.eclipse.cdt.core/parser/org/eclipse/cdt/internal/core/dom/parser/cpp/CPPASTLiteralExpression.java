@@ -6,30 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-
 /**
- * @author jcamelon
+ * Represents a c++ literal.
  */
 public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
 
     private int kind;
-    private String value = "";  //$NON-NLS-1$
+    private char[] value = CharArrayUtils.EMPTY;
 
-    
     public CPPASTLiteralExpression() {
 	}
 
-	public CPPASTLiteralExpression(int kind, String value) {
+	public CPPASTLiteralExpression(int kind, char[] value) {
 		this.kind = kind;
 		this.value = value;
 	}
@@ -39,16 +39,20 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     }
 
     public void setKind(int value) {
-        this.kind = value;
+        kind = value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public char[] getValue() {
+    	return value;
+    }
+
+    public void setValue(char[] value) {
+    	this.value= value;
     }
     
     @Override
 	public String toString() {
-        return value;
+        return new String(value);
     }
 
     @Override
@@ -74,4 +78,20 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	return CPPVisitor.getExpressionType(this);
     }
     
+    /**
+     * @deprecated, use {@link #setValue(char[])}, instead.
+     */
+    @Deprecated
+	public void setValue(String value) {
+        this.value = value.toCharArray();
+    }
+    
+
+    /**
+     * @deprecated use {@link #CPPASTLiteralExpression(int, char[])}, instead.
+     */
+	@Deprecated
+	public CPPASTLiteralExpression(int kind, String value) {
+		this(kind, value.toCharArray());
+	}
 }

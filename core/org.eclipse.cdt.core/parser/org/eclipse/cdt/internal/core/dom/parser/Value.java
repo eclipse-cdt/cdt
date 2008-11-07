@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -229,19 +228,19 @@ public class Value implements IValue {
 		if (e instanceof IASTLiteralExpression) {
 			IASTLiteralExpression litEx= (IASTLiteralExpression) e;
 			switch (litEx.getKind()) {
-			case ICPPASTLiteralExpression.lk_false:
+			case IASTLiteralExpression.lk_false:
 				return "0";
-			case ICPPASTLiteralExpression.lk_true:
+			case IASTLiteralExpression.lk_true:
 				return "1";
 			case IASTLiteralExpression.lk_integer_constant:
 				try {
-					return ExpressionEvaluator.getNumber(e.toString().toCharArray());
+					return ExpressionEvaluator.getNumber(litEx.getValue());
 				} catch (EvalException e1) {
 					throw UNKNOWN_EX;
 				}
 			case IASTLiteralExpression.lk_char_constant:
 				try {
-					final char[] image= e.toString().toCharArray();
+					final char[] image= litEx.getValue();
 					if (image.length > 1)
 						if (image[0] == 'L') 
 							return ExpressionEvaluator.getChar(image, 2);

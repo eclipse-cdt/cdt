@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -328,12 +327,12 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		case IASTLiteralExpression.lk_string_literal:
 			declSpec.setType(ICPPASTSimpleDeclSpecifier.t_wchar_t);
 			break;
-		case ICPPASTLiteralExpression.lk_false: 
+		case IASTLiteralExpression.lk_false: 
 			//Like lk_true a boolean type
-		case ICPPASTLiteralExpression.lk_true:
+		case IASTLiteralExpression.lk_true:
 			declSpec.setType(ICPPASTSimpleDeclSpecifier.t_bool);
 			break;
-		case ICPPASTLiteralExpression.lk_this:
+		case IASTLiteralExpression.lk_this:
 			break;
 		}
 
@@ -348,7 +347,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			IASTUnaryExpression unary = (IASTUnaryExpression) target.getParent();
 			init.setExpression(unary);
 		} else {
-			CPPASTLiteralExpression expression = new CPPASTLiteralExpression(target.getKind(), target.toString());
+			CPPASTLiteralExpression expression = new CPPASTLiteralExpression(target.getKind(), target.getValue());
 			init.setExpression(expression);
 		}
 		decl.setInitializer(init);

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -61,13 +60,14 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
  * 
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
+	final static char[] ZERO= {'0'};
 
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound,
 			List<IASTNode> list, ASTRewrite rewrite, TextEditGroup group) {
 
 		CPPASTReturnStatement statement = new CPPASTReturnStatement();
-		IASTExpression nullReturnExp = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "0"); //$NON-NLS-1$
+		IASTExpression nullReturnExp = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO); 
 		statement.setReturnValue(nullReturnExp);
 		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
 		
@@ -112,9 +112,9 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
               return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_int);
           case IASTLiteralExpression.lk_string_literal:
               return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_wchar_t);
-          case ICPPASTLiteralExpression.lk_false: 
+          case IASTLiteralExpression.lk_false: 
               //Like lk_true a boolean type
-          case ICPPASTLiteralExpression.lk_true:
+          case IASTLiteralExpression.lk_true:
               return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_bool);
           default:
               return null;

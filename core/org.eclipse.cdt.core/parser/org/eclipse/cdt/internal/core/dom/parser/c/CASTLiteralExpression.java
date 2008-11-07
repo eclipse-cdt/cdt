@@ -6,30 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author jcamelon
+ * Represents a literal
  */
 public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpression {
 
     private int kind;
-    private String value = ""; //$NON-NLS-1$
+    private char[] value = CharArrayUtils.EMPTY;
 
-    
-    
     public CASTLiteralExpression() {
 	}
 
-	public CASTLiteralExpression(int kind, String value) {
+	public CASTLiteralExpression(int kind, char[] value) {
 		this.kind = kind;
 		this.value = value;
 	}
@@ -42,13 +42,17 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
         kind = value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public char[] getValue() {
+    	return value;
+    }
+
+    public void setValue(char[] value) {
+    	this.value= value;
     }
     
     @Override
 	public String toString() {
-        return value;
+        return new String(value);
     }
 
     @Override
@@ -74,4 +78,19 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
     	return CVisitor.getExpressionType(this);
     }
     
+    /**
+     * @deprecated, use {@link #setValue(char[])}, instead.
+     */
+    @Deprecated
+	public void setValue(String value) {
+        this.value = value.toCharArray();
+    }
+    
+    /**
+     * @deprecated use {@link #CASTLiteralExpression(int, char[])}, instead.
+     */
+	@Deprecated
+	public CASTLiteralExpression(int kind, String value) {
+		this(kind, value.toCharArray());
+	}
 }

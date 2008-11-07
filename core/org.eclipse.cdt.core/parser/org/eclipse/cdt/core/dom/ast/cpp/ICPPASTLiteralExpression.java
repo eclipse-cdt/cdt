@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -15,24 +15,24 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 /**
  * C++ adds additional literal types to primary expression.
  * 
- * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTLiteralExpression extends IASTLiteralExpression {
 
 	/**
 	 * <code>lk_this</code> represents the 'this' keyword.
 	 */
-	public static final int lk_this = IASTLiteralExpression.lk_last + 1;
+	public static final int lk_this = IASTLiteralExpression.lk_this;
 
 	/**
 	 * <code>lk_true</code> represents the 'true' keyword.
 	 */
-	public static final int lk_true = IASTLiteralExpression.lk_last + 2;
+	public static final int lk_true = IASTLiteralExpression.lk_true;
 
 	/**
 	 * <code>lk_false</code> represents the 'false' keyword.
 	 */
-	public static final int lk_false = IASTLiteralExpression.lk_last + 3;
+	public static final int lk_false = IASTLiteralExpression.lk_false;
 
 	/**
 	 * <code>lk_last</code> is maintained for future subinterfaces.

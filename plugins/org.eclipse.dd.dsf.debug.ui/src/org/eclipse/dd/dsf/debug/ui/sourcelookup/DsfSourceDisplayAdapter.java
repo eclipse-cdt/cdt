@@ -73,12 +73,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -199,7 +199,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                 	URI uriLocation = ((ITranslationUnit)sourceElement).getLocationURI();
             		IFileStore fileStore = EFS.getStore(uriLocation);
             		editorInput = new FileStoreEditorInput(fileStore);
-            		editorId = getEditorIdForFilename(uriLocation.getPath());
+            		editorId = getEditorIdForFilename(fileStore.getName());
             	} catch (CoreException e) {
                     editorInput = new CommonSourceNotFoundEditorInput(dmc);
                     editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
@@ -208,7 +208,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             	File file = ((LocalFileStorage)sourceElement).getFile();
             	IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(file);
         		editorInput = new FileStoreEditorInput(fileStore);
-        		editorId = getEditorIdForFilename(file.getPath());
+        		editorId = getEditorIdForFilename(file.getName());
             }
             result.setEditorInput(editorInput);
             result.setEditorId(editorId);
@@ -218,13 +218,13 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         }
         
         private String getEditorIdForFilename(String filename) {
-            IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-            IEditorDescriptor descriptor = registry.getDefaultEditor(filename);
-            if (descriptor == null) {
-                return "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
-            } 
-                
-            return descriptor.getId();
+			try {
+	            IEditorDescriptor descriptor= IDE.getEditorDescriptor(filename);
+	            return descriptor.getId();
+			} catch (PartInitException exc) {
+				DsfDebugUIPlugin.log(exc);
+			}
+			return "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
         }
 	}
 
@@ -680,11 +680,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         fRunningLookupJob = new LookupJob(frameData, page, eventTriggered);
         fRunningLookupJob.schedule();
     }
-    
-    // To be called only on dispatch thread. 
-	private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page) {
-		startDisplayJob(lookupResult, frameData, page, false);
-	}
 
 	// To be called only on dispatch thread. 
     private void startDisplayJob(SourceLookupResult lookupResult, FrameData frameData, IWorkbenchPage page, boolean eventTriggered) {

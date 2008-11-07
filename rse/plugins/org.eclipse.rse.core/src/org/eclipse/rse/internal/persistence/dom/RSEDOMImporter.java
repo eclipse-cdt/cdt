@@ -23,7 +23,7 @@
  * David Dykstal (IBM) - [232126] retrieve persisted filter type attribute
  * David Dykstal (IBM) - [233876] filters lost after restart
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
- * David McKniht (IBM) - [245198] [dstore] ServerLauncherProperties not restored
+ * David McKnight (IBM) - [245198] [dstore] ServerLauncherProperties not restored
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.managedbuilder.xlc.ui.preferences;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -35,6 +36,8 @@ public class XLCompilerPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 
+	private String originalMessage;
+
 	public XLCompilerPreferencePage() {
 		super(FLAT);
 		setPreferenceStore(XLCUIPlugin.getDefault().getPreferenceStore());
@@ -48,8 +51,36 @@ public class XLCompilerPreferencePage
 	 * restore itself.
 	 */
 	public void createFieldEditors() {
-		addField(new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, 
-				Messages.XLCompilerPreferencePage_1, getFieldEditorParent()));
+
+		DirectoryFieldEditor pathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, Messages.XLCompilerPreferencePage_1, getFieldEditorParent()) 
+		{
+			protected boolean doCheckState() 
+			{
+				// always return true, as we don't want to fail cases when compiler is installed remotely
+				// just warn user
+				if (getPage() != null)
+				{
+					if (!super.doCheckState())
+					{
+						getPage().setMessage(Messages.XLCompilerPreferencePage_3, IMessageProvider.WARNING);
+					}
+					else
+					{
+						getPage().setMessage(originalMessage, 0);
+					}
+				}
+				
+				return true;
+			}
+
+			protected boolean checkState() 
+			{
+				return doCheckState();
+			}
+			
+		};
+
+		addField(pathEditor);
 		
 		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, Messages.XLCompiler_v8},
 									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, Messages.XLCompiler_v9}};
@@ -62,7 +93,9 @@ public class XLCompilerPreferencePage
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {
+	public void init(IWorkbench workbench) 
+	{
+		originalMessage = getMessage();
 	}
 	
 }

@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String XLCompilerPreferencePage_0;
 	public static String XLCompilerPreferencePage_1;
 	public static String XLCompilerPreferencePage_2;
+	public static String XLCompilerPreferencePage_3;
 	public static String XLCompilerPropertyPage_0;
 	public static String XLCompilerPropertyPage_1;
 	public static String XLCompilerPropertyPage_2;

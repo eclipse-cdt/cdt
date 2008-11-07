@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
@@ -340,7 +341,7 @@ public class Binary extends Openable implements IBinary {
 				if (wkspFile != null)
 					tu = new TranslationUnit(this, wkspFile, id);
 				else
-					tu = new ExternalTranslationUnit(this, file.toURI(), id);
+					tu = new ExternalTranslationUnit(this, Path.fromOSString(filename), id);
 
 				if (! info.includesChild(tu))
 					info.addChild(tu);					

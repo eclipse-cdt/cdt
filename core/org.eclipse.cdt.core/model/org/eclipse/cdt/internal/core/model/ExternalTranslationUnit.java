@@ -16,11 +16,21 @@ package org.eclipse.cdt.internal.core.model;
 import java.net.URI;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * ExternalTranslationUnit
  */
 public class ExternalTranslationUnit extends TranslationUnit {
+
+	public ExternalTranslationUnit(ICElement parent, java.io.File file, String contentTypeID) {
+		this(parent, URIUtil.toURI(file.getAbsolutePath()), contentTypeID);
+	}
+
+	public ExternalTranslationUnit(ICElement parent, IPath location, String contentTypeID) {
+		super(parent, URIUtil.toURI(location), contentTypeID);
+	}
 
 	public ExternalTranslationUnit(ICElement parent, URI uri, String contentTypeID) {
 		super(parent, uri, contentTypeID);

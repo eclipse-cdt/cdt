@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,8 +99,9 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 						{
 							String id;
 							try {
-								id = CoreModel.getRegistedContentTypeId(project.getProject(), Path.fromOSString(file.getCanonicalPath()).lastSegment());
-								return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, file.toURI(), id) };
+								final IPath location= Path.fromOSString(file.getCanonicalPath());
+								id = CoreModel.getRegistedContentTypeId(project.getProject(), location.lastSegment());
+								return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, location, id) };
 							} catch (IOException e) { e.printStackTrace(); }
 						}
 					}									
@@ -147,6 +148,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals( Object o ) {
 		if ( !(o instanceof MapEntrySourceContainer ) )
 			return false;

@@ -87,6 +87,7 @@ public class IndexBugsTests extends BaseTestCase {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
+		waitForIndexer();
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
@@ -1370,9 +1371,8 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/header.h", "#define ID three\n");
 		TestSourceReader.createFile(fCProject.getProject(), "f1/g/source.cpp", contents + "int CONCAT(one, ID);\n");
 		TestSourceReader.createFile(fCProject.getProject(), "f2/g/source.cpp", contents + "int CONCAT(two, ID);\n");
-		IFile f= TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/source.cpp", contents + "int CONCAT(three, ID);\n");
-		waitUntilFileIsIndexed(f, 4000);
-		indexManager.reindex(fCProject);
+		TestSourceReader.createFile(fCProject.getProject(), "f1/g/h/source.cpp", contents + "int CONCAT(three, ID);\n");
+		
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {

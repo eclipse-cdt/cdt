@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.Arrays;
@@ -146,6 +146,9 @@ public class PDOMSearchTest extends PDOMTestBase {
 		// methods
 		methods = class2.getDeclaredMethods();
 		assertEquals(2, methods.length);
+		if (methods[0].getName().equals("~Class1")) {
+			IBinding h= methods[1]; methods[1]= methods[0]; methods[0]=h;
+		}
 		assertEquals("Class1", methods[0].getName());
 		assertEquals("~Class1", methods[1].getName());
 

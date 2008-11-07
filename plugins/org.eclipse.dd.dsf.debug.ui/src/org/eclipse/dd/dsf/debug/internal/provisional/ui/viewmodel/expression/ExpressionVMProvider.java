@@ -73,8 +73,10 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
 
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            if (event.getProperty().equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
-                setDelayEventHandleForViewUpdate((Boolean)event.getNewValue());
+            String property = event.getProperty();
+			if (property.equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
+                IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
+                setDelayEventHandleForViewUpdate(store.getBoolean(property));
             }
         }
     };

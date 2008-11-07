@@ -21,26 +21,24 @@
 
 package org.eclipse.rse.internal.ui.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
-import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -96,73 +94,66 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 			// to collapse 
 			sr.setHostOffline(conn, true);
 			setChecked(true);
-									
-			// online going offline, disconnect all subsystems
-			final ISubSystem[] subsystems = sr.getSubSystems(conn);
-			final List subsystemsDisconnected = new ArrayList();		
 			
-			if (subsystems != null)
-			{
-				ISystemResourceChangeListener listener = new ISystemResourceChangeListener()
-				{			
-					public void systemResourceChanged(
-							ISystemResourceChangeEvent event) {
-						Object src = event.getSource();
-						if (src instanceof SubSystem){
-							if (!((SubSystem)src).isConnected()){
-								if (!subsystemsDisconnected.contains(src))
-									subsystemsDisconnected.add(src);
-								if (subsystemsDisconnected.size() == subsystems.length){
-									sr.removeSystemResourceChangeListener(this);
+			// online going offline, disconnect all subsystems
+			final Display display = Display.getCurrent();
+			String jobName =  NLS.bind(CommonMessages.MSG_DISCONNECT_PROGRESS, conn.getName());
+			Job disconnectJob = new Job(jobName) 
+			{										
+				public IStatus run(IProgressMonitor monitor){
+					ISubSystem[] subsystems = sr.getSubSystems(conn);
+					if (subsystems != null && subsystems.length > 0){
+						boolean cancelled = false;
+						// disconnect each connector service associated with the host
+						for (int i = 0; i < subsystems.length && !cancelled; i++){
+																					
+							final ISubSystem subSystem = subsystems[i];
+							
+							if(subSystem.getSubSystemConfiguration().supportsSubSystemConnect()){
+								if (subSystem.isConnected()){
+									// should always have a connector service
+									IConnectorService cs = subSystem.getConnectorService();
+									if (cs.isConnected()){
+										try {
+											cs.disconnect(monitor);
+										}
+										catch (Exception e){					
+											SystemBasePlugin.logError(e.getMessage());
+										}
+										
+										// failed to disconnect?
+										if (cs.isConnected()){
+											cancelled = true;
+										}								
+										else {
+											cs.reset();
+											display.asyncExec(new Runnable(){
+												public void run(){
+													// this will take care of updating all subsystems
+													sr.connectedStatusChange(subSystem, false, true, false);
+												}
+											});
+										}
+									}
 								}
 							}
-						}
-					}												
-				};
-
-				sr.addSystemResourceChangeListener(listener);
-				
-				boolean cancelled = false;				
-				for (int i = 0; i < subsystems.length && !cancelled; i++)
-				{
-					try 
-					{
-						// disconnect launches a job but doesn't wait for completion
-						subsystems[i].disconnect(false);
+							if (monitor.isCanceled()){
+								cancelled = true;
+							}
+						}					
 						
-					} catch (InterruptedException e) {
-						// user cancelled disconnect
-						cancelled = true;
-					} catch (Exception e) {
-						SystemBasePlugin.logError("SystemWorkOfflineAction.run", e); //$NON-NLS-1$
-					}
-				}
-			}
-			
-			Job job = new Job("Ensure Disconnected") //$NON-NLS-1$
-			{
-				public IStatus run(IProgressMonitor monitor){
-						// while 
-						while (subsystemsDisconnected.size() < subsystems.length){
-							try {
-								Thread.sleep(1000);
-							}
-							catch (InterruptedException e){								
-							}
-						}
-					
-						// check that everything was disconnedted okay and this is not the local connection
-						if(sr.isAnySubSystemConnected(conn) && !conn.getSystemType().isLocal())
-						{
-							// backout changes, likely because user cancelled the disconnect
+						if (cancelled){ // either monitor got cancelled or disconnect failed
 							setChecked(false);
 							sr.setHostOffline(conn, false);
+							return Status.CANCEL_STATUS;
 						}
-						return Status.OK_STATUS;
 					}
-			};
-			job.setSystem(true);
-			job.schedule();
+					return Status.OK_STATUS;
+				}
+				
+				};
+									
+			disconnectJob.schedule();
 		}
 	}
 

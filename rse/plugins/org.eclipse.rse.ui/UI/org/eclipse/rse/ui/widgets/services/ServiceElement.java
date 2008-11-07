@@ -28,9 +28,13 @@ public abstract class ServiceElement
 	protected ServiceElement _parent;
 	protected boolean _isSelected = false;
 	
-	// indicates whether a child of this element has changed
-	// this is used to determine whether or not a commit is required
-	protected boolean _childChanged = false;
+	/**
+	 * Indicates whether a child of this element has changed
+	 * this is used to determine whether or not a commit is required
+	 * 
+	 * @since 3.1
+	 */
+	protected boolean _childChanged = false; 
 	
 	public ServiceElement(IHost host, ServiceElement parent)
 	{

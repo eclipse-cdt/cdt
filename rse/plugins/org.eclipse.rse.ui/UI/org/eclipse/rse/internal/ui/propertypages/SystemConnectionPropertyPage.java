@@ -101,14 +101,20 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 	}
 
 	private boolean hasConnectionChanged(IHost conn){
-		
-		if (!conn.getName().equals(form.getConnectionName()) ||
-				!conn.getHostName().equals(form.getHostName()) ||
-			    !conn.getDescription().equals(form.getConnectionDescription()) ||
-			    !conn.getDefaultUserId().equals(form.getDefaultUserId())){
+		if (!compareStrings(conn.getName(), form.getConnectionName()) ||
+				!compareStrings(conn.getHostName(), form.getHostName()) ||
+			    !compareStrings(conn.getDescription(), form.getConnectionDescription()) ||
+			    !compareStrings(conn.getDefaultUserId(), form.getDefaultUserId())){
 			return true;
 		}
 		return false;	    			  
+	}
+	
+	private boolean compareStrings(String str1, String str2){
+		if (str1 == null || str1.length() == 0)
+			return (str2 == null || str2.length() == 0);
+		else 
+			return (str2 == null || str2.length() == 0) ? false: str1.equals(str2);
 	}
 	
 	/**

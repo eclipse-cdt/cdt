@@ -60,27 +60,26 @@ public class PDOMCPPArgumentList {
 	/**
 	 * Restores an array of template arguments from the database.
 	 */
-	public static void clearArguments(PDOMNode parent, int rec) throws CoreException {
+	public static void clearArguments(PDOMNode parent, final int record) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getPDOM().getDB();
-		final short len= db.getShort(rec);
+		final short len= db.getShort(record);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
-		rec+=2;
+		int p= record+2;
 		for (int i=0; i<len; i++) {
-			rec++;
-			final int typeRec= db.getInt(rec);
+			final int typeRec= db.getInt(p);
 			if (typeRec != 0) {
 				final IType t= (IType) linkage.getNode(typeRec);
 				linkage.deleteType(t, parent.getRecord());
 			}			
-			final int nonTypeValueRec= db.getInt(rec+4);
+			final int nonTypeValueRec= db.getInt(p+4);
 			if (nonTypeValueRec != 0) {
 				db.getString(nonTypeValueRec).delete();
 			} 
-			rec+= 8;
+			p+= 8;
 		}
-		db.free(rec);
+		db.free(record);
 	}
 
 	/**

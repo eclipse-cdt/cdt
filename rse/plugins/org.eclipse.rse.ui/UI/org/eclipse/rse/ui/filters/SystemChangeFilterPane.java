@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [226561] add API markup to javadoc
  * David McKnight(IBM) - [239257] Tooltip for Filter Pool label is incorrect
  * Kevin Doyle (IBM) - [235223] Duplicate Filter Strings
+ * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -674,7 +675,25 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		}
 		
 		try {
-		    mgr.updateSystemFilter(inputFilter, inputFilter.getName(), filterStrings);
+			// before committing, make sure there has been a change
+			boolean hasChanged = false;
+			String[] originalFilterStrings = inputFilter.getFilterStrings();			
+			if (originalFilterStrings.length != filterStrings.length){
+				hasChanged = true;
+			}
+			else {
+				for (int i = 0; i < originalFilterStrings.length && !hasChanged; i++){
+					String originalFilterString = originalFilterStrings[i];
+					String filterString = filterStrings[i];
+					if (!originalFilterString.equals(filterString)){
+						hasChanged = true;
+					}
+				}
+			}
+				
+			if (hasChanged){ // for bug 252708 - don't update unless there really is a change
+				mgr.updateSystemFilter(inputFilter, inputFilter.getName(), filterStrings);
+			}
 		} 
 		catch (SystemMessageException exc) 
 		{

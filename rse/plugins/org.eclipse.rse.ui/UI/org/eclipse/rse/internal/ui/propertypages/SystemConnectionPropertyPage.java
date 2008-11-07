@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [226574] don't show encoding if no subsystem supports it
+ * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -99,6 +100,17 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		return (IHost)getElement();
 	}
 
+	private boolean hasConnectionChanged(IHost conn){
+		
+		if (!conn.getName().equals(form.getConnectionName()) ||
+				!conn.getHostName().equals(form.getHostName()) ||
+			    !conn.getDescription().equals(form.getConnectionDescription()) ||
+			    !conn.getDefaultUserId().equals(form.getDefaultUserId())){
+			return true;
+		}
+		return false;	    			  
+	}
+	
 	/**
 	 * Called by parent when user presses OK
 	 */
@@ -109,20 +121,25 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		{
 		  IHost conn = (IHost)getElement();
 		  ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-		  sr.updateHost( conn, conn.getSystemType(), form.getConnectionName(),form.getHostName(),
-		                       form.getConnectionDescription(), form.getDefaultUserId(),
-		                       form.getUserIdLocation() );
+		  
+		  if (hasConnectionChanged(conn)){			  
+			  sr.updateHost( conn, conn.getSystemType(), form.getConnectionName(),form.getHostName(),
+			                       form.getConnectionDescription(), form.getDefaultUserId(),
+			                       form.getUserIdLocation() );
+		  }
 
 		  // update encoding
 		  String encoding = form.getDefaultEncoding();
 		  boolean isRemoteEncoding = form.isEncodingRemoteDefault();
 		  
+		  String currentEncoding = conn.getDefaultEncoding(false);
+		  		  		  
 		  // user set encoding
-		  if (!isRemoteEncoding) {
+		  if (!isRemoteEncoding && encoding != null && !encoding.equals(currentEncoding)) {
 			  conn.setDefaultEncoding(encoding, false);
 		  }
 		  // remote default encoding
-		  else {
+		  else if (currentEncoding != null){
 			  // remove user encoding from host property first
 			  conn.setDefaultEncoding(null, false);
 			  // remove default remote encoding to indicate to get from remote system

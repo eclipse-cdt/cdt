@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -27,6 +27,10 @@ public abstract class ServiceElement
 	protected IHost _host;
 	protected ServiceElement _parent;
 	protected boolean _isSelected = false;
+	
+	// indicates whether a child of this element has changed
+	// this is used to determine whether or not a commit is required
+	protected boolean _childChanged = false;
 	
 	public ServiceElement(IHost host, ServiceElement parent)
 	{
@@ -61,6 +65,7 @@ public abstract class ServiceElement
 	
 	public void childChanged(ServiceElement element)
 	{
+		_childChanged = true;
 		if (_parent != null)
 		{
 			_parent.childChanged(element);

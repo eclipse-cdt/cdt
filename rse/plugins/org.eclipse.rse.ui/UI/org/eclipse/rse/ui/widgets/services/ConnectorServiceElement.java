@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -79,17 +79,20 @@ public class ConnectorServiceElement extends RSEModelServiceElement
 
 	public void commit()
 	{
-		super.commit();
-		ServiceElement[] children = getChildren();
-		if (children != null)
-		{
-			for (int i = 0; i < children.length; i++)
+		// for bug 252708 - should only be doing a commit if a child has changed
+		if (_childChanged){
+			super.commit();
+			ServiceElement[] children = getChildren();
+			if (children != null)
 			{
-				ServiceElement child = children[i];
-				child.commit();
+				for (int i = 0; i < children.length; i++)
+				{
+					ServiceElement child = children[i];				
+					child.commit();
+				}
 			}
+			_connectorService.commit();
 		}
-		_connectorService.commit();
 	}
 
 	public void revert()

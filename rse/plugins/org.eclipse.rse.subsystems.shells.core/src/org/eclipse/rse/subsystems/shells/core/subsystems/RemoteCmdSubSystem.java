@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David McKnight   (IBM)        - [230285] [shells] Remote shells should be restored on quit and re-start of RSE
+ * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -136,6 +137,39 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return result;
 	}
 
+	
+	private boolean areVariablesTheSame(String[] names, String[] values)
+	{
+		IPropertySet environmentVariables = getPropertySet(ENVIRONMENT_VARS);
+		if (environmentVariables == null || names == null){
+			return false;
+		}
+		else {
+			String[] originalNames = environmentVariables.getPropertyKeys();
+			if (originalNames.length != names.length){
+				return false;
+			}
+			else {
+				for (int i = 0; i < names.length; i++){
+					String name = names[i];
+					String originalName = originalNames[i];
+					
+					// names should be the same (i.e. in same order)
+					if (!name.equals(originalName)){
+						return false;
+					}
+					else {
+						String value = values[i];
+						String originalValue = environmentVariables.getPropertyValue(name);
+						if (!value.equals(originalValue)){
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 	/**
 	 * Set the initial environment variable list entries, all in one shot, using
 	 * a pair of String arrays: the first is the environment variable names, the
@@ -144,6 +178,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @param values the array of string values
 	 */
 	public void setEnvironmentVariableList(String[] names, String[] values) {
+		if (areVariablesTheSame(names, values)){
+			// unchanged so don't bother doing anything
+			return;
+		}
+		
 		removePropertySet(ENVIRONMENT_VARS);
 		IPropertySet environmentVariables = getEnvironmentVariables();
 		if (names != null) {

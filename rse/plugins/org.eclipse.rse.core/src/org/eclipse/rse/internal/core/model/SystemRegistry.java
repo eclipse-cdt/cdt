@@ -57,6 +57,7 @@
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * David McKnight   (IBM)        - [249247] Expand New Connections
+ * David McKnight   (IBM(        - [254590] When disconnecting a subsystem with COLLAPSE option, subsystems of other connector services also get collapsed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -2319,10 +2320,10 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected, boolean collapseTree)
 	{
-		//System.out.println("INSIDE CONNECTEDSTATUSCHANGE: "+connected+" vs "+wasConnected);
 		IHost conn = subsystem.getHost();
-		//int eventId = ISystemResourceChangeEvent.EVENT_CHANGE;
-		//int eventId = ISystemResourceChangeEvent.EVENT_PROPERTY_CHANGE;
+		
+		IConnectorService effectedConnectorService = subsystem.getConnectorService();
+		
 		if (connected != wasConnected)
 		{
 			int eventId = ISystemResourceChangeEvents.EVENT_ICON_CHANGE;
@@ -2331,13 +2332,15 @@ public class SystemRegistry implements ISystemRegistry
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(subsystem, eventId, conn);
 			fireEvent(event);
 
-			// DKM
+				
 			// fire for each subsystem
 			ISubSystem[] sses = getSubSystems(conn);
 			for (int i = 0; i < sses.length; i++)
 			{
 			    ISubSystem ss = sses[i];
-			    if (ss != subsystem)
+			    
+			    // only fire the event for subsystems that share the effected connector service
+			    if (ss != subsystem && ss.getConnectorService().equals(effectedConnectorService))
 			    {
 			        SystemResourceChangeEvent sevent = new SystemResourceChangeEvent(ss, eventId, conn);
 					fireEvent(sevent);
@@ -2364,7 +2367,9 @@ public class SystemRegistry implements ISystemRegistry
 			for (int i = 0; i < sses.length; i++)
 			{
 			    ISubSystem ss = sses[i];
-			    if (ss != subsystem && !ss.isConnected())
+			    
+			    // only fire the event for subsystems that share the effected connector service
+			    if (ss != subsystem && ss.getConnectorService().equals(effectedConnectorService) && !ss.isConnected())
 			    {
 			    	invalidateFiltersFor(ss);
 			        SystemResourceChangeEvent sevent = new SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_MUST_COLLAPSE, conn);

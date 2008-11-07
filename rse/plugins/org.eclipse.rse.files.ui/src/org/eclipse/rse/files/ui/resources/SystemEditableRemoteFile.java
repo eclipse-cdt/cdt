@@ -34,6 +34,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  * David McKnight   (IBM)        - [247189] SystemEditableRemoteFile.openEditor() not updating the default editor properly
+ * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -700,6 +701,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// reget the remote file so that we have the right timestamps
 		try
 		{
+			remoteFile.markStale(true); // as per bug 249544, we should mark stale to ensure we get a fresh copy
 			remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
 		}
 		catch (Exception e)

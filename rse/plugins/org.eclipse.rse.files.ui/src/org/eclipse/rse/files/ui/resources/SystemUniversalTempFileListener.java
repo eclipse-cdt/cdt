@@ -257,14 +257,65 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 
 	}
 
+	/**
+	 * This method attempts to upload a temporary file in the workspace to a corresponding remote file location.  It
+	 * checks whether the timestamp of the remote file has changed since the temporary file was last known to
+	 * be in synch with the remote file.  If the timestamp has not changed, then it is assumed that the remote
+	 * file has not changed and therefore it is safe to do an upload.  If the timestamp has changed, then the remote
+	 * file must have changed independently and there is a conflict and the upload conflict action is invoked.
+	 * 
+	 * <p>
+	 * <b>Warning</b> It is important to make sure that the remoteFile that gets passed in is up-to-date AND is the 
+	 * current cached version.  If the remoteFile is not up-to-date then the timestamp of the actual remote file may 
+	 * be wrong and lead to the following problems:
+	 * 
+	 * <ul>
+	 *   <li> If the detected remote timestamp is not the actual remote timestamp but it is the same as the storedModifiedStamp, an 
+	 *   upload without detecting a conflict will cause lost data on the remote side!
+	 *   <li> If the detected remote timestamp is not the actual remote timestamp and the actual timestamp is the same as the 
+	 *   storedModifiedStamp, a conflict will be indicated that doesn't actually exist
+	 * </ul>
+	 * 
+	 * If the remoteFile is not the current cached version then the following problem occurs.  After the upload, the remote file is
+	 * marked stale so that the up-to-date remote file can be retrieved with the updated actual timestamp.  Because the remoteFile 
+	 * that was passed into this method is not the cached version, marking it stale will not mark the cached version stale and 
+	 * thus, when a re-query of the file is done after the upload, the original cached version gets returned as opposed to a fresh
+	 * version with the correct timestamp. 
+	 * 
+	 * <p>
+	 * Because of these problems, it is recommended that, before calling upload(), the remoteFile is retrieved from the cache and is
+	 * marked stale like the following example:
+	 * 
+	 * <code>
+	 *    ...
+	 *    // get the remote file from the cache
+	 *    IRemoteFile remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
+	 *    
+	 *    // mark it stale
+	 *    remoteFile.markStale(true);
+	 *    
+	 *    // re-query the remote file to make sure you have the latest
+	 *    remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
+	 *    
+	 *    // call upload
+	 *    upload(fs, remoteFile, ...);
+	 *    .... 
+	 * </code>
+	 * 
+	 * 
+	 * @param fs the file subsystem that corresponds with the file to upload
+	 * @param remoteFile the remote file location to upload to 
+	 * @param tempFile the source temp file to upload
+	 * @param properties the remote file properties of the file to upload
+	 * @param storedModifiedStamp the last timestamp of the remote file for which a temp file was in synch with the remote file
+	 * @param editable the wrapper that associates the remote file, temp file and editor together
+	 * @param monitor the progress monitor
+	 */
 	public void upload(IRemoteFileSubSystem fs, IRemoteFile remoteFile, IFile tempFile, SystemIFileProperties properties, 
 				long storedModifiedStamp, SystemEditableRemoteFile editable, IProgressMonitor monitor)
 	{
 		try
 		{
-			// make sure the remote file is the current cached version			
-			remoteFile = fs.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
-			
 			// get the remote modified timestamp
 			long remoteModifiedStamp = remoteFile.getLastModified();
 			

@@ -22,6 +22,7 @@
  * David Dykstal (IBM) - [168976][api] move ISystemNewConnectionWizardPage from core to UI
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * Martin Oberhuber (Wind River) - [218309] ConcurrentModificationException during workbench startup
+ * David McKinght   (IBM)        - [249245] Go Into on a filter then back brings up prompt of any expanded promptable filter
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -132,6 +133,10 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Return true if subsystem instances from this factory support remote command execution
 	 * <p>Returns false in default implementation, and is usually only true for command subsystems.
+	 * 
+	 * NOTE: command subsystems are special because their filters don't yield children or allow
+	 * drilling into them via Show In Table, Open In New Window or Go Into.  See bug 249245 and 
+	 * bug 254605 for further explanation.
 	 */
 	public boolean supportsCommands();
 

@@ -16,8 +16,14 @@ package org.eclipse.rse.tests.core.connection;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -54,6 +60,50 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		assertEquals(h1, h2);
 
 		sr.deleteSystemProfile(testprof);
+	}
+
+	/**
+	 * Creating/disposing elements in the systemView can lead
+	 * to "Widget is disposed" exception when Refresh is called
+	 * rarely so there is much to refresh. This might be due to
+	 * the elementComparer only comparing by absolute name.
+	 */
+	public void testBug251625() throws Exception {
+		// -test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
+		Job j = new Job("testBug251625") {
+
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+					ISystemProfile prof = sr.createSystemProfile("Foo", true);
+					IRSESystemType st = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID);
+					IHost h1 = sr.createHost("Foo", st, "vxsim0", "localhost", "vxsim0");
+					IHost h2 = sr.createHost("Foo", st, "vxsim1", "localhost", "vxsim1");
+					IHost h3 = sr.createHost("Foo", st, "vxsim2", "localhost", "vxsim2");
+					sr.fireEvent(new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH, null));
+					// flushEventQueue();
+					Thread.sleep(10000);
+					sr.deleteHost(h1);
+					sr.deleteHost(h2);
+					sr.deleteHost(h3);
+					IHost h4 = sr.createHost("Foo", st, "vxsim1", "localhost", "vxsim1");
+					sr.fireEvent(new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH, null));
+					// flushEventQueue(); // will throw exception in main Thread!
+					Thread.sleep(10000);
+					sr.deleteSystemProfile(prof);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		j.schedule();
+		while (j.getState() != Job.NONE) {
+			flushEventQueue();
+		}
 	}
 
 	/**

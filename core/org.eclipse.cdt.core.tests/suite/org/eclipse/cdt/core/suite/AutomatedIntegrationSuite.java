@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
-import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
 
 /**

@@ -95,7 +95,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -145,6 +144,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
@@ -184,7 +184,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 /**
  * @author aniefer
  */
-public class CPPVisitor {
+public class CPPVisitor extends ASTQueries {
 	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
 	public static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
 	public static final String STD = "std"; //$NON-NLS-1$
@@ -1784,15 +1784,15 @@ public class CPPVisitor {
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
 	        IType type = createType(id.getDeclSpecifier());
 	        return createType(type, id.getAbstractDeclarator());
-	    } else if (expression instanceof ICPPASTLiteralExpression) {
-	    	ICPPASTLiteralExpression lit= (ICPPASTLiteralExpression) expression;
+	    } else if (expression instanceof IASTLiteralExpression) {
+	    	IASTLiteralExpression lit= (IASTLiteralExpression) expression;
 	    	switch(lit.getKind()) {
-	    		case ICPPASTLiteralExpression.lk_this: {
+	    		case IASTLiteralExpression.lk_this: {
 	    			IScope scope = getContainingScope(expression);
 	    			return getThisType(scope);
 	    		}
-	    		case ICPPASTLiteralExpression.lk_true:
-	    		case ICPPASTLiteralExpression.lk_false:
+	    		case IASTLiteralExpression.lk_true:
+	    		case IASTLiteralExpression.lk_false:
 	    			return new CPPBasicType(ICPPBasicType.t_bool, 0, expression);
 	    		case IASTLiteralExpression.lk_char_constant:
 	    			return new CPPBasicType(IBasicType.t_char, 0, expression);
@@ -2096,12 +2096,12 @@ public class CPPVisitor {
 	}
 	
 	private static IType classifyTypeOfFloatLiteral(final IASTLiteralExpression expr) {
-		final String lit= expr.toString();
-		final int len= lit.length();
+		final char[] lit= expr.getValue();
+		final int len= lit.length;
 		int kind= IBasicType.t_double;
 		int flags= 0;
 		if (len > 0) {
-			switch(lit.charAt(len-1)) {
+			switch(lit[len-1]) {
 			case 'f': case 'F':
 				kind= IBasicType.t_float;
 				break;
@@ -2117,13 +2117,13 @@ public class CPPVisitor {
 		int makelong= 0;
 		boolean unsigned= false;
 	
-		final String lit= expression.toString();
-		for (int i=lit.length()-1; i >=0; i--) {
-			final char c= lit.charAt(i);
+		final char[] lit= expression.getValue();
+		for (int i=lit.length-1; i >=0; i--) {
+			final char c= lit[i];
 			if (!(c > 'f' && c <= 'z') && !(c > 'F' && c <= 'Z')) {
 				break;
 			}
-			switch (lit.charAt(i)) {
+			switch (c) {
 			case 'u':
 			case 'U':
 				unsigned = true;

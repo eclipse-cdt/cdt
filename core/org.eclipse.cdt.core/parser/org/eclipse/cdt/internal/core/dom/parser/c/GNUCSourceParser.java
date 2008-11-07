@@ -111,6 +111,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -192,21 +193,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
                 IASTInitializer initializer = cInitializerClause(newDesignators, true);
 
-                if (newDesignators.isEmpty()) {
-                    // depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
-                	if (initializer != null)
+                // depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
+                if (initializer != null) {
+                	if (newDesignators.isEmpty()) {
                 		result.addInitializer(initializer);
-                } else {
-                    ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
-                    ((ASTNode) desigInitializer).setOffsetAndLength(
-                            ((ASTNode) newDesignators.get(0)).getOffset(),
-							((ASTNode)initializer).getOffset() + ((ASTNode)initializer).getLength() - ((ASTNode) newDesignators.get(0)).getOffset());
-                    for (int i = 0; i < newDesignators.size(); ++i) {
-                        ICASTDesignator d = (ICASTDesignator) newDesignators.get(i);
-                        desigInitializer.addDesignator(d);
-                    }
-                    desigInitializer.setOperandInitializer(initializer);
-                    result.addInitializer(desigInitializer);
+                	} else {
+                		ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
+                		((ASTNode) desigInitializer).setOffsetAndLength(
+                				((ASTNode) newDesignators.get(0)).getOffset(),
+                				((ASTNode)initializer).getOffset() + ((ASTNode)initializer).getLength() - ((ASTNode) newDesignators.get(0)).getOffset());
+                		for (int i = 0; i < newDesignators.size(); ++i) {
+                			ICASTDesignator d = (ICASTDesignator) newDesignators.get(i);
+                			desigInitializer.addDesignator(d);
+                		}
+                		desigInitializer.setOperandInitializer(initializer);
+                		result.addInitializer(desigInitializer);
+                	}
                 }
                 // can end with ", }" or "}"
                 if (LT(1) == IToken.tCOMMA)
@@ -235,7 +237,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         // assignmentExpression
         IASTExpression assignmentExpression = assignmentExpression();
         if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
-        	if (!NAME_CHECKER.containsName(assignmentExpression))
+        	if (!ASTQueries.canContainName(assignmentExpression))
         		return null;
         }
         IASTInitializerExpression result = createInitializerExpression();

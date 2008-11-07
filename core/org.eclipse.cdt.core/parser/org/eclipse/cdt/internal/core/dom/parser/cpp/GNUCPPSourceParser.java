@@ -146,6 +146,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -1371,7 +1372,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTExpression primaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken t = null;
-        ICPPASTLiteralExpression literalExpression = null;
+        IASTLiteralExpression literalExpression = null;
         switch (LT(1)) {
         // TO DO: we need more literals...
         case IToken.tINTEGER:
@@ -1407,14 +1408,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_false:
             t = consume();
             literalExpression = createLiteralExpression();
-            literalExpression.setKind(ICPPASTLiteralExpression.lk_false);
+            literalExpression.setKind(IASTLiteralExpression.lk_false);
             literalExpression.setValue(t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.t_true:
             t = consume();
             literalExpression = createLiteralExpression();
-            literalExpression.setKind(ICPPASTLiteralExpression.lk_true);
+            literalExpression.setKind(IASTLiteralExpression.lk_true);
             literalExpression.setValue(t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
@@ -1422,7 +1423,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_this:
             t = consume();
             literalExpression = createLiteralExpression();
-            literalExpression.setKind(ICPPASTLiteralExpression.lk_this);
+            literalExpression.setKind(IASTLiteralExpression.lk_this);
             literalExpression.setValue(t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
@@ -3290,7 +3291,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         // assignmentExpression
         IASTExpression assignmentExpression = assignmentExpression();
         if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
-        	if (!NAME_CHECKER.containsName(assignmentExpression))
+        	if (!ASTQueries.canContainName(assignmentExpression)) 
         		return null;
         }
 

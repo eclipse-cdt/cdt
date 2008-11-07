@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -107,24 +106,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             this.currToken =t;
         }
     }
-
-	protected static class NameChecker extends ASTVisitor {
-		private boolean fFound;
-		protected NameChecker() {
-			shouldVisitNames= true;
-		}
-		@Override
-		public int visit(IASTName name) {
-			fFound= true;
-			return PROCESS_ABORT;
-		}
-		public boolean containsName(IASTNode node) {
-			fFound= false;
-			node.accept(this);
-			return fFound;
-		}
-	}
-	protected NameChecker NAME_CHECKER= new NameChecker();
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
     protected static int parseCount = 0;
@@ -1225,8 +1206,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	case IASTLiteralExpression.lk_char_constant:
         	case IASTLiteralExpression.lk_float_constant:
         	case IASTLiteralExpression.lk_integer_constant:
-        	case ICPPASTLiteralExpression.lk_true:
-        	case ICPPASTLiteralExpression.lk_false:
+        	case IASTLiteralExpression.lk_true:
+        	case IASTLiteralExpression.lk_false:
 				throwBacktrack(operatorToken);
         	}
         }

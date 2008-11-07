@@ -335,44 +335,24 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	public void testMacrosHidingCall_249801() throws Exception {
 		long t= System.currentTimeMillis();
 		String content= getContentsForTest(1)[0].toString();
-		t= printTime("contents", t);
 		IFile file= createFile(getProject(), "file249801.cpp", content);
-		t= printTime("file", t);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		t= printTime("indexer", t);
 
 		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
-		t= printTime("view", t);
 
 		// open editor, check outline
 		CEditor editor= openEditor(file);
-		t= printTime("editor", t);
 		int idx = content.indexOf("MACRO(Test");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
-		t= printTime("ch1", t);
 
 		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *)").getParent();
 		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int)");
-		t= printTime("checked", t);
 
 		idx = content.indexOf("CALL(0");
 		editor.selectAndReveal(idx+4, 0);
 		openCallHierarchy(editor, true);
-		t= printTime("ch2",t );
 		chTree= checkTreeNode(ch, 0, "call(int)").getParent();
 		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *)");
-		t= printTime("checked", t);
-	}
-
-	/**
-	 * mstodo
-	 * @param string
-	 * @return
-	 */
-	private long printTime(String string, long off) {
-		long t= System.currentTimeMillis();
-		System.out.println(string + (t-off));
-		return t;
 	}
 }

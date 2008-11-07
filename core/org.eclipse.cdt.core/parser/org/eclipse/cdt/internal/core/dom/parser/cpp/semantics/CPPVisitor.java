@@ -151,6 +151,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -191,7 +192,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 /**
  * @author aniefer
  */
-public class CPPVisitor {
+public class CPPVisitor extends ASTQueries {
 	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
 	public static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
 	public static final String STD = "std"; //$NON-NLS-1$

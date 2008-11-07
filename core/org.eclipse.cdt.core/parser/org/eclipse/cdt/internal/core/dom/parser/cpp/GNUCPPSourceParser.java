@@ -146,6 +146,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -3301,7 +3302,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         // assignmentExpression
         IASTExpression assignmentExpression = assignmentExpression();
         if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
-        	if (!NAME_CHECKER.containsName(assignmentExpression))
+        	if (!ASTQueries.canContainName(assignmentExpression)) 
         		return null;
         }
 

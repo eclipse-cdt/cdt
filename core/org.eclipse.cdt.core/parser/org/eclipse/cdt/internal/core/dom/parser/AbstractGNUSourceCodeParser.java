@@ -108,24 +108,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-	protected static class NameChecker extends ASTVisitor {
-		private boolean fFound;
-		protected NameChecker() {
-			shouldVisitNames= true;
-		}
-		@Override
-		public int visit(IASTName name) {
-			fFound= true;
-			return PROCESS_ABORT;
-		}
-		public boolean containsName(IASTNode node) {
-			fFound= false;
-			node.accept(this);
-			return fFound;
-		}
-	}
-	protected NameChecker NAME_CHECKER= new NameChecker();
-
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
     protected static int parseCount = 0;
 

@@ -37,10 +37,12 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -139,6 +141,46 @@ public class IndexBugsTests extends BaseTestCase {
 
 	protected void waitUntilFileIsIndexed(IFile file, int time) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
+	}
+
+	/**
+	 * Attempts to get an IBinding from the initial specified number of characters
+	 * from the specified code fragment. Fails the test if
+	 * <ul>
+	 *  <li> There is not a unique name with the specified criteria
+	 *  <li> The binding associated with the name is null or a problem binding
+     *  <li> The binding is not an instance of the specified class
+	 * </ul>
+	 * @param ast the AST to test.
+	 * @param source the source code corresponding to the AST.
+	 * @param section the code fragment to search for in the AST. The first occurrence of
+	 *   an identical section is used.
+	 * @param len the length of the specified section to use as a name. This can also be useful
+	 *   for distinguishing between template names, and template ids.
+	 * @param clazz an expected class type or interface that the binding should extend/implement
+	 * @return the associated name's binding
+	 */
+	protected <T> T getBindingFromASTName(IASTTranslationUnit ast, String source, String section, int len,
+			Class<T> clazz, Class ... cs) {
+		IASTName name= ast.getNodeSelector(null).findName(source.indexOf(section), len);
+		assertNotNull("name not found for \""+section+"\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
+		
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for "+name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(),
+				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertInstance(binding, clazz, cs);
+		return clazz.cast(binding);
+	}
+
+	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
+		assertNotNull("Expected "+clazz.getName()+" but got null", o);
+		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		for (Class c : cs) {
+			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+		}
+		return clazz.cast(o);
 	}
 
 	// class A {
@@ -555,6 +597,34 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 	
+	//  // header.h
+	//	template <class T> class Test {};
+	
+	//  #include "header.h"
+	//	struct A {};
+	//	Test<A> a;
+
+	//	template <class U> class Test;
+	public void _test253080() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(3);
+		IFile header= TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
+		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
+		IFile unrelated= TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
+			ICPPTemplateInstance b0= getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
@@ -1238,8 +1308,7 @@ public class IndexBugsTests extends BaseTestCase {
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] bindings = fIndex
-					.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
+			IIndexBinding[] bindings = fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
 		} finally {
 			fIndex.releaseReadLock();

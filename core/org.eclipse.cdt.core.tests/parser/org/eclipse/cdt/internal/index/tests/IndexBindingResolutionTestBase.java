@@ -144,12 +144,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected static void assertQNEquals(String expectedQN, IBinding b) {
 		try {
 			assertInstance(b, IBinding.class);
-			if(b instanceof ICPPBinding) {
+			if (b instanceof ICPPBinding) {
 				assertEquals(expectedQN, CPPVisitor.renderQualifiedName(((ICPPBinding)b).getQualifiedName()));
 			} else {
 				assertEquals(expectedQN, b.getName());
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			fail(de.getMessage());
 		}
 	}
@@ -183,7 +183,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
 		assertNotNull("Expected "+clazz.getName()+" but got null", o);
 		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
-		for(Class c : cs) {
+		for (Class c : cs) {
 			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
 		}
 		return clazz.cast(o);
@@ -213,12 +213,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			IVariable variable = (IVariable) b;
 			assertQNEquals(qn, variable);
 			assertInstance(variable.getType(), expType);
-			if(expTypeQN!=null) {
+			if (expTypeQN != null) {
 				IType type= variable.getType();
 				assertInstance(type, IBinding.class);
 				assertQNEquals(expTypeQN, (IBinding) type);
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			fail(de.getMessage());
 		}
 	}
@@ -229,11 +229,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertInstance(conType, containerType);
 			IType containedType= ((ITypeContainer)conType).getType();
 			assertInstance(containedType, expContainedType);
-			if(expContainedTypeQN!=null) {
+			if (expContainedTypeQN != null) {
 				assertInstance(containedType, IBinding.class);
 				assertQNEquals(expContainedTypeQN, (IBinding) containedType);
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			fail(de.getMessage());
 		}
 	}
@@ -274,7 +274,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
-			if(DEBUG) {
+			if (DEBUG) {
 				System.out.println("Project PDOM: "+getName());
 				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
@@ -286,7 +286,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 
 		public void tearDown() throws Exception {
-			if(index != null) {
+			if (index != null) {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
@@ -319,7 +319,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 		
 		public void tearDown() throws Exception {
-			if(index != null) {
+			if (index != null) {
 				index.releaseReadLock();
 			}
 			if (cproject != null) {
@@ -350,7 +350,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			CCorePlugin.getIndexManager().reindex(cproject);
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
-			if(DEBUG) {
+			if (DEBUG) {
 				System.out.println("Online: "+getName());
 			 	((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
@@ -372,7 +372,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
-			if(DEBUG) {
+			if (DEBUG) {
 				System.out.println("Referenced: "+getName());
 				((PDOM)CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			}
@@ -404,7 +404,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * quite rare.
 	 */
 	protected void fakeFailForSingle() {
-		if(getName().startsWith("_") && strategy instanceof SinglePDOMTestStrategy) {
+		if (getName().startsWith("_") && strategy instanceof SinglePDOMTestStrategy) {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForSingle()");
 		}
 	}
@@ -416,7 +416,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * quite rare.
 	 */
 	protected void fakeFailForMultiProject() {
-		if(getName().startsWith("_") && strategy instanceof ReferencedProject) {
+		if (getName().startsWith("_") && strategy instanceof ReferencedProject) {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForReferenced()");
 		}
 	}

@@ -47,8 +47,8 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 4;
 	
-	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMNode parent,
-			ICPPFunctionTemplate template) throws CoreException {
+	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template)
+			throws CoreException {
 		super(pdom, parent, (ICPPFunction) template, false);
 	}
 

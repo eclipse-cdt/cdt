@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassTemplate, ICPPInstanceCache {
-	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
 	private static final int FIRST_PARTIAL = PDOMCPPClassType.RECORD_SIZE + 4;
 	
@@ -131,14 +130,14 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 			return new ICPPClassTemplatePartialSpecialization[0];
 		}
 	}
-				
+
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 		list.accept(visitor);
 	}
-	
+
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateParameter) {
@@ -148,7 +147,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 			super.addChild(member);
 		}
 	}
-		
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {

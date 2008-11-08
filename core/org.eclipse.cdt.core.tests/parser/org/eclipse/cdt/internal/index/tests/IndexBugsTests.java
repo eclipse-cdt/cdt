@@ -109,7 +109,7 @@ public class IndexBugsTests extends BaseTestCase {
     	StringBuffer[] help= TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
     	String[] result= new String[help.length];
-    	int i=0;
+    	int i= 0;
     	for (StringBuffer buf : help) {
 			result[i++]= buf.toString();
 		}
@@ -125,7 +125,7 @@ public class IndexBugsTests extends BaseTestCase {
 		long waitms= 1;
 		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(fCProject)) {
 			Thread.sleep(waitms);
-			waitms*=2;
+			waitms *= 2;
 		}
 		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, NPM));
 	}

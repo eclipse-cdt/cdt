@@ -117,7 +117,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 		try {
 			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials =
-				new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
+					new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
 			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial();
 					partial != null;
 					partial = partial.getNextPartial()) {

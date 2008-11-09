@@ -66,8 +66,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private ICPPClassScope fScope;
 
-	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
-			throws CoreException {
+	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType) throws CoreException {
 		super(pdom, parent, classType.getNameCharArray());
 
 		setKind(classType);
@@ -88,7 +87,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPCLASSTYPE;
 	}
-
 
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
@@ -141,7 +139,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
-
 
 	private PDOMCPPBase getFirstBase() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRSTBASE);

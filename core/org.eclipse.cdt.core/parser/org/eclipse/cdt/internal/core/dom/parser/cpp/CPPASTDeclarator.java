@@ -35,9 +35,8 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     private IASTInitializer initializer;
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
-    private IASTPointerOperator [] pointerOps = null;
-    private int pointerOpsPos=-1;
-
+    private IASTPointerOperator[] pointerOps = null;
+    private int pointerOpsPos= -1;
    
     public CPPASTDeclarator() {
 	}
@@ -52,8 +51,8 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 	}
 
 	public IASTPointerOperator[] getPointerOperators() {
-        if( pointerOps == null ) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter( IASTPointerOperator.class, pointerOps, pointerOpsPos );
+        if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
+        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);
         return pointerOps;
     }
 
@@ -81,7 +80,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     	if (operator != null) {
     		operator.setParent(this);
 			operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator );
+    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
     	}
     }
 
@@ -93,7 +92,6 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 		}
     }
 
-
     public void setName(IASTName name) {
         this.name = name;
         if (name != null) {
@@ -103,18 +101,18 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarators ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarators) {
+		    switch(action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default : break;
 	        }
 		}
         
-        IASTPointerOperator [] ptrOps = getPointerOperators();
-        for ( int i = 0; i < ptrOps.length; i++ ) {
-            if( !ptrOps[i].accept( action ) ) return false;
+        IASTPointerOperator[] ptrOps = getPointerOperators();
+        for (int i = 0; i < ptrOps.length; i++) {
+            if (!ptrOps[i].accept(action)) return false;
         }
         
         if (nestedDeclarator == null && name != null) {
@@ -147,55 +145,47 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 
 	public int getRoleForName(IASTName n) {
         IASTNode getParent = getParent();
-        boolean fnDtor = ( this instanceof IASTFunctionDeclarator );
-        if( getParent instanceof IASTDeclaration )
-        {
-            if( getParent instanceof IASTFunctionDefinition )
+        boolean fnDtor = (this instanceof IASTFunctionDeclarator);
+        if (getParent instanceof IASTDeclaration) {
+            if (getParent instanceof IASTFunctionDefinition)
                 return r_definition;
-            if( getParent instanceof IASTSimpleDeclaration ) {
+            if (getParent instanceof IASTSimpleDeclaration) {
                 final int storage = ((IASTSimpleDeclaration) getParent).getDeclSpecifier().getStorageClass(); 
-                if( getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
+                if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
                     return r_definition;
                 
-                if( storage == IASTDeclSpecifier.sc_extern || 
-                    storage == IASTDeclSpecifier.sc_static )
-                {
+                if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
                     return r_declaration;
                 }
             }
             return fnDtor ? r_declaration : r_definition;
         }
-        if( getParent instanceof IASTTypeId )
+        if (getParent instanceof IASTTypeId)
             return r_reference;
-        if( getParent instanceof IASTDeclarator )
-        {
+        if (getParent instanceof IASTDeclarator) {
             IASTNode t = getParent;
-            while ( t instanceof IASTDeclarator )
+            while (t instanceof IASTDeclarator)
                 t = t.getParent();
-            if( t instanceof IASTDeclaration )
-            {
-                if( getParent instanceof IASTFunctionDefinition )
+            if (t instanceof IASTDeclaration) {
+                if (getParent instanceof IASTFunctionDefinition)
                     return r_definition;
-                if( getParent instanceof IASTSimpleDeclaration )
-                {
-                    if( getInitializer() != null )
+                if (getParent instanceof IASTSimpleDeclaration) {
+                    if (getInitializer() != null)
                         return r_definition;
                     IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
                     int storage = sd.getDeclSpecifier().getStorageClass();
-                    if( storage == IASTDeclSpecifier.sc_extern || 
-                        storage == IASTDeclSpecifier.sc_typedef ||
-                        storage == IASTDeclSpecifier.sc_static )
-                    {
+                    if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_typedef ||
+                    		storage == IASTDeclSpecifier.sc_static) {
                         return r_declaration;
                     }
                 }
                 return fnDtor ? r_declaration : r_definition;                    
             }
-            if( t instanceof IASTTypeId )
+            if (t instanceof IASTTypeId)
                 return r_reference;
         }
-        if( getParent instanceof IASTParameterDeclaration )
-            return ( n.toCharArray().length > 0 ) ? r_definition : r_declaration;
+        if (getParent instanceof IASTParameterDeclaration)
+            return (n.toCharArray().length > 0) ? r_definition : r_declaration;
         
         return r_unclear;
 	}

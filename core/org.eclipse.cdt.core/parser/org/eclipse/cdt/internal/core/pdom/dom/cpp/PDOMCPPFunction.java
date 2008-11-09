@@ -85,7 +85,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
 			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 			
-			if(setTypes) {
+			if (setTypes) {
 				initData((ICPPFunctionType) function.getType(), function.getParameters());
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
@@ -94,7 +94,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public void initData(ICPPFunctionType ftype, IParameter[] params)  throws CoreException {
+	public void initData(ICPPFunctionType ftype, IParameter[] params) throws CoreException {
 		PDOMCPPFunctionType pft= setType(ftype);
 		setParameters(pft, params);	
 	}
@@ -132,8 +132,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		db.putInt(record + NUM_PARAMS, params.length);
 		db.putInt(record + FIRST_PARAM, 0);
 		IType[] paramTypes= pft.getParameterTypes();
-		for (int i=0; i<params.length; ++i) {
-			int ptRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
+		for (int i= 0; i < params.length; ++i) {
+			int ptRecord= i < paramTypes.length && paramTypes[i] != null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
 			setFirstParameter(new PDOMCPPParameter(pdom, this, params[i], ptRecord));
 		}
 	}
@@ -268,7 +268,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 	
 	protected static int compareSignatures(IPDOMOverloader a, Object b) {
-		if(b instanceof IPDOMOverloader) {
+		if (b instanceof IPDOMOverloader) {
 			IPDOMOverloader bb= (IPDOMOverloader) b;
 			try {
 				int mySM = a.getSignatureHash();

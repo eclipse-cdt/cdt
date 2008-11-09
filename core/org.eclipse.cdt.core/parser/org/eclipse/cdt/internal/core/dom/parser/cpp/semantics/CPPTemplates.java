@@ -395,7 +395,7 @@ public class CPPTemplates {
 			ICPPASTTemplatedTypeTemplateParameter templatedParam = (ICPPASTTemplatedTypeTemplateParameter) parent;
 			binding = templatedParam.getName().resolveBinding();
 		}
-		return  (binding instanceof ICPPTemplateDefinition) ? (ICPPTemplateDefinition) binding : null;
+		return (binding instanceof ICPPTemplateDefinition) ? (ICPPTemplateDefinition) binding : null;
 	}
 
 	public static IBinding createBinding(ICPPASTTemplateParameter templateParameter) {

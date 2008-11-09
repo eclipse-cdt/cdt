@@ -251,7 +251,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		int pos= templateParameter.getParameterPosition() & 0xff;
 		
     	int tdeclLen= declarations == null ? 0 : declarations.length;
-    	for (int i=-1; i<tdeclLen; i++) {
+    	for (int i= -1; i < tdeclLen; i++) {
     		IASTName tdecl;
     		if (i == -1) {
     			tdecl= definition;
@@ -277,7 +277,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 
     	int k=0;
     	int tdeclLen= declarations == null ? 0 : declarations.length;
-    	for (int i=-1; i<tdeclLen && k<updateParams.length; i++) {
+    	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {
     		IASTName tdecl;
     		if (i == -1) {
     			tdecl= definition;

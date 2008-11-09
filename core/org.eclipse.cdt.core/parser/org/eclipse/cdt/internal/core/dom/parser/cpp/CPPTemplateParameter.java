@@ -211,7 +211,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			return null;
 		
 		IASTNode node= declarations[0];
-		while (node instanceof ICPPASTTemplateParameter == false) {
+		while (!(node instanceof ICPPASTTemplateParameter)) {
 			if (node == null)
 				return null;
 			

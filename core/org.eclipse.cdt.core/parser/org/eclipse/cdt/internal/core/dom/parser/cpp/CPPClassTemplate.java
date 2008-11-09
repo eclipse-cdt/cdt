@@ -107,7 +107,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
 
-	 public CPPClassTemplate(IASTName name) {
+	public CPPClassTemplate(IASTName name) {
 		super(name);
 	}
 

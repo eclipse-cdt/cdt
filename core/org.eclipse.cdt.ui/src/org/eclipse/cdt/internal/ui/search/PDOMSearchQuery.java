@@ -49,7 +49,6 @@ import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
  *
  */
 public abstract class PDOMSearchQuery implements ISearchQuery {
-
 	public static final int FIND_DECLARATIONS = 0x1;
 	public static final int FIND_DEFINITIONS = 0x2;
 	public static final int FIND_REFERENCES = 0x4;
@@ -155,10 +154,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
 
 			for (IASTName name : names) {
-				if (   ((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration())
-					|| ((flags & FIND_DEFINITIONS) != 0 && name.isDefinition())
-					|| ((flags & FIND_REFERENCES) != 0 && name.isReference())) {
-					
+				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration()) ||
+						((flags & FIND_DEFINITIONS) != 0 && name.isDefinition()) ||
+						((flags & FIND_REFERENCES) != 0 && name.isReference())) {
 					ASTTypeInfo typeInfo= ASTTypeInfo.create(name);
 					if (typeInfo != null) {
 						ITypeReference ref= typeInfo.getResolvedReference();

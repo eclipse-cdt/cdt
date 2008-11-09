@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @author Doug Schaefer
  */
 public interface ICPPClassType extends ICompositeType, ICPPBinding {
-	public static final ICPPClassType [] EMPTY_CLASS_ARRAY = new ICPPClassType[0];
+	public static final ICPPClassType[] EMPTY_CLASS_ARRAY = new ICPPClassType[0];
 	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
 
 	/**
@@ -103,5 +103,5 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * return an array of nested classes/structures
 	 * @throws DOMException
 	 */
-	public ICPPClassType [] getNestedClasses() throws DOMException;
+	public ICPPClassType[] getNestedClasses() throws DOMException;
 }

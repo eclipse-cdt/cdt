@@ -89,7 +89,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			IString name2 = db.getString(db.getInt(record2 + LOCATION_REPRESENTATION));
 			int cmp= name1.compare(name2, true);
 			if (cmp == 0) {
-				cmp= db.getInt(record1+LINKAGE_ID) - db.getInt(record2+LINKAGE_ID);
+				cmp= db.getInt(record1 + LINKAGE_ID) - db.getInt(record2 + LINKAGE_ID);
 			}
 			return cmp;
 		}
@@ -243,8 +243,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				IASTPreprocessorMacroDefinition macro= (IASTPreprocessorMacroDefinition) stmt;
 				PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().toCharArray());
 				pdomMacro = new PDOMMacro(pdom, container, macro, this);
-			}
-			else if (stmt instanceof IASTPreprocessorUndefStatement) {
+			} else if (stmt instanceof IASTPreprocessorUndefStatement) {
 				IASTPreprocessorUndefStatement undef= (IASTPreprocessorUndefStatement) stmt;
 				PDOMMacroContainer container= linkage.getMacroContainer(undef.getMacroName().toCharArray());
 				pdomMacro = new PDOMMacro(pdom, container, undef, this);
@@ -287,13 +286,11 @@ public class PDOMFile implements IIndexFragmentFile {
 					nameCache.put(name[0], pdomName);
 					if (lastName == null) {
 						setFirstName(pdomName);
-					}
-					else {
+					} else {
 						lastName.setNextInFile(pdomName);
 					}
 					lastName= pdomName;
-				}
-				else if (fname instanceof PDOMMacroReferenceName) {
+				} else if (fname instanceof PDOMMacroReferenceName) {
 					PDOMMacroReferenceName macroName = (PDOMMacroReferenceName) fname;
 					if (lastMacroName == null) {
 						setFirstMacroReference(macroName);
@@ -430,8 +427,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				include.setPrevInIncludedBy(firstIncludedBy);
 				firstIncludedBy.setNextInIncludedBy(include);
 			}
-		}
-		else {
+		} else {
 			setFirstIncludedBy(include);
 		}
 	}

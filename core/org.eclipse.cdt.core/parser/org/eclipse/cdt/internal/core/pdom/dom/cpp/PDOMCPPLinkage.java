@@ -94,7 +94,6 @@ import org.eclipse.core.runtime.CoreException;
  * Container for c++-entities.
  */
 class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
-	
 	public final static int CACHE_MEMBERS= 0;
 	public final static int CACHE_BASES= 1;
 	public final static int CACHE_INSTANCES= 2;
@@ -225,7 +224,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		}
 		
-		handlePostProcesses();	
+		handlePostProcesses();
 		return pdomBinding;
 	}
 
@@ -256,8 +255,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = adaptBinding(parent, binding);
 			if (pdomBinding != null) {
 				pdom.putCachedResult(inputBinding, pdomBinding);
-			}
-			else {
+			} else {
 				try {
 					pdomBinding = createBinding(parent, binding);
 					if (pdomBinding != null) {
@@ -584,7 +582,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
 		return adaptBinding(null, inputBinding);
 	}
-	
+
 	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding) throws CoreException {
 		if (cannotAdapt(inputBinding)) {
 			return null;
@@ -646,7 +644,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
  	private final PDOMNode adaptOrAddParent(boolean add, IBinding binding) throws CoreException {
  		try {
  			IBinding owner= binding.getOwner();
- 			if (owner instanceof IFunction && binding instanceof ICPPTemplateParameter == false) {
+ 			if (owner instanceof IFunction && !(binding instanceof ICPPTemplateParameter)) {
  				return null;
  			}
 
@@ -716,12 +714,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return addBinding((ITypedef) type, null);
 		}
 		if (type instanceof ICPPReferenceType) {
-			return new PDOMCPPReferenceType(pdom, parent,
-					(ICPPReferenceType) type);
+			return new PDOMCPPReferenceType(pdom, parent, (ICPPReferenceType) type);
 		}
 		if (type instanceof ICPPPointerToMemberType) {
-			return new PDOMCPPPointerToMemberType(pdom, parent,
-					(ICPPPointerToMemberType) type);
+			return new PDOMCPPPointerToMemberType(pdom, parent,	(ICPPPointerToMemberType) type);
 		}
 		if (type instanceof ICPPTemplateTypeParameter) {
 			return addBinding((ICPPTemplateTypeParameter) type, null);

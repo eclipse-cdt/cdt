@@ -196,9 +196,8 @@ public class IndexBugsTests extends BaseTestCase {
 	//   void five() {}
 	// };
 	public void test154563() throws Exception {
-		// because of fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=193779
-		// this test case passes. However https://bugs.eclipse.org/bugs/show_bug.cgi?id=154563
-		// remains to be fixed.
+		// Because of fix for http://bugs.eclipse.org/193779 this test case passes.
+		// However http://bugs.eclipse.org/154563 remains to be fixed.
 		String[] content= getContentsForTest(3);
 		
 		IFile file= createFile(getProject(), "header.h", content[0]);
@@ -609,9 +608,9 @@ public class IndexBugsTests extends BaseTestCase {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(3);
-		IFile header= TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
 		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
-		IFile unrelated= TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
+		TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		indexManager.reindex(fCProject);
 		waitForIndexer();
@@ -619,7 +618,7 @@ public class IndexBugsTests extends BaseTestCase {
 		index.acquireReadLock();
 		try {
 			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
-			ICPPTemplateInstance b0= getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
+			getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
 		} finally {
 			index.releaseReadLock();
 		}
@@ -1372,12 +1371,11 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
-
-	// #undef XXX
+	// #undef YYY
 	
-	// #define XXX
+	// #define YYY
 	// #include "header.h"
-	// #ifdef XXX
+	// #ifdef YYY
 	//    int bug227088;
 	// #else
 	//    int ok;

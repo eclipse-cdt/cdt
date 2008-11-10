@@ -597,13 +597,18 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 	
 	//  // header.h
-	//	template <class T> class Test {};
+	//	template <class T1> class Test {};
+	//	template <class T2> void f() {}
 	
 	//  #include "header.h"
 	//	struct A {};
 	//	Test<A> a;
+	//  void func() {
+	//    f<A>();
+	//  }
 
-	//	template <class U> class Test;
+	//	template <class U1> class Test;
+	//	template <class U2> void f();
 	public void _test253080() throws Exception {
 		waitForIndexer();
 
@@ -619,6 +624,7 @@ public class IndexBugsTests extends BaseTestCase {
 		try {
 			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
 			getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
+			getBindingFromASTName(ast, testData[1], "f<A>", 4, ICPPTemplateInstance.class);
 		} finally {
 			index.releaseReadLock();
 		}

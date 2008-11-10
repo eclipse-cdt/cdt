@@ -245,7 +245,7 @@ abstract public class PDOMWriter {
 							}
 						}
 						else if (name.isReference()) {
-							if (fSkipReferences == SKIP_TYPE_REFERENCES) {
+							if ((fSkipReferences & SKIP_TYPE_REFERENCES) != 0) {
 								if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
 									na[0]= null;
 									fStatistics.fReferenceCount--;

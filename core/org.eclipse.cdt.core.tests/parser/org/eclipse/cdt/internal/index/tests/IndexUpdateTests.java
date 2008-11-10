@@ -873,6 +873,82 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkValue("C::mem", null);
 		checkValue("e0", 0L);
 	}
+	
+	// class A {
+	//    public: void foo();
+	// };
+
+	// class A {
+	//    public: void foo() throw();
+	// };
+
+	// class A {
+	//    public: void foo() throw(int, double);
+	// };
+
+	// class A {
+	//    public: void foo() throw();
+	// };
+
+	// class A {
+	//    public: void foo();
+	// };
+	public void testExceptionSpecification() throws Exception {
+		ICPPMethod method;
+		IType[] exceptionSpec;
+		setupFile(5, true);
+		fIndex.acquireReadLock();
+		try {
+			method = (ICPPMethod) findBinding("A::foo");
+			exceptionSpec = method.getExceptionSpecification();
+			assertNull(exceptionSpec);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			method = (ICPPMethod) findBinding("A::foo");
+			exceptionSpec = method.getExceptionSpecification();
+			assertEquals(0, exceptionSpec.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			method = (ICPPMethod) findBinding("A::foo");
+			exceptionSpec = method.getExceptionSpecification();
+			assertNotNull(exceptionSpec);
+			assertEquals(2, exceptionSpec.length);
+			assertEquals("int", ASTTypeUtil.getType(exceptionSpec[0]));
+			assertEquals("double", ASTTypeUtil.getType(exceptionSpec[1]));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			method = (ICPPMethod) findBinding("A::foo");
+			exceptionSpec = method.getExceptionSpecification();
+			assertEquals(0, exceptionSpec.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			method = (ICPPMethod) findBinding("A::foo");
+			exceptionSpec = method.getExceptionSpecification();
+			assertNull(exceptionSpec);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 
 	// int global;
 	// struct C {int mem;};

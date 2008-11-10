@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
@@ -31,8 +32,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Binding for function specialization in the index. 
  */
 class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICPPFunction {
 	/**
@@ -54,16 +54,21 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	private static final int FUNCTION_TYPE = PDOMCPPSpecialization.RECORD_SIZE + 8;	
 
 	/**
+	 * Offset of start of exception specification
+	 */
+	protected static final int EXCEPTION_SPEC = PDOMCPPSpecialization.RECORD_SIZE + 12; // int
+
+	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = PDOMCPPSpecialization.RECORD_SIZE + 12; // byte
+	protected static final int ANNOTATION = PDOMCPPSpecialization.RECORD_SIZE + 16; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 13;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 17;
 	
 	public PDOMCPPFunctionSpecialization(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
 		super(pdom, parent, (ICPPSpecialization) function, specialized);
@@ -95,10 +100,22 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], type);
 				setFirstParameter(new PDOMCPPParameterSpecialization(pdom, this, (ICPPParameter) params[i], sParam, typeRecord));
 			}
-			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
+			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));			
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+		try {
+			int typelist= 0;
+			if (function instanceof ICPPMethod && ((ICPPMethod) function).isImplicit()) {
+				// don't store the exception specification, computed it on demand.
+			} else {
+				typelist = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
+			}
+			db.putInt(record + EXCEPTION_SPEC, typelist);
+		} catch (DOMException e) {
+			// ignore problems in the exception specification
+		}
+
 	}
 
 	public PDOMCPPFunctionSpecialization(PDOM pdom, int bindingRecord) {
@@ -207,5 +224,15 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp= super.pdomCompareTo(other);
 		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
+	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		try {
+			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			return PDOMCPPTypeList.getTypes(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 }

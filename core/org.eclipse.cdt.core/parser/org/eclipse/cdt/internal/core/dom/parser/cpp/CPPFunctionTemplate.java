@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -93,6 +94,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		}
 		public boolean takesVarArgs() throws DOMException {
 			throw new DOMException(this);
+		}
+		public IType[] getExceptionSpecification() throws DOMException {
+			throw new DOMException( this );
 		}
 	}
 	
@@ -354,5 +358,25 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		IFunctionType t = getType();
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		return result.toString();
+	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+    	ICPPASTFunctionDeclarator declarator = getDeclaratorByName(getDefinition());
+		if (declarator != null) {
+			IASTTypeId[] astTypeIds = declarator.getExceptionSpecification();
+			if (astTypeIds.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
+				return null;
+			}
+			if (astTypeIds.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
+				return IType.EMPTY_TYPE_ARRAY;
+			}
+			
+			IType[] typeIds = new IType[astTypeIds.length];
+			for (int i=0; i<astTypeIds.length; ++i) {
+				typeIds[i] = CPPVisitor.createType(astTypeIds[i]);
+			}
+			return typeIds;
+		}
+		return null;
 	}
 }

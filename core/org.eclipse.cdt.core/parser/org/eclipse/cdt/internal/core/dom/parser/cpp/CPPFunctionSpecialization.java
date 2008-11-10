@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
 	private IFunctionType type = null;
 	private IParameter[] specializedParams = null;
+	private IType[] specializedExceptionSpec = null;
 
 	public CPPFunctionSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
@@ -248,5 +250,18 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			result.append(tpmap.toString());
 		}
 		return result.toString();
+	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		if (specializedExceptionSpec == null) {
+			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
+			IType[] types = function.getExceptionSpecification();
+			if (types != null) {
+				IType[] specializedTypeList = new IType[types.length];
+				for (int i=0; i<types.length; ++i) 
+					specializedTypeList[i] = specializeType(types[i]);
+			}
+		}
+		return specializedExceptionSpec;
 	}
 }

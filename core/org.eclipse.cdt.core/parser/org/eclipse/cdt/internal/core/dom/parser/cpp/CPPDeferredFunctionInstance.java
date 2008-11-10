@@ -143,4 +143,8 @@ public class CPPDeferredFunctionInstance extends CPPUnknownBinding implements IC
     public IBinding resolveParameter(IASTParameterDeclaration param) {
         return null;
     }
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		return ((ICPPFunction)getTemplateDefinition()).getExceptionSpecification();
+	}
 }

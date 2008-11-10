@@ -4,22 +4,40 @@ public:
 	virtual void inheritedMethod();
 	virtual void pureVirtualMethod() = 0;
 	virtual void overriddenMethod();
-	
+
+	void noExceptionSpecMethod();
+	void emptyExceptionSpecMethod() throw();
+	void nonEmptyExceptionSpecMethod() throw(int);
+
 	inline int inlineMethod();
 	static int staticMethod();
 	int varArgsMethod(...);
 	int constMethod() const;
 	int volatileMethod() volatile;
 	int constVolatileMethod() const volatile;
-	
+
 	// Here, const/volatile applies to the return value, not the method
 	const int *notConstMethod();
 	volatile int *notVolatileMethod();
 	const volatile int *notConstVolatileMethod();
-	
+
 	Class1();
 	virtual ~Class1() = 0;
 };
+
+struct A {
+	A();
+	A(const A&) throw();
+	~A() throw(int);
+};
+
+struct B {
+	B() throw();
+	B(const B&) throw();
+	~B() throw(double);
+};
+
+struct D : public A, public B {};
 
 class Class2 : public Class1 {
 public:
@@ -27,7 +45,7 @@ public:
 	void overriddenMethod();
 	void overloadedMethod();
 	void overloadedMethod(int p1);
-	
+
 	Class2();
 	~Class2();
 };
@@ -66,7 +84,7 @@ Class2::~Class2() {
 }
 
 class Class3 {
-	int defaultMethod();	
+	int defaultMethod();
 private:
 	void privateMethod();
 protected:
@@ -85,23 +103,23 @@ int main() {
 
 	pc1->pureVirtualMethod();
 	pc1->pureVirtualMethod();
-	
+
 	pc1->overriddenMethod();
 	pc1->overriddenMethod();
 	pc1->overriddenMethod();
 
 	c2.inheritedMethod();
 	pc2->inheritedMethod();
-	
+
 	c2.pureVirtualMethod();
 	c2.pureVirtualMethod();
 	pc2->pureVirtualMethod();
-	
+
 	c2.overriddenMethod();
 	c2.overriddenMethod();
 	c2.overriddenMethod();
 	pc2->overriddenMethod();
-	
+
 	c2.overloadedMethod();
 	pc2->overloadedMethod();
 

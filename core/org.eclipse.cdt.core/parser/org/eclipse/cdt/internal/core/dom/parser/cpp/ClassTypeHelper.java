@@ -29,10 +29,15 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -45,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
@@ -207,8 +213,10 @@ public class ClassTypeHelper {
 		ICPPClassType[] bases= getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			set.addAll(base.getDeclaredMethods());
-			scope= (ICPPClassScope) base.getCompositeScope();
-			set.addAll(scope.getImplicitMethods());
+			final IScope compositeScope = base.getCompositeScope();
+			if (compositeScope instanceof ICPPClassScope) {
+				set.addAll(((ICPPClassScope) compositeScope).getImplicitMethods());
+			}
 		}
 		return set.keyArray(ICPPMethod.class);
 	}
@@ -546,5 +554,120 @@ public class ClassTypeHelper {
 				}
 			}
 		}
+	}
+
+	private static final int KIND_DEFAULT_CTOR= 0;
+	private static final int KIND_COPY_CTOR= 1;
+	private static final int KIND_ASSIGNMENT_OP= 2;
+	private static final int KIND_DTOR= 3;
+	private static final int KIND_OTHER= 4;
+	
+	/**
+	 * For implicit methods the exception specification is inherited, search it
+	 * @throws DOMException 
+	 */
+	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod) throws DOMException {
+		// See 15.4.13
+		ICPPClassType owner= implicitMethod.getClassOwner();
+		if (owner == null || owner.getBases().length == 0) 
+			return null;
+
+		// we use a list as types aren't comparable, and can have duplicates (15.4.6)
+		int kind= getImplicitMethodKind(owner, implicitMethod);
+		if (kind == KIND_OTHER)
+			return null;
+		
+		List<IType> inheritedTypeids = new ArrayList<IType>();
+		ICPPClassType[] bases= getAllBases(owner);
+		for (ICPPClassType base : bases) {
+			if (!(base instanceof ICPPDeferredClassInstance)) {
+				ICPPMethod  baseMethod= getMethodInClass(base, kind);
+				if (baseMethod != null) {
+					IType[] baseExceptionSpec= baseMethod.getExceptionSpecification();
+					if (baseExceptionSpec == null) 
+						return null;
+					for (IType baseTypeId : baseMethod.getExceptionSpecification()) {
+						inheritedTypeids.add(baseTypeId);
+					}
+				}
+			}
+		}
+		return inheritedTypeids.toArray(new IType[inheritedTypeids.size()]);
+	}
+
+	private static int getImplicitMethodKind(ICPPClassType ct, ICPPMethod method) throws DOMException {
+		if (method instanceof ICPPConstructor) {
+			final IFunctionType type= method.getType();
+			final IType[] params= type.getParameterTypes();
+			if (params.length == 0)
+				return KIND_DEFAULT_CTOR;
+			if (params.length == 1) {
+				IType t= params[0];
+				if (t instanceof IBasicType && ((IBasicType) t).getType() == IBasicType.t_void)
+					return KIND_DEFAULT_CTOR;
+
+				if (isRefToConstClass(ct, t))
+					return KIND_COPY_CTOR;
+			}
+			return KIND_OTHER;
+		}
+		
+		if (method.isDestructor())
+			return KIND_DTOR;
+		
+		if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
+			final IFunctionType type= method.getType();
+			final IType[] params= type.getParameterTypes();
+			if (params.length == 1) {
+				IType t= params[0];
+				if (isRefToConstClass(ct, t))
+					return KIND_ASSIGNMENT_OP;
+			}
+			return KIND_OTHER;
+		}
+		return KIND_OTHER;	
+	}
+
+	private static boolean isRefToConstClass(ICPPClassType ct, IType t) throws DOMException {
+		while (t instanceof ITypedef)
+			t= ((ITypedef) t).getType();
+		
+		if (t instanceof ICPPReferenceType) {
+			t= ((ICPPReferenceType) t).getType();
+			while (t instanceof ITypedef)
+				t= ((ITypedef) t).getType();
+			if (t instanceof IQualifierType) {
+				t= ((IQualifierType) t).getType();
+				return ct.isSameType(t);
+			}
+		}
+		return false;
+	}
+
+	private static ICPPMethod getMethodInClass(ICPPClassType ct, int kind) throws DOMException {
+		switch(kind) {
+		case KIND_DEFAULT_CTOR:
+		case KIND_COPY_CTOR:
+			for (ICPPConstructor ctor : ct.getConstructors()) {
+				if (!ctor.isImplicit() && getImplicitMethodKind(ct, ctor) == kind)
+					return ctor;
+			}
+			return null;
+		case KIND_ASSIGNMENT_OP:
+			for (ICPPMethod method : ct.getDeclaredMethods()) {
+				if (method instanceof ICPPConstructor)
+					continue;
+				if (getImplicitMethodKind(ct, method) == kind)
+					return method;
+			}
+			return null;
+		case KIND_DTOR:
+			for (ICPPMethod method : ct.getDeclaredMethods()) {
+				if (method.isDestructor())
+					return method;
+			}
+			return null;
+		}
+		return null;
 	}
 }

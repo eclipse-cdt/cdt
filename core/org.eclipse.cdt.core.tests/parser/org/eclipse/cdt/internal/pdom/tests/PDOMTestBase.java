@@ -120,6 +120,15 @@ public class PDOMTestBase extends BaseTestCase {
 		}
 		return pdom.findBindings(pattern, true, IndexFilter.ALL_DECLARED, PROGRESS);
 	}
+	
+	protected IBinding[] findQualifiedPossiblyImplicit(PDOM pdom, String name) throws CoreException {
+		String[] segments = name.split("::");
+		Pattern[] pattern = new Pattern[segments.length];
+		for (int i = 0; i < segments.length; i++) {
+			pattern[i] = Pattern.compile(segments[i]);
+		}
+		return pdom.findBindings(pattern, true, IndexFilter.ALL, PROGRESS);
+	}
 
 	protected IBinding[] findUnqualifiedName(PDOM pdom, String name) throws CoreException {
 		String[] segments = name.split("::");

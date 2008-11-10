@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -75,7 +76,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 	}
 
 	public boolean isImplicit() {
-		return false;
+		return ((ICPPMethod) getSpecializedBinding()).isImplicit();
 	}
 
 	public boolean isPureVirtual() throws DOMException {
@@ -86,4 +87,11 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return false;
 	}
 
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		if (isImplicit()) {
+			return ClassTypeHelper.getInheritedExceptionSpecification(this);
+		}
+		return super.getExceptionSpecification();
+	}
 }

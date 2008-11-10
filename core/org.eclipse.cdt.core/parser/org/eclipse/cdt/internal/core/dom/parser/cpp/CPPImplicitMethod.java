@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * Binding for implicit methods, base class for implicit constructors.
  */
 public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
     
@@ -180,4 +180,8 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return getClassOwner();
 	}
 
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		return ClassTypeHelper.getInheritedExceptionSpecification(this);
+	}
 }

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -197,5 +198,13 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 			}
 		}
 		return 0;
+	}
+	
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		if (isImplicit()) {
+			return ClassTypeHelper.getInheritedExceptionSpecification(this);
+		}
+		return super.getExceptionSpecification();
 	}
 }

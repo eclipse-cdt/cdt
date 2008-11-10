@@ -6,24 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Mar 15, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * @author aniefer
+ * Binding for c++ functions.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPFunction extends IFunction, ICPPBinding {
 
-    /**
+	/**
      * does this function have the mutable storage class specifier
      * @throws DOMException
      */
@@ -39,4 +38,11 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
      * @since 5.0
      */
     public boolean isExternC() throws DOMException;
+    
+    /**
+     * Returns the exception specification for this function or <code>null</code> if there
+     * is no exception specification.
+     * @since 5.1
+     */
+    public IType[] getExceptionSpecification() throws DOMException;
 }

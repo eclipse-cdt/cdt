@@ -12,10 +12,12 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -120,5 +122,13 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	@Override
 	public boolean isVolatile() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
+	}
+	
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		if (isImplicit()) {
+			return ClassTypeHelper.getInheritedExceptionSpecification(this);
+		}
+		return super.getExceptionSpecification();
 	}
 }

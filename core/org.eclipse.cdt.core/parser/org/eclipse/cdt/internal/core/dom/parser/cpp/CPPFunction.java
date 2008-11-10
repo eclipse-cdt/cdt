@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -24,11 +24,13 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -44,10 +46,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Binding for c++ function
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
-    
+
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
         public CPPFunctionProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
@@ -97,6 +99,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         public boolean takesVarArgs() throws DOMException {
             throw new DOMException(this);
         }
+		public IType[] getExceptionSpecification() throws DOMException {
+            throw new DOMException(this);
+		}
     }
     
 	protected ICPPASTFunctionDeclarator[] declarations;
@@ -213,7 +218,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 
 	public IParameter[] getParameters() {
-	    IASTStandardFunctionDeclarator dtor = (definition != null) ? definition : declarations[0];
+	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
 		IASTParameterDeclaration[] params = dtor.getParameters();
 		int size = params.length;
 		IParameter[] result = new IParameter[ size ];
@@ -516,15 +521,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     }
 
     public boolean takesVarArgs() {
-        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
-        if (dtor != null) {
-            return dtor.takesVarArgs();
-        }
-        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
-        if (ds != null && ds.length > 0) {
-            return ds[0].takesVarArgs();
-        }
-        return false;
+        ICPPASTFunctionDeclarator dtor= getPreferredDtor();
+        return dtor != null ? dtor.takesVarArgs() : false;
     }
     
 	public ILinkage getLinkage() {
@@ -542,5 +540,39 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	public IBinding getOwner() throws DOMException {
 		return CPPVisitor.findNameOwner(getASTName(), false);
+	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		ICPPASTFunctionDeclarator declarator = getPreferredDtor();
+		if (declarator != null) {
+			IASTTypeId[] astTypeIds= declarator.getExceptionSpecification();
+			if (astTypeIds.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) 
+				return null;
+			
+			if (astTypeIds.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) 
+				return IType.EMPTY_TYPE_ARRAY;
+			
+			IType[] typeIds = new IType[astTypeIds.length];
+			for (int i=0; i<astTypeIds.length; ++i) {
+				typeIds[i] = CPPVisitor.createType(astTypeIds[i]);
+			}
+			return typeIds;
+		}
+		return null;
+	}
+	
+	protected ICPPASTFunctionDeclarator getPreferredDtor() {
+        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
+        if (dtor != null) 
+        	return dtor;
+
+        ICPPASTFunctionDeclarator[] dtors = (ICPPASTFunctionDeclarator[]) getDeclarations();
+        if (dtors != null) {
+        	for (ICPPASTFunctionDeclarator declarator : dtors) {
+        		if (declarator != null) 
+        			return declarator;
+        	}
+        }
+        return null;
 	}
 }

@@ -14,11 +14,13 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction implements ICPPSpecialization {
@@ -53,8 +55,21 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 		return result.toString();
 	}
 
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
+		if (es == null || es.length == 0)
+			return es;
+		
+		IType[] result= new IType[es.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i]= cf.getCompositeType((IIndexType) result[i]);
+		}
+		return result;
+	}
+
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
-	}
+	}	
 }

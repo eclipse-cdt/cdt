@@ -15,6 +15,7 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -246,5 +247,59 @@ public class MethodTests extends PDOMTestBase {
 		assertFalse(type.isConst());
 		assertFalse(type.isVolatile());
 	}
+	
+	public void testNoExceptionSpecification() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "Class1::noExceptionSpecMethod");
+		assertEquals(1, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[0];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertNull(exceptionSpec);
+	}
+	
+	public void testEmptyExceptionSpecification() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "Class1::emptyExceptionSpecMethod");
+		assertEquals(1, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[0];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertEquals(0, exceptionSpec.length);
+	}
+	
+	public void testNonEmptyExceptionSpecification() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "Class1::nonEmptyExceptionSpecMethod");
+		assertEquals(1, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[0];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertEquals(1, exceptionSpec.length);
+		assertEquals(IBasicType.t_int, ((ICPPBasicType) exceptionSpec[0]).getType());
+	}
 
+	public void testImplicitCtorExceptionSpec() throws Exception {
+		IBinding[] bindings = findQualifiedPossiblyImplicit(pdom, "D::D");
+		// get both default ctor + copy ctor
+		assertEquals(2, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[0];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertNull(exceptionSpec);
+	}
+
+	public void testImplicitCopyCtorExceptionSpec() throws Exception {
+		IBinding[] bindings = findQualifiedPossiblyImplicit(pdom, "D::D");
+		// get both default ctor + copy ctor
+		assertEquals(2, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[1];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertEquals(0, exceptionSpec.length);
+	}
+
+	public void testImplicitDtorExceptionSpec() throws Exception {
+		IBinding[] bindings = findQualifiedPossiblyImplicit(pdom, "D::~D");
+		assertEquals(1, bindings.length);
+		ICPPMethod method = (ICPPMethod) bindings[0];
+		IType[] exceptionSpec = method.getExceptionSpecification();
+		assertEquals(2, exceptionSpec.length);
+		int t1= ((ICPPBasicType) exceptionSpec[0]).getType();
+		int t2= ((ICPPBasicType) exceptionSpec[1]).getType();
+		assertEquals(IBasicType.t_int, Math.min(t1, t2));
+		assertEquals(IBasicType.t_double, Math.max(t1, t2));
+	}
 }

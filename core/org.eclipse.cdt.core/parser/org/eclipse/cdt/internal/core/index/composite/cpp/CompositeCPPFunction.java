@@ -92,4 +92,16 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		}
 		return result.toString();
 	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
+		if (es == null || es.length == 0)
+			return es;
+		
+		IType[] result= new IType[es.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i]= cf.getCompositeType((IIndexType) es[i]);
+		}
+		return result;
+	}
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Corporation - initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -20,15 +20,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * Binding for implicit constructors (default and copy constructor).
  */
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
-    /**
-     * @param name
-     * @param params
-     */
-    public CPPImplicitConstructor( ICPPClassScope scope, char [] name, IParameter[] params ) {
+    public CPPImplicitConstructor(ICPPClassScope scope, char[] name, IParameter[] params) {
         super( scope, name, createFunctionType(scope, params), params );
     }
 
@@ -37,9 +33,6 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
 		return CPPVisitor.createImplicitFunctionType(returnType, params, null);
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
-     */
     public boolean isExplicit() {
         return false;
     }

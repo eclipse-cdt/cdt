@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -32,8 +33,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements ICPPTemplateInstance {
 	private static final int ARGUMENTS = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;
+	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 4;
+	private static final int EXCEPTION_SPEC = PDOMCPPFunctionSpecialization.RECORD_SIZE + 4;
+
+	@SuppressWarnings("hiding")
+	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
 			throws CoreException {
@@ -41,7 +46,15 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
 		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		pdom.getDB().putInt(record+ARGUMENTS, argListRec);
+		final Database db = pdom.getDB();
+		db.putInt(record+ARGUMENTS, argListRec);
+		
+		try {
+			int exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
+			db.putInt(record+EXCEPTION_SPEC, exceptSpecRec);
+		} catch (DOMException e) {
+			// ignore problems in the exception specification
+		}
 	}
 
 	public PDOMCPPFunctionInstance(PDOM pdom, int bindingRecord) {
@@ -73,6 +86,17 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		}
 	}
 	
+	@Override
+	public IType[] getExceptionSpecification() throws DOMException {
+		try {
+			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			return PDOMCPPTypeList.getTypes(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());

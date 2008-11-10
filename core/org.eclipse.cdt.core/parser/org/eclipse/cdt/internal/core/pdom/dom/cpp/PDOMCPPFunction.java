@@ -6,24 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    IBM Corporation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
@@ -38,8 +37,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Binding for c++ functions in the index.
  */
 class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
 
@@ -65,18 +63,23 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 * Offset of hash of parameter information to allow fast comparison
 	 */
 	private static final int SIGNATURE_HASH = PDOMCPPBinding.RECORD_SIZE + 12;
+		
+	/**
+	 * Offset of start of exception specifications
+	 */
+	protected static final int EXCEPTION_SPEC = PDOMCPPBinding.RECORD_SIZE + 16; // int
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 16; // byte
-	
+	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 20; // byte
+
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 17;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 21;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException {
 		super(pdom, parent, function.getNameCharArray());
@@ -89,6 +92,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 				initData((ICPPFunctionType) function.getType(), function.getParameters());
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
+			storeExceptionSpec(db, function);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -102,7 +106,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPFunction) {
-			IFunction func= (ICPPFunction) newBinding;
+			ICPPFunction func= (ICPPFunction) newBinding;
 			ICPPFunctionType newType;
 			IParameter[] newParams;
 			byte newAnnotation;
@@ -123,8 +127,29 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			if (oldParams != null) {
 				oldParams.delete(linkage);
 			}
-			pdom.getDB().putByte(record + ANNOTATION, newAnnotation);
+			final Database db = pdom.getDB();
+			db.putByte(record + ANNOTATION, newAnnotation);
+			
+			int oldRec = db.getInt(record+EXCEPTION_SPEC);
+			storeExceptionSpec(db, func);
+			if (oldRec != 0) {
+				PDOMCPPTypeList.clearTypes(this, oldRec);
+			}
 		}
+	}
+
+	private void storeExceptionSpec(final Database db, ICPPFunction binding) throws CoreException {
+		int typelist= 0;
+		try {
+			if (binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit()) {
+				// don't store the exception specification, computed it on demand.
+			} else {
+				typelist = PDOMCPPTypeList.putTypes(this, binding.getExceptionSpecification());
+			}
+		} catch (DOMException e) {
+			// ignore problems in the exception specification.
+		}
+		db.putInt(record + EXCEPTION_SPEC, typelist);
 	}
 
 	private void setParameters(PDOMCPPFunctionType pft, IParameter[] params) throws CoreException {
@@ -281,5 +306,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			throw new PDOMNotImplementedError(b.getClass().toString());
 		}
 		return 0;
+	}
+
+	public IType[] getExceptionSpecification() throws DOMException {
+		try {
+			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			return PDOMCPPTypeList.getTypes(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 }

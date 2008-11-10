@@ -1617,6 +1617,9 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	public static IType createType(IASTDeclarator declarator) {
+		if (declarator == null) 
+			return null;
+		
 		IASTDeclSpecifier declSpec = null;
 		
 		IASTNode node = declarator.getParent();

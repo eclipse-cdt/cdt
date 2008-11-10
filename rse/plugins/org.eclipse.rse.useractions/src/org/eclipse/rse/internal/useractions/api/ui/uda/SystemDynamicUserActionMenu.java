@@ -7,6 +7,7 @@
  * Contributors:
  * Xuan Chen (IBM) - [222470] initial contribution.
  * Kevin Doyle (IBM) - [239805] User Action/Compile menu's shouldn't be tied to IRemoteFile
+ * Kevin Doyle (IBM) - [253037] ClassCastException in SystemDynamicUserActionMenu
  *********************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.uda;
 
@@ -47,22 +48,6 @@ import org.eclipse.ui.actions.CompoundContributionItem;
  */
 public class SystemDynamicUserActionMenu extends CompoundContributionItem
 {
-	private class UserActionContribution extends ActionContributionItem {
-
-		public UserActionContribution(Action action)
-		{
-			super(action);
-		}
-
-		/*
-		public void fill(Menu menu, int index)
-		{
-
-			MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-			menuItem.setText("My First Contribution");
-		}
-		*/
-	}
 
 	protected IContributionItem[] getContributionItems() {
 
@@ -71,7 +56,9 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getSelectionService().getSelection();
-		Object firstSelection = ((IStructuredSelection) selection).getFirstElement();
+		Object firstSelection = null;
+		if (selection instanceof IStructuredSelection)
+			firstSelection = ((IStructuredSelection) selection).getFirstElement();
 		if (firstSelection == null)
 		{
 			return new IContributionItem[0];
@@ -110,7 +97,7 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 
 				 for (int i = 0; i < list.length; i++)
 				 {
-					 UserActionContribution testContribution = new UserActionContribution(list[i]);
+					 ActionContributionItem testContribution = new ActionContributionItem(list[i]);
 					 returnedItemList.add(testContribution);
 				 }
 			 }
@@ -128,7 +115,7 @@ public class SystemDynamicUserActionMenu extends CompoundContributionItem
 		wwAction.setToolTipText(SystemUDAResources.RESID_WORKWITH_UDAS_ACTION_TOOLTIP);
 		wwAction.allowOnMultipleSelection(true);
 		wwAction.setSelection(selection);
-		UserActionContribution userActionContribution = new UserActionContribution(wwAction);
+		ActionContributionItem userActionContribution = new ActionContributionItem(wwAction);
 		returnedItemList.add(userActionContribution);
 
 		IContributionItem[] list = (IContributionItem[])returnedItemList.toArray(new IContributionItem[]{});

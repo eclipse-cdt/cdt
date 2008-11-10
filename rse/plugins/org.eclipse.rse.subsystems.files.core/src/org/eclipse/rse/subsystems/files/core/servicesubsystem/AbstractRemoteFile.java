@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  * Martin Oberhuber (Wind River) - [234726] Update IRemoteFile Javadocs
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
+ * David McKnight   (IBM)        - [241327] IRemoteFile.getParentName returns null for ssh, ftp, dstore, and local
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -164,12 +165,33 @@ public abstract class AbstractRemoteFile extends RemoteFile
 		return null;
 	}
 
+	/**
+	 * Return the parent's name
+	 */
 	public String getParentName()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String parentPath = getParentPath();
+		String parentName = getNameFromPath(parentPath);
+		return parentName;
 	}
-
+	
+	/**
+	 * Gets the name from a path
+	 * @param path to get the name from a path
+	 * @return the name of file in the path
+	 */
+	private String getNameFromPath(String path)
+	{
+		int lastSlash = path.lastIndexOf('/');
+		if (lastSlash == -1){ // account for windows		
+			lastSlash = path.lastIndexOf('\\');
+		}
+		if (lastSlash > 0 && lastSlash != path.length() - 1){
+			return path.substring(lastSlash + 1);
+		}
+		return path;
+	}
+	
 	public boolean isHidden()
 	{
 		return _hostFile.isHidden();

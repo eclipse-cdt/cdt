@@ -20,6 +20,9 @@ import org.eclipse.jface.text.BadLocationException;
  */
 public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 
+	/** Maximum width of column (in characters) */
+	private static final int MAXWIDTH= 40;
+
 	/**
 	 * Default constructor.
 	 */
@@ -39,9 +42,13 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 			AddressRangePosition pos = doc.getDisassemblyPosition(offset);
 			if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
 				DisassemblyPosition disassPos = (DisassemblyPosition)pos;
+				int length = disassPos.fFunction.length;
+				if (length > MAXWIDTH) {
+					return "..." + new String(disassPos.fFunction, length - MAXWIDTH + 3, MAXWIDTH - 3); //$NON-NLS-1$
+				}
 				return new String(disassPos.fFunction);
 			} else if (pos != null && !pos.fValid) {
-				return DOTS.substring(0, doc.getMaxFunctionLength());
+				return DOTS.substring(0, Math.min(MAXWIDTH, doc.getMaxFunctionLength()));
 			}
 		} catch (BadLocationException e) {
 			// silently ignored
@@ -52,15 +59,7 @@ public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 	@Override
 	protected int computeNumberOfCharacters() {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
-		return doc.getMaxFunctionLength();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getWidth()
-	 */
-	@Override
-	public int getWidth() {
-		return super.getWidth();
+		return Math.min(MAXWIDTH, doc.getMaxFunctionLength());
 	}
 
 }

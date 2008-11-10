@@ -2428,9 +2428,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			asyncExec(new Runnable() {
 				public void run() {
 					updatePC(PC_UNKNOWN);
+					firePropertyChange(PROP_SUSPENDED);
 				}
 			});
-			firePropertyChange(PROP_SUSPENDED);
 		}
 	}
 
@@ -2442,9 +2442,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			asyncExec(new Runnable() {
 				public void run() {
 					updatePC(PC_RUNNING);
+					firePropertyChange(PROP_SUSPENDED);
 				}
 			});
-			firePropertyChange(PROP_SUSPENDED);
 		}
 	}
 

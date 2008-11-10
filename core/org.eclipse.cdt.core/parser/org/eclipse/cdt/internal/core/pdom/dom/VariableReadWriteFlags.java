@@ -92,6 +92,9 @@ public abstract class VariableReadWriteFlags {
 		if (expr instanceof IASTBinaryExpression) {
 			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
 		}
+		if (expr instanceof IASTCastExpression) { // must be ahead of unary
+			return rwAnyNode(expr, indirection);
+		}
 		if (expr instanceof IASTUnaryExpression) {
 			return rwInUnaryExpression(node, (IASTUnaryExpression) expr, indirection);			
 		}
@@ -100,9 +103,6 @@ public abstract class VariableReadWriteFlags {
 				return rwAnyNode(expr, indirection-1);
 			}
 			return READ;
-		}
-		if (expr instanceof IASTCastExpression) {
-			return rwAnyNode(expr, indirection);
 		}
 		if (expr instanceof IASTConditionalExpression) {
 			if (node.getPropertyInParent() == IASTConditionalExpression.LOGICAL_CONDITION) {

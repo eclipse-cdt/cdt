@@ -174,11 +174,11 @@ public class Value implements IValue {
 		if (e instanceof IASTBinaryExpression) {
 			return evaluateBinaryExpression((IASTBinaryExpression) e, maxdepth);
 		}
+		if (e instanceof IASTCastExpression) { // must be ahead of unary
+			return evaluate(((IASTCastExpression) e).getOperand(), maxdepth);
+		}
 		if (e instanceof IASTUnaryExpression) {
 			return evaluateUnaryExpression((IASTUnaryExpression) e, maxdepth);
-		}
-		if (e instanceof IASTCastExpression) {
-			return evaluate(((IASTCastExpression) e).getOperand(), maxdepth);
 		}
 		if (e instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) e;

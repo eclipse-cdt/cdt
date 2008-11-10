@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -35,6 +36,8 @@ public class ASTQueries {
 		if (expr instanceof IASTAmbiguousExpression) 
 			return true;
 		if (expr instanceof IASTIdExpression) 
+			return true;
+		if (expr instanceof IASTCastExpression)
 			return true;
 		
 		if (expr instanceof IASTUnaryExpression) {

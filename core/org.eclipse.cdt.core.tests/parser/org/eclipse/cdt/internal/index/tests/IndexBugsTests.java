@@ -1396,4 +1396,21 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	// struct s {int a;};
+	// struct s x[]= {{.a=1,},{.a=2}};
+	public void testReferencesInDesignators_Bug253690() throws Exception {
+		String code= getContentsForTest(1)[0];
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test.c", code);
+		waitUntilFileIsIndexed(file, 4000);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("a".toCharArray(), false, IndexFilter.ALL_DECLARED, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] refs = fIndex.findNames(bindings[0], IIndex.FIND_REFERENCES);
+			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 }

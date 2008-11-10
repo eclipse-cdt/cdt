@@ -156,93 +156,84 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         if (LT(1) == IToken.tASSIGN) {
             consume();
-            final List<IASTNode> empty= Collections.emptyList();
-            return cInitializerClause(empty, false);
+            return cInitializerClause(false);
         }
         return null;
     }
 
-    protected IASTInitializer cInitializerClause(List<IASTNode> designators, boolean inAggregateInitializer)
-            throws EndOfFileException, BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        la = null;
-        if (LT(1) == IToken.tLBRACE) {
-            consume();
-            IASTInitializerList result = createInitializerList();
-            ((ASTNode) result).setOffset(startingOffset);
-            
-            // bug 196468, gcc accepts empty braces.
-            if (supportGCCStyleDesignators && LT(1) == (IToken.tRBRACE)) {
-                int l = consume().getEndOffset();
-                ((ASTNode) result).setLength(l - startingOffset);
-                return result;
+    protected IASTInitializer cInitializerClause(boolean inAggregate) throws EndOfFileException, BacktrackException {
+        final int offset = LA(1).getOffset();
+        if (LT(1) != IToken.tLBRACE) {
+            IASTExpression assignmentExpression= assignmentExpression();
+            if (inAggregate && skipTrivialExpressionsInAggregateInitializers) {
+            	if (!ASTQueries.canContainName(assignmentExpression))
+            		return null;
             }
-
-            for (;;) {
-            	final IToken startToken= LA(1);
-                // required at least one initializer list
-                // get designator list
-                List<IASTNode> newDesignators = designatorList();
-                if (newDesignators.size() != 0)
-                    if (LT(1) == IToken.tASSIGN)
-                        consume();
-
-                IASTInitializer initializer = cInitializerClause(newDesignators, true);
-
-                // depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
-                if (initializer != null) {
-                	if (newDesignators.isEmpty()) {
-                		result.addInitializer(initializer);
-                	} else {
-                		ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
-                		((ASTNode) desigInitializer).setOffsetAndLength(
-                				((ASTNode) newDesignators.get(0)).getOffset(),
-                				((ASTNode)initializer).getOffset() + ((ASTNode)initializer).getLength() - ((ASTNode) newDesignators.get(0)).getOffset());
-                		for (int i = 0; i < newDesignators.size(); ++i) {
-                			ICASTDesignator d = (ICASTDesignator) newDesignators.get(i);
-                			desigInitializer.addDesignator(d);
-                		}
-                		desigInitializer.setOperandInitializer(initializer);
-                		result.addInitializer(desigInitializer);
-                	}
-                }
-                // can end with ", }" or "}"
-                if (LT(1) == IToken.tCOMMA)
-                    consume();
-                if (LT(1) == IToken.tRBRACE)
-                    break;
-                
-                final IToken nextToken= LA(1);
-                if (nextToken.getType() == IToken.tEOC) {
-                	return result;
-                }
-                if (nextToken == startToken) {
-                    throwBacktrack(startingOffset, nextToken.getEndOffset() - startingOffset);
-                    return null;
-                }
-
-                // otherwise, its another initializer in the list
-            }
-            // consume the closing brace
-            int lastOffset = consume(IToken.tRBRACE).getEndOffset();
-            ((ASTNode) result).setLength(lastOffset - startingOffset);
+            IASTInitializerExpression result= createInitializerExpression();
+            result.setExpression(assignmentExpression);
+            setRange(result, assignmentExpression);
             return result;
+
         }
-        // if we get this far, it means that we have not yet succeeded
-        // try this now instead
-        // assignmentExpression
-        IASTExpression assignmentExpression = assignmentExpression();
-        if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
-        	if (!ASTQueries.canContainName(assignmentExpression))
-        		return null;
+        
+        // it's an aggregate initializer
+        consume(IToken.tLBRACE);
+        IASTInitializerList result = createInitializerList();
+
+        // bug 196468, gcc accepts empty braces.
+        if (supportGCCStyleDesignators && LT(1) == IToken.tRBRACE) {
+        	int endOffset= consume().getEndOffset();
+        	setRange(result, offset, endOffset);
+        	return result;
         }
-        IASTInitializerExpression result = createInitializerExpression();
-        result.setExpression(assignmentExpression);
-        ((ASTNode) result).setOffsetAndLength(
-        		((ASTNode) assignmentExpression).getOffset(),
-        		((ASTNode) assignmentExpression).getLength());
-        return result;
+
+        for (;;) {
+        	final int checkOffset= LA(1).getOffset();
+        	// required at least one initializer list
+        	// get designator list
+        	List<? extends ICASTDesignator> designator= designatorList();
+        	if (designator == null) {
+        		IASTInitializer initializer= cInitializerClause(true);
+        		// depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
+        		if (initializer != null) {
+        			result.addInitializer(initializer);
+        		}
+        	} else {
+        		if (LT(1) == IToken.tASSIGN)
+        			consume();
+        		IASTInitializer initializer= cInitializerClause(false);
+        		ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
+        		setRange(desigInitializer, designator.get(0));
+        		adjustLength(desigInitializer, initializer);
+
+        		for (ICASTDesignator d : designator) {
+        			desigInitializer.addDesignator(d);
+        		}
+        		desigInitializer.setOperandInitializer(initializer);
+        		result.addInitializer(desigInitializer);
+        	}
+
+        	// can end with ", }" or "}"
+        	boolean canContinue= LT(1) == IToken.tCOMMA;
+        	if (canContinue)
+        		consume();
+        	
+        	switch (LT(1)) {
+        	case IToken.tRBRACE:
+        		int lastOffset = consume().getEndOffset();
+        		setRange(result, offset, lastOffset);
+        		return result;
+
+        	case IToken.tEOC:
+        		setRange(result, offset, LA(1).getOffset());
+        		return result;
+        	}
+        	
+        	if (!canContinue || LA(1).getOffset() == checkOffset) {
+        		throwBacktrack(offset, LA(1).getEndOffset() - offset);
+        	}
+        }
+        // consume the closing brace
     }
 
     protected ICASTDesignatedInitializer createDesignatorInitializer() {
@@ -257,102 +248,67 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTInitializerExpression();
     }
 
-    protected List<IASTNode> designatorList() throws EndOfFileException,
-            BacktrackException {
-        // designated initializers for C
-        List<IASTNode> designatorList= Collections.emptyList();
-
-        if (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
-            while (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
-                if (LT(1) == IToken.tDOT) {
+    private List<? extends ICASTDesignator> designatorList() throws EndOfFileException, BacktrackException {
+    	final int lt1= LT(1);
+        if (lt1 == IToken.tDOT || lt1 == IToken.tLBRACKET) {
+            List<ICASTDesignator> designatorList= null;
+            while (true) {
+            	switch (LT(1)) {
+            	case IToken.tDOT:
                     int offset = consume().getOffset();
                     IToken id = identifier();
-                    ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode) designator).setOffsetAndLength(offset, id.getEndOffset() - offset);
                     IASTName n = createName(id);
-                    designator.setName(n);
-                    if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
-                    designatorList.add(designator);
-                } else if (LT(1) == IToken.tLBRACKET) {
-                    IToken mark = consume();
-                    int offset = mark.getOffset();
+                    ICASTFieldDesignator fieldDesignator = createFieldDesignator();
+                	setRange(fieldDesignator, offset, id.getEndOffset());
+                    fieldDesignator.setName(n);
+                    if (designatorList == null)
+                        designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                    designatorList.add(fieldDesignator);
+                    break;
+                    
+            	case IToken.tLBRACKET:
+                    offset = consume().getOffset();
                     IASTExpression constantExpression = expression();
-                    if (LT(1) == IToken.tRBRACKET) {
-                        int lastOffset = consume().getEndOffset();
-                        ICASTArrayDesignator designator = createArrayDesignator();
-                        ((ASTNode) designator).setOffsetAndLength(offset, lastOffset - offset);
-                        designator.setSubscriptExpression(constantExpression);
-                        if (designatorList == Collections.EMPTY_LIST)
-                            designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
-                        designatorList.add(designator);
-                        continue;
-                    }
-                    backup(mark);
-                    if (supportGCCStyleDesignators) {
-                        int startOffset = consume(IToken.tLBRACKET).getOffset();
-                        IASTExpression constantExpression1 = expression();
-                        consume(IToken.tELLIPSIS);
-                        IASTExpression constantExpression2 = expression();
+                    if (supportGCCStyleDesignators && LT(1) == IToken.tELLIPSIS) {
+                    	consume(IToken.tELLIPSIS);
+                    	IASTExpression constantExpression2 = expression();
+                    	int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
+                    	IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
+                    	setRange(designator, offset, lastOffset);
+                    	designator.setRangeFloor(constantExpression);
+                    	designator.setRangeCeiling(constantExpression2);
+                    	if (designatorList == null)
+                    		designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                    	designatorList.add(designator);
+                    } else {
                         int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
-                        IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
-                        ((ASTNode) designator).setOffsetAndLength(startOffset, lastOffset - startOffset);
-                        designator.setRangeFloor(constantExpression1);
-                        designator.setRangeCeiling(constantExpression2);
-                        if (designatorList == Collections.EMPTY_LIST)
-                            designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
+                        ICASTArrayDesignator designator = createArrayDesignator();
+                    	setRange(designator, offset, lastOffset);
+                        designator.setSubscriptExpression(constantExpression);
+                        if (designatorList == null)
+                            designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
                         designatorList.add(designator);
                     }
-                } else if (supportGCCStyleDesignators
-                        && LT(1) == IToken.tIDENTIFIER) {
-                    IToken identifier = identifier();
-                    int lastOffset = consume(IToken.tCOLON).getEndOffset();
-                    ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode) designator).setOffsetAndLength(identifier
-                            .getOffset(), lastOffset - identifier.getOffset());
-                    IASTName n = createName(identifier);
-                    designator.setName(n);
-                    if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
-                    designatorList.add(designator);
+                    break;
+                    
+                default:
+                	return designatorList;
                 }
             }
-        } else {
-            if (supportGCCStyleDesignators
-                    && (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tLBRACKET)) {
-
-                if (LT(1) == IToken.tIDENTIFIER) {
-                	// fix for 84176: if reach identifier and it's not a designator then return empty designator list
-                	if (LT(2) != IToken.tCOLON)
-                		return designatorList;
-                	
-                    IToken identifier = identifier();
-                    int lastOffset = consume(IToken.tCOLON).getEndOffset();
-                    ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode) designator).setOffsetAndLength(identifier
-                            .getOffset(), lastOffset - identifier.getOffset());
-                    IASTName n = createName(identifier);
-                    designator.setName(n);
-                    if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
-                    designatorList.add(designator);
-                } else if (LT(1) == IToken.tLBRACKET) {
-                    int startOffset = consume().getOffset();
-                    IASTExpression constantExpression1 = expression();
-                    consume(IToken.tELLIPSIS);
-                    IASTExpression constantExpression2 = expression();
-                    int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
-                    IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
-                    ((ASTNode) designator).setOffsetAndLength(startOffset, lastOffset - startOffset);
-                    designator.setRangeFloor(constantExpression1);
-                    designator.setRangeCeiling(constantExpression2);
-                    if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList<IASTNode>(DEFAULT_DESIGNATOR_LIST_SIZE);
-                    designatorList.add(designator);
-                }
-            }
-        }
-        return designatorList;
+        } 
+        
+		// fix for 84176: if reach identifier and it's not a designator then return empty designator list
+		if (supportGCCStyleDesignators && lt1 == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
+			IToken identifier = identifier();
+			int lastOffset = consume(IToken.tCOLON).getEndOffset();
+			ICASTFieldDesignator designator = createFieldDesignator();
+			((ASTNode) designator).setOffsetAndLength(identifier.getOffset(), lastOffset - identifier.getOffset());
+			IASTName n = createName(identifier);
+			designator.setName(n);
+			return Collections.singletonList(designator);
+		}
+		
+        return null;
     }
 
     protected IGCCASTArrayRangeDesignator createArrayRangeDesignator() {
@@ -686,8 +642,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		if (t != null) {
         			consume(IToken.tRPAREN).getEndOffset();
                 	if (LT(1) == IToken.tLBRACE) {
-        				final List<IASTNode> emptyList = Collections.emptyList();
-						IASTInitializer i = cInitializerClause(emptyList, false);
+						IASTInitializer i = cInitializerClause(false);
         				firstExpression = buildTypeIdInitializerExpression(t, i, offset, calculateEndOffset(i));
         				break;        
                 	}

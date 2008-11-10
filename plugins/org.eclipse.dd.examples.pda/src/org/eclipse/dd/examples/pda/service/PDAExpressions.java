@@ -467,6 +467,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
             }
         } catch (NumberFormatException e) {
             PDAPlugin.failRequest(rm, INVALID_HANDLE, "Value not formatted properly");
+            return;
         }
         
         final String exprValue = value != null ? value : formattedExprValue;

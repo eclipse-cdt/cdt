@@ -286,7 +286,7 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 			System.out.println("Good! " + ce);
 			assertTrue("1.1.1", ce.getStatus().getCode() == EFS.ERROR_DELETE);
 		}
-		if (fDefaultPropertiesFile != null || File.separatorChar != '\\') {
+		if (fPropertiesFileName != null || File.separatorChar != '\\') {
 			// On Windows, no exception is thrown (read-only stuff can be deleted)
 			if (fHomeDirectory == null || fHomeDirectory.getSeparatorChar() != '\\') {
 				assertTrue("1.1", exceptionThrown);

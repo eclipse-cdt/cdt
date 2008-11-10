@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Kevin Doyle		(IBM)		 - [252707] Everytime a Compile command is selected a saving profile job is performed
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.compile;
 
@@ -124,14 +125,11 @@ public class SystemCompileAction extends SystemBaseAction {
 			Object element = getFirstSelection();
 			boolean ok = true;
 			while (ok && (element != null)) {
-				/* FIXME - compile actions not coupled with subsystem API anymore
-				 ISystemRemoteElementAdapter rmtAdapter = SystemAdapterHelpers.getRemoteAdapter(element);
-				 ISubSystem ss = rmtAdapter.getSubSystem(element);
-				 ss.getParentSubSystemFactory().getCompileManager().setSystemConnection(ss.getHost());
-				 */
 				SystemCompileType compType = compileCmd.getParentType();
-				compType.setLastUsedCompileCommand(compileCmd);
-				compType.getParentProfile().writeToDisk();
+				if (!compileCmd.equals(compType.getLastUsedCompileCommand())) {
+					compType.setLastUsedCompileCommand(compileCmd);
+					compType.getParentProfile().writeToDisk();
+				}
 				SystemCompilableSource compilableSrc = compType.getParentProfile().getCompilableSourceObject(getShell(), element, compileCmd, isPrompt, viewer);
 				ok = compilableSrc.runCompileCommand();
 				if (ok) element = getNextSelection();
@@ -189,10 +187,8 @@ public class SystemCompileAction extends SystemBaseAction {
 			}
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider(null);
-			// TODO: Cannot use WorkbenchMessages -- it's internal
 			ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, cprovider, lprovider, SystemUDAResources.EditorManager_saveResourcesMessage);
 			dlg.setInitialSelections(input.getChildren());
-			// TODO: Cannot use WorkbenchMessages -- it's internal
 			dlg.setTitle(SystemUDAResources.EditorManager_saveResourcesTitle);
 			int result = dlg.open();
 			//Just return false to prevent the operation continuing

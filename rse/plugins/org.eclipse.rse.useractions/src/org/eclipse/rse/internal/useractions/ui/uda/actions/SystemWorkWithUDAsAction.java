@@ -13,6 +13,7 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  *                                API to the user actions plugin
  * Xuan Chen     (IBM) - [225617] [useraction][api] Remove Team view support inside user action.
  * Kevin Doyle (IBM)   - [222828] Icons for some Actions Missing
+ * Kevin Doyle	 (IBM) - [252296] Work With User Actions action is not available in offline mode
  *******************************************************************************/
 //import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -91,6 +92,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 		else
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0045"); //$NON-NLS-1$
+		setAvailableOffline(true);
 	}
 
 	/**

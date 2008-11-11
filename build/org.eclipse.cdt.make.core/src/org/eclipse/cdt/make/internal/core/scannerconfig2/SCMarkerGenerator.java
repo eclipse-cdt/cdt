@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,6 @@ public class SCMarkerGenerator implements IMarkerGenerator {
             }
 
             IMarker marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-            marker.setAttribute(IMarker.LOCATION, String.valueOf(problemMarkerInfo.lineNumber));
             marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
             marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
             marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
@@ -92,7 +91,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
         try {
             IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
             if (markers != null) {
-                List exactMarkers = new ArrayList();
+                List<IMarker> exactMarkers = new ArrayList<IMarker>();
                 for (int i = 0; i < markers.length; i++) {
                     IMarker marker = markers[i];
                     int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();
@@ -105,7 +104,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
                     }
                 }
                 if (exactMarkers.size() > 0) {
-                    workspace.deleteMarkers((IMarker[]) exactMarkers.toArray(new IMarker[exactMarkers.size()]));
+                    workspace.deleteMarkers(exactMarkers.toArray(new IMarker[exactMarkers.size()]));
                 }
             }
         }

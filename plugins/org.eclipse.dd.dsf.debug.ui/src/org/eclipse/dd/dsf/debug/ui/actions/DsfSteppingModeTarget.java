@@ -14,10 +14,16 @@ import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.ITargetProperties;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.dd.dsf.debug.internal.ui.DsfDebugUIPlugin;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  */
 public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProperties {
+
+	private static final String ID_DISASSEMBLY_VIEW= "org.eclipse.dd.dsf.debug.ui.disassembly.view"; //$NON-NLS-1$
 
 	private final Preferences fPreferences;
 
@@ -31,6 +37,16 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	 */
 	public void enableInstructionStepping(boolean enabled) {
 		fPreferences.setValue(PREF_INSTRUCTION_STEPPING_MODE, enabled);
+		if (enabled) {
+			try {
+				final IWorkbenchWindow activeWorkbenchWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
+					activeWorkbenchWindow.getActivePage().showView(ID_DISASSEMBLY_VIEW);
+				}
+			} catch (PartInitException exc) {
+				DsfDebugUIPlugin.log(exc);
+			}
+		}
 	}
 
 	/*

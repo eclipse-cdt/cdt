@@ -571,5 +571,22 @@
          </action>
       </actionSet>
    </extension>
- 
+
+   <!-- Debug perspective extension -->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.dd.dsf.debug.ui.disassembly.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.dd.dsf.debug.ui.disassembly.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+
 </plugin>

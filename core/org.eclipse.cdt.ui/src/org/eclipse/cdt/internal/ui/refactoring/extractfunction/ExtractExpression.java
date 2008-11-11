@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.utils.ExpressionCopier;
 
 /**
  * Handles the extraction of expression nodes, like return type determination.
@@ -56,6 +58,9 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
  * 
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
+
+	
+	ExpressionCopier expCopier = new ExpressionCopier();
 
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound,
@@ -66,7 +71,21 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		statement.setReturnValue(nullReturnExp);
 		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
 		
-		nestedRewrite.replace(nullReturnExp, list.get(0), group);
+		nestedRewrite.replace(nullReturnExp, getExpression(list), group);
+		
+	}
+
+	private IASTExpression getExpression(List<IASTNode> list) {
+		if(list.size()> 1 ) {
+			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
+			bExp.setParent(list.get(0).getParent());
+			bExp.setOperand1(expCopier.createCopy((IASTExpression) list.get(0)));
+			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
+			bExp.setOperand2(getExpression(list.subList(1, list.size())));
+			return bExp;
+		}else {
+			return expCopier.createCopy((IASTExpression) list.get(0));
+		}
 		
 	}
 
@@ -233,20 +252,17 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			IBinding binding = functionName.resolveBinding();
 			if (binding instanceof CPPFunction) {
 				CPPFunction function =  (CPPFunction) binding;
-
-				if (function != null) {
-					if(function.getDefinition() != null) {
-						IASTNode parent = function.getDefinition().getParent();
-						if(parent instanceof CPPASTFunctionDefinition) {
-							CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-							return definition.getDeclarator().getPointerOperators().length > 0;
-						}
-					} else if(hasDeclaration(function)) {
-						IASTNode parent = function.getDeclarations()[0].getParent();
-						if (parent instanceof CPPASTSimpleDeclaration) {
-							CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-							return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
-						}
+				if(function.getDefinition() != null) {
+					IASTNode parent = function.getDefinition().getParent();
+					if(parent instanceof CPPASTFunctionDefinition) {
+						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
+						return definition.getDeclarator().getPointerOperators().length > 0;
+					}
+				} else if(hasDeclaration(function)) {
+					IASTNode parent = function.getDeclarations()[0].getParent();
+					if (parent instanceof CPPASTSimpleDeclaration) {
+						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
+						return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
 					}
 				}
 			}

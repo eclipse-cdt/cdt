@@ -2226,3 +2226,115 @@ void Test::test()
 	RetType v = exp();
 }
 
+//!Bug 248622: Extract function fails to extract several expressions; Selection at the end
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=endTag
+//@testString.h
+
+namespace test{
+
+	class string{
+	public:
+
+		friend string operator+(const string& lhs, const string& rhs)
+		{
+		        return rhs;
+		}
+
+
+		string operator+(const string& rhs){return rhs;}
+		string(char* cp){}
+		string(){};
+
+	};
+}
+
+//@Test.cpp
+#include "testString.h"
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return "<" + name + ">" + //$"</" + name + ">"$//;
+}
+
+int main() {
+	return 0;
+}
+
+//=
+#include "testString.h"
+
+wchar_t endTag(test::string name)
+{
+    return "</" + name + ">";
+}
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return "<" + name + ">" + endTag(name);
+}
+
+int main() {
+	return 0;
+}
+
+//!Bug 248622: Extract function fails to extract several expressions; Selection in the middle
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=Test.cpp
+methodname=exp
+//@testString.h
+
+namespace test{
+
+	class string{
+	public:
+
+		friend string operator+(const string& lhs, const string& rhs)
+		{
+		        return rhs;
+		}
+
+
+		string operator+(const string& rhs){return rhs;}
+		string(char* cp){}
+		string(){};
+
+	};
+}
+
+//@Test.cpp
+#include "testString.h"
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return "<" + name + //$">" + "</"$// + name + ">";
+}
+
+int main() {
+	return 0;
+}
+
+//=
+#include "testString.h"
+
+wchar_t exp()
+{
+    return ">" + "</";
+}
+
+test::string toXML() {
+	test::string name;
+	name = "hello";
+	return "<" + name + exp() + name + ">";
+}
+
+int main() {
+	return 0;
+}
+

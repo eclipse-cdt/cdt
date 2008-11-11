@@ -170,9 +170,16 @@ public abstract class AbstractRemoteFile extends RemoteFile
 	 */
 	public String getParentName()
 	{
-		String parentPath = getParentPath();
-		String parentName = getNameFromPath(parentPath);
-		return parentName;
+		if (_parentFile != null)           // optimization if we have the parentFile
+			return _parentFile.getName();  // if we had used getParentFile(), the operation may have been more
+		                                   // expensive than just using the parent path
+		else {
+			String parentPath = getParentPath();
+			if (parentPath == null) // parentPath may be null - avoid NPE
+				return null; 
+			else 
+				return getNameFromPath(parentPath);
+		}
 	}
 	
 	/**

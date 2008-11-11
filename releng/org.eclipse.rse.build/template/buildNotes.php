@@ -33,10 +33,22 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>API: WinCE <b>IRAPISession.CeRapiInvoke()</b> has been added
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238773">238773</a>].</li>
+  <li><b>Performance</b> of the RSE Save Job was drastically improved for certain situations involving property sets - before the fix, the context menu could be frozen for up to 30 seconds in user actions
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=254842">254842</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=252708">252708</a>]</li>
+  <li><b>A Race Condition</b> was fixed when saving files in the editor. The bug would lead to
+    a rogue conflict being reported when normally saving a remote file in the editor
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=249544">249544</a>]</li>
+  <li><b>Drag &amp; Drop</b> was fixed for files and folders with some non-english
+    characters that were problematic due to their special Unicode encoding
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248339">248339</a>]</li>
+  <li><b>DStore Remote Search</b> was fixed for some cases with symbolic links
+    and binary files in the search scope
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=250168">250168</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=251650">251650</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=251729">251729</a>]</li> 
 </ul></li>
-<li>At least __ bugs were fixed: Use 
+<li>At least 35 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-09-30&chfieldto=2008-11-13&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B24567%5D"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->

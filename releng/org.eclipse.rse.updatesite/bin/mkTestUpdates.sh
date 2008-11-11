@@ -105,8 +105,12 @@ elif [ ${TYPE} = testSigned ]; then
       cp -R ${SITE}/../testUpdates/features/*.jar ${STAGING}/updates.${stamp}/features
       cd ${STAGING}/updates.${stamp}/features
       for x in `ls *.jar`; do
-        echo "signing feature: ${x}"
-        sign ${x} nomail >/dev/null
+        result=`jarsigner -verify ${x} | head -1`
+        if [ "$result" != "jar verified." ]; then
+          # do not sign Orbit bundles again since they are signed already 
+          echo "signing feature: ${x}"
+          sign ${x} nomail >/dev/null
+        fi
       done
       TRIES=10
       while [ $TRIES -gt 0 ]; do
@@ -140,8 +144,12 @@ elif [ ${TYPE} = testSigned ]; then
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
         for x in `ls *.jar`; do
-          echo "signing plugin: ${x}"
-          sign ${x} nomail >/dev/null
+          result=`jarsigner -verify ${x} | head -1`
+          if [ "$result" != "jar verified." ]; then
+            # do not sign Orbit bundles again since they are signed already 
+            echo "signing plugin: ${x}"
+            sign ${x} nomail >/dev/null
+          fi
         done
         TRIES=10
         while [ $TRIES -gt 0 ]; do

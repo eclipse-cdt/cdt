@@ -113,7 +113,7 @@ elif [ ${TYPE} = testSigned ]; then
         sleep 30
         echo "TRIES to go: ${TRIES}"
         for x in `ls *.jar | grep -v '^temp[_.]'`; do
-          result=`jarsigner -verify ${x}`
+          result=`jarsigner -verify ${x} | head -1`
           if [ "$result" = "jar verified." ]; then
             echo "${result}: ${x}"
             cp ${x} ${SITE}/features.${stamp}
@@ -148,7 +148,7 @@ elif [ ${TYPE} = testSigned ]; then
           sleep 30
           echo "TRIES to go: ${TRIES}"
           for x in `ls *.jar | grep -v '^temp[_.]'`; do
-            result=`jarsigner -verify ${x}`
+            result=`jarsigner -verify ${x} | head -1`
             if [ "$result" = "jar verified." ]; then
               echo "${result}: ${x}"
               cp ${x} ${SITE}/plugins.${stamp}

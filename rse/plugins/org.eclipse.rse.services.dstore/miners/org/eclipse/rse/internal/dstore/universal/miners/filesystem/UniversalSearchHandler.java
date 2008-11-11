@@ -26,6 +26,7 @@ package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 
@@ -130,13 +131,10 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 			_miner.statusCancelled(_status);
 		}
-		else {
-			// NOTE: do not call miner statusDone() method since we want to
-			// update the status immediately.
-			// Otherwise we don't get an event on the client corresponding
-			// to status refresh. As a result client thinks
-			// search isn't finished.
-			// _miner.statusDone(_status);
+		else {			
+			// previously, the status would be set to done immediately because search results were sent
+			// back to the client as they arrived.  Now, the search handler wait until the search has
+			// completed before setting the status to done
 			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status);	// true indicates refresh immediately
 
@@ -156,18 +154,40 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	}
 
 	protected boolean hasSearched(File file)
-	{
-		return _alreadySearched.contains(file);
+	{       
+        boolean result = false;
+        try {
+        	File canonicalFile = file.getCanonicalFile();
+
+        	// if it's not a symbolic link - if not, we always search it
+        	if (!file.getAbsolutePath().equals(canonicalFile.getAbsolutePath())){
+        		// check whether it's already been searched
+        		result = _alreadySearched.contains(canonicalFile);
+        	}
+        }
+        catch (IOException e){	        	
+        	_dataStore.trace(e);
+        }
+
+        return result;
 	}
+
 
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
 		
-		if (!hasSearched(theFile)) {
-
-			_alreadySearched.add(theFile);
-			
-			// is it a directory?
+		if (theFile.isFile() || !hasSearched(theFile)) {
 			boolean isDirectory = theFile.isDirectory();
+			if (isDirectory){
+				try {
+					_alreadySearched.add(theFile.getCanonicalFile());
+				}
+				catch (Exception e){
+					_alreadySearched.add(theFile);
+					_dataStore.trace(e);
+
+				}
+			}
+			
 	
 			// is it an archive?
 			boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);

@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation.
+ * Copyright (c) 2006, 2008 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *    IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
@@ -36,12 +35,14 @@ public class CFunctionTests extends PDOMTestBase {
 		return suite(CFunctionTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		project = createProject("functionTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
@@ -83,5 +84,15 @@ public class CFunctionTests extends PDOMTestBase {
 		assertNull(params[0].getType()); // its a problem binding in the DOM 
 		assertTrue(params[1].getType() instanceof ICBasicType);
 		assertTrue(params[2].getType() instanceof ICBasicType); 
+	}
+	
+	public void testFunctionWithRegisterParam() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "storageClassCFunction");
+		assertEquals(1, bindings.length);
+		IFunction f= (IFunction) bindings[0];
+		IParameter[] params= f.getParameters();
+		assertEquals(2, params.length);
+		assertEquals(true, params[0].isRegister());
+		assertEquals(false, params[1].isRegister());
 	}
 }

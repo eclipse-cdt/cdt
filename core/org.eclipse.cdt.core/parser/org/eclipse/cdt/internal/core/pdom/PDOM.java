@@ -166,11 +166,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  74.0 - changes for proper template argument support, bug 242668
 	 *  75.0 - support for friends, bug 250167
 	 *  76.0 - support for exception specification, bug 252697
+	 *  77.0 - support for parameter annotations, bug 254520
 	 */
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 76; 
+	public static final int MAJOR_VERSION = 77; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);

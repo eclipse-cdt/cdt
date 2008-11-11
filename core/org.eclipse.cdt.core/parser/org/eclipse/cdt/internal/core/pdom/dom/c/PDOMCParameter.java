@@ -41,9 +41,14 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
 	
+	protected static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 8;
+	
 	@SuppressWarnings("hiding")
-	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
-
+	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 9;
+	static {
+		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
+	}
+	
 	public PDOMCParameter(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -62,6 +67,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 					PDOMNode typeNode = getLinkageImpl().addType(this, type);
 					db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 				}
+				byte flags = encodeFlags(param);
+				db.putByte(record + FLAGS, flags);
 			}
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -105,7 +112,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
+		return hasFlag(flag, true);
 	}
 
 	public boolean isExtern() throws DOMException {
@@ -113,7 +121,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
+		return hasFlag(flag, false);
 	}
 
 	public boolean isStatic() throws DOMException {
@@ -198,4 +207,23 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	public IValue getInitialValue() {
 		return null;
 	}
+
+	protected byte encodeFlags(IParameter param) throws DOMException {
+		// C99 ISO/IEC 9899: 6.7.5.3.2
+		byte flags= 0;
+		flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
+		flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
+		return flags;
+	}
+
+	protected boolean hasFlag(byte flag, boolean defValue) {
+		try {
+			byte myflags= pdom.getDB().getByte(record + FLAGS);
+			return (myflags & flag) == flag;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return defValue;
+	}
+	
 }

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -252,22 +252,19 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     }
     
     public boolean hasStorageClass(int storage) {
-	    IASTNode[] ns = getDeclarations();
-        if (ns == null)
-            return false;
-        
-        for (int i = 0; i < ns.length && ns[i] != null; i++) {
-            IASTNode parent = ns[i].getParent();
-            while (!(parent instanceof IASTDeclaration))
-                parent = parent.getParent();
-            
-            if (parent instanceof IASTSimpleDeclaration) {
-                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-                if (declSpec.getStorageClass() == storage)
-                    return true;
-            }
-        }
-        return false;
+		IASTNode[] ns = getDeclarations();
+		if (ns == null)
+			return false;
+
+		for (int i = 0; i < ns.length && ns[i] != null; i++) {
+			IASTNode parent = ns[i].getParent();
+			while (!(parent instanceof IASTParameterDeclaration))
+				parent = parent.getParent();
+			IASTDeclSpecifier declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+			if (declSpec.getStorageClass() == storage)
+				return true;
+		}
+		return false;
 	}
 
 	public IASTInitializer getDefaultValue() {

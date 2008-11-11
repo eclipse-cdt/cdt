@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -174,21 +175,25 @@ public class CParameter extends PlatformObject implements IParameter {
         return hasStorageClass( IASTDeclSpecifier.sc_register );
     }
 
-    public boolean hasStorageClass( int storage ){
-        if( declarations == null )
-            return false;
-        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
-            IASTNode parent = declarations[i].getParent();
-            while( !(parent instanceof IASTDeclaration) )
-                parent = parent.getParent();
-            
-            if( parent instanceof IASTSimpleDeclaration ){
-                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage )
-                    return true;
-            }
-        }
-        return false;
+    public boolean hasStorageClass(int storage) {
+		if (declarations == null)
+			return false;
+		
+		for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
+			IASTNode parent= declarations[i].getParent();
+			while (!(parent instanceof IASTParameterDeclaration) && !(parent instanceof IASTDeclaration))
+				parent= parent.getParent();
+
+			IASTDeclSpecifier declSpec = null;
+			if (parent instanceof IASTSimpleDeclaration) {
+				declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+			} else if (parent instanceof IASTParameterDeclaration) {
+				declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+			}
+			if (declSpec != null)
+				return declSpec.getStorageClass() == storage;
+		}
+		return false;
 	}
     
 	public ILinkage getLinkage() {

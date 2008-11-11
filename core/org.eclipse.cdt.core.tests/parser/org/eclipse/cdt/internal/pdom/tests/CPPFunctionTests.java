@@ -111,6 +111,16 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertEquals("p3", parameters[2].getName());
 	}
 	
+	public void testStorageClassSpecParameters() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "storageClassCPPFunction");
+		assertEquals(1, bindings.length);
+		ICPPFunction function = (ICPPFunction) bindings[0];
+		IParameter[] parameters = function.getParameters();
+		assertEquals(2, parameters.length);
+		assertEquals(true, parameters[0].isRegister());
+		assertEquals(true, parameters[1].isAuto());
+	}
+	
 	public void testExternCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "externCPPFunction");
 		assertEquals(1, bindings.length);

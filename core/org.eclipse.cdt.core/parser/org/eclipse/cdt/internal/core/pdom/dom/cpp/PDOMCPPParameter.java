@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -50,17 +51,26 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
 
 	/**
+	 * Offset of annotation information (relative to the beginning of the
+	 * record).
+	 */
+	private static final int ANNOTATIONS = PDOMNamedNode.RECORD_SIZE + 8;
+
+	/**
 	 * Offset of flags
 	 * (relative to the beginning of the record).
 	 */
-	private static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 8;
+	private static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 9;
 
 	
 	/**
 	 * The size in bytes of a PDOMCPPParameter record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 9;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 10;
+	static {
+		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
+	}
 
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
@@ -77,7 +87,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		db.putInt(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
 		db.putByte(record + FLAGS, flags);
-
+		
 		try {
 			if (type == null) 
 				type= param.getType();
@@ -85,6 +95,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 				PDOMNode typeNode = getLinkageImpl().addType(this, type);
 				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 			}
+			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
+			db.putByte(record + ANNOTATIONS, annotations);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -101,6 +113,14 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		db.putByte(record + FLAGS, flags);
 		
 		db.putInt(record + TYPE, typeRecord);
+		
+		try {
+			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
+			db.putByte(record + ANNOTATIONS, annotations);
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+
 	}
 
 	private byte encodeFlags(IParameter param) {
@@ -160,7 +180,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.2
+		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
+		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
 	public boolean isExtern() throws DOMException {
@@ -173,7 +195,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.2
+		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
+		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
 	public boolean isStatic() throws DOMException {
@@ -205,19 +229,19 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	public boolean hasDefaultValue() {
-		return hasFlag(FLAG_DEFAULT_VALUE, false);
+		return hasFlag(FLAG_DEFAULT_VALUE, false, FLAGS);
 	}
 
-	private boolean hasFlag(byte flag, boolean defValue) {
+	private boolean hasFlag(byte flag, boolean defValue, int offset) {
 		try {
-			byte myflags= pdom.getDB().getByte(record + FLAGS);
+			byte myflags= pdom.getDB().getByte(record + offset);
 			return (myflags & flag) == flag;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return defValue;
 	}
-
+	
 	public IIndexFragment getFragment() {
 		return pdom;
 	}	

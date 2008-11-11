@@ -1129,8 +1129,7 @@ public class UniversalFileSystemMiner extends Miner {
 		if (tokens < 10)
 		    return null;
 
-
-		return (str[11]);
+		return (str[10]);
 	}
 	/**
 	 * Method to obtain the filter string of file or folder.
@@ -1919,6 +1918,11 @@ public class UniversalFileSystemMiner extends Miner {
 	private DataElement handleQueryFilePermissions(DataElement subject, DataElement status)
 	{
 		File file = getFileFor(subject);
+		if (file == null){
+			// subject may have been a filter pointing to a virtual
+			return statusCancelled(status);
+		}
+	
 
 		String result = getFilePermission(file, PERMISSION_ALL);
         status.setAttribute(DE.A_SOURCE, result);

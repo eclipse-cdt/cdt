@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Nokia and others.
+ * Copyright (c) 2007, 2008 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,6 @@ public class BreakpointProblems {
 			}
 
 			IMarker marker = markerResource.createMarker(BREAKPOINT_PROBLEM_MARKER_ID);
-			marker.setAttribute(IMarker.LOCATION, String.valueOf(problemMarkerInfo.lineNumber));
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 			marker.setAttribute(IMarker.SEVERITY, problemMarkerInfo.severity);
 			marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);

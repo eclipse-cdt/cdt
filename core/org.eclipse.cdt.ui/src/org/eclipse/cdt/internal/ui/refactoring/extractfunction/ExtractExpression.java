@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.utils.ExpressionCopier;
 
 /**
  * Handles the extraction of expression nodes, like return type determination.
@@ -60,6 +61,8 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
  * 
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
+	
+	ExpressionCopier expCopier = new ExpressionCopier();
 	final static char[] ZERO= {'0'};
 
 	@Override
@@ -71,7 +74,21 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		statement.setReturnValue(nullReturnExp);
 		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
 		
-		nestedRewrite.replace(nullReturnExp, list.get(0), group);
+		nestedRewrite.replace(nullReturnExp, getExpression(list), group);
+		
+	}
+
+	private IASTExpression getExpression(List<IASTNode> list) {
+		if(list.size()> 1 ) {
+			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
+			bExp.setParent(list.get(0).getParent());
+			bExp.setOperand1(expCopier.createCopy((IASTExpression) list.get(0)));
+			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
+			bExp.setOperand2(getExpression(list.subList(1, list.size())));
+			return bExp;
+		}else {
+			return expCopier.createCopy((IASTExpression) list.get(0));
+		}
 		
 	}
 

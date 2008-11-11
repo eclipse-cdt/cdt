@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -70,6 +72,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
@@ -79,6 +82,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
@@ -173,11 +177,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
 		info.setExtractExpression(isExtractExpression);
-
-		if (isExtractExpression && container.getNodesToWrite().size() > 1) {
-			status
-					.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
-		}
 
 		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
 		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
@@ -307,12 +306,41 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			CPPASTDeclarationStatement declarationStatement = new CPPASTDeclarationStatement((IASTDeclaration) methodCall);
 			methodCall = declarationStatement;
 		}
-		rewriter.replace(firstNodeToWrite, methodCall, editGroup);
+		insertCallintoTree(methodCall, container.getNodesToWrite(), rewriter, editGroup);
 		for (IASTNode node : container.getNodesToWrite()) {
 			if (node != firstNodeToWrite) {
 				rewriter.remove(node, editGroup);
 			}
 		}		
+	}
+
+	private void insertCallintoTree(IASTNode methodCall, List<IASTNode> list,
+			ASTRewrite rewriter, TextEditGroup editGroup) {
+		IASTNode firstNode = list.get(0);
+		if(list.size() > 1 && firstNode.getParent() instanceof IASTBinaryExpression &&
+				firstNode.getParent().getParent() instanceof IASTBinaryExpression) {
+			IASTBinaryExpression parent = (IASTBinaryExpression) firstNode.getParent();
+			IASTExpression leftSubTree = parent.getOperand1();
+			int op = parent.getOperator();
+			IASTBinaryExpression newParentNode = new CPPASTBinaryExpression();
+			CPPASTLiteralExpression placeholder = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "0"); //$NON-NLS-1$
+			IASTBinaryExpression rootBinExp = getRootBinExp(parent, list);
+			newParentNode.setParent(rootBinExp.getParent());
+			newParentNode.setOperand1(placeholder);
+			newParentNode.setOperator(op);
+			newParentNode.setOperand2((IASTExpression) methodCall); // TODO check
+			ASTRewrite callRewrite = rewriter.replace(rootBinExp, newParentNode, editGroup);
+			callRewrite.replace(placeholder, leftSubTree, editGroup);
+		}else {
+			rewriter.replace(firstNode, methodCall, editGroup);
+		}
+	}
+
+	private IASTBinaryExpression getRootBinExp(IASTBinaryExpression binExp, List<IASTNode> nodeList) {
+		while(binExp.getParent() instanceof IASTBinaryExpression && nodeList.contains(((IASTBinaryExpression) binExp.getParent()).getOperand2())) {
+			binExp = (IASTBinaryExpression) binExp.getParent();
+		}
+		return binExp;
 	}
 
 	private void createMethodDefinition(final IASTName astMethodName,

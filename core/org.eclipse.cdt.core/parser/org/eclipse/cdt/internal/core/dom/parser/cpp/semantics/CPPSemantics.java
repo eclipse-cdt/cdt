@@ -2566,10 +2566,14 @@ public class CPPSemantics {
 	}
 	
 	public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException{
-		return findBindings(scope, name.toCharArray(), qualified);
+		return findBindings(scope, name.toCharArray(), qualified, null);
 	}
-	
-	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified) throws DOMException{
+
+	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified) throws DOMException {
+		return findBindings(scope, name, qualified, null);
+	}
+
+	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified, IASTNode beforeNode) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName(name);
 	    astName.setParent(ASTInternal.getPhysicalNodeOfScope(scope));
@@ -2577,7 +2581,7 @@ public class CPPSemantics {
 	    
 		LookupData data = new LookupData(astName);
 		data.forceQualified = qualified;
-		return standardLookup(data, scope);
+		return standardLookup(data, scope, beforeNode);
 	}
 	
 	public static IBinding[] findBindingsForContentAssist(IASTName name, boolean prefixLookup) {
@@ -2628,7 +2632,7 @@ public class CPPSemantics {
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
     }
 
-    private static IBinding[] standardLookup(LookupData data, Object start) {
+    private static IBinding[] standardLookup(LookupData data, Object start, IASTNode beforeNode) {
     	try {
 			lookup(data, start);
 		} catch (DOMException e) {
@@ -2639,26 +2643,34 @@ public class CPPSemantics {
 		if (items == null)
 		    return new IBinding[0];
 		
+		boolean indexBased= false;
+		if (beforeNode != null) {
+			IASTTranslationUnit tu= beforeNode.getTranslationUnit();
+			if (tu != null && tu.getIndex() != null)
+				indexBased= true;
+		}
 		ObjectSet<IBinding> set = new ObjectSet<IBinding>(items.length);
 		IBinding binding = null;
 		for (Object item : items) {
-		    if (item instanceof IASTName) {
-		        binding = ((IASTName) item).resolveBinding();
-		    } else if (item instanceof IBinding) {
-		        binding = (IBinding) item;
-		    } else {
-		        binding = null;
-		    }
-		    
-		    if (binding != null) {
-		    	if (binding instanceof ICPPUsingDeclaration) {
-		    		set.addAll(((ICPPUsingDeclaration) binding).getDelegates());
-		    	} else if (binding instanceof CPPCompositeBinding) {
-                    set.addAll(((CPPCompositeBinding) binding).getBindings());
-			    } else {
-			        set.put(binding);
-			    }
-		    }
+	    	if (beforeNode == null || declaredBefore(item, beforeNode, indexBased)) { 
+	    		if (item instanceof IASTName) {
+	    			binding = ((IASTName) item).resolveBinding();
+	    		} else if (item instanceof IBinding) {
+	    			binding = (IBinding) item;
+	    		} else {
+	    			binding = null;
+	    		}
+
+	    		if (binding != null) {
+	    			if (binding instanceof ICPPUsingDeclaration) {
+	    				set.addAll(((ICPPUsingDeclaration) binding).getDelegates());
+	    			} else if (binding instanceof CPPCompositeBinding) {
+	    				set.addAll(((CPPCompositeBinding) binding).getBindings());
+	    			} else {
+	    				set.put(binding);
+	    			}
+	    		}
+	    	}
 		}
 		
 	    return set.keyArray(IBinding.class);

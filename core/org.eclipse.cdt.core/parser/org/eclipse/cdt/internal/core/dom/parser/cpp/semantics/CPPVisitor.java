@@ -185,8 +185,8 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * @author aniefer
  */
 public class CPPVisitor extends ASTQueries {
-	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
-	public static final String PTRDIFF_T = "ptrdiff_t"; //$NON-NLS-1$
+	public static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
+	public static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	public static final String STD = "std"; //$NON-NLS-1$
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	
@@ -1895,7 +1895,7 @@ public class CPPVisitor extends ASTQueries {
 	        		if (SemanticUtil.getUltimateTypeViaTypedefs(t1) instanceof IPointerType) {
 	        			IScope scope = getContainingScope(expression);
 	        			try {
-	        				IBinding[] bs = scope.find(PTRDIFF_T);
+	        				IBinding[] bs= CPPSemantics.findBindings(scope, PTRDIFF_T, false, expression);
 	        				if (bs.length > 0) {
 	        					for (IBinding b : bs) {
 	        						if (b instanceof IType && CPPSemantics.declaredBefore(b, binary, false)) {
@@ -2089,7 +2089,7 @@ public class CPPVisitor extends ASTQueries {
 	private static IType get_SIZE_T(IASTNode sizeofExpr) {
 		IScope scope = getContainingScope(sizeofExpr);
 		try {
-			IBinding[] bs = scope.find(SIZE_T);
+			IBinding[] bs = CPPSemantics.findBindings(scope, SIZE_T, false, sizeofExpr);
 			if (bs.length > 0 && bs[0] instanceof IType) {
 				return (IType) bs[0];
 			}

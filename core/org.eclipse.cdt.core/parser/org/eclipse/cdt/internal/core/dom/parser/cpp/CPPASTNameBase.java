@@ -142,6 +142,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
     	}
 	
 		fIsFinal= true;
+		fResolutionDepth= 0;
 	}
 	
 	public void setBinding(IBinding binding) {

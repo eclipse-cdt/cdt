@@ -170,10 +170,18 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	@Override
 	public void addName(IASTName name) throws DOMException {
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName ln= ((ICPPASTQualifiedName) name).getLastName();
-			if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln)) {
-				return;
+			// check whether the qualification matches
+			IBinding b= getClassType();
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
+			final IASTName[] names= qname.getNames();
+			for (int i = names.length-2; i>=0; i--) {
+				if (b == null || !CharArrayUtils.equals(names[i].toCharArray(), b.getNameCharArray()))
+					return;
+				
+				b= b.getOwner();
 			}
+			if (qname.isFullyQualified() && b != null)
+				return;
 		}
 		IASTNode parent = name.getParent();
 		if (parent instanceof IASTDeclarator) {

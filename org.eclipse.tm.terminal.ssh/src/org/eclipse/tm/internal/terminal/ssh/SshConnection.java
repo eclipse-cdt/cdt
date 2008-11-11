@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [205674][ssh] Terminal remains "connecting" when authentication is cancelled
  * Michael Scharf (Wind River) - 240420: [terminal][ssh]Channel is not closed when the connection is closed with the close button
  * Martin Oberhuber (Wind River) - [206919] Improve SSH Terminal Error Reporting
+ * Andrei Sobolev (Xored) - [250456] Ssh banner message causes IllegalArgumentException popup
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -305,7 +306,7 @@ class SshConnection extends Thread {
 					// [168197] Replace JFace MessagDialog by SWT MessageBox
 					// MessageDialog.openInformation(null, SshMessages.INFO, message);
 					if (isSessionConnected()) {
-						MessageBox mb = new MessageBox(null, SWT.ICON_INFORMATION | SWT.OK);
+						MessageBox mb = new MessageBox(fControl.getShell(), SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText(SshMessages.INFO);
 						mb.setMessage(message);
 						mb.open();

@@ -15,6 +15,7 @@ Contributors:
 Martin Oberhuber (Wind River) - Rename Remote Systems Explorer to Remote System Explorer for consistency
 Uwe Stieber (Wind River) - [175153][175316] Fix messages for new connection dlg
 Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
+Kevin Doyle (IBM) - [250797] ValidatorSourceType sets error messages to ones that don't exist
 -->
 <!DOCTYPE MessageFile SYSTEM "messageFile.dtd">
 
@@ -422,7 +423,19 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Value %1 not in range</LevelOne>
                           <LevelTwo>The value specified is not within the valid range of %2 to %3</LevelTwo>
                     </Message>
-                       <Message ID="1201" Indicator="Q">
+                    <Message ID="1192" Indicator="E">
+                          <LevelOne>Enter source type</LevelOne>
+                          <LevelTwo>You must enter a source type</LevelTwo>
+                    </Message>
+                    <Message ID="1193" Indicator="E">
+                          <LevelOne>Source type "%1" not valid</LevelOne>
+                          <LevelTwo>The source type you entered is not valid.</LevelTwo>
+                    </Message>
+                    <Message ID="1194" Indicator="E">
+                          <LevelOne>Source type "%1" already exists</LevelOne>
+                          <LevelTwo>The source type you entered has already been specified. Specify a unique source type.</LevelTwo>
+                    </Message>
+                    <Message ID="1201" Indicator="Q">
                           <LevelOne>Changes pending. Save changes?</LevelOne>
                           <LevelTwo>You have changes pending. Select Yes to save those changes. Select No to discard those changes</LevelTwo>
                     </Message>

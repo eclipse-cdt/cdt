@@ -1275,12 +1275,26 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void handleThreadTerminatedEvent( ICDIDestroyedEvent event ) {
 		ICDIThread cdiThread = (ICDIThread)event.getSource();
-		CThread thread = findThread( cdiThread );
-		if ( thread != null ) {
-			getThreadList().remove( thread );
-			thread.terminated();
-			thread.fireTerminateEvent();
-		}
+        List threads = getThreadList();
+        List<CThread> threadsToRemove = new ArrayList<CThread>(1);
+        for(int i = 0; i < threads.size(); i++) {
+        	CThread cthread = (CThread)threads.get(i);
+        	// It's possible CThread has handled the thread-terminated event
+			// before us (by appearing first in the EventManager)
+			// and has disassociated itself from the ICDIThread.
+			// So handle any disassociated CThreads we find. Chances are
+			// there's only one and it's the one we got the terminated event
+			// for. See bugzilla 254888.  
+        	ICDIThread cdithread = cthread.getCDIThread(); 
+        	if (cdithread == null || cdithread.equals(cdiThread)) {
+        		threadsToRemove.add(cthread);
+        	}
+        }
+        for (CThread cthread : threadsToRemove) {
+        	threads.remove(cthread);
+        	cthread.terminated();
+        	cthread.fireTerminateEvent();
+        }
 	}
 
 	/**
@@ -1290,19 +1304,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @return the associated model thread
 	 */
 	public CThread findThread( ICDIThread cdiThread ) {
-		List threads = getThreadList();
-		for( int i = 0; i < threads.size(); i++ ) {
-			CThread t = (CThread)threads.get( i );
-			if ( t.getCDIThread().equals( cdiThread ) )
-				return t;
-		}
-		return null;
+		return findThread(getThreadList(), cdiThread);
 	}
 
 	public CThread findThread( List threads, ICDIThread cdiThread ) {
 		for( int i = 0; i < threads.size(); i++ ) {
 			CThread t = (CThread)threads.get( i );
-			if ( t.getCDIThread().equals( cdiThread ) )
+			ICDIThread thisCdiThread = t.getCDIThread();
+			if ( thisCdiThread != null && thisCdiThread.equals( cdiThread ) )
 				return t;
 		}
 		return null;

@@ -22,6 +22,7 @@
  * Xuan Chen        (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
+ * Kevin Doyle		(IBM)		 - [242389] [usability] RSE Save Conflict dialog should indicate which file is in conflict
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -244,14 +246,16 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
         private SystemMessage _errorMessage;
 
         private IRemoteFile _saveasLocation;
-
+        private String _uploadFile;
+        
   	  /**
 	    * Constructor.
 	    * @param shell the parent shell of the dialog
 	    */
-        public UploadConflictDialog(Shell shell)
+        public UploadConflictDialog(Shell shell, String file)
         {
             super(shell, FileResources.RESID_CONFLICT_SAVE_TITLE);
+            _uploadFile = file;
             //pack();
         }
 
@@ -331,7 +335,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 
             Text text = new Text(m, SWT.WRAP | SWT.MULTI);
             text.setEditable(false);
-            text.setText(FileResources.RESID_CONFLICT_SAVE_MESSAGE);
+            text.setText(NLS.bind(FileResources.RESID_CONFLICT_SAVE_MESSAGE, _uploadFile));
             GridData textData = new GridData(SWT.FILL, SWT.CENTER, true, false);
             text.setLayoutData(textData);
 
@@ -594,7 +598,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
     {
         SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
 
-        UploadConflictDialog cnfDialog = new UploadConflictDialog(SystemBasePlugin.getActiveWorkbenchShell());
+        UploadConflictDialog cnfDialog = new UploadConflictDialog(SystemBasePlugin.getActiveWorkbenchShell(), _remoteFile.getName());
         if (cnfDialog.open() == Window.OK)
         {
             // does user want to open local or replace local with remote?

@@ -435,7 +435,7 @@
    <feature url="features/org.eclipse.rse.remotecdt_2.1.100.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.1.100.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals_0.1.1.qualifier.jar" id="org.eclipse.rse.terminals" version="0.1.1.qualifier">
+   <feature url="features/org.eclipse.rse.terminals_0.1.100.qualifier.jar" id="org.eclipse.rse.terminals" version="0.1.100.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_3.0.100.qualifier.jar" id="org.eclipse.rse.tests" version="3.0.100.qualifier">
@@ -450,7 +450,7 @@
    <feature url="features/org.eclipse.tm.discovery_3.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_2.0.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_2.0.2.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="2.0.2.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <category-def name="TM and RSE 3.1" label="TM and RSE 3.1">

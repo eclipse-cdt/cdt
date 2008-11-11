@@ -208,11 +208,15 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		return null;
 	}
 
-	protected byte encodeFlags(IParameter param) throws DOMException {
+	protected byte encodeFlags(IParameter param) {
 		// C99 ISO/IEC 9899: 6.7.5.3.2
 		byte flags= 0;
-		flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
-		flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
+		try {
+			flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
+			flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
+		} catch (DOMException e) {
+			// ignore and miss out on some flags
+		}
 		return flags;
 	}
 

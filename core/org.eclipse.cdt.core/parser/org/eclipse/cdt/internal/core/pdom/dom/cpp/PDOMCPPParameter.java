@@ -118,7 +118,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
 			db.putByte(record + ANNOTATIONS, annotations);
 		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+			// ignore and miss out on some properties of the parameter
 		}
 
 	}

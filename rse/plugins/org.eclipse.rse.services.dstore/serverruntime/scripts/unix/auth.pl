@@ -8,6 +8,7 @@
 #
 # Contributors:
 # IBM Corporation - initial API and implementation
+# David McKnight   (IBM)   - [254785] [dstore] RSE Server assumes home directory on target machine
 #*******************************************************************************
 
 use Shell;
@@ -25,7 +26,7 @@ else
   $timeoutIN = $ARGV[3];
   $ticketIN  = $ARGV[4];
 
-  if (defined($ARGV[5]))
+ if (defined($ARGV[5]))
   {
     $javaHome = $ARGV[5];
     $javaExe = "$javaHome/bin/java";
@@ -34,12 +35,12 @@ else
   {
     $javaExe = "java"
   }
-  
+
   $pwdIN = <STDIN>;
   chomp($pwdIN);
 
 
-  @passwdStruct = getpwnam($userIN);
+   @passwdStruct = getpwnam($userIN);
 
   if (@passwdStruct == 0)
   {
@@ -49,6 +50,9 @@ else
   else
   {
     $passwd=$passwdStruct[1];
+    $dir=$passwdStruct[7]; // get the user's home dir
+    #$passwd = $pass;
+    
     $encryptedPWD = crypt($pwdIN, $passwd);
     $classpath=$ENV{CLASSPATH};
     $suOptions="-p";
@@ -65,7 +69,14 @@ else
 			$suOptions="-";
 		}
 
-		system("su $suOptions $userIN -c '$javaExe -cp $classpath -DA_PLUGIN_PATH=$pathIN -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
+		# check for the existence of a home directory
+		$homeDir=$dir;
+		if (!(-e $homeDir))
+	    {
+	      $homeDir="/tmp/" . $userIN;
+	    }	 
+		
+		system("su $suOptions $userIN -c '$javaExe -Duser.home=$homeDir -cp $classpath -DA_PLUGIN_PATH=$pathIN -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
 		1;
     }
     else

@@ -1,17 +1,17 @@
 /********************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Justin Lin (IBM) - [244051] JJ: Environment Variables property page allows duplicates...
  ********************************************************************************/
@@ -87,19 +87,19 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 	public class EnvironmentVariable {
 		protected String _name;
 		protected String _value;
-		
+
 		public EnvironmentVariable(String name, String value)
 		{
 			_name = name;
 			_value = value;
 		}
-		
+
 		public String getName() { return _name;}
 		public String getValue() { return _value;}
 		public void setName(String name) {_name = name;}
 		public void setValue(String value) { _value = value;}
 	}
-	
+
 	protected class EnvironmentVariablesTableContentProvider implements IStructuredContentProvider,
 																		ITableLabelProvider,
 																		ICellModifier, ICellEditorValidator
@@ -161,7 +161,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		}
 
 		// yantzi:2.1.2 Added ability to directly edit in env var table
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 		 */
@@ -174,12 +174,12 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		 */
 		public Object getValue(Object element, String property) {
 			if (VAR_NAME.equals(property))
-			{ 
+			{
 				return ((EnvironmentVariable) element).getName();
 			}
-			else // VAR_VALUE 
+			else // VAR_VALUE
 			{
-				return ((EnvironmentVariable) element).getValue();				
+				return ((EnvironmentVariable) element).getValue();
 			}
 		}
 
@@ -187,22 +187,22 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
 		 */
 		public void modify(Object element, String property, Object value) {
-			if (VAR_NAME.equals(property)) 
-			{	
+			if (VAR_NAME.equals(property))
+			{
 				SystemMessage msg = validateName((String)value);
 				if (msg != null)
 				{
-					getMessageLine().setErrorMessage(msg);				
+					getMessageLine().setErrorMessage(msg);
 				}
 				else
 				{
 					if (invalidNameChars != null && invalidNameChars.indexOf(' ') != -1)
 					{
-						((EnvironmentVariable) ((TableItem)element).getData()).setName(((String) value).trim());					
+						((EnvironmentVariable) ((TableItem)element).getData()).setName(((String) value).trim());
 					}
 					else
 					{
-						((EnvironmentVariable) ((TableItem)element).getData()).setName((String) value);					
+						((EnvironmentVariable) ((TableItem)element).getData()).setName((String) value);
 					}
 					getMessageLine().clearErrorMessage();
 				}
@@ -212,13 +212,13 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 				((EnvironmentVariable) ((TableItem)element).getData()).setValue((String) value);
 			}
 
-			envVarTableViewer.refresh();						
+			envVarTableViewer.refresh();
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
 		 */
-		public String isValid(Object value) 
+		public String isValid(Object value)
 		{
 			SystemMessage msg = validateName((String) value);
 			if (msg != null)
@@ -246,22 +246,22 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		this.invalidNameChars = invalidNameChars;
 		envVars = new Vector();
 		provider = new EnvironmentVariablesTableContentProvider();
-		
+
 		if (selectedObject instanceof ISubSystem)
 		{
 			systemType = ((ISubSystem) selectedObject).getHost().getSystemType();
 		}
-		
+
 	}
 
 	/**
 	 * @see org.eclipse.rse.ui.SystemBaseForm#createContents(Composite)
 	 */
 	public Control createContents(Composite parent) {
-		
+
 		SystemWidgetHelpers.createLabel(parent, SystemResources.RESID_SUBSYSTEM_ENVVAR_DESCRIPTION);
-		
-		// Environment Variables List 
+
+		// Environment Variables List
 		envVarTable = new Table(parent, SWT.FULL_SELECTION |SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		envVarTable.setLinesVisible(true);
 		envVarTable.setHeaderVisible(true);
@@ -273,26 +273,26 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		tableLayout.addColumnData(new ColumnWeightData(100, true));
 		tableLayout.addColumnData(new ColumnWeightData(100, true));
 		envVarTable.setLayout(tableLayout);
-		
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 	    gd.grabExcessHorizontalSpace = true;
-		gd.grabExcessVerticalSpace = true;		  
+		gd.grabExcessVerticalSpace = true;
 		gd.heightHint = 200;
 		envVarTable.setLayoutData(gd);
-		
+
 		// Name column
 		TableColumn hostnameColumn = new TableColumn(envVarTable, SWT.NONE);
-		hostnameColumn.setText(SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_TITLE);		
-		
+		hostnameColumn.setText(SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_TITLE);
+
 		// Value column
 		TableColumn sysTypeColumn = new TableColumn(envVarTable, SWT.NONE);
 		sysTypeColumn.setText(SystemResources.RESID_SUBSYSTEM_ENVVAR_VALUE_TITLE);
-		
+
 		envVarTableViewer = new TableViewer(envVarTable);
 		envVarTableViewer.setContentProvider(provider);
 		envVarTableViewer.setLabelProvider(provider);
-		
-		// yantzi:2.1.2 Added ability to directly edit in env var table		
+
+		// yantzi:2.1.2 Added ability to directly edit in env var table
 		envVarTableViewer.setCellModifier(provider);
 		envVarTableViewer.setColumnProperties(COLUMN_PROPERTIES);
 
@@ -301,10 +301,10 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		cellEditors[0].setValidator(provider);
 		cellEditors[1] = new TextCellEditor(envVarTable);
 		envVarTableViewer.setCellEditors(cellEditors);
-				
-		envVarTableViewer.setInput(selectedObject);		
-		
-		// Create the buttons for add, change, remove, move up and move down		
+
+		envVarTableViewer.setInput(selectedObject);
+
+		// Create the buttons for add, change, remove, move up and move down
 		Composite buttonBar = SystemWidgetHelpers.createComposite(parent, 5);
 
 		addButton = SystemWidgetHelpers.createPushButton(buttonBar, SystemResources.RESID_PREF_SIGNON_ADD_LABEL, null);
@@ -332,7 +332,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		moveDownButton.setEnabled(false);
 
 		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0000"); //$NON-NLS-1$
-		
+
 		return parent;
 	}
 
@@ -352,37 +352,37 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		{
 			existingNames[i] = ((EnvironmentVariable) envVars.get(i))._name;
 		}
-		
+
 		return existingNames;
 	}
-	
+
 	/**
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent e) {
 
-		if (e.getSource() == addButton) 
+		if (e.getSource() == addButton)
 		{
 			// Prompt the user for the new environment variable
-			EnvironmentVariablesPromptDialog dialog = 
+			EnvironmentVariablesPromptDialog dialog =
 				new EnvironmentVariablesPromptDialog(
-							getShell(), 
-							SystemResources.RESID_SUBSYSTEM_ENVVAR_ADD_TITLE, 
-							systemType,  
-							invalidNameChars, 
+							getShell(),
+							SystemResources.RESID_SUBSYSTEM_ENVVAR_ADD_TITLE,
+							systemType,
+							invalidNameChars,
 							getVariableNames(),
 							false);
-				
+
 			if (dialog.open() == Window.OK) {
 				// Add new variable to model
 				EnvironmentVariable var = new EnvironmentVariable(dialog.getName(), dialog.getValue());
 				envVars.add(var);
-				envVarTableViewer.refresh();					
-				
+				envVarTableViewer.refresh();
+
 				//dy defect 47040 position table so new variable is shown
 				envVarTableViewer.reveal(var);
-			}			
-		} 
+			}
+		}
 		else if (e.getSource() == removeButton)
 		{
 			int[] selections = envVarTable.getSelectionIndices();
@@ -401,20 +401,20 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		{
 			int[] selections = envVarTable.getSelectionIndices();
 			envVarTable.deselectAll();
-			
-			if (selections != null) {			
+
+			if (selections != null) {
 				// Move the selected objects up one position in the table
 				Object temp;
 				for (int loop=0; loop < selections.length; loop++) {
 					temp = envVars.remove(selections[loop]);
 					envVars.add(selections[loop] - 1, temp);
 				}
-				
+
 				envVarTableViewer.refresh();
-				
+
 				//dy defect 47040 position table so top variable is shown
 				envVarTableViewer.reveal(envVars.get(selections[0] - 1));
-				
+
 				// Reselect the entries
 				for (int loop=0; loop < selections.length; loop++) {
 					if (selections[loop] > 0)
@@ -428,9 +428,9 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		{
 			int[] selections = envVarTable.getSelectionIndices();
 			envVarTable.deselectAll();
-						
+
 			// move the selected entries down one position in the table
-			if (selections != null) {			
+			if (selections != null) {
 				Object temp;
 				for (int loop=selections.length - 1; loop >= 0; loop--) {
 					if (selections[loop] < envVars.size() - 1) {
@@ -443,7 +443,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 
 				//dy defect 47040 position table so bottom variable is shown
 				envVarTableViewer.reveal(envVars.get(selections[selections.length - 1] + 1));
-				
+
 				// reselect the entries
 				for (int loop=0; loop < selections.length; loop++) {
 					if (selections[loop] < envVars.size() - 1)
@@ -467,15 +467,15 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 			for (int loop = 0; loop < selectionIndices.length; loop++) {
 				if (selectionIndices[loop] == 0)
 					upEnabled = false;
-				
+
 				if (selectionIndices[loop] == (envVarTable.getItemCount() - 1))
 					downEnabled = false;
-			}		
-			
+			}
+
 			if (selectionIndices.length == 1)
 			{
 				changeButton.setEnabled(true);
-			}	
+			}
 			else
 			{
 				changeButton.setEnabled(false);
@@ -497,7 +497,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 
 	/**
 	 * Set the input for the environment variables table
-	 */	
+	 */
 	public void setEnvVars(Vector envVars)
 	{
 		this.envVars = envVars;
@@ -506,9 +506,9 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 			envVarTableViewer.refresh();
 		}
 	}
-	
+
 	/**
-	 * Helper method so the same code can be run when the user selets the chagne button or 
+	 * Helper method so the same code can be run when the user selets the chagne button or
 	 * double clicks in the table.
 	 */
 	private void changeCurrentlySelectedVariable()
@@ -518,24 +518,24 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		{
 			EnvironmentVariablesPromptDialog dialog = new
 					EnvironmentVariablesPromptDialog(
-						getShell(), 
-						SystemResources.RESID_SUBSYSTEM_ENVVAR_CHANGE_TITLE, 
-						systemType,  
-						invalidNameChars,  
+						getShell(),
+						SystemResources.RESID_SUBSYSTEM_ENVVAR_CHANGE_TITLE,
+						systemType,
+						invalidNameChars,
 						getVariableNames(),
-						true);		
+						true);
 			dialog.setName(((EnvironmentVariable)envVars.get(selections[0])).getName());
 			dialog.setValue(((EnvironmentVariable)envVars.get(selections[0])).getValue());
-			
+
 			if (dialog.open() == Window.OK)
 			{
 				envVars.remove(selections[0]);
 				envVars.add(selections[0], new EnvironmentVariable(dialog.getName(), dialog.getValue()));
-				envVarTableViewer.refresh();					
-			}						
+				envVarTableViewer.refresh();
+			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(MouseEvent)
 	 */
@@ -568,7 +568,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		String name = value;
 		if (name == null || name.trim().equals("")) //$NON-NLS-1$
 		{
-			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);					
+			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);
 		}
 		else
 		{
@@ -580,17 +580,15 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 				}
 
 				// first check for invalid characters
-				if (invalidNameChars != null)
+				for (int i = 0; i < invalidNameChars.length() && msg == null; i++)
 				{
-					for (int i = 0; i < invalidNameChars.length() && msg == null; i++)
+					if (name.indexOf(invalidNameChars.charAt(i)) != -1)
 					{
-						if (name.indexOf(invalidNameChars.charAt(i)) != -1)
-						{
-							msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR);
-						}
+						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR);
 					}
 				}
-						
+			}
+			if (msg == null) {
 				// next check for duplicate env var names
 				int itemCount = envVarTable.getItemCount();
 				for (int i = 0; i < itemCount; i++) {
@@ -602,9 +600,9 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 						break;
 					}
 				}
-			}					
+			}
 		}
-		
-		return msg;		
+
+		return msg;
 	}
 }

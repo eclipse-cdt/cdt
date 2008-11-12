@@ -1737,7 +1737,9 @@ public class CPPSemantics {
 	        } else {
 	            continue;
 	        }
-
+	        // select among those bindings that have been created without problems.
+	        if (temp instanceof IProblemBinding)
+	        	continue;
 	        if (!(temp instanceof ICPPMember) && !declaredBefore)
                 continue;
 	        if (temp instanceof ICPPUsingDeclaration) {

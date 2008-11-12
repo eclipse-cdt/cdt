@@ -4198,6 +4198,11 @@ public class AST2CPPTests extends AST2BaseTest {
 		}
 	}
 	
+	private void assertProblemBinding(int id, IBinding b) {
+		assertTrue(b instanceof IProblemBinding);
+		assertEquals(id, ((IProblemBinding) b).getID());
+	}
+
 	protected void assertProblemBindings(CPPNameCollector col, int count) {
 		Iterator i = col.nameList.iterator();
 		int sum = 0;
@@ -6201,5 +6206,23 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstance(exstmt.getExpression(), IASTBinaryExpression.class);
 		exstmt= getStatement(fdef, 1);
 		assertInstance(exstmt.getExpression(), IASTBinaryExpression.class);
+    }
+    
+    //    template <int E> class A;
+    //    class A {};
+    //    class A;
+    //    class B;
+    //    template <int E> class B;
+    //    template <int E> class B {};
+    public void testInvalidClassRedeclaration_254961() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parse(code, ParserLanguage.CPP, true, false);
+		CPPNameCollector nc= new CPPNameCollector();
+		tu.accept(nc);
+		assertProblemBindings(nc, 4);
+		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDEFINITION, nc.getName(2).resolveBinding());
+		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDECLARATION, nc.getName(3).resolveBinding());
+		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDECLARATION, nc.getName(6).resolveBinding());
+		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDEFINITION, nc.getName(8).resolveBinding());
     }
 }

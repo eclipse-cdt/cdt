@@ -1220,7 +1220,18 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
 		if ( breakpoint instanceof ICAddressBreakpoint )
 			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
-		
+
+		// If the breakpoint is set on a resource in this project
+		// it should be enabled irrespective of what the CSourceLookupDirector thinks
+		if (breakpoint.getMarker() != null) {
+			IProject project = breakpoint.getMarker().getResource().getProject();
+			if (getProject().equals(project))
+				return true;
+			if (CDebugUtils.isReferencedProject(getProject(), project))
+				return true;
+		}
+
+		// Is it a line breakpoint with source handle ?
 		if ( breakpointUsesSourceMatching( breakpoint ) ) {
 			try {
 				String handle = breakpoint.getSourceHandle();
@@ -1232,10 +1243,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				}
 			}
 			catch( CoreException e ) {
-				return false;
+				CDebugCorePlugin.log(e);
 			}
-		}
-		else {
+		} else {
+			// Check the marker resource against the source containers ...
 			IResource resource = breakpoint.getMarker().getResource();			
 			IProject project = resource.getProject();
 			if ( project != null && project.exists() ) {
@@ -1244,12 +1255,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					return ((ICSourceLocator)sl).contains( project );
 				else if ( sl instanceof CSourceLookupDirector )
 					return ((CSourceLookupDirector)sl).contains( project );
-				if ( project.equals( getProject() ) )
-					return true;
-				return CDebugUtils.isReferencedProject( getProject(), project );
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public boolean supportsBreakpoint( ICBreakpoint breakpoint ) {

@@ -14,14 +14,13 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -39,10 +38,10 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
  */
 public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 
-	private static Set fSupportedTypes;
+	private static Set<String> fSupportedTypes;
 
 	static {
-		fSupportedTypes = new HashSet();
+		fSupportedTypes = new HashSet<String>();
 		fSupportedTypes.add( WorkspaceSourceContainer.TYPE_ID );
 		fSupportedTypes.add( ProjectSourceContainer.TYPE_ID );
 		fSupportedTypes.add( FolderSourceContainer.TYPE_ID );
@@ -77,16 +76,6 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	public boolean contains( ICBreakpoint breakpoint ) {
 		try {
 			String handle = breakpoint.getSourceHandle();
-			// Check if the breakpoint's resource is a link - we have to handle 
-			// this case differently. 
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=125603
-			IMarker marker = breakpoint.getMarker();
-			if ( marker != null ) {
-				IResource resource = marker.getResource();
-				if ( resource.isLinked() && resource.getLocation().toOSString().equals( handle ) ) {
-					return contains( resource.getProject() );
-				}
-			}
 			ISourceContainer[] containers = getSourceContainers();
 			for ( int i = 0; i < containers.length; ++i ) {
 				if ( contains( containers[i], handle ) )

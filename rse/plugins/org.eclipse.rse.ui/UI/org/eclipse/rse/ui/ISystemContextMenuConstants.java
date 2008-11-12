@@ -54,6 +54,7 @@ public interface ISystemContextMenuConstants
 	 * RSE Views: Remote Systems, Remote System Details, Monitor, and Scratchpad
 	 * Note: This does does not work with dialog's which have the SystemView 
 	 * embedded in them.
+	 * @since 3.1
 	 */
 	public static final String RSE_CONTEXT_MENU = "org.eclipse.rse.views.common"; //$NON-NLS-1$
 	

@@ -126,3 +126,6 @@ void foo() {
 	{
 	}
 }
+// http://bugs.eclipse.org/255018
+#if 0
+// #endif missing

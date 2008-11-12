@@ -1423,6 +1423,14 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 
+		if (!branchStack.isEmpty()) {
+			// unterminated #if
+			Branch branch= branchStack.pop();
+			branch.setEndOffset(getDocument().getLength());
+			branch.setInclusive(true);
+			branches.add(branch);
+		}
+		
 		Map<String, Counter> keys= new HashMap<String, Counter>(branches.size());
 		for (Branch branch : branches) {
 			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);

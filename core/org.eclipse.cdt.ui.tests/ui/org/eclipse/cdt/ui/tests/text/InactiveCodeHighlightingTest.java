@@ -55,6 +55,7 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
@@ -64,6 +65,7 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 	}
 
+	@Override
 	protected void tearDown () throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 		
@@ -95,13 +97,13 @@ public class InactiveCodeHighlightingTest extends TestCase {
 	}
 
 	String toString(Position[] positions) throws BadLocationException {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		IDocument document= fSourceViewer.getDocument();
 		buf.append("Position[] expected= new Position[] {\n");
 		for (int i= 0, n= positions.length; i < n; i++) {
 			Position position= positions[i];
 			int startLine= document.getLineOfOffset(position.getOffset());
-			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength());
+			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength()-1);
 			buf.append("\tcreatePosition(" + startLine + ", " + endLine + "),\n");
 		}
 		buf.append("};\n");
@@ -111,8 +113,8 @@ public class InactiveCodeHighlightingTest extends TestCase {
 	protected Position[] getInactiveCodePositions() {
 		CSourceViewerDecorationSupport support= (CSourceViewerDecorationSupport) new Accessor(fEditor, AbstractDecoratedTextEditor.class).get("fSourceViewerDecorationSupport");
 		InactiveCodeHighlighting highlighting= (InactiveCodeHighlighting) new Accessor(support, support.getClass()).get("fInactiveCodeHighlighting");
-		List positions= (List) new Accessor(highlighting, highlighting.getClass()).get("fInactiveCodePositions");
-		return (Position[]) positions.toArray(new Position[positions.size()]);
+		List<Position> positions= (List<Position>) new Accessor(highlighting, highlighting.getClass()).get("fInactiveCodePositions");
+		return positions.toArray(new Position[positions.size()]);
 	}
 
 	public void testInactiveCodePositions() throws BadLocationException {
@@ -125,8 +127,9 @@ public class InactiveCodeHighlightingTest extends TestCase {
 				createPosition(39, 41),
 				createPosition(47, 57),
 				createPosition(67, 69),
+				createPosition(73, 75),
 			};
-		if (false) System.out.println(toString(actual));
+		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	

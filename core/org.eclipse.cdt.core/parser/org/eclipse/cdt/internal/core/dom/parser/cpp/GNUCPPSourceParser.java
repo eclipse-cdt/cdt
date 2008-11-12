@@ -304,28 +304,31 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		if(typeId != null && (LT(1)==IToken.tCOMMA || LT(1)==IToken.tGT || LT(1)==IToken.tEOC)) {
     			// potentially a type-id - check for id-expression ambiguity
     			IToken typeIdEnd= mark();
-
-    			backup(argStart);
     			try {
-    				IASTExpression expression = assignmentExpression();
-    				if(expression instanceof IASTIdExpression) {
-    					IASTIdExpression idExpression= (IASTIdExpression) expression;
-    					if(idExpression.getName() instanceof ICPPASTTemplateId) {
-    						/*
-    						 * A template-id cannot be used in an id-expression as a template argument.
-    						 * 
-    						 * 5.1-11 A template-id shall be used as an unqualified-id only as specified in
-    						 * 14.7.2, 14.7, and 14.5.4.
-    						 */
-    						throw backtrack;
-    					}
+    				// consider ambiguity with id-expressions, only:
+        			IASTDeclSpecifier declspec= typeId.getDeclSpecifier();
+        			if (!(declspec instanceof IASTNamedTypeSpecifier)) 
+        				throw backtrack;
+        			IASTName name= ((IASTNamedTypeSpecifier) declspec).getName();
+        			if (!name.contains(typeId)) 
+        				throw backtrack;
+        			
+        			// A template-id cannot be used in an id-expression as a template argument
+        			// 5.1-11 A template-id shall be used as an unqualified-id only as specified in
+        			// 14.7.2, 14.7, and 14.5.4.
+        			name= name.getLastName();
+        			if (name instanceof ICPPASTTemplateId)
+        				throw backtrack;
 
+        			backup(argStart);
+    				IASTExpression expression = assignmentExpression();
+    				if (expression instanceof IASTIdExpression) {
     					if (mark() != typeIdEnd) 
     						throw backtrack;
 
     					ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
     					ambiguity.addTypeId(typeId);
-    					ambiguity.addIdExpression(idExpression);
+    					ambiguity.addIdExpression((IASTIdExpression) expression);
     					list.add(ambiguity);
     				} else {
     					// prefer the typeId at this stage

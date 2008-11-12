@@ -40,8 +40,9 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	private String[] findUsedModuleNames(File file) {
 		ArrayList names = new ArrayList();
+		InputStream in = null;
 		try {
-			InputStream in = new BufferedInputStream(new FileInputStream(file));
+			in = new BufferedInputStream(new FileInputStream(file));
 			Reader r = new BufferedReader(new InputStreamReader(in));
 			StreamTokenizer st = new StreamTokenizer(r);
 			st.commentChar('!');
@@ -62,9 +63,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					}
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return new String[0];
+		} finally {
+			// ensure the input stream is closed or we can run out of fd's...
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {/*don't care */}
 		}
 		return (String[]) names.toArray(new String[names.size()]);
 	}
@@ -74,8 +80,9 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	private String[] findModuleNames(File file) {
 		ArrayList names = new ArrayList();
+		InputStream in = null;
 		try {
-			InputStream in = new BufferedInputStream(new FileInputStream(file));
+			in = new BufferedInputStream(new FileInputStream(file));
 			Reader r = new BufferedReader(new InputStreamReader(in));
 			StreamTokenizer st = new StreamTokenizer(r);
 			st.commentChar('!');
@@ -96,9 +103,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					}
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return new String[0];
+		} finally {
+			// ensure the input stream is closed or we run out of fd's...
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {/*don't care */}
 		}
 		return (String[]) names.toArray(new String[names.size()]);
 	}

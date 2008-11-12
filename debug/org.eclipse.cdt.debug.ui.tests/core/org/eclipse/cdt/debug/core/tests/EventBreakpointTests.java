@@ -52,12 +52,6 @@ public class EventBreakpointTests extends AbstractDebugTest {
 		pause();
 	}
 
-	void setBreakOnMain() throws CDIException {
-		ICDILocation location = null;
-		location = currentTarget.createFunctionLocation("", "main"); //$NON-NLS-1$	
-		currentTarget.setFunctionBreakpoint(ICBreakpointType.TEMPORARY, (ICDIFunctionLocation) location, null, false);
-
-	}
 
 	public void testCatch() throws CModelException, IOException, MIException, CDIException {
 		eventbreakpoints(EventBreakpoint.CATCH, "");
@@ -74,7 +68,7 @@ public class EventBreakpointTests extends AbstractDebugTest {
 		setBreakOnMain();
 		currentTarget.restart();
 		waitSuspend(currentTarget);
-		ICDILocator locator = currentTarget.getThreads()[0].getStackFrames()[0].getLocator();
+		ICDILocator locator = getCurrentLocator();
 		assertEquals("Debug should be stopped in function 'main' but it is stopped in: " + locator.getFunction(),
 				"main", locator.getFunction());
 

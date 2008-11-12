@@ -14,11 +14,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import junit.extensions.TestSetup;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.testplugin.CDebugHelper;
 import org.eclipse.cdt.debug.testplugin.CProjectHelper;
@@ -29,11 +38,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractDebugTest extends TestCase {
 	IWorkspace workspace;
@@ -110,6 +116,26 @@ public abstract class AbstractDebugTest extends TestCase {
 		return "main";
 	}
 
+
+	public static Display getDisplay() {
+		return PlatformUI.getWorkbench().getDisplay();
+	}
+	/**
+	 * Dispatch ui events for at least msec - milliseconds
+	 * 
+	 * @param msec -
+	 *            milliseconds delay
+	 */
+	public static void uimsleep(int msec) {
+		long cur = System.currentTimeMillis();
+		long pass = 0;
+		Display display = getDisplay();
+		while (pass < msec) {
+			if (!display.readAndDispatch())
+				display.sleep();
+			pass = System.currentTimeMillis() - cur;
+		}
+	}
 	/**
 	 * Tears down the test fixture.
 	 * 
@@ -166,27 +192,38 @@ public abstract class AbstractDebugTest extends TestCase {
 	}
 
 	void pause() {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
+		uimsleep(200);
 	}
 
+	public ICDILocator getCurrentLocator() throws CDIException {
+		return getCurrentFrame().getLocator();
+	}
+
+	public ICDIStackFrame getCurrentFrame() throws CDIException {
+		return currentTarget.getCurrentThread().getStackFrames()[0];
+	}
+	
 	void waitSuspend(ICDITarget currentTarget) {
 		int loop;
 		loop = 0;
 		while ((currentTarget.isSuspended() == false) && (currentTarget.isTerminated() == false) && (loop < 20)) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// Ignore
-			}
+			uimsleep(500);
 			loop++;
 		}
 		assertFalse("Target should be suspended, but it is terminated " + currentTarget.isTerminated(), currentTarget
 				.isTerminated());
 		assertTrue("Target should be suspended but it is not", currentTarget.isSuspended());
 
+	}
+	
+	public void resumeCurrentTarget() throws CDIException{
+		currentTarget.resume(false);
+	}
+
+	void setBreakOnMain() throws CDIException {
+		ICDILocation location = null;
+		location = currentTarget.createFunctionLocation("", "main"); //$NON-NLS-1$	
+		currentTarget.setFunctionBreakpoint(ICBreakpointType.TEMPORARY, (ICDIFunctionLocation) location, null, false);
 	}
 
 	@Override

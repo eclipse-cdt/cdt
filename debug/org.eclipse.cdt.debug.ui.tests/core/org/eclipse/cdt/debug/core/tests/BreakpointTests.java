@@ -13,12 +13,15 @@ package org.eclipse.cdt.debug.core.tests;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
@@ -38,6 +41,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.deferred.SetModel;
 
 /**
  * @author Peter Graves
@@ -136,26 +140,17 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Resume the target, this should cause it to run till it hits the
 		 * breakpoint
 		 */
-		targets[0].resume();
+		resumeCurrentTarget();
 		/**
 		 * Give the process up to 10 seconds to become either terminated or
 		 * suspended. It sould hit the breakponint almost immediatly so we
 		 * should only sleep for max 100 ms
 		 */
-		for (int x = 0; x < 100; x++) {
-			if (targets[0].isTerminated() || targets[0].isSuspended())
-				break;
-			Thread.sleep(100);
-		}
-		assertTrue(targets[0].isSuspended());
-		ICDILocator locator = targets[0].getCurrentThread().getStackFrames()[0].getLocator();
+		waitSuspend(cdiTarget);
+		ICDILocator locator = getCurrentLocator();
 		assertTrue(locator.getLineNumber() == 6);
 		assertTrue(locator.getFunction().equals("func1")); //$NON-NLS-1$
 		assertTrue(locator.getFile().endsWith("main.c")); //$NON-NLS-1$
-
-
-
-
 	}
 
 	/***************************************************************************
@@ -259,7 +254,7 @@ public class BreakpointTests extends AbstractDebugTest {
 		}
 		assertTrue("Suspended: " + targets[0].isSuspended() + " Termiunated: " + targets[0].isTerminated(), targets[0]
 				.isSuspended());
-		ICDILocator locator = targets[0].getCurrentThread().getStackFrames()[0].getLocator();
+		ICDILocator locator = getCurrentLocator();
 		assertTrue(locator.getLineNumber() == 7);
 		assertTrue(locator.getFunction().equals("func1"));
 		assertTrue(locator.getFile().endsWith("main.c"));
@@ -499,6 +494,39 @@ public class BreakpointTests extends AbstractDebugTest {
 	public void testCondBreak() throws CoreException, MIException, IOException, CDIException, InterruptedException {
 		boolean caught = false;
 		ICDITarget cdiTarget = currentTarget;
+		ICDICondition cond;
+
+		/***********************************************************************
+		 * Create a break point on a line number with a condition and make sure
+		 * it does not suspend execution of the application until the condition
+		 * is true
+		 **********************************************************************/
+		cdiTarget.deleteAllBreakpoints();
+		pause();
+		ICDILineLocation lineLocation = cdiTarget.createLineLocation(null, 23);
+		assertNotNull(lineLocation);
+		cond = cdiTarget.createCondition(0, "a>10");
+		cdiTarget.setLineBreakpoint(0, lineLocation, cond, false);
+		pause();
+		resumeCurrentTarget();
+		/**
+		 * Give the process up to 10 seconds to become either terminated or
+		 * suspended. It sould hit the breakponint almost immediatly so we
+		 * should only sleep for max 100 ms
+		 */
+		waitSuspend(cdiTarget);
+		ICDIStackFrame frame = getCurrentFrame(); 
+		ICDILocator locator = getCurrentLocator();
+		assertTrue(locator.getLineNumber() == 23);
+		assertTrue(locator.getFunction().equals("main"));
+		assertTrue(locator.getFile().endsWith("main.c"));
+		/* Get the value of a and and make sure it is 11 */
+		assertTrue(targets[0].evaluateExpressionToString(frame, "a"), targets[0].evaluateExpressionToString(frame, "a").equals("11"));
+
+	}
+	public void testCondBreak2() throws CoreException, MIException, IOException, CDIException, InterruptedException {
+		boolean caught = false;
+		ICDITarget cdiTarget = currentTarget;
 
 		/***********************************************************************
 		 * Create a break point on a generic function with an empty condition
@@ -528,51 +556,49 @@ public class BreakpointTests extends AbstractDebugTest {
 		} catch (CDIException e) {
 			caught = true;
 		}
-		assertTrue(caught);
-
-		/***********************************************************************
-		 * Create a break point on a line number with a condition and make sure
-		 * it does not suspend execution of the application until the condition
-		 * is true
-		 **********************************************************************/
-		cdiTarget.deleteAllBreakpoints();
-		ICDILineLocation lineLocation = cdiTarget.createLineLocation(null, 23);
-		assertNotNull(location);
-		cond = cdiTarget.createCondition(0, "a>10");
-
-		cdiTarget.setLineBreakpoint(0, lineLocation, cond, false);
-		targets = session.getTargets();
-		/*
-		 * We better only have one target connected to this session or something
-		 * is not right...
-		 */
-		assertTrue(targets.length == 1);
-		/*
-		 * Resume the target, this should cause it to run till it hits the
-		 * breakpoint
-		 */
-		targets[0].resume();
-		/**
-		 * Give the process up to 10 seconds to become either terminated or
-		 * suspended. It sould hit the breakponint almost immediatly so we
-		 * should only sleep for max 100 ms
-		 */
-		for (int x = 0; x < 100; x++) {
-			if (targets[0].isSuspended() || targets[0].isTerminated())
-				break;
-			Thread.sleep(100);
-		}
-		assertTrue("Suspended: " + targets[0].isSuspended() + " Termiunated: " + targets[0].isTerminated(), targets[0]
-				.isSuspended());
-		ICDIStackFrame frame = targets[0].getCurrentThread().getStackFrames()[0]; 
-		ICDILocator locator = frame.getLocator();
-		assertTrue(locator.getLineNumber() == 23);
-		assertTrue(locator.getFunction().equals("main"));
-		assertTrue(locator.getFile().endsWith("main.c"));
-		/* Get the value of a and and make sure it is 11 */
-		assertTrue(targets[0].evaluateExpressionToString(frame, "a"), targets[0].evaluateExpressionToString(frame, "a").equals("11"));
-
+		assertTrue("Setting wrong condition should fail",caught);
 	}
+	
+	public void testHitCond() throws CoreException, MIException, IOException, CDIException, InterruptedException {
+		// this currently fails sometimes - after set bad breakpoint it does not hit any
+		setBreakOnMain();
+		testCondBreak2();
+		resumeCurrentTarget();
+		waitSuspend(currentTarget);
+	}
+	/***************************************************************************
+	 * A test to make sure setting address breakpoints works as
+	 * expected.
+	 */
+	public void testAddressBreak() throws CoreException, MIException, IOException, CDIException, InterruptedException {
+		
+		
+		ICDIAddressLocation location;
+		boolean caught = false;
 
+		setBreakOnMain();
+		currentTarget.resume(false);
+		waitSuspend(currentTarget);
+		currentTarget.stepOver(1);
+		pause();
+		BigInteger address = getCurrentLocator().getAddress();
+		/***********************************************************************
+		 * Create a break point on first instruction
+		 **********************************************************************/
+
+		location = currentTarget.createAddressLocation(address); //$NON-NLS-1$
+		assertNotNull(location);
+		currentTarget.setAddressBreakpoint(0, location, null, false);
+		
+		// restart
+		currentTarget.restart();
+		pause();
+		waitSuspend(currentTarget);
+		
+		ICDILocator locator = getCurrentLocator();
+		assertTrue(locator.getLineNumber() == 18);
+		assertTrue(locator.getFunction().equals("main")); //$NON-NLS-1$
+		assertTrue(locator.getFile().endsWith("main.c")); //$NON-NLS-1$
+	}
 
 }

@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
+ * Justin Lin (IBM) - [244051] JJ: Environment Variables property page allows duplicates...
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -591,16 +592,15 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 				}
 						
 				// next check for duplicate env var names
-				int numberFound = 0;
 				int itemCount = envVarTable.getItemCount();
 				for (int i = 0; i < itemCount; i++) {
 					TableItem item = envVarTable.getItem(i);
 					String itemName = item.getText(0);
-					if (itemName.equals(name)) numberFound++;
-				}
-				if (numberFound > 1) {
-					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
-					msg.makeSubstitution(name);
+					if (itemName.equals(name) && i != envVarTable.getSelectionIndex()) {
+						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
+						msg.makeSubstitution(name);
+						break;
+					}
 				}
 			}					
 		}

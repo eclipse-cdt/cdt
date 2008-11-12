@@ -3171,4 +3171,39 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("x))", 1, ICPPVariable.class);
     }
+    
+    //    template<typename T, typename U> class TL {};
+    //    typedef int T;
+    //    typedef
+    //    TL<T, TL< T, TL< T, TL< T, TL<T,
+    //    TL<T, TL< T, TL< T, TL< T, TL<T,
+    //    TL<T, TL< T, TL< T, TL< T, TL<T,
+    //    TL<T, TL< T, TL< T, TL< T, TL<T,
+    //    TL<T, TL< T, TL< T, TL< T, TL<T,
+    //    T
+    //    > > > > >
+    //    > > > > >
+    //    > > > > >
+    //    > > > > >
+    //    > > > > >
+    //    type;
+    public void testNestedArguments_246079() throws Throwable {
+    	final Throwable[] th= {null};
+    	Thread t= new Thread(){
+    		@Override
+			public void run() {
+    			try {
+    				parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    			} catch (Throwable e) {
+    				th[0]= e;
+    			}
+    		}
+    	};
+    	
+    	t.start();
+    	t.join(4000);
+    	assertFalse(t.isAlive());
+    	if (th[0] != null)
+    		throw th[0];
+    }
 }

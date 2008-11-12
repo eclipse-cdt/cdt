@@ -3315,7 +3315,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	private void saveRebuildState(){
-		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(rebuildState));
 	}
 
 	public CLanguageData getCLanguageData(IInputType type) {

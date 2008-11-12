@@ -413,7 +413,12 @@ public class CPPVisitor extends ASTQueries {
     				ASTInternal.addName(scope,  elabType.getName());
     			}
     		} else {
-    			((ICPPInternalBinding)binding).addDeclaration(elabType);
+				if ((binding instanceof ICPPClassTemplate) == template) {
+					((ICPPInternalBinding)binding).addDeclaration(elabType);
+				} else {
+    				binding = new ProblemBinding(name,
+    						IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
+    			}
     		}
         } catch (DOMException e) {
             binding = e.getProblem();
@@ -457,7 +462,8 @@ public class CPPVisitor extends ASTQueries {
 				}
     		} else {
     			ICPPInternalBinding internal = (ICPPInternalBinding) binding;
-    			if (internal.getDefinition() == null) {
+    			if (internal.getDefinition() == null &&
+    					(binding instanceof ICPPClassTemplate) == template) {
     				internal.addDefinition(compType);
     		    } else {
     				binding = new ProblemBinding(name,

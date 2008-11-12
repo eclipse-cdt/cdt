@@ -94,7 +94,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		parameterHandler.initArgumentNames();
 		sm.worked(1);
 		sm.done();
-		findInsertLocation();
+		insertLocation = findInsertLocation();
 		sm.worked(1);
 		sm.done();
 		return initStatus;
@@ -136,13 +136,15 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		}
 	}
 
-	private void findInsertLocation() throws CoreException {
-		insertLocation = MethodDefinitionInsertLocationFinder.find(methodDeclaration.getFileLocation(), methodDeclaration.getParent(), file);
+	private InsertLocation findInsertLocation() throws CoreException {
+		InsertLocation insertLocation = MethodDefinitionInsertLocationFinder.find(methodDeclaration.getFileLocation(), methodDeclaration.getParent(), file);
 
 		if (!insertLocation.hasFile() || NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {
 			insertLocation.setInsertFile(file);
 			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(methodDeclaration));
 		}
+		
+		return insertLocation;
 	}
 
 	private void createFunctionDefinition(IASTTranslationUnit unit) throws CoreException {

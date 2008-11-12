@@ -68,11 +68,11 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 	 * rarely so there is much to refresh. This might be due to
 	 * the elementComparer only comparing by absolute name.
 	 */
-	public void testBug251625() throws Exception {
+	public void testBug255023() throws Exception {
 		// -test-author-:MartinOberhuber
 		if (isTestDisabled())
 			return;
-		Job j = new Job("testBug251625") {
+		Job j = new Job("testBug255023") {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -88,6 +88,15 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 					sr.deleteHost(h1);
 					sr.deleteHost(h2);
 					sr.deleteHost(h3);
+					// // Firing a refresh event here, after deleting the hosts
+					// // but before adding the new one, makes the bug
+					// disappear.
+					// // Perhaps a correct fix would be that our content
+					// provider
+					// // refreshes the view right away by means of a listener,
+					// // instead of relying on forced manual refresh only.
+					// sr.fireEvent(new SystemResourceChangeEvent(sr,
+					// ISystemResourceChangeEvents.EVENT_REFRESH, null));
 					IHost h4 = sr.createHost("Foo", st, "vxsim1", "localhost", "vxsim1");
 					sr.fireEvent(new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 					// flushEventQueue(); // will throw exception in main Thread!

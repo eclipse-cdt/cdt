@@ -20,6 +20,7 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
 Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
 Anna Dushistova (MontaVista)  - [252058] Actions for shells subsystem should be contributed declaratively
 Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
+Kevin Doyle		 (IBM)		  - [249320] Launch Shell action not available in Remote System Details/Monitor views
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -141,7 +142,7 @@ Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offli
    <extension
            point="org.eclipse.ui.menus">
         <menuContribution
-              locationURI="popup:org.eclipse.rse.ui.view.systemView?after=additions">
+              locationURI="popup:org.eclipse.rse.views.common?after=additions">
            <command
                  commandId="org.eclipse.rse.shells.ui.actions.LaunchShellCommand"
                  icon="icons/full/obj16/systemshell.gif"

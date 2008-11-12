@@ -53,7 +53,7 @@ public interface ISystemContextMenuConstants
 	 * Context menu id used by all RSE views, such that menu's can be contributed
 	 * to all views.
 	 *
-	 * RSE Views: Remote Systems, Remote System Details, Monitor, and Scratchpad
+	 * RSE Views: Remote Systems, Remote System Details, Remote Monitor, Remote Search, and Remote Scratchpad
 	 * Note: This does does not work with dialog's which have the SystemView 
 	 * embedded in them.
 	 * @since 3.1

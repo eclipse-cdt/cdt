@@ -34,6 +34,7 @@
  * Kevin Doyle 	 (IBM) - [186769] Enable Contributions to Drop Down menu of Remote Systems view -> Preferences
  * David McKnight (IBM)  - [244807] System view does not handle restore from cache
  * David McKnight (IBM)  - [247544] [performance] Restoring Selection on Restart can cause the UI to freeze
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -397,6 +398,7 @@ public class SystemViewPart
 		// Enable right-click popup menu
 		// -----------------------------
 		getSite().registerContextMenu(systemView.getContextMenuManager(), systemView);
+		getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, systemView.getContextMenuManager(), systemView);
 
 		// ----------------------------------------------------------------------
 		// Enable property sheet updates when tree items are selected.

@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [232320] remote system details view restore problem
  * David McKnight   (IBM)        - [233578] Promptable Filter Displayed 3 times when clicking cancel
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -92,6 +93,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemActionViewerFilter;
@@ -1271,6 +1273,7 @@ public class SystemTableViewPart extends ViewPart
 		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000"); //$NON-NLS-1$
 
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
+		getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, _viewer.getContextMenuManager(), _viewer);
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection sel)

@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [195543] Double Clicking expands wrong folder when duplicate elements shown
  * Kevin Doyle (IBM) - [193155] Double Clicking on a String in Scratchpad Errors
  * Kevin Doyle (IBM) - [194867] Remote Scratchpad should have Refresh Action on toolbar
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -43,6 +44,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
@@ -158,6 +160,7 @@ public class SystemScratchpadViewPart extends ViewPart
 		setInput(SystemRegistryUI.getInstance().getSystemScratchPad());
 		
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
+		getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, _viewer.getContextMenuManager(), _viewer);
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection sel)

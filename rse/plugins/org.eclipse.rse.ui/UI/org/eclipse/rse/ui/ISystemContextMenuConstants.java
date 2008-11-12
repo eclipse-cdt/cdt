@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -45,6 +46,17 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  */
 public interface ISystemContextMenuConstants
 {
+	
+	/**
+	 * Context menu id used by all RSE views, such that menu's can be contributed
+	 * to all views.
+	 *
+	 * RSE Views: Remote Systems, Remote System Details, Monitor, and Scratchpad
+	 * Note: This does does not work with dialog's which have the SystemView 
+	 * embedded in them.
+	 */
+	public static final String RSE_CONTEXT_MENU = "org.eclipse.rse.views.common"; //$NON-NLS-1$
+	
 	/**
 	 * Pop-up menu: name of group for goto actions (value <code>"group.goto"</code>).
 	 * <p>

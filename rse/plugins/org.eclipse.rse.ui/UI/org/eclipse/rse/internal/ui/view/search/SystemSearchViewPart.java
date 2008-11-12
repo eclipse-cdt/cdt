@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -535,6 +536,7 @@ public class SystemSearchViewPart extends ViewPart
 		SystemSearchTableView viewer = new SystemSearchTableView(tabletree, resultSet, this);
 		
 		getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);
+		getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, viewer.getContextMenuManager(), viewer);
 		return viewer;
 	}
 

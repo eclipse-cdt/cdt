@@ -14,12 +14,14 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Kevin Doyle (IBM) - [177587] createTabItem sets the wrapped selection provider
+ * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.swt.SWT;
@@ -234,6 +236,7 @@ public class MonitorViewWorkbook extends Composite
 		{
 			_viewPart.setActiveViewerSelectionProvider(viewer);
 			_viewPart.getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);
+			_viewPart.getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, viewer.getContextMenuManager(), viewer);
 		}
 		monitorViewPage.setFocus();
 	}

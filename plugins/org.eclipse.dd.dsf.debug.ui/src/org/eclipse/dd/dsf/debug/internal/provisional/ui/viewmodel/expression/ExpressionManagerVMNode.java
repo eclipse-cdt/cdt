@@ -185,7 +185,16 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getVMProvider().getExecutor(), update);
         int multiRmCount = 0;
         
-        for (int i = update.getOffset(); i < update.getOffset() + update.getLength() && i < expressions.length + 1; i++) {
+        int lowOffset= update.getOffset();
+        if (lowOffset < 0) {
+        	lowOffset = 0;
+        }
+		int length= update.getLength();
+		if (length <= 0) {
+			length = expressions.length;
+		}
+		final int highOffset= lowOffset + length;
+		for (int i = lowOffset; i < highOffset && i < expressions.length + 1; i++) {
             if (i < expressions.length) {
                 multiRmCount++;
                 final int childIndex = i;

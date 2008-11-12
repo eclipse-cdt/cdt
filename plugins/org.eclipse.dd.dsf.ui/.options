@@ -3,3 +3,4 @@ org.eclipse.dd.dsf.ui/debug/vm/contentProvider = false
 org.eclipse.dd.dsf.ui/debug/vm/delta = false
 org.eclipse.dd.dsf.ui/debug/vm/cache = false
 org.eclipse.dd.dsf.ui/debug/vm/presentationId = 
+org.eclipse.dd.dsf.ui/debug/vm/atomicUpdate = false

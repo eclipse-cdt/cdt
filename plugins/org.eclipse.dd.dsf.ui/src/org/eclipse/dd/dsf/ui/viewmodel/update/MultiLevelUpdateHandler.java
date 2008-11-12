@@ -17,6 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
@@ -39,6 +40,9 @@ import org.eclipse.swt.graphics.RGB;
 
 @SuppressWarnings("restriction")
 class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
+	
+	private static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.dd.dsf.ui/debug/vm/atomicUpdate")); //$NON-NLS-1$ //;
+
     private static final class UpdateLevel {
     	private final List<Object> fChildren;
     	private final TreePath fPath;
@@ -135,8 +139,9 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 		fRequestMonitor = new CountingRequestMonitor(fExecutor, parentRequestMonitor);
 	}
 	void startUpdate() {
+		if (DEBUG) System.out.println("[MultiLevelUpdateHandler] startUpdate " + fLowIndex + '-' + fHighIndex); //$NON-NLS-1$
 		fContentProvider.update(new IChildrenUpdate[] {
-				new VMChildrenUpdate(fCurrentPath, fViewerInput, fPresentationContext, fLowIndex, fHighIndex - fLowIndex + 1, this)
+				new VMChildrenUpdate(fCurrentPath, fViewerInput, fPresentationContext, -1, -1, this)
 		});
 	}
 	void setRange(int low, int high) {
@@ -153,6 +158,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
                 public void run() {
             		final List<Object> data= getData();
             		if (data != null && !data.isEmpty()) {
+        				if (DEBUG) System.out.println("[MultiLevelUpdateHandler] gotChildUpdate " + data.size()); //$NON-NLS-1$
 						fStack.push(new UpdateLevel(fCurrentPath, data));
             		}
                 	processNext();
@@ -196,6 +202,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	    			IElementLabelProvider labelProvider = (IElementLabelProvider) ((IAdaptable)data).getAdapter(IElementLabelProvider.class);
 	    			if (labelProvider != null) {
 	    				++fPendingUpdates;
+	    				if (DEBUG) System.out.println("[MultiLevelUpdateHandler] labelUpdate " + data); //$NON-NLS-1$
 	        			labelProvider.update(new ILabelUpdate[] {
 	        					new DummyLabelUpdate(data, path, fRequestMonitor)
 	        			});
@@ -207,13 +214,15 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 				TreeViewer treeViewer = (TreeViewer) fViewer;
 				if (treeViewer.getExpandedState(data)) {
 					fCurrentPath = path;
+    				if (DEBUG) System.out.println("[MultiLevelUpdateHandler] childrenUpdate " + data); //$NON-NLS-1$
 					fContentProvider.update(new IChildrenUpdate[] {
 							new VMChildrenUpdate(path, fViewerInput, fPresentationContext, -1, -1, this)
 					});
 					return;
-				} else {
+				} else if (fIndex >= fLowIndex) {
 					// update also the hasChildren flag
 					++fPendingUpdates;
+    				if (DEBUG) System.out.println("[MultiLevelUpdateHandler] hasChildUpdate " + data); //$NON-NLS-1$
 					fContentProvider.update(new IHasChildrenUpdate[] {
 							new VMHasChildrenUpdate(path, fViewerInput, fPresentationContext, new DataRequestMonitor<Boolean>(fExecutor, fRequestMonitor))
 					});

@@ -18,13 +18,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
@@ -986,11 +989,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         			getModelDataFromService(node, update, service, dmc, rm, executor, entry );
         		}
         		else {
-        			dsfExecutor.execute(new DsfRunnable() {
-        				public void run() {
-        					getModelDataFromService(node, update, service, dmc, rm, executor, entry );
-        				}
-        			});
+        		    try {
+            			dsfExecutor.execute(new DsfRunnable() {
+            				public void run() {
+            					getModelDataFromService(node, update, service, dmc, rm, executor, entry );
+            				}
+            			});
+        		    } catch (RejectedExecutionException e) {
+            		    rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service session's executor shut down.", null)); //$NON-NLS-1$
+            		    rm.done();
+            		}
         		}
         	}
         }

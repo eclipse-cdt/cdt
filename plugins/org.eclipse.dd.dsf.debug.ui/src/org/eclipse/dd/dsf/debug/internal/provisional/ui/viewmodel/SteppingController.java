@@ -73,7 +73,7 @@ public final class SteppingController implements IStepQueueManager
 	 * stepping is enabled. This also serves as a safeguard in the case stepping
 	 * control participants fail to indicate completion of event processing.
 	 */
-    public final static int MAX_STEP_DELAY= 1000;
+    public final static int MAX_STEP_DELAY= 5000;
 
     private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf.debug.ui/stepping")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -216,6 +216,7 @@ public final class SteppingController implements IStepQueueManager
      * @param execCtx
      */
     public void doneStepping(final IExecutionDMContext execCtx, final ISteppingControlParticipant participant) {
+    	if (DEBUG) System.out.println("[SteppingController] doneStepping participant=" + participant.getClass().getSimpleName()); //$NON-NLS-1$
     	List<ISteppingControlParticipant> participants = fStepInProgress.get(execCtx);
     	if (participants != null) {
     		participants.remove(participant);
@@ -285,7 +286,9 @@ public final class SteppingController implements IStepQueueManager
 	 * @return <code>true</code> if the step should be delayed
 	 */
 	private boolean shouldDelayStep(IExecutionDMContext execCtx) {
-        return getStepDelay(execCtx) > 0;
+        final int stepDelay= getStepDelay(execCtx);
+        if (DEBUG) System.out.println("[SteppingController] shouldDelayStep delay=" + stepDelay); //$NON-NLS-1$
+		return stepDelay > 0;
 	}
 
 	/**
@@ -345,6 +348,7 @@ public final class SteppingController implements IStepQueueManager
      * @param stepType Type of step to execute.
      */
     public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
+    	System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
         if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
             doEnqueueStep(execCtx, stepType);
             processStepQueue(execCtx);
@@ -415,6 +419,7 @@ public final class SteppingController implements IStepQueueManager
 				return;
 			}
             final StepRequest request = queue.get(0);
+    		if (DEBUG) System.out.println("[SteppingController] processStepQueue request-in-progress="+request.inProgress); //$NON-NLS-1$
             if (!request.inProgress) {
         		if (isSteppingDisabled(request.fContext)) {
         			return;
@@ -502,10 +507,11 @@ public final class SteppingController implements IStepQueueManager
         	long now = System.currentTimeMillis();
         	long lastStepTime = getLastStepTime(execCtx);
         	if (now - lastStepTime > MAX_STEP_DELAY) {
+        		if (DEBUG) System.out.println("[SteppingController] stepping control participant(s) timed out"); //$NON-NLS-1$
         		enableStepping(execCtx);
         		disabled = false;
         	}
-        }            
+        }
         return disabled;
 	}
 

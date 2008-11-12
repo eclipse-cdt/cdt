@@ -105,6 +105,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 public class ExtractFunctionRefactoring extends CRefactoring {
 
 	static final Integer NULL_INTEGER = Integer.valueOf(0);
+	static final char[] ZERO= "0".toCharArray(); //$NON-NLS-1$
+
 
 	NodeContainer container;
 	final ExtractFunctionInformation info;
@@ -323,7 +325,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			IASTExpression leftSubTree = parent.getOperand1();
 			int op = parent.getOperator();
 			IASTBinaryExpression newParentNode = new CPPASTBinaryExpression();
-			CPPASTLiteralExpression placeholder = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "0"); //$NON-NLS-1$
+			CPPASTLiteralExpression placeholder = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO);
 			IASTBinaryExpression rootBinExp = getRootBinExp(parent, list);
 			newParentNode.setParent(rootBinExp.getParent());
 			newParentNode.setOperand1(placeholder);

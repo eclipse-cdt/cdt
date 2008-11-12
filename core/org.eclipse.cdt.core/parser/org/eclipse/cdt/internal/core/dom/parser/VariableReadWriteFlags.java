@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.

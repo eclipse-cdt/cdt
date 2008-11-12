@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.internal.core.pdom.dom.c;
+package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -21,14 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.internal.core.pdom.dom.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.
  * The algorithm works starting from the variable and looking upwards what's being done
  * with the variable.
  */
-final class CVariableReadWriteFlags extends VariableReadWriteFlags {
+public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 	
 	private static CVariableReadWriteFlags INSTANCE= new CVariableReadWriteFlags();
 

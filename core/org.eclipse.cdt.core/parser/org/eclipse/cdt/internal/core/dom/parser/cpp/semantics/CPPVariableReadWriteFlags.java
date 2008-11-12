@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -20,14 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.pdom.dom.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.
  * The algorithm works starting from the variable and looking upwards what's being done
  * with the variable.
  */
-final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
+public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	
 	private static CPPVariableReadWriteFlags INSTANCE= new CPPVariableReadWriteFlags();
 

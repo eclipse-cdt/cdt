@@ -18,6 +18,7 @@ Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should 
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
 Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
+Kevin Doyle		 (IBM)		  - [249320] Launch Shell action not available in Remote System Details/Monitor views
 -->
 <?eclipse version="3.2"?>
 <plugin>
@@ -53,7 +54,7 @@ Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offli
     <extension
            point="org.eclipse.ui.menus">
         <menuContribution
-              locationURI="popup:org.eclipse.rse.ui.view.systemView?after=additions">
+              locationURI="popup:org.eclipse.rse.views.common?after=additions">
            <command
                  commandId="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand"
                  icon="icons/terminal_view.gif"

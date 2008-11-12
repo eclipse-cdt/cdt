@@ -297,7 +297,9 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 			}
 		}
 		if (inInactiveCode) {
-			// handle dangling #if?
+			// handle unterminated #if - http://bugs.eclipse.org/255018
+			int inactiveCodeEnd = fDocument.getLength();
+			positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
 		}
 		return positions;
 	}

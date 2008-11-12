@@ -233,6 +233,7 @@ public class FoldingTest extends TestCase {
 				createPosition(119, 127),
 				createPosition(120, 122),
 				createPosition(123, 126),
+				createPosition(129, 130),
 		};
 		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);

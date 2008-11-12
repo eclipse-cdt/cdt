@@ -70,3 +70,7 @@
 #endif
 
 #endif // unbalanced endif because of invalid ifdef above
+
+#if foo // unterminated #if - http://bugs.eclipse.org/255018
+// inactive code
+// #endif

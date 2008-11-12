@@ -1489,4 +1489,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(IBasicType.t_char, 0))});
 		assertSame(charInst1, charInst2);
 	}
+	
+	
+	//	template<typename T> class XT {
+	//     public: void method() {};
+	//  };
+	//  XT<int> x;
+	
+	//	void test() {
+	//     x.method();
+	//  }
+	public void testMethodSpecialization_Bug248927() throws Exception {
+		ICPPMethod m= getBindingFromASTName("method", 6, ICPPMethod.class);
+		assertInstance(m, ICPPSpecialization.class);
+		ICPPClassType ct= m.getClassOwner();
+		assertInstance(ct, ICPPTemplateInstance.class);
+		ICPPMethod[] ms= ct.getDeclaredMethods();
+		assertEquals(1, ms.length);
+		assertEquals(m, ms[0]);
+	}
 }

@@ -82,6 +82,10 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         /** 
          * Roll back gives the step implementation a chance to undo the 
          * operation that was performed by execute().
+         * <br>
+         * Note if the {@link #execute(RequestMonitor)} call completes with a 
+         * non-OK status, then rollBack will not be called for that step.  
+         * Instead it will be called for the previous step.
          * @param rm Result token to submit to executor when rolling back the step is finished.
          */
         public void rollBack(RequestMonitor rm) { 

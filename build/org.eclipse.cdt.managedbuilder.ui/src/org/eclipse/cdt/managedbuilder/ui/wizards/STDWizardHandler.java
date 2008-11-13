@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 
@@ -48,40 +50,49 @@ public class STDWizardHandler extends MBSWizardHandler {
 	/**
 	 * Note that configurations parameter is ignored
 	 */
-	public void createProject(IProject project, boolean defaults, boolean onFinish)  throws CoreException {
-		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
-		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		ManagedProject mProj = new ManagedProject(des);
-		info.setManagedProject(mProj);
-
-		cfgs = CfgHolder.unique(fConfigPage.getCfgItems(defaults));
-		cfgs = CfgHolder.reorder(cfgs);
-			
-		for (int i=0; i<cfgs.length; i++) {
-			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
-			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
-			IBuilder bld = cfg.getEditableBuilder();
-			if (bld != null) {
-				if(bld.isInternalBuilder()){
-					IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
-					IBuilder prefBuilder = prefCfg.getBuilder();
-					cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
-					bld = cfg.getEditableBuilder();
-					bld.setBuildPath(null);
-				}
-				bld.setManagedBuildOn(false);
-			} else {
-				System.out.println(UIMessages.getString("StdProjectTypeHandler.3")); //$NON-NLS-1$
-			}
-			cfg.setArtifactName(removeSpaces(project.getName()));
-			CConfigurationData data = cfg.getConfigurationData();
-			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-		}
-		mngr.setProjectDescription(project, des);
+	@Override
+	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)  throws CoreException {
+		try {
+			monitor.beginTask("", 100);//$NON-NLS-1$
 		
-		doTemplatesPostProcess(project);
-		doCustom(project);
+			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+			ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
+			ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+			ManagedProject mProj = new ManagedProject(des);
+			info.setManagedProject(mProj);
+			monitor.worked(20);
+			cfgs = CfgHolder.unique(fConfigPage.getCfgItems(defaults));
+			cfgs = CfgHolder.reorder(cfgs);
+			int work = 50/cfgs.length;
+			for (int i=0; i<cfgs.length; i++) {
+				String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
+				Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
+				IBuilder bld = cfg.getEditableBuilder();
+				if (bld != null) {
+					if(bld.isInternalBuilder()){
+						IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
+						IBuilder prefBuilder = prefCfg.getBuilder();
+						cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
+						bld = cfg.getEditableBuilder();
+						bld.setBuildPath(null);
+					}
+					bld.setManagedBuildOn(false);
+				} else {
+					System.out.println(UIMessages.getString("StdProjectTypeHandler.3")); //$NON-NLS-1$
+				}
+				cfg.setArtifactName(removeSpaces(project.getName()));
+				CConfigurationData data = cfg.getConfigurationData();
+				des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+				monitor.worked(work);
+			}
+			mngr.setProjectDescription(project, des);
+			
+			doTemplatesPostProcess(project);
+			doCustom(project);
+			monitor.worked(30);
+		} finally {
+			monitor.done();
+		}
 	}
 	public boolean canCreateWithoutToolchain() { return true; } 
 	

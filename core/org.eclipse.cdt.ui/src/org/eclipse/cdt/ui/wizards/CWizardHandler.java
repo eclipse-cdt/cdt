@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -148,13 +150,43 @@ public class CWizardHandler implements Cloneable {
 	 * @param proj - simple project to be used as base
 	 * @param defaults - true if called from 1st Wizard page
 	 * @param onFinish - true when the project creation is performed on finish. false -otherwise
-	 * false means that the project created is actually a temporary one that can be removed in case cancell is pressed
+	 * false means that the project created is actually a temporary one that can be removed in case cancel is pressed
 	 * 
 	 * @throws CoreException
 	 */
 	public void createProject(IProject proj, boolean defaults, boolean onFinish)
 			throws CoreException {
 		createProject(proj, defaults);
+	}
+	
+
+	/**
+	 * Creates project
+	 * 
+	 * @param proj - simple project to be used as base
+	 * @param defaults - true if called from 1st Wizard page
+	 * @param monitor - progress monitor to track the creation process
+	 * @throws CoreException
+	 * @since 5.1
+	 */
+	public void createProject(IProject proj, boolean defaults, IProgressMonitor monitor)
+			throws CoreException {}
+
+	/**
+	 * Creates project
+	 * 
+	 * @param proj - simple project to be used as base
+	 * @param defaults - true if called from 1st Wizard page
+	 * @param onFinish - true when the project creation is performed on finish. false -otherwise
+	 * false means that the project created is actually a temporary one that can be removed in case cancel is pressed
+	 * @param monitor - progress monitor to track the creation process
+	 * 
+	 * @throws CoreException
+	 * @since 5.1
+	 */
+	public void createProject(IProject proj, boolean defaults, boolean onFinish, IProgressMonitor monitor)
+			throws CoreException {
+		createProject(proj, defaults, monitor);
 	}
 	/**
 	 * 

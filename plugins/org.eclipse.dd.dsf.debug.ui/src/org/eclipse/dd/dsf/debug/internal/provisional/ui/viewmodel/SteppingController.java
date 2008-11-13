@@ -348,7 +348,7 @@ public final class SteppingController implements IStepQueueManager
      * @param stepType Type of step to execute.
      */
     public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
-    	System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
+    	if (DEBUG) System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
         if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
             doEnqueueStep(execCtx, stepType);
             processStepQueue(execCtx);

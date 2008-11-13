@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -188,6 +190,11 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	private void createLog(final PrintStream out, final ITranslationUnit tu, IProgressMonitor pm) {
+		try {
+			tu.open(pm);
+		} catch (CModelException e) {
+			CUIPlugin.log(e);
+		}
 		ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, pm, new ASTCache.ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				if (ast != null)

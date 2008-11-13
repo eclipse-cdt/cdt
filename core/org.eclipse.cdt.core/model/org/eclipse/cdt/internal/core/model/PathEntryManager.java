@@ -1033,7 +1033,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		@Override
 		public IStatus runInWorkspace(IProgressMonitor monitor) {								
-			while (markerProblems.peek() != null) {
+			while (markerProblems.peek() != null && !monitor.isCanceled()) {
 				PathEntryProblem problem = markerProblems.poll();
 				IProject project = problem.project;
 				ICModelStatus[] problems = problem.problems;

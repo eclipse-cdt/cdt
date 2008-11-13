@@ -489,7 +489,7 @@ public class FinalLaunchSequence extends Sequence {
     DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, IProgressMonitor pm) {
-        super(executor, pm, "Configuring GDB", "Aborting configuring GDB");    //$NON-NLS-1$//$NON-NLS-2$
+        super(executor, pm, "Configuring GDB", "Aborting configuring GDB");    
         fLaunch = launch;
         fSessionType = sessionType;
         fAttach = attach;

@@ -398,14 +398,14 @@ public class FinalLaunchSequence extends Sequence {
                     
                         fCommandControl.queueCommand(
                         		new MITargetSelect(fCommandControl.getContext(), 
-                        				           fRemoteTcpHost, fRemoteTcpPort), 
+                        				           fRemoteTcpHost, fRemoteTcpPort, fAttach), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		} else {
                			if (!getSerialDevice(requestMonitor)) return;
                     
                         fCommandControl.queueCommand(
                         		new MITargetSelect(fCommandControl.getContext(), 
-                        				           fSerialDevice), 
+                        				           fSerialDevice, fAttach), 
                         	    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
                		}
             	} else {
@@ -489,7 +489,7 @@ public class FinalLaunchSequence extends Sequence {
     DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, IProgressMonitor pm) {
-        super(executor, pm, "Configuring GDB", "Aborting configuring GDB");  
+        super(executor, pm, "Configuring GDB", "Aborting configuring GDB");    //$NON-NLS-1$//$NON-NLS-2$
         fLaunch = launch;
         fSessionType = sessionType;
         fAttach = attach;

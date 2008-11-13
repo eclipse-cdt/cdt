@@ -18,12 +18,28 @@ import org.eclipse.dd.mi.service.command.output.MIInfo;
  */
 public class MITargetSelect extends MICommand<MIInfo> {
 
+	@Deprecated
 	public MITargetSelect(IDMContext ctx, String host, String port) {
-		super(ctx, "-target-select extended-remote", new String[] {host + ":" + port}); //$NON-NLS-1$ //$NON-NLS-2$
+		this(ctx, host, port, true);
 	}
 	
+	@Deprecated	
 	public MITargetSelect(IDMContext ctx, String serialDevice) {
-		super(ctx, "-target-select extended-remote", new String[] {serialDevice}); //$NON-NLS-1$
+		this(ctx, serialDevice, true);
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	public MITargetSelect(IDMContext ctx, String host, String port, boolean extended) {
+		super(ctx, "-target-select", new String[] { extended ? "extended-remote" : "remote", host + ":" + port}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public MITargetSelect(IDMContext ctx, String serialDevice, boolean extended) {
+		super(ctx, "-target-select", new String[] { extended ? "extended-remote" : "remote", serialDevice}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }

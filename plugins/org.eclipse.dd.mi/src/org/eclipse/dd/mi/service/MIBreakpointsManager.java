@@ -1504,8 +1504,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private Set<String> extractThreads(IBreakpointsTargetDMContext context, ICBreakpoint breakpoint) {
 
         // Find the ancestor
-        IContainerDMContext targetContext = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
-        IExecutionDMContext[] threads = null;
+        List<IExecutionDMContext[]> threads = new ArrayList<IExecutionDMContext[]>(1);
 
         try {
             // Retrieve the targets
@@ -1513,31 +1512,33 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             IContainerDMContext[] targets = filterExtension.getTargetFilters();
 
             // If no target is present, plant one...
-            if (targets.length == 0) {
-                for (IBreakpointsTargetDMContext dmc : fPlatformBPs.keySet()) {
-                    IContainerDMContext ctx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
-                    if (ctx == targetContext) {
-                        filterExtension.setTargetFilter(ctx);
-                        targets = filterExtension.getTargetFilters();
-                    }
-                }
-            }
+//            if (targets.length == 0) {
+//                for (IBreakpointsTargetDMContext dmc : fPlatformBPs.keySet()) {
+//                    IContainerDMContext ctx = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+//                    if (ctx == targetContext) {
+//                        filterExtension.setTargetFilter(ctx);
+//                        targets = filterExtension.getTargetFilters();
+//                    }
+//                }
+//            }
 
             // Extract the thread IDs (if there is none, we are covered)
             for (IContainerDMContext ctxt : targets) {
-                if (ctxt == targetContext) {
-                    threads = filterExtension.getThreadFilters(ctxt);
+                if (DMContexts.isAncestorOf(ctxt, context)) {
+                    threads.add(filterExtension.getThreadFilters(ctxt));
                 }
             }
         } catch (CoreException e1) {
         }
 
         Set<String> results = new HashSet<String>();
-        if ((threads != null) && (supportsThreads(breakpoint))) {
-            for (IExecutionDMContext thread : threads) {
-                if (thread instanceof IMIExecutionDMContext) {
-                	IMIExecutionDMContext dmc = (IMIExecutionDMContext) thread;
-                    results.add(((Integer) dmc.getThreadId()).toString());
+        if (supportsThreads(breakpoint)) {
+            for (IExecutionDMContext[] targetThreads : threads) {
+                for (IExecutionDMContext thread : targetThreads) {
+                    if (thread instanceof IMIExecutionDMContext) {
+                    	IMIExecutionDMContext dmc = (IMIExecutionDMContext) thread;
+                        results.add(((Integer) dmc.getThreadId()).toString());
+                    }
                 }
             }
         } else {

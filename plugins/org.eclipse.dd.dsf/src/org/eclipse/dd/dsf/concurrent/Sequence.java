@@ -229,7 +229,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * @since 1.1
      */
     public Sequence(DsfExecutor executor, RequestMonitorWithProgress rm, String taskName, String rollbackTaskName) {
-        this(executor, rm.getProgressMonitor(), "", "", rm); //$NON-NLS-1$ //$NON-NLS-2$
+        this(executor, rm.getProgressMonitor(), taskName, rollbackTaskName, rm); 
     }    
     
     /**

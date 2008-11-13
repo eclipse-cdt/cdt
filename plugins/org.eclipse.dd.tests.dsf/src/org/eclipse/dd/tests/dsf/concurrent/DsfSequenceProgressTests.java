@@ -62,11 +62,9 @@ public class DsfSequenceProgressTests {
 
     class SleepStep extends Sequence.Step {
     	
-    	final int STEP_TIME = 5; 	// seconds
-    	
         @Override
 		public int getTicks() {
-			return STEP_TIME;
+			return 3;
 		}
         
 		@Override public void execute(RequestMonitor requestMonitor) {
@@ -89,22 +87,21 @@ public class DsfSequenceProgressTests {
     
     class SleepStepWithProgress extends Sequence.StepWithProgress {
     	
-    	final int STEP_TIME = 5; 	// seconds
-    	
         @Override
 		public int getTicks() {
-			return STEP_TIME;
+			return 12;
 		}
         
 		@Override 
 		public void execute(RequestMonitor rm, IProgressMonitor pm) {
         	stepCounter.fInteger++;
         	
-        	pm.beginTask("", getTicks());
-        	
-        	sleep(getTicks(), rm, pm);
+            // step has its own sub-progress ticks. 
+        	pm.beginTask(getTaskName() + ": ", 6);
+        	sleep(6, rm, pm);
         	
             rm.done(); 
+            pm.done();
         }
 		
         @Override 
@@ -119,16 +116,22 @@ public class DsfSequenceProgressTests {
     
     @Test
     /**
-     * Run this as a JUnit plugin test.
-     * In the test workbench, watch the progress bar in the Progress View.  
-     * During execution of a StepWithProgress, you should see the progress bar 
-     * is growing and you can have more responsive cancel. Meanwhile, during execution
-     * of a step without progress,  you should see that progress bar does not
-     * grow and cancel does not work until end of the step. <br>
-     * <br> 
-     * Also watch that when you cancel the progress bar during the execution of the 
-     * sequence, you should see that "rollback" starts to happen.
-     */
+     * It's better to run this as a manual interactive test. Run this as a JUnit
+     * plugin test.<br>
+     * <br>
+     * In the test workbench, watch the progress bar in the Progress View.<br>
+     * <br>
+     * During execution of a StepWithProgress, you should see the progress bar
+     * is growing and you can have more responsive cancel.<br>
+     * <br>
+     * Meanwhile, during execution of a step without progress, you should see
+     * that progress bar does not grow and cancel does not work until end of the
+     * step.<br>
+     * <br>
+     * Also watch that when you cancel the progress bar during the execution of
+     * the sequence, you should see that "Rollback.." appears in the progress bar 
+     * label.<br>
+     */    
     public void sequenceProgressTest() throws InterruptedException, ExecutionException {
 
         final Sequence.Step[] steps = new Sequence.Step[] {
@@ -219,7 +222,10 @@ public class DsfSequenceProgressTests {
     private static void sleep(int seconds, RequestMonitor rm, IProgressMonitor pm) {
     	try {
     		for (int i = 0; i < seconds; i++) {
-    			Thread.sleep(1000);
+    		    if (pm != null)
+    		        pm.subTask("subStep - " + (i+1));
+    		               
+    		    Thread.sleep(1000);
     			
     			if (pm != null) {
     				pm.worked(1);

@@ -71,7 +71,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         public Sequence getSequence() { return fSequence; }
         
         /** 
-         * Executes the next step.  Overriding classes should perform the 
+         * Executes the step.  Overriding classes should perform the 
          * work in this method.
          * @param rm Result token to submit to executor when step is finished.
          */
@@ -112,8 +112,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * A step that will report execution progress by itself on the progress
      * monitor of the owner sequence.<br>
      * <br>
-     * Note we don't offer a rollBack(rm, pm) as we don't want end user to be
-     * able to cancel the rollback.
+     * Note we don't offer a rollBack(RequestMonitor, IProgressMonitor) as we 
+     * don't want end user to be able to cancel the rollback.
      * 
      * @since 1.1
      */
@@ -210,7 +210,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * @since 1.1
      */
     public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName) {
-        this(executor, pm, "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+        this(executor, pm, taskName, rollbackTaskName, new RequestMonitorWithProgress(ImmediateExecutor.getInstance(), pm));
     }
     
     /**
@@ -251,6 +251,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * @deprecated This constructor should not be used because it creates a 
      * potential ambiguity when one of the two monitors is canceled.
      */
+    @Deprecated
     public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, RequestMonitor rm) {
         fExecutor = executor;
         fProgressMonitor = pm;
@@ -405,7 +406,6 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
                         fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
                     }
                     executeStep(fStepIdx + 1);
-
                 }
                 
                 @Override

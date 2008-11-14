@@ -777,7 +777,6 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 		SystemXMLElementWrapper pastedElementWrapper = null;
 		try {
 			IPropertySetContainer parentElement = null;
-			IPropertySet pastedElement = null;
 			
 			pastedElementWrapper = createElementWrapper(currentNodeClone, selectedElementWrapper.getProfile(), selectedElementWrapper.getDomain());
 			pastedElementWrapper.setName(getUniqueCloneName(pastedElementWrapper));
@@ -790,7 +789,6 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 				currentNodeClone.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(allChildren.length));		
 				
 				parentElement.addPropertySet(currentNodeClone);
-				pastedElement = currentNodeClone;
 			} else {
 				parentElement = selectedElement.getContainer();
 				IPropertySet[] allChildren = parentElement.getPropertySets();
@@ -809,7 +807,6 @@ public abstract class SystemUDBaseManager implements IResourceChangeListener, IS
 				}
 				currentNodeClone.addProperty(ISystemUDAConstants.ORDER_ATTR, Integer.toString(elementOrder + 1));
 				parentElement.addPropertySet(currentNodeClone);
-				pastedElement = currentNodeClone;
 			}
 			
 		} catch (Exception exc) {

@@ -67,7 +67,7 @@
 			class="org.eclipse.rse.internal.subsystems.files.core.RemoteFilePropertyTester"
 			id="org.eclipse.rse.subsystems.files.core.RemoteFilePropertyTester"
 			namespace="org.eclipse.rse.subsystems.files"
-			properties="isdirectory"
+			properties="isdirectory,isvirtual,isroot,isarchive"
 			type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
 		</propertyTester>
 	</extension>

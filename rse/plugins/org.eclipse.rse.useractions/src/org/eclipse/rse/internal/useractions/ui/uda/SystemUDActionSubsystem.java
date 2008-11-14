@@ -1126,7 +1126,6 @@ public abstract class SystemUDActionSubsystem implements ISystemSubstitutor {
 			}
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider();
-			// TODO: Cannot use WorkbenchMessages -- it's internal
 			ListSelectionDialog dlg = new ListSelectionDialog(SystemBasePlugin.getActiveWorkbenchShell(), input, cprovider, lprovider, SystemUDAResources.EditorManager_saveResourcesMessage);
 			dlg.setInitialSelections(input.getChildren());
 			dlg.setTitle(SystemUDAResources.EditorManager_saveResourcesTitle);

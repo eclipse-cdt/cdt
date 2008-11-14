@@ -96,7 +96,7 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 				 // compileProfile.addContributions(element);
 				 
 				 // get the compile type for the current resource
-				 SystemCompileType compType = (SystemCompileType)compileProfile.getCompileType(srcType);
+				 SystemCompileType compType = compileProfile.getCompileType(srcType);
 				 
 				 
 				 // get the last used compile command for that type
@@ -163,10 +163,8 @@ public class SystemCompileMultipleSelectAction extends SystemBaseAction {
 			}
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider(null);
-			// TODO: Cannot use WorkbenchMessages -- it's internal
 			ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, cprovider, lprovider, SystemUDAResources.EditorManager_saveResourcesMessage);
 			dlg.setInitialSelections(input.getChildren());
-			// TODO: Cannot use WorkbenchMessages -- it's internal
 			dlg.setTitle(SystemUDAResources.EditorManager_saveResourcesTitle);
 			int result = dlg.open();
 			//Just return false to prevent the operation continuing

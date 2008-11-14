@@ -6,8 +6,7 @@
  *
  * Contributors:
  * Xuan Chen (IBM) - [222470] initial contribution.
- * Kevin Doyle (IBM) - [239805] User Action/Compile menu's shouldn't be tied to IRemoteFile
- * Kevin Doyle (IBM) - [239700] Compile Commands are available on items it shouldn't
+ * Kevin Doyle (IBM) - [239700] Compile Commands are available on items it shouldn't -- Modified SystemDynamicCompileMenu
  *********************************************************************************/
 package org.eclipse.rse.internal.useractions.api.ui.compile;
 
@@ -46,7 +45,7 @@ import org.eclipse.ui.actions.CompoundContributionItem;
  * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
  * </p>
  */
-public class SystemDynamicCompileMenu extends CompoundContributionItem
+public class SystemDynamicCompilePromptMenu extends CompoundContributionItem
 {
 
 	protected IContributionItem[] getContributionItems() {
@@ -106,7 +105,7 @@ public class SystemDynamicCompileMenu extends CompoundContributionItem
 					 SystemCompileCommand[] cmds = compileType.getCompileCommandsArray();
 					 for (int idx2=0; idx2<cmds.length; idx2++)
 					 {
-						 SystemCompileAction action = new SystemCompileAction(shell, cmds[idx2], false);
+						 SystemCompileAction action = new SystemCompileAction(shell, cmds[idx2], true);
 						 action.setSelection(selection);
 						 ActionContributionItem testContribution = new ActionContributionItem(action);
 						 returnedItemList.add(testContribution);

@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
-import java.net.URL;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.osgi.framework.BundleContext;
 

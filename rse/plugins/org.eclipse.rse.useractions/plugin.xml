@@ -13,14 +13,75 @@
            <visibleWhen>
                <with
                      variable="activeMenuSelection">
+                  <count
+                        value="1">
+                  </count>
                   <iterate
                         ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
-                     </adapt>
+                     <and>
+                        <adapt
+                              type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                        </adapt>
+                        <test
+                              property="org.eclipse.rse.internal.useractions.files.compile.iscompilable"
+                              value="true">
+                        </test>
+                        <test
+                              property="org.eclipse.rse.subsystems.files.isdirectory"
+                              value="false">
+                        </test>
+                        <test
+                              property="org.eclipse.rse.subsystems.files.isvirtual"
+                              value="false">
+                        </test>
+                        <test
+                              property="org.eclipse.rse.subsystems.files.isarchive"
+                              value="false">
+                        </test>
+                     </and>
                   </iterate>
                </with>
             </visibleWhen>
+        </menu>
+        <menu
+              id="org.eclipse.rse.ui.useractions.compileprompt.menu"
+              label="%DynamicLabel.CompilePromptActionNode">
+           <dynamic
+                 class="org.eclipse.rse.internal.useractions.api.ui.compile.SystemDynamicCompilePromptMenu"
+                 id="org.eclipse.ui.rse.ui.views.dynamiccompilepromptmenu">
+           </dynamic>
+           <visibleWhen>
+              <with
+                    variable="activeMenuSelection">
+                 <count
+                       value="1">
+                 </count>
+                 <iterate
+                       ifEmpty="false">
+                    <and>
+                       <adapt
+                             type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                       </adapt>
+                       <test
+                             property="org.eclipse.rse.internal.useractions.files.compile.iscompilable"
+                             value="true">
+                       </test>
+                       <test
+                             property="org.eclipse.rse.subsystems.files.isdirectory"
+                             value="false">
+                       </test>
+                       <test
+                             property="org.eclipse.rse.subsystems.files.isvirtual"
+                             value="false">
+                       </test>
+                       <test
+                             property="org.eclipse.rse.subsystems.files.isarchive"
+                             value="false">
+                       </test>
+                    </and>
+                 </iterate>
+              </with>
+           </visibleWhen>
         </menu>
       	<menu id="org.eclipse.rse.ui.useractions.useraction.menu"
               label="%DynamicLabel.UserActionNode">
@@ -32,15 +93,32 @@
                      variable="activeMenuSelection">
                   <iterate
                         ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
-                     </adapt>
+                     <and>
+                        <adapt
+                              type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                        </adapt>
+                        <test
+                              property="org.eclipse.rse.subsystems.files.isvirtual"
+                              value="false">
+                        </test>
+                     </and>
                   </iterate>
                </with>
             </visibleWhen>
         </menu>
      </menuContribution>
      </extension>
+     
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+			class="org.eclipse.rse.internal.useractions.files.compile.CompilablePropertyTester"
+			id="org.eclipse.rse.internal.useractions.files.compile.CompilablePropertyTester"
+			namespace="org.eclipse.rse.internal.useractions.files.compile"
+			properties="iscompilable"
+			type="org.eclipse.core.runtime.IAdaptable">
+		</propertyTester>
+   </extension>
    
 	
 </plugin>

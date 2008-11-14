@@ -198,7 +198,7 @@ public class SystemCommandTextField implements SelectionListener {
 							textCommand.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 							break;
 							// CTRL-Z
-						case (int) 'z' - (int) 'a' + 1 :
+						case 'z' - 'a' + 1 :
 							textCommand.doOperation(ITextOperationTarget.UNDO);
 							//e.doit = false;
 							break;

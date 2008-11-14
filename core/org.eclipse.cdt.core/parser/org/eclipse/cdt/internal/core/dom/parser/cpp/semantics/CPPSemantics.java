@@ -1563,9 +1563,8 @@ public class CPPSemantics {
 	        		return null;
 	        	
 		        // specialization is selected during instantiation
-	        	// mstodo why not?
-//		        if (candidate instanceof ICPPTemplateInstance && candidate instanceof IType)
-//		        	candidate= ((ICPPTemplateInstance) candidate).getSpecializedBinding();
+		        if (candidate instanceof ICPPTemplateInstance && candidate instanceof IType)
+		        	candidate= ((ICPPTemplateInstance) candidate).getSpecializedBinding();
 	        	
 	        	return candidate;
 	        }
@@ -1720,11 +1719,6 @@ public class CPPSemantics {
 	            continue;
 	        }
 
-	        // specialization is selected during instantiation
-	        // mstodo why not?
-//	        if (temp instanceof ICPPTemplateInstance && temp instanceof IType)
-//        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
-
 	        // select among those bindings that have been created without problems.
         	if (temp instanceof IProblemBinding)
 	        	continue;
@@ -1764,12 +1758,18 @@ public class CPPSemantics {
 	        		}
 	        	}
 	        } else if (temp instanceof IType) {
+		        // specializations are selected during instantiation
+	        	if (temp instanceof ICPPClassTemplatePartialSpecialization) 
+		        	continue;
+	        	if (temp instanceof ICPPTemplateInstance) {
+	        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
+	        		if (!(temp instanceof IType))
+	        			continue;
+	        	}
+
 	        	if (type == null) {
 	                type = temp;
-	        	} else if (type instanceof ICPPClassTemplate && temp instanceof ICPPSpecialization &&
-						  ((IType) type).isSameType((IType) ((ICPPSpecialization)temp).getSpecializedBinding())) {
-					// ok, stay with the template, the specialization, if applicable, will come out during instantiation
-				} else if (type != temp && !((IType)type).isSameType((IType) temp)) {
+	        	} else if (type != temp && !((IType)type).isSameType((IType) temp)) {
 	                return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name());
 	            }
 	        } else {

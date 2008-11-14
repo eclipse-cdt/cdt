@@ -524,7 +524,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class D<B, T3> {};
 	// template<typename T3>
 	// class D<C, T3> {};
-	public void _testClassPartialSpecializations() throws Exception {
+	public void testClassPartialSpecializations() throws Exception {
 		IBinding b0= getBindingFromASTName("D<A, T3>", 8);
 		IBinding b1= getBindingFromASTName("D<B, T3>", 8);
 		IBinding b2= getBindingFromASTName("D<C, T3>", 8);
@@ -919,7 +919,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class Foo<A> {};
 	//
 	// Foo<B> b2;
-	public void _testClassSpecializations_180738() {
+	public void testClassSpecializations_180738() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
 		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 6);
 		

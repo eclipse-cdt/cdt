@@ -122,14 +122,11 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		super.addDeclaration(node);
 	}
 
-	/**
-	 * @param name
-	 */
-	private void updateFunctionParameterBindings(IASTName paramName) {
+	private void updateFunctionParameterBindings(IASTName declName) {
 		IASTName defName = definition != null ? definition : declarations[0];
-		ICPPASTFunctionDeclarator orig = (ICPPASTFunctionDeclarator) defName.getParent();
+		ICPPASTFunctionDeclarator orig = getDeclaratorByName(defName);
     	IASTParameterDeclaration[] ops = orig.getParameters();
-    	IASTParameterDeclaration[] nps = ((ICPPASTFunctionDeclarator)paramName.getParent()).getParameters();
+    	IASTParameterDeclaration[] nps = getDeclaratorByName(declName).getParameters();
     	CPPParameter temp = null;
     	for(int i = 0; i < nps.length; i++) {
     		temp = (CPPParameter) CPPVisitor.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();

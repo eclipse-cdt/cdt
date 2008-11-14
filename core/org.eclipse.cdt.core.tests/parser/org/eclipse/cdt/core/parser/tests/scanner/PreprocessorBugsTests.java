@@ -187,4 +187,24 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, null);
 	}
 
+	//	#ifdef 0
+	//	/**/ #else
+	//	OK1
+	//	#endif
+	//	#ifdef 0
+	//	a /*
+	//   */ #else
+	//	OK2
+	//	#endif
+	//	#ifdef 0
+	//	a /**/ #else
+	//	NOTOK
+	//	#endif
+	public void testCommentBeforeDirective_Bug255318() throws Exception {
+		initializeScanner();
+		validateIdentifier("OK1");
+		validateIdentifier("OK2");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

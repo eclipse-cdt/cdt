@@ -1285,8 +1285,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IBinding U2 = col.getName(10).resolveBinding();
 		assertSame(U, U2);
 		
-		assertTrue(f2 instanceof ICPPSpecialization);
-		assertSame(((ICPPSpecialization)f2).getSpecializedBinding(), f1);
+		assertSame(f1, f2);
 	}
 	
 	// template<typename T>
@@ -1792,9 +1791,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassTemplate B = (ICPPClassTemplate) col.getName(4).resolveBinding();
 		
 		assertSame(T, col.getName(5).resolveBinding());
-		assertSame(T2, col.getName(6).resolveBinding());
+		final IBinding T2ofPartialSpec = col.getName(6).resolveBinding();
+		assertNotSame(T2, T2ofPartialSpec); // partial spec has its own template params
 		assertSame(T, col.getName(10).resolveBinding());
-		assertSame(T2, col.getName(14).resolveBinding());
+		assertSame(T2ofPartialSpec, col.getName(14).resolveBinding());
 		
 		ICPPClassTemplatePartialSpecialization spec = (ICPPClassTemplatePartialSpecialization) col.getName(12).resolveBinding();
 		assertSame(spec.getPrimaryClassTemplate(), B);
@@ -3234,7 +3234,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     		@Override
 			public void run() {
     			try {
-    				parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	    				parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     			} catch (Throwable e) {
     				th[0]= e;
     			}
@@ -3246,5 +3246,51 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertFalse(t.isAlive());
     	if (th[0] != null)
     		throw th[0];
+    }
+    
+    //	template<class T, class U> class A {};
+    //	template<class T> class A<T, int> {   
+    //	   void foo(T t);                     
+    //	};                                    
+    //	template<class T> void A<T, int>::foo(T t) {} 
+    public void testBug177418() throws Exception {
+    	IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true );
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	ICPPTemplateParameter T1 = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+    	ICPPTemplateParameter U = (ICPPTemplateParameter) col.getName(1).resolveBinding();
+    	ICPPClassTemplate A = (ICPPClassTemplate) col.getName(2).resolveBinding();
+
+    	ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(3).resolveBinding();
+    	assertNotSame(T1, T2);
+
+    	ICPPClassTemplatePartialSpecialization A2 = (ICPPClassTemplatePartialSpecialization) col.getName(4).resolveBinding();
+    	assertSame(A2.getPrimaryClassTemplate(), A);
+    	assertSame(A, col.getName(5).resolveBinding());
+    	assertSame(T2, col.getName(6).resolveBinding());
+
+    	ICPPMethod foo = (ICPPMethod) col.getName(7).resolveBinding(); 
+    	assertSame(T2, col.getName(8).resolveBinding());
+    	assertSame(T2, col.getName(10).resolveBinding());
+    	ICPPParameter t = (ICPPParameter) col.getName(9).resolveBinding();
+
+    	assertSame(A2, col.getName(12).resolveBinding());
+    	assertSame(A, col.getName(13).resolveBinding());
+    	assertSame(T2, col.getName(14).resolveBinding());
+    	assertSame(foo, col.getName(15).resolveBinding());
+    	assertSame(T2, col.getName(16).resolveBinding());
+    	assertSame(t, col.getName(17).resolveBinding());
+    }
+    
+    //    template <typename T, typename U> class CT {
+    //    	T* instance(void);
+    //    };
+    //    template <class T, class U> T * CT<T, U>::instance (void) {
+    //    	return new CT<T, U>;
+    //    }
+    public void testNewOfThisTemplate() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 }

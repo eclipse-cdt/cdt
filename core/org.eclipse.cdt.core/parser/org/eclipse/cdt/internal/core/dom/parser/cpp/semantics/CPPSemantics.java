@@ -67,7 +67,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -132,7 +131,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -220,12 +218,6 @@ public class CPPSemantics {
 		return postResolution(binding, data);
 	}
 	
-	/**
-     * @param binding
-     * @param data
-     * @param name
-     * @return
-     */
     private static IBinding postResolution(IBinding binding, LookupData data) {
         if (data.checkAssociatedScopes()) {
             //3.4.2 argument dependent name lookup, aka Koenig lookup
@@ -321,58 +313,23 @@ public class CPPSemantics {
             }
 		}
         
-        // mstodo this looks like a hack?
-        // in template declarations the template-ids get instantiated to deferred instances, revert that.
-		IASTName name = data.astName;
-		if (name instanceof ICPPASTTemplateId) {
-			if (binding instanceof ICPPDeferredTemplateInstance && CPPTemplates.getTemplateDeclaration(name) != null ) {
-				ICPPDeferredTemplateInstance deferred= (ICPPDeferredTemplateInstance) binding;
-				IBinding spec= deferred.getSpecializedBinding();
-				if (spec instanceof ICPPTemplateDefinition) {
-					try {
-						ICPPTemplateArgument[] args= deferred.getTemplateArguments();
-						ICPPTemplateParameter[] pars= ((ICPPTemplateDefinition) spec).getTemplateParameters();
-						if (args.length == pars.length) {
-							boolean useOriginal= true;
-							for (int i = 0; useOriginal && i < pars.length; i++) {
-								ICPPTemplateParameter par= pars[i];
-								if (par instanceof ICPPTemplateNonTypeParameter) {
-									IValue val= args[i].getNonTypeValue();
-									if (val == null || par.getParameterPosition() != Value.isTemplateParameter(val)) {
-										useOriginal= false;
-									}
-								} else {
-									IType other= args[i].getTypeValue();
-									if (!(other instanceof ICPPTemplateParameter)) {
-										useOriginal= false;
-									} else if (par.getParameterPosition() != ((ICPPTemplateParameter) other).getParameterPosition()) {
-										useOriginal= false;
-									}
-								}
-							}
-							if (useOriginal) {
-								binding= spec;
-							}
-						}
-					} catch (DOMException e) {
-					}
-				}
-			}
-		}
-		if (name.getParent() instanceof ICPPASTTemplateId) {
+        IASTName name= data.astName;
+        IASTNode nameParent= name.getParent();
+		if (nameParent instanceof ICPPASTTemplateId) {
 			if (binding instanceof ICPPTemplateInstance) {
-				IBinding b = binding;
-				binding = ((ICPPTemplateInstance)binding).getSpecializedBinding();
+				final ICPPTemplateInstance instance = (ICPPTemplateInstance)binding;
+				binding = instance.getSpecializedBinding();
 				name.setBinding(binding);
-				name = (IASTName) name.getParent();
-				name.setBinding(b);
-			} else {
-				name = (IASTName) name.getParent();
-			}
+				((ICPPASTTemplateId) nameParent).setBinding(instance);
+			} 
+			name= (ICPPASTTemplateId) nameParent;
+			nameParent= name.getParent();
 		}
-		if (name.getParent() instanceof ICPPASTQualifiedName) {
-			if (name == ((ICPPASTQualifiedName)name.getParent()).getLastName())
-				name = (IASTName) name.getParent();
+		if (nameParent instanceof ICPPASTQualifiedName) {
+			if (name == ((ICPPASTQualifiedName) nameParent).getLastName()) {
+				name= (IASTName) nameParent;
+				nameParent= name.getParent();
+			}
 		}
 		
 		// if the lookup in base-classes ran into a deferred instance, use the computed unknown binding.
@@ -1585,6 +1542,11 @@ public class CPPSemantics {
 	        	if (candidate instanceof ICPPClassTemplatePartialSpecialization) 
 	        		return null;
 	        	
+		        // specialization is selected during instantiation
+	        	// mstodo why not?
+//		        if (candidate instanceof ICPPTemplateInstance && candidate instanceof IType)
+//		        	candidate= ((ICPPTemplateInstance) candidate).getSpecializedBinding();
+	        	
 	        	return candidate;
 	        }
 	    }
@@ -1737,9 +1699,16 @@ public class CPPSemantics {
 	        } else {
 	            continue;
 	        }
+
+	        // specialization is selected during instantiation
+	        // mstodo why not?
+//	        if (temp instanceof ICPPTemplateInstance && temp instanceof IType)
+//        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
+
 	        // select among those bindings that have been created without problems.
-	        if (temp instanceof IProblemBinding)
+        	if (temp instanceof IProblemBinding)
 	        	continue;
+
 	        if (!(temp instanceof ICPPMember) && !declaredBefore)
                 continue;
 	        if (temp instanceof ICPPUsingDeclaration) {

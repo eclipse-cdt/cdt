@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -1490,7 +1491,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertSame(charInst1, charInst2);
 	}
 	
-	
 	//	template<typename T> class XT {
 	//     public: void method() {};
 	//  };
@@ -1508,4 +1508,16 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals(1, ms.length);
 		assertEquals(m, ms[0]);
 	}
+	
+    //	template<class T, class U> class A {};
+    //	template<class T> class A<T, int> {   
+    //	   void foo(T t);                     
+    //	};                                    
+
+	//	template<class T> void A<T, int>::foo(T t) {} 
+    public void testBug177418() throws Exception {
+		ICPPMethod m= getBindingFromASTName("foo", 3, ICPPMethod.class);
+		ICPPClassType owner= m.getClassOwner();
+		assertInstance(owner, ICPPClassTemplatePartialSpecialization.class);
+    }
 }

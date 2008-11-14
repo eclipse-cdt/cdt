@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -94,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -254,23 +256,38 @@ public class CPPSemantics {
         /* 14.6.1-1: Class template name without argument list is equivalent to the injected-class-name followed by
 		 * the template-parameters of the class template enclosed in <> */
 		if (binding instanceof ICPPClassTemplate) {
+			ICPPClassTemplate ct= (ICPPClassTemplate) binding;
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
 			if (prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME &&
 					binding instanceof ICPPInternalBinding) {
 				try {
-					IASTNode def = ((ICPPInternalBinding)binding).getDefinition();
-					if (def != null) {
-						def = def.getParent();
-						IASTNode parent = data.astName.getParent();
-						while (parent != null) {
-							if (parent == def) {
-								binding = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) binding);
-								break;
+					IScope scope= CPPVisitor.getContainingScope(data.astName);
+					while (scope instanceof IASTInternalScope) {
+						final IASTInternalScope internalScope = (IASTInternalScope) scope;
+						if (scope instanceof ICPPClassScope) {
+							final IName scopeName = internalScope.getScopeName();
+							if (scopeName instanceof IASTName) {
+								IBinding b= ((IASTName) scopeName).resolveBinding();
+								if (binding == b) {
+									binding= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) binding);
+									break;
+								}
+								if (b instanceof ICPPClassTemplatePartialSpecialization) {
+									ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) b;
+									if (ct.isSameType(pspec.getPrimaryClassTemplate())) {
+										binding= CPPTemplates.instantiateWithinClassTemplate(pspec);
+										break;
+									}
+								} else if (b instanceof ICPPClassSpecialization) {
+									ICPPClassSpecialization specialization= (ICPPClassSpecialization) b;
+									if (ct.isSameType(specialization.getSpecializedBinding())) {
+										binding= specialization;
+										break;
+									}
+								}
 							}
-							if (parent instanceof ICPPASTNamespaceDefinition)
-								break;
-							parent = parent.getParent();
 						}
+						scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
 					}
 				} catch (DOMException e) {
 				}
@@ -1110,7 +1127,10 @@ public class CPPSemantics {
 			nodes = comp.getMembers();
 			
 			//9-2 a class name is also inserted into the scope of the class itself
-			IASTName n = comp.getName();
+			IASTName n = comp.getName().getLastName();
+			if (n instanceof ICPPASTTemplateId) {
+				n= ((ICPPASTTemplateId) n).getTemplateName();
+			}
 			if (nameMatches(data, n, scope)) {
 				found = (IASTName[]) ArrayUtil.append(IASTName.class, found, n);
 		    }

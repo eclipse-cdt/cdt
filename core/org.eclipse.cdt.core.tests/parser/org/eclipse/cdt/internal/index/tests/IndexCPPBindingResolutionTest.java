@@ -445,12 +445,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding _b10 = getBindingFromASTName("topFunc(){", 7);
 	}
 
-	public void _testMultiVirtualBaseClassLookup() {fail("aftodo");}
-	public void _testMultiNonVirtualBaseClassLookup() {fail("aftodo");}
-
-	public void _testQualifiedNamesForNamespaceAliases() {fail("aftodo");}
-	public void _testQualifiedNamesForNamespaces() {fail("aftodo");}
-
 	//	// header content
 	// namespace n1 { namespace n2 { struct S {}; } }
 	// class c1 { public: class c2 { public: struct S {}; }; };
@@ -997,8 +991,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b23 = getBindingFromASTName("f;/*23*/", 1);
 		IBinding b24 = getBindingFromASTName("f;/*24*/", 1);
 	}
-
-	public void _testAddressOfOverloadedMethod() throws DOMException { fail("aftodo"); }
 
 	// struct C {
 	//	 int m1(int a);

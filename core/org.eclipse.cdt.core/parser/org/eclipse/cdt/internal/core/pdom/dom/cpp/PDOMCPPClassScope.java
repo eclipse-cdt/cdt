@@ -28,8 +28,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -79,6 +81,10 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		            return CPPSemantics.resolveAmbiguities(name, fBinding.getConstructors());
 		        }
 	            //9.2 ... The class-name is also inserted into the scope of the class itself
+		        if (fBinding instanceof ICPPClassTemplatePartialSpecialization)
+		        	return ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
+		        if (fBinding instanceof ICPPSpecialization)
+		        	return ((ICPPSpecialization) fBinding).getSpecializedBinding();
 	            return fBinding;
 		    }
 			
@@ -101,7 +107,13 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), 0, nameChars.length, nameChars, true)) {
 				// 9.2 ... The class-name is also inserted into the scope of
 				// the class itself
-				visitor.visit(fBinding);
+				IPDOMNode node= fBinding;
+		        if (node instanceof ICPPClassTemplatePartialSpecialization)
+		        	node= (IPDOMNode) ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
+		        else if (fBinding instanceof ICPPSpecialization)
+		        	node= (IPDOMNode) ((ICPPSpecialization) fBinding).getSpecializedBinding();
+		        	
+		        visitor.visit(node);
 			}
 			acceptViaCache(fBinding, visitor, true);
 			result= visitor.getBindings();

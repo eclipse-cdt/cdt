@@ -220,10 +220,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    char[] c = name.toCharArray();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName();
-	    if (compName instanceof ICPPASTQualifiedName) {
-	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
-	    }
+	    IASTName compName = compType.getName().getLastName();
+		if (compName instanceof ICPPASTTemplateId) {
+			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+		}
 	    if (CharArrayUtils.equals(c, compName.toCharArray())) {
 	        if (isConstructorReference(name)) {
 	            return CPPSemantics.resolveAmbiguities(name, getConstructors(bindings, resolve, name));
@@ -239,10 +239,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    char[] c = name.toCharArray();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName();
-	    if (compName instanceof ICPPASTQualifiedName) {
-	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
-	    }
+	    IASTName compName = compType.getName().getLastName();
+		if (compName instanceof ICPPASTTemplateId) {
+			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+		}
 	    IBinding[] result = null;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.toCharArray()))
 	    	|| (prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, c.length, c, true))) {

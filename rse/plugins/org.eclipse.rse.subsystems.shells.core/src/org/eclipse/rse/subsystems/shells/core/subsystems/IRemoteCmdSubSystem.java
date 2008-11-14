@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight  (IBM)  - [208813] removing deprecated APIs
+ * David McKnight  (IBM)  - [247533] [apidoc] IRemoteCmdSubSystem#runCommand() Javadocs do not match implementation
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -42,8 +43,11 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 * @param context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @param monitor the progress monitor
-	 * @return Array of objects that are the result of running this command. Typically, these
-	 *   are messages logged by the command.
+	 * @return Array of objects that are the result of running this command.  In a typical use, such as a
+	 *   command run from a shell, there is only one result in the array and that is the IRemoteCommandShell 
+	 *   object.  In that cause, the lines of output for the shell are contained as children under the 
+	 *   IRemoteCommandShell object.
+	 *     
 	 */
 	public Object[] runCommand(String command, Object context, IProgressMonitor monitor) throws Exception;
 	
@@ -55,8 +59,10 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 * 			command as a shell command in the default shell.
 	 * @param interpretOutput whether to interpret the output or not
 	 * @param monitor the progress monitor
-	 * @return Array of objects that are the result of running this command. Typically, these
-	 *   are messages logged by the command.
+	 * @return Array of objects that are the result of running this command.  In a typical use, such as a
+	 *   command run from a shell, there is only one result in the array and that is the IRemoteCommandShell 
+	 *   object.  In that cause, the lines of output for the shell are contained as children under the 
+	 *   IRemoteCommandShell object.
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput, IProgressMonitor monitor) throws Exception;
 

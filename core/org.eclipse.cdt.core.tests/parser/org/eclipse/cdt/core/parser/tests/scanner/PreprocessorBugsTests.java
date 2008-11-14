@@ -187,23 +187,48 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, null);
 	}
 
-	//	#ifdef 0
+	//  /**/ #if 0
+	//  bug
+	//  /**/ #endif
+	//  passed
+	//
+	//  /*
+	//   */ #if 0
+	//  bug
+	//  /**/ #endif
+	//  passed
+	//
+	//	#if 0
 	//	/**/ #else
 	//	OK1
 	//	#endif
-	//	#ifdef 0
-	//	a /*
+	//
+	//	#if 0
+	//	/*
 	//   */ #else
 	//	OK2
 	//	#endif
-	//	#ifdef 0
+	//
+	//	#if 0
 	//	a /**/ #else
-	//	NOTOK
+	//	bug
 	//	#endif
+	//  passed
+	//
+	//	#if 0
+	//	a /*
+	//     */ #else   // interesting, gcc ignores this directive, we mimic the behavior
+	//	bug
+	//	#endif
+	//  passed
 	public void testCommentBeforeDirective_Bug255318() throws Exception {
 		initializeScanner();
+		validateIdentifier("passed");
+		validateIdentifier("passed");
 		validateIdentifier("OK1");
 		validateIdentifier("OK2");
+		validateIdentifier("passed");
+		validateIdentifier("passed");
 		validateEOF();
 		validateProblemCount(0);
 	}

@@ -99,9 +99,13 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void validateToken(int tokenType, String image) throws Exception {
-		IToken t= fScanner.nextToken();
-		assertEquals(tokenType, t.getType());
-		assertEquals(image, t.getImage());
+		try {
+			IToken t= fScanner.nextToken();
+			assertEquals(tokenType, t.getType());
+			assertEquals(image, t.getImage());
+		} catch (EndOfFileException e) {
+			fail("Missing token " + image);
+		}
 	}
 
 	protected void validateInteger(String expectedImage) throws Exception {

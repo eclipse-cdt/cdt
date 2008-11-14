@@ -269,6 +269,7 @@ final public class Lexer {
 					continue; 
 				case '*':
 					blockComment(start, '*');
+					haveNL= hadNL;
 					continue;
 				case '%':
 					if (fOptions.fSupportSlashPercentComments) {

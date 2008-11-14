@@ -17,6 +17,7 @@
  *  David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ *  David McKnight     (IBM)   [250203] [dstore][shells]%var% is substituted to null in Unix shell
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -797,7 +798,7 @@ public class CommandMinerThread extends MinerThread
 						}
 					}
 				} //If the current char is a %, then simply look for a matching %
-				else if (c == '%')
+				else if (c == '%' && _isWindows)
 				{
 					int next = theValue.toString().indexOf("%", index + 1); //$NON-NLS-1$
 					if (next > 0)

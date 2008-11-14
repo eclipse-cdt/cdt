@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [228933] file icons shown in shell view should check editor registry for proper icon
  * David McKnight   (IBM)        - [233349] Could not drag and drop file from Shell view to local folder.
  * David McKnight   (IBM)        - [233475] Cannot drag and drop file/folder within the shell output
+ * Kevin Doyle		(IBM)		 - [247297] Double Clicking on a Shell doesn't open that Shell
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -59,7 +60,6 @@ import org.eclipse.rse.internal.shells.ui.view.ShellServiceSubSystemConfiguratio
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.internal.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.internal.ui.view.SystemView;
-import org.eclipse.rse.services.shells.ParsedOutput;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -452,16 +452,14 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 					doOpen(file, output);
 					return true;
 			}
-			else if (element instanceof IRemoteCommandShell)
+		} else if (element instanceof IRemoteCommandShell) {
+			IRemoteCommandShell cmdshell = (IRemoteCommandShell) element;
+			if (cmdshell.getType().equals(ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL))
 			{
-				IRemoteCommandShell cmdshell = (IRemoteCommandShell) element;
-				if (cmdshell.getType().equals(ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL))
-				{
-					SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
-					viewPart.updateOutput(cmdshell);
-					viewPart.showPageFor(cmdshell); //196584
-					result = true;
-				}
+				SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
+				viewPart.updateOutput(cmdshell);
+				viewPart.showPageFor(cmdshell); //196584
+				result = true;
 			}
 		}
 		return result;

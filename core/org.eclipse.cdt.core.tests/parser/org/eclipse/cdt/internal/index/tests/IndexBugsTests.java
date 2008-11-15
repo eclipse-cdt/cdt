@@ -1484,7 +1484,7 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	// #include "dir"
 	// #include "header.h"
-	public void testIncludsionOfFolders_Bug243682() throws Exception {
+	public void testInclusionOfFolders_Bug243682() throws Exception {
 		String contents= getContentsForTest(1)[0];
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		IFile sol= TestSourceReader.createFile(fCProject.getProject(), "f1/header.h", "");

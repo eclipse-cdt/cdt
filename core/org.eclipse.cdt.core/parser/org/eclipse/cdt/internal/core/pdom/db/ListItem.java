@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 public class ListItem {
-	
 	protected final Database db;
 	protected final int record;
 	
@@ -84,5 +83,4 @@ public class ListItem {
 	public void delete() throws CoreException {
 		db.free(record);
 	}
-	
 }

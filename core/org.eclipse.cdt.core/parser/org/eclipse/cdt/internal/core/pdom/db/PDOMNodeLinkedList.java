@@ -8,6 +8,7 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -55,16 +56,17 @@ public class PDOMNodeLinkedList {
 	}
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		ListItem firstItem = getFirstMemberItem();
-		if (firstItem == null)
+		Database db = pdom.getDB();
+		int firstItem = db.getInt(offset + FIRST_MEMBER);
+		if (firstItem == 0)
 			return;
 		
-		ListItem item = firstItem;
+		int item = firstItem;
 		do {
 			PDOMNode node;
-			final int record= item.getItem();
-			if(record==0) {
-				if(!allowsNull) {
+			final int record= db.getInt(item + ListItem.ITEM);
+			if (record == 0) {
+				if (!allowsNull) {
 					throw new NullPointerException();
 				}
 				node= null;
@@ -75,8 +77,7 @@ public class PDOMNodeLinkedList {
 				node.accept(visitor);
 			}
 			visitor.leave(node);
-			item = item.getNext();
-		} while (!item.equals(firstItem));
+		} while ((item = db.getInt(item + ListItem.NEXT)) != firstItem);
 	}
 	
 	private ListItem getFirstMemberItem() throws CoreException {
@@ -84,7 +85,36 @@ public class PDOMNodeLinkedList {
 		int item = db.getInt(offset + FIRST_MEMBER);
 		return item != 0 ? new ListItem(db, item) : null;
 	}
-	
+
+	/**
+	 * Returns node at position {@code pos}. Not recommended to be used in a loop since
+	 * such a loop would be more expensive that a single {@code accept(IPDOMVisitor)} call. 
+	 * @param pos A zero-based position in the list.
+	 * @return The node at position {@code pos}, or {@code null} if no such node exists.
+	 */
+	public PDOMNode getNodeAt(int pos) throws CoreException {
+		Database db = pdom.getDB();
+		int firstItem = db.getInt(offset + FIRST_MEMBER);
+		if (firstItem == 0) {
+			return null;
+		}
+		int item = firstItem;
+		do {
+			if (--pos < 0) {
+				int record = db.getInt(item + ListItem.ITEM);
+				if (record == 0) {
+					if (!allowsNull) {
+						throw new NullPointerException();
+					}
+					return null;
+				} else {
+					return linkage.getNode(record);
+				}
+			}
+		} while ((item = db.getInt(item + ListItem.NEXT)) != firstItem);
+		return null;
+	}
+
 	public void addMember(PDOMNode member) throws CoreException {
 		addMember(allowsNull && member==null ? 0 : member.getRecord());
 	}

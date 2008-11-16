@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- *
  * CModelExceptionTest
  * 
  * @author Judy N. Green
@@ -28,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CModelExceptionTest extends TestCase {
     // Shared values setup and torn down
-//    private Throwable throwableException;
     private CModelStatus cModelStatus;
     private CoreException coreException;
 
@@ -73,19 +71,12 @@ public class CModelExceptionTest extends TestCase {
     
     public void testCreationNoStatus(){
         CModelException testException = new CModelException(coreException);
-        
-        // should not be null
-        assertTrue("TestException is null", (testException != null));
-
         // should be the same object inside
         assertTrue("Object compare failed", testException.getException() == coreException);
     }
     public void testCreationWithStatus(){
         CModelException testException = new CModelException(coreException, 
                                                             ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
-        // should not be null
-        assertTrue("TestException is null", (testException != null));
-
         // should not be null
         assertTrue("TestException.getStatus() is null", (testException.getStatus() != null));
         
@@ -96,10 +87,6 @@ public class CModelExceptionTest extends TestCase {
     public void testElementDoesNotExist(){
         CModelException testException = new CModelException(coreException, 
                                                             ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST);
-        // should not be null
-        assertTrue("TestException is null", (testException != null));
-
-        
         // should not exist since this is the value we set on creation
         assertTrue("Object unexpectedly exists", testException.doesNotExist());
     }
@@ -107,13 +94,7 @@ public class CModelExceptionTest extends TestCase {
     public void testElementExists(){
         CModelException testException = new CModelException(coreException, 
                                                             ICModelStatusConstants.INVALID_CONTENTS);
-        // should not be null
-        assertTrue("TestException is null", (testException != null));
-
-        
         // should not exist since this is the value we set on creation
-        assertTrue("Object unexpectedly does not exist", testException.doesNotExist() == false);
+        assertTrue("Object unexpectedly does not exist", !testException.doesNotExist());
     }
-    
-
 }

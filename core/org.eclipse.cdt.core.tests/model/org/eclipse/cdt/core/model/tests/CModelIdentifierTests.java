@@ -73,7 +73,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 		CProjectHelper.delete(fCProject);
 	}	
 
-	public void testIdentiferConsistency() throws Exception {
+	public void testIdentifierConsistency() throws Exception {
 		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fHeaderFile);
 
 		final String cModelIdentifier= tu.getCModel().getHandleIdentifier();

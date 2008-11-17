@@ -459,7 +459,7 @@ public class AST2BaseTest extends BaseTestCase {
     		return binding;
     	}
     	
-    	public IBinding assertNonProblem(String section, int len) {
+    	public <T extends IBinding> T assertNonProblem(String section, int len) {
     		IBinding binding= binding(section, len);
     		if (binding instanceof IProblemBinding) {
     			IProblemBinding problem= (IProblemBinding) binding;
@@ -468,7 +468,7 @@ public class AST2BaseTest extends BaseTestCase {
     		if (binding == null) {
     			fail("Null binding resolved for name: " + section.substring(0, len));
     		}
-    		return binding;
+    		return (T) binding;
     	}
 
     	private String renderProblemID(int i) {

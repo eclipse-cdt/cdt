@@ -6,20 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Devin Steffler (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
- *
  * NOTE:  Once these tests pass (are fixed) then fix the test to work so that they
  * are tested for a pass instead of a failure and move them to AST2CPPSpecTest.java.
- * 
- * @author dsteffle
  */
 public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 
@@ -36,18 +36,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	
 	public void testDummy() {} // avoids JUnit "no tests" warning
 	
-	// int foo() {
-	// if (int x = f()) {
-	// int x; // illformed,redeclaration of x
-	// }
-	// else {
-	// int x; // illformed,redeclaration of x
-	// }
-	// }
-	public void _test6_4s3() throws Exception { // TODO raised bug 90618
-		parse(getAboveComment(), ParserLanguage.CPP, true, 2);
-	}
-
 	// struct B {
 	// virtual void f(int);
 	// virtual void f(char);
@@ -73,12 +61,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// char msg[] = "Syntax error on line %s
-	// ";
-	public void _test8_5_2s1() throws Exception { // TODO raised bug 90647
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
 	// template<class T> class task;
 	// template<class T> task<T>* preempt(task<T>*);
 	// template<class T> class task {
@@ -95,45 +77,21 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// template <int I, int J> A<I+J> f(A<I>, A<J>); // #1
-	// template <int K, int L> A<K+L> f(A<K>, A<L>); // same as #1
-	// template <int I, int J> A<I-J> f(A<I>, A<J>); // different from #1
-	public void _test14_5_5_1s5() throws Exception { // TODO raised bug 90683
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	// template <int I> class A;
+	// template <int I, int J> A<I+J> f/*1*/(A<I>, A<J>); // #1
+	// template <int K, int L> A<K+L> f/*2*/(A<K>, A<L>); // same as #1
+	// template <int I, int J> A<I-J> f/*3*/(A<I>, A<J>); // different from #1
+	public void _test14_5_5_1s5() throws Exception { 
+		final String content= getAboveComment();
+		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
+		ICPPFunctionTemplate f1= bh.assertNonProblem("f/*1*/", 1);
+		ICPPFunctionTemplate f2= bh.assertNonProblem("f/*2*/", 1);
+		ICPPFunctionTemplate f3= bh.assertNonProblem("f/*3*/", 1);
+		assertSame(f1, f2);
+		assertNotSame(f1, f3);
 	}
-
-	// template <int I, int J> void f(A<I+J>); // #1
-	// template <int K, int L> void f(A<K+L>); // same as #1
-	public void _test14_5_5_1s6() throws Exception { // TODO raised bug 90683
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
-	// typedef double A;
-	// template<class T> B {
-	// typedef int A;
-	// };
-	// template<class T> struct X : B<T> {
-	// A a; // a has type double
-	// };
-	public void _test14_6_2s3() throws Exception { // TODO this doesn't compile via g++ ?
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
-	// template <class T> int f(typename T::B*);
-	// int i = f<int>(0);
-	public void _test14_8_2s2b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
-	}
-
-	// template <class T> int f(typename T::B*);
-	// struct A {};
-	// struct C { int B; };
-	// int i = f<A>(0);
-	// int j = f<C>(0);
-	public void _test14_8_2s2c() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 2);
-	}
-
+	
 	// template <class T> void f(T t);
 	// template <class X> void g(const X x);
 	// template <class Z> void h(Z, Z*);
@@ -151,6 +109,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// h<const int>(1,0);
 	// }
 	public void _test14_8_2s3() throws Exception {
+		// mstodo this one must pass
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -166,27 +125,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// f(d2); //calls f(B<int>&)
 	// }
 	public void _test14_8_2_4s8() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
-	// template <template X<class T> > struct A { };
-	// template <template X<class T> > void f(A<X>) { }
-	// template<class T> struct B { };
-	// int foo() {
-	// A<B> ab;
-	// f(ab); //calls f(A<B>)
-	// }
-	public void _test14_8_2_4s18() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-
-	// // Guaranteed to be the same
-	// template <int I> void f(A<I>, A<I+10>);
-	// template <int I> void f(A<I>, A<I+10>);
-	// // Guaranteed to be different
-	// template <int I> void f(A<I>, A<I+10>);
-	// template <int I> void f(A<I>, A<I+11>);
-	public void _test14_5_5_1s8a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 

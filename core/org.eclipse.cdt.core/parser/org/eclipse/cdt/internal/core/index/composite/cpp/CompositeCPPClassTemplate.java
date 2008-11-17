@@ -36,25 +36,25 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()
 			throws DOMException {		
 		try {
-			IIndexFragmentBinding[] bindings= ((CIndex)((CPPCompositesFactory)cf).getContext()).findEquivalentBindings(rbinding);
+			IIndexFragmentBinding[] bindings= ((CIndex)((CPPCompositesFactory) cf).getContext()).findEquivalentBindings(rbinding);
 			IIndexFragmentBinding[][] preresult= new IIndexFragmentBinding[bindings.length][];
 			
-			for(int i=0; i<bindings.length; i++) {
-				ICPPClassTemplatePartialSpecialization[] ss= ((ICPPClassTemplate)bindings[i]).getPartialSpecializations();
+			for (int i= 0; i < bindings.length; i++) {
+				ICPPClassTemplatePartialSpecialization[] ss= ((ICPPClassTemplate) bindings[i]).getPartialSpecializations();
 				preresult[i]= new IIndexFragmentBinding[ss.length];
 				System.arraycopy(ss, 0, preresult[i], 0, ss.length);
 			}
 			
 			return (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.addAll(ICPPClassTemplatePartialSpecialization.class, null, cf.getCompositeBindings(preresult));
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 			return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 		}
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPClassTemplate)rbinding).getTemplateParameters();
-		for(int i=0; i<result.length; i++) {
+		ICPPTemplateParameter[] result= ((ICPPClassTemplate) rbinding).getTemplateParameters();
+		for (int i= 0; i < result.length; i++) {
 			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;

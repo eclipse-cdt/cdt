@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public abstract class CPPTemplateParameter extends PlatformObject 
 		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
-	private IASTName [] declarations;
+	private IASTName[] declarations;
 	private final int position;
 	
 	public CPPTemplateParameter(IASTName name) {
@@ -105,7 +105,6 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return declarations[0].toCharArray();
 	}
 
-	
 	public int getParameterPosition() {
 		return position;
 	}
@@ -140,7 +139,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
 	 */
 	public char[][] getQualifiedNameCharArray() {
-		return new char [][] {getNameCharArray() };
+		return new char[][] {getNameCharArray() };
 	}
 
 	/* (non-Javadoc)
@@ -185,7 +184,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		} else {
 	        if (declarations.length > 0 && declarations[0] == node)
 	            return;
-			//keep the lowest offset declaration in [0]
+			// keep the lowest offset declaration in [0]
 			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
 				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {

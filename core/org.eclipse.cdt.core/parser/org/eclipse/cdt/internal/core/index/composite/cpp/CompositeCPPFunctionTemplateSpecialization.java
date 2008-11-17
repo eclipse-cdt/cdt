@@ -29,8 +29,8 @@ public class CompositeCPPFunctionTemplateSpecialization	extends CompositeCPPFunc
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPFunctionTemplate)rbinding).getTemplateParameters();
-		for(int i=0; i<result.length; i++) {
+		ICPPTemplateParameter[] result= ((ICPPFunctionTemplate) rbinding).getTemplateParameters();
+		for (int i= 0; i < result.length; i++) {
 			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;

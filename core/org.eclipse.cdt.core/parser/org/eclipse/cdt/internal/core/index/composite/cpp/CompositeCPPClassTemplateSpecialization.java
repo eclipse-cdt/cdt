@@ -31,16 +31,16 @@ CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInstanceCache{
 
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()
 			throws DOMException {
-		ICPPClassTemplatePartialSpecialization[] result= ((ICPPClassTemplate)rbinding).getPartialSpecializations();
-		for(int i=0; i<result.length; i++) {
+		ICPPClassTemplatePartialSpecialization[] result= ((ICPPClassTemplate) rbinding).getPartialSpecializations();
+		for (int i= 0; i < result.length; i++) {
 			result[i]= (ICPPClassTemplatePartialSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
 		return result;
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPClassTemplate)rbinding).getTemplateParameters();
-		for(int i=0; i<result.length; i++) {
+		ICPPTemplateParameter[] result= ((ICPPClassTemplate) rbinding).getTemplateParameters();
+		for (int i= 0; i < result.length; i++) {
 			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;

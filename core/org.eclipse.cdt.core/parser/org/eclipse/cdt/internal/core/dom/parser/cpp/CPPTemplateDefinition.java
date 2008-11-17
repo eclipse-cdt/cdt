@@ -67,7 +67,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 	}
 
-	//private IASTName templateName;
 	protected IASTName[] declarations;
 	protected IASTName definition;
 	
@@ -115,7 +114,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	public ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i=0; i < instances.size(); i++) {
+			for (int i= 0; i < instances.size(); i++) {
 				result[i]= (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
@@ -194,7 +193,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		}
 		return templateParameters;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
@@ -275,7 +274,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	final protected void updateTemplateParameterBindings(IASTName name) {
     	ICPPASTTemplateParameter[] updateParams = CPPTemplates.getTemplateDeclaration(name).getTemplateParameters();
 
-    	int k=0;
+    	int k= 0;
     	int tdeclLen= declarations == null ? 0 : declarations.length;
     	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {
     		IASTName tdecl;

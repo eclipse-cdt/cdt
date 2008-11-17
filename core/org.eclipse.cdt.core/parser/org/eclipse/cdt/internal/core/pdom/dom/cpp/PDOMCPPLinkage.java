@@ -619,8 +619,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof PDOMCPPNamespace) {
 			int localToFileRec= getLocalToFileRec(parent, binding);
-			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding,
+			return CPPFindBinding.findBinding(((PDOMCPPNamespace) parent).getIndex(), this, binding,
 					localToFileRec);
+		}
+		if (binding instanceof ICPPTemplateParameter && parent instanceof IPDOMCPPTemplateParameterOwner) {
+			return (PDOMBinding) ((IPDOMCPPTemplateParameterOwner) parent).adaptTemplateParameter(
+					(ICPPTemplateParameter) binding);
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			int localToFileRec= getLocalToFileRec(parent, binding);

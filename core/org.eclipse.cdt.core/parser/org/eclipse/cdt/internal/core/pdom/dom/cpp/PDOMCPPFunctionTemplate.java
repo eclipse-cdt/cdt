@@ -8,6 +8,7 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -37,7 +38,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
-		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
+		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IPDOMCPPTemplateParameterOwner {
 
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
 	
@@ -97,7 +98,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 			return new ICPPTemplateParameter[0];
 		}
 	}
-
+	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateParameter) {
@@ -123,5 +124,17 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	
 	public ICPPTemplateInstance[] getAllInstances() {
 		return PDOMInstanceCache.getCache(this).getAllInstances();	
+	}
+
+	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
+		// Template parameters are identified by their position in the parameter list.
+		int pos = param.getParameterPosition() & 0xFFFF;
+		try {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
+			return (ICPPTemplateParameter) list.getNodeAt(pos);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -41,7 +42,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassTemplate, ICPPInstanceCache {
+public class PDOMCPPClassTemplate extends PDOMCPPClassType
+		implements ICPPClassTemplate, ICPPInstanceCache, IPDOMCPPTemplateParameterOwner {
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
 	private static final int FIRST_PARTIAL = PDOMCPPClassType.RECORD_SIZE + 4;
 	
@@ -102,7 +104,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 		System.arraycopy(params, 0, result, 0, params.length);
 		return result;
 	}
-	
+
 	private PDOMCPPClassTemplatePartialSpecialization getFirstPartial() throws CoreException {
 		int value = pdom.getDB().getInt(record + FIRST_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(pdom, value) : null;
@@ -231,5 +233,20 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 
 	public ICPPTemplateInstance[] getAllInstances() {
 		return PDOMInstanceCache.getCache(this).getAllInstances();	
+	}
+
+	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
+		// Template parameters are identified by their position in the parameter list.
+		int pos = param.getParameterPosition() & 0xFFFF;
+		if (params != null) {
+			return pos < params.length ? params[pos] : null;
+		}
+		try {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
+			return (ICPPTemplateParameter) list.getNodeAt(pos);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

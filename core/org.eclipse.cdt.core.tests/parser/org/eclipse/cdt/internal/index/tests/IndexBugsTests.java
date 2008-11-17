@@ -609,7 +609,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//	template <class U1> class Test;
 	//	template <class U2> void f();
-	public void _test253080() throws Exception {
+	public void test253080() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(3);

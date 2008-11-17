@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [247573][api] IClassifierConstants.TYPE_LINK == "link" is not in sync with actual usage of "symbolic link" in the code
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -28,8 +28,17 @@ public interface IClassifierConstants {
 	
 	/**
 	 * Link type, "link".
+	 * 
+	 * @deprecated should use TYPE_SYMBOLIC_LINK
 	 */
 	public static final String TYPE_LINK = "link"; //$NON-NLS-1$
+
+	/**
+	 * Symbolic link type, "symbolic link"
+	 * 
+	 * @since 3.1 
+	 */
+	public static final String TYPE_SYMBOLIC_LINK = "symbolic link"; //$NON-NLS-1$
 	
 	/**
 	 * Java executable type, "executable(java:*)".

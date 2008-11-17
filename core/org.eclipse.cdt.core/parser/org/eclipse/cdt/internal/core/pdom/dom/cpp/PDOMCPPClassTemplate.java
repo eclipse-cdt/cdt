@@ -141,6 +141,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType implements ICPPClassT
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
 		if (member instanceof ICPPTemplateParameter) {
+			params= null; // clear cache
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + PARAMETERS, getLinkageImpl());
 			list.addMember(member);
 		} else {

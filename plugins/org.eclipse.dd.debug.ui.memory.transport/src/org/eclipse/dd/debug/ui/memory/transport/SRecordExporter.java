@@ -301,6 +301,22 @@ public class SRecordExporter implements IMemoryExporter
 		});
 		
 		composite.pack();
+		parent.pack();
+		
+		/*
+		 *  We need to perform a validation. If we do it immediately we will get an exception
+		 *  because things are not totally setup. So we schedule an immediate running of  the
+		 *  validation. For a very brief time the view logically may show a state which  does
+		 *  not reflect the true state of affairs.  But the validate immediately corrects the
+		 *  info. In practice the user never sees the invalid state displayed, because of the
+		 *  speed of the draw of the dialog.
+		 */
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run()
+			{
+				validate();
+			}
+		});
 		
 		return composite;
 	}
@@ -364,7 +380,6 @@ public class SRecordExporter implements IMemoryExporter
 		}
 		
 		fParentDialog.setValid(isValid);
-			
 	}
 
 	

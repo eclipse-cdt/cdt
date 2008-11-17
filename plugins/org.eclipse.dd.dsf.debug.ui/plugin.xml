@@ -55,6 +55,60 @@
       </specification>
    </extension>
 
+   <extension point="org.eclipse.ui.viewActions">
+      <!-- Variables View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
+            targetID="org.eclipse.debug.ui.VariableView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
+      <!-- Registers View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
+            targetID="org.eclipse.debug.ui.RegisterView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      
+      <!-- Expressions View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
+            targetID="org.eclipse.debug.ui.ExpressionView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
+      <!-- Debug View menu contributions -->
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.debugView.Refresh"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+   </extension>
+
    <extension 
          point="org.eclipse.ui.menus">
 	   <!-- Debug view menu commands -->
@@ -76,18 +130,6 @@
 	               class="org.eclipse.dd.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
 	           </dynamic>
             </menu>
-       </menuContribution>
-       <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
-            <command
-                  commandId="org.eclipse.ui.file.refresh"
-	              icon="icons/refresh.gif"
-                  style="push"
-                  label="%command.refresh.name">
-               <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-               </visibleWhen>
-            </command>
        </menuContribution>
 
 	   <!-- Registers view menu commands -->
@@ -138,18 +180,6 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
-       <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.RegisterView?after=additions">
-            <command
-                  commandId="org.eclipse.ui.file.refresh"
-	              icon="icons/refresh.gif"
-                  style="push"
-                  label="%command.refresh.name">
-               <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-               </visibleWhen>
-            </command>
-       </menuContribution>
 
 	   <!-- Variables view menu commands  -->
        <menuContribution
@@ -199,18 +229,6 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
-       <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.VariableView?after=additions">
-            <command
-                  commandId="org.eclipse.ui.file.refresh"
-	              icon="icons/refresh.gif"
-                  style="push"
-                  label="%command.refresh.name">
-               <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-               </visibleWhen>
-            </command>
-       </menuContribution>
 
 	   <!-- Expressions view menu commands  -->
        <menuContribution
@@ -259,18 +277,6 @@
 	               class="org.eclipse.dd.dsf.debug.internal.provisional.ui.viewmodel.numberformat.NumberFormatsContribution">
 	           </dynamic>
             </menu>         
-       </menuContribution>
-       <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.ExpressionView?after=additions">
-            <command
-                  commandId="org.eclipse.ui.file.refresh"
-	              icon="icons/refresh.gif"
-                  style="push"
-                  label="%command.refresh.name">
-               <visibleWhen checkEnabled="false">
-                  <reference definitionId="org.eclipse.dd.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-               </visibleWhen>
-            </command>
        </menuContribution>
    </extension>  
 

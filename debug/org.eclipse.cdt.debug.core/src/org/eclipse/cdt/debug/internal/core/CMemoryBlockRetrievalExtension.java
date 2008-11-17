@@ -189,7 +189,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 
 				BigInteger addrBigInt = null;
 				String memorySpaceID = null;
-				if (hasMemorySpaces()) {
+				if (hasMemorySpaces() && fDebugTarget != null) {
 					// Can't tell if block was created with a memory-space/address or with an expression.
 					// Assume the former and let an exception in the decoding tell us otherwise
 					ICDITarget cdiTarget = fDebugTarget.getCDITarget();
@@ -392,6 +392,8 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	}
 
 	public void dispose() {
+		// Minimize leaks. See bugzilla 255120
+		fDebugTarget = null;
 	}
 
 	/**
@@ -410,9 +412,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	 * @return an array of memory space identifiers
 	 */
 	public String [] getMemorySpaces() {
-		ICDITarget cdiTarget = fDebugTarget.getCDITarget(); 
-		if (cdiTarget instanceof ICDIMemorySpaceManagement)
-			return ((ICDIMemorySpaceManagement)cdiTarget).getMemorySpaces(); 
+		if (fDebugTarget != null) {
+			ICDITarget cdiTarget = fDebugTarget.getCDITarget(); 
+			if (cdiTarget instanceof ICDIMemorySpaceManagement)
+				return ((ICDIMemorySpaceManagement)cdiTarget).getMemorySpaces();
+		}
 		
 		return new String[0];
 	}

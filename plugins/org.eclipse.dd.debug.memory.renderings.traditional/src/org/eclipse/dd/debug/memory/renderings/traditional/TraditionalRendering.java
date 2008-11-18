@@ -1214,8 +1214,11 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 							public void run() {
 								try 
 								{
-									fBigBaseAddress = TraditionalRendering.this.fRendering.getMemoryBlock().getBigBaseAddress();
-									TraditionalRendering.this.fRendering.gotoAddress(fBigBaseAddress);
+									if(fBigBaseAddress != TraditionalRendering.this.fRendering.getMemoryBlock().getBigBaseAddress())
+									{
+										fBigBaseAddress = TraditionalRendering.this.fRendering.getMemoryBlock().getBigBaseAddress();
+										TraditionalRendering.this.fRendering.gotoAddress(fBigBaseAddress);
+									}
 									TraditionalRendering.this.fRendering.refresh();
 								} 
 								catch (DebugException e) 

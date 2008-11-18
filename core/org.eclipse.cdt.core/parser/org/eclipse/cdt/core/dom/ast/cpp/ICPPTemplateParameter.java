@@ -21,11 +21,31 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	
 	/**
 	 * The position of the template parameter is determined by the nesting level of the template 
-	 * declaration and the position within the template parameter list. In every context where a
-	 * template parameter can be referenced (i.e. within a template declaration) the parameter
-	 * position is unique.
-	 * <par>
-	 * The position is computed by <code>(nesting-level << 16) + position-in-parameter-list</code>
+	 * declaration and the offset of this parameter within the template parameter list. 
+	 * In every context where a template parameter can be referenced (i.e. within a template declaration) 
+	 * the parameter position is unique. 
+	 * <p>
+	 * The nesting level is determined by counting the template declarations that enclose the one that 
+	 * declares this parameter. The position is then computed by 
+	 * <code>(nesting-level << 16) + position-in-parameter-list</code>.
+	 * <p> 
+	 * Example: 
+	 * <pre>
+	 * namespace ns {
+	 *    template<typename T> class X {       // parameter position: 0x0000
+	 *       template<typename U> class Y1 {   // parameter position: 0x0100
+	 *       };
+	 *       class Y2 {
+	 *          template typename<V> class Z { // parameter position: 0x0100
+	 *             void m();
+	 *          };  
+	 *       };
+	 *    };
+	 * }
+	 * template<typename T>                    // parameter position 0x0000
+	 *    template <typename V>                // parameter position 0x0100
+	 *       void ns::X<T>::Y2::Z<V>::m() {}
+	 * </pre>
 	 * @since 5.1
 	 */
 	int getParameterPosition();

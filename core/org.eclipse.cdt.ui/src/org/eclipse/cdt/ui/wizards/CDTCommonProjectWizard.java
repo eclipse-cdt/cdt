@@ -293,7 +293,7 @@ implements IExecutableExtension, IWizardWithMemory
 	 */	
 	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor) throws CoreException{
 		
-		monitor.beginTask("createIProject", 100);
+		monitor.beginTask(UIMessages.getString("CDTCommonProjectWizard.creatingProject"), 100); //$NON-NLS-1$
 		
 		if (newProject != null)	return newProject;
 		

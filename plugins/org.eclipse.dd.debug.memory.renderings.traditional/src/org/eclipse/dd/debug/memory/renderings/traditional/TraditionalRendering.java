@@ -25,12 +25,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
@@ -1078,7 +1080,28 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 manager.add(copyAction);
                 manager.add(copyAddressAction);
 
-                manager.add(gotoAddressAction);
+                // IMemoryGoToAddressProvider interface, called using reflection, waiting on platform acceptance of patch
+                final IMemoryBlockRetrieval retrieve = MemoryViewUtil.getMemoryBlockRetrieval(TraditionalRendering.this.getMemoryBlock());
+				if (retrieve != null)
+				{
+					try
+					{
+		                Method m = retrieve.getClass().getMethod("getGoToAddressRenderingId", new Class[] {});
+						m.setAccessible(true);
+						
+						if(m != null)
+						{
+							String id = (String) m.invoke(retrieve, new Object[] {});
+							if(id == null)
+								manager.add(gotoAddressAction);
+						}
+					}
+					catch(Exception e)
+					{
+						// do nothing
+					}
+				}
+				
                 manager.add(gotoBaseAddressAction);
                 manager.add(refreshAction);
                 manager.add(new Separator());

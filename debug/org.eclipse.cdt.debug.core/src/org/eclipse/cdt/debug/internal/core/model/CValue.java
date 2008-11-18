@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBigIntegerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
@@ -230,6 +231,8 @@ public class CValue extends AbstractCValue {
 				return getLongValueString( (ICDILongValue)cdiValue );
 			else if ( cdiValue instanceof ICDILongLongValue )
 				return getLongLongValueString( (ICDILongLongValue)cdiValue );
+			else if ( cdiValue instanceof ICDIBigIntegerValue )
+				return getBigIntegerValueString( (ICDIBigIntegerValue)cdiValue );
 			else if ( cdiValue instanceof ICDIFloatValue )
 				return getFloatValueString( (ICDIFloatValue)cdiValue );
 			else if ( cdiValue instanceof ICDIDoubleValue )
@@ -605,6 +608,35 @@ public class CValue extends AbstractCValue {
 		return value.getValueString();
 	}
 
+	private String getBigIntegerValueString( ICDIBigIntegerValue value ) throws CDIException {
+		try {
+			CVariableFormat format = getParentVariable().getFormat();
+			
+			if (CVariableFormat.NATURAL.equals(format)) {
+				format = getNaturalFormat(value, CVariableFormat.DECIMAL);
+			}
+			
+			if ( CVariableFormat.DECIMAL.equals( format ) ) {
+				BigInteger bigValue = value.bigIntegerValue();
+				return bigValue.toString(10); 
+			}
+			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer("0x");
+				BigInteger bigValue = value.bigIntegerValue();
+				sb.append(bigValue.toString(16));
+				return sb.toString();
+			}
+			else if ( CVariableFormat.BINARY.equals( format ) ) {
+				StringBuffer sb = new StringBuffer("0b");
+				BigInteger bigValue = value.bigIntegerValue();
+				sb.append(bigValue.toString(2));
+				return sb.toString();
+			}
+		}
+		catch( NumberFormatException e ) {
+		}
+		return null;
+	}	
 	private boolean isUnsigned() {
 		boolean result = false;
 		try {

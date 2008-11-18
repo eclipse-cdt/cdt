@@ -237,7 +237,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		// Template parameters are identified by their position in the parameter list.
-		int pos = param.getParameterPosition() & 0xff;
+		int pos = param.getParameterPosition() & 0xFFFF;
 		if (params != null) {
 			return pos < params.length ? params[pos] : null;
 		}

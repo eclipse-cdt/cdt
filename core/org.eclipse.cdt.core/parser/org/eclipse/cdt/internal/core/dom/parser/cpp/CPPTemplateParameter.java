@@ -239,7 +239,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		// use parameter from the index
 		try {
 			ICPPTemplateParameter[] params = template.getTemplateParameters();
-			final int pos= position & 0xff;
+			final int pos= position & 0xffff;
 			if (pos < params.length) 
 				return params[pos];
 		} catch (DOMException e) {

@@ -32,18 +32,18 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 * Example: 
 	 * <pre>
 	 * namespace ns {
-	 *    template<typename T> class X {       // parameter position: 0x0000
-	 *       template<typename U> class Y1 {   // parameter position: 0x0100
+	 *    template<typename T> class X {       // parameter position: 0x00000000
+	 *       template<typename U> class Y1 {   // parameter position: 0x00010000
 	 *       };
 	 *       class Y2 {
-	 *          template typename<V> class Z { // parameter position: 0x0100
+	 *          template typename<V> class Z { // parameter position: 0x00010000
 	 *             void m();
 	 *          };  
 	 *       };
 	 *    };
 	 * }
-	 * template<typename T>                    // parameter position 0x0000
-	 *    template <typename V>                // parameter position 0x0100
+	 * template<typename T>                    // parameter position 0x00000000
+	 *    template <typename V>                // parameter position 0x00010000
 	 *       void ns::X<T>::Y2::Z<V>::m() {}
 	 * </pre>
 	 * @since 5.1

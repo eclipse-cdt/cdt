@@ -247,7 +247,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	}
 	
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
-		int pos= templateParameter.getParameterPosition() & 0xff;
+		int pos= templateParameter.getParameterPosition() & 0xffff;
 		
     	int tdeclLen= declarations == null ? 0 : declarations.length;
     	for (int i= -1; i < tdeclLen; i++) {

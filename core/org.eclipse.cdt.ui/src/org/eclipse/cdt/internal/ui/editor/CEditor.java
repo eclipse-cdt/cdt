@@ -2141,10 +2141,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
         setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
 
         //Assorted action groupings
-		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		fSelectionSearchGroup = createSelectionSearchGroup();
 		fTextSearchGroup= new TextSearchGroup(this);
 		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
-		fOpenInViewGroup= new OpenViewActionGroup(this);
+		fOpenInViewGroup= createOpenViewActionGroup();
 		fGenerateActionGroup= new GenerateActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
 
 		action = getAction(ITextEditorActionConstants.SHIFT_RIGHT);
@@ -2158,6 +2158,17 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
 		}
 	}
+
+
+	protected ActionGroup createSelectionSearchGroup() {
+		return new SelectionSearchGroup(this);
+	}
+	
+	protected ActionGroup createOpenViewActionGroup() {
+		return new OpenViewActionGroup(this);
+	}
+	
+
 
 	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)

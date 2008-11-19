@@ -34,8 +34,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -61,46 +59,6 @@ import org.eclipse.swt.widgets.Composite;
 public class ExpressionManagerVMNode extends AbstractVMNode
     implements IElementLabelProvider, IElementEditor
 {
-
-    /**
-     * VMC of an expression object that failed to get parsed by any of the 
-     * configured expression layout nodes.  It is only used to display an
-     * error message in the view, and to allow the user to edit the 
-     * expression.
-     */
-    static class InvalidExpressionVMContext extends AbstractVMContext {
-        final private IExpression fExpression;
-        
-        public InvalidExpressionVMContext(ExpressionManagerVMNode node, IExpression expression) {
-            super(node);
-            fExpression = expression;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked") 
-        public Object getAdapter(Class adapter) {
-            if (adapter.isAssignableFrom(fExpression.getClass())) {
-                return fExpression;
-            } else {
-                return super.getAdapter(adapter);
-            }
-        }
-        
-        public IExpression getExpression() {
-            return fExpression;
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof InvalidExpressionVMContext && ((InvalidExpressionVMContext)obj).fExpression.equals(fExpression);
-        }
-        
-        @Override
-        public int hashCode() {
-            return fExpression.hashCode();
-        }
-    }
-    
     /**
      * VMC for a new expression object to be added.  When user clicks on this node to 
      * edit it, he will create a new expression.
@@ -237,42 +195,13 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         // The expression layout nodes are responsible for supplying label providers 
         // for their VMCs.
         for (ILabelUpdate update : updates) {
-            if (update.getElement() instanceof InvalidExpressionVMContext) {
-                updateInvalidExpressionVMCLabel(update, (InvalidExpressionVMContext) update.getElement());
-            } else if (update.getElement() instanceof NewExpressionVMC) {
+            if (update.getElement() instanceof NewExpressionVMC) {
                 updateNewExpressionVMCLabel(update, (NewExpressionVMC) update.getElement());
             } else {
                 update.done();
             }
         }
     }
-
-    /**
-     * Updates the label for the InvalidExpressionVMC.
-     */
-    private void updateInvalidExpressionVMCLabel(ILabelUpdate update, InvalidExpressionVMContext vmc) {
-        String[] columnIds = update.getColumnIds() != null ? 
-            update.getColumnIds() : new String[] { IDebugVMConstants.COLUMN_ID__NAME };
-            
-        for (int i = 0; i < columnIds.length; i++) {
-            if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])) {
-                update.setLabel(vmc.getExpression().getExpressionText(), i);
-                update.setImageDescriptor(DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ), i);
-            } else if (IDebugVMConstants.COLUMN_ID__NAME.equals(columnIds[i])) {
-                update.setLabel(vmc.getExpression().getExpressionText(), i);
-                update.setImageDescriptor(DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ), i);
-            } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnIds[i])) {
-                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__invalidExpression_valueColumn_label, i);
-            } else {
-                update.setLabel("", i); //$NON-NLS-1$
-            }
-            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], i);            
-        }
-        
-        
-        update.done();
-    }
-
 
     /**
      * Updates the label for the NewExpressionVMC.

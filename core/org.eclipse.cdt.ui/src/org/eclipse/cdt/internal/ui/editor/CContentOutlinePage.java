@@ -109,12 +109,12 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	}
 
 	@Override
-	protected SelectionSearchGroup createSearchActionGroup() {
+	protected ActionGroup createSearchActionGroup() {
 		return new SelectionSearchGroup(this);
 	}
 
 	@Override
-	protected OpenViewActionGroup createOpenViewActionGroup() {
+	protected ActionGroup createOpenViewActionGroup() {
 		OpenViewActionGroup ovag= new OpenViewActionGroup(this, getEditor());
 		ovag.setEnableIncludeBrowser(true);
 		return ovag;

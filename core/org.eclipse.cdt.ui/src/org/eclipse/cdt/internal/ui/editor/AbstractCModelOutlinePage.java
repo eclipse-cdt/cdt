@@ -206,9 +206,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	private IncludeGroupingAction fIncludeGroupingAction;
 	private ToggleLinkingAction fToggleLinkingAction;
 	private ActionGroup fMemberFilterActionGroup;
-	private SelectionSearchGroup fSelectionSearchGroup;
+	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
-	private OpenViewActionGroup fOpenViewActionGroup;
+	private ActionGroup fOpenViewActionGroup;
 	/**
 	 * Custom filter action group.
 	 * @since 3.0
@@ -516,7 +516,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	 * return an ActionGroup contributing search actions or
 	 *         <code>null</code> if search is not supported
 	 */
-	protected SelectionSearchGroup createSearchActionGroup() {
+	protected ActionGroup createSearchActionGroup() {
 		// default: no search action group
 		return null;
 	}
@@ -525,7 +525,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	 * @return an OpenViewActionGroup contributing open view actions or
 	 *         <code>null</code> if open view actions are not wanted
 	 */
-	protected OpenViewActionGroup createOpenViewActionGroup() {
+	protected ActionGroup createOpenViewActionGroup() {
 		// default: no open view action group
 		return null;
 	}

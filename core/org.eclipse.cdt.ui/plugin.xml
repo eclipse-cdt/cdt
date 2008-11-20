@@ -666,107 +666,147 @@
             name="%CPluginPreferencePage.name"
             class="org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CPluginPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CPluginEditorPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CEditorPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CodeAssistPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.contentassist"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CodeAssistAdvancedPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeAssistAdvancedPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced">
+          <keywordReference id="org.eclipse.cdt.ui.contentassist"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%ColoringPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CEditorColoringPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"/>
+            id="org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.syntaxcoloring"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%FoldingPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.FoldingPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.FoldingPreferencePage"/>
+            id="org.eclipse.cdt.ui.preferences.FoldingPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.folding"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%HoverPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CEditorHoverPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.HoverPreferencePage"/>
+            id="org.eclipse.cdt.ui.preferences.HoverPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.hover"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%CPluginTemplatePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CTemplatePreferencePage"
             id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.templates"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%SmartTypingPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.SmartTypingPreferencePage"
             id="org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.smarttyping"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CodeFormatterPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.codestyle"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CPluginBuildConsolePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CPluginFileTypesPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%appearancePrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.AppearancePreferencePage"
             id="org.eclipse.cdt.ui.preferences.AppearancePreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"
             id="org.eclipse.cdt.ui.preferences.IndexerPreferencePage"
-            name="%indexerPrefName"/>
+            name="%indexerPrefName">
+          <keywordReference id="org.eclipse.cdt.ui.indexer"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.language.WorkspaceLanguageMappingPreferencePage"
             id="org.eclipse.cdt.ui.preferences.LanguageMappings"
             name="%CDTLanguagesProperty.name">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
             id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
-            name="%todoTaskPrefName"/>
+            name="%todoTaskPrefName">
+          <keywordReference id="org.eclipse.cdt.ui.todo"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%codeTemplatePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage"
-            id="org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage"/>
+            id="org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.codetemplates"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%markOccurrencesPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.MarkOccurrencesPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.MarkOccurrencesPreferencePage"/>
+            id="org.eclipse.cdt.ui.preferences.MarkOccurrencesPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.markoccurrences"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <page
             name="%ScalabilityPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.ScalabilityPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.CScalabilityPreferences"/>
+            id="org.eclipse.cdt.ui.preferences.CScalabilityPreferences">
+          <keywordReference id="org.eclipse.cdt.ui.scalability"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -777,8 +817,57 @@
             class="org.eclipse.cdt.ui.templateengine.pages.TemplatePreferencePage"
             name="%TemplatePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            id="org.eclipse.cdt.core.templateengine.shareddefaults"/>
+            id="org.eclipse.cdt.core.templateengine.shareddefaults">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
    </extension>
+
+   <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.common"
+            id="org.eclipse.cdt.ui.common"/>
+      <keyword
+            label="%preferenceKeywords.codestyle"
+            id="org.eclipse.cdt.ui.codestyle"/>
+      <keyword
+            label="%preferenceKeywords.codetemplates"
+            id="org.eclipse.cdt.ui.codetemplates"/>
+      <keyword
+            label="%preferenceKeywords.todo"
+            id="org.eclipse.cdt.ui.todo"/>            
+      <keyword
+            label="%preferenceKeywords.ceditor"
+            id="org.eclipse.cdt.ui.ceditor"/>      
+      <keyword
+            label="%preferenceKeywords.contentassist"
+            id="org.eclipse.cdt.ui.contentassist"/>   
+      <keyword
+            label="%preferenceKeywords.hover"
+            id="org.eclipse.cdt.ui.hover"/>
+      <keyword
+            label="%preferenceKeywords.scalability"
+            id="org.eclipse.cdt.ui.scalability"/>
+      <keyword
+            label="%preferenceKeywords.syntaxcoloring"
+            id="org.eclipse.cdt.ui.syntaxcoloring"/>   
+      <keyword
+            label="%preferenceKeywords.templates"
+            id="org.eclipse.cdt.ui.templates"/>
+      <keyword
+            label="%preferenceKeywords.folding"
+            id="org.eclipse.cdt.ui.folding"/>
+      <keyword
+            label="%preferenceKeywords.markoccurrences"
+            id="org.eclipse.cdt.ui.markoccurrences"/>
+      <keyword
+            label="%preferenceKeywords.smarttyping"
+            id="org.eclipse.cdt.ui.smarttyping"/>
+      <keyword
+            label="%preferenceKeywords.indexer"
+            id="org.eclipse.cdt.ui.indexer"/>
+   </extension>  
+
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution

@@ -672,6 +672,7 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CEditorPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.ceditor"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page

@@ -128,14 +128,10 @@ public interface ICHelpContextIds {
 
 	// view parts
 	public static final String TYPE_HIERARCHY_VIEW= PREFIX + "type_hierarchy_view_context"; //$NON-NLS-1$
-	public static final String PACKAGES_VIEW= PREFIX + "package_view_context"; //$NON-NLS-1$
-	public static final String PROJECTS_VIEW= PREFIX + "projects_view_context"; //$NON-NLS-1$
-	public static final String PACKAGES_BROWSING_VIEW= PREFIX + "packages_browsing_view_context"; //$NON-NLS-1$
-	public static final String TYPES_VIEW= PREFIX + "types_view_context"; //$NON-NLS-1$
-	public static final String MEMBERS_VIEW= PREFIX + "members_view_context"; //$NON-NLS-1$
+	public static final String CALL_HIERARCHY_VIEW= PREFIX + "call_hierarchy_view_context"; //$NON-NLS-1$
+	public static final String INCLUDE_BROWSER_VIEW= PREFIX + "include_browser_view_context"; //$NON-NLS-1$
 
 	public static final String OPEN_ACTION = PREFIX + "open_action"; //$NON-NLS-1$
-	public static final String OPEN_C_BROWSING_PERSPECTIVE_ACTION = PREFIX + "open_c_browsing_perspective_action"; //$NON-NLS-1$
 	public static final String OPEN_PROJECT_ACTION = PREFIX + "open_project_action"; //$NON-NLS-1$
 
 	public static final String OPEN_TYPE_ACTION = PREFIX + "open_type_action"; //$NON-NLS-1$

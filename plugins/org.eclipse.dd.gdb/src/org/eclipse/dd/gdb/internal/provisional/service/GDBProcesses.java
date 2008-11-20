@@ -154,7 +154,15 @@ public class GDBProcesses extends MIProcesses {
 
 	@Override
 	public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-		rm.setData(!fGdb.isConnected());
+        MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+	    if (!fGdb.isConnected() &&
+	    	inferiorProcess != null && 
+	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
+	    	
+	    	rm.setData(true);
+	    } else {
+	    	rm.setData(false);
+	    }
 		rm.done();
 	}
 

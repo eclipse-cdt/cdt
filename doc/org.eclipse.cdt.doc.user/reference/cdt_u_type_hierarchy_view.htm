@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>
+      Type Hierarchy View
+    </title>
+    <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">
+  </head>
+  <body>
+    <h1>
+      Type Hierarchy View
+    </h1>
+    <p>
+      This view shows the hierarchy of a type. The Type Hierarchy view consists of two panes:
+    </p>
+    <ul>
+      <li>
+        Type Hierarchy tree pane
+      </li>
+      <li>
+        Member list pane (optional)
+      </li>
+    </ul>
+    <h2 class="Head">
+      Type Hierarchy tree pane toolbar buttons
+    </h2>
+    <p>
+    The type hierarchy tree shows supertypes, suptypes or both of a given type depending on the selection made in the
+    toolbar.
+    </p>
+    <table border="1" cellspacing="0" cellpadding="5" width="100%" summary="Hierarchy viewer">
+      <thead>
+        <tr>
+          <th>
+            <p>
+              Command
+            </p>
+          </th>
+          <th>
+            <p>
+              Description
+            </p>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td valign="top">
+            <p>
+              Show the Type Hierarchy
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This command displays the type in its full context (i.e., superclasses and subclasses) in the Hierarchy view.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Show the Supertype Hierarchy
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This command displays the supertypes in the Hierarchy view. The tree starts at the selected type and
+              displays the result of traversing up the hierarchy.
+            </p>
+             <em>Note: The selected type is always at the top level, in the upper-left corner.</em>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Show the Subtype Hierarchy
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This command displays the subtypes of the selected type in the Hierarchy view. The tree starts at the selected type and
+              displays the result of traversing down the hierarchy
+            </p>
+             <em>Note: The selected type is always at the top level, in the upper-left corner.</em>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Show History List
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This menu displays a history of previously displayed type hierarchies.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Refresh
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This command updates the view content by running a new query on the index database.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Cancel
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              This command cancels a currently running query.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Layout &gt; Hierarchy View Only
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Hides the member list pane.
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="Head">
+      Member list pane toolbar buttons
+    </h2>
+    <p>
+      The member list pane displays the members of the currently selected type in the type hierarchy tree pane.
+    </p>
+    <table border="1" cellspacing="0" cellpadding="5" width="100%" summary="Member viewer">
+      <thead>
+        <tr>
+          <th>
+            <p>
+              Command
+            </p>
+          </th>
+          <th>
+            <p>
+              Description
+            </p>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td valign="top">
+            <p>
+              Show All Inherited Members
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Shows or hides all methods and fields inherited by base classes. When this option is set, the name of the type that defines the method is appended to the method
+              name.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Hide Fields
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Shows or hides the fields.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Hide Static Fields and Methods
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Shows or hides the static fields and methods.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>
+              Hide Non-Public Members
+            </p>
+          </td>
+          <td valign="top">
+            <p>
+              Shows or hides the static fields and methods.
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+      <a href="cdt_o_views.htm">Views</a>
+    </p>
+  </body>
+</html>

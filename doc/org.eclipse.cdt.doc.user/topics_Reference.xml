@@ -18,6 +18,8 @@
 		<topic label="Properties view" href="reference/cdt_u_properties_view.htm"/>
 		<topic label="Search view" href="reference/cdt_u_search_view.htm"/>
 		<topic label="Call Hierarchy view" href="reference/cdt_u_call_hierarchy_view.htm"/>
+		<topic label="Type Hierarchy view" href="reference/cdt_u_type_hierarchy_view.htm"/>
+		<topic label="Include Browser view" href="reference/cdt_u_include_browser_view.htm"/>
 		<topic label="Debug views" href="reference/cdt_o_dbg_view.htm">
 			<topic label="Registers view" href="reference/cdt_u_registersview.htm"/>
 			<topic label="Memory view" href="reference/cdt_u_memoryview.htm"/>
@@ -70,6 +72,7 @@
 			<topic label="Folding preferences" href="reference/cdt_u_c_editor_folding.htm"/>
 			<topic label="Hovers preferences" href="reference/cdt_u_c_editor_hov.htm"/>
 			<topic label="Mark Occurrences preferences" href="reference/cdt_u_c_editor_mark_occurrences.htm"/>
+			<topic label="Scalability preferences" href="reference/cdt_u_c_editor_scalability.htm"/>
 			<topic label="Syntax Coloring preferences" href="reference/cdt_u_c_editor_color.htm"/>
 			<topic label="Templates preferences" href="reference/cdt_u_code_temp.htm"/>
 			<topic label="Typing preferences" href="reference/cdt_u_c_editor_typing.htm"/>

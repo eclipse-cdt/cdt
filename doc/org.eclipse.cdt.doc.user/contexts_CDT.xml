@@ -87,6 +87,11 @@
    <topic href="reference/cdt_u_c_editor_hov.htm"
    	label="C/C++ Editor Hovers Preferences"/>
 </context>
+<context id ="scalability_preference_page_context">
+   <description>This page allows to configure editor scalability mode options. The scalability mode helps to deal with very large source files.</description>
+   <topic href="reference/cdt_u_c_editor_scalability.htm"
+   	label="C/C++ Editor Scalability Preferences"/>
+</context>
 <context id ="c_editor_typing">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_typing.htm"
@@ -333,12 +338,12 @@
    	label="Common"/>
 </context>
 <context id ="cdt_u_search">
-   <description>Click below to see help.</description>
+   <description>Use the C/C++ Search to search for occurrences of C/C++ elements.</description>
    <topic href="reference/cdt_u_search.htm"
    	label="C/C++ search page"/>
 </context>
 <context id ="open_element_dialog_context">
-   <description>Click below to see help.</description>
+   <description>This dialog allows to open up the declaration of C/C++ classes, structures, unions, typedefs, enumerations, namespaces, functions, methods, variables and macros.</description>
    <topic href="reference/cdt_u_open_element.htm"
    	label="Open Element"/>
 </context>
@@ -497,4 +502,16 @@
    label="Preferred Toolchains tab"/> 
 </context>                   
 
+<context id="type_hierarchy_view_context" title="About Type Hierarchy view">
+    <description>This view displays a type&apos;s hierarchy.</description>
+    <topic label="Type Hierarchy view" href="reference/cdt_u_type_hierarchy_view.htm"/>
+</context>
+<context id="call_hierarchy_view_context" title="About Call Hierarchy view">
+    <description>The Call Hierarchy shows all callers or callees of the given function.</description>
+    <topic label="Call Hierarchy view" href="reference/cdt_u_call_hierarchy_view.htm"/>
+</context>
+<context id="include_browser_view_context" title="About Include Browser view">
+    <description>This view displays include file relationships.</description>
+    <topic label="Include Browser view" href="reference/cdt_u_include_browser_view.htm"/>
+</context>
 </contexts>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,28 +32,26 @@ import org.eclipse.core.runtime.Preferences;
  * 
  * @author vhirsl
  */
-public class ScannerConfigProfileManager {
+public final class ScannerConfigProfileManager {
 	public static final String SI_PROFILE_SIMPLE_ID = "ScannerConfigurationDiscoveryProfile";	//$NON-NLS-1$
 	public static final String PER_PROJECT_PROFILE_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
 	public static final String DEFAULT_SI_PROFILE_ID = PER_PROJECT_PROFILE_ID;
     public static final String NULL_PROFILE_ID = "";//$NON-NLS-1$
 	
-	private Map projectToProfileInstanceMap;
-	private List profileIds;
-	private List contextAwareProfileIds;
-	
+	private final Map<IProject, Map<InfoContext, Object>> projectToProfileInstanceMap;
+	private List<String> profileIds;
+	private List<String> contextAwareProfileIds;
+	private final Object fLock = new Object();
+
 	/**
 	 * Singleton pattern
 	 */
 	private ScannerConfigProfileManager() {
-		projectToProfileInstanceMap = new HashMap();
+		projectToProfileInstanceMap = new HashMap<IProject, Map<InfoContext, Object>>();
 	}
-	private static ScannerConfigProfileManager instance = null;
+	private static final ScannerConfigProfileManager instance = new ScannerConfigProfileManager();
 
 	public static ScannerConfigProfileManager getInstance() {
-		if (instance == null) {
-			instance = new ScannerConfigProfileManager();
-		}
 		return instance;
 	}
 
@@ -85,17 +84,21 @@ public class ScannerConfigProfileManager {
 		getProfileMap(project, true).put(context, profile);
 	}
 	
-	private Map getProfileMap(IProject project, boolean create){
-		Map map = (Map)projectToProfileInstanceMap.get(project);
-		if(map == null && create){
-			map = new HashMap();
-			projectToProfileInstanceMap.put(project, map);
+	private Map<InfoContext, Object> getProfileMap(IProject project, boolean create){
+		synchronized (fLock) {
+			Map<InfoContext, Object> map = projectToProfileInstanceMap.get(project);
+			if(map == null && create){
+				map = new HashMap<InfoContext, Object>();
+				projectToProfileInstanceMap.put(project, map);
+			}
+			return Collections.synchronizedMap(map);
 		}
-		return map;
 	}
 	
 	public void handleProjectRemoved(IProject project){
-		projectToProfileInstanceMap.remove(project);
+		synchronized (fLock) {
+			projectToProfileInstanceMap.remove(project);
+		}
 	}
 	
 	/**
@@ -113,14 +116,16 @@ public class ScannerConfigProfileManager {
         if (profileId == NULL_PROFILE_ID) {
             profileId = getProfileId(project, context);
         }
-        // is the project's profile already loaded?
-        Map map = getProfileMap(project, true);
-        SCProfileInstance profileInstance = (SCProfileInstance) map.get(context);
-        if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
-            profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
-            map.put(context, profileInstance);
-        }
-        return profileInstance;
+		synchronized (fLock) {
+	        // is the project's profile already loaded?
+	        Map<InfoContext, Object> map = getProfileMap(project, true);
+	        SCProfileInstance profileInstance = (SCProfileInstance) map.get(context);
+	        if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
+	            profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
+	            map.put(context, profileInstance);
+	        }
+	        return profileInstance;
+		}
 	}
 
     /**
@@ -147,20 +152,24 @@ public class ScannerConfigProfileManager {
 	/**
 	 * @return
 	 */
-	public List getProfileIds() {
+	public List<String> getProfileIds() {
 		if (profileIds == null) {
-			profileIds = new ArrayList();
-			IExtensionPoint extension = Platform.getExtensionRegistry().
-					getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
-			if (extension != null) {
-				IExtension[] extensions = extension.getExtensions();
-				for (int i = 0; i < extensions.length; ++i) {
-					String rProfileId = extensions[i].getUniqueIdentifier();
-					profileIds.add(rProfileId);
+			synchronized (fLock) {
+				if (profileIds == null) {
+					profileIds = new ArrayList<String>();
+					IExtensionPoint extension = Platform.getExtensionRegistry().
+							getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
+					if (extension != null) {
+						IExtension[] extensions = extension.getExtensions();
+						for (int i = 0; i < extensions.length; ++i) {
+							String rProfileId = extensions[i].getUniqueIdentifier();
+							profileIds.add(rProfileId);
+						}
+					}
 				}
 			}
 		}
-		return profileIds;	
+		return Collections.unmodifiableList(profileIds);	
 	}
 	
 	/**
@@ -168,23 +177,26 @@ public class ScannerConfigProfileManager {
 	 * @param context
 	 * @return
 	 */
-	public List getProfileIds(InfoContext context){
+	public List<String> getProfileIds(InfoContext context){
 		if(context.isDefaultContext() || context.getProject() == null)
 			return getProfileIds();
 		
 		if(contextAwareProfileIds == null){
-			contextAwareProfileIds = new ArrayList();
-			List all = getProfileIds();
-			
-			for(int i = 0; i < all.size(); i++){
-				String id = (String)all.get(i);
-				ScannerConfigProfile profile = getSCProfileConfiguration(id);
-				if(profile.supportsContext())
-					contextAwareProfileIds.add(id);
+			synchronized (fLock) {
+				if(contextAwareProfileIds == null){
+					contextAwareProfileIds = new ArrayList<String>();
+					List<String> all = getProfileIds();
+
+					for(int i = 0; i < all.size(); i++){
+						String id = all.get(i);
+						ScannerConfigProfile profile = getSCProfileConfiguration(id);
+						if(profile.supportsContext())
+							contextAwareProfileIds.add(id);
+					}
+				}
 			}
 		}
-		
-		return contextAwareProfileIds;
+		return Collections.unmodifiableList(contextAwareProfileIds);
 	}
 
 	/**

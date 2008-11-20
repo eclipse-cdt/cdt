@@ -948,6 +948,58 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define BLOCK { }
+	//#define DOIT1() { }
+	//#define DOIT2() do { } while(false)
+	//#define ALWAYS if(true)
+	//#define NEVER if(false)
+	//#define FOREVER for(;;)
+	//
+	//void foo() {
+	//	int i=0;
+	//  if (true) DOIT1();
+	//  if (true) DOIT2();
+	//	for (;;) BLOCK
+	//	ALWAYS BLOCK
+	//	NEVER FOREVER BLOCK
+	//	switch(i) {
+	//	case 0: BLOCK
+	//	}
+	//}
+
+	//#define BLOCK { }
+	//#define DOIT1() { }
+	//#define DOIT2() do { } while(false)
+	//#define ALWAYS if(true)
+	//#define NEVER if(false)
+	//#define FOREVER for(;;)
+	//
+	//void
+	//foo()
+	//{
+	//  int i = 0;
+	//  if (true)
+	//    DOIT1();
+	//  if (true)
+	//    DOIT2();
+	//  for (;;)
+	//    BLOCK
+	//  ALWAYS
+	//    BLOCK
+	//  NEVER
+	//    FOREVER
+	//      BLOCK
+	//  switch (i)
+	//    {
+	//  case 0:
+	//    BLOCK
+	//    }
+	//}
+	public void testCompoundStatementAsMacroGNU_Bug244928() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getGNUSettings().getMap();
+		assertFormatterResult();
+	}
+
 	//#define A (0)
 	//#define B (1)
 	//#define ARGS (A, B)

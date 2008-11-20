@@ -3093,6 +3093,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		if (!endsWithMacroExpansion) {
 			formatClosingBrace(block_brace_position);
+		} else {
+			if (DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(block_brace_position)) {
+				scribe.unIndent();
+			}
 		}
 	}
 

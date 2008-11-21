@@ -1227,6 +1227,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private boolean fEnableScalablilityMode = false;
 
+	/**
+	 * Flag indicating wheter the reconciler is currently running.
+	 */
+	private volatile boolean fIsReconciling;
+
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -1715,7 +1720,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						((IWorkingCopy) unit).reconcile();
 					}
 					return unit.getElementAtOffset(offset);
-				} else if (unit.isStructureKnown() && unit.isConsistent()) {
+				} else if (unit.isStructureKnown() && unit.isConsistent() && !fIsReconciling) {
 					return unit.getElementAtOffset(offset);
 				}
 			} catch (CModelException x) {
@@ -2820,6 +2825,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	public void aboutToBeReconciled() {
+		fIsReconciling= true;
+
 		// Notify AST provider
 		CUIPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputCElement());
 
@@ -2835,6 +2842,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 4.0
 	 */
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
+		fIsReconciling= false;
+
 		CUIPlugin cuiPlugin= CUIPlugin.getDefault();
 		if (cuiPlugin == null)
 			return;

@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -39,16 +41,20 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.absolutePath";	 //$NON-NLS-1$
 
 	private Object[] findSourceElementByFile(File file) {
-		IFile[] wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(file.getAbsolutePath()));
-		if (wfiles.length > 0)
+		IFile[] wfiles = ResourceLookup.findFilesForLocation(new Path(file.getAbsolutePath()));
+		if (wfiles.length > 0) {
+			ResourceLookup.sortFilesByRelevance(wfiles, getProject());
 			return wfiles;
+		}
 
 		try {
 			// Check the canonical path as well to support case insensitive file
 			// systems like Windows.
-			wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(file.getCanonicalPath()));
-			if (wfiles.length > 0)
+			wfiles = ResourceLookup.findFilesForLocation(new Path(file.getCanonicalPath()));
+			if (wfiles.length > 0) {
+				ResourceLookup.sortFilesByRelevance(wfiles, getProject());
 				return wfiles;
+			}
 			
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			ISourceLookupDirector director = getDirector();
@@ -75,6 +81,24 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 
 		// If we can't create an ETU then fall back on LocalFileStorage.
 		return new LocalFileStorage[] { new LocalFileStorage(file) };
+	}
+
+	/**
+	 * Find the project associated with the current launch configuration
+	 * @return IProject or null
+	 */
+	private IProject getProject() {
+		ILaunchConfiguration config = getDirector().getLaunchConfiguration();
+		if (config != null) {
+			try {
+				String name = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+				if (name.length() > 0)
+					return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			} catch (CoreException e) {
+				// Don't care carry on search using other heuristics
+			}
+		}
+		return null;
 	}
 
 	public boolean isValidAbsoluteFilePath( String name )

@@ -357,7 +357,7 @@ public class RxThread extends Thread {
 			OutputStream target = session.getMIInferior().getPipedOutputStream();
 			if (target != null) {
 				MITargetStreamOutput out = (MITargetStreamOutput) stream;
-				String str = out.getString();
+				String str = out.getCString();
 				if (str != null) {
 					try {
 						target.write(str.getBytes());

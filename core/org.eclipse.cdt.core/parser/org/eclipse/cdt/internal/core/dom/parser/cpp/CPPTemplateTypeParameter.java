@@ -73,7 +73,7 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
         if (!(type instanceof ICPPTemplateTypeParameter))
         	return false;
         
-        return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
+        return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
     }
 
 	public IASTName getUnknownName() {

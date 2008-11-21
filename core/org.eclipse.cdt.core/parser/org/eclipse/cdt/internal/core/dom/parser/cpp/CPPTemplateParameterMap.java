@@ -35,36 +35,36 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 * Returns whether the map contains the given parameter
 	 */
 	public boolean contains(ICPPTemplateParameter templateParameter) {
-		return fMap.containsKey(templateParameter.getParameterPosition());
+		return fMap.containsKey(templateParameter.getParameterID());
 	}
 
 	/**
 	 * Adds the mapping to the map.
 	 */
 	public void put(ICPPTemplateParameter param, ICPPTemplateArgument value) {
-		fMap.put(param.getParameterPosition(), value);
+		fMap.put(param.getParameterID(), value);
 	}
 
 	/**
 	 * Adds the mapping to the map.
 	 */
-	public void put(int parameterPos, ICPPTemplateArgument value) {
-		fMap.put(parameterPos, value);
+	public void put(int parameterID, ICPPTemplateArgument value) {
+		fMap.put(parameterID, value);
 	}
 
 	/**
 	 * Returns the value for the given parameter.
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param) {
-		return (ICPPTemplateArgument) fMap.get(param.getParameterPosition());
+		return (ICPPTemplateArgument) fMap.get(param.getParameterID());
 	}
 
 	/**
-	 * Returns the value for the template parameter at the given position.
-	 * @see ICPPTemplateParameter#getParameterPosition()
+	 * Returns the value for the template parameter with the given id.
+	 * @see ICPPTemplateParameter#getParameterID()
 	 */
-	public ICPPTemplateArgument getArgument(int paramPosition) {
-		return (ICPPTemplateArgument) fMap.get(paramPosition);
+	public ICPPTemplateArgument getArgument(int paramID) {
+		return (ICPPTemplateArgument) fMap.get(paramID);
 	}
 
 	/**

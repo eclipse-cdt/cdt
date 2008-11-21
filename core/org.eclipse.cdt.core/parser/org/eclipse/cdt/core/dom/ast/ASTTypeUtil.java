@@ -315,7 +315,7 @@ public class ASTTypeUtil {
 			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
 			if (normalize) {
 				result.append('#');
-				result.append(Integer.toString(tpar.getParameterPosition(), 16));
+				result.append(Integer.toString(tpar.getParameterID(), 16));
 			} else {
 				result.append(tpar.getName());
 			}

@@ -34,10 +34,18 @@ public class CompositeCPPTemplateNonTypeParameter extends CompositeCPPVariable i
 		fail(); return null; 
 	}
 
-	public int getParameterPosition() {
+	public short getParameterPosition() {
 		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
 	}
+
+	public short getTemplateNestingLevel() {
+		return ((ICPPTemplateParameter)rbinding).getTemplateNestingLevel();
+	}
 	
+	public int getParameterID() {
+		return ((ICPPTemplateParameter)rbinding).getParameterID();
+	}
+
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTypeParameter)rbinding).getDefaultValue());

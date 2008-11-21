@@ -128,7 +128,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		// Template parameters are identified by their position in the parameter list.
-		int pos = param.getParameterPosition() & 0xFFFF;
+		int pos = param.getParameterPosition();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
 			return (ICPPTemplateParameter) list.getNodeAt(pos);

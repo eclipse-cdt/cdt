@@ -99,7 +99,7 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Tests whether the value is a template parameter, returns the parameter position of the
+	 * Tests whether the value is a template parameter, returns the parameter id of the
 	 * parameter, or <code>null</code> if it is not a template parameter.
 	 */
 	public static int isTemplateParameter(IValue tval) {
@@ -265,7 +265,7 @@ public class Value implements IValue {
 	
 	@SuppressWarnings("nls")
 	private static String evaluate(ICPPTemplateParameter param) {
-		return "#" + Integer.toHexString(param.getParameterPosition());
+		return "#" + Integer.toHexString(param.getParameterID());
 	}
 	
 	@SuppressWarnings("nls")

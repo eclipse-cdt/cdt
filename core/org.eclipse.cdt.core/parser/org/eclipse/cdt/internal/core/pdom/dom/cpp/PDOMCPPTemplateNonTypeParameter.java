@@ -37,9 +37,10 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 		ICPPTemplateNonTypeParameter {
 
 	private static final int MEMBERLIST = PDOMCPPVariable.RECORD_SIZE;
-	private static final int PARAMETERPOS= PDOMCPPVariable.RECORD_SIZE + 4;
+	private static final int PARAMETERID= PDOMCPPVariable.RECORD_SIZE + 4;
 	private static final int DEFAULTVAL= PDOMCPPVariable.RECORD_SIZE + 8;
 
+	private int fCachedParamID= -1;
 
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
@@ -51,7 +52,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 			ICPPTemplateNonTypeParameter param) throws CoreException {
 		super(pdom, parent, param);
 		final Database db = pdom.getDB();
-		db.putInt(record + PARAMETERPOS, param.getParameterPosition());
+		db.putInt(record + PARAMETERID, param.getParameterID());
 		ICPPTemplateArgument val= param.getDefaultValue();
 		if (val != null) {
 			IValue sval= val.getNonTypeValue();
@@ -92,13 +93,30 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 		}
 	}
 
-	public int getParameterPosition() {
-		try {
-			final Database db = pdom.getDB();
-			return db.getInt(record + PARAMETERPOS);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return -1;
+	public short getParameterPosition() {
+		readParamID();
+		return (short) fCachedParamID;
+	}
+	
+	public short getTemplateNestingLevel() {
+		readParamID();
+		return (short)(fCachedParamID >> 16);
+	}
+	
+	public int getParameterID() {
+		readParamID();
+		return fCachedParamID;
+	}
+	
+	private void readParamID() {
+		if (fCachedParamID == -1) {
+			try {
+				final Database db = pdom.getDB();
+				fCachedParamID= db.getInt(record + PARAMETERID);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fCachedParamID= -2;
+			}
 		}
 	}
 

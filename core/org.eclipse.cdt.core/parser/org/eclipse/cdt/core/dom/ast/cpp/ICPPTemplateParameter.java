@@ -18,38 +18,44 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPTemplateParameter extends ICPPBinding {
 	public static final ICPPTemplateParameter[] EMPTY_TEMPLATE_PARAMETER_ARRAY = new ICPPTemplateParameter[0];
-	
+
 	/**
-	 * The position of the template parameter is determined by the nesting level of the template 
-	 * declaration and the offset of this parameter within the template parameter list. 
-	 * In every context where a template parameter can be referenced (i.e. within a template declaration) 
-	 * the parameter position is unique. 
+	 * Returns the zero-based position of this parameter within the template parameter list it belongs to. 
+	 * @since 5.1
+	 */
+	short getParameterPosition();
+
+	/**
+	 * Returns the nesting-level of the template declaration this parameter belongs to.
 	 * <p>
-	 * The nesting level is determined by counting the template declarations that enclose the one that 
-	 * declares this parameter. The position is then computed by 
-	 * <code>(nesting-level << 16) + position-in-parameter-list</code>.
-	 * <p> 
-	 * Example: 
+	 * The nesting level is determined by counting enclosing template declarations,
+	 * for example:
 	 * <pre>
 	 * namespace ns {
-	 *    template<typename T> class X {       // parameter position: 0x00000000
-	 *       template<typename U> class Y1 {   // parameter position: 0x00010000
+	 *    template<typename T> class X {       // nesting level 0
+	 *       template<typename U> class Y1 {   // nesting level 1
 	 *       };
 	 *       class Y2 {
-	 *          template typename<V> class Z { // parameter position: 0x00010000
+	 *          template typename<V> class Z { // nesting level 1
 	 *             void m();
 	 *          };  
 	 *       };
 	 *    };
 	 * }
-	 * template<typename T>                    // parameter position 0x00000000
-	 *    template <typename V>                // parameter position 0x00010000
+	 * template<typename T>                    // nesting level 0
+	 *    template <typename V>                // nesting level 1
 	 *       void ns::X<T>::Y2::Z<V>::m() {}
 	 * </pre>
 	 * @since 5.1
 	 */
-	int getParameterPosition();
-
+	short getTemplateNestingLevel();
+	
+	/**
+	 * Returns {@code (getTemplateNestingLevel() << 16) + getParameterPosition()}.
+	 * @since 5.1
+	 */
+	int getParameterID();
+	
 	/**
 	 * Returns the default value for this template parameter, or <code>null</code>.
 	 * @since 5.1

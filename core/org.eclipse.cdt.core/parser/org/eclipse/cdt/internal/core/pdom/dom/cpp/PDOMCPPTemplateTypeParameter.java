@@ -43,14 +43,16 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
-	private static final int PARAMETERPOS= PDOMCPPBinding.RECORD_SIZE + 8;
+	private static final int PARAMETERID= PDOMCPPBinding.RECORD_SIZE + 8;
 
 	/**
 	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
+	
 	private ICPPScope fUnknownScope;
+	private int fCachedParamID= -1;
 	
 	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateTypeParameter param) throws CoreException {
@@ -58,7 +60,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		
 		try {
 			final Database db = pdom.getDB();
-			db.putInt(record + PARAMETERPOS, param.getParameterPosition());
+			db.putInt(record + PARAMETERID, param.getParameterID());
 			IType dflt = param.getDefault();
 			if (dflt != null) {
 				PDOMNode typeNode = getLinkageImpl().addType(this, dflt);
@@ -85,13 +87,30 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
 	}
 	
-	public int getParameterPosition() {
-		try {
-			final Database db = pdom.getDB();
-			return db.getInt(record + PARAMETERPOS);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return -1;
+	public short getParameterPosition() {
+		readParamID();
+		return (short) fCachedParamID;
+	}
+	
+	public short getTemplateNestingLevel() {
+		readParamID();
+		return (short)(fCachedParamID >> 16);
+	}
+	
+	public int getParameterID() {
+		readParamID();
+		return fCachedParamID;
+	}
+	
+	private void readParamID() {
+		if (fCachedParamID == -1) {
+			try {
+				final Database db = pdom.getDB();
+				fCachedParamID= db.getInt(record + PARAMETERID);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fCachedParamID= -2;
+			}
 		}
 	}
 
@@ -115,7 +134,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
         if (!(type instanceof ICPPTemplateTypeParameter))
         	return false;
         
-        return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
+        return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
 	public IType getDefault() {

@@ -253,7 +253,7 @@ public class CPPTemplates {
 
 	private static boolean argIsParameter(ICPPTemplateArgument arg, ICPPTemplateParameter param) {
 		if (param instanceof ICPPTemplateNonTypeParameter) {
-			return arg.isNonTypeValue() && Value.isTemplateParameter(arg.getNonTypeValue()) == param.getParameterPosition();
+			return arg.isNonTypeValue() && Value.isTemplateParameter(arg.getNonTypeValue()) == param.getParameterID();
 		}
 		if (param instanceof IType) {
 			return arg.isTypeValue() && ((IType) param).isSameType(arg.getTypeValue());
@@ -1917,7 +1917,7 @@ public class CPPTemplates {
 					return false;
 			} else {
 				int parpos= Value.isTemplateParameter(arg.getNonTypeValue());
-				if (parpos != par.getParameterPosition())
+				if (parpos != par.getParameterID())
 					return false;
 			}
 		}

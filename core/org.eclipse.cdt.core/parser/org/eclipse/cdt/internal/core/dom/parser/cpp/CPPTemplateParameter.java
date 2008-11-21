@@ -38,11 +38,11 @@ import org.eclipse.core.runtime.PlatformObject;
 public abstract class CPPTemplateParameter extends PlatformObject 
 		implements ICPPTemplateParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
 	private IASTName[] declarations;
-	private final int position;
+	private final int fParameterID;
 	
 	public CPPTemplateParameter(IASTName name) {
 		declarations = new IASTName[] {name};
-		position= computeParameterPosition(name);
+		fParameterID= computeParameterPosition(name);
 	}
 
 	private int computeParameterPosition(IASTName name) {
@@ -105,8 +105,16 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return declarations[0].toCharArray();
 	}
 
-	public int getParameterPosition() {
-		return position;
+	public int getParameterID() {
+		return fParameterID;
+	}
+
+	public short getParameterPosition() {
+		return (short) fParameterID;
+	}
+
+	public short getTemplateNestingLevel() {
+		return (short) (fParameterID >> 16);
 	}
 
 	public IASTName getPrimaryDeclaration () {
@@ -239,7 +247,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		// use parameter from the index
 		try {
 			ICPPTemplateParameter[] params = template.getTemplateParameters();
-			final int pos= position & 0xffff;
+			final int pos= getParameterPosition();
 			if (pos < params.length) 
 				return params[pos];
 		} catch (DOMException e) {

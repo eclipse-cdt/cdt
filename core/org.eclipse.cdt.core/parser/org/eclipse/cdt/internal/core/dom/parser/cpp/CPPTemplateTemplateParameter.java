@@ -168,7 +168,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		if (!(type instanceof ICPPTemplateTemplateParameter))
 			return false;
 
-		return getParameterPosition() == ((ICPPTemplateParameter) type).getParameterPosition();
+		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {

@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
+ * David McKnight   (IBM)        - [250169] Problems with extending the menu's of results in Remote Search View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -35,6 +36,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -212,6 +214,37 @@ public class SystemSearchViewPart extends ViewPart
 	}
 
 	/**
+	 * Creates a dummy selection provider.
+	 * @return a dummy selection provider.
+	 */
+	private ISelectionProvider createDummySelectionProvider() {
+		
+		ISelectionProvider provider = new ISelectionProvider() {
+
+			public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			}
+
+			public ISelection getSelection() {
+				if (currentViewer != null){
+					return currentViewer.getSelection();
+				}
+				return null;
+			}
+
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			}
+
+			public void setSelection(ISelection selection) {
+				if (currentViewer != null){
+					currentViewer.setSelection(selection);
+				}
+			}
+		};
+		
+		return provider;
+	}
+	
+	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -224,9 +257,12 @@ public class SystemSearchViewPart extends ViewPart
 		// get view site
 		IViewSite site = getViewSite();
 		
-		// set a dummy selection provider
-		// getSite().setSelectionProvider(createDummySelectionProvider());
-
+		// set a dummy selection provider 
+		// because when the view is first created we don't have any real viewers (i.e. currentViewer)
+		// after addSearchResult() is called, the provider should defer to the selection from the
+		// current viewer
+		site.setSelectionProvider(createDummySelectionProvider());
+		
 		// get action bars
 		actionBars = site.getActionBars();
 
@@ -421,10 +457,12 @@ public class SystemSearchViewPart extends ViewPart
 			MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(this);
-			Tree tree = (Tree)treeViewer.getControl();
+			
+			Tree tree = (Tree)treeViewer.getControl();				
 			Menu menu = menuMgr.createContextMenu(tree);
 			tree.setMenu(menu);	
 		}
+		
 		
 		// set input
 		currentViewer.setInput(resultSet);

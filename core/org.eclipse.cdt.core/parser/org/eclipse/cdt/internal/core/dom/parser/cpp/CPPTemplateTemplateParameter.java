@@ -75,7 +75,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 			ICPPTemplateParameter p = null;
 			ICPPTemplateParameter[] result = null;
 			for (ICPPASTTemplateParameter param : params) {
-				p= (ICPPTemplateParameter) CPPTemplates.getTemplateParameterName(param).resolveBinding();
+				IBinding binding = CPPTemplates.getTemplateParameterName(param).resolveBinding();
+				p= (ICPPTemplateParameter) binding;
 				if (p != null) {
 					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, p);
 				}

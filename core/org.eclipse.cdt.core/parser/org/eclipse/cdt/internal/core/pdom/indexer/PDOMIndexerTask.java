@@ -171,14 +171,13 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			scanInfo= provider.getScannerInformation(file);
 			if (scanInfo == null || scanInfo.getDefinedSymbols().isEmpty()) {
 				scanInfo= provider.getScannerInformation(project);
-				if (linkageID == ILinkage.C_LINKAGE_ID) {
-					final Map<String, String> definedSymbols = scanInfo.getDefinedSymbols();
-					definedSymbols.remove("__cplusplus__"); //$NON-NLS-1$
-					definedSymbols.remove("__cplusplus"); //$NON-NLS-1$
-				}
 			}
-		}
-		else {
+			if (linkageID == ILinkage.C_LINKAGE_ID) {
+				final Map<String, String> definedSymbols = scanInfo.getDefinedSymbols();
+				definedSymbols.remove("__cplusplus__"); //$NON-NLS-1$
+				definedSymbols.remove("__cplusplus"); //$NON-NLS-1$
+			}
+		} else {
 			scanInfo= new ScannerInfo();
 		}
 		return scanInfo;

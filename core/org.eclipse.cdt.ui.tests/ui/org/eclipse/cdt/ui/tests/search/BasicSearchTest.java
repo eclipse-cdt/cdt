@@ -62,6 +62,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		return suite(BasicSearchTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject = CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
@@ -76,6 +77,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if(fCProject != null) {
 			fCProject.getProject().delete(true, NPM);
@@ -311,6 +313,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		String newContent= "void bar() {}";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
+		runEventQueue(500);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 1);
@@ -328,12 +331,14 @@ public class BasicSearchTest extends BaseUITestCase {
 		String newContent= "void bar() {      foo();      }";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
+		runEventQueue(500);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 2);
 		
 		String newContent2= "void bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, NPM);
+		runEventQueue(500);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 3);

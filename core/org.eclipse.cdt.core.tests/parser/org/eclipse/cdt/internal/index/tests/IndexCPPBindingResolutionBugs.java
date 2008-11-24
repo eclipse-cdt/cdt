@@ -1038,6 +1038,15 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertBindings(new String[] {"P"}, ct.getNestedClasses());
 	}
 
+	//	void func(const int* x) {}
+	
+	//	void func(int* p) {
+	//		func(const_cast<const int*>(p));
+	//	}
+	public void _testFunctionWithConstCast_Bug256240() throws Exception {
+    	getBindingFromASTName("func(const_cast", 4, ICPPFunction.class);
+	}
+
 	private void assertBindings(String[] expected, ICPPBase[] bases) throws DOMException {
 		IBinding[] bindings= new IBinding[bases.length];
 		for (int i = 0; i < bindings.length; i++) {

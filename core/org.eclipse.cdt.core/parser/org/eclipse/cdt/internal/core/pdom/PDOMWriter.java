@@ -38,8 +38,10 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -243,17 +245,19 @@ abstract public class PDOMWriter {
 							if (fShowProblems) {
 								reportProblem((IProblemBinding) binding);
 							}
-						}
-						else if (name.isReference()) {
-							if ((fSkipReferences & SKIP_TYPE_REFERENCES) != 0) {
-								if (isTypeReferenceBinding(binding) && !isRequiredReference(name)) {
+						} else if (name.isReference()) {
+							if (binding instanceof ICPPTemplateParameter || 
+									binding instanceof ICPPDeferredTemplateInstance || 
+									((fSkipReferences & SKIP_TYPE_REFERENCES) != 0 && isTypeReferenceBinding(binding))) {
+								if (!isRequiredReference(name)) {
 									na[0]= null;
-									fStatistics.fReferenceCount--;
+								} else {
+									fStatistics.fReferenceCount++;
 								}
+							} else {
+								fStatistics.fReferenceCount++;
 							}
-							fStatistics.fReferenceCount++;
-						}
-						else {
+						} else {
 							fStatistics.fDeclarationCount++;
 						}
 					} catch (RuntimeException e) {

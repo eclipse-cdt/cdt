@@ -18,6 +18,9 @@ public class Messages extends NLS {
 	public static String CRefactoringActionGroup_menu;
 	public static String CRenameAction_label;
 	public static String ExtractConstantAction_label;
+	/**
+	 * @since 5.1
+	 */
 	public static String ExtractLocalVariableAction_label;
 	public static String ExtractFunctionAction_label;
 	public static String HideMethodAction_label;

@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocal
 
 /**
  * Launches a extract local variable refactoring.
+ * @since 5.1
  */          
 public class ExtractLocalVariableAction extends RefactoringAction {
     

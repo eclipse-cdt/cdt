@@ -407,7 +407,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		return false;
 	}
 
-	private boolean contains( IPath path ) {
+	protected boolean contains( IPath path ) {
 		List list = fDirList.getElements();
 		Iterator it = list.iterator();
 		while( it.hasNext() ) {

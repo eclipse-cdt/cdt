@@ -368,8 +368,12 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	protected Shell getShell() {
 		return fShell;
 	}
+	
+	protected DialogField getDirList(){
+		return fDirList;
+	}
 
-	private boolean addDirectory() {
+	protected boolean addDirectory() {
 		boolean changed = false;
 		AddDirectoryDialog dialog = new AddDirectoryDialog( getShell() );
 		dialog.open();

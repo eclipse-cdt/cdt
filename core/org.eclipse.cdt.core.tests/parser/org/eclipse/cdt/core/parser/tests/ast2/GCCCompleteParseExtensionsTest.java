@@ -237,20 +237,24 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
         parseGPP( writer.toString() ); // TODO Devin raised bug 93980
     }
     
-    public void testBug75401() throws Exception
-    {
+    public void testBug75401() throws Exception {
         Writer writer = new StringWriter();
-        writer.write( "#define va_arg __builtin_va_arg      \n"); //$NON-NLS-1$
-        writer.write( "#define va_list __builtin_va_list    \n"); //$NON-NLS-1$
-        writer.write( "void main( int argc, char** argv ) { \n"); //$NON-NLS-1$
-        writer.write( "   va_list v;                        \n"); //$NON-NLS-1$
-        writer.write( "   long l = va_arg( v, long );       \n"); //$NON-NLS-1$
-        writer.write( "}                                    \n"); //$NON-NLS-1$
-        
-        parseGCC( writer.toString() );
+        writer.write( "#define va_list  __builtin_va_list            \n"); //$NON-NLS-1$
+        writer.write( "#define va_arg(v,l) __builtin_va_arg(v,l)     \n"); //$NON-NLS-1$
+        writer.write( "#define va_start(v,l) __builtin_va_start(v,l) \n"); //$NON-NLS-1$
+        writer.write( "#define va_end(v) __builtin_va_end(v)         \n"); //$NON-NLS-1$
+        writer.write( "void variadic(int first, ...) {               \n"); //$NON-NLS-1$
+        writer.write( "   va_list v;                                 \n"); //$NON-NLS-1$
+        writer.write( "   va_start(v, first);                        \n"); //$NON-NLS-1$
+        writer.write( "   long l = va_arg(v, long);                  \n"); //$NON-NLS-1$
+        writer.write( "   va_end(v);                                 \n"); //$NON-NLS-1$
+        writer.write( "}                                             \n"); //$NON-NLS-1$
+
+        parseGCC(writer.toString());
+        parseGPP(writer.toString());
     }
-    
-    public void testBug73954B() throws Exception{
+
+    public void testBug73954B() throws Exception {
         Writer writer = new StringWriter();
         writer.write( "#define foo(x)                                            \\\n"); //$NON-NLS-1$
         writer.write( "  __builtin_choose_expr( 1, foo_d(x), (void)0 )             \n"); //$NON-NLS-1$

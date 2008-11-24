@@ -58,6 +58,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		"GCCBuiltinSymbolProvider.BUILTIN_GCC_SYMBOL - built-in GCC symbol"); //$NON-NLS-1$
 	
 	private static final char[] __BUILTIN_VA_LIST = "__builtin_va_list".toCharArray(); //$NON-NLS-1$
+	private static final char[] __BUILTIN_VA_START = "__builtin_va_start".toCharArray(); //$NON-NLS-1$
+	private static final char[] __BUILTIN_VA_END = "__builtin_va_end".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_EXPECT  = "__builtin_expect".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_PREFETCH  = "__builtin_prefetch".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_HUGE_VAL  = "__builtin_huge_val".toCharArray(); //$NON-NLS-1$
@@ -303,6 +305,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	
 	private void initialize() {
 		__builtin_va_list();
+		__builtin_va_start();
+		__builtin_va_end();
 		__builtin_expect();
         __builtin_prefetch();
         __builtin_huge_val();
@@ -356,6 +360,52 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
+	private void __builtin_va_start() {
+		// void* __builtin_va_start(va_list, ...)
+		IBinding temp = null;
+		if (lang == ParserLanguage.C) {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[1];
+			parms[0] = c_va_list;
+			functionType = new CFunctionType(c_void_p, parms);
+			IParameter[] theParms = new IParameter[1];
+			theParms[0] = new CBuiltinParameter(parms[0]);
+			temp = new CImplicitFunction(__BUILTIN_VA_START, scope, functionType, theParms, true);
+		} else {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[1];
+			parms[0] = cpp_va_list;
+			functionType = new CPPFunctionType(cpp_void_p, parms);
+			IParameter[] theParms = new IParameter[1];
+			theParms[0] = new CPPBuiltinParameter(parms[0]);
+			temp = new CPPImplicitFunction(__BUILTIN_VA_START, scope, functionType, theParms, true);
+		}
+		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
+	}
+
+	private void __builtin_va_end() {
+		// void __builtin_va_end(void*)
+		IBinding temp = null;
+		if (lang == ParserLanguage.C) {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[1];
+			parms[0] = c_va_list;
+			functionType = new CFunctionType(c_void, parms);
+			IParameter[] theParms = new IParameter[1];
+			theParms[0] = new CBuiltinParameter(parms[0]);
+			temp = new CImplicitFunction(__BUILTIN_VA_END, scope, functionType, theParms, false);
+		} else {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[1];
+			parms[0] = cpp_va_list;
+			functionType = new CPPFunctionType(cpp_void, parms);
+			IParameter[] theParms = new IParameter[1];
+			theParms[0] = new CPPBuiltinParameter(parms[0]);
+			temp = new CPPImplicitFunction(__BUILTIN_VA_END, scope, functionType, theParms, false);
+		}
+		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
+	}
+
 	private void __builtin_expect() {
         //long __builtin_expect( long exp, long c )
 		IBinding temp = null;

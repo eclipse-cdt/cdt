@@ -97,6 +97,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.constant"</code>).
 	 */
 	public static final String EXTRACT_CONSTANT= "org.eclipse.cdt.ui.refactor.extract.constant"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the refactor -> extract local variable action
+	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.local.variable"</code>).
+	 */
+	public static final String EXTRACT_LOCAL_VARIABLE= "org.eclipse.cdt.ui.refactor.extract.local.variable"; //$NON-NLS-1$
 	
 	/**
 	 * Action definition ID of the refactor -> extract function action (value

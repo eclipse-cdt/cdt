@@ -247,6 +247,13 @@ public class CdtActionConstants {
 	 * (value <code>"org.eclipse.cdt.ui.actions.ExtractConstant"</code>).
 	 */
 	public static final String EXTRACT_CONSTANT= "org.eclipse.cdt.ui.actions.ExtractConstant"; //$NON-NLS-1$
+
+	/**
+	 * Refactor menu: name of standard Extract Local Variable global action
+	 * (value <code>"org.eclipse.cdt.ui.actions.ExtractLocalVariable"</code>).
+     * @since 5.1
+	 */
+	public static final String EXTRACT_LOCAL_VARIABLE= "org.eclipse.cdt.ui.actions.ExtractLocalVariable"; //$NON-NLS-1$
 	
 	/**
 	 * Refactor menu: name of standard Hide Method global action

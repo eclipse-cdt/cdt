@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionTestSuite;
+import org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTests;
 import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 
@@ -33,6 +34,7 @@ public class RefactoringTestSuite extends TestSuite {
 		suite.addTest(RefactoringTester.suite("HideMethodRefactoringTests", "resources/refactoring/HideMethod.rts"));
 		suite.addTest(RefactoringTester.suite("GettersAndSettersTests", "resources/refactoring/GenerateGettersAndSetters.rts"));
 		suite.addTest(RefactoringTester.suite("ImplementMethodRefactoringTests", "resources/refactoring/ImplementMethod.rts"));
+		suite.addTest(ExtractLocalVariableTestSuite.suite());
 		return suite;
 	}
 }

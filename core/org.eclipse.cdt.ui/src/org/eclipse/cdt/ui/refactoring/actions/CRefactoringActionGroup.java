@@ -113,6 +113,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private String fGroupName= IWorkbenchActionConstants.GROUP_REORGANIZE;
     private CRenameAction fRenameAction;
     private RefactoringAction fExtractConstantAction;
+    private RefactoringAction fExtractLocalVariableAction;
     private RefactoringAction fExtractFunctionAction;
     private RefactoringAction fHideMethodAction;
     private RefactoringAction fImplementMethodAction;
@@ -153,6 +154,10 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
         	fExtractConstantAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_CONSTANT);
         	fAllActions.add(fExtractConstantAction);
         	
+        	fExtractLocalVariableAction= new ExtractLocalVariableAction();
+        	fExtractLocalVariableAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_LOCAL_VARIABLE);
+        	fAllActions.add(fExtractLocalVariableAction);
+
         	fExtractFunctionAction = new ExtractFunctionAction();
 			fExtractFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_FUNCTION);
 			fAllActions.add(fExtractFunctionAction);
@@ -204,6 +209,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		super.fillActionBars(actionBar);
 		setActionHandler(actionBar, CdtActionConstants.RENAME, fRenameAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_CONSTANT, fExtractConstantAction);
+		setActionHandler(actionBar, CdtActionConstants.EXTRACT_LOCAL_VARIABLE, fExtractLocalVariableAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
 		setActionHandler(actionBar, CdtActionConstants.IMPLEMENT_METHOD, fImplementMethodAction);		
@@ -236,6 +242,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			addAction(refactorSubmenu, fRenameAction);
 			refactorSubmenu.add(new Separator(GROUP_CODING));
 			addAction(refactorSubmenu, fExtractConstantAction);
+			addAction(refactorSubmenu, fExtractLocalVariableAction);
 			addAction(refactorSubmenu, fExtractFunctionAction);
 			addAction(refactorSubmenu, fHideMethodAction);
 			refactorSubmenu.add(new Separator(GROUP_REORG2));

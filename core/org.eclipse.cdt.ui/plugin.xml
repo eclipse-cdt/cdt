@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
 
@@ -1256,6 +1255,13 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.extract.local.variable"
+               label="%Refactoring.extractLocalVariable.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ExtractLocalVariable"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.getters.and.setters"
                label="%Refactoring.gettersAndSetters.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
@@ -1740,6 +1746,11 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.constant"/>
+     <key
+            sequence="M2+M3+L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
             
       <scheme
             id="org.eclipse.cdt.ui.visualstudio"
@@ -2090,6 +2101,10 @@
 	        categoryId="org.eclipse.cdt.ui.category.refactoring"
 	        id="org.eclipse.cdt.ui.refactoring.command.ExtractConstant"
 	        name="%refactoringExtractConstant.label"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactoring.command.ExtractLocalVariable"
+            name="%refactoringExtractLocalVariable.label"/>
 	  <command
 	        categoryId="org.eclipse.cdt.ui.category.refactoring"
 	        id="org.eclipse.cdt.ui.refactor.hide.method"   
@@ -2104,6 +2119,11 @@
             description="%ActionDefinition.extractConstant.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.constant"/>
+      <command
+            name="%ActionDefinition.extractLocalVariable.name"
+            description="%ActionDefinition.extractLocalVariable.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
       <command
             name="%ActionDefinition.extractFunction.name"
             description="%ActionDefinition.extractFunction.description"

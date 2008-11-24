@@ -14,9 +14,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.refactoring.actions.messages"; //$NON-NLS-1$
+
 	public static String CRefactoringActionGroup_menu;
 	public static String CRenameAction_label;
 	public static String ExtractConstantAction_label;
+	public static String ExtractLocalVariableAction_label;
 	public static String ExtractFunctionAction_label;
 	public static String HideMethodAction_label;
 	public static String ImplementMethodAction_label;

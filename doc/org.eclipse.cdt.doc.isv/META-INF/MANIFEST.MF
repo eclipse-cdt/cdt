@@ -5,5 +5,5 @@ Bundle-SymbolicName: org.eclipse.cdt.doc.isv; singleton:=true
 Bundle-Version: 5.1.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help;bundle-version="[3.2.0,4.0.0)"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

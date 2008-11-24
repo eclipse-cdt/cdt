@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core.tests; singleton:=true
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
@@ -18,4 +18,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.cdt.core,
  org.eclipse.cdt.managedbuilder.core
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

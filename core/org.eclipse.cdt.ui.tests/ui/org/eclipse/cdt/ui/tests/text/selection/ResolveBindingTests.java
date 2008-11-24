@@ -81,7 +81,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		return name;
 	}
 
-	private void checkBinding(IASTName name, Class clazz) {
+	private void checkBinding(IASTName name, Class<?> clazz) {
 		IBinding binding;
 		binding= name.resolveBinding();
 		assertNotNull("Cannot resolve binding", binding);

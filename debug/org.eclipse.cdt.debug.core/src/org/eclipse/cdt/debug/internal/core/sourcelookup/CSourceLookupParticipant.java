@@ -77,6 +77,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#findSourceElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] findSourceElements( Object object ) throws CoreException {
 
 		// Workaround for BUG247977
@@ -152,13 +153,14 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	 * @see CSourceLookupParticipant#findSourceElements(Object)
 	 */
 	@Override
-	protected boolean isFindDuplicates() {
+	public boolean isFindDuplicates() {
 		return true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fListeners.removeAll();
 		super.dispose();
@@ -175,6 +177,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void sourceContainersChanged( ISourceLookupDirector director ) {
 		Object[] listeners = fListeners.getListeners();
 		for ( int i = 0; i < listeners.length; ++i )

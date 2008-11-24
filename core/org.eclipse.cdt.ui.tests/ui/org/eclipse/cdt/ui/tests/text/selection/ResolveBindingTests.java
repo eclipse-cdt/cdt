@@ -81,7 +81,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		return name;
 	}
 
-	private void checkBinding(IASTName name, Class clazz) {
+	private void checkBinding(IASTName name, Class<?> clazz) {
 		IBinding binding;
 		binding= name.resolveBinding();
 		assertNotNull("Cannot resolve binding", binding);
@@ -102,7 +102,6 @@ public class ResolveBindingTests extends BaseUITestCase  {
 	//		++var; // r1
 	//      ++ns::var; // r2
 	//	}
-	
 	public void testNamespaceVarBinding() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);

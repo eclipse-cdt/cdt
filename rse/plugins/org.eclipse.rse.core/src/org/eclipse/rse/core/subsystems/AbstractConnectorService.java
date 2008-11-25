@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
  * David Dykstal (IBM) - [189483] fix spelling in initialize/uninitialize method signatures
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David McKnight (IBM) - [249222] [api] Access to communication listeners in AbstractConnectorService
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -501,6 +502,26 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		IRSESystemType systemType = host.getSystemType();
 		boolean result = RSEPreferencesManager.getDenyPasswordSave(systemType, hostAddress);
 		return result;
+	}
+
+	/**
+	 * Check if there are any active communication listeners listening to
+	 * this connector service.
+	 * 
+	 * @return true if there are any active communication listeners
+	 * 
+	 * @since 3.1
+	 */
+	public boolean hasActiveCommunicationListeners() {
+		if (commListeners.size() > 0){
+			for (int i = 0; i < commListeners.size(); i++){
+				ICommunicationsListener listener = (ICommunicationsListener)commListeners.get(i);
+				if (!listener.isPassiveCommunicationsListener()){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 

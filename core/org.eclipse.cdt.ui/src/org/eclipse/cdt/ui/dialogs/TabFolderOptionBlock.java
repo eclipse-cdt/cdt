@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -161,7 +162,7 @@ public abstract class TabFolderOptionBlock {
 				} catch (CoreException e) {
 					CUIPlugin.errorDialog(
 							composite.getShell(),
-							CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e, true); //$NON-NLS-1$ //$NON-NLS-2$
+							CUIMessages.TabFolderOptionBlock_error, CUIMessages.TabFolderOptionBlock_error_settingOptions, e, true); 
 					return false;
 				}
 			}
@@ -191,8 +192,8 @@ public abstract class TabFolderOptionBlock {
 			if (!ok) {
                 String errorMessage = tab.getErrorMessage();
                 if (!tab.getControl().isVisible()) {
-                    setErrorMessage(CUIMessages.getFormattedString(
-                            "TabFolderOptionBlock.error.message", tab.getTitle())); //$NON-NLS-1$
+                    setErrorMessage(NLS.bind(
+                            CUIMessages.TabFolderOptionBlock_error_message, tab.getTitle()));
                 } else {
                     setErrorMessage(errorMessage);
                 }

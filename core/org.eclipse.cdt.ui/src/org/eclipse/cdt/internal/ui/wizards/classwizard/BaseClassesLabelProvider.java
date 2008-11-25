@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import org.eclipse.swt.graphics.Image;
 
 public final class BaseClassesLabelProvider implements ITableLabelProvider {
 
-	private static final String YES_VALUE = NewClassWizardMessages.getString("BaseClassesLabelProvider.boolean.yes.label"); //$NON-NLS-1$
-	private static final String NO_VALUE = NewClassWizardMessages.getString("BaseClassesLabelProvider.boolean.no.label"); //$NON-NLS-1$
-	private static final String ACCESS_PUBLIC = NewClassWizardMessages.getString("BaseClassesLabelProvider.access.public.label"); //$NON-NLS-1$
-	private static final String ACCESS_PROTECTED = NewClassWizardMessages.getString("BaseClassesLabelProvider.access.protected.label"); //$NON-NLS-1$
-	private static final String ACCESS_PRIVATE = NewClassWizardMessages.getString("BaseClassesLabelProvider.access.private.label"); //$NON-NLS-1$
+	private static final String YES_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_yes_label; 
+	private static final String NO_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_no_label; 
+	private static final String ACCESS_PUBLIC = NewClassWizardMessages.BaseClassesLabelProvider_access_public_label; 
+	private static final String ACCESS_PROTECTED = NewClassWizardMessages.BaseClassesLabelProvider_access_protected_label; 
+	private static final String ACCESS_PRIVATE = NewClassWizardMessages.BaseClassesLabelProvider_access_private_label; 
 
     public static final String getYesNoText(boolean value) {
        return value ? YES_VALUE : NO_VALUE;

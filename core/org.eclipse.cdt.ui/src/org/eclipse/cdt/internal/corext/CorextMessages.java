@@ -10,33 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class CorextMessages {
+public final class CorextMessages extends NLS {
 
-	private static final String BUNDLE_NAME= CorextMessages.class.getName();
-
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.corext.CorextMessages";//$NON-NLS-1$
 
 	private CorextMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	public static String Resources_outOfSyncResources;
+	public static String Resources_outOfSync;
+	public static String Resources_modifiedResources;
+	public static String Resources_fileModified;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, CorextMessages.class);
 	}
-	
-	public static String getFormattedString(String key, Object arg) {
-		return getFormattedString(key, new Object[] { arg });
-	}
-	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}		
 }

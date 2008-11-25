@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 QNX Software Systems and others.
+ * Copyright (c) 2003, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,6 @@ public interface ICElementPropertyConstants {
 	 */
 	public static final String  P_ELF_NEEDED = "needed"; //$NON-NLS-1$
 
-	public static final String P_BINARY_FILE_CATEGORY = CUIMessages.getString("ICElementPropertyConstants.catagory"); //$NON-NLS-1$
+	public static final String P_BINARY_FILE_CATEGORY = CUIMessages.ICElementPropertyConstants_catagory; 
 
 }

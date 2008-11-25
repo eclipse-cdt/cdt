@@ -62,12 +62,12 @@ public class PasteAction extends SelectionListenerAction {
 	 * @param shell the shell for any dialogs
 	 */
 	public PasteAction(Shell shell, Clipboard clipboard) {
-		super(CViewMessages.getString("PasteAction.title")); //$NON-NLS-1$
+		super(CViewMessages.PasteAction_title); 
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(CViewMessages.getString("PasteAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(CViewMessages.PasteAction_toolTip); 
 		setId(PasteAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.PASTE_ACTION);
 	}

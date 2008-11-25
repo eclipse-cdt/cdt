@@ -235,7 +235,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_staticField"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_staticField; 
 		}
 
 		/*
@@ -314,7 +314,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_field"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_field; 
 		}
 
 		/*
@@ -387,7 +387,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_methodDeclaration"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_methodDeclaration; 
 		}
 
 		/*
@@ -483,7 +483,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_staticMethodInvocation"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_staticMethodInvocation; 
 		}
 
 		/*
@@ -565,7 +565,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_method"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_method; 
 		}
 
 		/*
@@ -639,7 +639,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_functionDeclaration"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_functionDeclaration; 
 		}
 
 		/*
@@ -730,7 +730,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_function"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_function; 
 		}
 
 		/*
@@ -803,7 +803,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_localVariableDeclaration"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_localVariableDeclaration; 
 		}
 
 		/*
@@ -888,7 +888,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_localVariable"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_localVariable; 
 		}
 
 		/*
@@ -988,7 +988,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_globalVariable"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_globalVariable; 
 		}
 
 		/*
@@ -1075,7 +1075,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_parameterVariable"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_parameterVariable; 
 		}
 
 		/*
@@ -1141,7 +1141,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_templateParameter"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_templateParameter; 
 		}
 
 		/*
@@ -1210,7 +1210,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_classes"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_classes; 
 		}
 
 		/*
@@ -1282,7 +1282,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_enums"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_enums; 
 		}
 		
 		/*
@@ -1351,7 +1351,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_macroSubstitution"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_macroSubstitution; 
 		}
 		
 		/*
@@ -1420,7 +1420,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_macroDefintion"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_macroDefintion; 
 		}
 		
 		/*
@@ -1489,7 +1489,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_typeDef"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_typeDef; 
 		}
 		
 		/*
@@ -1562,7 +1562,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_namespace"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_namespace; 
 		}
 		
 		/*
@@ -1628,7 +1628,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_label"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_label; 
 		}
 		
 		/*
@@ -1694,7 +1694,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_enumerator"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_enumerator; 
 		}
 		
 		/*
@@ -1775,7 +1775,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_problem"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_problem; 
 		}
 		
 		/*
@@ -1856,7 +1856,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_externalSDK"); //$NON-NLS-1$
+			return CEditorMessages.SemanticHighlighting_externalSDK; 
 		}
 		
 		/*

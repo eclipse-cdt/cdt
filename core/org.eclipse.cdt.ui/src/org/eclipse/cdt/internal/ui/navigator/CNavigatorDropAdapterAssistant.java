@@ -145,10 +145,10 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 					return handleDropCopy(target, event);
 			}
 		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
 			return e.getStatus();
 		} catch(InvocationTargetException e) {
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.exception")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_exception); 
 			return Status.CANCEL_STATUS;
 		} catch (InterruptedException e) {
 			//ok
@@ -227,7 +227,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 						return handleValidateMove(target);
 				}
 			} catch (CModelException e){
-				ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
 			}
 		}
 		return Status.CANCEL_STATUS;

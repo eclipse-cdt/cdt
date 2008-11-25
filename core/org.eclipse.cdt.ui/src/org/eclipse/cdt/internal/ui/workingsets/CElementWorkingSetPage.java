@@ -69,7 +69,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  */
 public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
-	final private static String PAGE_TITLE= WorkingSetMessages.getString("CElementWorkingSetPage.title"); //$NON-NLS-1$
+	final private static String PAGE_TITLE= WorkingSetMessages.CElementWorkingSetPage_title; 
 	final private static String PAGE_ID= "CElementWorkingSetPage"; //$NON-NLS-1$
 
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
@@ -86,7 +86,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	public CElementWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, CPluginImages.DESC_WIZABAN_C_APP);
-		setDescription(WorkingSetMessages.getString("CElementWorkingSetPage.description")); //$NON-NLS-1$
+		setDescription(WorkingSetMessages.CElementWorkingSetPage_description); 
 		fFirstCheck= true;
 	}
 
@@ -102,7 +102,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		setControl(composite);
 
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.name")); //$NON-NLS-1$
+		label.setText(WorkingSetMessages.CElementWorkingSetPage_name); 
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -118,7 +118,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		fWorkingSetName.setFocus();
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.content")); //$NON-NLS-1$
+		label.setText(WorkingSetMessages.CElementWorkingSetPage_content); 
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
 
@@ -407,7 +407,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		String newText = fWorkingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false) {
-			errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
+			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty; 
 		}
 		if (newText.equals("")) { //$NON-NLS-1$
 			if (fFirstCheck) {
@@ -415,7 +415,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				fFirstCheck= false;
 				return;
 			}
-			errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
+			errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_nameMustNotBeEmpty; 
 		}
 
 		fFirstCheck= false;
@@ -424,13 +424,13 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (IWorkingSet workingSet : workingSets) {
 				if (newText.equals(workingSet.getName())) {
-					errorMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.workingSetExists"); //$NON-NLS-1$
+					errorMessage = WorkingSetMessages.CElementWorkingSetPage_warning_workingSetExists; 
 				}
 			}
 		}
 		
 		if (errorMessage == null && fTree.getCheckedElements().length == 0) {
-			String infoMessage = WorkingSetMessages.getString("CElementWorkingSetPage.warning.resourceMustBeChecked"); //$NON-NLS-1$
+			String infoMessage = WorkingSetMessages.CElementWorkingSetPage_warning_resourceMustBeChecked; 
 			setMessage(infoMessage, INFORMATION);
 		}
 		setErrorMessage(errorMessage);

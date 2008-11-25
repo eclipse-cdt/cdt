@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,21 +76,21 @@ public class CDocHover extends AbstractCEditorTextHover {
 
 			IFunctionSummary fs = CHelpProviderManager.getDefault().getFunctionInfo(context, expression);
 			if (fs != null) {
-				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.name")); //$NON-NLS-1$
+				buffer.append(CEditorMessages.DefaultCEditorTextHover_html_name); 
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
 				final IFunctionPrototypeSummary prototype = fs.getPrototype();
 				if (prototype != null) {
-					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.prototype")); //$NON-NLS-1$
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_prototype); 
 					buffer.append(HTMLPrinter.convertToHTMLContent(prototype.getPrototypeString(false)));
 				}
 				if(fs.getDescription() != null) {
-					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.description")); //$NON-NLS-1$
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_description); 
 					//Don't convert this description since it could already be formatted
 					buffer.append(fs.getDescription());
 				}
 				IRequiredInclude[] incs = fs.getIncludes();
 				if (incs != null && incs.length > 0) {
-					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.includes")); //$NON-NLS-1$
+					buffer.append(CEditorMessages.DefaultCEditorTextHover_html_includes); 
 					int count = 0;
 					for (IRequiredInclude inc : incs) {
 						buffer.append(inc.getIncludeName());

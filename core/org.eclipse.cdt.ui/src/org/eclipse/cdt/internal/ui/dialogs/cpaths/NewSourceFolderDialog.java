@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,16 +54,16 @@ public class NewSourceFolderDialog extends StatusDialog {
 		SourceContainerAdapter adapter = new SourceContainerAdapter();
 
 		fUseProjectButton = new SelectionButtonDialogField(SWT.RADIO);
-		fUseProjectButton.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.useproject.button")); //$NON-NLS-1$
+		fUseProjectButton.setLabelText(CPathEntryMessages.NewSourceFolderDialog_useproject_button); 
 		fUseProjectButton.setDialogFieldListener(adapter);
 
 		fUseFolderButton = new SelectionButtonDialogField(SWT.RADIO);
-		fUseFolderButton.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.usefolder.button")); //$NON-NLS-1$
+		fUseFolderButton.setLabelText(CPathEntryMessages.NewSourceFolderDialog_usefolder_button); 
 		fUseFolderButton.setDialogFieldListener(adapter);
 
 		fContainerDialogField = new StringDialogField();
 		fContainerDialogField.setDialogFieldListener(adapter);
-		fContainerDialogField.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.sourcefolder.label")); //$NON-NLS-1$
+		fContainerDialogField.setLabelText(CPathEntryMessages.NewSourceFolderDialog_sourcefolder_label); 
 
 		fUseFolderButton.attachDialogField(fContainerDialogField);
 
@@ -142,7 +143,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 		if (fUseFolderButton.isSelected()) {
 			String pathStr = fContainerDialogField.getText();
 			if (pathStr.length() == 0) {
-				fContainerFieldStatus.setError(CPathEntryMessages.getString("NewSourceFolderDialog.error.enterpath")); //$NON-NLS-1$
+				fContainerFieldStatus.setError(CPathEntryMessages.NewSourceFolderDialog_error_enterpath); 
 				return;
 			}
 			IPath path = fCurrProject.getFullPath().append(pathStr);
@@ -150,7 +151,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 
 			IStatus pathValidation = workspace.validatePath(path.toString(), IResource.FOLDER);
 			if (!pathValidation.isOK()) {
-				fContainerFieldStatus.setError(CPathEntryMessages.getFormattedString("NewSourceFolderDialog.error.invalidpath", //$NON-NLS-1$
+				fContainerFieldStatus.setError(NLS.bind(CPathEntryMessages.NewSourceFolderDialog_error_invalidpath, 
 						pathValidation.getMessage()));
 				return;
 			}
@@ -159,7 +160,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 			folder = fCurrProject;
 		}
 		if (isExisting(folder)) {
-			fContainerFieldStatus.setError(CPathEntryMessages.getString("NewSourceFolderDialog.error.pathexists")); //$NON-NLS-1$
+			fContainerFieldStatus.setError(CPathEntryMessages.NewSourceFolderDialog_error_pathexists); 
 			return;
 		}
 		fContainerFieldStatus.setOK();

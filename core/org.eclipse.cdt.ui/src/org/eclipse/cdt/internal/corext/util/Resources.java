@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 public class Resources {
 
@@ -140,7 +141,7 @@ public class Resources {
 	private static IStatus addModified(IStatus status, IFile file) {
 		IStatus entry= CUIStatus.createError(
 			ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT, 
-			CorextMessages.getFormattedString("Resources.fileModified", file.getFullPath().toString()), //$NON-NLS-1$ 
+			NLS.bind(CorextMessages.Resources_fileModified, file.getFullPath().toString()),
 			null);
 		if (status == null) {
 			return entry;
@@ -150,7 +151,7 @@ public class Resources {
 		} else {
 			MultiStatus result= new MultiStatus(CUIPlugin.getPluginId(),
 				ICStatusConstants.VALIDATE_EDIT_CHANGED_CONTENT,
-				CorextMessages.getString("Resources.modifiedResources"), null); //$NON-NLS-1$ 
+				CorextMessages.Resources_modifiedResources, null);
 			result.add(status);
 			result.add(entry);
 			return result;
@@ -162,7 +163,7 @@ public class Resources {
 			IStatus.ERROR,
 			ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
 			IResourceStatus.OUT_OF_SYNC_LOCAL,
-			CorextMessages.getFormattedString("Resources.outOfSync", resource.getFullPath().toString()), //$NON-NLS-1$ 
+			NLS.bind(CorextMessages.Resources_outOfSync, resource.getFullPath().toString()),
 			null);
 		if (status == null) {
 			return entry;
@@ -173,7 +174,7 @@ public class Resources {
 			MultiStatus result= new MultiStatus(
 				ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
 				IResourceStatus.OUT_OF_SYNC_LOCAL,
-				CorextMessages.getString("Resources.outOfSyncResources"), null); //$NON-NLS-1$ 
+				CorextMessages.Resources_outOfSyncResources, null);
 			result.add(status);
 			result.add(entry);
 			return result;

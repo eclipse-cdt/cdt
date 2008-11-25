@@ -166,7 +166,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(CUIMessages.getString("ReferenceBlock.task.ReferenceProjects"), 1); //$NON-NLS-1$
+			monitor.beginTask(CUIMessages.ReferenceBlock_task_ReferenceProjects, 1); 
 			try {
 				IProjectDescription description = project.getDescription();
 				description.setReferencedProjects(refProjects);

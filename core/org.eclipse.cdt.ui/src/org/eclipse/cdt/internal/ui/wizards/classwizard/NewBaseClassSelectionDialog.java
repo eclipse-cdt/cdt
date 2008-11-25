@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -39,8 +40,8 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	
     public NewBaseClassSelectionDialog(Shell parent) {
         super(parent);
-        setTitle(NewClassWizardMessages.getString("NewBaseClassSelectionDialog.title")); //$NON-NLS-1$
-        setMessage(NewClassWizardMessages.getString("NewBaseClassSelectionDialog.message")); //$NON-NLS-1$
+        setTitle(NewClassWizardMessages.NewBaseClassSelectionDialog_title); 
+        setMessage(NewClassWizardMessages.NewBaseClassSelectionDialog_message); 
         setDialogSettings(DIALOG_SETTINGS);
         setVisibleTypes(VISIBLE_TYPES);
         setFilter("*", true); //$NON-NLS-1$
@@ -76,7 +77,7 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, ADD_ID, NewClassWizardMessages.getString("NewBaseClassSelectionDialog.addButton.label"), true); //$NON-NLS-1$
+		createButton(parent, ADD_ID, NewClassWizardMessages.NewBaseClassSelectionDialog_addButton_label, true); 
 		super.createButtonsForButtonBar(parent);
 	}
 	
@@ -105,11 +106,11 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 		    ITypeInfo type = (ITypeInfo)elem;
 		    if (fTypeList.contains(type)) {
                 String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
-                String message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.classalreadyadded.info", qualifiedName); //$NON-NLS-1$
+                String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classalreadyadded_info, qualifiedName); 
                 updateStatus(new StatusInfo(IStatus.INFO, message));
             } else {
 				String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
-				String message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.addingclass.info", qualifiedName); //$NON-NLS-1$
+				String message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_addingclass_info, qualifiedName); 
 				updateStatus(new StatusInfo(IStatus.INFO, message));
 
                 boolean canAdd = true;
@@ -146,12 +147,12 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
                 if (canAdd) {
 					fTypeList.add(type);
 					
-					message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.classadded.info", qualifiedName); //$NON-NLS-1$
+					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_classadded_info, qualifiedName); 
 					updateStatus(new StatusInfo(IStatus.INFO, message));
 
 					notifyTypeAddedListeners(type);
 				} else {
-					message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.error.classnotadded", qualifiedName); //$NON-NLS-1$
+					message = NLS.bind(NewClassWizardMessages.NewBaseClassSelectionDialog_error_classnotadded, qualifiedName); 
 					updateStatus(new StatusInfo(IStatus.ERROR, message));
 				}
 		    }

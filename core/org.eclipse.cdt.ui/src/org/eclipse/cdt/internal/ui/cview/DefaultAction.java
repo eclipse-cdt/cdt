@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,8 @@ public class DefaultAction extends Action {
 	@Override
 	public void run() {
 		MessageBox errorMsg = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText(CViewMessages.getString("DefaultAction.WIP")); //$NON-NLS-1$
-		errorMsg.setMessage (CViewMessages.getString("DefaultAction.workInProgress")); //$NON-NLS-1$
+		errorMsg.setText(CViewMessages.DefaultAction_WIP); 
+		errorMsg.setMessage (CViewMessages.DefaultAction_workInProgress); 
 		errorMsg.open();
 	}
 }

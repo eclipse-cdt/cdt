@@ -55,11 +55,11 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	}
 
 	public ShowInCViewAction(IWorkbenchPage page, ISelectionProvider viewer) {
-		super(viewer, CEditorMessages.getString("ShowInCView.label")); //$NON-NLS-1$
-		setToolTipText(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
-		setDescription(CEditorMessages.getString("ShowInCView.description")); //$NON-NLS-1$
+		super(viewer, CEditorMessages.ShowInCView_label); 
+		setToolTipText(CEditorMessages.ShowInCView_tooltip); 
+		setDescription(CEditorMessages.ShowInCView_description); 
 		this.page = page;
-		setDescription(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
+		setDescription(CEditorMessages.ShowInCView_tooltip); 
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 

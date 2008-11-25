@@ -263,21 +263,17 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
 
 		String[] buttonLabels = new String[]{
-		/* 0 */
-		CUIMessages.getString("AbstractErrorParserBlock.label.up"), //$NON-NLS-1$
-				/* 1 */
-				CUIMessages.getString("AbstractErrorParserBlock.label.down"), //$NON-NLS-1$
+		CUIMessages.AbstractErrorParserBlock_label_up, 
+				CUIMessages.AbstractErrorParserBlock_label_down, 
 				/* 2 */
 				null,
-				/* 3 */
-				CUIMessages.getString("AbstractErrorParserBlock.label.selectAll"), //$NON-NLS-1$
-				/* 4 */
-				CUIMessages.getString("AbstractErrorParserBlock.label.unselectAll") //$NON-NLS-1$
+				CUIMessages.AbstractErrorParserBlock_label_selectAll, 
+				CUIMessages.AbstractErrorParserBlock_label_unselectAll
 		};
 
 		fErrorParserList = new CheckedListDialogField<String>(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
-		fErrorParserList.setLabelText(CUIMessages.getString("AbstractErrorParserBlock.label.errorParsers")); //$NON-NLS-1$
+		fErrorParserList.setLabelText(CUIMessages.AbstractErrorParserBlock_label_errorParsers); 
 		fErrorParserList.setUpButtonIndex(0);
 		fErrorParserList.setDownButtonIndex(1);
 		fErrorParserList.setCheckAllButtonIndex(3);
@@ -296,7 +292,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(CUIMessages.getString("AbstractErrorParserBlock.task.setErrorParser"), 1); //$NON-NLS-1$
+			monitor.beginTask(CUIMessages.AbstractErrorParserBlock_task_setErrorParser, 1); 
 			List<String> elements = fErrorParserList.getElements();
 			int count = elements.size();
 			List<Object> list = new ArrayList<Object>(count);

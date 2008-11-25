@@ -496,7 +496,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			
 			if (element != null) {
-				fJob= new Job(CEditorMessages.getString("SemanticHighlighting_job")) { //$NON-NLS-1$
+				fJob= new Job(CEditorMessages.SemanticHighlighting_job) { 
 					@Override
 					protected IStatus run(final IProgressMonitor monitor) {
 						if (oldJob != null) {

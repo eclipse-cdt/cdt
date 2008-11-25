@@ -23,9 +23,9 @@ class CollapseAllAction extends Action {
 	private CView cview;
 	
 	CollapseAllAction(CView part) {
-		super(CViewMessages.getString("CollapseAllAction.label")); //$NON-NLS-1$
-		setDescription(CViewMessages.getString("CollapseAllAction.description")); //$NON-NLS-1$
-		setToolTipText(CViewMessages.getString("CollapseAllAction.tooltip")); //$NON-NLS-1$
+		super(CViewMessages.CollapseAllAction_label); 
+		setDescription(CViewMessages.CollapseAllAction_description); 
+		setToolTipText(CViewMessages.CollapseAllAction_tooltip); 
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
 		cview = part;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COLLAPSE_ALL_ACTION);

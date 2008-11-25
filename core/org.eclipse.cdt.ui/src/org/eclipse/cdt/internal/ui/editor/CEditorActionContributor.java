@@ -58,7 +58,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	public CEditorActionContributor() {
 		super();
 		
-		ResourceBundle bundle = CEditorMessages.getResourceBundle();
+		ResourceBundle bundle = ConstructedCEditorMessages.getResourceBundle();
 	
 		fShiftRight= new RetargetTextEditorAction(bundle, "ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		 //$NON-NLS-1$
 		fShiftRight.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);

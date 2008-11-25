@@ -108,8 +108,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
 		String[] buttonLabels = new String[]{
-		/* 0 */CUIMessages.getString("BinaryParserBlock.button.up"), //$NON-NLS-1$
-				/* 1 */CUIMessages.getString("BinaryParserBlock.button.down")}; //$NON-NLS-1$
+		CUIMessages.BinaryParserBlock_button_up, 
+				CUIMessages.BinaryParserBlock_button_down}; 
 
 		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<BinaryParserConfiguration>() {
 
@@ -142,7 +142,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 				}
 			}
 		});
-		binaryList.setLabelText(CUIMessages.getString("BinaryParserBlock.binaryParser")); //$NON-NLS-1$
+		binaryList.setLabelText(CUIMessages.BinaryParserBlock_binaryParser); 
 		binaryList.setUpButtonIndex(0);
 		binaryList.setDownButtonIndex(1);
 		initializeParserList();
@@ -219,7 +219,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(CUIMessages.getString("BinaryParserBlock.settingBinaryParser"), 2); //$NON-NLS-1$
+		monitor.beginTask(CUIMessages.BinaryParserBlock_settingBinaryParser, 2); 
 		List<BinaryParserConfiguration> parsers = binaryList.getElements();
 		final List<BinaryParserConfiguration> selected = new ArrayList<BinaryParserConfiguration>(); // must do this to get proper order.
 		for (int i = 0; i < parsers.size(); i++) {

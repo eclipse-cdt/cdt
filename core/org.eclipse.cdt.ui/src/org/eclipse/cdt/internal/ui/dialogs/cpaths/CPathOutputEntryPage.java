@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
@@ -71,8 +72,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private final int IDX_REMOVE = 3;
 
 	public CPathOutputEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.getString("OutputPathEntryPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("OutputPathEntryPage.description")); //$NON-NLS-1$
+		super(CPathEntryMessages.OutputPathEntryPage_title); 
+		setDescription(CPathEntryMessages.OutputPathEntryPage_description); 
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		fCPathList = cPathList;
@@ -82,14 +83,14 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		String[] buttonLabels;
 
 		buttonLabels = new String[]{
-		/* 0 = IDX_ADDEXIST */CPathEntryMessages.getString("OutputPathEntryPage.folders.add.button"), //$NON-NLS-1$
-				/* 1 */null, /* 2 = IDX_EDIT */CPathEntryMessages.getString("OutputPathEntryPage.folders.edit.button"), //$NON-NLS-1$
-				/* 3 = IDX_REMOVE */CPathEntryMessages.getString("OutputPathEntryPage.folders.remove.button") //$NON-NLS-1$
+		CPathEntryMessages.OutputPathEntryPage_folders_add_button, 
+				/* 1 */null, CPathEntryMessages.OutputPathEntryPage_folders_edit_button, 
+				CPathEntryMessages.OutputPathEntryPage_folders_remove_button
 		};
 
 		fOutputList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fOutputList.setDialogFieldListener(adapter);
-		fOutputList.setLabelText(CPathEntryMessages.getString("OutputPathEntryPage.folders.label")); //$NON-NLS-1$
+		fOutputList.setLabelText(CPathEntryMessages.OutputPathEntryPage_folders_label); 
 
 		fOutputList.setViewerComparator(new CPElementSorter());
 		fOutputList.enableButton(IDX_EDIT, false);
@@ -428,11 +429,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 			}
 			return null;
 		}
-		String title = (existing == null) ? CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.new.title") //$NON-NLS-1$
-				: CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.edit.title"); //$NON-NLS-1$
+		String title = (existing == null) ? CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_new_title
+				: CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_edit_title; 
 		IProject proj = fCurrCProject.getProject();
 		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj, getExistingContainers(existing), existing);
-		dialog.setMessage(CPathEntryMessages.getFormattedString("SourcePathEntryPage.NewSourceFolderDialog.description", //$NON-NLS-1$
+		dialog.setMessage(NLS.bind(CPathEntryMessages.SourcePathEntryPage_NewSourceFolderDialog_description, 
 				fProjPath.toString()));
 		if (dialog.open() == Window.OK) {
 			IResource folder = dialog.getSourceFolder();
@@ -444,8 +445,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private void askForAddingExclusionPatternsDialog(List<CPElement> newEntries, Set<CPElement> modifiedEntries) {
 		fixNestingConflicts(newEntries, fOutputList.getElements(), modifiedEntries);
 		if (!modifiedEntries.isEmpty()) {
-			String title = CPathEntryMessages.getString("OutputPathEntryPage.exclusion_added.title"); //$NON-NLS-1$
-			String message = CPathEntryMessages.getString("OutputPathEntryPage.exclusion_added.message"); //$NON-NLS-1$
+			String title = CPathEntryMessages.OutputPathEntryPage_exclusion_added_title; 
+			String message = CPathEntryMessages.OutputPathEntryPage_exclusion_added_message; 
 			MessageDialog.openInformation(getShell(), title, message);
 		}
 	}
@@ -470,11 +471,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		ITreeContentProvider cp = new BaseWorkbenchContentProvider();
 
 		String title = (existing == null)
-				? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.title") //$NON-NLS-1$
-				: CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.edit.title"); //$NON-NLS-1$
+				? CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_new_title
+				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_title; 
 		String message = (existing == null)
-				? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.description") //$NON-NLS-1$
-				: CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.edit.description"); //$NON-NLS-1$
+				? CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_new_description
+				: CPathEntryMessages.OutputPathEntryPage_ExistingOutputFolderDialog_edit_description; 
 
 		MultipleFolderSelectionDialog dialog = new MultipleFolderSelectionDialog(getShell(), lp, cp);
 		dialog.setExisting(existingContainers.toArray());

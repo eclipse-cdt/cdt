@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,10 +102,10 @@ public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> 
     public BaseClassesListDialogField(String title, IListAdapter<IBaseClassInfo> listAdapter) {
         super(listAdapter,
         	new String[] {
-                /* 0 */ NewClassWizardMessages.getString("BaseClassesListDialogField.buttons.add"), //$NON-NLS-1$
-                /* 1 */ NewClassWizardMessages.getString("BaseClassesListDialogField.buttons.remove"), //$NON-NLS-1$
-                /* 2 */ NewClassWizardMessages.getString("BaseClassesListDialogField.buttons.up"), //$NON-NLS-1$
-                /* 3 */ NewClassWizardMessages.getString("BaseClassesListDialogField.buttons.down") //$NON-NLS-1$
+                NewClassWizardMessages.BaseClassesListDialogField_buttons_add, 
+                NewClassWizardMessages.BaseClassesListDialogField_buttons_remove, 
+                NewClassWizardMessages.BaseClassesListDialogField_buttons_up, 
+                NewClassWizardMessages.BaseClassesListDialogField_buttons_down
         	}, new BaseClassesLabelProvider());
         setRemoveButtonIndex(1);
         setUpButtonIndex(2);
@@ -113,9 +113,9 @@ public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> 
         setLabelText(title);
         
         String[] headers = new String[] {
-        	NewClassWizardMessages.getString("BaseClassesListDialogField.headings.name"), //$NON-NLS-1$
-        	NewClassWizardMessages.getString("BaseClassesListDialogField.headings.access"), //$NON-NLS-1$
-        	NewClassWizardMessages.getString("BaseClassesListDialogField.headings.virtual") //$NON-NLS-1$
+        	NewClassWizardMessages.BaseClassesListDialogField_headings_name, 
+        	NewClassWizardMessages.BaseClassesListDialogField_headings_access, 
+        	NewClassWizardMessages.BaseClassesListDialogField_headings_virtual
         };
         ColumnLayoutData[] columns = new ColumnLayoutData[] {
         	new ColumnWeightData(70, 30),
@@ -139,7 +139,7 @@ public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> 
             new AccessibleAdapter() {                       
                 @Override
 				public void getName(AccessibleEvent e) {
-                        e.result = NewClassWizardMessages.getString("NewClassCreationWizardPage.baseClasses.label"); //$NON-NLS-1$
+                        e.result = NewClassWizardMessages.NewClassCreationWizardPage_baseClasses_label; 
                 }
             }
         );

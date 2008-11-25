@@ -95,7 +95,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		if (fTranslationUnit != null) {
 			ArrayList<IRequiredInclude> toAdd = new ArrayList<IRequiredInclude>();
 			
-			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
+			monitor.beginTask(CEditorMessages.AddIncludesOperation_description, 2); 
 			
 			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
 			for (int i = 0; i < fIncludes.length; ++i) {
@@ -149,7 +149,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		if (fTranslationUnit != null) {
 			ArrayList<String> toAdd = new ArrayList<String>();
 			
-			monitor.beginTask(CEditorMessages.getString("AddIncludesOperation.description"), 2); //$NON-NLS-1$
+			monitor.beginTask(CEditorMessages.AddIncludesOperation_description, 2); 
 			
 			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
 			for (int i = 0; i < fUsings.length; ++i) {

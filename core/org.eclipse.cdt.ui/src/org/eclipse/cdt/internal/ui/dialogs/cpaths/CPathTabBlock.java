@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -55,10 +56,10 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	public CPathTabBlock(IStatusChangeListener context, int pageToShow) {
 		super(context, pageToShow);
 
-		String[] buttonLabels = new String[]{ /* 0 */CPathEntryMessages.getString("CPathsBlock.path.up.button"), //$NON-NLS-1$
-				/* 1 */CPathEntryMessages.getString("CPathsBlock.path.down.button"), //$NON-NLS-1$
-				/* 2 */null, /* 3 */CPathEntryMessages.getString("CPathsBlock.path.checkall.button"), //$NON-NLS-1$
-				/* 4 */CPathEntryMessages.getString("CPathsBlock.path.uncheckall.button") //$NON-NLS-1$
+		String[] buttonLabels = new String[]{ CPathEntryMessages.CPathsBlock_path_up_button, 
+				CPathEntryMessages.CPathsBlock_path_down_button, 
+				/* 2 */null, CPathEntryMessages.CPathsBlock_path_checkall_button, 
+				CPathEntryMessages.CPathsBlock_path_uncheckall_button
 
 		};
 		BuildPathAdapter adapter = new BuildPathAdapter();
@@ -159,7 +160,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 			if (nErrorEntries == 1 && entryError != null) {
 				getPathStatus().setWarning(entryError.getStatus().getMessage());
 			} else {
-				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPElement.status.multiplePathErrors", //$NON-NLS-1$
+				getPathStatus().setWarning(NLS.bind(CPathEntryMessages.CPElement_status_multiplePathErrors, 
 						String.valueOf(nErrorEntries)));
 			}
 		}

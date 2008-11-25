@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
@@ -122,16 +123,16 @@ public class SourceAttachmentBlock {
 
 		fFileNameField = new StringButtonDialogField(adapter);
 		fFileNameField.setDialogFieldListener(adapter);
-		fFileNameField.setLabelText(CPathEntryMessages.getString("SourceAttachmentBlock.filename.label")); //$NON-NLS-1$
-		fFileNameField.setButtonLabel(CPathEntryMessages.getString("SourceAttachmentBlock.filename.externalfile.button")); //$NON-NLS-1$
+		fFileNameField.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_label); 
+		fFileNameField.setButtonLabel(CPathEntryMessages.SourceAttachmentBlock_filename_externalfile_button); 
 
 		fWorkspaceButton = new SelectionButtonDialogField(SWT.PUSH);
 		fWorkspaceButton.setDialogFieldListener(adapter);
-		fWorkspaceButton.setLabelText(CPathEntryMessages.getString("SourceAttachmentBlock.filename.internal.button")); //$NON-NLS-1$
+		fWorkspaceButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_internal_button); 
 
 		fExternalFolderButton = new SelectionButtonDialogField(SWT.PUSH);
 		fExternalFolderButton.setDialogFieldListener(adapter);
-		fExternalFolderButton.setLabelText(CPathEntryMessages.getString("SourceAttachmentBlock.filename.externalfolder.button")); //$NON-NLS-1$
+		fExternalFolderButton.setLabelText(CPathEntryMessages.SourceAttachmentBlock_filename_externalfolder_button); 
 
 		// set the old settings
 		setDefaults();
@@ -192,8 +193,8 @@ public class SourceAttachmentBlock {
 
 		Label message = new Label(composite, SWT.LEFT);
 		message.setLayoutData(gd);
-		message.setText(CPathEntryMessages.getFormattedString(
-				"SourceAttachmentBlock.message", fEntry.getLibraryPath().lastSegment())); //$NON-NLS-1$
+		message.setText(NLS.bind(
+				CPathEntryMessages.SourceAttachmentBlock_message, fEntry.getLibraryPath().lastSegment()));
 
 		fWorkspaceButton.doFillIntoGrid(composite, 1);
 
@@ -301,7 +302,7 @@ public class SourceAttachmentBlock {
 			return status;
 		}
 		if (!Path.EMPTY.isValidPath(fileName)) {
-			status.setError(CPathEntryMessages.getString("SourceAttachmentBlock.filename.error.notvalid")); //$NON-NLS-1$
+			status.setError(CPathEntryMessages.SourceAttachmentBlock_filename_error_notvalid); 
 			return status;
 		}
 		IPath filePath = new Path(fileName);
@@ -311,8 +312,8 @@ public class SourceAttachmentBlock {
 			file = res.getLocation().toFile();
 		}
 		if (!file.exists()) {
-			String message = CPathEntryMessages.getFormattedString(
-					"SourceAttachmentBlock.filename.error.filenotexists", filePath.toString()); //$NON-NLS-1$
+			String message = NLS.bind(
+					CPathEntryMessages.SourceAttachmentBlock_filename_error_filenotexists, filePath.toString());
 			status.setError(message);
 			return status;
 		}
@@ -333,7 +334,7 @@ public class SourceAttachmentBlock {
 		}
 
 		FileDialog dialog = new FileDialog(getShell());
-		dialog.setText(CPathEntryMessages.getString("SourceAttachmentBlock.extjardialog.text")); //$NON-NLS-1$
+		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extjardialog_text); 
 		dialog.setFilterExtensions(new String[]{"*.jar;*.zip"}); //$NON-NLS-1$
 		dialog.setFilterPath(currPath.toOSString());
 		String res = dialog.open();
@@ -353,7 +354,7 @@ public class SourceAttachmentBlock {
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setText(CPathEntryMessages.getString("SourceAttachmentBlock.extfolderdialog.text")); //$NON-NLS-1$
+		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extfolderdialog_text); 
 		dialog.setFilterPath(currPath.toOSString());
 		String res = dialog.open();
 		if (res != null) {
@@ -388,8 +389,8 @@ public class SourceAttachmentBlock {
 		dialog.setAllowMultiple(false);
 		dialog.setValidator(validator);
 		dialog.addFilter(filter);
-		dialog.setTitle(CPathEntryMessages.getString("SourceAttachmentBlock.intjardialog.title")); //$NON-NLS-1$
-		dialog.setMessage(CPathEntryMessages.getString("SourceAttachmentBlock.intjardialog.message")); //$NON-NLS-1$
+		dialog.setTitle(CPathEntryMessages.SourceAttachmentBlock_intjardialog_title); 
+		dialog.setMessage(CPathEntryMessages.SourceAttachmentBlock_intjardialog_message); 
 		dialog.setInput(fWorkspaceRoot);
 		dialog.setInitialSelection(initSel);
 		if (dialog.open() == Window.OK) {
@@ -472,8 +473,8 @@ public class SourceAttachmentBlock {
 		shell.getDisplay().syncExec(new Runnable() {
 
 			public void run() {
-				String title = CPathEntryMessages.getString("SourceAttachmentBlock.putoncpdialog.title"); //$NON-NLS-1$
-				String message = CPathEntryMessages.getString("SourceAttachmentBlock.putoncpdialog.message"); //$NON-NLS-1$
+				String title = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_title; 
+				String message = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_message; 
 				result[0] = MessageDialog.openQuestion(CUIPlugin.getActiveWorkbenchShell(), title, message);
 			}
 		});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -526,14 +526,14 @@ public class CPElement {
 					try {
 						if ((CoreModel.getPathEntryContainer(fPath, fCProject) == null)) {
 							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1,
-									CPathEntryMessages.getString("CPElement.status.pathContainerMissing"), null); //$NON-NLS-1$
+									CPathEntryMessages.CPElement_status_pathContainerMissing, null); 
 						}
 					} catch (CModelException e) {
 					}
 					break;
 				case IPathEntry.CDT_LIBRARY :
 					if (!((ILibraryEntry)entry).getFullLibraryPath().toFile().exists()) {
-						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.libraryPathNotFound"), null); //$NON-NLS-1$
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_libraryPathNotFound, null); 
 					}
 					break;
 				case IPathEntry.CDT_SOURCE :
@@ -543,7 +543,7 @@ public class CPElement {
 						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 							res = root.getFolder(path);
 						}
-						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.sourcePathMissing"), null); //$NON-NLS-1$
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_sourcePathMissing, null); 
 					}
 					break;
 				case IPathEntry.CDT_OUTPUT :
@@ -553,7 +553,7 @@ public class CPElement {
 						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 							res = root.getFolder(path);
 						}
-						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.outputPathMissing"), null); //$NON-NLS-1$
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_outputPathMissing, null); 
 					}
 					break;
 				case IPathEntry.CDT_INCLUDE :
@@ -566,11 +566,11 @@ public class CPElement {
 					}
 					if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
 						if (!fCProject.isOnSourceRoot(res)) {
-							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_notOnSourcePath, null); 
 						}
 					}
 					if (!((IIncludeEntry)entry).getFullIncludePath().toFile().exists()) {
-						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.includePathNotFound"), null); //$NON-NLS-1$
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_includePathNotFound, null); 
 					}
 					break;
                 case IPathEntry.CDT_INCLUDE_FILE :
@@ -583,11 +583,11 @@ public class CPElement {
                     }
                     if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
                         if (!fCProject.isOnSourceRoot(res)) {
-                            fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+                            fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_notOnSourcePath, null); 
                         }
                     }
                     if (!((IIncludeFileEntry)entry).getFullIncludeFilePath().toFile().exists()) {
-                        fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.includeFilePathNotFound"), null); //$NON-NLS-1$
+                        fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_includeFilePathNotFound, null); 
                     }
                     break;
 				case IPathEntry.CDT_MACRO :
@@ -600,7 +600,7 @@ public class CPElement {
 					}
 					if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
 						if (!fCProject.isOnSourceRoot(res)) {
-							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_notOnSourcePath, null); 
 						}
 					}
 					break;
@@ -614,17 +614,17 @@ public class CPElement {
                     }
                     if (res != null && res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
                         if (!fCProject.isOnSourceRoot(res)) {
-                            fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+                            fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_notOnSourcePath, null); 
                         }
                     }
                     if (!((IMacroFileEntry)entry).getFullMacroFilePath().toFile().exists()) {
-                        fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.macrosFilePathNotFound"), null); //$NON-NLS-1$
+                        fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_macrosFilePathNotFound, null); 
                     }
                     break;
 				case IPathEntry.CDT_PROJECT :
 					res = root.findMember(fPath);
 					if (res == null) {
-						fStatus = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.missingProjectPath"), null); //$NON-NLS-1$
+						fStatus = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_missingProjectPath, null); 
 					}
 					break;
 			}

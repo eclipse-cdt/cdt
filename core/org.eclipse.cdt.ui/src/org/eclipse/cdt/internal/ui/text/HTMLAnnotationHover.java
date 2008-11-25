@@ -45,7 +45,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	protected String formatMultipleMessages(List messages) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(CUIMessages.getString("CAnnotationHover.multipleMarkers"))); //$NON-NLS-1$
+		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(CUIMessages.CAnnotationHover_multipleMarkers)); 
 
 		HTMLPrinter.startBulletList(buffer);
 		Iterator<String> e= messages.iterator();

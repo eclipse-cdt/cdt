@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
@@ -372,8 +371,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
                 
             });
         } catch (InvocationTargetException e) {
-            String title = CPathEntryMessages.getString(ERROR_TITLE);
-            String message = CPathEntryMessages.getString(ERROR_MESSAGE);
+            String title = MakeUIPlugin.getResourceString(ERROR_TITLE);
+            String message = MakeUIPlugin.getResourceString(ERROR_MESSAGE);
             ExceptionHandler.handle(e, getShell(), title, message);
         } catch (InterruptedException e) {
             // cancelled

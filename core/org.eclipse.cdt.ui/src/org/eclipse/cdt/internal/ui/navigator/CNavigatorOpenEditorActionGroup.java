@@ -98,7 +98,7 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 			return;
 		}
 
-		MenuManager submenu= new MenuManager(CViewMessages.getString("OpenWithMenu.label"), ICommonMenuConstants.GROUP_OPEN_WITH); //$NON-NLS-1$
+		MenuManager submenu= new MenuManager(CViewMessages.OpenWithMenu_label, ICommonMenuConstants.GROUP_OPEN_WITH); 
 		submenu.add(new OpenWithMenu(getViewPart().getSite().getPage(), (IFile) element));
 		menu.insertAfter(ICommonMenuConstants.GROUP_OPEN_WITH, submenu);
 	}

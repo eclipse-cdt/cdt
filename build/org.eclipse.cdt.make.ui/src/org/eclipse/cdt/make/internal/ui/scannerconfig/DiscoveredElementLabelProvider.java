@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,13 +111,13 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 			DiscoveredElement elem = (DiscoveredElement) element;
 			switch (elem.getEntryKind()) {
 				case DiscoveredElement.PATHS_GROUP:
-					return CPathEntryMessages.getString("CPElementLabelProvider.Includes"); //$NON-NLS-1$
+					return CPathEntryMessages.CPElementLabelProvider_Includes;
 				case DiscoveredElement.SYMBOLS_GROUP:
-					return CPathEntryMessages.getString("CPElementLabelProvider.PreprocessorSymbols"); //$NON-NLS-1$
+					return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols;
 				case DiscoveredElement.INCLUDE_FILE_GROUP:
-					return CPathEntryMessages.getString("CPElementLabelProvider.IncludeFiles"); //$NON-NLS-1$
+					return CPathEntryMessages.CPElementLabelProvider_IncludeFiles;
 				case DiscoveredElement.MACROS_FILE_GROUP:
-					return CPathEntryMessages.getString("CPElementLabelProvider.MacrosFiles"); //$NON-NLS-1$
+					return CPathEntryMessages.CPElementLabelProvider_MacrosFiles;
 				case DiscoveredElement.CONTAINER:
 				case DiscoveredElement.INCLUDE_PATH:
 				case DiscoveredElement.SYMBOL_DEFINITION:

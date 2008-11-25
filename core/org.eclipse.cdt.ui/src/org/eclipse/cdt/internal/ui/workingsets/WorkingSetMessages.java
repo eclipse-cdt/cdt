@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,64 +10,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.workingsets;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-class WorkingSetMessages {
+public final class WorkingSetMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= WorkingSetMessages.class.getName();
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.workingsets.WorkingSetMessages";//$NON-NLS-1$
 
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
 	private WorkingSetMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
+	public static String CElementWorkingSetPage_title;
+	public static String CElementWorkingSetPage_name;
+	public static String CElementWorkingSetPage_description;
+	public static String CElementWorkingSetPage_content;
+	public static String CElementWorkingSetPage_warning_nameMustNotBeEmpty;
+	public static String CElementWorkingSetPage_warning_workingSetExists;
+	public static String CElementWorkingSetPage_warning_resourceMustBeChecked;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
-	}
-
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object[] args) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		return MessageFormat.format(format, args);
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, WorkingSetMessages.class);
 	}
 }

@@ -11,11 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction;
 
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages;
 
 public class CSelectRulerAction extends AbstractRulerActionDelegate {
 
@@ -24,6 +25,6 @@ public class CSelectRulerAction extends AbstractRulerActionDelegate {
      */
     @Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-        return new CSelectAnnotationRulerAction(CEditorMessages.getResourceBundle(), "CSelectAnnotationRulerAction.", editor, rulerInfo); //$NON-NLS-1$
+        return new CSelectAnnotationRulerAction(ConstructedCEditorMessages.getResourceBundle(), "CSelectAnnotationRulerAction.", editor, rulerInfo); //$NON-NLS-1$
     }
 }

@@ -95,8 +95,8 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		@Override
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
-				monitor.beginTask(CUIMessages.getString("FileTransferDragAdapter.refreshing"), roots.size()); //$NON-NLS-1$
-				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.getString("FileTransferDragAdapter.problem"), null); //$NON-NLS-1$
+				monitor.beginTask(CUIMessages.FileTransferDragAdapter_refreshing, roots.size()); 
+				MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, CUIMessages.FileTransferDragAdapter_problem, null); 
 
 				for (IResource resource : roots) {
 					try {
@@ -178,8 +178,8 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled by user.
 		} catch (InvocationTargetException e) {
-			String message = CUIMessages.getString("FileTransferDragAdapter.problem"); //$NON-NLS-1$
-			String title = CUIMessages.getString("FileTransferDragAdapter.problemTitle"); //$NON-NLS-1$
+			String message = CUIMessages.FileTransferDragAdapter_problem; 
+			String title = CUIMessages.FileTransferDragAdapter_problemTitle; 
 
 			ExceptionHandler.handle(e, title, message);
 		}

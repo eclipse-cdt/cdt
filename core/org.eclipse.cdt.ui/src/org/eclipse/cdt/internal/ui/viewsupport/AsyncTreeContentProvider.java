@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 
     public AsyncTreeContentProvider(Display disp) {
         fDisplay= disp;
-        fJob= new Job(CUIMessages.getString("AsyncTreeContentProvider.JobName")) { //$NON-NLS-1$
+        fJob= new Job(CUIMessages.AsyncTreeContentProvider_JobName) { 
             @Override
 			protected IStatus run(final IProgressMonitor monitor) {
                 return runJob(monitor);
@@ -216,7 +216,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
     }
     
     private IStatus runJob(final IProgressMonitor monitor) {
-        monitor.beginTask(CUIMessages.getString("AsyncTreeContentProvider.TaskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+        monitor.beginTask(CUIMessages.AsyncTreeContentProvider_TaskName, IProgressMonitor.UNKNOWN); 
         try {
             Object parent= getParentForNextTask();
             while (parent != null) {

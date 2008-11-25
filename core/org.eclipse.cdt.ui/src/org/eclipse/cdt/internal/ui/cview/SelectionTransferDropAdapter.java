@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 					break;
 			}
 		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
 			event.detail= DND.DROP_NONE;
 		}	
 	}
@@ -147,9 +147,9 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 					break;
 			}
 		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_message); 
 		} catch(InvocationTargetException e) {
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.exception")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.SelectionTransferDropAdapter_error_title, CViewMessages.SelectionTransferDropAdapter_error_exception); 
 		} catch (InterruptedException e) {
 			//ok
 		} finally {

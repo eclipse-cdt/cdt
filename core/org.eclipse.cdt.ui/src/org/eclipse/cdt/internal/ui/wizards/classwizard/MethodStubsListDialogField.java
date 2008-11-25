@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,10 +123,10 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
         setLabelText(title);
         
         String[] headers = new String[] {
-        	NewClassWizardMessages.getString("MethodStubsDialogField.headings.name"), //$NON-NLS-1$
-        	NewClassWizardMessages.getString("MethodStubsDialogField.headings.access"), //$NON-NLS-1$
-        	NewClassWizardMessages.getString("MethodStubsDialogField.headings.virtual"), //$NON-NLS-1$
-        	NewClassWizardMessages.getString("MethodStubsDialogField.headings.inline") //$NON-NLS-1$
+        	NewClassWizardMessages.MethodStubsDialogField_headings_name, 
+        	NewClassWizardMessages.MethodStubsDialogField_headings_access, 
+        	NewClassWizardMessages.MethodStubsDialogField_headings_virtual, 
+        	NewClassWizardMessages.MethodStubsDialogField_headings_inline
         };
         ColumnLayoutData[] columns = new ColumnLayoutData[] {
         	new ColumnWeightData(70, 30),
@@ -151,7 +151,7 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
             new AccessibleAdapter() {                       
                 @Override
 				public void getName(AccessibleEvent e) {
-                        e.result = NewClassWizardMessages.getString("NewClassCreationWizardPage.methodStubs.label"); //$NON-NLS-1$
+                        e.result = NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label; 
                 }
             }
         );

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Add the <code>StatusBarUpdater</code> to your ViewPart to have the statusbar
@@ -54,7 +55,7 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 			
 			int nElements= selection.size();
 			if (nElements > 1) {
-				return CUIMessages.getFormattedString("StatusBarUpdater.num_elements_selected", String.valueOf(nElements)); //$NON-NLS-1$
+				return NLS.bind(CUIMessages.StatusBarUpdater_num_elements_selected, String.valueOf(nElements)); 
 			} 
 			Object elem= selection.getFirstElement();
 			if (elem instanceof ICElement) {

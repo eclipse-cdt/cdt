@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -86,16 +87,16 @@ public class ExPatternDialog extends StatusDialog {
 		fCurrProject = proj;
 		pattern = _data;
 		path = _path;
-		setTitle(CPathEntryMessages.getString("ExclusionPatternDialog.title")); //$NON-NLS-1$
+		setTitle(CPathEntryMessages.ExclusionPatternDialog_title); 
 
-		String label= CPathEntryMessages.getFormattedString("ExclusionPatternDialog.pattern.label", path.makeRelative().toString()); //$NON-NLS-1$
+		String label= NLS.bind(CPathEntryMessages.ExclusionPatternDialog_pattern_label, path.makeRelative().toString()); 
 		
 		String[] buttonLabels= new String[] {
-			/* IDX_ADD */ CPathEntryMessages.getString("ExclusionPatternDialog.pattern.add"), //$NON-NLS-1$
-			/* IDX_ADD_MULTIPLE */ CPathEntryMessages.getString("ExclusionPatternDialog.pattern.add.multiple"), //$NON-NLS-1$
-			/* IDX_EDIT */ CPathEntryMessages.getString("ExclusionPatternDialog.pattern.edit"), //$NON-NLS-1$
+			CPathEntryMessages.ExclusionPatternDialog_pattern_add, 
+			CPathEntryMessages.ExclusionPatternDialog_pattern_add_multiple, 
+			CPathEntryMessages.ExclusionPatternDialog_pattern_edit, 
 			null,
-			/* IDX_REMOVE */ CPathEntryMessages.getString("ExclusionPatternDialog.pattern.remove") //$NON-NLS-1$
+			CPathEntryMessages.ExclusionPatternDialog_pattern_remove
 		};
 
 		ExclusionPatternAdapter adapter= new ExclusionPatternAdapter();
@@ -242,9 +243,9 @@ public class ExPatternDialog extends StatusDialog {
 		IResource initialElement= null;	
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setTitle(CPathEntryMessages.getString("ExclusionPatternDialog.ChooseExclusionPattern.title")); //$NON-NLS-1$
+		dialog.setTitle(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_title); 
 		dialog.setValidator(validator);
-		dialog.setMessage(CPathEntryMessages.getString("ExclusionPatternDialog.ChooseExclusionPattern.description")); //$NON-NLS-1$
+		dialog.setMessage(CPathEntryMessages.ExclusionPatternDialog_ChooseExclusionPattern_description); 
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);

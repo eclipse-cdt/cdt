@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,16 +45,16 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	private ListDialogField<CPElement> fCPathList;
 
 	public CPathProjectsEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.getString("ProjectsEntryPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("ProjectsEntryPage.description")); //$NON-NLS-1$
+		super(CPathEntryMessages.ProjectsEntryPage_title); 
+		setDescription(CPathEntryMessages.ProjectsEntryPage_description); 
 		ProjectsListListener listener = new ProjectsListListener();
 
-		String[] buttonLabels = new String[] { /* 0 */CPathEntryMessages.getString("ProjectsEntryPage.projects.checkall.button"), //$NON-NLS-1$
-		/* 1 */CPathEntryMessages.getString("ProjectsEntryWorkbookPage.projects.uncheckall.button")}; //$NON-NLS-1$
+		String[] buttonLabels = new String[] { CPathEntryMessages.ProjectsEntryPage_projects_checkall_button, 
+		CPathEntryMessages.ProjectsEntryWorkbookPage_projects_uncheckall_button}; 
 
 		fProjectsList = new CheckedListDialogField<CPElement>(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
-		fProjectsList.setLabelText(CPathEntryMessages.getString("ProjectsEntryPage.projects.label")); //$NON-NLS-1$
+		fProjectsList.setLabelText(CPathEntryMessages.ProjectsEntryPage_projects_label); 
 		fProjectsList.setCheckAllButtonIndex(0);
 		fProjectsList.setUncheckAllButtonIndex(1);
 

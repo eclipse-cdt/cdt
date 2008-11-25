@@ -70,12 +70,12 @@ public class CopyAction extends SelectionListenerAction {
 	 * @param clipboard a platform clipboard
 	 */
 	public CopyAction(Shell shell, Clipboard clipboard) {
-		super(CViewMessages.getString("CopyAction.title")); //$NON-NLS-1$
+		super(CViewMessages.CopyAction_title); 
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(CViewMessages.getString("CopyAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(CViewMessages.CopyAction_toolTip); 
 		setId(CopyAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COPY_ACTION);
 
@@ -153,7 +153,7 @@ public class CopyAction extends SelectionListenerAction {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(shell, CViewMessages.getString("CopyToClipboardProblemDialog_title"), CViewMessages.getString("CopyToClipboardProblemDialog_message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(shell, CViewMessages.CopyToClipboardProblemDialog_title, CViewMessages.CopyToClipboardProblemDialog_message)) 
 				setClipboard(resources, fileNames, names);
 		}
 	}

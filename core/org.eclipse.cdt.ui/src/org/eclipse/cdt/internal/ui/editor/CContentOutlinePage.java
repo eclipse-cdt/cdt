@@ -73,7 +73,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 
 	private Control createStatusPage(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(CEditorMessages.getString("Scalability.outlineDisabled")); //$NON-NLS-1$
+		label.setText(CEditorMessages.Scalability_outlineDisabled); 
 		return label;
 	}
 

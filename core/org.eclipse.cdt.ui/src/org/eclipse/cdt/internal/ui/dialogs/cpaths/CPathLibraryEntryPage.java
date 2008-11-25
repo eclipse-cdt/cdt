@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,8 +75,8 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	private final int IDX_EXPORT = 7;
 
 	public CPathLibraryEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.getString("LibrariesEntryPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("LibrariesEntryPage.description")); //$NON-NLS-1$
+		super(CPathEntryMessages.LibrariesEntryPage_title); 
+		setDescription(CPathEntryMessages.LibrariesEntryPage_description); 
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		fCPathList = cPathList;
@@ -84,19 +84,19 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		LibrariesAdapter adapter = new LibrariesAdapter();
 
 		String[] buttonLabels= new String[] { 
-			/* IDX_ADD_LIBEXT */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.addextlib.button"), //$NON-NLS-1$
-			/* IDX_ADD_LIB*/ CPathEntryMessages.getString("LibrariesEntryPage.libraries.addworkspacelib.button"), //$NON-NLS-1$
-			/* IDX_ADD_CONTRIBUTED*/ CPathEntryMessages.getString("LibrariesEntryPage.libraries.addcontriblib.button"), //$NON-NLS-1$
+			CPathEntryMessages.LibrariesEntryPage_libraries_addextlib_button, 
+			CPathEntryMessages.LibrariesEntryPage_libraries_addworkspacelib_button, 
+			CPathEntryMessages.LibrariesEntryPage_libraries_addcontriblib_button, 
 			/* */ null,  
-			/* IDX_EDIT */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.edit.button"), //$NON-NLS-1$
-			/* IDX_REMOVE */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.remove.button"), //$NON-NLS-1$
+			CPathEntryMessages.LibrariesEntryPage_libraries_edit_button, 
+			CPathEntryMessages.LibrariesEntryPage_libraries_remove_button, 
 			null,
-			/* IDX_EXPORT */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.export.button") //$NON-NLS-1$
+			CPathEntryMessages.LibrariesEntryPage_libraries_export_button
 		};		
 
 		fLibrariesList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fLibrariesList.setDialogFieldListener(adapter);
-		fLibrariesList.setLabelText(CPathEntryMessages.getString("LibrariesEntryPage.libraries.label")); //$NON-NLS-1$
+		fLibrariesList.setLabelText(CPathEntryMessages.LibrariesEntryPage_libraries_label); 
 
 		fLibrariesList.setViewerComparator(new CPElementSorter());
 		fLibrariesList.enableButton(IDX_EDIT, false);
@@ -439,7 +439,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private CPElement[] openExtLibFileDialog(CPElement existing) {
-		String title= CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.title"); //$NON-NLS-1$
+		String title= CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title; 
 		
 		FileDialog dialog= new FileDialog(getShell(), existing == null ? SWT.MULTI : SWT.SINGLE);
 		dialog.setText(title);
@@ -475,8 +475,8 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 		
-		String title= (existing == null) ? CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.title") : CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.edit.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		String message= (existing == null) ? CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.description") : CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.edit.description"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title= (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_title : CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_title; 
+		String message= (existing == null) ? CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_new_description : CPathEntryMessages.LibrariesEntryPage_ExtLibDialog_edit_description; 
 		
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.setValidator(validator);
@@ -516,9 +516,9 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
-			title = CPathEntryMessages.getString("LibrariesEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_new_title; 
 		} else {
-			title = CPathEntryMessages.getString("LibrariesEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.LibrariesEntryPage_ContainerDialog_edit_title; 
 			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(),

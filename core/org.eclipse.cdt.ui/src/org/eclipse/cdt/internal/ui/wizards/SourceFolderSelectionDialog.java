@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,8 @@ public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
         setValidator(fValidator);
         setComparator(fSorter);
         addFilter(fFilter);
-        setTitle(NewWizardMessages.getString("SourceFolderSelectionDialog.title")); //$NON-NLS-1$
-        setMessage(NewWizardMessages.getString("SourceFolderSelectionDialog.description")); //$NON-NLS-1$
+        setTitle(NewWizardMessages.SourceFolderSelectionDialog_title); 
+        setMessage(NewWizardMessages.SourceFolderSelectionDialog_description); 
     }
 
 	private static ITreeContentProvider createContentProvider() {

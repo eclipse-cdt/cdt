@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,23 +53,23 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	private final int IDX_EXPORT = 5;
 
 	public CPathContainerEntryPage(ListDialogField<CPElement> cPathList) {
-		super(CPathEntryMessages.getString("ContainerEntryPage.title")); //$NON-NLS-1$
+		super(CPathEntryMessages.ContainerEntryPage_title); 
 		fCPathList = cPathList;
 
 		String[] buttonLabels = new String[]{
-		/* IDX_ADD */CPathEntryMessages.getString("ContainerEntryPage.add.button"), //$NON-NLS-1$
+		CPathEntryMessages.ContainerEntryPage_add_button, 
 				/* */null,
-				/* IDX_EDIT */CPathEntryMessages.getString("ContainerEntryPage.edit.button"), //$NON-NLS-1$
-				/* IDX_REMOVE */CPathEntryMessages.getString("ContainerEntryPage.remove.button"), //$NON-NLS-1$
+				CPathEntryMessages.ContainerEntryPage_edit_button, 
+				CPathEntryMessages.ContainerEntryPage_remove_button, 
 				null,
-				/* IDX_EXPORT */CPathEntryMessages.getString("ContainerEntryPage.export.button") //$NON-NLS-1$
+				CPathEntryMessages.ContainerEntryPage_export_button
 		};
 
 		ContainersAdapter adapter = new ContainersAdapter();
 
 		fContainersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
 		fContainersList.setDialogFieldListener(adapter);
-		fContainersList.setLabelText(CPathEntryMessages.getString("ContainerEntryPage.libraries.label")); //$NON-NLS-1$
+		fContainersList.setLabelText(CPathEntryMessages.ContainerEntryPage_libraries_label); 
 
 		fContainersList.enableButton(IDX_REMOVE, false);
 		fContainersList.enableButton(IDX_EDIT, false);
@@ -408,9 +408,9 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
-			title = CPathEntryMessages.getString("ContainerEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_new_title; 
 		} else {
-			title = CPathEntryMessages.getString("ContainerEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.ContainerEntryPage_ContainerDialog_edit_title; 
 			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, fCurrCProject, getRawClasspath());

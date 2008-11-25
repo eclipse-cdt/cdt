@@ -40,7 +40,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	 * Constructs and updates the action.
 	 */
 	public TogglePresentationAction() {
-		super(CEditorMessages.getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
+		super(ConstructedCEditorMessages.getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SEGMENT_EDIT);
 		setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,	ICHelpContextIds.TOGGLE_PRESENTATION_ACTION);		

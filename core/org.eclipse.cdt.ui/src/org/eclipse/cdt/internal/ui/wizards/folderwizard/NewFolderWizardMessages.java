@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,51 +10,41 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.folderwizard;
 
+import org.eclipse.osgi.util.NLS;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+public final class NewFolderWizardMessages extends NLS {
 
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.wizards.folderwizard.NewFolderWizardMessages";//$NON-NLS-1$
 
-public class NewFolderWizardMessages {
-
-	private static final String RESOURCE_BUNDLE= NewFolderWizardMessages.class.getName();
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
-	
 	private NewFolderWizardMessages() {
-	}
-		
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
+		// Do not instantiate
 	}
 
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
-	}
+	public static String NewSourceFolderCreationWizard_title;
+	public static String NewSourceFolderWizardPage_title;
+	public static String NewSourceFolderWizardPage_description;
+	public static String NewSourceFolderWizardPage_root_label;
+	public static String NewSourceFolderWizardPage_root_button;
+	public static String NewSourceFolderWizardPage_project_label;
+	public static String NewSourceFolderWizardPage_project_button;
+	public static String NewSourceFolderWizardPage_operation;
+	public static String NewSourceFolderWizardPage_exclude_label;
+	public static String NewSourceFolderWizardPage_ChooseExistingRootDialog_title;
+	public static String NewSourceFolderWizardPage_ChooseExistingRootDialog_description;
+	public static String NewSourceFolderWizardPage_ChooseProjectDialog_title;
+	public static String NewSourceFolderWizardPage_ChooseProjectDialog_description;
+	public static String NewSourceFolderWizardPage_error_EnterRootName;
+	public static String NewSourceFolderWizardPage_error_InvalidRootName;
+	public static String NewSourceFolderWizardPage_error_NotAFolder;
+	public static String NewSourceFolderWizardPage_error_AlreadyExisting;
+	public static String NewSourceFolderWizardPage_error_EnterProjectName;
+	public static String NewSourceFolderWizardPage_error_InvalidProjectPath;
+	public static String NewSourceFolderWizardPage_error_NotACProject;
+	public static String NewSourceFolderWizardPage_error_ProjectNotExists;
+	public static String NewSourceFolderWizardPage_warning_ReplaceSF;
+	public static String NewSourceFolderWizardPage_warning_AddedExclusions;
 
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, NewFolderWizardMessages.class);
+	}
 }

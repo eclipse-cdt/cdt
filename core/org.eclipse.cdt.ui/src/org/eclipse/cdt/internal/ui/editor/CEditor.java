@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Stack;
 
@@ -1342,12 +1343,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 						Display.getCurrent().getActiveShell(),
-						CEditorMessages.getString("Scalability.info"),  //$NON-NLS-1$
+						CEditorMessages.Scalability_info,  
 						null,
-						CEditorMessages.getString("Scalability.message"),  //$NON-NLS-1$
+						CEditorMessages.Scalability_message,  
 						MessageDialog.INFORMATION,
 						new String[] {IDialogConstants.OK_LABEL}, 0,
-						CEditorMessages.getString("Scalability.reappear"),  //$NON-NLS-1$
+						CEditorMessages.Scalability_reappear,  
 						false) {
 					@Override
 					protected void buttonPressed(int buttonId) {
@@ -2060,44 +2061,45 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);
 		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
 		
-		action = new GotoNextBookmarkAction(CEditorMessages.getResourceBundle(), "GotoNextBookmark.", this); //$NON-NLS-1$
+		final ResourceBundle bundle = ConstructedCEditorMessages.getResourceBundle();
+		action = new GotoNextBookmarkAction(bundle, "GotoNextBookmark.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_BOOKMARK);
 		setAction(GotoNextBookmarkAction.NEXT_BOOKMARK, action);
 
-		action = new FindWordAction(CEditorMessages.getResourceBundle(), "FindWord.", this, getSourceViewer()); //$NON-NLS-1$
+		action = new FindWordAction(bundle, "FindWord.", this, getSourceViewer()); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_WORD);
 		setAction(FindWordAction.FIND_WORD, action);
 		markAsStateDependentAction(FindWordAction.FIND_WORD, true);
 		markAsSelectionDependentAction(FindWordAction.FIND_WORD, true);
 
-		action = new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
+		action = new ToggleCommentAction(bundle, "ToggleComment.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);
 		setAction("ToggleComment", action); //$NON-NLS-1$
 		markAsStateDependentAction("ToggleComment", true); //$NON-NLS-1$
 		configureToggleCommentAction();
 
-		action = new AddBlockCommentAction(CEditorMessages.getResourceBundle(), "AddBlockComment.", this);  //$NON-NLS-1$
+		action = new AddBlockCommentAction(bundle, "AddBlockComment.", this);  //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_BLOCK_COMMENT);
 		setAction("AddBlockComment", action); //$NON-NLS-1$
 		markAsStateDependentAction("AddBlockComment", true); //$NON-NLS-1$
 		markAsSelectionDependentAction("AddBlockComment", true); //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(action, ICHelpContextIds.ADD_BLOCK_COMMENT_ACTION);
 
-		action = new RemoveBlockCommentAction(CEditorMessages.getResourceBundle(), "RemoveBlockComment.", this);  //$NON-NLS-1$
+		action = new RemoveBlockCommentAction(bundle, "RemoveBlockComment.", this);  //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.REMOVE_BLOCK_COMMENT);
 		setAction("RemoveBlockComment", action); //$NON-NLS-1$
 		markAsStateDependentAction("RemoveBlockComment", true); //$NON-NLS-1$
 		markAsSelectionDependentAction("RemoveBlockComment", true); //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(action, ICHelpContextIds.REMOVE_BLOCK_COMMENT_ACTION);
 
-		action = new IndentAction(CEditorMessages.getResourceBundle(), "Indent.", this, false); //$NON-NLS-1$
+		action = new IndentAction(bundle, "Indent.", this, false); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.INDENT);
 		setAction("Indent", action); //$NON-NLS-1$
 		markAsStateDependentAction("Indent", true); //$NON-NLS-1$
 		markAsSelectionDependentAction("Indent", true); //$NON-NLS-1$
 //		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, ICHelpContextIds.INDENT_ACTION);
 
-		action = new IndentAction(CEditorMessages.getResourceBundle(), "Indent.", this, true); //$NON-NLS-1$
+		action = new IndentAction(bundle, "Indent.", this, true); //$NON-NLS-1$
 		setAction("IndentOnTab", action); //$NON-NLS-1$
 		markAsStateDependentAction("IndentOnTab", true); //$NON-NLS-1$
 		markAsSelectionDependentAction("IndentOnTab", true); //$NON-NLS-1$
@@ -2106,42 +2108,42 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			setActionActivationCode("IndentOnTab", '\t', -1, SWT.NONE); //$NON-NLS-1$
 		}
 
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		action = new TextOperationAction(bundle, "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
 		setAction("Format", action); //$NON-NLS-1$
 		markAsStateDependentAction("Format", true); //$NON-NLS-1$
 
-		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
+		action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", action); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
 
-		action= new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistContextInformation.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
+		action= new TextOperationAction(bundle, "ContentAssistContextInformation.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistContextInformation", action); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssistContextInformation", true); //$NON-NLS-1$
 
-        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
+        action = new TextOperationAction(bundle, "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/
 
-        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenHierarchy.", this, CSourceViewer.SHOW_HIERARCHY, true); //$NON-NLS-1$
+        action = new TextOperationAction(bundle, "OpenHierarchy.", this, CSourceViewer.SHOW_HIERARCHY, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_TYPE_HIERARCHY);
         setAction("OpenHierarchy", action); //$NON-NLS-1$*/
 
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true); //$NON-NLS-1$
+        action = new GoToNextPreviousMemberAction(bundle, "GotoNextMember.", this, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
         setAction(GoToNextPreviousMemberAction.PREVIOUS_MEMBER, action);
 
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPreviousMember.", this, false); //$NON-NLS-1$
+        action = new GoToNextPreviousMemberAction(bundle, "GotoPreviousMember.", this, false); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
         setAction(GoToNextPreviousMemberAction.NEXT_MEMBER, action);
 
-        action= new ToggleSourceAndHeaderAction(CEditorMessages.getResourceBundle(), "ToggleSourceHeader.", this); //$NON-NLS-1$
+        action= new ToggleSourceAndHeaderAction(bundle, "ToggleSourceHeader.", this); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
         setAction("ToggleSourceHeader", action); //$NON-NLS-1$
 
-        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenMacroExplorer.", this, CSourceViewer.SHOW_MACRO_EXPLORER, true); //$NON-NLS-1$
+        action = new TextOperationAction(bundle, "OpenMacroExplorer.", this, CSourceViewer.SHOW_MACRO_EXPLORER, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_MACRO_EXPLORER);
         setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
 
@@ -2229,7 +2231,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	@Override
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
-		IMenuManager foldingMenu= new MenuManager(CEditorMessages.getString("CEditor.menu.folding"), "projection"); //$NON-NLS-1$ //$NON-NLS-2$
+		IMenuManager foldingMenu= new MenuManager(CEditorMessages.CEditor_menu_folding, "projection");  //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
 
 		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
@@ -2358,7 +2360,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		int selectionLength = Math.abs(selection.getLength());
 		if (selectionLength > 1) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.invalidSelection"));	//$NON-NLS-1$
+			setStatusLineErrorMessage(CEditorMessages.GotoMatchingBracket_error_invalidSelection);	
 			sourceViewer.getTextWidget().getDisplay().beep();
 			return;
 		}
@@ -2370,7 +2372,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		IRegion region = fBracketMatcher.match(document, sourceCaretOffset);
 		if (region == null) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.noMatchingBracket"));	//$NON-NLS-1$
+			setStatusLineErrorMessage(CEditorMessages.GotoMatchingBracket_error_noMatchingBracket);	
 			sourceViewer.getTextWidget().getDisplay().beep();
 			return;
 		}
@@ -2396,7 +2398,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		if (!visible) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.bracketOutsideSelectedElement"));	//$NON-NLS-1$
+			setStatusLineErrorMessage(CEditorMessages.GotoMatchingBracket_error_bracketOutsideSelectedElement);	
 			sourceViewer.getTextWidget().getDisplay().beep();
 			return;
 		}
@@ -2960,7 +2962,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		private final OccurrenceLocation[] fLocations;
 
 		public OccurrencesAnnotationUpdaterJob(IDocument document, OccurrenceLocation[] locations, ISelection selection, ISelectionValidator validator) {
-			super(CEditorMessages.getString("CEditor_markOccurrences_job_name")); //$NON-NLS-1$
+			super(CEditorMessages.CEditor_markOccurrences_job_name); 
 			fDocument= document;
 			fSelection= selection;
 			fLocations= locations;

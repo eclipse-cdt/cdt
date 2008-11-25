@@ -76,8 +76,8 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 			DragSource dragSource = (DragSource) event.widget;
 			Control control = dragSource.getControl();
 			Shell shell = control.getShell();
-			String title = CUIMessages.getString("Drag.move.problem.title"); //$NON-NLS-1$
-			String message = CUIMessages.getString("Drag.move.problem.message"); //$NON-NLS-1$
+			String title = CUIMessages.Drag_move_problem_title; 
+			String message = CUIMessages.Drag_move_problem_message; 
 
 			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(shell, title, message);
 

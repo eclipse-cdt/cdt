@@ -158,13 +158,13 @@ public class BuildGroup extends CViewActionGroup {
 		final IWorkbenchPartSite site = getCView().getSite();
 
 		buildAction = new BuildAction(site, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		buildAction.setText(CViewMessages.getString("BuildAction.label")); //$NON-NLS-1$
+		buildAction.setText(CViewMessages.BuildAction_label); 
 
 		cleanAction = new BuildAction(site, IncrementalProjectBuilder.CLEAN_BUILD);
-		cleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
+		cleanAction.setText(CViewMessages.CleanAction_label); 
 		
 		rebuildAction = new RebuildAction(site);
-		rebuildAction.setText(CViewMessages.getString("RebuildAction.label")); //$NON-NLS-1$
+		rebuildAction.setText(CViewMessages.RebuildAction_label); 
 	}
 
 	@Override

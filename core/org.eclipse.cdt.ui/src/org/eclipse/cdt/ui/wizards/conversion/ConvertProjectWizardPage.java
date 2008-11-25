@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,7 +151,7 @@ public abstract class ConvertProjectWizardPage
     protected void addToMainPage(Composite container){
        
 		// Add convert to C or C/C++ buttons
-		Composite area = ControlFactory.createGroup(container, CUIMessages.getString("ConvertProjectWizardPage.convertTo"), 2); //$NON-NLS-1$
+		Composite area = ControlFactory.createGroup(container, CUIMessages.ConvertProjectWizardPage_convertTo, 2); 
 		
 
 		SelectionListener cListener =  new SelectionAdapter() {
@@ -163,12 +163,12 @@ public abstract class ConvertProjectWizardPage
 			}
 		};
 		cRadioButton = ControlFactory.createRadioButton(area, 
-							  CUIMessages.getString("ConvertProjectWizardPage.CProject"), //$NON-NLS-1$
+							  CUIMessages.ConvertProjectWizardPage_CProject, 
 							  "C ", //$NON-NLS-1$
 			  			      cListener);
 		cRadioButton.setSelection(convertToC);			  			      
 		ccRadioButton = ControlFactory.createRadioButton(area, 
-							  CUIMessages.getString("ConvertProjectWizardPage.CppProject"), //$NON-NLS-1$
+							  CUIMessages.ConvertProjectWizardPage_CppProject, 
 							  "C++", //$NON-NLS-1$
 			  			      cListener);	
 		ccRadioButton.setSelection(convertToCC);			  			      
@@ -277,7 +277,7 @@ public abstract class ConvertProjectWizardPage
         
         
         selectAllButton= new Button(buttons, SWT.PUSH);
-        selectAllButton.setText(CUIMessages.getString("ConvertProjectWizardPage.SelectAll")); //$NON-NLS-1$
+        selectAllButton.setText(CUIMessages.ConvertProjectWizardPage_SelectAll); 
         selectAllButton.setLayoutData(getButtonGridData(selectAllButton));
         selectAllButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
@@ -289,7 +289,7 @@ public abstract class ConvertProjectWizardPage
         });
 
         deselectAllButton= new Button(buttons, SWT.PUSH);
-        deselectAllButton.setText(CUIMessages.getString("ConvertProjectWizardPage.DeselectAll")); //$NON-NLS-1$
+        deselectAllButton.setText(CUIMessages.ConvertProjectWizardPage_DeselectAll); 
         deselectAllButton.setLayoutData(getButtonGridData(deselectAllButton));
         deselectAllButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {

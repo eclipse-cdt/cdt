@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,7 +341,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.setTaskName(CPathEntryMessages.getString("CPathsBlock.operationdesc_c")); //$NON-NLS-1$
+		monitor.setTaskName(CPathEntryMessages.CPathsBlock_operationdesc_c); 
 		monitor.beginTask("", 10); //$NON-NLS-1$
 
 		try {

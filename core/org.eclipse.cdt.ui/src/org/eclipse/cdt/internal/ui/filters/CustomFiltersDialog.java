@@ -97,8 +97,8 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 	@Override
 	protected void configureShell(Shell shell) {
-		setTitle(FilterMessages.getString("CustomFiltersDialog.title"));  //$NON-NLS-1$
-		setMessage(FilterMessages.getString("CustomFiltersDialog.filterList.label")); //$NON-NLS-1$
+		setTitle(FilterMessages.CustomFiltersDialog_title);  
+		setMessage(FilterMessages.CustomFiltersDialog_filterList_label); 
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ICHelpContextIds.CUSTOM_FILTERS_DIALOG);
 	}
@@ -125,7 +125,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		
 		// Checkbox
 		fEnableUserDefinedPatterns= new Button(group, SWT.CHECK);
-		fEnableUserDefinedPatterns.setText(FilterMessages.getString("CustomFiltersDialog.enableUserDefinedPattern")); //$NON-NLS-1$
+		fEnableUserDefinedPatterns.setText(FilterMessages.CustomFiltersDialog_enableUserDefinedPattern); 
 		
 		// Pattern	field
 		fUserDefinedPatterns= new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -137,7 +137,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 		// Info text
 		final Label info= new Label(group, SWT.LEFT);
-		info.setText(FilterMessages.getString("CustomFiltersDialog.patternInfo")); //$NON-NLS-1$
+		info.setText(FilterMessages.CustomFiltersDialog_patternInfo); 
 
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(fEnablePatterns);
@@ -167,7 +167,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		new Label(parent, SWT.NONE);
 		
 		Label info= new Label(parent, SWT.LEFT);
-		info.setText(FilterMessages.getString("CustomFiltersDialog.filterList.label"));  //$NON-NLS-1$
+		info.setText(FilterMessages.CustomFiltersDialog_filterList_label);  
 		
 		fCheckBoxList= CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
@@ -186,7 +186,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 		// Description
 		info= new Label(parent, SWT.LEFT);
-		info.setText(FilterMessages.getString("CustomFiltersDialog.description.label"));  //$NON-NLS-1$
+		info.setText(FilterMessages.CustomFiltersDialog_description_label);  
 		final Text description= new Text(parent, SWT.LEFT | SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.VERTICAL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint= convertHeightInCharsToPixels(3);
@@ -229,7 +229,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		composite.setData(data);
 
 		// Select All button
-		String label= FilterMessages.getString("CustomFiltersDialog.SelectAllButton.label"); //$NON-NLS-1$
+		String label= FilterMessages.CustomFiltersDialog_SelectAllButton_label; 
 		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, label, false);
 		SWTUtil.setButtonDimensionHint(selectButton);
 		SelectionListener listener= new SelectionAdapter() {
@@ -245,7 +245,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		selectButton.addSelectionListener(listener);
 
 		// Deselect All button
-		label= FilterMessages.getString("CustomFiltersDialog.DeselectAllButton.label"); //$NON-NLS-1$
+		label= FilterMessages.CustomFiltersDialog_DeselectAllButton_label; 
 		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, label, false);
 		SWTUtil.setButtonDimensionHint(deselectButton);
 		listener= new SelectionAdapter() {

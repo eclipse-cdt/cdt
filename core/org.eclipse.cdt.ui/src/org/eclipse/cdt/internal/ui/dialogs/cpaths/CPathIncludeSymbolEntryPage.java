@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -88,22 +89,22 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 
 	private static final String[] buttonLabel = new String[]{
 
-	/* 0 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addFolderFile"), //$NON-NLS-1$
+	CPathEntryMessages.IncludeSymbolEntryPage_addFolderFile, 
 			null,
-			/* 2 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addUserSymbol"), //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_addUserSymbol, 
 			null,
-			/* 4 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addExternalInclude"), //$NON-NLS-1$
-			/* 5 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addFromWorkspace"), //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_addExternalInclude, 
+			CPathEntryMessages.IncludeSymbolEntryPage_addFromWorkspace, 
 			null,
-			/* 7 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addContributed"), //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_addContributed, 
 			null,
-			/* 9 */CPathEntryMessages.getString("IncludeSymbolEntryPage.edit"), //$NON-NLS-1$
-			/* 10 */CPathEntryMessages.getString("IncludeSymbolEntryPage.remove"), //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_edit, 
+			CPathEntryMessages.IncludeSymbolEntryPage_remove, 
 			null,
-			/* 12 */CPathEntryMessages.getString("IncludeSymbolEntryPage.export"), //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_export, 
 			null,
-			/* 14 */CPathEntryMessages.getString("IncludeSymbolEntryPage.up"), //$NON-NLS-1$
-			/* 15 */CPathEntryMessages.getString("IncludeSymbolEntryPage.down")}; //$NON-NLS-1$
+			CPathEntryMessages.IncludeSymbolEntryPage_up, 
+			CPathEntryMessages.IncludeSymbolEntryPage_down}; 
 	private CPElementGroup fTopGroup;
 
 	private class IncludeSymbolAdapter implements IDialogFieldListener, ITreeListAdapter<CPElementGroup> {
@@ -164,7 +165,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	}
 
 	public CPathIncludeSymbolEntryPage(IStatusChangeListener context) {
-		super(CPathEntryMessages.getString("IncludeSymbolEntryPage.title")); //$NON-NLS-1$
+		super(CPathEntryMessages.IncludeSymbolEntryPage_title); 
 		fContext = context;
 		IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
 		fIncludeSymPathsList = new TreeListDialogField<CPElementGroup>(adapter, buttonLabel, new CPElementLabelProvider(true, false)) {
@@ -174,7 +175,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 				return super.getTreeStyle() & ~SWT.MULTI;
 			}
 		};
-		fIncludeSymPathsList.setLabelText(CPathEntryMessages.getString("IncludeSymbolEntryPage.label")); //$NON-NLS-1$
+		fIncludeSymPathsList.setLabelText(CPathEntryMessages.IncludeSymbolEntryPage_label); 
 		fIncludeSymPathsList.enableButton(IDX_REMOVE, false);
 		fIncludeSymPathsList.enableButton(IDX_EDIT, false);
 		fIncludeSymPathsList.enableButton(IDX_ADD_CONTRIBUTED, true);
@@ -187,7 +188,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		fIncludeSymPathsList.setTreeExpansionLevel(2);
 		fShowInheritedPaths = new SelectionButtonDialogField(SWT.CHECK);
 		fShowInheritedPaths.setSelection(true);
-		fShowInheritedPaths.setLabelText(CPathEntryMessages.getString("IncludeSymbolsEntryPage.show_inherited.check")); //$NON-NLS-1$
+		fShowInheritedPaths.setLabelText(CPathEntryMessages.IncludeSymbolsEntryPage_show_inherited_check); 
 		fShowInheritedPaths.setDialogFieldListener(adapter);
 
 		fFilter = new CPElementFilter(new int[]{-1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER}, false,
@@ -243,8 +244,8 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 			if (nErrorEntries == 1 && entryError != null) {
 				status = entryError.getStatus();
 			} else {
-				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getFormattedString(
-						"CPElement.status.multiplePathErrors", //$NON-NLS-1$
+				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, NLS.bind(
+						CPathEntryMessages.CPElement_status_multiplePathErrors, //$NON-NLS-1$
 						String.valueOf(nErrorEntries)), null);
 			}
 		}
@@ -785,8 +786,8 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
-		String title = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.title"); //$NON-NLS-1$
-		String message = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.description"); //$NON-NLS-1$
+		String title = CPathEntryMessages.IncludeSymbolEntryPage_newResource_title; 
+		String message = CPathEntryMessages.IncludeSymbolEntryPage_newResource_description; 
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
 				new CElementContentProvider());
@@ -834,16 +835,16 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		// Popup an entry dialog
 		InputDialog dialog;
 		if (existing == null) {
-			dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.message"), "", //$NON-NLS-1$ //$NON-NLS-2$
+			dialog = new InputDialog(getShell(), CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_title, 
+					CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_message, "", 
 					null);
 		} else {
 			StringBuffer initialValue = new StringBuffer();
 			initialValue.append((String)existing.getAttribute(CPElement.MACRO_NAME));
 			initialValue.append('=');
 			initialValue.append((String)existing.getAttribute(CPElement.MACRO_VALUE));
-			dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.message"), initialValue.toString(), //$NON-NLS-1$ 
+			dialog = new InputDialog(getShell(), CPathEntryMessages.IncludeSymbolEntryPage_editSymbol_title, 
+					CPathEntryMessages.IncludeSymbolEntryPage_editSymbol_message, initialValue.toString(), 
 					null);
 		}
 
@@ -885,13 +886,13 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		InputDialog dialog;
 		if (existing == null) {
 			dialog = new SelectPathInputDialog(getShell(),
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.addExternal.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.addExternal.message"), null, null); //$NON-NLS-1$
+					CPathEntryMessages.IncludeSymbolEntryPage_addExternal_title, 
+					CPathEntryMessages.IncludeSymbolEntryPage_addExternal_message, null, null); 
 		} else {
 			dialog = new SelectPathInputDialog(
 					getShell(),
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.editExternal.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.editExternal.message"), ((IPath)existing.getAttribute(CPElement.INCLUDE)).toOSString(), null); //$NON-NLS-1$
+					CPathEntryMessages.IncludeSymbolEntryPage_editExternal_title, 
+					CPathEntryMessages.IncludeSymbolEntryPage_editExternal_message, ((IPath)existing.getAttribute(CPElement.INCLUDE)).toOSString(), null); 
 		}
 		String newItem = null;
 		if (dialog.open() == Window.OK) {
@@ -958,11 +959,11 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, existing == null);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
-		String title = (existing == null) ? CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.new.title") //$NON-NLS-1$
-				: CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.edit.title"); //$NON-NLS-1$
+		String title = (existing == null) ? CPathEntryMessages.IncludeSymbolEntryPage_fromWorkspaceDialog_new_title
+				: CPathEntryMessages.IncludeSymbolEntryPage_fromWorkspaceDialog_edit_title; 
 		String message = (existing == null)
-				? CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.new.description") //$NON-NLS-1$
-				: CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.edit.description"); //$NON-NLS-1$
+				? CPathEntryMessages.IncludeSymbolEntryPage_fromWorkspaceDialog_new_description
+				: CPathEntryMessages.IncludeSymbolEntryPage_fromWorkspaceDialog_edit_description; 
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
 				new CElementContentProvider());
@@ -1005,9 +1006,9 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
-			title = CPathEntryMessages.getString("IncludeSymbolEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.IncludeSymbolEntryPage_ContainerDialog_new_title; 
 		} else {
-			title = CPathEntryMessages.getString("IncludeSymbolEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
+			title = CPathEntryMessages.IncludeSymbolEntryPage_ContainerDialog_edit_title; 
 			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(), new int[]{
@@ -1051,14 +1052,14 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			Button browse = createButton(parent, 3,
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.addExternal.button.browse"), //$NON-NLS-1$
+					CPathEntryMessages.IncludeSymbolEntryPage_addExternal_button_browse, 
 					false);
 			browse.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(SelectionEvent ev) {
 					DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
-					dialog.setText(CPathEntryMessages.getString("IncludeSymbolEntryPage.browseForFolder")); //$NON-NLS-1$
+					dialog.setText(CPathEntryMessages.IncludeSymbolEntryPage_browseForFolder); 
 					String currentName = getText().getText();
 					if (currentName != null && currentName.trim().length() != 0) {
 						dialog.setFilterPath(currentName);

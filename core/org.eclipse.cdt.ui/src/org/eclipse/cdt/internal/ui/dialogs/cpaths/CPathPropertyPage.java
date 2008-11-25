@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 */
 	private Control createWithoutCProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.getString("CPathsPropertyPage.no_C_project.message")); //$NON-NLS-1$
+		label.setText(CPathEntryMessages.CPathsPropertyPage_no_C_project_message); 
 
 		fCPathsBlock = null;
 		setValid(true);
@@ -104,7 +104,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 */
 	private Control createForClosedProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(CPathEntryMessages.getString("CPathsPropertyPage.closed_project.message")); //$NON-NLS-1$
+		label.setText(CPathEntryMessages.CPathsPropertyPage_closed_project_message); 
 
 		fCPathsBlock = null;
 		setValid(true);
@@ -116,11 +116,11 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (fCPathsBlock != null) {
 			if (!visible) {
 				if (fCPathsBlock.hasChangesInDialog()) {
-					String title = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.title"); //$NON-NLS-1$
-					String message = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.message"); //$NON-NLS-1$
+					String title = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_title; 
+					String message = CPathEntryMessages.CPathsPropertyPage_unsavedchanges_message; 
 					String[] buttonLabels = new String[]{
-							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.save"), //$NON-NLS-1$
-							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.discard"), //$NON-NLS-1$
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_save, 
+							CPathEntryMessages.CPathsPropertyPage_unsavedchanges_button_discard, 
 					};
 					MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
 							buttonLabels, 0);
@@ -183,8 +183,8 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 			try {
 				new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InvocationTargetException e) {
-				String title = CPathEntryMessages.getString("CPathsPropertyPage.error.title"); //$NON-NLS-1$
-				String message = CPathEntryMessages.getString("CPathsPropertyPage.error.message"); //$NON-NLS-1$
+				String title = CPathEntryMessages.CPathsPropertyPage_error_title; 
+				String message = CPathEntryMessages.CPathsPropertyPage_error_message; 
 				ExceptionHandler.handle(e, shell, title, message);
 				return false;
 			} catch (InterruptedException e) {

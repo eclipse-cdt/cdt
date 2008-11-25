@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -164,46 +165,46 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	public NewClassCreationWizardPage() {
 		super(PAGE_NAME);
 
-		setDescription(NewClassWizardMessages.getString("NewClassCreationWizardPage.description")); //$NON-NLS-1$
+		setDescription(NewClassWizardMessages.NewClassCreationWizardPage_description);
 		
 		SourceFolderFieldAdapter sourceFolderAdapter = new SourceFolderFieldAdapter();
 		fSourceFolderDialogField = new StringButtonDialogField(sourceFolderAdapter);
 		fSourceFolderDialogField.setDialogFieldListener(sourceFolderAdapter);
-		fSourceFolderDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFolder.label")); //$NON-NLS-1$
-		fSourceFolderDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFolder.button")); //$NON-NLS-1$
+		fSourceFolderDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_sourceFolder_label);
+		fSourceFolderDialogField.setButtonLabel(NewClassWizardMessages.NewClassCreationWizardPage_sourceFolder_button);
 
 		NamespaceFieldAdapter namespaceAdapter = new NamespaceFieldAdapter();
 		fNamespaceSelection = new SelectionButtonDialogField(SWT.CHECK);
 		fNamespaceSelection.setDialogFieldListener(namespaceAdapter);
-		fNamespaceSelection.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.namespace.label")); //$NON-NLS-1$
+		fNamespaceSelection.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_namespace_label);
 
 		fNamespaceDialogField = new StringButtonDialogField(namespaceAdapter);
 		fNamespaceDialogField.setDialogFieldListener(namespaceAdapter);
-		fNamespaceDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.namespace.button")); //$NON-NLS-1$
+		fNamespaceDialogField.setButtonLabel(NewClassWizardMessages.NewClassCreationWizardPage_namespace_button);
 
 		ClassNameFieldAdapter classAdapter = new ClassNameFieldAdapter();
 		fClassNameDialogField = new StringDialogField();
 		fClassNameDialogField.setDialogFieldListener(classAdapter);
-		fClassNameDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.className.label")); //$NON-NLS-1$
+		fClassNameDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_className_label);
 		
 		BaseClassesFieldAdapter baseClassesAdapter = new BaseClassesFieldAdapter();
-		fBaseClassesDialogField = new BaseClassesListDialogField(NewClassWizardMessages.getString("NewClassCreationWizardPage.baseClasses.label"), baseClassesAdapter); //$NON-NLS-1$
+		fBaseClassesDialogField = new BaseClassesListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_baseClasses_label, baseClassesAdapter);
 		
 		MethodStubsFieldAdapter methodStubsAdapter = new MethodStubsFieldAdapter();
-		fMethodStubsDialogField = new MethodStubsListDialogField(NewClassWizardMessages.getString("NewClassCreationWizardPage.methodStubs.label"), methodStubsAdapter); //$NON-NLS-1$
+		fMethodStubsDialogField = new MethodStubsListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label, methodStubsAdapter);
 	    
 		FileGroupFieldAdapter fileGroupAdapter = new FileGroupFieldAdapter();
 		fUseDefaultSelection = new SelectionButtonDialogField(SWT.CHECK);
 		fUseDefaultSelection.setDialogFieldListener(fileGroupAdapter);
-		fUseDefaultSelection.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.useDefaultLocation.label")); //$NON-NLS-1$
+		fUseDefaultSelection.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_useDefaultLocation_label);
 		fHeaderFileDialogField = new StringButtonDialogField(fileGroupAdapter);
 		fHeaderFileDialogField.setDialogFieldListener(fileGroupAdapter);
-		fHeaderFileDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.headerFile.label")); //$NON-NLS-1$
-		fHeaderFileDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.headerFile.button")); //$NON-NLS-1$
+		fHeaderFileDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_headerFile_label);
+		fHeaderFileDialogField.setButtonLabel(NewClassWizardMessages.NewClassCreationWizardPage_headerFile_button);
 		fSourceFileDialogField = new StringButtonDialogField(fileGroupAdapter);
 		fSourceFileDialogField.setDialogFieldListener(fileGroupAdapter);
-		fSourceFileDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFile.label")); //$NON-NLS-1$
-		fSourceFileDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFile.button")); //$NON-NLS-1$
+		fSourceFileDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_sourceFile_label);
+		fSourceFileDialogField.setButtonLabel(NewClassWizardMessages.NewClassCreationWizardPage_sourceFile_button);
 		
 		fSourceFolderStatus = STATUS_OK;
 		fNamespaceStatus = STATUS_OK;
@@ -1049,8 +1050,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
         ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
         if (elements == null || elements.length == 0) {
-            String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.title"); //$NON-NLS-1$
-            String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.message"); //$NON-NLS-1$
+            String title = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_title;
+            String message = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noNamespaces_message;
             MessageDialog.openInformation(getShell(), title, message);
             return null;
         }
@@ -1100,8 +1101,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     private void chooseBaseClasses() {
         ITypeInfo[] elements = NewClassWizardUtil.getReachableClasses(getCurrentProject());
         if (elements == null || elements.length == 0) {
-            String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.title"); //$NON-NLS-1$
-            String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.message"); //$NON-NLS-1$
+            String title = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noClasses_title;
+            String message = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noClasses_message;
             MessageDialog.openInformation(getShell(), title, message);
             return;
         }
@@ -1211,7 +1212,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     
     private IPath chooseHeaderFile() {
         SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
-        dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.title")); //$NON-NLS-1$
+        dialog.setTitle(NewClassWizardMessages.NewClassCreationWizardPage_ChooseHeaderFileDialog_title);
         ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
         ICProject project = getCurrentProject();
         if (project != null)
@@ -1238,7 +1239,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     private IPath chooseSourceFile() {
         SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
-        dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.title")); //$NON-NLS-1$
+        dialog.setTitle(NewClassWizardMessages.NewClassCreationWizardPage_ChooseSourceFileDialog_title);
         ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
         ICProject project = getCurrentProject();
         if (project != null)
@@ -1434,7 +1435,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		IPath folderPath = getSourceFolderFullPath();
 		if (folderPath == null) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFolderName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterSourceFolderName);
 			return status;
 		}
 
@@ -1444,28 +1445,28 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", folderPath)); //$NON-NLS-1$
+					status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
 					return status;
 				}
 			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 					if (resType == IResource.PROJECT) {
-						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+						status.setError(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotACProject);
 						return status;
 					}
-					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+					status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 				}
 			    if (NewClassWizardUtil.getSourceFolder(res) == null) {
 			    	if (isUseDefaultSelected()) {
-						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotASourceFolder", folderPath)); //$NON-NLS-1$
+						status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder, folderPath)); //$NON-NLS-1$
 						return status;
 			    	}
 				}
 			} else {
-				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", folderPath)); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFolder, folderPath));
 				return status;
 			}
 		} else {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
@@ -1487,16 +1488,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		// must not be empty
         String namespace = getNamespaceText();
 		if (namespace == null || namespace.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterNamespace")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterNamespace);
 			return status;
 		}
 
 		IStatus val = CConventions.validateNamespaceName(namespace);
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace, val.getMessage()));
 			return status;
 		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NamespaceDiscouraged", val.getMessage())); //$NON-NLS-1$
+			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceDiscouraged, val.getMessage()));
 		}
 
 	 	IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
@@ -1508,7 +1509,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (typeName.isQualified()) {
 				searchResult = NewClassWizardUtil.searchForCppType(typeName.getEnclosingTypeName(),project, ICPPNamespace.class);
 				if (searchResult != NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
-					status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
+					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnclosingNamespaceNotExists);
 					return status;
 				}
 			}
@@ -1518,23 +1519,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				status.setOK();
 				return status;				
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExists);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_NamespaceExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceNotExists);
 				break;
 			}
 	    }
 
 	    val = CConventions.validateNamespaceName(typeName.lastSegment());
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidNamespace, val.getMessage()));
 			return status;
 		}
 	    return status;
@@ -1552,22 +1553,22 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    String className = getClassName();
 		// must not be empty
 		if (className == null || className.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterClassName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterClassName);
 			return status;
 		}
 
         IQualifiedTypeName typeName = new QualifiedTypeName(className);
         if (typeName.isQualified()) {
-            status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.QualifiedClassName")); //$NON-NLS-1$
+            status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_QualifiedClassName);
             return status;
         }
     
 		IStatus val = CConventions.validateClassName(className);
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidClassName", val.getMessage())); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidClassName, val.getMessage()));
 			return status;
 		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.ClassNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_ClassNameDiscouraged, val.getMessage()));
 			// continue checking
 		}
 	
@@ -1584,16 +1585,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project, ICPPClassType.class);
 			switch(searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+				status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_ClassNameExists);
 				return status;				
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
+				status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingClassExists);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_ClassNameExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingClassExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
 				break;
@@ -1651,7 +1652,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     ITypeInfo baseType = baseClass.getType();
                     StatusInfo baseClassStatus = new StatusInfo();
                     if (!NewClassWizardUtil.isTypeReachable(baseType, project, includePaths)) {
-                        baseClassStatus.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.BaseClassNotExistsInProject", baseType.getQualifiedTypeName().toString())); //$NON-NLS-1$
+                        baseClassStatus.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_BaseClassNotExistsInProject, baseType.getQualifiedTypeName().toString()));
                     }
                     status.add(baseClassStatus);
                 }
@@ -1694,19 +1695,19 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 		if (path == null) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterHeaderFileName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterHeaderFileName);
 			return status;
 		}
 		
 		IPath sourceFolderPath = getSourceFolderFullPath();
 		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.HeaderFileNotInSourceFolder")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_HeaderFileNotInSourceFolder);
 			return status;
 		}
 		
 		// Make sure the file location is under a source root
 		if (NewClassWizardUtil.getSourceFolder(path) == null) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.HeaderFileNotInSourceFolder")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_HeaderFileNotInSourceFolder);
 			return status;
 		}
 		
@@ -1720,7 +1721,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					IFileStore store = EFS.getStore(location);
 					fileExists = store.fetchInfo().exists();
 				} catch (CoreException e) {
-					status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.LocationUnknown")); //$NON-NLS-1$
+					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_LocationUnknown);
 					return status;
 				}
     		} else {
@@ -1729,17 +1730,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
-				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile, path));
 				return status;
 			}
 
 		    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 			} else if (fileExists) {
-			    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.HeaderFileExists")); //$NON-NLS-1$
+			    status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileExists);
 			}
     	} else {
-    		status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NotAFile")); //$NON-NLS-1$
+    		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
     		return status;
     	}
 		
@@ -1747,17 +1748,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
 		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		if (!fileExists) {
 			IStatus val = CConventions.validateHeaderFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
-				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidHeaderFileName", val.getMessage())); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidHeaderFileName, val.getMessage()));
 				return status;
 			} else if (val.getSeverity() == IStatus.WARNING) {
-				status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.HeaderFileNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_HeaderFileNameDiscouraged, val.getMessage()));
 			}
 		}
 		return status;
@@ -1774,19 +1775,19 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		IPath path = getSourceFileFullPath();
 		if (path == null) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFileName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterSourceFileName);
 			return status;
 		}
 		
 		IPath sourceFolderPath = getSourceFolderFullPath();
 		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_SourceFileNotInSourceFolder);
 			return status;
 		}
 		
 		// Make sure the file location is under a source root
 		if (NewClassWizardUtil.getSourceFolder(path) == null) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_SourceFileNotInSourceFolder);
 			return status;
 		}
 		
@@ -1800,7 +1801,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					IFileStore store = EFS.getStore(location);
 					fileExists = store.fetchInfo().exists();
 				} catch (CoreException e) {
-					status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.LocationUnknown")); //$NON-NLS-1$
+					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_LocationUnknown);
 					return status;
 				}
     		} else {
@@ -1809,17 +1810,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
-				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile, path));
 				return status;
 			}
 
 		    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 			} else if (fileExists) {
-			    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.SourceFileExists")); //$NON-NLS-1$
+			    status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileExists);
 			}
     	} else {
-    		status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NotAFile")); //$NON-NLS-1$
+    		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
     		return status;
     	}
 		
@@ -1827,17 +1828,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
 		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		if (!fileExists) {
 			IStatus val = CConventions.validateSourceFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
-				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidSourceFileName", val.getMessage())); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidSourceFileName, val.getMessage()));
 				return status;
 			} else if (val.getSeverity() == IStatus.WARNING) {
-				status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.SourceFileNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_SourceFileNameDiscouraged, val.getMessage()));
 			}
 		}
 		return status;

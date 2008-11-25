@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,21 +268,21 @@ public class BuildConsolePage extends Page
 		// each action
 		IActionBars actionBars = getSite().getActionBars();
 		TextViewerAction action = new TextViewerAction(getViewer(), ITextOperationTarget.COPY);
-		action.configureAction(ConsoleMessages.getString("BuildConsolePage.&Copy@Ctrl+C_6"), //$NON-NLS-1$
-				ConsoleMessages.getString("BuildConsolePage.Copy_7"), ConsoleMessages.getString("BuildConsolePage.Copy_7")); //$NON-NLS-1$ //$NON-NLS-2$
+		action.configureAction(ConsoleMessages.BuildConsolePage__Copy_Ctrl_C_6, 
+				ConsoleMessages.BuildConsolePage_Copy_7, ConsoleMessages.BuildConsolePage_Copy_7); 
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action = new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
-		action.configureAction(ConsoleMessages.getString("BuildConsolePage.Select_&All@Ctrl+A_12"), //$NON-NLS-1$
-				ConsoleMessages.getString("BuildConsolePage.Select_All"), //$NON-NLS-1$
-				ConsoleMessages.getString("BuildConsolePage.Select_All")); //$NON-NLS-1$
+		action.configureAction(ConsoleMessages.BuildConsolePage_Select__All_Ctrl_A_12, 
+				ConsoleMessages.BuildConsolePage_Select_All, 
+				ConsoleMessages.BuildConsolePage_Select_All); 
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		//XXX Still using "old" resource access
 		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME); 
-		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", //$NON-NLS-1$
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action_", //$NON-NLS-1$
 				getConsoleView())); 
 		action = new TextViewerGotoLineAction(getViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);

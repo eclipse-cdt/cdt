@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,8 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 
 	protected ProjectContainerPage(int[] filterType) {
 		super("projectContainerPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.getString("ProjectContainerPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("ProjectContainerPage.description")); //$NON-NLS-1$
+		setTitle(CPathEntryMessages.ProjectContainerPage_title); 
+		setDescription(CPathEntryMessages.ProjectContainerPage_description); 
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		fFilterType = filterType;
 		validatePage();
@@ -98,7 +98,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(CPathEntryMessages.getString("ProjectContainerPage.label")); //$NON-NLS-1$
+		label.setText(CPathEntryMessages.ProjectContainerPage_label); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

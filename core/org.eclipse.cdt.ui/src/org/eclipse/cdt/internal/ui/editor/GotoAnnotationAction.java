@@ -23,7 +23,7 @@ public class GotoAnnotationAction extends TextEditorAction {
 	private boolean fForward;
 	
 	public GotoAnnotationAction(String prefix, boolean forward) {
-		super(CEditorMessages.getResourceBundle(), prefix, null);
+		super(ConstructedCEditorMessages.getResourceBundle(), prefix, null);
 		fForward= forward;
 		if (forward)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_NEXT_ERROR_ACTION);

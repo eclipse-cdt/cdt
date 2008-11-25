@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,7 +237,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		treeWidget.setFont(composite.getFont());
 
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(CPathEntryMessages.getString("MultipleFolderSelectionDialog.button")); //$NON-NLS-1$
+		button.setText(CPathEntryMessages.MultipleFolderSelectionDialog_button); 
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override

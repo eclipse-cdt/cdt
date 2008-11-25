@@ -252,7 +252,7 @@ public class MainActionGroup extends CViewActionGroup {
 	}
 
 	void addNewMenu(IMenuManager menu, IStructuredSelection selection) {
-		MenuManager newMenu = new MenuManager(CViewMessages.getString("NewWizardsActionGroup.new")); //$NON-NLS-1$
+		MenuManager newMenu = new MenuManager(CViewMessages.NewWizardsActionGroup_new); 
         menu.add(newMenu);
         newMenu.add(newWizardMenu);
 	}

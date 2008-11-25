@@ -11,58 +11,42 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class CViewMessages {
+public final class CViewMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.cdt.internal.ui.cview.CViewMessages";//$NON-NLS-1$
-
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.cview.CViewMessages";//$NON-NLS-1$
 
 	private CViewMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
-	}
+	public static String OpenWithMenu_label;
+	public static String BuildAction_label;
+	public static String RebuildAction_label;
+	public static String CleanAction_label;
+	public static String CollapseAllAction_label;
+	public static String CollapseAllAction_tooltip;
+	public static String CollapseAllAction_description;
+	public static String CopyAction_title;
+	public static String CopyAction_toolTip;
+	public static String PasteAction_title;
+	public static String PasteAction_toolTip;
+	public static String NewWizardsActionGroup_new;
+	public static String DefaultAction_WIP;
+	public static String DefaultAction_workInProgress;
+	public static String CView_binaries;
+	public static String CView_archives;
+	public static String LibraryRefContainer_Libraries;
+	public static String IncludeRefContainer_Includes;
+	public static String CView_statusLine;
+	public static String CopyToClipboardProblemDialog_title;
+	public static String CopyToClipboardProblemDialog_message;
+	public static String SelectionTransferDropAdapter_error_title;
+	public static String SelectionTransferDropAdapter_error_message;
+	public static String SelectionTransferDropAdapter_error_exception;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(fgResourceBundle.getString(key), (Object[]) args);
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, CViewMessages.class);
 	}
-
 }

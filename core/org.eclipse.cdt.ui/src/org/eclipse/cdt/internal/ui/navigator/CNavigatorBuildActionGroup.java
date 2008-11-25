@@ -143,7 +143,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	@Override
 	protected void makeActions() {
 		fCleanAction= new BuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
-		fCleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
+		fCleanAction.setText(CViewMessages.CleanAction_label); 
 	}
 
 	@Override

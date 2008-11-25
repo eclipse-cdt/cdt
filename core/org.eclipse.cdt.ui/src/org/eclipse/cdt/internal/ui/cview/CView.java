@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -734,12 +735,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 					if (celement instanceof IBinaryContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + CViewMessages.getString("CView.binaries"); //$NON-NLS-1$
+							return cproj.getPath() + CViewMessages.CView_binaries; 
 						}
 					} else if (celement instanceof IArchiveContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + CViewMessages.getString("CView.archives"); //$NON-NLS-1$
+							return cproj.getPath() + CViewMessages.CView_archives; 
 						}
 					} else if (celement instanceof IBinaryModule) {
 						IBinary bin = ((IBinaryModule) celement).getBinary();
@@ -757,7 +758,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			}
 		}
 		if (selection.size() > 1) {
-			return CViewMessages.getFormattedString("CView.statusLine", //$NON-NLS-1$
+			return NLS.bind(CViewMessages.CView_statusLine, 
 					new String[] { Integer.toString(selection.size())});
 		}
 		return "";//$NON-NLS-1$

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -112,7 +113,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 			return null;
 		
 		final ViewerFilter[] result= new ViewerFilter[1];
-		String message= FilterMessages.getFormattedString("FilterDescriptor.filterCreationError.message", getId()); //$NON-NLS-1$
+		String message= NLS.bind(FilterMessages.FilterDescriptor_filterCreationError_message, getId()); 
 		ISafeRunnable code= new SafeRunnable(message) {
 			/*
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
@@ -246,7 +247,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 			if (FILTER_TAG.equals(element.getName())) {
 
 				final FilterDescriptor[] desc= new FilterDescriptor[1];
-				SafeRunnable.run(new SafeRunnable(FilterMessages.getString("FilterDescriptor.filterDescriptionCreationError.message")) { //$NON-NLS-1$
+				SafeRunnable.run(new SafeRunnable(FilterMessages.FilterDescriptor_filterDescriptionCreationError_message) { 
 					public void run() throws Exception {
 						desc[0]= new FilterDescriptor(element);
 					}

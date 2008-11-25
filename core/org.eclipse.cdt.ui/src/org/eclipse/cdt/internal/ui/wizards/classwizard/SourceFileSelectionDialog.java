@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -193,11 +194,11 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         
         fFolderNameDialogField = new StringDialogField();
         fFolderNameDialogField.setDialogFieldListener(fFieldsAdapter);
-        fFolderNameDialogField.setLabelText(NewClassWizardMessages.getString("SourceFileSelectionDialog.folderName.label")); //$NON-NLS-1$
+        fFolderNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_folderName_label); 
         
         fFileNameDialogField = new StringDialogField();
         fFileNameDialogField.setDialogFieldListener(fFieldsAdapter);
-        fFileNameDialogField.setLabelText(NewClassWizardMessages.getString("SourceFileSelectionDialog.fileName.label")); //$NON-NLS-1$
+        fFileNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_fileName_label); 
         
 		setResult(new ArrayList<Object>(0));
         setStatusLineAboveButtons(true);
@@ -255,7 +256,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		fCurrentFolder = null;
         String str = fFolderNameDialogField.getText();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("SourceFileSelectionDialog.error.EnterFolderName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFolderName); 
 			return status;
 		}
 
@@ -266,28 +267,28 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotAFolder", str)); //$NON-NLS-1$
+					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str)); 
 					return status;
 				}
 			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
 			    fCurrentFolder = CModelUtil.getSourceFolder(e);
 				if (fCurrentFolder == null) {
-					status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotASourceFolder", str)); //$NON-NLS-1$
+					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFolder, str)); 
 					return status;
 				}
 			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 					if (resType == IResource.PROJECT) {
-						status.setError(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotACProject")); //$NON-NLS-1$
+						status.setError(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotACProject); 
 						return status;
 					}
-					status.setWarning(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotInACProject")); //$NON-NLS-1$
+					status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject); 
 				}
 			} else {
-				status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotAFolder", str)); //$NON-NLS-1$
+				status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFolder, str)); 
 				return status;
 			}
 		} else {
-			status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.FolderDoesNotExist", str)); //$NON-NLS-1$
+			status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_FolderDoesNotExist, str)); 
 			return status;
 		}
         return status;
@@ -300,7 +301,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		ICElement existingFile = null;
         String str = fFileNameDialogField.getText();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("SourceFileSelectionDialog.error.EnterFileName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.SourceFileSelectionDialog_error_EnterFileName); 
 			return status;
 		}
 
@@ -315,7 +316,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 				if (resType == IResource.FILE) {
 					IProject proj = res.getProject();
 					if (!proj.isOpen()) {
-						status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotAFile", str)); //$NON-NLS-1$
+						status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str)); 
 						return status;
 					}
 				    ICElement e = CoreModel.getDefault().create(res.getFullPath());
@@ -323,20 +324,20 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 				        existingFile = e;
 				    }
 					if (existingFile == null) {
-						status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotASourceFile", str)); //$NON-NLS-1$
+						status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotASourceFile, str)); 
 						return status;
 					}
 				    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-						status.setWarning(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotInACProject")); //$NON-NLS-1$
+						status.setWarning(NewClassWizardMessages.SourceFileSelectionDialog_warning_NotInACProject); 
 					}
 				} else {
-					status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotAFile", str)); //$NON-NLS-1$
+					status.setError(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_error_NotAFile, str)); 
 					return status;
 				}
 			}
 		}
 		if (existingFile != null) {
-			status.setWarning(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.warning.SourceFileExists", str)); //$NON-NLS-1$
+			status.setWarning(NLS.bind(NewClassWizardMessages.SourceFileSelectionDialog_warning_SourceFileExists, str)); 
 		}
 		fCurrentFileString = str;
         return status;

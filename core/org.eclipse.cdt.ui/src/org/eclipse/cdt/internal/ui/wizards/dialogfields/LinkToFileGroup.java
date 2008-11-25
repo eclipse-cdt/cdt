@@ -87,7 +87,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		DialogField.createEmptySpace(parent);
 
 		resolvedPathLabelText = new Label(parent, SWT.SINGLE);
-		resolvedPathLabelText.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+		resolvedPathLabelText.setText(NewWizardMessages.CreateLinkedResourceGroup_resolvedPathLabel); 
 		resolvedPathLabelText.setVisible(true);		
 		
 		resolvedPathLabelData = new Label(parent, SWT.SINGLE);
@@ -110,7 +110,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	public Button getLinkCheckButtonControl(Composite parent){
 		if(linkButton == null){
 			linkButton = new Button(parent, SWT.CHECK);
-			linkButton.setText(NewWizardMessages.getString("NewClassWizardPage.files.linkFileButton")); //$NON-NLS-1$
+			linkButton.setText(NewWizardMessages.NewClassWizardPage_files_linkFileButton); 
 			linkButton.setSelection(createLink);
 			linkButton.setFont(parent.getFont());
 			SelectionListener selectionListener = new SelectionAdapter() {
@@ -184,7 +184,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			browseButton = new Button(parent, SWT.PUSH);
 			//setButtonLayoutData(browseButton);
 			browseButton.setFont(parent.getFont());
-			browseButton.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
+			browseButton.setText(NewWizardMessages.CreateLinkedResourceGroup_browseButton); 
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -244,7 +244,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}
 		if (type == IResource.FILE) {
 			FileDialog dialog = new FileDialog(linkTargetField.getShell());
-			dialog.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.open")); //$NON-NLS-1$
+			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open); 
 			if (file != null) {
 				if (file.isFile())
 					dialog.setFileName(linkTargetName);
@@ -255,14 +255,14 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}
 		else {
 			DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
-			dialog.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.open")); //$NON-NLS-1$
+			dialog.setText(NewWizardMessages.CreateLinkedResourceGroup_open); 
 			if (file != null) {
 				if (file.isFile())
 					linkTargetName = file.getParent();
 				if (linkTargetName != null)
 					dialog.setFilterPath(linkTargetName);
 			}
-			dialog.setMessage(NewWizardMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
+			dialog.setMessage(NewWizardMessages.CreateLinkedResourceGroup_targetSelectionLabel); 
 			selection = dialog.open();
 		}					
 		if (selection != null) {
@@ -313,11 +313,11 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		if (type == IResource.FILE && linkTargetFile.isFile() == false) {
 			return createStatus(
 				IStatus.ERROR,
-				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
+				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFile);	
 		} else if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
 			return createStatus(
 				IStatus.ERROR,
-				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
+				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNotFolder);	
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
@@ -354,7 +354,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			// locationStatus takes precedence over missing location warning.
 			return createStatus(
 				IStatus.WARNING,
-				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
+				NewWizardMessages.CreateLinkedResourceGroup_linkTargetNonExistent);	
 		}
 		return locationStatus;
 	}

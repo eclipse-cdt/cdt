@@ -84,8 +84,8 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	
 	
 	protected void handleFinishException(Shell shell, InvocationTargetException e) {
-		String title= NewWizardMessages.getString("NewElementWizard.op_error.title"); //$NON-NLS-1$
-		String message= NewWizardMessages.getString("NewElementWizard.op_error.message"); //$NON-NLS-1$
+		String title= NewWizardMessages.NewElementWizard_op_error_title; 
+		String message= NewWizardMessages.NewElementWizard_op_error_message; 
 		ExceptionHandler.handle(e, shell, title, message);
 	}
 	

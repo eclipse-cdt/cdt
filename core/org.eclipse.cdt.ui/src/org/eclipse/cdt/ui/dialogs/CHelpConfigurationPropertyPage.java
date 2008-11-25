@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2007 Intel Corporation and others.
+ * Copyright (c) 2004, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,12 +86,12 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		public CHelpSettingsDisplay() {
 		
 			String[] buttonLabels= new String[] {
-				/* 0 */ CUIMessages.getString("CHelpConfigurationPropertyPage.buttonLabels.CheckAll"), //NewWizardMessages.getString("BuildPathsBlock.classpath.checkall.button"), //$NON-NLS-1$
-				/* 1 */ CUIMessages.getString("CHelpConfigurationPropertyPage.buttonLabels.UncheckAll") //NewWizardMessages.getString("BuildPathsBlock.classpath.uncheckall.button") //$NON-NLS-1$
+				/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
+				/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll
 			};
 		
 			fCHelpBookList= new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels, new CHelpBookListLabelProvider());
-			fCHelpBookList.setLabelText(CUIMessages.getString("CHelpConfigurationPropertyPage.HelpBooks")); //$NON-NLS-1$
+			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks); 
 			fCHelpBookList.setCheckAllButtonIndex(0);
 			fCHelpBookList.setUncheckAllButtonIndex(1);
 		}

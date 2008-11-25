@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
  */
 class CStructureCreatorVisitor extends CPPASTVisitor {
 
-	private static final String TRANSLATION_UNIT_NAME = CUIMessages.getString("CStructureCreatorVisitor.translationUnitName"); //$NON-NLS-1$
+	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName; 
 	private static final String ANONYMOUS_NAME= CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 	
 	private Stack<DocumentRangeNode> fStack = new Stack<DocumentRangeNode>();

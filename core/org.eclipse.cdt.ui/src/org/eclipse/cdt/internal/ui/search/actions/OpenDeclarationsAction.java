@@ -86,7 +86,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 	private class WrapperJob extends Job {
 		WrapperJob() {
-			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
+			super(CEditorMessages.OpenDeclarations_dialog_title); 
 		}
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
@@ -111,9 +111,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	 */
 	public OpenDeclarationsAction(CEditor editor) {
 		super( editor );
-		setText(CEditorMessages.getString("OpenDeclarations.label")); //$NON-NLS-1$
-		setToolTipText(CEditorMessages.getString("OpenDeclarations.tooltip")); //$NON-NLS-1$
-		setDescription(CEditorMessages.getString("OpenDeclarations.description")); //$NON-NLS-1$
+		setText(CEditorMessages.OpenDeclarations_label); 
+		setToolTipText(CEditorMessages.OpenDeclarations_tooltip); 
+		setDescription(CEditorMessages.OpenDeclarations_description); 
 	}
 
 	
@@ -358,7 +358,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					}
 					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),
-							CEditorMessages.getString("OpenDeclarationsAction.dialog.title"), CEditorMessages.getString("OpenDeclarationsAction.selectMessage"), //$NON-NLS-1$ //$NON-NLS-2$
+							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage, 
 							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
 				}
 				if (target != null) {

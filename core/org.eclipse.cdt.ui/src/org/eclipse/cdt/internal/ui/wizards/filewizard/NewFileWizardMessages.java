@@ -59,12 +59,10 @@ public final class NewFileWizardMessages extends NLS {
 	public static String NewSourceFileCreationWizardPage_warning_FileNameDiscouraged;
 	public static String NewSourceFileCreationWizardPage_error_InvalidFileName;
 	public static String NewSourceFileGenerator_createFile_task;
-
 	public static String NewFileFromTemplateWizard_pageTitle;
 	public static String NewFileFromTemplateWizard_description;
 	public static String NewFileFromTemplateWizard_shellTitle;
 	public static String NewFileFromTemplateWizard_errorMessage;
-	
 	public static String WizardNewFileFromTemplateCreationPage_configure_label;
 	public static String WizardNewFileFromTemplateCreationPage_noTemplate_name;
 	public static String WizardNewFileFromTemplateCreationPage_useTemplate_label;

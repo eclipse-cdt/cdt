@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,8 +197,8 @@ public class CPathContainerWizard extends Wizard {
 	}
 
 	private void handlePageCreationFailed(CoreException e) {
-		String title = CPathEntryMessages.getString("CPathContainerWizard.pagecreationerror.title"); //$NON-NLS-1$
-		String message = CPathEntryMessages.getString("CPathContainerWizard.pagecreationerror.message"); //$NON-NLS-1$
+		String title = CPathEntryMessages.CPathContainerWizard_pagecreationerror_title; 
+		String message = CPathEntryMessages.CPathContainerWizard_pagecreationerror_message; 
 		ExceptionHandler.handle(e, getShell(), title, message);
 	}
 

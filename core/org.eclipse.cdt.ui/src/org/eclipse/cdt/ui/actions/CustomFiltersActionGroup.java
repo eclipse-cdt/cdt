@@ -71,7 +71,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 
 	class ShowFilterDialogAction extends Action {
 		ShowFilterDialogAction() {
-			setText(FilterMessages.getString("OpenCustomFiltersDialogAction.text")); //$NON-NLS-1$
+			setText(FilterMessages.OpenCustomFiltersDialogAction_text);
 			//setImageDescriptor(CPluginImages.DESC_CLCL_FILTER);
 		}
 		

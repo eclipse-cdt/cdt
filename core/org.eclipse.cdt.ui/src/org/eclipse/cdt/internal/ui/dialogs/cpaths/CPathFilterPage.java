@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class CPathFilterPage extends WizardPage {
 
 	protected CPathFilterPage(ICElement cElement, int[] filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.getString("CPathFilterPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("CPathFilterPage.description")); //$NON-NLS-1$
+		setTitle(CPathEntryMessages.CPathFilterPage_title); 
+		setDescription(CPathEntryMessages.CPathFilterPage_description); 
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		fFilterType = filterType;
 		fCElement = cElement;
@@ -64,7 +64,7 @@ public class CPathFilterPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(CPathEntryMessages.getString("CPathFilterPage.label")); //$NON-NLS-1$
+		label.setText(CPathEntryMessages.CPathFilterPage_label); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

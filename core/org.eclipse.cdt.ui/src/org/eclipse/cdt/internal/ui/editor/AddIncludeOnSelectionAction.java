@@ -108,9 +108,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	}
 
 	public AddIncludeOnSelectionAction(ITextEditor editor) {	
-		super(CEditorMessages.getString("AddIncludeOnSelection.label"));		 //$NON-NLS-1$
-		setToolTipText(CEditorMessages.getString("AddIncludeOnSelection.tooltip")); //$NON-NLS-1$
-		setDescription(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
+		super(CEditorMessages.AddIncludeOnSelection_label);		 
+		setToolTipText(CEditorMessages.AddIncludeOnSelection_tooltip); 
+		setDescription(CEditorMessages.AddIncludeOnSelection_description); 
 		
 		fEditor= editor;
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
@@ -123,7 +123,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				PlatformUI.getWorkbench().getProgressService(),
 				new WorkbenchRunnableAdapter(op), op.getScheduleRule());
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.AddIncludeOnSelection_error_message1, null); 
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}
@@ -272,8 +272,8 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				{				
 					ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_NAME_ONLY));
 					dialog.setElements(pdomNames.toArray());
-					dialog.setTitle(CEditorMessages.getString("AddIncludeOnSelection.label")); //$NON-NLS-1$
-					dialog.setMessage(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
+					dialog.setTitle(CEditorMessages.AddIncludeOnSelection_label); 
+					dialog.setMessage(CEditorMessages.AddIncludeOnSelection_description); 
 					if (dialog.open() == Window.OK) {
 						//get selection
 						Object[] selects = dialog.getResult();
@@ -332,7 +332,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			if (fRequiredIncludes == null && fUsings == null) {
 			}
 		} catch (BadLocationException e) {
-			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message3"), CEditorMessages.getString("AddIncludeOnSelection.error.message4") + e.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+			MessageDialog.openError(getShell(), CEditorMessages.AddIncludeOnSelection_error_message3, CEditorMessages.AddIncludeOnSelection_error_message4 + e.getMessage()); 
 		}
 		
 	}
@@ -362,7 +362,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.AddIncludeOnSelection_error_message1, null); 
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}

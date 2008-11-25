@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class NewClassCodeGenerator {
         if (monitor == null)
             monitor = new NullProgressMonitor();
 
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.mainTask"), 400); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_mainTask, 400); 
 
 	    ITranslationUnit headerTU = null;
         ITranslationUnit sourceTU = null;
@@ -263,7 +263,7 @@ public class NewClassCodeGenerator {
 	}
 
 	public String constructHeaderFileContent(ITranslationUnit headerTU, List<IMethodStub> publicMethods, List<IMethodStub> protectedMethods, List<IMethodStub> privateMethods, String oldContents, IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header"), 100); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header, 100); 
         
         String lineDelimiter= StubUtility.getLineDelimiterUsed(headerTU);
 
@@ -498,7 +498,7 @@ public class NewClassCodeGenerator {
 
     private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text, String lineDelimiter, IProgressMonitor monitor) throws CodeGeneratorException {
 
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header.includePaths"), 100); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_includePaths, 100); 
         
         ICProject cProject = headerTU.getCProject();
         IProject project = cProject.getProject();
@@ -582,7 +582,7 @@ public class NewClassCodeGenerator {
     }
 
     private void addIncludePaths(ICProject cProject, List<IPath> newIncludePaths, IProgressMonitor monitor) throws CodeGeneratorException {
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header.addIncludePaths"), 100); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_header_addIncludePaths, 100); 
 
         //TODO prefs option whether to add to project or parent source folder?
         IPath addToResourcePath = cProject.getPath();
@@ -725,7 +725,7 @@ public class NewClassCodeGenerator {
     }
     
     public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List<IMethodStub> publicMethods, List<IMethodStub> protectedMethods, List<IMethodStub> privateMethods, String oldContents, IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.source"), 150); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.NewClassCodeGeneration_createType_task_source, 150); 
         
         String lineDelimiter= StubUtility.getLineDelimiterUsed(sourceTU);
         if (oldContents != null && oldContents.length() == 0)

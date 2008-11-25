@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
@@ -678,7 +679,7 @@ public class EditorUtility {
 		String newModifierString= Action.findModifierString(modifier);
 		if (modifierString.length() == 0)
 			return newModifierString;
-		return CEditorMessages.getFormattedString("EditorUtility.concatModifierStrings", new String[] {modifierString, newModifierString}); //$NON-NLS-1$
+		return NLS.bind(CEditorMessages.EditorUtility_concatModifierStrings, new String[] {modifierString, newModifierString}); 
 	}
 
 	public static IStorage getStorage(IBinary bin) {

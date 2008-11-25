@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -59,9 +60,9 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		super(parent);
 		fExistingPatterns = existingPatterns;
 		if (patternToEdit == null) {
-			setTitle(CPathEntryMessages.getString("ExclusionPatternEntryDialog.add.title")); //$NON-NLS-1$
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_add_title); 
 		} else {
-			setTitle(CPathEntryMessages.getString("ExclusionPatternEntryDialog.edit.title")); //$NON-NLS-1$
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_edit_title); 
 			fExistingPatterns.remove(patternToEdit);
 		}
 
@@ -73,13 +74,13 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 
 		fExclusionPatternStatus = new StatusInfo();
 
-		String label = CPathEntryMessages.getFormattedString("ExclusionPatternEntryDialog.pattern.label", //$NON-NLS-1$
+		String label = NLS.bind(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_label, 
 				entryToEdit.getPath().makeRelative().toString());
 
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
 		fExclusionPatternDialog = new StringButtonDialogField(adapter);
 		fExclusionPatternDialog.setLabelText(label);
-		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.getString("ExclusionPatternEntryDialog.pattern.button")); //$NON-NLS-1$
+		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_button); 
 		fExclusionPatternDialog.setDialogFieldListener(adapter);
 		fExclusionPatternDialog.enableButton(fCurrSourceFolder != null);
 
@@ -104,7 +105,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		inner.setLayout(layout);
 
 		Label description = new Label(inner, SWT.WRAP);
-		description.setText(CPathEntryMessages.getString("ExclusionPatternEntryDialog.description")); //$NON-NLS-1$
+		description.setText(CPathEntryMessages.ExclusionPatternEntryDialog_description); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.widthHint = convertWidthInCharsToPixels(80);
@@ -153,16 +154,16 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	protected void checkIfPatternValid() {
 		String pattern = fExclusionPatternDialog.getText().trim();
 		if (pattern.length() == 0) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.getString("ExclusionPatternEntryDialog.error.empty")); //$NON-NLS-1$
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_empty); 
 			return;
 		}
 		IPath path = new Path(pattern);
 		if (path.isAbsolute() || path.getDevice() != null) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.getString("ExclusionPatternEntryDialog.error.notrelative")); //$NON-NLS-1$
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_notrelative); 
 			return;
 		}
 		if (fExistingPatterns.contains(pattern)) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.getString("ExclusionPatternEntryDialog.error.exists")); //$NON-NLS-1$
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_exists); 
 			return;
 		}
 
@@ -211,9 +212,9 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		}
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setTitle(CPathEntryMessages.getString("ExclusionPatternEntryDialog.ChooseExclusionPattern.title")); //$NON-NLS-1$
+		dialog.setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_title); 
 		dialog.setValidator(validator);
-		dialog.setMessage(CPathEntryMessages.getString("ExclusionPatternEntryDialog.ChooseExclusionPattern.description")); //$NON-NLS-1$
+		dialog.setMessage(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_description); 
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);

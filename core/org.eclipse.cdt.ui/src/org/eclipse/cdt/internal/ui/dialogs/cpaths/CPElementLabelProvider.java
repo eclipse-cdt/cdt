@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	}
 
 	public CPElementLabelProvider(boolean showExported, boolean showParentInfo) {
-		fNewLabel = CPathEntryMessages.getString("CPElementLabelProvider.new"); //$NON-NLS-1$
-		fCreateLabel = CPathEntryMessages.getString("CPElementLabelProvider.willbecreated"); //$NON-NLS-1$
+		fNewLabel = CPathEntryMessages.CPElementLabelProvider_new; 
+		fCreateLabel = CPathEntryMessages.CPElementLabelProvider_willbecreated; 
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
 		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
@@ -99,15 +99,15 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	private String getCPContainerGroupText(CPElementGroup group) {
 		switch (group.getEntryKind()) {
 			case IPathEntry.CDT_INCLUDE :
-				return CPathEntryMessages.getString("CPElementLabelProvider.Includes"); //$NON-NLS-1$
+				return CPathEntryMessages.CPElementLabelProvider_Includes; 
             case IPathEntry.CDT_INCLUDE_FILE :
-                return CPathEntryMessages.getString("CPElementLabelProvider.IncludeFiles"); //$NON-NLS-1$
+                return CPathEntryMessages.CPElementLabelProvider_IncludeFiles; 
 			case IPathEntry.CDT_MACRO :
-				return CPathEntryMessages.getString("CPElementLabelProvider.PreprocessorSymbols"); //$NON-NLS-1$
+				return CPathEntryMessages.CPElementLabelProvider_PreprocessorSymbols; 
             case IPathEntry.CDT_MACRO_FILE :
-                return CPathEntryMessages.getString("CPElementLabelProvider.MacrosFiles"); //$NON-NLS-1$
+                return CPathEntryMessages.CPElementLabelProvider_MacrosFiles; 
 			case IPathEntry.CDT_LIBRARY :
-				return CPathEntryMessages.getString("CPElementLabelProvider.Libraries"); //$NON-NLS-1$
+				return CPathEntryMessages.CPElementLabelProvider_Libraries; 
 			case -1 :
 				if (group.getResource().getType() == IResource.PROJECT) {
 					return group.getResource().getName();
@@ -122,11 +122,11 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	}
 
 	public String getCPElementAttributeText(CPElementAttribute attrib) {
-		String notAvailable = CPathEntryMessages.getString("CPElementLabelProvider.none"); //$NON-NLS-1$
+		String notAvailable = CPathEntryMessages.CPElementLabelProvider_none; 
 		StringBuffer buf = new StringBuffer();
 		String key = attrib.getKey();
 		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.source_attachment.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_label); 
 			IPath path = (IPath)attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(getPathString(path, path.getDevice() != null));
@@ -134,7 +134,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				buf.append(notAvailable);
 			}
 		} else if (key.equals(CPElement.SOURCEATTACHMENTROOT)) {
-			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.source_attachment_root.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.CPElementLabelProvider_source_attachment_root_label); 
 			IPath path = (IPath)attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(path.toString());
@@ -143,12 +143,12 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			}
 		}
 		if (key.equals(CPElement.EXCLUSION)) {
-			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.exclusion_filter.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_label); 
 			IPath[] patterns = (IPath[])attrib.getValue();
 			if (patterns != null && patterns.length > 0) {
 				for (int i = 0; i < patterns.length; i++) {
 					if (i > 0) {
-						buf.append(CPathEntryMessages.getString("CPElementLabelProvider.exclusion_filter_separator")); //$NON-NLS-1$
+						buf.append(CPathEntryMessages.CPElementLabelProvider_exclusion_filter_separator); 
 					}
 					buf.append(patterns[i].toString());
 				}
@@ -234,7 +234,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			default :
 		// pass
 		}
-		return CPathEntryMessages.getString("CPElementLabelProvider.unknown_element.label"); //$NON-NLS-1$
+		return CPathEntryMessages.CPElementLabelProvider_unknown_element_label; 
 	}
 	/**
 	 * @param cpentry
@@ -261,7 +261,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	private void addExport(CPElement cpentry, StringBuffer str) {
 		if (bShowExported && cpentry.isExported()) {
 			str.append(' ');
-			str.append(CPathEntryMessages.getString("CPElementLabelProvider.export.label")); //$NON-NLS-1$
+			str.append(CPathEntryMessages.CPElementLabelProvider_export_label); 
 		}
 	}
 

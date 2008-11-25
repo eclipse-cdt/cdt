@@ -85,7 +85,7 @@ public class OpenFileGroup extends CViewActionGroup {
 			return;
 		}
 
-		MenuManager submenu = new MenuManager(CViewMessages.getString("OpenWithMenu.label")); //$NON-NLS-1$
+		MenuManager submenu = new MenuManager(CViewMessages.OpenWithMenu_label); 
 		submenu.add(new OpenWithMenu(getCView().getSite().getPage(), (IFile) element));
 		menu.add(submenu);
 	}

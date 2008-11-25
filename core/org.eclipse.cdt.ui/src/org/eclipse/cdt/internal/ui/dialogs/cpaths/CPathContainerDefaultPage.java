@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,14 +43,14 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	 */
 	public CPathContainerDefaultPage() {
 		super("CPathContainerDefaultPage"); //$NON-NLS-1$
-		setTitle(CPathEntryMessages.getString("CPathContainerDefaultPage.title")); //$NON-NLS-1$
-		setDescription(CPathEntryMessages.getString("CPathContainerDefaultPage.description")); //$NON-NLS-1$
+		setTitle(CPathEntryMessages.CPathContainerDefaultPage_title); 
+		setDescription(CPathEntryMessages.CPathContainerDefaultPage_description); 
 		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		
 		fUsedPaths= new ArrayList<IPath>();
 		
 		fEntryField= new StringDialogField();
-		fEntryField.setLabelText(CPathEntryMessages.getString("CPathContainerDefaultPage.path.label")); //$NON-NLS-1$
+		fEntryField.setLabelText(CPathEntryMessages.CPathContainerDefaultPage_path_label); 
 		fEntryField.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
 				validatePath();
@@ -63,15 +63,15 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 		StatusInfo status= new StatusInfo();
 		String str= fEntryField.getText();
 		if (str.length() == 0) {
-			status.setError(CPathEntryMessages.getString("CPathContainerDefaultPage.path.error.enterpath")); //$NON-NLS-1$
+			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_enterpath); 
 		} else if (!Path.ROOT.isValidPath(str)) {
-			status.setError(CPathEntryMessages.getString("CPathContainerDefaultPage.path.error.invalidpath")); //$NON-NLS-1$
+			status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_invalidpath); 
 		} else {
 			IPath path= new Path(str);
 			if (path.segmentCount() == 0) {
-				status.setError(CPathEntryMessages.getString("CPathContainerDefaultPage.path.error.needssegment")); //$NON-NLS-1$
+				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_needssegment); 
 			} else if (fUsedPaths.contains(path)) {
-				status.setError(CPathEntryMessages.getString("CPathContainerDefaultPage.path.error.alreadyexists")); //$NON-NLS-1$
+				status.setError(CPathEntryMessages.CPathContainerDefaultPage_path_error_alreadyexists); 
 			}
 		}
 		updateStatus(status);

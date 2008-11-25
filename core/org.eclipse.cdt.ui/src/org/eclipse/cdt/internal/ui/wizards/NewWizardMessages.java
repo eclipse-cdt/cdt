@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,51 +10,34 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
+import org.eclipse.osgi.util.NLS;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+public final class NewWizardMessages extends NLS {
 
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.wizards.NewWizardMessages";//$NON-NLS-1$
 
-public class NewWizardMessages {
-
-	private static final String RESOURCE_BUNDLE= NewWizardMessages.class.getName();
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
-	
 	private NewWizardMessages() {
-	}
-		
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
+		// Do not instantiate
 	}
 
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
-	}
+	public static String AbstractOpenWizardAction_noproject_title;
+	public static String AbstractOpenWizardAction_noproject_message;
+	public static String AbstractOpenWizardAction_createerror_title;
+	public static String AbstractOpenWizardAction_createerror_message;
+	public static String NewElementWizard_op_error_title;
+	public static String NewElementWizard_op_error_message;
+	public static String NewClassWizardPage_files_linkFileButton;
+	public static String CreateLinkedResourceGroup_resolvedPathLabel;
+	public static String CreateLinkedResourceGroup_browseButton;
+	public static String CreateLinkedResourceGroup_open;
+	public static String CreateLinkedResourceGroup_targetSelectionLabel;
+	public static String CreateLinkedResourceGroup_linkTargetNotFile;
+	public static String CreateLinkedResourceGroup_linkTargetNotFolder;
+	public static String CreateLinkedResourceGroup_linkTargetNonExistent;
+	public static String SourceFolderSelectionDialog_title;
+	public static String SourceFolderSelectionDialog_description;
 
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, NewWizardMessages.class);
+	}
 }

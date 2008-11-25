@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,12 +83,12 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 				if (celement instanceof IBinaryContainer) {
 					ICProject cproj = celement.getCProject();
 					if (cproj != null) {
-						return cproj.getPath() + CViewMessages.getString("CView.binaries"); //$NON-NLS-1$
+						return cproj.getPath() + CViewMessages.CView_binaries; 
 					}
 				} else if (celement instanceof IArchiveContainer) {
 					ICProject cproj = celement.getCProject();
 					if (cproj != null) {
-						return cproj.getPath() + CViewMessages.getString("CView.archives"); //$NON-NLS-1$
+						return cproj.getPath() + CViewMessages.CView_archives; 
 					}
 				} else if (celement instanceof IBinaryModule) {
 					IBinary bin = ((IBinaryModule) celement).getBinary();

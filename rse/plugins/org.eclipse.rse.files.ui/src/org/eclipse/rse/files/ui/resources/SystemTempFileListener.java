@@ -706,7 +706,9 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						// instead, defer synchronization to later but allow user to edit
 						// set the dirty flag to indicate that this file needs resynchronization
 						properties.setDirty(true);
-						return;
+						
+						// as per bug 256048 - comment#6 if we're not connected follow through to
+						// doResourceSynchronization so we have the change to mark the SystemTextEditor dirty
 					}
 				}
 				doResourceSynchronization(fs, file, uploadPath, monitor);		

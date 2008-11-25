@@ -138,8 +138,9 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			// first we need to get the stored timestamp property and the actual remote timestamp
 			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
 			
-			// make sure we're working online - not offline
-			if (fs.isOffline())
+			// make sure we're working online 
+			// also as per bug 256048 - comment#6 if we're not connected we still need to do the same thing
+			if (fs.isOffline() || !fs.isConnected())
 			{			
 				// offline mode - make sure the file stays dirty
 				properties.setDirty(true);

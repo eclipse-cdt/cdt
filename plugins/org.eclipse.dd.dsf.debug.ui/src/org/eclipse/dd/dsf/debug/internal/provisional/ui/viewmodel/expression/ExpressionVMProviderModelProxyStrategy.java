@@ -54,6 +54,19 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
         IExpressionVMNode matchingNode = getExpressionVMProvider().findNodeToParseExpression(node, expression);
         if (matchingNode != null && !matchingNode.equals(node)) {
             flags = flags | getNodeDeltaFlagsForExpression(matchingNode, expression, event);
+        } else {
+            // Check the child nodes of this expression node for additional 
+            // delta flags. 
+            for (IVMNode childNode : getVMProvider().getChildVMNodes(node)) {
+                if (!childNode.equals(node)) {
+                    int childNodeDeltaFlags = getDeltaFlags(childNode, null, event);
+                    if ((childNodeDeltaFlags & IModelDelta.CONTENT) != 0) {
+                        childNodeDeltaFlags &= ~IModelDelta.CONTENT;
+                        childNodeDeltaFlags |= IModelDelta.STATE;
+                    }
+                    flags |= childNodeDeltaFlags;
+                }
+            }
         }
         return flags;
     }

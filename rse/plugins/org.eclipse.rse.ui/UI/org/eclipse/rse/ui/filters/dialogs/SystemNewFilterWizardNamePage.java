@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - [160403] filters should be connection private by default
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [226948] [api][regression] SystemNewFilterWizard.createNamePage() is no longer available
+ * David McKnight   (IBM)        - [249482] Duplicate Filters can be created if changing the filter pool
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -310,22 +311,91 @@ public class SystemNewFilterWizardNamePage
 		if (src == poolCombo)
 		{
 		  	int selection = poolCombo.getSelectionIndex();
-		  	if ((selection >= 0) && (nameValidators!=null))
+ 			
+		  	if ((selection >= 0) && (nameValidators!=null)){
 		    	nameValidator = nameValidators[selection];
+		    	
+	 			ISystemFilterPool currentPool = poolsToSelectFrom[selection];
+	 			if  (currentPool == parentPool){ // if this is the connection-unique filter pool, set the uniqueCB
+	 				uniqueCB.setSelection(true); 			
+	 				poolCombo.setEnabled(false);
+	 			} 			
+		  	}
 		}
 		else if (src == poolWrapperCombo)
 		{
 		  	int selection = poolWrapperCombo.getSelectionIndex();
-		  	if ((selection >= 0) && (nameValidators!=null))
+ 			
+		  	if ((selection >= 0) && (nameValidators!=null)){
 		    	nameValidator = nameValidators[selection];
+		    				  	
+	 			ISystemFilterPoolWrapper currentPool = poolWrappers[selection];
+	 			if  (currentPool == poolWrapperInformation.getPreSelectWrapper()){ // if this is the connection-unique filter pool, set the uniqueCB
+	 				uniqueCB.setSelection(true); 				
+	 				poolWrapperCombo.setEnabled(false);
+	 			} 	
+		  	}
 		}
 		else if (src == uniqueCB)
 		{
 			boolean selected = uniqueCB.getSelection();
 			if (poolVerbiage != null)
 			  	poolVerbiage.setEnabled(!selected);
-			if (poolCombo != null)
+			if (poolCombo != null){
 			 	poolCombo.setEnabled(!selected);
+			 	
+			 				 				 	
+			 	// if unique to connection then only connection-private filter pool can be used			 		
+			 	// if it's not unique to connection, then the connection-private filter pool should not be selected
+		 		boolean foundPool = false;
+			 	int filterPoolSelectionIndex = 0;
+		 		if (poolsToSelectFrom != null){
+		 			
+		 			int currentIndex = poolCombo.getSelectionIndex();
+		 			ISystemFilterPool currentPool = poolsToSelectFrom[currentIndex];
+		 			if (currentPool != parentPool && !selected){ 
+		 				// then the current pool is okay
+		 				filterPoolSelectionIndex = currentIndex;
+		 			}
+		 			else {
+			 			for (int idx=0; idx<poolsToSelectFrom.length && !foundPool; idx++){
+			 				ISystemFilterPool pool = poolsToSelectFrom[idx];
+			 		
+			 				boolean isConnectionUnique = pool == parentPool;
+			 				
+			 				if ((isConnectionUnique && selected) || (!isConnectionUnique && !selected)){			 				
+			 					filterPoolSelectionIndex = idx;
+		           	  			foundPool = true;		           	  			
+		           	  		}
+			 			}
+			 			poolCombo.select(filterPoolSelectionIndex);
+		 			}
+		 		}
+		 		else if (poolWrappers != null){
+		 			int currentIndex = poolWrapperCombo.getSelectionIndex();
+		 			ISystemFilterPoolWrapper currentPoolWrapper = poolWrappers[currentIndex];
+		 			if (currentPoolWrapper == poolWrapperInformation.getPreSelectWrapper()){
+		 				// then the current pool is okay
+		 				filterPoolSelectionIndex = currentIndex;
+		 			}
+		 			else {
+			 			for (int idx=0; idx<poolWrappers.length && !foundPool; idx++){
+			 				
+			 				boolean isConnectionUnique = poolWrapperInformation.getPreSelectWrapper() == poolWrappers[idx];
+			 				if ((isConnectionUnique && selected) || (!isConnectionUnique && !selected)){			 				
+			 					filterPoolSelectionIndex = idx;
+		           	  			foundPool = true;		           	  			
+		           	  		}
+			 			}
+			 			poolWrapperCombo.select(filterPoolSelectionIndex);
+		 			}
+		 		}
+
+		 		if (nameValidators != null){
+		 			nameValidator = nameValidators[filterPoolSelectionIndex];
+		 		}
+			 	
+			}
 			if (poolWrapperCombo != null)
 				poolWrapperCombo.setEnabled(!selected);
 			if (poolComboLabel != null)

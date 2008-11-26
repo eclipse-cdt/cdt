@@ -42,7 +42,6 @@ import org.eclipse.dd.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.dd.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetAutoSolib;
-import org.eclipse.dd.mi.service.command.commands.MIGDBSetBreakpointApply;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.dd.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.dd.mi.service.command.commands.MITargetSelect;
@@ -199,22 +198,6 @@ public class FinalLaunchSequence extends Sequence {
         		requestMonitor.done();
         	}
         }},
-        /*
-         * Tell GDB to have breakpoint affect all processes being debugged.
-         * The user should actually make this decision.  See bug 244053
-         */
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-            fCommandControl.queueCommand(
-                    // This command will fail for GDBs without multi-process support, and that is ok
-                    new MIGDBSetBreakpointApply(fCommandControl.getContext(), true),
-                    new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-                        @Override
-                        protected void handleCompleted() {
-                            requestMonitor.done();
-                        }
-                    });
-        }},
     	/*
     	 * Enable non-stop mode if necessary
     	 */
@@ -233,36 +216,22 @@ public class FinalLaunchSequence extends Sequence {
         	if (isNonStop) {
         		// The raw commands should not be necessary in the official GDB release
         		fCommandControl.queueCommand(
-        				new RawCommand(fCommandControl.getContext(), "set breakpoint always-inserted"), //$NON-NLS-1$
-        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-        					@Override
-        					protected void handleSuccess() {
-        						String asyncCommandStr;
-        						if (fSessionType == SessionType.REMOTE) {
-        							asyncCommandStr = "maint set remote-async 1"; //$NON-NLS-1$
-        						} else {
-        							asyncCommandStr = "maint set linux-async 1"; //$NON-NLS-1$
-        						}
-
-        						fCommandControl.queueCommand(
-        								new RawCommand(fCommandControl.getContext(), asyncCommandStr),
-        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-        									@Override
-        									protected void handleSuccess() {
-        										fCommandControl.queueCommand(
-        												new RawCommand(fCommandControl.getContext(), "set pagination off"),  //$NON-NLS-1$ 
-        												new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-        													@Override
-        													protected void handleSuccess() {
-        														fCommandControl.queueCommand(
-        																new MIGDBSetNonStop(fCommandControl.getContext(), true), 
-        																new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-        													}
-        												});
-        									}
-        								});
-        					}
-        								});
+       				new RawCommand(fCommandControl.getContext(), "set target-async on"), //$NON-NLS-1$
+       				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+       					@Override
+       					protected void handleSuccess() {
+       						fCommandControl.queueCommand(
+   								new RawCommand(fCommandControl.getContext(), "set pagination off"),  //$NON-NLS-1$ 
+   								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+   									@Override
+   									protected void handleSuccess() {
+   										fCommandControl.queueCommand(
+											new MIGDBSetNonStop(fCommandControl.getContext(), true), 
+											new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+      									}
+      								});
+       					}
+					});
         	} else {
         		requestMonitor.done();
         	}

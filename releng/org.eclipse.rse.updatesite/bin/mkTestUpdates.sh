@@ -183,6 +183,7 @@ elif [ ${TYPE} = testSigned ]; then
         rmdir ${STAGING}/updates.${stamp}
         #mv features features.old.${stamp}
         #mv plugins plugins.old.${stamp}
+        rm fversions.txt pversions.txt f30versions.txt p30versions.txt 2>/dev/null
         rm -rf features plugins
         mv features.${stamp} features
         mv plugins.${stamp} plugins
@@ -212,22 +213,24 @@ elif [ ${TYPE} = testSigned ]; then
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
     ## CHECK VERSION CORRECTNESS for 2.0.1
-    echo "VERIFYING VERSION CORRECNESS: Features"
-    ls features/*.jar | sort > f1.$$.txt
-    ls ../updates/3.0/features/*.jar | sort > f2.$$.txt
+    echo "VERIFYING VERSION CORRECTNESS: Features"
+    ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
+    ls ../updates/3.0/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
     echo "wc old-features:"
     wc f1.$$.txt
-    diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
-    echo "VERIFYING VERSION CORRECNESS: Plugins"
-    ls plugins/*.jar | sort > p1.$$.txt
-    ls ../updates/3.0/plugins/*.jar | sort > p2.$$.txt
+    #diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
+    diff f2.$$.txt f1.$$.txt | grep -v '^[>]'
+    echo "VERIFYING VERSION CORRECTNESS: Plugins"
+    ls plugins/*.jar | sed -e 's,^.*/plugins/,,' | sort > p1.$$.txt
+    ls ../updates/3.0/plugins/*.jar | sed -e 's,^.*/plugins/,,' | sort > p2.$$.txt
     echo "wc old-plugins:"
     wc p1.$$.txt
-    diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
-    mv f1.$$.txt fversions.txt
-    mv p1.$$.txt pversions.txt
-    mv f2.$$.txt f30versions.txt
-    mv p2.$$.txt p30versions.txt
+    #diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
+    diff p2.$$.txt p1.$$.txt
+    mv -f f1.$$.txt fversions.txt
+    mv -f p1.$$.txt pversions.txt
+    mv -f f2.$$.txt f30versions.txt
+    mv -f p2.$$.txt p30versions.txt
     ## rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
 elif [ ${TYPE} = milestone ]; then
     echo "Working on milestone update site"

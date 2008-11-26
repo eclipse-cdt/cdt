@@ -5531,4 +5531,44 @@ public class AST2Tests extends AST2BaseTest {
 		return runtime.totalMemory()-runtime.freeMemory();
 	}
 
+	// void test() {
+	//    const void* p = 1+2;
+	// }
+	public void testGetChildren_Bug256127() throws Exception {
+		final String code = getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTNode node= parseAndCheckBindings(code, lang);
+			
+			IASTNode[] children= node.getChildren();
+			assertEquals(1, children.length);
+			assertInstance(children[0], IASTFunctionDefinition.class);
+			
+			children= children[0].getChildren();
+			assertEquals(3, children.length);
+			assertInstance(children[0], IASTDeclSpecifier.class);
+			assertInstance(children[1], IASTDeclarator.class);
+			assertInstance(children[2], IASTCompoundStatement.class);
+			
+			children= children[2].getChildren();
+			assertEquals(1, children.length);
+			assertInstance(children[0], IASTDeclarationStatement.class);
+
+			children= children[0].getChildren()[0].getChildren();  // skip declaration
+			assertEquals(2, children.length);
+			assertInstance(children[0], IASTDeclSpecifier.class);
+			assertInstance(children[1], IASTDeclarator.class);
+
+			children= children[1].getChildren();  
+			assertEquals(2, children.length);
+			assertInstance(children[0], IASTName.class);
+			assertInstance(children[1], IASTInitializer.class);
+
+			children= children[1].getChildren()[0].getChildren(); // skip binary expression  
+			assertEquals(2, children.length);
+			assertInstance(children[0], IASTLiteralExpression.class);
+			assertInstance(children[1], IASTLiteralExpression.class);
+			
+			assertEquals(0, children[0].getChildren().length);
+		}
+	}
 }

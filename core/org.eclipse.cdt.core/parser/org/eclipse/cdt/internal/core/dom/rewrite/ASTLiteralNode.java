@@ -61,6 +61,10 @@ public class ASTLiteralNode implements IASTNode {
 	public IASTNode getParent() {
 		return null;
 	}
+	
+	public IASTNode[] getChildren() {
+		return IASTNode.EMPTY_NODE_ARRAY;
+	}
 
 	public ASTNodeProperty getPropertyInParent() {
 		return null;

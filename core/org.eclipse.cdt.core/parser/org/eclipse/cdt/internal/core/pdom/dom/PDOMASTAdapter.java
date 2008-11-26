@@ -105,6 +105,10 @@ public class PDOMASTAdapter {
 			return fDelegate.getParent();
 		}
 
+		public IASTNode[] getChildren() {
+			return fDelegate.getChildren();
+		}
+
 		public ASTNodeProperty getPropertyInParent() {
 			return fDelegate.getPropertyInParent();
 		}

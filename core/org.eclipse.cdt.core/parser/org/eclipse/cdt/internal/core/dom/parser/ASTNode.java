@@ -44,6 +44,11 @@ public abstract class ASTNode implements IASTNode {
     	return parent;
     }
     
+	public IASTNode[] getChildren() {
+		ChildCollector collector= new ChildCollector(this);
+		return collector.getChildren();
+	}
+    
     public void setParent(IASTNode node) {
     	this.parent = node;
     }

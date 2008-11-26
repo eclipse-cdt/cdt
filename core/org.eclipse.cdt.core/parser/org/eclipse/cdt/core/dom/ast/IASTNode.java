@@ -83,6 +83,12 @@ public interface IASTNode {
 	 * @return the parent node of this node
 	 */
 	public IASTNode getParent();
+	
+	/**
+	 * Returns the children of this node.
+	 * @since 5.1
+	 */
+	IASTNode[] getChildren();
 
 	/**
 	 * Set the parent node of this node in the tree.

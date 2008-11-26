@@ -183,7 +183,7 @@ elif [ ${TYPE} = testSigned ]; then
         rmdir ${STAGING}/updates.${stamp}
         #mv features features.old.${stamp}
         #mv plugins plugins.old.${stamp}
-        rm fversions.txt pversions.txt f30versions.txt p30versions.txt 2>/dev/null
+        rm fversions.txt pversions.txt f30versions.txt p30versions.txt f_new.txt p_new.txt 2>/dev/null
         rm -rf features plugins
         mv features.${stamp} features
         mv plugins.${stamp} plugins
@@ -212,21 +212,42 @@ elif [ ${TYPE} = testSigned ]; then
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-    ## CHECK VERSION CORRECTNESS for 2.0.1
+    # CHECK VERSION CORRECTNESS for MICRO UPDATES only
+    # Minor/major version updates are not allowed.
+    # Update of "qualifier" requires also updating "micro"
     echo "VERIFYING VERSION CORRECTNESS: Features"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
     ls ../updates/3.0/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
-    echo "wc old-features:"
-    wc f1.$$.txt
-    #diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
-    diff f2.$$.txt f1.$$.txt | grep -v '^[>]'
+    diff f2.$$.txt f1.$$.txt | grep '^[>]' \
+       | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > f_new.txt
+    for f in `cat f_new.txt`; do
+      fold=`grep ${f} f2.$$.txt`
+      if [ "${fold}" != "" ]; then
+        echo "PROBLEM: QUALIFIER update without MICRO: ${f}"
+      fi
+      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      fold=`grep ${fbase} f2.$$.txt`
+      if [ "${fold}" = "" ]; then
+        echo "PROBLEM: MAJOR or MINOR update : ${f}"
+      fi
+    done
     echo "VERIFYING VERSION CORRECTNESS: Plugins"
-    ls plugins/*.jar | sed -e 's,^.*/plugins/,,' | sort > p1.$$.txt
-    ls ../updates/3.0/plugins/*.jar | sed -e 's,^.*/plugins/,,' | sort > p2.$$.txt
-    echo "wc old-plugins:"
-    wc p1.$$.txt
-    #diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
-    diff p2.$$.txt p1.$$.txt
+    ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
+    ls ../updates/3.0/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
+    diff p2.$$.txt p1.$$.txt | grep '^[>]' \
+       | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > p_new.txt
+    for p in `cat p_new.txt`; do
+      pold=`grep ${p} p2.$$.txt`
+      if [ "${pold}" != "" ]; then
+        echo "PROBLEM: QUALIFIER update without MICRO: ${p}"
+      fi
+      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      pold=`grep ${pbase} p2.$$.txt`
+      if [ "${pold}" = "" ]; then
+        echo "PROBLEM: MAJOR or MINOR update : ${p}"
+      fi
+    done
+    #rm f_new.txt p_new.txt
     mv -f f1.$$.txt fversions.txt
     mv -f p1.$$.txt pversions.txt
     mv -f f2.$$.txt f30versions.txt

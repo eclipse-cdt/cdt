@@ -213,18 +213,22 @@ elif [ ${TYPE} = testSigned ]; then
     mv -f web/site.xsl.new web/site.xsl
     ## CHECK VERSION CORRECTNESS for 2.0.1
     echo "VERIFYING VERSION CORRECNESS: Features"
-    ls features | grep -v '_[123]\.0\.0\.v' | sort > f1.$$.txt
-    ls ../updates/3.0/features | sort > f2.$$.txt
+    ls features/*.jar | sort > f1.$$.txt
+    ls ../updates/3.0/features/*.jar | sort > f2.$$.txt
     echo "wc old-features:"
     wc f1.$$.txt
     diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
     echo "VERIFYING VERSION CORRECNESS: Plugins"
-    ls plugins | grep -v '_[123]\.0\.0\.v' | sort > p1.$$.txt
-    ls ../updates/3.0/plugins | sort > p2.$$.txt
+    ls plugins/*.jar | sort > p1.$$.txt
+    ls ../updates/3.0/plugins/*.jar | sort > p2.$$.txt
     echo "wc old-plugins:"
     wc p1.$$.txt
     diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
-    rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
+    mv f1.$$.txt fversions.txt
+    mv p1.$$.txt pversions.txt
+    mv f2.$$.txt f30versions.txt
+    mv p2.$$.txt p30versions.txt
+    ## rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
 elif [ ${TYPE} = milestone ]; then
     echo "Working on milestone update site"
     TPTYPE="3.1 Milestone"

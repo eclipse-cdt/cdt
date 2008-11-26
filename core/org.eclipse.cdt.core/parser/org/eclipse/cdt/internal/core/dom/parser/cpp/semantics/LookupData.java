@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -160,7 +161,7 @@ class LookupData {
 		return false;
 	}
 	
-	public boolean forDefinition() {
+	public boolean forFunctionDeclaration() {
 		if (astName == null) return false;
 		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
 		
@@ -169,39 +170,73 @@ class LookupData {
 		    n = (IASTName) n.getParent();
 		IASTNode p1 = n.getParent();
 		if (p1 instanceof ICPPASTQualifiedName) {
-		    IASTName[] ns = ((ICPPASTQualifiedName)p1).getNames();
-		    if (ns[ns.length - 1] != n)
-		        return false;
+			if (((ICPPASTQualifiedName) p1).getLastName() != n)
+				return false;
 		    p1 = p1.getParent();
 		}			
-		IASTNode p2 = p1.getParent();
-		if (p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) {
-			return !(p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation);
-		}
-		return (p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition);
-	}
-	
-	public boolean forExplicitInstantiation() {
-		if (astName == null) return false;
-		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
 		
-		IASTName n = astName;
-		if (n.getParent() instanceof ICPPASTTemplateId)
-		    n = (IASTName) n.getParent();
-		IASTNode p1 = n.getParent();
-		if (p1 instanceof ICPPASTQualifiedName) {
-		    IASTName[] ns = ((ICPPASTQualifiedName)p1).getNames();
-		    if (ns[ns.length - 1] != n)
-		        return false;
-		    p1 = p1.getParent();
-		}			
-		IASTNode p2 = p1.getParent();
-		if (p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) {
-			return (p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation);
+		if (p1 instanceof IASTDeclarator) {
+			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			if (p2 instanceof IASTSimpleDeclaration) {
+				if (p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation)
+					return false;
+				if (astName instanceof ICPPASTTemplateId &&
+						((ICPPASTDeclSpecifier)((IASTSimpleDeclaration)p2).getDeclSpecifier()).isFriend())
+					return false;
+				
+				return true;
+			} 
+			return p2 instanceof IASTFunctionDefinition;
 		}
 		return false;
 	}
 	
+	public boolean forExplicitFunctionSpecialization() {
+		if (astName == null) return false;
+		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
+		
+		IASTName n = astName;
+		if (n.getParent() instanceof ICPPASTTemplateId)
+		    n = (IASTName) n.getParent();
+		IASTNode p1 = n.getParent();
+		if (p1 instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) p1).getLastName() != n)
+				return false;
+		    p1 = p1.getParent();
+		}			
+		
+		if (p1 instanceof IASTDeclarator) {
+			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			if (p2 instanceof IASTSimpleDeclaration || p2 instanceof IASTFunctionDefinition) {
+				return p2.getParent() instanceof ICPPASTTemplateSpecialization;
+			}
+		}
+		return false;
+	}
+
+	public boolean forExplicitFunctionInstantiation() {
+		if (astName == null) return false;
+		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
+		
+		IASTName n = astName;
+		if (n.getParent() instanceof ICPPASTTemplateId)
+		    n = (IASTName) n.getParent();
+		IASTNode p1 = n.getParent();
+		if (p1 instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) p1).getLastName() != n)
+				return false;
+		    p1 = p1.getParent();
+		}			
+		
+		if (p1 instanceof IASTDeclarator) {
+			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			if (p2 instanceof IASTDeclaration) {
+				return p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation;
+			}
+		}
+		return false;
+	}
+
 	private boolean considerConstructors() {
 		if (astName == null) return false;
 		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
@@ -350,6 +385,14 @@ class LookupData {
         			return ((IPointerType)implied).getType();
         		}
         		return implied;
+        	}
+        	if (prop == IASTDeclarator.DECLARATOR_NAME) {
+        		if (forExplicitFunctionInstantiation()) {
+            		IScope scope = CPPVisitor.getContainingScope(astName);
+            		if (scope instanceof ICPPClassScope) {
+            			return ((ICPPClassScope)scope).getClassType();
+            		} 
+        		}
         	}
         	return null;
         } catch (DOMException e) {

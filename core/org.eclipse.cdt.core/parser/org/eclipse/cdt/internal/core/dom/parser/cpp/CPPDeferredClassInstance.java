@@ -106,6 +106,6 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 
 	@Override
 	public String toString() {
-		return getName() + ASTTypeUtil.getArgumentListString(fArguments, true);
+		return ASTTypeUtil.getType(this, true);
 	}
 }

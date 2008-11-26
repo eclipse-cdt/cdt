@@ -2947,7 +2947,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertFalse(th1sCtor instanceof ICPPSpecialization);
 		
 		ICPPTemplateNonTypeParameter np = ba.assertNonProblem("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
-		ICPPClassType clazz= ba.assertNonProblem("That<I>(I)", 4, ICPPClassType.class);
+		ICPPConstructor clazz= ba.assertNonProblem("That<I>(I)", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= ba.assertNonProblem("That<I>(I)", 7, ICPPConstructor.class);
 
 		ICPPTemplateNonTypeParameter np1 = ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
@@ -2978,7 +2978,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertFalse(th1sCtor instanceof ICPPSpecialization);
 		
 		ICPPTemplateTypeParameter np= ba.assertNonProblem("I>()", 1, ICPPTemplateTypeParameter.class);
-		ICPPClassType clazz= ba.assertNonProblem("That<I>()", 4, ICPPClassType.class);
+		ICPPConstructor clazz= ba.assertNonProblem("That<I>()", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= ba.assertNonProblem("That<I>()", 7, ICPPConstructor.class);
 	}
 	
@@ -3293,5 +3293,51 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    }
     public void testNewOfThisTemplate() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
+    
+    //    template <class T> void f(T);
+    //    class X {
+    //    	friend void f<>(int);
+    //    };
+    public void testFunctionSpecializationAsFriend() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPFunctionTemplate f= bh.assertNonProblem("f(T)", 1);
+		IFunction fref1= bh.assertNonProblem("f<>", 1);
+		assertSame(fref1, f);
+		IFunction fref2= bh.assertNonProblem("f<>", 3);
+		assertInstance(fref2, ICPPTemplateInstance.class);
+		assertSame(f, ((ICPPTemplateInstance) fref2).getSpecializedBinding());
+    }
+    
+    //    template <typename T> class XT {
+    //    	typedef int mytype1;
+    //    	mytype1 m1();
+    //    };
+    //    template <typename T> class XT<T*> {
+    //    	typedef int mytype2;
+    //    	mytype2 m2();
+    //    };
+    //    template <> class XT<int> {
+    //    	typedef int mytype3;
+    //    	mytype3 m3();
+    //    };
+    //    template <typename T> typename XT<T>::mytype1 XT<T>::m1() {}
+    //    template <typename T> typename XT<T*>::mytype2 XT<T*>::m2() {}
+    //    template <> typename XT<int>::mytype3 XT<int>::m3() {}
+    public void testMethodImplWithNonDeferredType() throws Exception {
+		final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPMethod m1= bh.assertNonProblem("m1();", 2);
+		ICPPMethod m2= bh.assertNonProblem("m1() ", 2);
+		assertSame(m1, m2);
+		m1= bh.assertNonProblem("m2();", 2);
+		m2= bh.assertNonProblem("m2() ", 2);
+		assertSame(m1, m2);
+		m1= bh.assertNonProblem("m3();", 2);
+		m2= bh.assertNonProblem("m3() ", 2);
+		assertSame(m1, m2);
     }
 }

@@ -24,7 +24,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -131,7 +134,17 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		int pos = param.getParameterPosition();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			return (ICPPTemplateParameter) list.getNodeAt(pos);
+			ICPPTemplateParameter result= (ICPPTemplateParameter) list.getNodeAt(pos);
+			if (param instanceof ICPPTemplateTypeParameter) {
+				if (result instanceof ICPPTemplateTypeParameter)
+					return result;
+			} else if (param instanceof ICPPTemplateNonTypeParameter) {
+				if (result instanceof ICPPTemplateNonTypeParameter)
+					return result;
+			} else if (param instanceof ICPPTemplateTemplateParameter) {
+				if (result instanceof ICPPTemplateTemplateParameter)
+					return result;
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

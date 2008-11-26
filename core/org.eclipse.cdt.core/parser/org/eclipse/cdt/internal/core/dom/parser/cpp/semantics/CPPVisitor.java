@@ -93,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -120,6 +121,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -131,6 +133,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
@@ -176,6 +180,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -190,9 +195,6 @@ public class CPPVisitor extends ASTQueries {
 	public static final String STD = "std"; //$NON-NLS-1$
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	
-	/**
-	 * @param name
-	 */
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
@@ -200,8 +202,7 @@ public class CPPVisitor extends ASTQueries {
 			    parent instanceof ICPPASTQualifiedName ||
 				parent instanceof ICPPASTBaseSpecifier ||
 				parent instanceof ICPPASTConstructorChainInitializer ||
-				name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME ||
-				parent instanceof ICPPASTTemplateId) {
+				name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME) {
 			binding = CPPSemantics.resolveBinding(name); 
 			if (binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName && 
 					!(parent.getParent() instanceof ICPPASTNamespaceAlias)) {
@@ -225,7 +226,15 @@ public class CPPVisitor extends ASTQueries {
 			} else {
 				return binding;
 			}
-		} 
+		} else if (parent instanceof ICPPASTTemplateId) {
+			final ICPPASTTemplateId id = (ICPPASTTemplateId) parent;
+			if (CPPTemplates.isClassTemplate(id)) 
+				return CPPSemantics.resolveBinding(name); 
+			
+			// function templates/instances/specializations must be resolved via the id
+			id.resolveBinding();
+			return name.getBinding();
+		}
 		if (parent instanceof IASTIdExpression) {
 			return resolveBinding(parent);
 		} else if (parent instanceof ICPPASTFieldReference) {
@@ -425,7 +434,7 @@ public class CPPVisitor extends ASTQueries {
         		scope= (ICPPScope) scope.getParent();
         	}
     		if (name instanceof ICPPASTTemplateId) {
-    			return CPPTemplates.createExplicitClassSpecialization(compType);
+    			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
     		} 
         	if (name.toCharArray().length > 0 && scope != null) //can't lookup anonymous things
         		binding = scope.getBinding(name, false);
@@ -522,24 +531,36 @@ public class CPPVisitor extends ASTQueries {
 			return candidate;
 		}
 		
-		ASTNodeProperty prop = parent.getPropertyInParent();
-		if (parent instanceof IASTTypeId) {
+		// function type
+		if (parent instanceof IASTTypeId)
 		    return CPPSemantics.resolveBinding(name);
-		} else if (prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION ||
-		         prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION) {
-			try {
-				return CPPTemplates.createFunctionSpecialization(name);
-			} catch (DOMException e) {
-				return e.getProblem();
+
+		// explicit instantiations
+		ASTNodeProperty prop = parent.getPropertyInParent();
+		if (prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION) 
+			return CPPSemantics.resolveBinding(name);
+		
+		// explicit specializations
+		if (prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION) {
+			IBinding b= CPPSemantics.resolveBinding(name);
+			if (b instanceof ICPPInternalBinding) {
+				if (parent instanceof ICPPASTFunctionDefinition)
+					((ICPPInternalBinding) b).addDefinition(name);
+				else 
+					((ICPPInternalBinding) b).addDeclaration(name);
 			}
-		} else if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
+			return b;
+		} 
+		// function type for non-type template parameter
+		if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 		
+		// function declaration/defintion
 		IBinding binding;
 		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
-
-		boolean template = false;
+		boolean template= false;
+		boolean isFriendDecl= false;
 		try {
 			while (scope instanceof ICPPTemplateScope) {
 				template = true;
@@ -550,11 +571,13 @@ public class CPPVisitor extends ASTQueries {
 				if (declSpec.isFriend()) {
 					try {
 						scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
+						isFriendDecl= true;
 					} catch (DOMException e1) {
 					}
 				}
 			}
-            binding = (scope != null) ? scope.getBinding(name, false) : null;
+			boolean forceResolve= isFriendDecl && name instanceof ICPPASTTemplateId;
+            binding = (scope != null) ? scope.getBinding(name, forceResolve) : null;
         } catch (DOMException e) {
             return e.getProblem();
         }
@@ -866,6 +889,20 @@ public class CPPVisitor extends ASTQueries {
 	    		inputNode.getRawSignature().toCharArray());
 	}
 	
+	/**
+	 * Searches for an enclosing function definition or declaration, returns
+	 * the name of the function. If you pass the name of a function, it will be returned.
+	 */
+	public static ICPPASTFunctionDefinition findEnclosingFunctionDefinition(IASTNode node) {
+		while (node != null) {
+			if (node instanceof ICPPASTFunctionDefinition) {
+				return (ICPPASTFunctionDefinition) node;
+			}
+			node= node.getParent();
+		}
+		return null;
+	}
+	
 	public static IScope getContainingScope(IASTName name) {
 		IScope scope= getContainingScopeOrNull(name);
 		if (scope == null) {
@@ -910,7 +947,11 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						scope= ((ICPPClassType)binding).getCompositeScope();
+						if (binding instanceof ICPPDeferredClassInstance) {
+							scope= checkForSpecializedScope((ICPPDeferredClassInstance) binding, qname);
+						}
+						if (scope == null)
+							scope= ((ICPPClassType)binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace)binding).getNamespaceScope();
 					} else if (binding instanceof ICPPUnknownBinding) {
@@ -954,6 +995,47 @@ public class CPPVisitor extends ASTQueries {
 			return new CPPScope.CPPScopeProblem(problem.getASTNode(), problem.getID(), problem.getNameCharArray()); 
 		}
 		return getContainingScope(parent);
+	}
+
+	/**
+	 * Checks whether the scope for a deferred instance should be a specialized variant of
+	 * the class-template.
+	 */
+	private static IScope checkForSpecializedScope(ICPPDeferredClassInstance dcli, final ICPPASTQualifiedName qname)
+			throws DOMException {
+		ICPPClassTemplate ct = dcli.getClassTemplate();
+		ICPPTemplateArgument[] args = dcli.getTemplateArguments();
+		IASTName start= qname;
+		ICPPASTFunctionDefinition func= findEnclosingFunctionDefinition(qname);
+		if (func != null) {
+			start= findInnermostDeclarator(func.getDeclarator()).getName();
+			if (start == qname)
+				return null;
+			start= start.getLastName();
+		}
+		IScope lookupScope= getContainingNonTemplateScope(start);
+		while (lookupScope != null) {
+			if (lookupScope instanceof ICPPClassScope) {
+				ICPPClassScope clscope= (ICPPClassScope) lookupScope;
+				ICPPClassType ctype = clscope.getClassType();
+				if (ctype instanceof ICPPClassTemplatePartialSpecialization) {
+					ICPPTemplateArgument[] args1 = ((ICPPClassTemplatePartialSpecialization) ctype).getTemplateArguments();
+					if (CPPTemplates.areSameArguments(args, args1))
+						return lookupScope;
+				} else if (ctype instanceof ICPPTemplateInstance) {
+					ICPPTemplateArgument[] args1 = ((ICPPTemplateInstance) ctype).getTemplateArguments();
+					if (CPPTemplates.areSameArguments(args, args1))
+						return lookupScope;
+				} else if (ctype instanceof ICPPClassTemplate) {
+					if (ct.isSameType(ctype) && 
+							CPPTemplates.argsAreTrivial(ct.getTemplateParameters(), args)) {
+						return lookupScope;
+					}
+				}
+			}
+			lookupScope= lookupScope.getParent();
+		}
+		return null;
 	}
 
 	public static IScope getContainingScope(IASTStatement statement) {
@@ -1495,36 +1577,7 @@ public class CPPVisitor extends ASTQueries {
 	        pt = createType(pDeclSpec);
 	        pt = createType(pt, pDtor);
 
-	        // bug 239975
-	        IType noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-	        
-	        //8.3.5-3 
-	        //Any cv-qualifier modifying a parameter type is deleted.
-	        //so only create the base type from the declspec and not the qualifiers
-	        try {
-	        	if (noTypedef instanceof IQualifierType) {
-	        		pt= ((IQualifierType) noTypedef).getType();
-	        		noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-	        	}
-	        	if (noTypedef instanceof CPPPointerType) {
-	        		pt= ((CPPPointerType) noTypedef).stripQualifiers();
-	        		noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-	        	}
-	        	//any parameter of type array of T is adjusted to be pointer to T
-	        	if (noTypedef instanceof IArrayType) {
-	        		IArrayType at = (IArrayType) noTypedef;
-                    pt = new CPPPointerType(at.getType());
-                    noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-	        	}
-            } catch (DOMException e) {
-                pt = e.getProblem();
-            }
-
-	        //any parameter to type function returning T is adjusted to be pointer to function
-	        if (noTypedef instanceof IFunctionType) {
-	            pt = new CPPPointerType(pt);
-	        }
-	        
+	        pt = SemanticUtil.adjustParameterType(pt);
 	        pTypes[i] = pt;
 	    }
 	     

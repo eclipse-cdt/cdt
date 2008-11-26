@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
@@ -330,6 +331,10 @@ public class ASTTypeUtil {
 				}
 			} else {
 				result.append(getNameForAnonymous((ICompositeType) type));
+			}
+			if (type instanceof ICPPTemplateInstance) {
+				ICPPTemplateInstance inst = (ICPPTemplateInstance) type;
+				result.append(getArgumentListString(inst.getTemplateArguments(), normalize));
 			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);

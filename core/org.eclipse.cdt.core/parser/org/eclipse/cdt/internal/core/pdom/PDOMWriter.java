@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
@@ -240,7 +241,10 @@ abstract public class PDOMWriter {
 					Throwable th= null;
 					try {
 						final IBinding binding = name.resolveBinding();
-						if (binding instanceof IProblemBinding) {
+						if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
+								((IASTName) name.getParent()).getBinding() == binding) {
+								na[0]= null;
+						} else if (binding instanceof IProblemBinding) {
 							fStatistics.fProblemBindingCount++;
 							if (fShowProblems) {
 								reportProblem((IProblemBinding) binding);

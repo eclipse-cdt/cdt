@@ -6,13 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM - Initial API and implementation
+ *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-/*
- * Created on Feb 11, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -28,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * @author aniefer
+ * Models pointer to members.
  */
 public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointerToMemberType {
 	private ICPPASTPointerToMember operator;
@@ -83,7 +80,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 					name = ns[ns.length - 1]; 
 			}
 			
-			IBinding binding = name.resolveBinding();
+			IBinding binding = CPPASTNameBase.resolvePreBinding(name);
 			if (binding instanceof IType) {
 				classType = (IType) binding;
 			} else {

@@ -4604,6 +4604,22 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+	// template<class T> class task;
+	// template<class T> task<T>* preempt(task<T>*);
+	// template<class T> class task {
+	// // ...
+	// friend void next_time();
+	// friend void process(task<T>*);
+	// friend task<T>* preempt<T>(task<T>*);
+	// template<class C> friend int func(C);
+	// friend class task<int>;
+	// template<class P> friend class frd;
+	// // ...
+	// };
+	public void test14_5_3s1() throws Exception { 
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// namespace N {
 	// template <class T> void f(T);
 	// void g(int);
@@ -5364,7 +5380,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template <> void f<int>(int*); // OK
 	// template <> void f(int); // OK
 	public void test14_7_3s12() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
+		// gcc does not report the explicit instantiation as ambiguous, so we accept it as well.
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T> void f(T) {  }
@@ -5467,6 +5484,19 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// template<class T> void f(T);
+	// class Complex {
+	// // ...
+	// Complex(double);
+	// };
+	// void g()
+	// {
+	// f<Complex>(1); // OK, means f<Complex>(Complex(1))
+	// }
+	public void test14_8_1s4() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// namespace A {
 	// struct B { };
 	// template<int X> void f();
@@ -5543,6 +5573,26 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int i2 = f<int,1>(0); // can't conv 1 to int*
 	public void test14_8_2s2e() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 1);
+	}
+
+	// template <class T> void f(T t);
+	// template <class X> void g(const X x);
+	// template <class Z> void h(Z, Z*);
+	// int main()
+	// {
+	// // #1: function type is f(int), t is nonconst
+	// f<int>(1);
+	// // #2: function type is f(int), t is const
+	// f<const int>(1);
+	// // #3: function type is g(int), x is const
+	// g<int>(1);
+	// // #4: function type is g(int), x is const
+	// g<const int>(1);
+	// // #5: function type is h(int, const int*)
+	// h<const int>(1,0);
+	// }
+	public void test14_8_2s3() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template <int> int f(int);
@@ -5704,6 +5754,19 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// f(di); // f( (B<int>&)di )
 	// }
 	public void test14_8_3s4() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
+	// template<class T> void f(T*,int); // #1
+	// template<class T> void f(T,char); // #2
+	// void h(int* pi, int i, char c)
+	// {
+	// f(pi,i); //#1: f<int>(pi,i)
+	// f(pi,c); //#2: f<int*>(pi,c)
+	// f(i,c); //#2: f<int>(i,c);
+	// f(i,i); //#2: f<int>(i,char(i))
+	// }
+	public void test14_8_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6207,6 +6270,21 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // distinguishable with an explicit template argument list
 	public void test14_5_5_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
+	// template <int I> class A;
+	// template <int I, int J> A<I+J> f/*1*/(A<I>, A<J>); // #1
+	// template <int K, int L> A<K+L> f/*2*/(A<K>, A<L>); // same as #1
+	// template <int I, int J> A<I-J> f/*3*/(A<I>, A<J>); // different from #1
+	public void test14_5_5_1s5() throws Exception { 
+		final String content= getAboveComment();
+		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
+		ICPPFunctionTemplate f1= bh.assertNonProblem("f/*1*/", 1);
+		ICPPFunctionTemplate f2= bh.assertNonProblem("f/*2*/", 1);
+		ICPPFunctionTemplate f3= bh.assertNonProblem("f/*3*/", 1);
+		assertSame(f1, f2);
+		assertNotSame(f1, f3);
 	}
 
 	// template <int I> class A;

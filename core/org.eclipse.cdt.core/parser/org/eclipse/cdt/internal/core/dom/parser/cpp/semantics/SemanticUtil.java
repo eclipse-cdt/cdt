@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -321,5 +323,42 @@ public class SemanticUtil {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Adjusts the parameter type according to 8.3.5-3:
+	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
+	 */
+	public static IType adjustParameterType(IType pt) {
+		// bug 239975
+		IType noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+
+		//8.3.5-3 
+		//Any cv-qualifier modifying a parameter type is deleted.
+		//so only create the base type from the declspec and not the qualifiers
+		try {
+			if (noTypedef instanceof IQualifierType) {
+				pt= ((IQualifierType) noTypedef).getType();
+				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+			}
+			if (noTypedef instanceof CPPPointerType) {
+				pt= ((CPPPointerType) noTypedef).stripQualifiers();
+				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+			}
+			//any parameter of type array of T is adjusted to be pointer to T
+			if (noTypedef instanceof IArrayType) {
+				IArrayType at = (IArrayType) noTypedef;
+				pt = new CPPPointerType(at.getType());
+				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+			}
+		} catch (DOMException e) {
+			pt = e.getProblem();
+		}
+
+		//any parameter to type function returning T is adjusted to be pointer to function
+		if (noTypedef instanceof IFunctionType) {
+			pt = new CPPPointerType(pt);
+		}
+		return pt;
 	}
 }

@@ -1419,7 +1419,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		*/
 		
 		ICPPTemplateNonTypeParameter np= getBindingFromASTName("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
-		ICPPClassType clazz= getBindingFromASTName("That<I>(I)", 4, ICPPClassType.class);
+		ICPPConstructor clazz= getBindingFromASTName("That<I>(I)", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= getBindingFromASTName("That<I>(I)", 7, ICPPConstructor.class);
 	}
 	
@@ -1445,7 +1445,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertFalse(th1sCtor instanceof ICPPSpecialization);
 		
 		ICPPTemplateTypeParameter np= getBindingFromASTName("I>()", 1, ICPPTemplateTypeParameter.class);
-		ICPPClassType clazz= getBindingFromASTName("That<I>()", 4, ICPPClassType.class);
+		ICPPConstructor clazz= getBindingFromASTName("That<I>()", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= getBindingFromASTName("That<I>()", 7, ICPPConstructor.class);
 	}
 	

@@ -19,7 +19,8 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight  (IBM)  - [250168] handle malformed binary and always resolve canonical paths
- *******************************************************************************/
+ * David McKnight  (IBM)  - [250168] update to just search file of canonical paths (not symbolic links)
+ ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -132,12 +133,12 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			_miner.statusCancelled(_status);
 		}
 		else {			
+			_alreadySearched.clear();
 			// previously, the status would be set to done immediately because search results were sent
 			// back to the client as they arrived.  Now, the search handler wait until the search has
 			// completed before setting the status to done
 			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status);	// true indicates refresh immediately
-
 		}
 	}
 
@@ -157,13 +158,10 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	{       
         boolean result = false;
         try {
-        	File canonicalFile = file.getCanonicalFile();
-
-        	// if it's not a symbolic link - if not, we always search it
-        	if (!file.getAbsolutePath().equals(canonicalFile.getAbsolutePath())){
-        		// check whether it's already been searched
-        		result = _alreadySearched.contains(canonicalFile);
-        	}
+        	String canonicalPath = file.getCanonicalPath();
+        	
+        	// check whether it's already been searched
+        	result = _alreadySearched.contains(canonicalPath);
         }
         catch (IOException e){	        	
         	_dataStore.trace(e);
@@ -175,20 +173,19 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
 		
-		if (theFile.isFile() || !hasSearched(theFile)) {
-			boolean isDirectory = theFile.isDirectory();
-			if (isDirectory){
-				try {
-					_alreadySearched.add(theFile.getCanonicalFile());
-				}
-				catch (Exception e){
-					_alreadySearched.add(theFile);
-					_dataStore.trace(e);
-
-				}
-			}
+		if (!hasSearched(theFile)) {
 			
+			try {
+				_alreadySearched.add(theFile.getCanonicalPath());
+			}
+			catch (Exception e){
+				_alreadySearched.add(theFile.getAbsolutePath());
+				_dataStore.trace(e);
+
+			}			
 	
+			boolean isDirectory = theFile.isDirectory();
+			
 			// is it an archive?
 			boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
 	
@@ -330,7 +327,6 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 					if (children != null) {
 
 						for (int i = 0; i < children.length && !_isCancelled; i++) {
-
 							File child = children[i];
 							internalSearch(child, depth - 1);
 						}

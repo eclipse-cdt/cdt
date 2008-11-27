@@ -272,6 +272,9 @@ public class ErrorParserManager extends OutputStream {
 		if (resourceLocation == null) {
 			return false;
 		}
+		if (location.getDevice()==null) {
+			resourceLocation = resourceLocation.setDevice(null);
+		}
 		if (location.isAbsolute()) {
 			return location.equals(resourceLocation);
 		} else {

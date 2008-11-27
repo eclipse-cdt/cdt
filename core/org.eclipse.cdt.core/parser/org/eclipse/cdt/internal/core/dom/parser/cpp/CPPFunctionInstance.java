@@ -52,7 +52,7 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	 */
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getArgumentListString(fArguments, true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " " + ASTTypeUtil.getArgumentListString(fArguments, true); //$NON-NLS-1$ 
 	}
 	
     @Override

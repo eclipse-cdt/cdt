@@ -107,7 +107,8 @@ public class ASTTypeUtil {
 	}
 	
 	/**
-	 * Returns a comma-separated list of the string representations of the arguments. 
+	 * Returns a comma-separated list of the string representations of the arguments, enclosed
+	 * in angle brackets. 
 	 * Optionally normalization is performed:
 	 * <br> template parameter names are represented by their parameter position,
 	 * <br> further normalization may be performed in future versions.
@@ -117,6 +118,7 @@ public class ASTTypeUtil {
 	public static String getArgumentListString(ICPPTemplateArgument[] args, boolean normalize) {
 		StringBuilder result= new StringBuilder();
 		boolean first= true;
+		result.append('<');
 		for (ICPPTemplateArgument arg : args) {
 			if (!first) {
 				result.append(',');
@@ -124,6 +126,7 @@ public class ASTTypeUtil {
 			first= false;
 			result.append(getArgumentString(arg, normalize));
 		}
+		result.append('>');
 		return result.toString();
 	}
 

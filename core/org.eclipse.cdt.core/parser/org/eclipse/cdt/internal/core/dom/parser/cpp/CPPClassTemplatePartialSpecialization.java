@@ -66,7 +66,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	@Override
 	public String toString() {
 		try {
-			return super.toString() + '<' + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true) + '>';
+			return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
 		} catch (DOMException e) {
 			return super.toString() + '<' + e.getProblem().toString() + '>';
 		}

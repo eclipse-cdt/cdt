@@ -52,7 +52,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	 */
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getArgumentListString(arguments, true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " " + ASTTypeUtil.getArgumentListString(arguments, true); //$NON-NLS-1$
 	}
 	
 	@Override

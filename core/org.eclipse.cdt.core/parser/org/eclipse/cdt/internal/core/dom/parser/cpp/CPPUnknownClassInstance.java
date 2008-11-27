@@ -39,7 +39,7 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getArgumentListString(arguments, true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " " + ASTTypeUtil.getArgumentListString(arguments, true); //$NON-NLS-1$ 
 	}
 	
 	@Override

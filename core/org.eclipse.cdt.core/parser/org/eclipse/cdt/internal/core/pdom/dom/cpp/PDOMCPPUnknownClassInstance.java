@@ -74,7 +74,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 
 	@Override
 	public String toString() {
-		return getName() + " <" + ASTTypeUtil.getArgumentListString(getArguments(), true) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getName() + " " + ASTTypeUtil.getArgumentListString(getArguments(), true); //$NON-NLS-1$ 
 	}
 	
 	@Override

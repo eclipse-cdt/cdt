@@ -1041,10 +1041,11 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	void func(const int* x) {}
 	
 	//	void func(int* p) {
-	//		func(const_cast<const int*>(p));
+	//      const int* q = p;
+	//		func(q);
 	//	}
-	public void _testFunctionWithConstCast_Bug256240() throws Exception {
-    	getBindingFromASTName("func(const_cast", 4, ICPPFunction.class);
+	public void _testOverloadedFunctionFromIndex_Bug256240() throws Exception {
+    	getBindingFromASTName("func(q", 4, ICPPFunction.class);
 	}
 
 	private void assertBindings(String[] expected, ICPPBase[] bases) throws DOMException {

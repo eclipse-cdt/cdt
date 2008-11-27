@@ -18,6 +18,7 @@
  * Xuan Chen        (IBM)        - [215863]] NPE when Expanding Empty Zip File
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight   (IBM)        - [251729][dstore] problems querying symbolic link folder
+ * Noriaki Takatsu  (IBM)        - [256724] thread-level security is not established
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -34,6 +35,7 @@ import java.util.List;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
@@ -46,7 +48,7 @@ import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 /*
  * This utility class is for determining file types
  */
-public class FileClassifier extends Thread
+public class FileClassifier extends SecuredThread
 {
     protected class Pair
     {
@@ -129,6 +131,7 @@ public class FileClassifier extends Thread
 
     public FileClassifier(DataElement subject)
     {
+    	super(subject.getDataStore());
         _lines = new ArrayList();
         // special encoding passed in when starting server
         _specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
@@ -259,6 +262,7 @@ public class FileClassifier extends Thread
 
     public void run()
     {
+    	super.run();
         if (!_systemSupportsClassify)
             return;
         init();
@@ -291,7 +295,7 @@ public class FileClassifier extends Thread
                 // if parent file is a directory, classify all its children, and
                 // do not
                 // resolve links by default
-                if (parentFile.isDirectory() && parentFile.list().length > 0)
+                if ((parentFile != null) && parentFile.isDirectory() && parentFile.list().length > 0)
                 {
                     classifyChildren(parentFile, "*", false); //$NON-NLS-1$
                 }

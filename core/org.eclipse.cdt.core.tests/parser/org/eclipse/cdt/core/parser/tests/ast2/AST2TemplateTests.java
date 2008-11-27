@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -3340,4 +3341,30 @@ public class AST2TemplateTests extends AST2BaseTest {
 		m2= bh.assertNonProblem("m3() ", 2);
 		assertSame(m1, m2);
     }
+    
+    //    template<typename S> class A1 {
+    //        template<typename T> void f1(T);
+    //    };
+    //    template<> template<typename T> void A1<float>::f1(T){}   
+    //
+    //    template<typename T> class A {};
+    //    template<> class A<float> {
+    //    	  template<typename T> void f(T);
+    //    };
+    //    template<typename T> void A<float>::f(T){}   //problem on f
+    public void _testClassTemplateMemberFunctionTemplate_Bug104262() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        ICPPClassTemplate A1= bh.assertNonProblem("A1", 2);
+        ICPPMethod method= bh.assertNonProblem("A1<float>::f1", 13);
+        IBinding owner= method.getOwner();
+        assertInstance(owner, ICPPClassSpecialization.class);
+        assertSame(A1, ((ICPPClassSpecialization) owner).getSpecializedBinding());
+        
+        ICPPClassSpecialization special= bh.assertNonProblem("A<float>", 8);
+        method= bh.assertNonProblem("A<float>::f", 11);
+        assertSame(method.getOwner(), special);
+    }    
 }

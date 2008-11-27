@@ -6135,14 +6135,26 @@ public class AST2CPPTests extends AST2BaseTest {
         }
     }
     
-    //    namespace ns {
-    //    	template<typename T> class CT {};
-    //    }
-    //    using ns::CT<int>;
+    //	namespace ns {
+    //	  template<typename T> class CT {};
+    //  }
+    //  using ns::CT<int>;
     public void testTemplateIDInUsingDecl_251199() throws Exception {
         parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 
+	//	namespace ns {
+	//	struct A {};
+	//	}
+	//
+	//	struct B {
+	//	  operator ns::A(); // problems on operator ns and on A
+	//	};
+	public void _testNamespaceQualifiedOperator_256840() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("operator ns::A", 14);
+	}
+	
 	//	void f();
 	//	
 	//	void test(int p) {

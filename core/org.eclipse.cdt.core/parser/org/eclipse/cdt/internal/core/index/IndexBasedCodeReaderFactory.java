@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
@@ -162,9 +164,15 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			CCorePlugin.log(e);
 		}
 
-		CodeReader codeReader= createCodeReaderForInclusion(path);
-		if (codeReader != null) {
-			return new IncludeFileContent(codeReader);
+		try {
+			CodeReader codeReader= InternalParserUtil.createCodeReader(ifl);
+			if (codeReader != null) {
+				return new IncludeFileContent(codeReader);
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (IOException e) {
+			CCorePlugin.log(e);
 		}
 		return null;
 	}

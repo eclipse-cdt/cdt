@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.ByteArrayInputStream;
@@ -81,7 +80,9 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	public static TestSuite suite() {
-		return suite(IndexBugsTests.class);
+		final TestSuite ts = suite(IndexBugsTests.class);
+		ts.addTest(Bug246129.suite());
+		return ts;
 	}
 
 	@Override

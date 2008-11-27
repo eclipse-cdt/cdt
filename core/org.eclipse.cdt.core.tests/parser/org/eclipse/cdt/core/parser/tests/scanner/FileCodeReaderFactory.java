@@ -66,5 +66,4 @@ public class FileCodeReaderFactory implements ICodeReaderFactory {
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;
 	}
-
 }

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.util.Iterator;
+import java.io.IOException;
 
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 
 /**
  * This is an empty implementation of the ICodeReaderCache interface.  It is used to implement a 
@@ -32,20 +30,13 @@ public class EmptyCodeReaderCache implements ICodeReaderCache {
 	 * Creates a new CodeReader for the given file location.
 	 */
 	public CodeReader get(String location) {
-		CodeReader ret = null;
-		ret = InternalParserUtil.createFileReader(location);
-		return ret;
+		try {
+			return new CodeReader(location);
+		} catch (IOException e) {
+		}
+		return null;
 	}
 	
-	/**
-	 * This provides support for PartialWorkingCopyCodeReaderFactory.
-	 * @param finalPath
-	 * @param workingCopies
-	 */
-	public CodeReader createReader(String finalPath, Iterator<IWorkingCopy> workingCopies ) {
-		return InternalParserUtil.createFileReader(finalPath);
-	}
-
 	/**
 	 * Returns null.
 	 */

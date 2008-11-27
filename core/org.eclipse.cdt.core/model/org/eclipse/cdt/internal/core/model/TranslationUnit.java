@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerIncludeResolutionHeuristics;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
@@ -930,20 +931,25 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public CodeReader getCodeReader() {
-		CodeReader reader;
 		IPath location= getLocation();
-		if (isWorkingCopy() || location == null) {
-			if (location == null) {
-				reader= new CodeReader(getContents());
-			}
-			else {
-				reader= new CodeReader(location.toString(), getContents());
-			}
+		if (location == null)
+			return new CodeReader(getContents());
+		if (isWorkingCopy()) {
+			return new CodeReader(location.toOSString(), getContents());
 		}
-		else {
-			reader= ParserUtil.createReader(location.toString(), null);
+		
+		IResource res= getResource();
+		try {
+			if (res instanceof IFile)
+				return InternalParserUtil.createWorkspaceFileReader(location.toOSString(), (IFile) res);
+			else 
+				return InternalParserUtil.createExternalFileReader(location.toOSString());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (IOException e) {
+			CCorePlugin.log(e);
 		}
-		return reader;
+		return null;
 	}
 
 	public IScannerInfo getScannerInfo(boolean force) {

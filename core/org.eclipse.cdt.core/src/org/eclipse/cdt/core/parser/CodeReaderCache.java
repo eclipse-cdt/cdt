@@ -13,11 +13,10 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 import org.eclipse.core.resources.IFile;
@@ -27,6 +26,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -140,25 +140,44 @@ public class CodeReaderCache implements ICodeReaderCache {
 	 * @param key the path of the CodeReader to retrieve
 	 */
 	public synchronized CodeReader get(String key) {
-		CodeReader ret = null;
+		CodeReader result = null;
 		if (cache.getSpaceLimit() > 0) 
-			ret = cache.get(key);
+			result= cache.get(key);
 		
-		// not in the cache
-		if (ret == null) {
-			// for efficiency: check File.exists before ParserUtil#createReader()
-			// bug 100947 fix: don't want to attempt to create a code reader if there is no file for the key
-			if (!(new File(key).exists()))
-				return null;
+		if (result != null)
+			return result;
+		
+		// for efficiency: check File.exists before ParserUtil#createReader()
+		// bug 100947 fix: don't want to attempt to create a code reader if there is no file for the key
+		final File jfile = new File(key);
+		if (!(jfile.exists()))
+			return null;
 			
-			final List<IWorkingCopy> emptyList= Collections.emptyList();
-			ret = ParserUtil.createReader(key, emptyList.iterator());
-			
+		try {
+			IResource file = ParserUtil.getResourceForFilename(key);
+			if (file instanceof IFile) {
+				key= InternalParserUtil.normalizePath(key, (IFile) file);
+				result= cache.get(key);
+				if (result != null)
+					return result;
+
+				result=  InternalParserUtil.createWorkspaceFileReader(key, (IFile) file);
+			}
+			key= jfile.getCanonicalPath();
+			result= cache.get(key);
+			if (result != null)
+				return result;
+
+			result= InternalParserUtil.createExternalFileReader(key);
 			if (cache.getSpaceLimit() > 0) 
-				put(ret);
+				put(result);
+
+			return result;
+		} catch (CoreException ce) {
+		} catch (IOException e) {
+		} catch (IllegalStateException e) {
 		}
-		
-		return ret;
+		return null;
 	}
 	
 	/**

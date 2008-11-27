@@ -30,7 +30,19 @@ public class ScannerUtility {
 	 *   - replace multiple separators by single one
 	 *   - skip "/./" 
 	 *   - skip quotes
-	 *   - process "/../" (skip previous directory level)    
+	 * 
+	 * Note: "/../" is left untouched on purpose in order to work properly under
+	 * circumstances such as this:
+	 * 
+	 * header file at include_1/vector:
+	 *   // Is supposed to find the STL vector header:
+	 *   #include <ext/../vector>
+	 *   
+	 * GCC include tree 
+	 *   include_gcc/ext/...
+	 *              /vector
+	 * 
+	 * (ls include_1/ext/../vector does not work either).
 	 * 
 	 * @param originalPath - path to process
 	 * @return             - reconciled path   
@@ -87,29 +99,12 @@ public class ScannerUtility {
 							aus[j++] = DOT;
 							aus[j++] = c;
 						}
-						// we found "/.." sequence. Look ahead.
+						// Processed as usual
 						else {
-							// we found "/../" (or "/.." is at the end of string)
-							// we should delete previous segment of output path 
-							if (i == len1 || ein[i+2] == SLASH || ein[i+2] == BSLASH) {
-								i+=2;
-								noSepBefore = false;
-								if (j > 1) { // there is at least 1 segment before
-									int k = j - 2;
-									while ( k >= 0 ) {
-										if (aus[k] == File.separatorChar) break;
-										k--;
-									}
-									j = k + 1; // set index to previous segment or to 0
-								}
-							}
-							// Case "/..blabla" processed as usual
-							else {
-								i++;
-								noSepBefore = true;
-								aus[j++] = DOT;
-								aus[j++] = DOT;
-							}
+							i++;
+							noSepBefore = true;
+							aus[j++] = DOT;
+							aus[j++] = DOT;
 						}
 					} else 
 					{} // do nothing when "." is last symbol

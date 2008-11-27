@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -62,48 +61,28 @@ public class ParserUtil
 		return null;
 	}
 	
-	public static CodeReader createReader( String finalPath, Iterator<IWorkingCopy> workingCopies )
-	{
-		// check to see if the file which this path points to points to an 
+	public static CodeReader createReader(String path, Iterator<IWorkingCopy> workingCopies) {
+		// check to see if the file which this path points to points to an
 		// IResource in the workspace
-		try
-		{
-			IResource resultingResource = getResourceForFilename(finalPath);
-			
-			if( resultingResource != null && resultingResource.getType() == IResource.FILE )
-			{
-				// this is the file for sure
-				// check the working copy
-				if( workingCopies != null && workingCopies.hasNext() )
-				{
-					char[] buffer = findWorkingCopy( resultingResource, workingCopies );
-					if( buffer != null )
-						return new CodeReader(finalPath, buffer); 
+		try {
+			IResource file = getResourceForFilename(path);
+			if (file instanceof IFile) {
+				// check for a working copy
+				if (workingCopies != null && workingCopies.hasNext()) {
+					char[] buffer = findWorkingCopy(file, workingCopies);
+					if (buffer != null)
+						return new CodeReader(InternalParserUtil.normalizePath(path, (IFile) file), buffer);
 				}
-				InputStream in = null;
-				try
-				{
-					in = ((IFile)resultingResource).getContents();
-					return new CodeReader(finalPath, ((IFile)resultingResource).getCharset(), in);
-				} finally {
-					if (in != null)
-					{
-						in.close();
-					}
-				}
+				return InternalParserUtil.createWorkspaceFileReader(path, (IFile) file);
 			}
+			return InternalParserUtil.createExternalFileReader(path);
+		} catch (CoreException ce) {
+		} catch (IOException e) {
+		} catch (IllegalStateException e) {
 		}
-		catch( CoreException ce )
-		{
-		}
-		catch( IOException e )
-		{
-		}
-		catch( IllegalStateException e ) 
-		{
-		}
-		return InternalParserUtil.createFileReader(finalPath);
+		return null;
 	}
+
 
 	public static IResource getResourceForFilename(String finalPath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

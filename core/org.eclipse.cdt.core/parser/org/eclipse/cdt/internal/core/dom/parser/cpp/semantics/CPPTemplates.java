@@ -139,7 +139,7 @@ public class CPPTemplates {
 	public static IBinding instantiate(ICPPTemplateDefinition template, ICPPTemplateArgument[] arguments) {
 		try {
 			arguments= SemanticUtil.getSimplifiedArguments(arguments);
-			if (template instanceof ICPPTemplateTemplateParameter) {
+			if (template instanceof ICPPTemplateTemplateParameter || hasDependentArgument(arguments)) {
 				return deferredInstance(template, arguments);
 			}
 

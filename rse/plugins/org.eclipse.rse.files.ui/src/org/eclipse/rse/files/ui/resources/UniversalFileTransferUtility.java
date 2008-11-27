@@ -49,6 +49,7 @@
  * Kevin Doyle		  (IBM)		 - [227391] Saving file in Eclipse does not update remote file
  * David McKnight     (IBM)      - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  * David McKnight     (IBM)      - [236723] UniversalFileTransferUtility..uploadResourcesFromWorkspace should query remote folder encoding
+ * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -103,6 +104,7 @@ import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -294,6 +296,9 @@ public class UniversalFileTransferUtility
 					}
 				}
 			}
+		}
+		catch (SystemOperationCancelledException soce) {
+			return null;
 		}
 		catch (final SystemMessageException e)
 		{
@@ -717,6 +722,10 @@ public class UniversalFileTransferUtility
 				{
 
 					IFile tempFile = downloadFileToWorkspace(srcFileOrFolder, monitor);
+					if (monitor != null && monitor.isCanceled())
+					{
+						return resultSet;
+					}					
 					resultSet.addResource(tempFile);
 				}
 				else // folder transfer

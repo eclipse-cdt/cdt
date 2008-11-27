@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [248922]  [dnd] Remote to local overwrite copy does not work
  * David McKnight   (IBM)        - [196166] [usability][dnd] Changing the sort order of hosts in the SystemView should work by drag & drop
  * David McKnight   (IBM)        - [248922]  [dnd] display error message when copy operation hits exception
+ * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -206,7 +207,10 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			if (!sameSubSystemType && targetSubSystem != null)
 			{
 				ISystemResourceSet tempObjects = srcAdapter.doDrag(set, monitor);			
-				
+				if (monitor.isCanceled()) {
+					monitor.done();
+					return false;
+				}
 				if (tempObjects == null)
 				{
 					// drag failed		

@@ -1457,7 +1457,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				}
 			    if (NewClassWizardUtil.getSourceFolder(res) == null) {
 			    	if (isUseDefaultSelected()) {
-						status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder, folderPath)); //$NON-NLS-1$
+						status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder, folderPath));
 						return status;
 			    	}
 				}

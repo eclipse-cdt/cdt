@@ -293,7 +293,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
                 status = entryError.getStatus();
             } else {
                 status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, NLS.bind(
-                        CPathEntryMessages.CPElement_status_multiplePathErrors, //$NON-NLS-1$
+                        CPathEntryMessages.CPElement_status_multiplePathErrors,
                         String.valueOf(nErrorEntries)), null);
             }
         }
@@ -892,7 +892,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         InputDialog dialog;
         if (existing == null) {
             dialog = new InputDialog(getShell(), CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_title, 
-                    CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_message, "", 
+                    CPathEntryMessages.IncludeSymbolEntryPage_addSymbol_message, "",  //$NON-NLS-1$
                     null);
         } else {
             StringBuffer initialValue = new StringBuffer();

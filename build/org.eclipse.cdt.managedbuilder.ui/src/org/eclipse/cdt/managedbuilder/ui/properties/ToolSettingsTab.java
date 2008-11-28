@@ -446,9 +446,13 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				setOption(op1[i], op2[i], dst, res);
 			}
 		}
-
+		
+		protected void addFilter(ViewerFilter filter) {
+			optionList.addFilter(filter);
+		}
+		
 		@SuppressWarnings("unchecked")
-		private void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
+		protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
 				switch (op1.getValueType()) {
 					case IOption.BOOLEAN :

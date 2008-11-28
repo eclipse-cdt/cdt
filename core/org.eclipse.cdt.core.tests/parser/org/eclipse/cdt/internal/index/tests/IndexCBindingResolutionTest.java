@@ -348,12 +348,7 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b10 = getBindingFromASTName("foo1/*k*/", 4);
 		IBinding b10a = getBindingFromASTName("sp);/*9*/ ", 2);
 	}
-	
-	public void _testEnumeratorInFileScope() {fail("todo");}
-	public void _testEnumeratorInStructScope() {fail("todo");}
-	public void _testEnumeratorInUnionScope() {fail("todo");}
-	public void _testMemberAccess() {fail("todo");}
-	
+		
 	// // header file
 	// struct myStruct {
 	//    int a;

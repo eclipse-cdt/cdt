@@ -648,7 +648,7 @@ public class CPPTemplates {
 			return null;
 		// mstodo- instantiate values correctly
 		int parPos= Value.isTemplateParameter(value);
-		if (parPos > 0) {
+		if (parPos >= 0) {
 			ICPPTemplateArgument arg = tpMap.getArgument(parPos);
 			if (arg != null) {
 				IValue mappedValue = arg.getNonTypeValue();

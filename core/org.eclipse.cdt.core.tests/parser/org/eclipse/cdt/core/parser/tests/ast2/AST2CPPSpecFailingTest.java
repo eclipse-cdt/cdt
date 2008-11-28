@@ -73,19 +73,4 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	public void _test14_8_2_4s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
-
-	// template<int i, typename T>
-	// T deduce(typename A<T>::X x, // T is not deduced here
-	// T t, // but T is deduced here
-	// typename B<i>::Y y); // i is not deduced here
-	// A<int> a;
-	// B<77> b;
-	// int x = deduce<77>(a.xm, 62, y.ym);
-	// // T is deduced to be int, a.xm must be convertible to
-	// // A<int>::X
-	// // i is explicitly specified to be 77, y.ym must be convertible
-	// // to B<77>::Y
-	public void _test14_8_2_4s14() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
 }

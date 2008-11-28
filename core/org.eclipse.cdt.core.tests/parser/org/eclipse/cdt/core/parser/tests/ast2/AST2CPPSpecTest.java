@@ -5667,6 +5667,29 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	//	template<typename T> class A {
+	//  public:
+	//		typedef int X;
+	//	    X xm;
+	//	};
+	//	template<int I> class B {
+	//	public:
+	//		typedef int* Y;
+	//	    Y ym;
+	//	};
+	//	template<int i, typename T>
+	//	T deduce(typename A<T>::X x, // T is not deduced here
+	//			T t,                 // but T is deduced here
+	//			typename B<i>::Y y); // i is not deduced here
+	//	void test() {
+	//		A<int> a;
+	//		B<77> b;
+	//		deduce<77> (a.xm, 62, b.ym);
+	//	}
+	public void test14_8_2_4s14() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// template<int i> class A { /* ... */ };
 	// template<short s> void f(A<s>);
 	// void k1() {

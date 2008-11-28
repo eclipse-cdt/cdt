@@ -208,7 +208,8 @@ class LookupData {
 		if (p1 instanceof IASTDeclarator) {
 			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
 			if (p2 instanceof IASTSimpleDeclaration || p2 instanceof IASTFunctionDefinition) {
-				return p2.getParent() instanceof ICPPASTTemplateSpecialization;
+				ICPPASTTemplateDeclaration tmplDecl = CPPTemplates.getTemplateDeclaration(n);
+				return tmplDecl instanceof ICPPASTTemplateSpecialization;
 			}
 		}
 		return false;

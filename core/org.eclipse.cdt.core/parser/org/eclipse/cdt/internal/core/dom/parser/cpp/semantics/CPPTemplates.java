@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -79,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -118,6 +121,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -483,9 +488,9 @@ public class CPPTemplates {
 
 			final ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
 			ICPPTemplateArgument[] args= createTemplateArgumentArray(id);
-			ICPPASTTemplateDeclaration tdecl= getTemplateDeclaration(id);
-			if (tdecl != null) {
-				if (hasDependentArgument(args)) {
+			if (hasDependentArgument(args)) {
+				ICPPASTTemplateDeclaration tdecl= getTemplateDeclaration(id);
+				if (tdecl != null) {
 					if (argsAreTrivial(classTemplate.getTemplateParameters(), args)) {
 						result= classTemplate;  
 					} else {
@@ -830,10 +835,248 @@ public class CPPTemplates {
 	 * correspond to a template declaration.
 	 */
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTName name) {
-		if (name == null) {
+		if (name == null) 
 			return null;
-		}
 
+		// first look for a related sequence of template declarations
+		ICPPASTInternalTemplateDeclaration tdecl= getInnerTemplateDeclaration(name);
+		if (tdecl == null)
+			return null;
+		
+		name= name.getLastName();
+		IASTNode parent= name.getParent();
+		if (!(parent instanceof ICPPASTQualifiedName)) {
+			if (parent instanceof ICPPASTTemplateId) {
+				return null;
+			}
+			// one name: use innermost template declaration
+			return tdecl;
+		} 
+		
+		// last name can be associated even if it is not a template-id
+		final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
+		final IASTName lastName = qname.getLastName();
+		final boolean lastIsTemplate= lastName instanceof ICPPASTTemplateId || 
+				tdecl.isAssociatedWithLastName();
+		if (name == lastName) { 
+			if (lastIsTemplate) {
+				return tdecl;
+			}
+			return null;
+		} 
+		
+		// not the last name, search for the matching template declaration
+		if (!(name instanceof ICPPASTTemplateId)) 
+			return null;
+			
+		if (lastIsTemplate) {
+			// skip one
+			tdecl= getDirectlyEnclosingTemplateDeclaration(tdecl);
+		}
+		final IASTName[] ns= qname.getNames();
+		for (int i = ns.length-2; tdecl != null && i >= 0; i--) {
+			final IASTName n = ns[i];
+			if (n == name) {
+				return tdecl;
+			}
+			if (n instanceof ICPPASTTemplateId) {
+				tdecl= getDirectlyEnclosingTemplateDeclaration(tdecl);
+			}
+		}
+		// not enough template declartaions
+		return null;
+	}
+	
+	public static void associateTemplateDeclarations(ICPPASTInternalTemplateDeclaration tdecl) {
+		// find innermost template decl
+		IASTDeclaration decl= tdecl.getDeclaration();
+		while (decl instanceof ICPPASTInternalTemplateDeclaration) {
+			tdecl= (ICPPASTInternalTemplateDeclaration) decl;
+			decl= tdecl.getDeclaration();
+		}
+		final ICPPASTInternalTemplateDeclaration innerMostTDecl= tdecl;
+		
+		// find name declared in nested declaration
+		IASTName name= getNameForDeclarationInTemplateDeclaration(decl);
+
+		// count template declarations
+		int tdeclcount= 1;
+		IASTNode node= tdecl.getParent();
+		while (node instanceof ICPPASTInternalTemplateDeclaration) {
+			tdeclcount++;
+			tdecl = (ICPPASTInternalTemplateDeclaration) node;
+			node= node.getParent();
+		}
+		final ICPPASTInternalTemplateDeclaration outerMostTDecl= tdecl;
+
+		// determine association of names with template declarations
+		boolean lastIsTemplate= true;
+		int additionalLevels= 0;
+		if (name instanceof ICPPASTQualifiedName) {
+			ICPPASTQualifiedName qname= (ICPPASTQualifiedName) name;
+			final boolean lastIsID = qname.getLastName() instanceof ICPPASTTemplateId;
+
+			// count template-ids
+			int idcount= 0;
+			final IASTName[] ns= qname.getNames();
+			for (int j = 0; j < ns.length; j++) {
+				final IASTName n = ns[j];
+				if (n instanceof ICPPASTTemplateId) {
+					idcount++;
+				}
+			}
+			
+			if (lastIsID) {
+				additionalLevels= idcount-tdeclcount;
+			} else {
+				additionalLevels= idcount+1-tdeclcount;
+				if (additionalLevels > 0) {
+					// last name is probably not a template
+					additionalLevels--;
+					lastIsTemplate= false;
+					CharArraySet tparnames= collectTemplateParameterNames(outerMostTDecl);
+					int j= 0;
+					IASTName n;
+					for (int i = 0; i < ns.length; i++) {
+						n = ns[j];
+						if (n instanceof ICPPASTTemplateId) {
+							// if we find a dependent id, there can be no explicit specialization.
+							ICPPASTTemplateId id= (ICPPASTTemplateId) n;
+							if (usesTemplateParameter(id, tparnames))
+								break;
+
+							if (j++ == additionalLevels) {
+								IBinding b= n.resolveBinding();
+								if (b instanceof ICPPTemplateInstance && b instanceof ICPPClassType) {
+									try {
+										IScope s= ((ICPPClassType) b).getCompositeScope();
+										if (!(s instanceof ICPPClassSpecializationScope)) {
+											// template-id of an explicit specialization. 
+											// here we don't have a template declaration. (see 14.7.3.5)
+											additionalLevels++;
+											lastIsTemplate= true;
+										}
+									} catch (DOMException e) {
+										// assume that it is not an explicit instance
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (additionalLevels < 0) {
+			additionalLevels= 0; // too many template declarations
+		}
+		
+		// determine nesting level of parent
+		int level= 0;
+		node= outerMostTDecl.getParent();
+		while (node != null) {
+			if (node instanceof ICPPASTInternalTemplateDeclaration) {
+				level= ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
+				break;
+			}
+			node= node.getParent();
+		}
+		
+		level += additionalLevels;
+		
+		tdecl= outerMostTDecl;
+		while(true) {
+			tdecl.setNestingLevel((short) level++);
+			node= tdecl.getDeclaration();
+			if (node instanceof ICPPASTInternalTemplateDeclaration) {
+				tdecl= (ICPPASTInternalTemplateDeclaration) node;
+			} else {
+				break;
+			}
+		}
+		innerMostTDecl.setAssociatedWithLastName(lastIsTemplate);
+	}
+
+	private static CharArraySet collectTemplateParameterNames(ICPPASTTemplateDeclaration tdecl) {
+		CharArraySet set= new CharArraySet(4);
+		while(true) {
+			ICPPASTTemplateParameter[] pars = tdecl.getTemplateParameters();
+			for (ICPPASTTemplateParameter par : pars) {
+				IASTName name= CPPTemplates.getTemplateParameterName(par);
+				if (name != null)
+					set.put(name.toCharArray());
+			}
+			final IASTNode next= tdecl.getDeclaration();
+			if (next instanceof ICPPASTTemplateDeclaration) {
+				tdecl= (ICPPASTTemplateDeclaration) next;
+			} else {
+				break;
+			}
+		}
+		return set;
+	}
+
+	private static boolean usesTemplateParameter(final ICPPASTTemplateId id, final CharArraySet names) {
+		final boolean[] result= {false};
+		ASTVisitor v= new ASTVisitor(false) {
+			{ shouldVisitNames= true;}
+			@Override
+			public int visit(IASTName name) {
+				if (name instanceof ICPPASTTemplateId)
+					return PROCESS_CONTINUE;
+				if (name instanceof ICPPASTQualifiedName) {
+					ICPPASTQualifiedName qname= (ICPPASTQualifiedName) name;
+					if (qname.isFullyQualified())
+						return PROCESS_SKIP;
+					return PROCESS_CONTINUE;
+				}
+				
+				if (names.containsKey(name.toCharArray())) {
+					IASTNode parent= name.getParent();
+					if (parent instanceof ICPPASTQualifiedName) {
+						if (((ICPPASTQualifiedName) parent).getNames()[0] != name) {
+							return PROCESS_CONTINUE;
+						}
+						result[0]= true;
+						return PROCESS_ABORT;
+					} else if (parent instanceof IASTIdExpression ||
+							parent instanceof ICPPASTNamedTypeSpecifier) {
+						result[0]= true;
+						return PROCESS_ABORT;
+					}
+				}
+				return PROCESS_CONTINUE;
+			}
+		};
+		id.accept(v);
+		return result[0];
+	}
+
+	private static IASTName getNameForDeclarationInTemplateDeclaration(IASTDeclaration decl) {
+		IASTName name= null;
+		if (decl instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) decl;
+			IASTDeclarator[] dtors = sdecl.getDeclarators();
+			if (dtors != null && dtors.length > 0) {
+				name= CPPVisitor.findInnermostDeclarator(dtors[0]).getName();
+			} else {
+				IASTDeclSpecifier declspec = sdecl.getDeclSpecifier();
+				if (declspec instanceof IASTCompositeTypeSpecifier) {
+					name= ((IASTCompositeTypeSpecifier) declspec).getName();
+				} else if (declspec instanceof IASTElaboratedTypeSpecifier) {
+					name= ((IASTElaboratedTypeSpecifier) declspec).getName();
+				}
+			} 
+		} else if (decl instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
+			name= CPPVisitor.findInnermostDeclarator(fdef.getDeclarator()).getName();
+		}
+		return name;
+	}
+	
+
+	private static ICPPASTInternalTemplateDeclaration getInnerTemplateDeclaration(final IASTName name) {
 		IASTNode parent = name.getParent();
 		while (parent instanceof IASTName) {
 		    parent = parent.getParent();
@@ -849,47 +1092,22 @@ public class CPPTemplates {
 			    parent = parent.getParent();
 			}
 		}
-		if (!(parent instanceof IASTDeclaration)) {
+		if (!(parent instanceof IASTDeclaration)) 
 			return null;
-		}
 		
 		parent = parent.getParent();
-		if (parent instanceof ICPPASTTemplateDeclaration) {
-		    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) parent;
+		if (parent instanceof ICPPASTInternalTemplateDeclaration) 
+			return (ICPPASTInternalTemplateDeclaration) parent;
 
-			IASTName[] ns;
-			if (name instanceof ICPPASTQualifiedName) {
-				ns = ((ICPPASTQualifiedName) name).getNames();
-				name = ns[ns.length - 1];
-			} else if (name.getParent() instanceof ICPPASTQualifiedName) {
-				ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
-			} else {
-				// one name: use innermost template declaration
-				return templateDecl;
-			}
-			
-			// start with outermost template declaration
-		    while (templateDecl.getParent() instanceof ICPPASTTemplateDeclaration)
-		        templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getParent();
-		    
-			for (int j = 0; j < ns.length; j++) {
-				final IASTName singleName = ns[j];
-				if (singleName == name) {
-					if (singleName instanceof ICPPASTTemplateId || j == ns.length-1) {
-						return templateDecl;
-					}
-					return null;
-				}
-				if (singleName instanceof ICPPASTTemplateId) {
-					final IASTDeclaration next= templateDecl.getDeclaration();
-					if (next instanceof ICPPASTTemplateDeclaration) {
-						templateDecl= (ICPPASTTemplateDeclaration) next;
-					} else {
-						return null;
-					}
-				}
-			}
-		}
+		return null;
+	}
+	
+	private static ICPPASTInternalTemplateDeclaration getDirectlyEnclosingTemplateDeclaration(
+			ICPPASTInternalTemplateDeclaration tdecl ) {
+		final IASTNode parent= tdecl.getParent();
+		if (parent instanceof ICPPASTInternalTemplateDeclaration) 
+			return (ICPPASTInternalTemplateDeclaration) parent;
+		
 		return null;
 	}
 

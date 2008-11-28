@@ -3326,7 +3326,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    };
     //    template <typename T> typename XT<T>::mytype1 XT<T>::m1() {}
     //    template <typename T> typename XT<T*>::mytype2 XT<T*>::m2() {}
-    //    template <> typename XT<int>::mytype3 XT<int>::m3() {}
+    //    XT<int>::mytype3 XT<int>::m3() {}
     public void testMethodImplWithNonDeferredType() throws Exception {
 		final String code = getAboveComment();
         parseAndCheckBindings(code, ParserLanguage.CPP);
@@ -3352,7 +3352,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    	  template<typename T> void f(T);
     //    };
     //    template<typename T> void A<float>::f(T){}   //problem on f
-    public void _testClassTemplateMemberFunctionTemplate_Bug104262() throws Exception {
+    public void testClassTemplateMemberFunctionTemplate_Bug104262() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -3367,4 +3367,22 @@ public class AST2TemplateTests extends AST2BaseTest {
         method= bh.assertNonProblem("A<float>::f", 11);
         assertSame(method.getOwner(), special);
     }    
+    
+    //    template<typename T> class XT {
+    //    	class Nested {
+    //    		template<typename V> void Nested::m(V);
+    //    	};
+    //    };
+    //    template<typename T> template <typename V> void XT<T>::Nested::m(V) {
+    //    }
+    public void testQualifiedMethodTemplate() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        ICPPMethod mt1= bh.assertNonProblem("m(V);", 1);
+        ICPPMethod mt2= bh.assertNonProblem("m(V) ", 1);
+        assertSame(mt1, mt2);
+        assertInstance(mt1, ICPPFunctionTemplate.class);
+    }
 }

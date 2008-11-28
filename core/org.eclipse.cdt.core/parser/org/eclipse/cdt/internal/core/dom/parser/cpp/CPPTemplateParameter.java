@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -42,42 +41,40 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	
 	public CPPTemplateParameter(IASTName name) {
 		declarations = new IASTName[] {name};
-		fParameterID= computeParameterPosition(name);
+		fParameterID= computeParameterID(name);
 	}
 
-	private int computeParameterPosition(IASTName name) {
-		int pos= -1;
-		int nesting= -1;
+	private int computeParameterID(IASTName name) {
+		int nesting= 0;
 		ICPPASTTemplateParameter tp= null;
+		ICPPASTTemplateParameter[] tps= null;
 		for (IASTNode node= name.getParent(); node != null; node= node.getParent()) {
-			ICPPASTTemplateParameter[] tps= null;
-			if (node instanceof ICPPASTTemplateParameter) {
+			if (tp == null && node instanceof ICPPASTTemplateParameter) {
 				tp= (ICPPASTTemplateParameter) node;
-			} else if (node instanceof ICPPASTTemplateDeclaration) {
-				if (++nesting == 0) {
-					tps= ((ICPPASTTemplateDeclaration) node).getTemplateParameters();
+			} else if (node instanceof ICPPASTInternalTemplateDeclaration) {
+				final ICPPASTInternalTemplateDeclaration tdecl= (ICPPASTInternalTemplateDeclaration) node;
+				nesting+= tdecl.getNestingLevel();
+				if (tps == null) {
+					tps= tdecl.getTemplateParameters();
 				}
 			} else if (node instanceof ICPPASTTemplatedTypeTemplateParameter) {
-				if (++nesting == 0) {
+				nesting++;
+				if (tps == null) {
 					tps= ((ICPPASTTemplatedTypeTemplateParameter) node).getTemplateParameters();
 				}
 			}
-			
-			if (pos == -1 && tps != null && tp != null) {
-				for (int i = 0; i < tps.length; i++) {
-					if (tps[i] == tp) {
-						pos= i;
-						break;
-					}
+		}
+		int pos= 0;
+		if (tps != null && tp != null) {
+			for (int i = 0; i < tps.length; i++) {
+				if (tps[i] == tp) {
+					pos= i;
+					break;
 				}
 			}
 		}
-		if (nesting < 0)
-			nesting= 0;
-		if (pos < 0)
-			pos= 0;
-		
-		return (nesting << 16) + pos;
+
+		return (nesting << 16) + (pos & 0xffff);
 	}
 
 	@Override

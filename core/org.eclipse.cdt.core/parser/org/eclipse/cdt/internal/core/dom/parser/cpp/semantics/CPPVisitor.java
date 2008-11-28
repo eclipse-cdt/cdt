@@ -215,12 +215,23 @@ public class CPPVisitor extends ASTQueries {
 			    if (((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
 					IASTNode node = getContainingBlockItem(name.getParent());
 					ASTNodeProperty prop= node.getPropertyInParent();
+					while (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION) {
+						node= node.getParent();
+						prop= node.getPropertyInParent();
+					}
 					if (prop != IASTCompositeTypeSpecifier.MEMBER_DECLARATION &&
 							prop != ICPPASTNamespaceDefinition.OWNED_DECLARATION) {
 						return binding;
 					}
-					
-				    if (getContainingScope(qname) != getContainingScope(name))
+					IScope scope= getContainingScope(qname);
+					while (scope instanceof ICPPTemplateScope) {
+						try {
+							scope= scope.getParent();
+						} catch (DOMException e) {
+							return binding;
+						}
+					}
+				    if (scope != getContainingScope(name))
 				        return binding;
 				}
 			} else {
@@ -535,13 +546,19 @@ public class CPPVisitor extends ASTQueries {
 		if (parent instanceof IASTTypeId)
 		    return CPPSemantics.resolveBinding(name);
 
-		// explicit instantiations
+		// function type for non-type template parameter
 		ASTNodeProperty prop = parent.getPropertyInParent();
+		if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
+			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
+		}
+
+		// explicit instantiations
 		if (prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION) 
 			return CPPSemantics.resolveBinding(name);
 		
 		// explicit specializations
-		if (prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION) {
+		ICPPASTTemplateDeclaration tmplDecl= CPPTemplates.getTemplateDeclaration(name);
+		if (tmplDecl instanceof ICPPASTTemplateSpecialization) {
 			IBinding b= CPPSemantics.resolveBinding(name);
 			if (b instanceof ICPPInternalBinding) {
 				if (parent instanceof ICPPASTFunctionDefinition)
@@ -551,19 +568,14 @@ public class CPPVisitor extends ASTQueries {
 			}
 			return b;
 		} 
-		// function type for non-type template parameter
-		if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
-			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
-		}
-		
-		// function declaration/defintion
+
+		// function declaration/definition
 		IBinding binding;
-		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
-		boolean template= false;
+		final boolean template= tmplDecl != null;
 		boolean isFriendDecl= false;
+		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
 		try {
 			while (scope instanceof ICPPTemplateScope) {
-				template = true;
 				scope= (ICPPScope) scope.getParent();
 			}
 			if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
@@ -650,20 +662,7 @@ public class CPPVisitor extends ASTQueries {
 			        return function;
 			    }
 			} 
-			
-			if (binding instanceof IIndexBinding) {
-				ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
-				if (templateDecl != null) {
-					ICPPASTTemplateParameter[] params = templateDecl.getTemplateParameters();
-					for (ICPPASTTemplateParameter param : params) {
-						IASTName paramName = CPPTemplates.getTemplateParameterName(param);
-						paramName.setBinding(null);
-						//unsetting the index bindings so that they
-						//can be re-resolved with normal bindings
-					}
-				}
-			}
-			
+						
 			if (scope instanceof ICPPClassScope) {
 				if (isConstructor(scope, funcDeclarator)) {
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate(name)

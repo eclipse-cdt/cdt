@@ -6,28 +6,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * @author jcamelon
+ * Node for template specialization syntax.
  */
 public class CPPASTTemplateSpecialization extends ASTNode implements
-        ICPPASTTemplateSpecialization, ICPPASTTemplateDeclaration, IASTAmbiguityParent {
+        ICPPASTTemplateSpecialization, ICPPASTInternalTemplateDeclaration, IASTAmbiguityParent {
 
     private IASTDeclaration declaration;
     private ICPPTemplateScope templateScope;
+	private short nestingLevel= -1;
+	private byte isAssociatedWithLastName= -1;
 
     
     public CPPASTTemplateSpecialization() {
@@ -98,4 +101,29 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
             declaration = (IASTDeclaration) other;
         }
     }
+    
+	public short getNestingLevel() {
+		if (nestingLevel == -1) {
+			CPPTemplates.associateTemplateDeclarations(this);
+		}
+		assert nestingLevel != -1;
+		return nestingLevel;
+	}
+
+	public boolean isAssociatedWithLastName() {
+		if (isAssociatedWithLastName == -1)
+			CPPTemplates.associateTemplateDeclarations(this);
+			
+		assert isAssociatedWithLastName != -1;
+		return isAssociatedWithLastName != 0;
+	}
+	
+	public void setAssociatedWithLastName(boolean value) {
+		isAssociatedWithLastName= value ? (byte) 1 : (byte) 0;
+	}
+
+	public void setNestingLevel(short level) {
+		assert level >= 0;
+		nestingLevel= level;
+	}
 }

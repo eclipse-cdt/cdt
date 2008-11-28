@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -559,7 +560,7 @@ public class CommonBuilder extends ACBuilder {
 			updateOtherConfigs(info, builders, kind);
 		
 		monitor.done();
-		return project.getReferencedProjects();		
+		return refProjects;
 	}
 	
 	private Set<IProject> buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor){
@@ -574,6 +575,21 @@ public class CommonBuilder extends ACBuilder {
 					IConfiguration cfg = cfgs[i];
 					IBuilder builder = cfg.getEditableBuilder();
 //					CfgBuildInfo bInfo = new CfgBuildInfo(builder, false);
+					
+					//bug 219337
+					if (buildRefConfig()){						
+						IProject currProject = cfg.getOwner().getProject(); //get the project of the current referenced configuration
+						IBuilder[] builders = new IBuilder[]{builder};
+						IConfiguration[] refConfigs = getReferencedConfigs(builders); //referenced configurations of the current project
+						if (refConfigs.length <=0) { //if this is not a dependent project, then we don't build unless there's a change within the workspace
+							IResourceDelta delta = getDelta(currProject);
+							if (delta != null && delta.getAffectedChildren().length <= 0) { //do not build when there are no changes since last build						
+								projSet.addAll(Arrays.asList(currProject.getReferencedProjects()));
+								return projSet;
+							}
+						}
+					}
+					
 					if(VERBOSE)
 						outputTrace(cfg.getOwner().getProject().getName(), ">>>>building reference cfg " + cfg.getName()); //$NON-NLS-1$
 

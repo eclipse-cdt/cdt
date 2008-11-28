@@ -294,6 +294,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CPluginPreferencePage_2;
 	public static String CPluginPreferencePage_3;
 	public static String CPluginPreferencePage_4;
+	public static String CPluginPreferencePage_5;
+	public static String CPluginPreferencePage_6;
+	public static String CPluginPreferencePage_7;
 	public static String CPluginPreferencePage_caption;
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;

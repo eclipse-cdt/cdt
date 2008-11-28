@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.Preferences;
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
 	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
+	private static final String PREF_BUILD_REFERENCED_CONFIGS = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 
 	/**
@@ -100,6 +102,28 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	
 	public static void setAllConfigBuild(boolean enable) {
 		prefs.setValue(PREF_BUILD_ALL_CONFIGS, enable);		
+	}
+	
+	/**
+	 * Preference for building referenced projects only when there are changes within Eclipse.
+	 * Dependent projects will be built regardless.
+	 * @return true if referenced projects will be build when changes within the project in Eclipse
+	 *         false otherwise
+	 * @since 5.1
+	 */
+	public static boolean buildRefConfig() {
+		//bug 219337
+		return prefs.getBoolean(PREF_BUILD_REFERENCED_CONFIGS);
+	}
+	
+	/**
+	 * Preference for building referenced projects only when there are changes within Eclipse.
+	 * Dependent projects will be built regardless.
+	 * @param enable
+	 * @since 5.1
+	 */
+	public static void setBuildRefConfig(boolean enable) {
+		prefs.setValue(PREF_BUILD_REFERENCED_CONFIGS, enable);		
 	}
 	
 }

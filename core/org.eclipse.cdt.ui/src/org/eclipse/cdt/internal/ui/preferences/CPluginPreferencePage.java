@@ -45,7 +45,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= PreferencesMessages.CPluginPreferencePage_structuralParseMode_label;
 	private static final int GROUP_VINDENT = 5;
 	private static final int GROUP_HINDENT = 20;
-	private Button b1, b2;
+	private Button b1, b2, b3;
 	
 	public CPluginPreferencePage() {
 		super(GRID);
@@ -123,7 +123,31 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		gd.verticalIndent = GROUP_VINDENT;
 		noteControl.setLayoutData(gd);
 
+		// Building project dependencies 
+		Group gr2 = new Group(parent, SWT.NONE);
+		gr2.setText(PreferencesMessages.CPluginPreferencePage_5);
+		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
+		gd2.verticalIndent = GROUP_VINDENT;
+		gr2.setLayoutData(gd2);
+		gr2.setLayout(new GridLayout());
+
+		boolean b2 = ACBuilder.buildRefConfig();
 		
+		b3 = new Button(gr2, SWT.CHECK);
+		b3.setText(PreferencesMessages.CPluginPreferencePage_7);
+		gd2 = new GridData(GridData.FILL_HORIZONTAL);
+		gd2.verticalIndent = GROUP_VINDENT;
+		b3.setLayoutData(gd2);
+		b3.setSelection(b2);
+		
+		noteControl= createNoteComposite(
+				JFaceResources.getDialogFont(), 
+				gr2, 
+				PreferencesMessages.CPluginPreferencePage_note, 
+				PreferencesMessages.CPluginPreferencePage_6);
+		gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd2.verticalIndent = GROUP_VINDENT;
+		noteControl.setLayoutData(gd2);
 	}
 	@Override
 	protected Composite createNoteComposite(Font font, Composite composite,
@@ -177,6 +201,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		ACBuilder.setAllConfigBuild(false);
+		ACBuilder.setBuildRefConfig(false);
 	}
 	
 	/* (non-Javadoc)
@@ -189,6 +214,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		// tell the Core Plugin about this preference
 		CCorePlugin.getDefault().setStructuralParseMode(useStructuralParseMode());
 		ACBuilder.setAllConfigBuild(b2.getSelection());
+		ACBuilder.setBuildRefConfig(b3.getSelection());
 		return true;
 	}
 
@@ -196,7 +222,9 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	protected void performDefaults() {
     	super.performDefaults();
 		ACBuilder.setAllConfigBuild(false);
+		ACBuilder.setBuildRefConfig(false);
 		b1.setSelection(true);
 		b2.setSelection(false);
+		b3.setSelection(false);
     }
 }

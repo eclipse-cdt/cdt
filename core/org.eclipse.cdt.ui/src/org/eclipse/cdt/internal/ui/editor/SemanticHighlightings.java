@@ -1787,9 +1787,6 @@ public class SemanticHighlightings {
 			if (node instanceof IASTProblem) {
 				return true;
 			}
-			if (node instanceof ICPPASTQualifiedName) {
-				return false;
-			}
 			IBinding binding= token.getBinding();
 			if (binding instanceof IProblemBinding) {
 				return true;

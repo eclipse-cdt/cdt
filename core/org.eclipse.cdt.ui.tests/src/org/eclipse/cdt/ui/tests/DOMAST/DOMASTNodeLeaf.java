@@ -12,6 +12,11 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -82,11 +87,16 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	
 	// used for applying filters to the tree, since it is lazily populated
 	// all parents of the desired tree object to display need to have a flag as well
-	private int filterFlag = 0; 
+	private int filterFlag = 0;
+	private static Set<String> ignoreInterfaces= new HashSet<String>(); 
 	public static final int FLAG_PROBLEM = 1<<0;
 	public static final int FLAG_PREPROCESSOR = 1<<1;
 	public static final int FLAG_INCLUDE_STATEMENTS = 1<<2;
-	
+	static {
+		ignoreInterfaces.addAll(Arrays.asList(new String[] {
+				"IASTCompletionContext", "IASTNode"
+				}));
+	}
 	public DOMASTNodeLeaf(IASTNode node) {
 		this.node = node;
 	}
@@ -106,9 +116,11 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				string.startsWith(ICPPAST_PREFIX) ||
 				string.startsWith(IGPPAST_PREFIX) ||
 				string.startsWith(IGNUAST_PREFIX) ||
-				string.startsWith(IGCCAST_PREFIX))
-			return true;
-
+				string.startsWith(IGCCAST_PREFIX)) {
+			if (!ignoreInterfaces.contains(string)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -116,26 +128,30 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	public String toString() {
 	    if( node == null ) return BLANK_STRING; 
 		StringBuffer buffer = new StringBuffer();
+		List<Class<?>> search= new LinkedList<Class<?>>();
+		boolean done= false;
 		
-		Class<?> clazz= node.getClass();
-		Class<?>[] classes = clazz.getInterfaces();
-		while (classes.length == 0) {
-			clazz= clazz.getSuperclass();
-			if (clazz == null)
-				break;
-			classes= clazz.getInterfaces();
-		}
-		for(int i=0; i<classes.length; i++) {
-            if (classes[i].getPackage().toString().indexOf(INTERNAL) >= 0)
-                continue;
-            
-			String interfaceName = classes[i].getName().substring(classes[i].getName().lastIndexOf(PERIOD) + 1);
-			if (hasProperPrefix(interfaceName)) {
-				buffer.append(interfaceName);
-				if (i+1 < classes.length && 
-                        hasProperPrefix(classes[i+1].getName().substring(classes[i+1].getName().lastIndexOf(PERIOD) + 1)) &&
-                        classes[i+1].getPackage().toString().indexOf(INTERNAL) < 0)
-					buffer.append(LIST_SEPARATOR);
+		for (search.add(node.getClass()); !search.isEmpty(); ) {
+			Class<?> clazz= search.remove(0);
+			boolean needComma= false;
+			if (clazz.isInterface()) {
+				if (clazz.getPackage().toString().indexOf(INTERNAL) < 0) {
+					String interfaceName= clazz.getName();
+					interfaceName= interfaceName.substring(interfaceName.lastIndexOf(PERIOD) + 1);
+					if (hasProperPrefix(interfaceName)) {
+						if (needComma)
+							buffer.append(LIST_SEPARATOR);
+						buffer.append(interfaceName);
+						needComma= true;
+						done= true;
+					}
+				}				
+			} 
+			if (!done) {
+				search.addAll(Arrays.asList((Class<?>[])clazz.getInterfaces()));
+				final Class<?> superclass = clazz.getSuperclass();
+				if (superclass != null)
+					search.add(superclass);
 			}
 		}
 		

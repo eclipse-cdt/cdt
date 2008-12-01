@@ -1036,4 +1036,39 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define assign1(uc1, uc2, uc3, uc4, val) \
+	//      uc1##uc2##uc3##uc4 = val;
+	//
+	//#define assign2(ucn, val) ucn = val;
+	//
+	//void foo1(void)
+	//{
+	//int \U00010401\U00010401\U00010401\U00010402;
+	//assign1(\U00010401, \U00010401, \U00010401, \U00010402, 4);
+	//}
+	//
+	//void foo2(void)
+	//{
+	//int \U00010401\U00010401\U00010401\U00010402;
+	//assign2(\U00010401\U00010401\U00010401\U00010402, 4);
+	//}
+
+	//#define assign1(uc1, uc2, uc3, uc4, val) \
+	//      uc1##uc2##uc3##uc4 = val;
+	//
+	//#define assign2(ucn, val) ucn = val;
+	//
+	//void foo1(void) {
+	//	int \U00010401\U00010401\U00010401\U00010402;
+	//	assign1(\U00010401, \U00010401, \U00010401, \U00010402, 4);
+	//}
+	//
+	//void foo2(void) {
+	//	int \U00010401\U00010401\U00010401\U00010402;
+	//	assign2(\U00010401\U00010401\U00010401\U00010402, 4);
+	//}
+	public void testUniversalCharacters_Bug255949() throws Exception {
+		assertFormatterResult();
+	}
+	
 }

@@ -29,10 +29,11 @@ public class SimpleScanner {
 
     protected Token fCurrentToken;
 	protected ScannerContext fContext;
-	protected StringBuffer fTokenBuffer= new StringBuffer();
+	protected StringBuilder fTokenBuffer= new StringBuilder();
 	private int fPreprocessorToken= 0;
 	private boolean fReuseToken;
 	private boolean fSplitPreprocessor;
+	private final StringBuilder fUniversalCharBuffer= new StringBuilder();
 
 	/**
 	 * 
@@ -66,7 +67,7 @@ public class SimpleScanner {
 
 	public void cleanup() {
 	    fContext= null;
-	    fTokenBuffer= new StringBuffer();
+	    fTokenBuffer= new StringBuilder();
 	    fCurrentToken= null;
 	}
 
@@ -91,7 +92,7 @@ public class SimpleScanner {
 	    return newToken(fPreprocessorToken);
 	}
 
-	private int categorizePreprocessor(StringBuffer text) {
+	private int categorizePreprocessor(StringBuilder text) {
 	    boolean skipHash= true;
 	    int i=0;
 	    for (; i < text.length(); i++) {
@@ -147,15 +148,74 @@ public class SimpleScanner {
 	            }
 	        } else if (c == '\n') {
 	            c = getChar(false);
+	        } else if (c == 'U' || c == 'u') {
+	    		fUniversalCharBuffer.setLength(0);
+	    		fUniversalCharBuffer.append('\\').append((char) c);
+	        	c = getUniversalCharacter();
+	        } else {
+	        	ungetChar(c);
+	        	c = '\\';
 	        }
 	    }
 	    
 	    return c;
 	}
 
+	private int getUniversalCharacter() {
+		int unicode = 0;
+        do {
+            int c = getChar(true);
+            int digit;
+            switch (c) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            	digit = c - '0';
+            	break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            	digit = c - 'a' + 10;
+            	break;
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            	digit = c - 'A' + 10;
+            	break;
+            default:
+                ungetChar(c);
+            	return unicode;
+            }
+            fUniversalCharBuffer.append((char) c);
+            unicode <<= 4;
+            unicode += digit;
+        } while (true);
+	}
+
 	protected void ungetChar(int c) {
-	    fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
-	    fContext.pushUndo(c);
+		if (c < 256) {
+			fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
+			fContext.pushUndo(c);
+		} else {
+			char[] chs = fUniversalCharBuffer.toString().toCharArray();
+			for (int i = chs.length-1; i >= 0; --i) {
+				fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
+				fContext.pushUndo(chs[i]);
+			}
+		}
 	}
 
 	public Token nextToken() {
@@ -173,9 +233,9 @@ public class SimpleScanner {
 	        }
 	        
 	        if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
-	            while ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
+	            do {
 	                c = getChar();
-	            }
+	            } while ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n'));
 	            ungetChar(c);
 	            return newToken(Token.tWHITESPACE);
 	        } else if (c == '"' || (c == 'L' && !madeMistake)) {
@@ -199,7 +259,7 @@ public class SimpleScanner {
 	            int type = wideString ? Token.tLSTRING : Token.tSTRING;
 	            return newToken(type);
 	
-	        } else if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
+	        } else if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_') || (c > 255 && Character.isUnicodeIdentifierStart(c))) {
 	
 	            madeMistake = false;
 	
@@ -208,7 +268,8 @@ public class SimpleScanner {
 	            while (((c >= 'a') && (c <= 'z'))
 	                || ((c >= 'A') && (c <= 'Z'))
 	                || ((c >= '0') && (c <= '9'))
-	                || (c == '_')) {
+	                || (c == '_')
+	                || (c > 255 && Character.isUnicodeIdentifierPart(c))) {
 	                c = getChar();
 	            }
 	

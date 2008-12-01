@@ -73,7 +73,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 				}
 				list.addMember(typeNode);
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 		}
 	}
 
@@ -81,7 +81,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	public void delete(final PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getReturnType(), record);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
-		list.accept(new IPDOMVisitor(){
+		list.accept(new IPDOMVisitor() {
 			public void leave(IPDOMNode node) throws CoreException {
 			}
 			public boolean visit(IPDOMNode node) throws CoreException {
@@ -123,17 +123,17 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 
 				IType[] params1= getParameterTypes();
 				IType[] params2= ft.getParameterTypes();
-				if( params1.length == 1 && params2.length == 0 ){
-					if( !(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void )
+				if (params1.length == 1 && params2.length == 0) {
+					if (!(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void)
 						return false;
-				} else if( params2.length == 1 && params1.length == 0 ){
-					if( !(params2[0] instanceof IBasicType) || ((IBasicType)params2[0]).getType() != IBasicType.t_void )
+				} else if (params2.length == 1 && params1.length == 0) {
+					if (!(params2[0] instanceof IBasicType) || ((IBasicType) params2[0]).getType() != IBasicType.t_void)
 						return false;
-				} else if( params1.length != params2.length ){
+				} else if (params1.length != params2.length) {
 					return false;
 				} else {
-					for( int i = 0; i < params1.length; i++ ){
-						if (params1[i] == null || ! params1[i].isSameType( params2[i] ) )
+					for (int i = 0; i < params1.length; i++) {
+						if (params1[i] == null || !params1[i].isSameType(params2[i]))
 							return false;
 					}
 				}
@@ -146,12 +146,11 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		return false;
 	}
 
-
 	public IType[] getParameterTypes() {
 		final List<IType> result= new ArrayList<IType>();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
-			list.accept(new IPDOMVisitor(){
+			list.accept(new IPDOMVisitor() {
 				public void leave(IPDOMNode node) throws CoreException {
 					result.add((IType)node);
 				}
@@ -159,7 +158,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 					return false;
 				}
 			});
-		} catch(CoreException ce) {
+		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 		}
 		return result.toArray(new IType[result.size()]);

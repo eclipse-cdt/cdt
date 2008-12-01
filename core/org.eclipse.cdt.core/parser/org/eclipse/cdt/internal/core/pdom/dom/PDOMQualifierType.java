@@ -74,7 +74,6 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
-		
 	}
 
 	@Override
@@ -129,19 +128,19 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 	}
 
 	public boolean isSameType(IType type) {
-	    if( type instanceof ITypedef )
-	        return type.isSameType( this );
-	    if( !( type instanceof IQualifierType ) ) 
+	    if (type instanceof ITypedef)
+	        return type.isSameType(this);
+	    if (!(type instanceof IQualifierType)) 
 	        return false;
 	    
 	    IQualifierType pt = (IQualifierType) type;
 	    try {
 	    	boolean flagsMatch= isConst() == pt.isConst() && isVolatile() == pt.isVolatile();
-	    	if(flagsMatch && (type instanceof ICQualifierType))
-	    		flagsMatch &= isRestrict() == ((ICQualifierType)type).isRestrict();
-			if(flagsMatch) {
+	    	if (flagsMatch && type instanceof ICQualifierType)
+	    		flagsMatch &= isRestrict() == ((ICQualifierType) type).isRestrict();
+			if (flagsMatch) {
 				IType myType= getType();
-			    return myType != null && myType.isSameType( pt.getType() );
+			    return myType != null && myType.isSameType(pt.getType());
 			}
 		} catch (DOMException e) {
 		}

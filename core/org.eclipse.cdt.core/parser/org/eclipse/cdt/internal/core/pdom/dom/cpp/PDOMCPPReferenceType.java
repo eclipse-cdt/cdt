@@ -30,8 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
-class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
-		ITypeContainer, IIndexType {
+class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeContainer, IIndexType {
 
 	private static final int TYPE = PDOMNode.RECORD_SIZE + 0;
 	
@@ -71,8 +70,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_REFERENCE_TYPE;
 	}
-	
-	
+
 	public IType getType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
@@ -84,10 +82,10 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 	}
 
 	public boolean isSameType(IType type) {
-		if( type instanceof ITypedef )
+		if (type instanceof ITypedef)
 		    return type.isSameType(this);
 		
-		if( !( type instanceof ICPPReferenceType )) 
+		if (!(type instanceof ICPPReferenceType)) 
 		    return false;
 		
 		ICPPReferenceType rhs = (ICPPReferenceType) type;

@@ -92,10 +92,10 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		
 		// require a class instance
 		if (type instanceof ICPPClassSpecialization == false ||
-				type instanceof ICPPTemplateInstance == false || type instanceof IProblemBinding) 
+				type instanceof ICPPTemplateInstance == false || type instanceof IProblemBinding) {
 			return false;
-		
-		
+		}
+
 		final ICPPClassSpecialization classSpec2 = (ICPPClassSpecialization) type;
 		final ICPPClassType orig1= getSpecializedBinding();
 		final ICPPClassType orig2= classSpec2.getSpecializedBinding();

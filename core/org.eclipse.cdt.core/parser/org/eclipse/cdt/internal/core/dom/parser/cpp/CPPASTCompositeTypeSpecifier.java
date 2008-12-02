@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -14,21 +15,21 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * c++ specific composite type specifier
  */
 public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         implements ICPPASTCompositeTypeSpecifier, IASTAmbiguityParent {
 
     private int k;
     private IASTName n;
-    private IScope scope;
+    private ICPPClassScope scope;
 
 
     public CPPASTCompositeTypeSpecifier() {
@@ -97,14 +98,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] baseSpecs = null;
     private int baseSpecsPos=-1;
 
-    public IScope getScope() {
+    public ICPPClassScope getScope() {
     	if( scope == null )
     		scope = new CPPClassScope( this );
     	
         return scope;
     }
     
-    public void setScope( IScope scope ){
+    public void setScope(ICPPClassScope scope) {
         this.scope = scope;
     }
 

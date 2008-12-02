@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Represents a specialization of a class-template
@@ -31,6 +32,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplate, ICPPInternalClassTemplate {
 
 	private ObjectMap instances = null;
+	private ICPPDeferredClassInstance fDeferredInstance;
 
 	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
 		super(orig, owner, argumentMap);
@@ -99,5 +101,13 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
+	}
+	
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+		if (fDeferredInstance == null) {
+			ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
+			fDeferredInstance= new CPPDeferredClassInstance(this, args, getCompositeScope());
+		}
+		return fDeferredInstance;
 	}
 }

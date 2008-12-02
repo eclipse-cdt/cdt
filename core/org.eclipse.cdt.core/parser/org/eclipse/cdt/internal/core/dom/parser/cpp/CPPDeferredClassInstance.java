@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -31,12 +32,17 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	
 	private final ICPPTemplateArgument[] fArguments;
 	private final ICPPClassTemplate fClassTemplate;
+	private final ICPPScope fLookupScope;
 
-	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
+	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, ICPPScope lookupScope) throws DOMException {
 		super(template.getOwner(), new CPPASTName(template.getNameCharArray()));
-
 		fArguments= arguments;
 		fClassTemplate= template;
+		fLookupScope= lookupScope;
+	}
+
+	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
+		this(template, arguments, null);
 	}
 	
 	public ICPPClassTemplate getClassTemplate() {
@@ -102,6 +108,14 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	@Override
 	public IScope getScope() throws DOMException {
 		return fClassTemplate.getScope();
+	}
+	
+	@Override
+	public ICPPScope getUnknownScope() throws DOMException {
+		if (fLookupScope != null)
+			return fLookupScope;
+		
+		return super.getUnknownScope();
 	}
 
 	@Override

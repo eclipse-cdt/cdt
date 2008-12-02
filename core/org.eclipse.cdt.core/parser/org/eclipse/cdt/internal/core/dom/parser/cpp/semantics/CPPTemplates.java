@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -228,7 +229,14 @@ public class CPPTemplates {
 
 	static IBinding isUsedInClassTemplateScope(ICPPClassTemplate ct, IASTName name) {
 		try {
-			IScope scope= CPPVisitor.getContainingScope(name);
+			IASTName start= name;
+			ICPPASTFunctionDefinition func= CPPVisitor.findEnclosingFunctionDefinition(name);
+			if (func != null) {
+				start= CPPVisitor.findInnermostDeclarator(func.getDeclarator()).getName();
+				start= start.getLastName();
+			}
+
+			IScope scope= CPPVisitor.getContainingScope(start);
 			while (scope instanceof IASTInternalScope) {
 				final IASTInternalScope internalScope = (IASTInternalScope) scope;
 				if (scope instanceof ICPPClassScope) {
@@ -411,29 +419,40 @@ public class CPPTemplates {
 	 * Instantiates the template for usage within its own body. May return <code>null</code>.
 	 */
 	public static ICPPClassType instantiateWithinClassTemplate(ICPPClassTemplate template) throws DOMException {
+		if (template instanceof ICPPInternalClassTemplate) {
+			return ((ICPPInternalClassTemplate) template).asDeferredInstance();
+		}
+		
 		ICPPTemplateArgument[] args;
 		if (template instanceof ICPPClassTemplatePartialSpecialization) {
 			args= ((ICPPClassTemplatePartialSpecialization) template).getTemplateArguments();
 		} else {
 			ICPPTemplateParameter[] templateParameters = template.getTemplateParameters();
-			args = new ICPPTemplateArgument[templateParameters.length];
-			for (int i = 0; i < templateParameters.length; i++) {
-				final ICPPTemplateParameter tp = templateParameters[i];
-				if (tp instanceof IType) {
-					args[i] = new CPPTemplateArgument((IType) tp);
-				} else if (tp instanceof ICPPTemplateNonTypeParameter) {
-					final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
-					args[i] = new CPPTemplateArgument(Value.create(nttp), nttp.getType());
-				} else {
-					assert false;
-				}
-			}
+			args = templateParametersAsArguments(templateParameters);
 		}
 		IBinding result = deferredInstance(template, args);
     	if (result instanceof ICPPClassType)
     		return (ICPPClassType) result;
     	
     	return template;
+	}
+
+	public static ICPPTemplateArgument[] templateParametersAsArguments(
+			ICPPTemplateParameter[] templateParameters) throws DOMException {
+		ICPPTemplateArgument[] args;
+		args = new ICPPTemplateArgument[templateParameters.length];
+		for (int i = 0; i < templateParameters.length; i++) {
+			final ICPPTemplateParameter tp = templateParameters[i];
+			if (tp instanceof IType) {
+				args[i] = new CPPTemplateArgument((IType) tp);
+			} else if (tp instanceof ICPPTemplateNonTypeParameter) {
+				final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
+				args[i] = new CPPTemplateArgument(Value.create(nttp), nttp.getType());
+			} else {
+				assert false;
+			}
+		}
+		return args;
 	}
 
 	/** 

@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -39,8 +38,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
@@ -106,6 +108,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
+	private ICPPDeferredClassInstance fDeferredInstance;
 
 	public CPPClassTemplate(IASTName name) {
 		super(name);
@@ -143,7 +146,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		return null;
 	}
 
-	public IScope getCompositeScope() {
+	public ICPPScope getCompositeScope() {
 		if (definition == null) {
 			checkForDefinition();
 		}
@@ -253,5 +256,17 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 
 	public boolean isAnonymous() {
 		return false;
+	}
+
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+		if (fDeferredInstance == null) {
+			fDeferredInstance= createDeferredInstance();
+		}
+		return fDeferredInstance;
+	}
+
+	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
+		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
+		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 }

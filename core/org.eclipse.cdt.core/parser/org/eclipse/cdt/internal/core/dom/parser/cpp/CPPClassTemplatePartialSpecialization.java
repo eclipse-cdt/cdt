@@ -62,6 +62,11 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 			return CPPTemplateParameterMap.EMPTY;
 		}
 	}
+	
+	@Override
+	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
+		return new CPPDeferredClassInstance(this, getTemplateArguments(), getCompositeScope());
+	}
 
 	@Override
 	public String toString() {

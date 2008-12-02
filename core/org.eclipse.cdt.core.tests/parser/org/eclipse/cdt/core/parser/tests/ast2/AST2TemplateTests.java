@@ -3404,7 +3404,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    		this->a= 1;
     //    	}
     //    };
-    public void _testFieldReference_Bug234321() throws Exception {
+    public void testFieldReference_Bug257186() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);

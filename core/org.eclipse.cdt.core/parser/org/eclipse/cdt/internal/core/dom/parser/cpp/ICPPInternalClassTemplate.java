@@ -6,16 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 
 /**
- * @author aniefer
- *
+ * Interface for class templates used in the AST.
  */
 public interface ICPPInternalClassTemplate extends ICPPInternalTemplate {
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec);
+
+	/**
+	 * Returns a deferred instance that allows lookups within this class template.
+	 */
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException;
 }

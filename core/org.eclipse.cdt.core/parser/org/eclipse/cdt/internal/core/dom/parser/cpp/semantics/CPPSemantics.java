@@ -148,6 +148,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -280,6 +281,16 @@ public class CPPSemantics {
 					if (!ok) {
 						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
 					}
+				}
+			}
+		} else if (binding instanceof ICPPDeferredClassInstance) {
+			// try to replace binding by the one pointing to the enclosing template declaration.
+			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
+			IBinding usedHere= CPPTemplates.isUsedInClassTemplateScope(dcl.getClassTemplate(), data.astName);
+			if (usedHere instanceof ICPPDeferredClassInstance) {
+				ICPPDeferredClassInstance alt= (ICPPDeferredClassInstance) usedHere;
+				if (CPPTemplates.areSameArguments(alt.getTemplateArguments(), dcl.getTemplateArguments())) {
+					binding= alt;
 				}
 			}
 		}

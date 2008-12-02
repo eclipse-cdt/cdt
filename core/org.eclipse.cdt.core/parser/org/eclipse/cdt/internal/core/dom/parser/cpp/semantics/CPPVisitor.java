@@ -121,7 +121,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -133,8 +132,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
@@ -180,7 +177,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -946,11 +942,7 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						if (binding instanceof ICPPDeferredClassInstance) {
-							scope= checkForSpecializedScope((ICPPDeferredClassInstance) binding, qname);
-						}
-						if (scope == null)
-							scope= ((ICPPClassType)binding).getCompositeScope();
+						scope= ((ICPPClassType)binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace)binding).getNamespaceScope();
 					} else if (binding instanceof ICPPUnknownBinding) {
@@ -994,47 +986,6 @@ public class CPPVisitor extends ASTQueries {
 			return new CPPScope.CPPScopeProblem(problem.getASTNode(), problem.getID(), problem.getNameCharArray()); 
 		}
 		return getContainingScope(parent);
-	}
-
-	/**
-	 * Checks whether the scope for a deferred instance should be a specialized variant of
-	 * the class-template.
-	 */
-	private static IScope checkForSpecializedScope(ICPPDeferredClassInstance dcli, final ICPPASTQualifiedName qname)
-			throws DOMException {
-		ICPPClassTemplate ct = dcli.getClassTemplate();
-		ICPPTemplateArgument[] args = dcli.getTemplateArguments();
-		IASTName start= qname;
-		ICPPASTFunctionDefinition func= findEnclosingFunctionDefinition(qname);
-		if (func != null) {
-			start= findInnermostDeclarator(func.getDeclarator()).getName();
-			if (start == qname)
-				return null;
-			start= start.getLastName();
-		}
-		IScope lookupScope= getContainingNonTemplateScope(start);
-		while (lookupScope != null) {
-			if (lookupScope instanceof ICPPClassScope) {
-				ICPPClassScope clscope= (ICPPClassScope) lookupScope;
-				ICPPClassType ctype = clscope.getClassType();
-				if (ctype instanceof ICPPClassTemplatePartialSpecialization) {
-					ICPPTemplateArgument[] args1 = ((ICPPClassTemplatePartialSpecialization) ctype).getTemplateArguments();
-					if (CPPTemplates.areSameArguments(args, args1))
-						return lookupScope;
-				} else if (ctype instanceof ICPPTemplateInstance) {
-					ICPPTemplateArgument[] args1 = ((ICPPTemplateInstance) ctype).getTemplateArguments();
-					if (CPPTemplates.areSameArguments(args, args1))
-						return lookupScope;
-				} else if (ctype instanceof ICPPClassTemplate) {
-					if (ct.isSameType(ctype) && 
-							CPPTemplates.argsAreTrivial(ct.getTemplateParameters(), args)) {
-						return lookupScope;
-					}
-				}
-			}
-			lookupScope= lookupScope.getParent();
-		}
-		return null;
 	}
 
 	public static IScope getContainingScope(IASTStatement statement) {

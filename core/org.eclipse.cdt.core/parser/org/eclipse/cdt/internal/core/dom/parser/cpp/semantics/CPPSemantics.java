@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -89,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -253,53 +253,31 @@ public class CPPSemantics {
         	}
         }
 
-        /* 14.6.1-1: Class template name without argument list is equivalent to the injected-class-name followed by
-		 * the template-parameters of the class template enclosed in <> */
-		if (binding instanceof ICPPClassTemplate) {
-			ICPPClassTemplate ct= (ICPPClassTemplate) binding;
+        /* 14.6.1-1: 
+         * Within the scope of a class template, when the name of the template is neither qualified nor 
+         * followed by <, it is equivalent to the name followed by the template parameters enclosed in <>.
+         */
+		if (binding instanceof ICPPClassTemplate && !(binding instanceof ICPPClassSpecialization) &&
+				!(data.astName instanceof ICPPASTTemplateId)) {
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
-			if (prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME &&
-					binding instanceof ICPPInternalBinding) {
-				try {
-					IScope scope= CPPVisitor.getContainingScope(data.astName);
-					while (scope instanceof IASTInternalScope) {
-						final IASTInternalScope internalScope = (IASTInternalScope) scope;
-						if (scope instanceof ICPPClassScope) {
-							final IName scopeName = internalScope.getScopeName();
-							if (scopeName instanceof IASTName) {
-								IBinding b= ((IASTName) scopeName).resolveBinding();
-								if (binding == b) {
-									binding= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) binding);
-									break;
-								}
-								if (b instanceof ICPPClassTemplatePartialSpecialization) {
-									ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) b;
-									if (ct.isSameType(pspec.getPrimaryClassTemplate())) {
-										binding= CPPTemplates.instantiateWithinClassTemplate(pspec);
-										break;
-									}
-								} else if (b instanceof ICPPClassSpecialization) {
-									ICPPClassSpecialization specialization= (ICPPClassSpecialization) b;
-									if (ct.isSameType(specialization.getSpecializedBinding())) {
-										binding= specialization;
-										break;
-									}
-								}
-							}
+			if (prop != ICPPASTTemplateId.TEMPLATE_NAME && prop != ICPPASTQualifiedName.SEGMENT_NAME) {
+				// You cannot use a class template name outside of the class template scope, 
+				// mark it as a problem.
+				IBinding replacement= CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, data.astName);
+				if (replacement != null) {
+					binding= replacement;
+				} else {
+					boolean ok= false;
+					IASTNode node= data.astName.getParent();
+					while (node != null && !ok) {
+						if (node instanceof ICPPASTTemplateId ||
+								node instanceof ICPPASTTemplatedTypeTemplateParameter) {
+							ok= true; // can be argument or default-value for template template parameter
+							break;
 						}
-						scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
+						node= node.getParent();
 					}
-				} catch (DOMException e) {
-				}
-			}
-			
-			/* If the class template name is used as a type name in a simple declaration,
-             * outside of the class template scope, mark it as a problem.
-			 */
-			if (binding instanceof ICPPClassTemplate) {
-				IASTNode parent= data.astName.getParent();
-				if (parent instanceof IASTNamedTypeSpecifier) {
-					if (parent.getParent() instanceof IASTSimpleDeclaration) {
+					if (!ok) {
 						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name());
 					}
 				}
@@ -843,20 +821,16 @@ public class CPPSemantics {
 			inherited = null;
 			
 			final ICPPClassType cls = (ICPPClassType) b;
-			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
-			
-			if (parent == null)
-				continue;
-			if (parent instanceof CPPUnknownScope) {
-				if (data.unknownBinding == null && classType instanceof ICPPClassTemplate && data.astName != null) {
-					ICPPClassTemplate template= ((ICPPClassTemplate) classType);
-					IBinding thisType= CPPTemplates.instantiateWithinClassTemplate(template);
-					if (thisType instanceof ICPPUnknownBinding) {
-						data.unknownBinding= ((ICPPUnknownBinding) thisType).getUnknownScope().getBinding(data.astName, true);
-					}
+			if (cls instanceof ICPPUnknownBinding) {
+				if (data.unknownBinding == null) {
+					data.unknownBinding= cls;
 				}
 				continue;
 			}
+			
+			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
+			if (parent == null || parent instanceof CPPUnknownScope)
+				continue;
 	
 			if (!base.isVirtual() || !data.visited.containsKey(parent)) {
 				if (base.isVirtual()) {
@@ -1970,9 +1944,7 @@ public class CPPSemantics {
 	    System.arraycopy(ptypes, 0, result, 1, ptypes.length);
 	    ICPPClassType owner= ((ICPPMethod) fn).getClassOwner();
 	    if (owner instanceof ICPPClassTemplate) {
-	    	IBinding within= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
-	    	if (within instanceof ICPPClassType)
-	    		owner = (ICPPClassType)within;
+	    	owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
 	    }
 	    IType implicitType= owner;
 	    if (ftype.isConst() || ftype.isVolatile()) {

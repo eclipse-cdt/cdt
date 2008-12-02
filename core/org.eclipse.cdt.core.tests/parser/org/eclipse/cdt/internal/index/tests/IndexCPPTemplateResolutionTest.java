@@ -1482,7 +1482,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(t1, ICPPTemplateInstance.class);
 		
 		ICPPTemplateInstance inst= (ICPPTemplateInstance) t1;
-		final ICPPTemplateDefinition tmplDef = inst.getTemplateDefinition();
+		final ICPPClassTemplate tmplDef = (ICPPClassTemplate) inst.getTemplateDefinition();
 		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments());
 		assertSame(inst, inst2);
 		

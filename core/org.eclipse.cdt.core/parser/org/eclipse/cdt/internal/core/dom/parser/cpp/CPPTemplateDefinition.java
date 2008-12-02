@@ -272,8 +272,11 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	}
 
 	final protected void updateTemplateParameterBindings(IASTName name) {
-    	ICPPASTTemplateParameter[] updateParams = CPPTemplates.getTemplateDeclaration(name).getTemplateParameters();
-
+    	final ICPPASTTemplateDeclaration templateDeclaration = CPPTemplates.getTemplateDeclaration(name);
+    	if (templateDeclaration == null)
+    		return;
+    	
+		ICPPASTTemplateParameter[] updateParams = templateDeclaration.getTemplateParameters();
     	int k= 0;
     	int tdeclLen= declarations == null ? 0 : declarations.length;
     	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {

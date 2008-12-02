@@ -304,13 +304,7 @@ public class SemanticUtil {
 			final ICPPTemplateArgument arg= args[i];
 			ICPPTemplateArgument newArg= arg;
 			if (arg != null) {
-				if (arg.isTypeValue()) {
-					final IType type= arg.getTypeValue();
-					final IType newType= getSimplifiedType(type);
-					if (newType != type) {
-						newArg= new CPPTemplateArgument(newType);
-					}
-				}
+				newArg = getSimplifiedArgument(arg);
 				if (result != args) {
 					result[i]= newArg;
 				} else if (arg != newArg) {
@@ -323,6 +317,17 @@ public class SemanticUtil {
 			}
 		}
 		return result;
+	}
+
+	public static ICPPTemplateArgument getSimplifiedArgument(final ICPPTemplateArgument arg) {
+		if (arg.isTypeValue()) {
+			final IType type= arg.getTypeValue();
+			final IType newType= getSimplifiedType(type);
+			if (newType != type) {
+				return new CPPTemplateArgument(newType);
+			}
+		}
+		return arg;
 	}
 
 	/**

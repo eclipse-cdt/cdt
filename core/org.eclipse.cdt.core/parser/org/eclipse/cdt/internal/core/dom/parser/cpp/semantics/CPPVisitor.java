@@ -1802,9 +1802,7 @@ public class CPPVisitor extends ASTQueries {
 						ICPPClassScope cScope = (ICPPClassScope) s;
 						IType type = cScope.getClassType();
 						if (type instanceof ICPPClassTemplate) {
-					    	IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
-					    	if (within instanceof ICPPClassType)
-					    		type = (ICPPClassType)within;
+					    	type= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
 						}
 						if (dtor.isConst() || dtor.isVolatile())
 							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile());

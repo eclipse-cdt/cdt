@@ -3385,4 +3385,33 @@ public class AST2TemplateTests extends AST2BaseTest {
         assertSame(mt1, mt2);
         assertInstance(mt1, ICPPFunctionTemplate.class);
     }
+    
+    //    template <typename T, typename U=T> class XT {};
+    //    template <typename T> class XT<T,T> {public: int partial;};
+    //    void test() {
+    //       XT<int> xt;
+    //       xt.partial;
+    //    }
+    public void testDefaultArgsWithPartialSpecialization() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+    }
+    
+    //    template <typename T> class XT {
+    //   	public:
+    //   		int a;
+    //    	void m() {
+    //    		this->a= 1;
+    //    	}
+    //    };
+    public void _testFieldReference_Bug234321() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        IBinding a1= bh.assertNonProblem("a;", 1);
+        IBinding a2= bh.assertNonProblem("a=", 1);
+        assertInstance(a1, ICPPField.class);
+        assertSame(a1, a2);
+    }
 }

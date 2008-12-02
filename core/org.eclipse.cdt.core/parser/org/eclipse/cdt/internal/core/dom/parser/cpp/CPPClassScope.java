@@ -96,9 +96,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         ICPPClassType clsType = (ICPPClassType) binding;
         if (clsType instanceof ICPPClassTemplate) {
             try {
-            	IBinding within = CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) clsType);
-            	if (within instanceof ICPPClassType)
-            		clsType = (ICPPClassType)within;
+            	clsType= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) clsType);
             } catch (DOMException e) {
             }
         }

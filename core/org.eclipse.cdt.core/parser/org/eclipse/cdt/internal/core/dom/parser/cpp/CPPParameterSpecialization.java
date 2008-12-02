@@ -15,8 +15,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Binding for a specialization of a parameter.
@@ -40,6 +42,18 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 			type= specializeType(getParameter().getType());
 		}
 		return type;
+	}
+	
+	@Override
+	public IType specializeType(IType type) throws DOMException {
+		IBinding owner= getOwner();
+		if (owner != null) {
+			owner= owner.getOwner();
+			if (owner instanceof ICPPClassSpecialization) {
+				return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
+			}
+		}
+		return CPPTemplates.instantiateType(type, getTemplateParameterMap(), null);
 	}
 
 	/* (non-Javadoc)

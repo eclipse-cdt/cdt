@@ -45,16 +45,13 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 			{
 				// always return true, as we don't want to fail cases when compiler is installed remotely
 				// just warn user
-				if (getPage() != null)
+				if (!super.doCheckState())
 				{
-					if (!super.doCheckState())
-					{
-						getPage().setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
-					}
-					else
-					{
-						getPage().setMessage(originalMessage, 0);
-					}
+					setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
+				}
+				else
+				{
+					setMessage(originalMessage);
 				}
 				
 				return true;
@@ -90,7 +87,8 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		fPathEditor.setStringValue(currentPath);
 		
 		String[] versionEntries = {PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, 
-				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME};
+				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME,
+				PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME};
 		
 		Composite versionParent = getFieldEditorParent();
 		

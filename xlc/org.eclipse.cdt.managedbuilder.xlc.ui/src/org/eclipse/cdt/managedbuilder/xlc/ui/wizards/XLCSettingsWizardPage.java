@@ -172,6 +172,7 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		// populate the combo
 		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME);
 		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME);
+		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME);
 		
 		// set the default based on the workbench preference
 		String compilerVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);

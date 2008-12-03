@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -3850,7 +3852,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// S a( f() ); // does not instantiate member template
 	// }
 	public void test12_8s3() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// void h(int());
@@ -4245,7 +4247,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// void* p = operator new(sizeof(int)*n);
 	// }
 	public void test13_5s4() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// struct B {
@@ -4268,7 +4270,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // D::operator=(const D&)
 	// }
 	public void test13_5_3s2() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// class X {
@@ -4388,6 +4390,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// template<typename T> class complex {};
 	// template<class T> class Array {
 	// T* v;
 	// int sz;
@@ -4398,8 +4401,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // ...
 	// };
 	// Array<int> v1(20);
-	// typedef complex<double> dcomplex; // complex is a standard
-	// // library template
+	// typedef complex<double> dcomplex; 
 	// Array<dcomplex> v2(30);
 	// Array<dcomplex> v3(40);
 	// void bar() {
@@ -4407,7 +4409,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// v2[3] = v3.elem(4) = dcomplex(7,8);
 	// }
 	public void test14_3s1() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T> class X {
@@ -4513,6 +4515,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+
+	// void error(const char*);
 	// template<class T> class Array {
 	// T* v;
 	// int sz;
@@ -4528,7 +4532,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// return v[i];
 	// }
 	public void test14_5_1_1s1() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// void test() {
@@ -4562,7 +4566,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // ...
 	// }
 	public void test14_5_2s1() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 
@@ -4592,8 +4596,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// ip = a.operator int*(); // explicit call to template operator
 	// // A::operator int*()
 	// }
-	public void test14_5_2s5() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+	public void _test14_5_2s5() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T> class X {
@@ -4978,10 +4982,11 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+	// template<typename T> class Array {};
 	// template<class T> class X : public Array<T> {  };
 	// template<class T> class Y : public T { };
 	public void test14_6_1s3b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T, int i> class Y {
@@ -5032,6 +5037,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	// template <typename T> class B {};
 	// template<class T> struct X : B<T> {
 	// typename T::A* pa;
 	// void f(B<T>* pb) {
@@ -5040,7 +5046,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// }
 	// };
 	public void test14_6_2s2() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		final String code = getAboveComment();
+		parse(code, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPUnknownBinding unknown= bh.assertNonProblem("B<T>", 4);
+		unknown= bh.assertNonProblem("T::A", 4);
+		unknown= bh.assertNonProblem("B<T>::i", 7);
+		unknown= bh.assertNonProblem("j", 1);
 	}
 
 	// typedef double A;
@@ -5050,7 +5062,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T> struct X : B<T> {
 	// A a; // a has type double
 	// };
-	public void test14_6_2s3() throws Exception { // TODO this doesn't compile via g++ ?
+	public void test14_6_2s3() throws Exception { 
 		final String content= getAboveComment();
 		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
@@ -5076,7 +5088,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// };
 	// Y<A> ya;
 	public void test14_6_2s4() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		final String content= getAboveComment();
+		parse(content, ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
+		IBinding b= bh.assertNonProblem("b;", 1);
+		assertEquals("Y", b.getOwner().getName());
+		b= bh.assertNonProblem("a = i", 1);
+		assertNull(b.getOwner());
 	}
 
 	// void g(double);

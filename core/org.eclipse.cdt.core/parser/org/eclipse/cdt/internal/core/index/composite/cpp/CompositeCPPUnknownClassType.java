@@ -125,7 +125,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPBinding implements ICPPUn
 		return ((ICPPClassType) rbinding).isSameType(type);
 	}
 
-	public ICPPScope getUnknownScope() {
+	public ICPPScope asScope() {
     	if (unknownScope == null) {
     		unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
     	}

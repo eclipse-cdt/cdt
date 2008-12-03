@@ -27,14 +27,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * The standard template parameter (template<typename T> or template<class T>).
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateTypeParameter, IType, ICPPUnknownBinding {
+		ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
 	private ICPPScope unknownScope;
 
 	public CPPTemplateTypeParameter(IASTName name) {
 		super(name);
 	}
 
-	public ICPPScope getUnknownScope() {
+	public ICPPScope asScope() {
 	    if (unknownScope == null) {
 	    	IASTName n = null;
 	    	IASTNode[] nodes = getDeclarations();

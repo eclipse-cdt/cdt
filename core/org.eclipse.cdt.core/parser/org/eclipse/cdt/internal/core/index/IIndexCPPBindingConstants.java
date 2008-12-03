@@ -38,7 +38,6 @@ public interface IIndexCPPBindingConstants {
 	 int CPP_FUNCTION_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 21;
 	 int CPP_METHOD_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 22;
 	 int CPP_CONSTRUCTOR_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 23;
-	 int CPP_DEFERRED_FUNCTION_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 24;
 	 int CPP_CLASS_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 25;
 	 int CPP_DEFERRED_CLASS_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 26;
 	 int CPP_PARAMETER_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 27;

@@ -170,7 +170,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 	@Override
 	public Object clone() {fail();return null;}
 
-	public ICPPScope getUnknownScope() throws DOMException {
+	public ICPPScope asScope() throws DOMException {
 		if (unknownScope == null) {
 			unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
 		}

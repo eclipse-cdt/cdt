@@ -1596,8 +1596,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		ICPPFunctionTemplate f = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
 		ICPPFunction f2 = (ICPPFunction) col.getName(8).resolveBinding();
-		assertTrue(f2 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance)f2).getTemplateDefinition(), f);
+		assertTrue(f2 instanceof ICPPUnknownBinding);
 	}
 	
 	// template < class T > class A {};                          
@@ -3414,4 +3413,72 @@ public class AST2TemplateTests extends AST2BaseTest {
         assertInstance(a1, ICPPField.class);
         assertSame(a1, a2);
     }
+    
+    //    void f(int); void f(char);
+    //    void g(int);
+    //    template<typename T> void h(T);
+    //    template<typename T> struct A  {
+    //      void m(int); void m(char);
+    //    	void m() {
+    //    		typename T::B b;
+    //    		b.func(); b.var;
+    //    		f(b); g(b); h(b); m(b);
+    //    	}
+    //    };
+    public void testUnknownReferences_Bug257186() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        bh.assertNonProblem("func();", 4, ICPPUnknownBinding.class);
+        bh.assertNonProblem("var;", 3, ICPPUnknownBinding.class);
+        bh.assertNonProblem("f(b)", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("h(b)", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("m(b)", 1, ICPPUnknownBinding.class, IFunction.class);
+        IFunction g= bh.assertNonProblem("g(b)", 1); 
+        assertFalse(g instanceof ICPPUnknownBinding);
+    }
+
+    //    template<typename T> struct A  {
+    //    	void m() {
+    //    		T::b.c;
+    //	        T::b.f();
+    //    		T::b.f().d;
+    //          T::f1();
+    //    	}
+    //    };
+    public void testTypeOfUnknownReferences_Bug257186a() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        bh.assertNonProblem("b.c", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("c;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("f();", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("f().", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("d;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("f1();", 2, ICPPUnknownBinding.class, IFunction.class);
+    }
+
+    //    template<typename T> struct A  {
+    //    	void m() {
+    //    		T::b->c;
+    //	        T::b->f();
+    //    		T::b->f()->d;
+    //          T::f1();
+    //    	}
+    //    };
+    public void testTypeOfUnknownReferences_Bug257186b() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        bh.assertNonProblem("b->c", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("c;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("f();", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("f()->", 1, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("d;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("f1();", 2, ICPPUnknownBinding.class, IFunction.class);
+    }
+
 }

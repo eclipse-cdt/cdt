@@ -111,11 +111,11 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 	
 	@Override
-	public ICPPScope getUnknownScope() throws DOMException {
+	public ICPPScope asScope() throws DOMException {
 		if (fLookupScope != null)
 			return fLookupScope;
 		
-		return super.getUnknownScope();
+		return super.asScope();
 	}
 
 	@Override

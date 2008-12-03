@@ -122,7 +122,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return this;
 	}
 
-    public ICPPScope getUnknownScope() {
+    public ICPPScope asScope() {
     	if (unknownScope == null) {
     		unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
     	}

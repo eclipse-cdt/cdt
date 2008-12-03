@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -47,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
@@ -251,7 +251,7 @@ abstract public class PDOMWriter {
 							}
 						} else if (name.isReference()) {
 							if (binding instanceof ICPPTemplateParameter || 
-									binding instanceof ICPPDeferredTemplateInstance || 
+									binding instanceof ICPPUnknownBinding || 
 									((fSkipReferences & SKIP_TYPE_REFERENCES) != 0 && isTypeReferenceBinding(binding))) {
 								if (!isRequiredReference(name)) {
 									na[0]= null;

@@ -10,15 +10,13 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * Represents a binding for a type found in a template definition, that can be 
- * determined only after the template is instantiated. 
- * 
- * This interface should be made public.
- * @since 5.0
+ * Models the type of an unknown function.
  */
-public interface ICPPUnknownClassType extends ICPPUnknownBinding, ICPPUnknownType, ICPPClassType {
-
+public class CPPUnknownFunctionType extends CPPFunctionType implements ICPPUnknownType {
+	CPPUnknownFunctionType() {
+		super(CPPUnknownClass.createUnnamedInstance(), IType.EMPTY_TYPE_ARRAY);
+	}
 }

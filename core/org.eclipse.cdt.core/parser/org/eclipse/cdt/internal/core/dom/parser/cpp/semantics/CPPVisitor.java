@@ -173,6 +173,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
@@ -946,7 +947,7 @@ public class CPPVisitor extends ASTQueries {
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace)binding).getNamespaceScope();
 					} else if (binding instanceof ICPPUnknownBinding) {
-					    scope= ((ICPPUnknownBinding)binding).getUnknownScope();
+					    scope= ((ICPPUnknownBinding)binding).asScope();
 					} else if (binding instanceof IProblemBinding) {
 						if (binding instanceof ICPPScope)
 							scope= (IScope) binding;
@@ -971,6 +972,8 @@ public class CPPVisitor extends ASTQueries {
 				}
 				if (type instanceof ICPPClassType) {
 					return ((ICPPClassType) type).getCompositeScope();
+				} else if (type instanceof ICPPUnknownBinding) {
+					return ((ICPPUnknownBinding) type).asScope();
 				}
 			} else if (parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement) {
 			    while (!(parent instanceof IASTFunctionDefinition)) {
@@ -1786,6 +1789,8 @@ public class CPPVisitor extends ASTQueries {
 					return ((ICPPTemplateNonTypeParameter) binding).getType();
 				} else if (binding instanceof ICPPClassType) {
 					return ((ICPPClassType) binding);
+				} else if (binding instanceof ICPPUnknownBinding) {
+					return CPPUnknownClass.createUnnamedInstance();
 				}
 			} catch (DOMException e) {
 				return e.getProblem();
@@ -2004,6 +2009,8 @@ public class CPPVisitor extends ASTQueries {
 				    return ((IFunction)binding).getType();
                 else if (binding instanceof IEnumerator)
                 	return ((IEnumerator)binding).getType();
+                else if (binding instanceof ICPPUnknownBinding)
+                	return CPPUnknownClass.createUnnamedInstance();
 		    } catch (DOMException e) {
 		        return e.getProblem();
             }

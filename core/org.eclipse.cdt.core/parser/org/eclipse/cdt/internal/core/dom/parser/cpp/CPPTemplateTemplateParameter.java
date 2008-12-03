@@ -44,7 +44,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * @author aniefer
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding {
+		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding,
+		ICPPUnknownType {
 
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
@@ -57,7 +58,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		super(name);
 	}
 
-	public ICPPScope getUnknownScope() {
+	public ICPPScope asScope() {
 	    if (unknownScope == null) {
 	    	IASTName n = null;
 	    	IASTNode[] nodes = getDeclarations();

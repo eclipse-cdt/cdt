@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Corporation - initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - initial API and implementation
  *    Sergey Prigogin (Google)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -29,11 +28,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Represents a C++ class, declaration of which is not yet available.
- *
- * @author aniefer
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownClassType {
-
+	public static CPPUnknownClass createUnnamedInstance() {
+    	return new CPPUnknownClass(null, new CPPASTName());
+    }
+    
     public CPPUnknownClass(IBinding binding, IASTName name) {
         super(binding, name);
     }
@@ -79,7 +79,7 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
     }
 
     public final IScope getCompositeScope() throws DOMException {
-        return getUnknownScope();
+        return asScope();
     }
 
     public boolean isSameType(IType type) {

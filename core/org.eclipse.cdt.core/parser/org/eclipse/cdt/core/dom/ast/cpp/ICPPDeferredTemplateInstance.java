@@ -11,16 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+
 /**
- * Interface for deferred instances. A deferred instance is not actually instantiated yet,
- * because the correct template cannot be selected until all information is available.
+ * @deprecated use {@link ICPPDeferredClassInstance} instead.
  */
+@Deprecated
 public interface ICPPDeferredTemplateInstance extends ICPPTemplateInstance {
-	
-	/**
-	 * Returns an empty map, because template parameters cannot be mapped until
-	 * all of the arguments are resolved.
-	 * @since 5.1
-	 */
-	public ICPPTemplateParameterMap getTemplateParameterMap();
 }

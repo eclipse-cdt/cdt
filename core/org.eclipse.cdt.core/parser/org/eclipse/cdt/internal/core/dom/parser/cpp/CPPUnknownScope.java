@@ -16,19 +16,21 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileSet;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Models the scope represented by an unknown binding such (e.g.: template type parameter). Used within
@@ -100,55 +102,68 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
+    public IBinding getBinding(final IASTName name, boolean resolve, IIndexFileSet fileSet) {
+    	boolean type= false;
+    	boolean function= false;
+
+    	if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) {
+    		type= true;
+    	} else {
+    		IASTName n= name;
+    		IASTNode parent= name.getParent();
+    		if (parent instanceof ICPPASTTemplateId) {
+    			n= (IASTName) parent;
+    			parent= n.getParent();
+    		}
+    		if (parent instanceof ICPPASTQualifiedName) {
+    			ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
+    			if (qname.getLastName() != n) {
+    				type= true;
+    			} else {
+    				parent= qname.getParent();
+    			}
+    		}
+    		if (!type) {
+    			if (parent instanceof ICPPASTNamedTypeSpecifier ||
+    				parent instanceof ICPPASTBaseSpecifier ||
+    				parent instanceof ICPPASTConstructorChainInitializer) {
+    					type= true;
+    			} else if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+    				function=  true;
+    			}
+    		}
+    	}
+    	
         if (map == null)
             map = new CharArrayObjectMap(2);
 
         char[] c = name.toCharArray();
-        if (map.containsKey(c)) {
-            return (IBinding) map.get(c);
+        IBinding[] o= (IBinding[]) map.get(c);
+        if (o == null) {
+        	o= new IBinding[3];
+        	map.put(c, o);
         }
-
-        IBinding b;
-        IASTNode parent = name.getParent();
-        if (parent instanceof ICPPASTTemplateId) {
-        	try {
-				ICPPTemplateArgument[] arguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) parent);
-				b = new CPPUnknownClassInstance(binding, name, arguments);
-			} catch (DOMException e) {
-				return e.getProblem();
-			}
-        } else {
-        	b = new CPPUnknownClass(binding, name);
+        
+        int idx= type ? 0 : function ? 1 : 2;
+        IBinding result= o[idx];
+        if (result == null) {
+        	if (type) {
+        		result= new CPPUnknownClass(binding, name.getLastName());
+        	} else if (function) {
+        		result= new CPPUnknownFunction(binding, name.getLastName());
+        	} else {
+        		result= new CPPUnknownBinding(binding, name.getLastName());
+        	}
+        	o[idx]= result;
         }
-
-        name.setBinding(b);
-        map.put(c, b);
-        return b;
+        return result;
     }
 
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
-    		IIndexFileSet fileSet) {
-        if (map == null)
-            map = new CharArrayObjectMap(2);
-
-        char[] c = name.toCharArray();
-
-	    IBinding[] result = null;
-	    if (prefixLookup) {
-	    	Object[] keys = map.keyArray();
-	    	for (Object key2 : keys) {
-	    		char[] key = (char[]) key2;
-	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
-	    			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, map.get(key));
-	    		}
-	    	}
-	    } else {
-	    	result = new IBinding[] { (IBinding) map.get(c) };
-	    }
-
-	    result = (IBinding[]) ArrayUtil.trim(IBinding.class, result);
-	    return result;
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet fileSet) {
+    	if (prefixLookup)
+    		return IBinding.EMPTY_BINDING_ARRAY;
+    	
+    	return new IBinding[] {getBinding(name, resolve, fileSet)};
     }
 
     /* (non-Javadoc)

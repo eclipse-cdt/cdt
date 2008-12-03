@@ -20,11 +20,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding 
-	implements ICPPTemplateTypeParameter, ICPPUnknownBinding, IIndexType {
+	implements ICPPTemplateTypeParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType {
 
 	private ICPPScope unknownScope;
 
@@ -58,7 +59,7 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 		fail(); return null; 
 	}
 
-	public ICPPScope getUnknownScope() {
+	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
 		}

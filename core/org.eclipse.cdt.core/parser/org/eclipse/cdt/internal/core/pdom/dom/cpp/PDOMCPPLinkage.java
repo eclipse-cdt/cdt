@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -385,10 +384,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	private PDOMBinding createSpecialization(PDOMNode parent, PDOMBinding orig, IBinding special) throws CoreException {
 		PDOMBinding result= null;
-		if (special instanceof ICPPDeferredTemplateInstance) {
-			if (special instanceof ICPPFunction && orig instanceof ICPPFunctionTemplate) {
-				result= new PDOMCPPDeferredFunctionInstance(pdom, parent, (ICPPFunction) special, orig);	
-			} else if (special instanceof ICPPDeferredClassInstance && orig instanceof ICPPClassTemplate) {
+		if (special instanceof ICPPDeferredClassInstance) {
+			if (orig instanceof ICPPClassTemplate) {
 				result= new PDOMCPPDeferredClassInstance(pdom,	parent, (ICPPDeferredClassInstance) special, orig);
 			}
 		} else if (special instanceof ICPPTemplateInstance) {
@@ -476,14 +473,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@Override
 	public int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPSpecialization) {
-			if (binding instanceof ICPPDeferredTemplateInstance) {
-				if (binding instanceof ICPPFunction) {
-					return CPP_DEFERRED_FUNCTION_INSTANCE;
-				} else if (binding instanceof ICPPClassType) {
+			if (binding instanceof ICPPTemplateInstance) {
+				if (binding instanceof ICPPDeferredClassInstance) {
 					return CPP_DEFERRED_CLASS_INSTANCE;
-				}
-			} else if (binding instanceof ICPPTemplateInstance) {
-				if (binding instanceof ICPPConstructor) {
+				} else if (binding instanceof ICPPConstructor) {
 					return CPP_CONSTRUCTOR_INSTANCE;
 				} else if (binding instanceof ICPPMethod) {
 					return CPP_METHOD_INSTANCE;
@@ -800,8 +793,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPMethodInstance(pdom, record);
 		case CPP_CONSTRUCTOR_INSTANCE:
 			return new PDOMCPPConstructorInstance(pdom, record);
-		case CPP_DEFERRED_FUNCTION_INSTANCE:
-			return new PDOMCPPDeferredFunctionInstance(pdom, record);
 		case CPP_CLASS_INSTANCE:
 			return new PDOMCPPClassInstance(pdom, record);
 		case CPP_DEFERRED_CLASS_INSTANCE:

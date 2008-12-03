@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -43,6 +42,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 
@@ -93,7 +93,7 @@ public class IndexLabelProvider extends LabelProvider {
 
 				if (element instanceof ICPPTemplateInstance) {
 					StringBuffer buffer = null;
-					if (element instanceof ICPPDeferredTemplateInstance) {
+					if (element instanceof ICPPDeferredClassInstance) {
 						buffer = new StringBuffer("Dfrd: "); //$NON-NLS-1$
 					} else {
 						buffer = new StringBuffer("Inst: "); //$NON-NLS-1$	

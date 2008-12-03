@@ -100,7 +100,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -144,13 +143,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -303,7 +305,7 @@ public class CPPSemantics {
 		    			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
 		    			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
 		    			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
-		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredTemplateInstance) ? (ICPPClassType)inst : cls; 
+		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredClassInstance) ? (ICPPClassType)inst : cls; 
 		    		}
 		    	}
 		    	if (cls != null) {
@@ -339,8 +341,12 @@ public class CPPSemantics {
 		}
 		
 		// if the lookup in base-classes ran into a deferred instance, use the computed unknown binding.
-		if (binding == null && data.unknownBinding != null) {
-			binding= data.unknownBinding;
+		if (binding == null && data.skippedScope != null) {
+			if (data.functionParameters != null) {
+				binding= new CPPUnknownFunction(data.skippedScope, name.getLastName());
+			} else {
+				binding= new CPPUnknownBinding(data.skippedScope, name.getLastName());
+			}
 		}
 		
         if (binding != null) {
@@ -737,7 +743,7 @@ public class CPPSemantics {
 			}
 			
 			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope) {
-				mergeResults(data, lookupInParents(data, scope), true);
+				mergeResults(data, lookupInParents(data, scope, ((ICPPClassScope) scope).getClassType()), true);
 			}
 			
 			if (!data.contentAssist && (data.problem != null || data.hasResults()))
@@ -794,7 +800,7 @@ public class CPPSemantics {
 		return (ICPPScope) parentScope;
 	}
 
-	private static Object lookupInParents(LookupData data, ICPPScope lookIn) throws DOMException{
+	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope) throws DOMException{
 		if (lookIn instanceof ICPPClassScope == false)
 			return null;
 		
@@ -826,44 +832,46 @@ public class CPPSemantics {
 				continue;
 			
 			IBinding b = base.getBaseClass();
-			if (b instanceof ICPPClassType == false)
+			if (!(b instanceof ICPPClassType)) {
+				// 14.6.2.3 scope is not examined 
+				if (b instanceof ICPPUnknownBinding) {
+					if (data.skippedScope == null)
+						data.skippedScope= overallScope;
+				}
 				continue;
+			}
 
 			inherited = null;
 			
 			final ICPPClassType cls = (ICPPClassType) b;
-			if (cls instanceof ICPPUnknownBinding) {
-				if (data.unknownBinding == null) {
-					data.unknownBinding= cls;
-				}
+			final ICPPScope classScope = (ICPPScope) cls.getCompositeScope();
+			if (classScope == null || classScope instanceof ICPPInternalUnknownScope) {
+				// 14.6.2.3 scope is not examined 
+				if (data.skippedScope == null)
+					data.skippedScope= overallScope;
 				continue;
 			}
-			
-			final ICPPScope parent = (ICPPScope) cls.getCompositeScope();
-			if (parent == null || parent instanceof CPPUnknownScope)
-				continue;
-	
-			if (!base.isVirtual() || !data.visited.containsKey(parent)) {
+			if (!base.isVirtual() || !data.visited.containsKey(classScope)) {
 				if (base.isVirtual()) {
-					data.visited.put(parent);
+					data.visited.put(classScope);
 				}
 	
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
-				if (!data.inheritanceChain.containsKey(parent)) {
+				if (!data.inheritanceChain.containsKey(classScope)) {
 					//is this name define in this scope?
-					if (ASTInternal.isFullyCached(parent)) {
+					if (ASTInternal.isFullyCached(classScope)) {
 						if (data.astName != null && !data.contentAssist) {
-							inherited = parent.getBinding(data.astName, true);
+							inherited = classScope.getBinding(data.astName, true);
 						} else if (data.astName != null) {
-							inherited = parent.getBindings(data.astName, true, data.prefixLookup);
+							inherited = classScope.getBindings(data.astName, true, data.prefixLookup);
 						}
 					} else {
-						inherited = lookupInScope(data, parent, null);
+						inherited = lookupInScope(data, classScope, null);
 					}
 					
 					if (inherited == null || data.contentAssist) {
-						Object temp = lookupInParents(data, parent);
+						Object temp = lookupInParents(data, classScope, overallScope);
 						if (inherited != null) {
 							inherited = mergePrefixResults(null, inherited, true);
 							inherited = mergePrefixResults((CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true);
@@ -1863,6 +1871,13 @@ public class CPPSemantics {
 				functions[i]= null;
 				continue;
 			}
+			if (function instanceof ICPPUnknownBinding) {
+				if (def) {
+					functions[i]= null;
+				}
+				continue;
+			}
+				
 			num = function.getParameters().length;
 		
 			// if there are m arguments in the list, all candidate functions having m parameters
@@ -1981,21 +1996,27 @@ public class CPPSemantics {
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable(data, fns);
 		
-		// deferred function instances cannot be disambiguated.
-		boolean deferredOnly= true;
-		for (int i = 0; deferredOnly && i < fns.length; i++) {
-			final IFunction f = fns[i];
-			if (f != null && !(f instanceof ICPPDeferredTemplateInstance)) {
-				deferredOnly= false;
-			}
-		}
-		if (deferredOnly || data.forFunctionDeclaration()) {
-			for (IFunction fn : fns) {
-				if (fn != null) {
-					return fn;
+		int viableCount= 0;
+		IFunction firstViable= null;
+		for (IFunction f : fns) {
+			if (f != null) {
+				if (++viableCount == 1) {
+					firstViable= f;
 				}
 			}
+		}
+		if (firstViable == null) 
 			return null;
+		if (data.forFunctionDeclaration()) 
+			return firstViable;
+		
+			
+		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); // the parameters the function is being called with
+		if (CPPTemplates.containsDependentType(sourceParameters)) {
+			if (viableCount == 1)
+				return firstViable;
+			
+			return CPPUnknownFunction.createForSample(firstViable, data.astName);
 		}
 		
 		IFunction bestFn = null;				// the best function
@@ -2016,7 +2037,6 @@ public class CPPSemantics {
 		boolean currHasAmbiguousParam = false;	// currFn has an ambiguous parameter conversion (ok if not bestFn)
 		boolean bestHasAmbiguousParam = false;  // bestFn has an ambiguous parameter conversion (not ok, ambiguous)
 
-		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); // the parameters the function is being called with
 		final boolean sourceVoid = (data.functionParameters == null || data.functionParameters.length == 0);
 		final IType impliedObjectType = data.getImpliedObjectArgument();
 		
@@ -2400,7 +2420,7 @@ public class CPPSemantics {
     	IASTExpression owner = fieldReference.getFieldOwner();
     	IType result= CPPVisitor.getExpressionType(owner);
 
-    	if (fieldReference.isPointerDereference()) {
+    	if (fieldReference.isPointerDereference() && !(result instanceof ICPPUnknownType)) {
     		IType type= getUltimateTypeUptoPointers(result);
     		boolean needCheckClassMemberAccessOperator= true;
     		if (type instanceof IPointerType) {

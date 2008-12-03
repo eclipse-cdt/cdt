@@ -205,7 +205,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			if (parent instanceof ICPPClassType) {
 				return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
 			} else if (parent instanceof ICPPUnknownBinding) {
-				return (IIndexScope) ((ICPPUnknownBinding) parent).getUnknownScope();
+				return (IIndexScope) ((ICPPUnknownBinding) parent).asScope();
 			}
 			
 			if (parent instanceof IIndexScope) {

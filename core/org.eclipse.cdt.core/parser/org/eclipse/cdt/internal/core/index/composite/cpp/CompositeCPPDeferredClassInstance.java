@@ -57,7 +57,7 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return ((ICPPDeferredClassInstance) rbinding).getUnknownName();
 	}
 
-	public ICPPScope getUnknownScope() throws DOMException {
+	public ICPPScope asScope() throws DOMException {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
 		}

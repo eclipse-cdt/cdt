@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -183,14 +182,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = null;
 			} else if (binding instanceof ICPPSpecialization) {
 				if (binding instanceof ICPPTemplateInstance) {
-					if (binding instanceof ICPPDeferredTemplateInstance) {
-						if (binding instanceof ICPPDeferredClassInstance) {
-							return new CompositeCPPDeferredClassInstance(this, (ICPPDeferredClassInstance) findOneBinding(binding));
-						} else if (binding instanceof ICPPFunction) {
-							return new CompositeCPPDeferredFunctionInstance(this, (ICPPFunction) binding);
-						} else {
-							throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+					if (binding instanceof ICPPDeferredClassInstance) {
+						return new CompositeCPPDeferredClassInstance(this, (ICPPDeferredClassInstance) findOneBinding(binding));
 					} else {
 						if (binding instanceof ICPPClassType) {
 							return new CompositeCPPClassInstance(this, (ICPPClassType) findOneBinding(binding));

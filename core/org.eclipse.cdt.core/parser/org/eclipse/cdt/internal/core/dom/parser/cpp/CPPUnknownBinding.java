@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Represents a binding that is unknown because it depends on template arguments.
  */
-public abstract class CPPUnknownBinding extends PlatformObject
+public class CPPUnknownBinding extends PlatformObject
 		implements ICPPUnknownBinding, ICPPInternalBinding, Cloneable {
     protected IBinding fOwner;
     private ICPPScope unknownScope;
@@ -80,7 +80,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
 
     public IScope getScope() throws DOMException {
     	if (fOwner instanceof ICPPUnknownBinding) {
-    		return ((ICPPUnknownBinding) fOwner).getUnknownScope();
+    		return ((ICPPUnknownBinding) fOwner).asScope();
     	} else if (fOwner instanceof ICPPClassType) {
     		return ((ICPPClassType) fOwner).getCompositeScope();
     	} else if (fOwner instanceof ICPPNamespace) {
@@ -91,7 +91,7 @@ public abstract class CPPUnknownBinding extends PlatformObject
     	return null;
     }
 
-    public ICPPScope getUnknownScope() throws DOMException {
+    public ICPPScope asScope() throws DOMException {
         if (unknownScope == null) {
             unknownScope = new CPPUnknownScope(this, name);
         }

@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -39,7 +40,7 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for template type parameters in the index.
  */
 class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner,
-		ICPPTemplateTypeParameter, ICPPUnknownBinding, IIndexType {
+		ICPPTemplateTypeParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType {
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
@@ -161,7 +162,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	public Object clone() { fail(); return null; }
 
 
-	public ICPPScope getUnknownScope() {
+	public ICPPScope asScope() {
 		if (fUnknownScope == null) {
 			fUnknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 		}

@@ -905,17 +905,19 @@ implements
 	@Override
 	public void dispose() {
 		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
-		
+
 		if (!isNewOpening)
 			handleResize(false); // save page size 
 		isNewOpening = true;
+		// Remove this page from the property manager
+		CDTPropertyManager.remove(this);
 		// clear static variables
 		if (CDTPropertyManager.getPagesCount() == 0) {
 			resd = null;
 			cfgDescs = null;
 		}
-	} 
-	
+	}
+
 	/**
 	 * The only method to be redefined in descendants
 	 * @return 

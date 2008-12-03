@@ -37,7 +37,10 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * 
  * When page's "performOK" called, it should call
  * manager's  method
- * performOk()   
+ * performOk()
+ *
+ * Registered pages can call {@link CDTPropertyManager#remove(Object)}
+ * to explicitly remove themselves from this manager.
  *
  * In addition, there are utility methods for pages: 
  * getPagesCount()
@@ -116,8 +119,17 @@ public class CDTPropertyManager {
 			prjd = null;
 			saveDone = false;
 		}
-	}	
-	
+	}
+
+	/**
+	 * Explicitly remove the page from this CDTPropertyManager
+	 * @param p
+	 * @since 5.1
+	 */
+	public static void remove(Object p) {
+		DListener.dispose(p);
+	}
+
 	/**
 	 * Performs mandatory saving 
 	 * @param p
@@ -141,17 +153,14 @@ public class CDTPropertyManager {
 	public static boolean isSaveDone() { return saveDone; }	
 	public static int getPagesCount() {	return pages.size(); }
 	public static Object getPage(int index) { return pages.get(index); }
-	
+
 	// Removes disposed items from list
 	static class DListener implements DisposeListener {
-		public void widgetDisposed(DisposeEvent e) {
-			Widget w = e.widget;
+		public static void dispose (Object w) {
 			if (pages.contains(w)) { // Widget ?	
 				pages.remove(w); 
 			} else {                 // Property Page ?
-				Iterator<Object> it = pages.iterator();
-				while (it.hasNext()) {
-					Object ob = it.next();
+				for (Object ob : pages) {
 					if (ob != null && ob instanceof PropertyPage) {
 						if (((PropertyPage)ob).getControl().equals(w)) {
 							pages.remove(ob);
@@ -160,23 +169,16 @@ public class CDTPropertyManager {
 					}
 				}
 			}
-			
-			
-			if (pages.size() == 0) {
-//				if(!saveDone){
-//					if(prjd != null){
-//						saveDone = !prjd.isModified();
-//					}
-//				}
-				
+
+			if (pages.isEmpty()) {
 				saveDone = true;
-				
-//				if(saveDone){
-					project = null;
-					prjd = null;
-					saveDone = false;
-//				}
+				project = null;
+				prjd = null;
+				saveDone = false;
 			}
+		}
+		public void widgetDisposed(DisposeEvent e) {
+			dispose(e.widget);
 		}
 	}
 	

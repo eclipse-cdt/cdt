@@ -29,8 +29,24 @@ public class StringFieldEditorM extends StringFieldEditor {
     public Text getTextControl() {
         return super.getTextControl();
     }
-    
+       
     public void valueChanged() {
-    	super.valueChanged();
+        setPresentsDefaultValue(false);
+        boolean oldState = super.isValid();
+        super.refreshValidState();
+        if (super.isValid() != oldState) {
+			fireStateChanged(IS_VALID, oldState, super.isValid());
+		}
+        String newValue = this.getTextControl().getText();             
+        if (!newValue.equals(oldValue)) {  
+        	String oldValueTmp =oldValue;
+        	oldValue = newValue;        	
+            try {
+				fireValueChanged(VALUE, oldValueTmp, newValue);
+			} catch (Exception e) {
+				oldValue = oldValueTmp;
+				ManagedBuilderUIPlugin.log(e);
+			}            
+        }
     }
 }

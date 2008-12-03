@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
-
 /**
  * @author ajin
  *
@@ -25,7 +24,7 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doDelay(int, java.util.Collection)
 	 */
 	public void doDelay(int delay, Collection commands) {
-		String cmd = "monitor delay " + String.valueOf( delay * 1000 );
+		String cmd = "monitor delay " + String.valueOf(delay * 1000);
 		addCmd(commands, cmd);
 	}
 
@@ -43,7 +42,6 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	public int getDefaultDelay() {
 		return 0;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doRemote(java.lang.String, int, java.util.Collection)
@@ -73,17 +71,23 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doLoadImage(java.lang.String, java.lang.String, java.util.Collection)
 	 */
 	public void doLoadImage(String imageFileName, String imageOffset, Collection commands) {
-		String cmd = "restore " + imageFileName + " " + imageOffset;
+		String file = escapeScpaces(imageFileName);
+		String cmd = "restore " + file + " " + imageOffset;
 		addCmd(commands, cmd);
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doLoadSymbol(java.lang.String, java.lang.String, java.util.Collection)
 	 */
 	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection commands) {
-		String cmd = "add-sym " + symbolFileName + " " + symbolOffset;
+		String file = escapeScpaces(symbolFileName);
+		String cmd = "add-sym " + file + " " + symbolOffset;
 		addCmd(commands, cmd);
+	}
+	
+	protected String escapeScpaces(String file) {
+		if (file.indexOf(' ') >= 0) { return '"' + file + '"'; }
+		return file;
 	}
 
 	/* (non-Javadoc)
@@ -101,11 +105,11 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 		String cmd = "tbreak " + stopAt;
 		addCmd(commands, cmd);
 	}
-	
+
 	/*
 	 * addCmd Utility method to format commands
 	 */
-	protected void addCmd (Collection commands, String cmd) {
+	protected void addCmd(Collection commands, String cmd) {
 		commands.add(cmd + System.getProperty("line.separator"));
 	}
 
@@ -122,5 +126,5 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	public String getDefaultPortNumber() {
 		return "10000";
 	}
-	
+
 }

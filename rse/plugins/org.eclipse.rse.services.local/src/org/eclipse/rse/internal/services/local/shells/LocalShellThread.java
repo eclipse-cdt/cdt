@@ -12,10 +12,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * Javier Montalvo Orús (Symbian) - 138619: Fix codepage on Win2K
- * Lothar Werzinger (Tradescape) - 161838: Support terminating local shells
- * David McKnight       (IBM)     - [189387] Use specified encoding for shell output
+ * Javier Montalvo Orús (Symbian)- [138619] Fix codepage on Win2K
+ * Lothar Werzinger (Tradescape) - [161838] Support terminating local shells
+ * David McKnight       (IBM)    - [189387] Use specified encoding for shell output
  * Martin Oberhuber (Wind River) - [161838] local shell reports isActive() wrong
+ * Anna Dushistova  (MontaVsita) - [249354] Incorrect behaviour of local shells subsystem runCommand method 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -29,7 +30,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.FileLocator;
 
 /**
  * The LocalCommandThread class is used for running and interacting with a
@@ -84,7 +85,7 @@ public class LocalShellThread extends Thread
 		PSEUDO_TERMINAL = System.getProperty("rse.pty"); //$NON-NLS-1$
 		if (PSEUDO_TERMINAL != null) {
 			try {
-				PSEUDO_TERMINAL = Platform.resolve(new URL(PSEUDO_TERMINAL)).getPath();
+				PSEUDO_TERMINAL = FileLocator.resolve(new URL(PSEUDO_TERMINAL)).getPath();
 			} catch (Exception e) {
 				/* ignore, no pty available */
 			}
@@ -183,16 +184,21 @@ public class LocalShellThread extends Thread
 				    }
 				    else
 				    {
+				    	String args[];
 						if (_invocation.equals(">")) //$NON-NLS-1$
 						{
 							_invocation = theShell;
 							_isShell = true;
+							args = new String[1];
+							args[0] = _invocation;
+							_theProcess = Runtime.getRuntime().exec(args[0], envVars, theDirectory);
+						} else {	
+							args = new String[3];
+							args[0] = theShell;
+							args[1] = "-c";//$NON-NLS-1$
+							args[2] = _invocation;
+						   _theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
 						}
-						String args[] = new String[1];
-						args[0] = _invocation;
-						//args[1] = "-i";
-
-						_theProcess = Runtime.getRuntime().exec(args[0], envVars, theDirectory);
 				    }
 				}
 

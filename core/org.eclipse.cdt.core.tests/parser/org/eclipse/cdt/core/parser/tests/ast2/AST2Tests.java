@@ -1660,22 +1660,22 @@ public class AST2Tests extends AST2BaseTest {
 	// int a[restrict];       
 	// char * b[][];    
 	// const char * const c[][][]; 
+	// char* d[const][];
 	public void testArrayTypes() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C);
 		
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu
-		.getDeclarations()[0];
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		IASTName name_a = decl.getDeclarators()[0].getName();
-		IVariable a = (IVariable) decl.getDeclarators()[0].getName()
-		.resolveBinding();
+		IVariable a = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
 		decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
 		IASTName name_b = decl.getDeclarators()[0].getName();
-		IVariable b = (IVariable) decl.getDeclarators()[0].getName()
-		.resolveBinding();
+		IVariable b = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
 		decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
 		IASTName name_c = decl.getDeclarators()[0].getName();
-		IVariable c = (IVariable) decl.getDeclarators()[0].getName()
-		.resolveBinding();
+		IVariable c = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+		decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
+		IASTName name_d = decl.getDeclarators()[0].getName();
+		IVariable d = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
 		
 		IType t_a_1 = a.getType();
 		assertTrue(t_a_1 instanceof ICArrayType);
@@ -1694,6 +1694,16 @@ public class AST2Tests extends AST2BaseTest {
 		assertTrue(t_b_4 instanceof IBasicType);
 		assertEquals(((IBasicType) t_b_4).getType(), IBasicType.t_char);
 		
+		t_b_1 = d.getType();
+		assertTrue(t_b_1 instanceof IArrayType);
+		t_b_2 = ((IArrayType) t_b_1).getType();
+		assertTrue(t_b_2 instanceof IArrayType);
+		t_b_3 = ((IArrayType) t_b_2).getType();
+		assertTrue(t_b_3 instanceof IPointerType);
+		t_b_4 = ((IPointerType) t_b_3).getType();
+		assertTrue(t_b_4 instanceof IBasicType);
+		assertEquals(((IBasicType) t_b_4).getType(), IBasicType.t_char);
+
 		IType t_c_1 = c.getType();
 		assertTrue(t_c_1 instanceof IArrayType);
 		IType t_c_2 = ((IArrayType) t_c_1).getType();

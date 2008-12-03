@@ -1918,20 +1918,14 @@ public class CVisitor {
 	 */
 	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
-			int i=0;
 			IASTArrayModifier[] mods = ((IASTArrayDeclarator)decl).getArrayModifiers();
-			
-			CArrayType arrayType = new CArrayType(lastType); 
-			if (mods[i] instanceof ICASTArrayModifier) {
-				arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i++]);
-			}
-			for (; i < ((IASTArrayDeclarator)decl).getArrayModifiers().length - 1; i++) {
-				arrayType = new CArrayType(arrayType);
-				if (mods[i] instanceof ICASTArrayModifier) {
-					arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i]);
+			for (IASTArrayModifier mod : mods) {
+				CArrayType arrayType = new CArrayType(lastType);
+				if (mod instanceof ICASTArrayModifier) {
+					arrayType.setModifiedArrayModifier((ICASTArrayModifier)mod);
 				}
+				lastType= arrayType;
 			}
-			return arrayType;
 		}
 		
 		return lastType;

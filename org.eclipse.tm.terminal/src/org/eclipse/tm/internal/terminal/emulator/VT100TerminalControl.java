@@ -953,7 +953,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fState=state;
 		fTerminalListener.setState(state);
 		// enable the (blinking) cursor if the terminal is connected
-		runInDisplayThread(new Runnable() {
+		runAsyncInDisplayThread(new Runnable() {
 			public void run() {
 				if(fCtlText!=null && !fCtlText.isDisposed())
 					fCtlText.setCursorEnabled(isConnected());
@@ -962,11 +962,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/**
 	 * @param runnable run in display thread
 	 */
-	private void runInDisplayThread(Runnable runnable) {
+	private void runAsyncInDisplayThread(Runnable runnable) {
 		if(Display.findDisplay(Thread.currentThread())!=null)
 			runnable.run();
 		else if(PlatformUI.isWorkbenchRunning())
-			PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(runnable);
 		// else should not happen and we ignore it...
 	}
 

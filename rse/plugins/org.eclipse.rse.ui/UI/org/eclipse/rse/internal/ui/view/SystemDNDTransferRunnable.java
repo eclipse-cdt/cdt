@@ -7,13 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Rupen Mardirossian (IBM) - [187713] Check to see if target is null before attempting to retrieve targetAdapter in tranferRSEResources method (line 248)
  * Martin Oberhuber (Wind River) - [200682] Fix drag&drop for elements just adaptable to IResource, like CDT elements
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
@@ -81,7 +81,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
   *  Runnable to perform actual transfer operation.
-  * 
+  *
   */
 public class SystemDNDTransferRunnable extends WorkspaceJob
 {
@@ -96,8 +96,8 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 	private List _resultSrcObjects;
 	private List _resultTgtObjects;
 	private List _setList;
-	
-	
+
+
 	private Object _currentTarget;
 	private int _sourceType;
 	private Viewer _originatingViewer;
@@ -117,7 +117,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		this.setUser(true);
 		_shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
-	
+
 	protected SystemRemoteResourceSet getSetFor(ISubSystem subSystem, ISystemDragDropAdapter adapter)
 	{
 		for (int i = 0; i < _setList.size(); i++)
@@ -128,23 +128,31 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				return set;
 			}
 		}
-		
+
 		// no existing set - create one
 		SystemRemoteResourceSet newSet = new SystemRemoteResourceSet(subSystem, adapter);
 		_setList.add(newSet);
 		return newSet;
 	}
-	
+
+	/**
+	 * Transfer RSE resources.
+	 *
+	 * @param target actual target object (parent item) to drop into
+	 * @param targetSubSystem subsystem of target object
+	 * @param targetAdapter RSE ISystemDragDropAdapter of target object
+	 * @param monitor progress monitor for cancellation
+	 * @return <code>true</code> if successfully transferred, or
+	 *         <code>false</code> if cancelled.
+	 */
 	protected boolean transferRSEResources(Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter, IProgressMonitor monitor)
 	{
-		
-		
 		// transfer local artificts and categorize remote objects
 		for (int i = 0; i < _srcObjects.size() && _ok; i++)
 		{
 			Object srcObject = _srcObjects.get(i);
 			_resultSrcObjects.add(srcObject);
-			
+
 			if (srcObject instanceof SystemMessage)
 			{
 				operationFailed(monitor);
@@ -164,56 +172,56 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				        {
 				            targetAdapter.doDrop(tempObject, target, false, false, _sourceType, monitor);
 				            _resultTgtObjects.add(tempObject);
-				        }							        
+				        }
 				    }
 				    else
 				    {
 				    	ISubSystem srcSubSystem = srcAdapter.getSubSystem(srcObject);
-				    	if (srcSubSystem.isConnected() || 
+				    	if (srcSubSystem.isConnected() ||
 						        srcObject instanceof ISystemFilterReference ||
 						        srcObject instanceof ISubSystem)
 						{
 				    		SystemRemoteResourceSet set = getSetFor(srcSubSystem, srcAdapter);
 							set.addResource(srcObject);
 						}
-				    }				
+				    }
 				}
 			}
 		}
-		
+
 		String targetPath = targetAdapter.getAbsoluteName(target);
 	    boolean sameSubSystemType = true;
 	    String targetType = ""; //$NON-NLS-1$
 	    if (targetSubSystem != null)
 	    {
-	        targetType = targetSubSystem.getName();																		
+	        targetType = targetSubSystem.getName();
 	    }
-	    
+
 		// now we have things divided into sets
 		// transfer 1 set at a time
 		for (int s = 0; s < _setList.size(); s++)
 		{
 			SystemRemoteResourceSet set = (SystemRemoteResourceSet)_setList.get(s);
-			
 
-			
-			
+
+
+
 			ISubSystem srcSubSystem = set.getSubSystem();
 			ISystemDragDropAdapter srcAdapter = set.getAdapter();
-			
+
 			String srcType = srcSubSystem.getName();
 			sameSubSystemType = targetType.equals(srcType);
-			
+
 			if (!sameSubSystemType && targetSubSystem != null)
 			{
-				ISystemResourceSet tempObjects = srcAdapter.doDrag(set, monitor);			
+				ISystemResourceSet tempObjects = srcAdapter.doDrag(set, monitor);
 				if (monitor.isCanceled()) {
 					monitor.done();
 					return false;
 				}
 				if (tempObjects == null)
 				{
-					// drag failed		
+					// drag failed
 					operationFailed(monitor);
 					showInvalidTransferMessage(set, targetPath);
 				}
@@ -225,19 +233,19 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				else
 				{
 					if (targetAdapter.validateDrop(tempObjects, target, (targetSubSystem == srcSubSystem)))
-					{					
+					{
 						//	special case for filters
 					    if (target instanceof ISystemFilterReference)
 					    {
 					        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 					        if (factory.supportsDropInFilters())
-					        {											        
-					            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);										            
-					            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);				
+					        {
+					            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
+					            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
 					        }
 					    }
-					   
-				
+
+
 						ISystemResourceSet droppedObjects = targetAdapter.doDrop(tempObjects, target, sameSubSystemType, (targetSubSystem == srcSubSystem), _sourceType, monitor);
 						if (droppedObjects == null)
 						{
@@ -257,7 +265,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 							operationFailed(monitor);
 							showErrorMessage(droppedObjects.getMessage());
 						}
-						else 
+						else
 						{
 							List results = droppedObjects.getResourceSet();
 							for (int d = 0; d < results.size(); d++)
@@ -273,15 +281,15 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						showInvalidTransferMessage(set, targetPath);
 					}
 				}
-			}	
+			}
 			else
-			{																	
-			    // special case for filters			 
+			{
+			    // special case for filters
 			    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 			    {
 			        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 			        if (factory.supportsDropInFilters())
-			        {											        
+			        {
 			            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
 			            if (target == null)
 			            {
@@ -295,7 +303,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			    }
 				if (targetAdapter.validateDrop(set, target, (targetSubSystem == srcSubSystem)))
 				{
-				   
+
 					ISystemResourceSet droppedObjects = targetAdapter.doDrop(set, target, sameSubSystemType, (targetSubSystem == srcSubSystem), _sourceType, monitor);
 					if (droppedObjects == null)
 					{
@@ -306,14 +314,14 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						operationFailed(monitor);
 						showErrorMessage(droppedObjects.getMessage());
 					}
-					else 
+					else
 					{
 						List results = droppedObjects.getResourceSet();
 						for (int d = 0; d < results.size(); d++)
 						{
 							_resultTgtObjects.add(results.get(d));
 						}
-					}					
+					}
 				}
 				else
 				{
@@ -323,14 +331,14 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				}
 			}
 		}
-		
+
 		return _ok;
 	}
-	
+
 	protected boolean transferRSEResourcesToEclipseResource(IResource target, ISubSystem targetSubSystem, IProgressMonitor monitor)
 	{
 		boolean alwaysOverwrite = false;
-		
+
 		List resourcesToCopy = new ArrayList();
 		IWorkspaceRoot root = target.getWorkspace().getRoot();
 		for (int i = 0; i < _srcObjects.size() && _ok; i++)
@@ -354,24 +362,24 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 					boolean canCopy = true;
 					IResource res = (IResource)tempFile;
 					try
-					{						
+					{
 						IPath destPath = target.getFullPath();
 						destPath = destPath.append(res.getName());
-						
-						IResource newResource = root.findMember(destPath);				
-						
+
+						IResource newResource = root.findMember(destPath);
+
 						// check for existing files
-						if (!alwaysOverwrite){				
+						if (!alwaysOverwrite){
 							if (newResource != null && newResource.exists()){
 								int result = checkOverwrite(res, newResource);
 								if (result != IDialogConstants.YES_ID && result != IDialogConstants.YES_TO_ALL_ID){
-									canCopy = false;							
+									canCopy = false;
 									if (result == IDialogConstants.CANCEL_ID){
 										// cancel the whole operation
 										monitor.setCanceled(true);
 										return false;
 									}
-									
+
 									_resultSrcObjects.remove(srcObject);
 								}
 								else if (result == IDialogConstants.YES_TO_ALL_ID){
@@ -379,7 +387,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 								}
 							}
 						}
-						
+
 						// add to the list of files to copy
 						if (canCopy){
 							resourcesToCopy.add(res);
@@ -393,15 +401,15 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				}
 			}
 		}
-	
-		// now doing the actual copy 
+
+		// now doing the actual copy
 		if (!resourcesToCopy.isEmpty()) {
 			IResource[] resources = (IResource[])resourcesToCopy.toArray(new IResource[resourcesToCopy.size()]);
-			IPath destinationPath = target.getFullPath();	
+			IPath destinationPath = target.getFullPath();
 			CopyResourcesOperation op = new CopyResourcesOperation(resources, destinationPath,
 					SystemResources.RESID_COPY_TITLE);
-			
-				
+
+
 			IAdaptable adaptable = WorkspaceUndoUtil.getUIInfoAdapter(_shell);
 			try {
 				PlatformUI.getWorkbench().getOperationSupport()
@@ -409,13 +417,13 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			} catch (ExecutionException e) {
 				SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
 				if (e.getCause() instanceof CoreException) {
-					SystemBasePlugin.logError(e.getMessage(), e);					
+					SystemBasePlugin.logError(e.getMessage(), e);
 					errorMessage.makeSubstitution(e.getCause().getMessage());
 				} else {
-					SystemBasePlugin.logError(e.getMessage(), e);		
-					errorMessage.makeSubstitution(e.getMessage());					
+					SystemBasePlugin.logError(e.getMessage(), e);
+					errorMessage.makeSubstitution(e.getMessage());
 				}
-				
+
 				showErrorMessage(errorMessage);
 				operationFailed(monitor);
 				return false;
@@ -431,21 +439,21 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 
 		Runnable query = new Runnable() {
 			public void run() {
-				int resultId[] = { 
-						IDialogConstants.YES_ID, 
-						IDialogConstants.YES_TO_ALL_ID, 
-						IDialogConstants.NO_ID, 
+				int resultId[] = {
+						IDialogConstants.YES_ID,
+						IDialogConstants.YES_TO_ALL_ID,
+						IDialogConstants.NO_ID,
 						IDialogConstants.CANCEL_ID };
-				
-				String labels[] = new String[] { 
+
+				String labels[] = new String[] {
 						IDialogConstants.YES_LABEL,
 						IDialogConstants.YES_TO_ALL_LABEL,
 						IDialogConstants.NO_LABEL,
 						IDialogConstants.CANCEL_LABEL };
-				
+
 				String title = SystemResources.RESID_COLLISION_DUPLICATE_RESOURCE_TITLE;
-				String msg = NLS.bind(SystemResources.RESID_COLLISION_OVERWRITE_RESOURCE_MESSAGE, destination.getFullPath().makeRelative());			
-					
+				String msg = NLS.bind(SystemResources.RESID_COLLISION_OVERWRITE_RESOURCE_MESSAGE, destination.getFullPath().makeRelative());
+
 				MessageDialog dialog = new MessageDialog(
 						PlatformUI.getWorkbench().getDisplay().getActiveShell(),
 						title,
@@ -459,11 +467,11 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				}
 			}
 		};
-	
+
 		PlatformUI.getWorkbench().getDisplay().syncExec(query);
 		return result[0];
 	}
-	
+
 	protected boolean transferNonRSEResources(Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter, IProgressMonitor monitor)
 	{
 
@@ -480,23 +488,23 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			}
 			else if (srcObject != null)
 			{
-		
-				  
+
+
 					// special case for filters
 				    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 				    {
-				    	
+
 				        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 				        if (factory.supportsDropInFilters() && factory.providesCustomDropInFilters())
 				        {
 				        	((ISystemFilterReference)target).markStale(true);
-				  
-				            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);										            
+
+				            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
 				            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-					
+
 				        }
 				    }
-				    
+
 				if (_sourceType == SRC_TYPE_ECLIPSE_RESOURCE)
 				{
 					// Eclipse resource transfer
@@ -513,7 +521,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						if (droppedObject == null)
 							operationFailed(monitor);
 						else
-							_resultTgtObjects.add(droppedObject);																	
+							_resultTgtObjects.add(droppedObject);
 					}
 				}
 				else if (_sourceType == SRC_TYPE_OS_RESOURCE)
@@ -555,13 +563,13 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 					        {
 					            targetAdapter.doDrop(tempObject, target, false, false, _sourceType, monitor);
 					            _resultTgtObjects.add(tempObject);
-					        }							        
+					        }
 					    }
 					    else
 					    {
 							ISubSystem srcSubSystem = srcAdapter.getSubSystem(srcObject);
-				
-							if (srcSubSystem.isConnected() || 
+
+							if (srcSubSystem.isConnected() ||
 							        srcObject instanceof ISystemFilterReference ||
 							        srcObject instanceof ISubSystem)
 							{
@@ -571,7 +579,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 							    boolean sameSubSystemType = true;
 							    if (targetSubSystem != null)
 							    {
-							        String targetType = targetSubSystem.getName();																		
+							        String targetType = targetSubSystem.getName();
 									sameSubSystemType = targetType.equals(srcType);
 							    }
 
@@ -580,7 +588,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 									Object tempObject = srcAdapter.doDrag(srcObject, sameSubSystemType, monitor);
 									if (tempObject == null)
 									{
-										// drag failed		
+										// drag failed
 										operationFailed(monitor);
 										showInvalidTransferMessage(srcPath, targetPath);
 									}
@@ -599,13 +607,13 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 										    {
 										        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 										        if (factory.supportsDropInFilters() && factory.providesCustomDropInFilters())
-										        {											        
-										            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);										            
+										        {
+										            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
 										            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-											
+
 										        }
 										    }
-										   										    
+
 											Object droppedObject = targetAdapter.doDrop(tempObject, target, sameSubSystemType, (targetSubSystem == srcSubSystem), _sourceType, monitor);
 											if (droppedObject == null)
 											{
@@ -628,22 +636,22 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 									}
 								}
 								else if (srcObject != target && !srcPath.equals(targetPath))
-								{																	
+								{
 								    // special case for filters
-								 
+
 								    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 								    {
 								        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 								        if (factory.supportsDropInFilters() && factory.providesCustomDropInFilters())
-								        {											        
-								            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);										            
+								        {
+								            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
 								            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-									
+
 								        }
 								    }
 									if (targetAdapter.validateDrop(srcObject, target, (targetSubSystem == srcSubSystem)))
 									{
-									   
+
 										Object droppedObject = targetAdapter.doDrop(srcObject, target, sameSubSystemType, (targetSubSystem == srcSubSystem), _sourceType, monitor);
 										if (droppedObject == null)
 										{
@@ -695,8 +703,8 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		Object target = _currentTarget;
 		ISubSystem targetSubSystem = null;
 		//boolean expandFolder = false;
-	
-		
+
+
 		if (target instanceof IAdaptable)
 		{
 			ISystemDragDropAdapter targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
@@ -704,7 +712,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			// checking for IResource since we already handle them specially
 			if (targetAdapter != null && !(target instanceof IResource))
 			{
-				targetSubSystem = targetAdapter.getSubSystem(target);				
+				targetSubSystem = targetAdapter.getSubSystem(target);
 
 				if (targetSubSystem != null && !targetSubSystem.isConnected())
 				{
@@ -720,11 +728,11 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYGENERIC_PROGRESS);
 				if (monitor != null)
 				    monitor.beginTask(copyMessage.getLevelOneText(), IProgressMonitor.UNKNOWN);
-				
+
 				if (_sourceType == SRC_TYPE_RSE_RESOURCE)
 				{
 					transferRSEResources(target, targetSubSystem, targetAdapter, monitor);
-				}				
+				}
 				else
 				{
 					transferNonRSEResources(target, targetSubSystem, targetAdapter, monitor);
@@ -742,17 +750,17 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			monitor.done();
 		}
 
-		
+
 		if (target != null && target instanceof ISystemContainer)
 		{
 			((ISystemContainer)target).markStale(true);
 		}
-	
+
 		RefreshJob refresh = new RefreshJob(target, targetSubSystem);
 		refresh.schedule();
 		return Status.OK_STATUS;
 	}
-	
+
 	public class RefreshJob extends UIJob
 	{
 		private Object _target;
@@ -763,7 +771,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			_target = target;
 			_targetSubSystem = targetSubSystem;
 		}
-		
+
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
 			String[] oldNames = new String[_resultSrcObjects.size()];
@@ -771,7 +779,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			if (_resultTgtObjects.size() > 0)
 			{
 				boolean doRefresh = _ok;
-			
+
 				for (int t = 0; t < _resultTgtObjects.size() && t < _resultSrcObjects.size(); t++)
 				{
 				    Object tgt = _resultTgtObjects.get(t);
@@ -785,13 +793,13 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				        doRefresh = true;
 				    }
 				    ISystemDragDropAdapter adapter = null;
-				    if (src instanceof IAdaptable) {				    					    	
+				    if (src instanceof IAdaptable) {
 				    	adapter = (ISystemDragDropAdapter)((IAdaptable)src).getAdapter(ISystemDragDropAdapter.class);
 				    }
 				    else {
-				    	adapter = (ISystemDragDropAdapter)Platform.getAdapterManager().getAdapter(src, ISystemDragDropAdapter.class);		    	
+				    	adapter = (ISystemDragDropAdapter)Platform.getAdapterManager().getAdapter(src, ISystemDragDropAdapter.class);
 				    }
-				    
+
 				    if (adapter != null){
 				    	oldNames[t] = adapter.getAbsoluteName(src);
 				    }
@@ -805,23 +813,23 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				    	oldNames[t] = ""; // source resource unknown //$NON-NLS-1$
 				    }
 				}
-				
+
 				if (_originatingViewer instanceof TreeViewer)
 				{
 					try
 					{
 						TreeViewer viewer = (TreeViewer) _originatingViewer;
-						
-						if (!(_target instanceof IHost)){ // not sure when we'd want to expand a host 
+
+						if (!(_target instanceof IHost)){ // not sure when we'd want to expand a host
 							viewer.setExpandedState(_target, true);
 						}
 					}
 					catch (Exception e)
 					{
-						
+
 					}
 				}
-				 
+
 				if (doRefresh)
 				{
 					String operation = ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_COPY;
@@ -839,7 +847,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 
 	private void operationFailed(IProgressMonitor monitor)
 	{
-	    
+
 		_ok = false;
 		if (monitor != null)
 		    monitor.done();
@@ -851,7 +859,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		errorMessage.makeSubstitution(srcPath, targetPath);
 		showErrorMessage(errorMessage);
 	}
-	
+
 	private void showInvalidTransferMessage(ISystemResourceSet resourceSet, String targetPath)
 	{
 		SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_TRANSFER_INVALID);
@@ -871,16 +879,16 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 		{
 			_errorMessage = errorMessage;
 		}
-		
+
 		public void run()
 		{
 			Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
 			SystemMessageDialog dlg = new SystemMessageDialog(shell, _errorMessage);
 			dlg.open();
 		}
-		
+
 	}
-	
+
 	public boolean dropOkay()
 	{
 		return _ok;

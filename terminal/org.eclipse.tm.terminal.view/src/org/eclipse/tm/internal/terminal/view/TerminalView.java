@@ -22,6 +22,7 @@
  * Michael Scharf (Wind River) - [172483] switch between connections
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
+ * Michael Scharf (Wind River) - [241096] Secondary terminals in same view do not observe the "invert colors" Preference 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -435,6 +436,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 		legacyLoadState();
 		legacySetTitle();
+		// make sure we take the values defined in the preferences
+		updatePreferences();
 
 		refresh();
 		onTerminalFontChanged();
@@ -470,6 +473,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		fMultiConnectionManager.addConnection(conn);
 		fMultiConnectionManager.setActiveConnection(conn);
 		setupContextMenus(fCtlTerminal.getControl());
+		// make sure we take the values defined in the preferences
+		updatePreferences();
 	}
 
 	private ITerminalViewConnection makeViewConnection() {
@@ -484,7 +489,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		ITerminalConnector connector = loadSettings(fStore,connectors);
 		// set the connector....
 		ctrl.setConnector(connector);
-		updatePreferences();
+
 		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
 		
 		return conn;

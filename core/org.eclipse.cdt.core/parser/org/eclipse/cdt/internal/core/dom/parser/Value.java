@@ -22,12 +22,14 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 
@@ -213,6 +215,10 @@ public class Value implements IValue {
 				cv= ((IVariable) b).getInitialValue();
 			} else if (b instanceof IEnumerator) {
 				cv= ((IEnumerator) b).getValue();
+			} else if (b instanceof ICPPUnknownBinding && !(b instanceof IType)) {
+				return "#0x0fffffff"; 
+				// mstodo unknown bindings must be stored with the value, such that they can
+				// be instantiated lated on, bug 245027
 			}
 			if (cv != null)
 				return toObject(cv);

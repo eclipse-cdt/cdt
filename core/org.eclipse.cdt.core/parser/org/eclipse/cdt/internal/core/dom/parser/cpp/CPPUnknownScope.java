@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -124,11 +126,19 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     			}
     		}
     		if (!type) {
-    			if (parent instanceof ICPPASTNamedTypeSpecifier ||
-    				parent instanceof ICPPASTBaseSpecifier ||
-    				parent instanceof ICPPASTConstructorChainInitializer) {
+    			if (parent instanceof ICPPASTBaseSpecifier ||
+    				parent instanceof ICPPASTConstructorChainInitializer ||
+    				parent instanceof ICPPASTTypenameExpression) {
     					type= true;
-    			} else if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+    			} else if (parent instanceof ICPPASTNamedTypeSpecifier) {
+    				ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) parent;
+    				type= nts.isTypename();
+    			} else if (parent instanceof ICPPASTUsingDeclaration) {
+    				ICPPASTUsingDeclaration ud= (ICPPASTUsingDeclaration) parent;
+    				type= ud.isTypename();
+    			}
+    			
+    			if (!type && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
     				function=  true;
     			}
     		}

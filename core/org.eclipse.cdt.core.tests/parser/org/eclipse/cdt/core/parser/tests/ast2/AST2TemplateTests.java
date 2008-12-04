@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -283,8 +284,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	}
 	
 	// template < class T > class A { typedef int TYPE; };  
-	// template < class T > A<T>::TYPE foo(T);            
-	// template < class T > A<T>::TYPE foo(T);            
+	// template < class T > typename A<T>::TYPE foo(T);            
+	// template < class T > typename A<T>::TYPE foo(T);            
 	public void testStackOverflow_2() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();
@@ -3481,4 +3482,36 @@ public class AST2TemplateTests extends AST2BaseTest {
         bh.assertNonProblem("f1();", 2, ICPPUnknownBinding.class, IFunction.class);
     }
 
+    //    template<typename T> class XT {
+    //    	typename T::template type<T::a> x;
+    //    	typename T::template type<typename T::A> y;
+    //      using T::b;
+    //      using typename T::B;
+    //      void m() {
+    //         T::f();
+    //         typename T::F();
+    //      }
+    //    };
+    public void testTypeVsExpressionInArgsOfDependentTemplateID_257194() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        ICPPUnknownBinding b= bh.assertNonProblem("a>", 1);
+        assertFalse(b instanceof IType);
+        b= bh.assertNonProblem("A>", 1);
+        assertTrue(b instanceof IType);
+        
+        ICPPUsingDeclaration ud= bh.assertNonProblem("b;", 1);
+        b= (ICPPUnknownBinding) ud.getDelegates()[0];
+        assertFalse(b instanceof IType);
+        ud= bh.assertNonProblem("B;", 1);
+        b= (ICPPUnknownBinding) ud.getDelegates()[0];
+        assertTrue(b instanceof IType);
+
+        b= bh.assertNonProblem("f();", 1);
+        assertFalse(b instanceof IType);
+        b= bh.assertNonProblem("F();", 1);
+        assertTrue(b instanceof IType);
+    }
 }

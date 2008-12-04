@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight  (IBM)  - [250168] handle malformed binary and always resolve canonical paths
  * David McKnight  (IBM)  - [250168] update to just search file of canonical paths (not symbolic links)
+ * David McKnight  (IBM)  - [255390] memory checking
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -27,7 +28,6 @@ package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 
@@ -35,6 +35,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.server.SecuredThread;
+import org.eclipse.dstore.core.server.SystemServiceManager;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -132,14 +133,16 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 			_miner.statusCancelled(_status);
 		}
-		else {			
-			_alreadySearched.clear();
+		else {
 			// previously, the status would be set to done immediately because search results were sent
 			// back to the client as they arrived.  Now, the search handler wait until the search has
 			// completed before setting the status to done
 			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status);	// true indicates refresh immediately
 		}
+		
+		_alreadySearched.clear();
+		_dataStore.disconnectObjects(_status);
 	}
 
 	public boolean isCancelled() {
@@ -154,6 +157,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		_isCancelled = true;
 	}
 
+
 	protected boolean hasSearched(File file)
 	{       
         boolean result = false;
@@ -163,13 +167,13 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
         	// check whether it's already been searched
         	result = _alreadySearched.contains(canonicalPath);
         }
-        catch (IOException e){	        	
+        catch (Exception e){	
+        	result = _alreadySearched.contains(file.getAbsolutePath());
         	_dataStore.trace(e);
         }
 
-        return result;
+		return result;
 	}
-
 
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
 		
@@ -181,11 +185,11 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			catch (Exception e){
 				_alreadySearched.add(theFile.getAbsolutePath());
 				_dataStore.trace(e);
-
+				
 			}			
 	
-			boolean isDirectory = theFile.isDirectory();
-			
+			boolean isDirectory = theFile.isDirectory();	
+	
 			// is it an archive?
 			boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
 	
@@ -275,7 +279,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 				}
 	
 				// do a refresh
-				//_dataStore.refresh(_status, true);
+				//_dataStore.refresh(_status);
 			}
 	
 			// if the depth is not 0, then we need to recursively search
@@ -326,7 +330,9 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 					if (children != null) {
 
-						for (int i = 0; i < children.length && !_isCancelled; i++) {
+						for (int i = 0; i < children.length && !_isCancelled; i++) {		
+							
+							checkAndClearupMemory();
 							File child = children[i];
 							internalSearch(child, depth - 1);
 						}
@@ -356,11 +362,14 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 				if (simpleSearch(inputStream, size, _stringMatcher)){
 					return true;
 				}
+				
+				bufReader.close();
+				reader.close();
 				return false;
 			}
 			else {
-				SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);
-						
+				SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);						
+				
 				SystemSearchLineMatch[] matches = locator.locateMatches();									
 				boolean foundMatches = ((matches != null) && (matches.length > 0));
 
@@ -368,8 +377,15 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 					convert(remoteFile, absPath, matches);
 				}
 
+				bufReader.close();
+				reader.close();
 				return foundMatches;
 			}
+		}
+		catch (OutOfMemoryError e){
+			if (SystemServiceManager.getInstance().getSystemService() == null)
+				System.exit(-1);
+			return false;
 		}
 		catch (Exception e) {
 			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e, _dataStore); //$NON-NLS-1$
@@ -439,5 +455,37 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			DataElement obj = _dataStore.createObject(deObj, _deGrep, match.getLine(), absPath);
 			obj.setAttribute(DE.A_SOURCE, obj.getSource() + ':'+ match.getLineNumber());
 		}
+	}
+	
+	public void checkAndClearupMemory()
+	{
+		int count = 0;
+		while(count < 5 && isMemoryThresholdExceeded()) {
+			
+			System.gc();
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+			}
+			count ++;
+		}
+		if(count == 5) { 
+			_dataStore.trace("heap memory low"); //$NON-NLS-1$
+			if (SystemServiceManager.getInstance().getSystemService() == null)
+				System.exit(-1);
+		}				
+	}
+
+	private boolean isMemoryThresholdExceeded(){
+		// trying to avoid using Java 1.5
+		Runtime runtime = Runtime.getRuntime();
+		long freeMem = runtime.freeMemory();
+
+		if (freeMem < 10000){
+
+			return true;
+		}
+		
+		return false;
 	}
 }

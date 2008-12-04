@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  * Michael Scharf (Wind River) - [237398] Terminal get Invalid Thread Access when the title is set
  * Martin Oberhuber (Wind River) - [240745] Pressing Ctrl+F1 in the Terminal should bring up context help
+ * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -951,6 +952,22 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void setState(TerminalState state) {
 		fState=state;
 		fTerminalListener.setState(state);
+		// enable the (blinking) cursor if the terminal is connected
+		runInDisplayThread(new Runnable() {
+			public void run() {
+				if(fCtlText!=null && !fCtlText.isDisposed())
+					fCtlText.setCursorEnabled(isConnected());
+			}});
+	}
+	/**
+	 * @param runnable run in display thread
+	 */
+	private void runInDisplayThread(Runnable runnable) {
+		if(Display.findDisplay(Thread.currentThread())!=null)
+			runnable.run();
+		else if(PlatformUI.isWorkbenchRunning())
+			PlatformUI.getWorkbench().getDisplay().syncExec(runnable);
+		// else should not happen and we ignore it...
 	}
 
 	public String getSettingsSummary() {

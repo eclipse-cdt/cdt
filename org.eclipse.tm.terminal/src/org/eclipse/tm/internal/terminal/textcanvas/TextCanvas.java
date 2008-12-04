@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -41,6 +42,7 @@ public class TextCanvas extends GridCanvas {
 	private ResizeListener fResizeListener;
 	private int fMinColumns=20;
 	private int fMinLines=4;
+	private boolean fCursorEnabled;
 	/**
 	 * Create a new CellCanvas with the given SWT style bits.
 	 * (SWT.H_SCROLL and SWT.V_SCROLL are automatically added).
@@ -65,9 +67,10 @@ public class TextCanvas extends GridCanvas {
 				scrollToEnd();
 			}
 		});
+		// let the cursor blink if the text canvas gets the focus...
 		addFocusListener(new FocusListener(){
 			public void focusGained(FocusEvent e) {
-				fCellCanvasModel.setCursorEnabled(true);
+				fCellCanvasModel.setCursorEnabled(fCursorEnabled);
 			}
 			public void focusLost(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(false);
@@ -303,6 +306,24 @@ public class TextCanvas extends GridCanvas {
 	public void setInvertedColors(boolean invert) {
 		fCellRenderer.setInvertedColors(invert);
 		redraw();
+	}
+
+	/**
+	 * @return true if the cursor is enabled (blinking). By default the cursor is not enabled.
+	 */
+	public boolean isCursorEnabled() {
+		return fCursorEnabled;
+	}
+
+	/**
+	 * @param enabled enabling means that the cursor blinks
+	 */
+	public void setCursorEnabled(boolean enabled) {
+		if(enabled!=fCursorEnabled) {
+			fCursorEnabled=enabled;
+			fCellCanvasModel.setCursorEnabled(fCursorEnabled);
+		}
+		
 	}
 
 }

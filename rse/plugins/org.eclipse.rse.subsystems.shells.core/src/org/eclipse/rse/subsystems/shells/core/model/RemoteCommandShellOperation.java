@@ -1,15 +1,15 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
@@ -35,17 +35,15 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.swt.widgets.Shell;
 
-
-
-/*
- * This abstract class can be extended to provide a command shell wrapper.
- * When running a shell, commands can be piped to the shell via the 
- * sendCommand() method.  Echo commands are used to determine when each command
- * is complete.   Whenever a command completes, the handleCommandFinished() method
- * is called. 
+/**
+ * Base class for command shell wrappers that use echo markers to parse command finish.
+ * This abstract class can be extended to provide a command shell wrapper. When
+ * running a shell, commands can be piped to the shell via the sendCommand()
+ * method. Echo commands are used to determine when each command is complete.
+ * Whenever a command completes, the handleCommandFinished() method is called.
  *
  */
-public abstract class RemoteCommandShellOperation 
+public abstract class RemoteCommandShellOperation
 	implements ISystemResourceChangeListener, ISystemShellProvider
 {
 
@@ -58,32 +56,32 @@ public abstract class RemoteCommandShellOperation
 			_alias = alias;
 			_command = command;
 		}
-		
+
 		public String getAlias()
 		{
 			return _alias;
 		}
-		
+
 		public String getCommand()
 		{
 			return _command;
 		}
 	}
-	
-	
+
+
 	protected IRemoteCmdSubSystem _cmdSubSystem;
 	protected IRemoteFile _pwd;
 	protected Shell _shell;
-	
+
 	protected IRemoteCommandShell _remoteCmdShell;
-	
+
 	private Stack _commandStack;
 	private int _outputOffset = 0;
 	private String _cmdSeparator = ";"; //$NON-NLS-1$
-	
+
 	private Random _random;
-	
-	/*
+
+	/**
 	 * Constructor
 	 */
 	public RemoteCommandShellOperation(Shell shell, IRemoteCmdSubSystem cmdSubSystem, IRemoteFile pwd)
@@ -95,13 +93,13 @@ public abstract class RemoteCommandShellOperation
 		_commandStack = new Stack();
 		_cmdSeparator = _cmdSubSystem.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator();
 	}
-	 
+
 	public void setWorkingDirectory(IRemoteFile pwd)
 	{
 	    _pwd = pwd;
 	}
 
-	/*
+	/**
 	 * Launches a new remote shell
 	 */
 	public IRemoteCommandShell run()
@@ -109,20 +107,20 @@ public abstract class RemoteCommandShellOperation
 		try
 		{
 			RSECorePlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			_remoteCmdShell = _cmdSubSystem.runShell(_pwd, new NullProgressMonitor());	
+			_remoteCmdShell = _cmdSubSystem.runShell(_pwd, new NullProgressMonitor());
 		}
 		catch (Exception e)
-		{	
+		{
 			e.printStackTrace();
 		}
 		return _remoteCmdShell;
 	}
-	
+
 	public IRemoteCommandShell getRemoteCommandShell()
 	{
 		return _remoteCmdShell;
 	}
-	
+
 	public void associateProject(IProject project)
 	{
 		if (_remoteCmdShell != null)
@@ -130,8 +128,8 @@ public abstract class RemoteCommandShellOperation
 			_remoteCmdShell.associateProject(project);
 		}
 	}
-	
-	/*
+
+	/**
 	 * Called when a shell is complete.
 	 */
 	public void finish()
@@ -144,22 +142,22 @@ public abstract class RemoteCommandShellOperation
 				_cmdSubSystem.cancelShell(_remoteCmdShell, new NullProgressMonitor());
 			}
 			catch (Exception e)
-			{				
+			{
 			}
 		}
-	
+
 	}
 
 	private String getEchoCmd(CommandAlias alias)
 	{
 		return "echo " + getEchoResult(alias); //$NON-NLS-1$
 	}
-	
+
 	private String getEchoResult(CommandAlias alias)
 	{
 		return "BEGIN-END-TAG:" + alias.getAlias() + " done"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	public String getCurrentCommand()
 	{
 	    if (_commandStack != null && _commandStack.size() > 0)
@@ -169,7 +167,7 @@ public abstract class RemoteCommandShellOperation
 	    }
 	    return null;
 	}
-	
+
 	/**
 	 * Send a command to the running command shell.
 	 * @param cmd the command to run in the shell
@@ -184,18 +182,18 @@ public abstract class RemoteCommandShellOperation
 				CommandAlias alias = new CommandAlias(newId, cmd);
 				_commandStack.push(alias);
 				String echoCmd = getEchoCmd(alias);
-				
+
 				// echo command appended after ; so that
 				// it isn't treated like stdin for the intial command
 				_cmdSubSystem.sendCommandToShell(cmd + _cmdSeparator + echoCmd, _remoteCmdShell,  new NullProgressMonitor());
-																		
+
 			}
 			catch (Exception e)
-			{				
+			{
 			}
 		}
 	}
-	
+
 	/**
 	 * Send input to the running command shell.  The input is treated as input to
 	 * a running program - rather than a new command.  As such, no echos are used
@@ -209,15 +207,15 @@ public abstract class RemoteCommandShellOperation
 			try
 			{
 				_cmdSubSystem.sendCommandToShell(input, _remoteCmdShell,  new NullProgressMonitor());
-																		
+
 			}
 			catch (Exception e)
-			{				
+			{
 			}
 		}
 	}
-	
-	
+
+
 	public Shell getShell()
 	{
 		if (_shell.isDisposed())
@@ -226,9 +224,9 @@ public abstract class RemoteCommandShellOperation
 		}
 		return _shell;
 	}
-	
 
-	
+
+
 	/**
 	 * Indicates whether the command shell is active or not
 	 * @return true if the command shell is running
@@ -237,11 +235,11 @@ public abstract class RemoteCommandShellOperation
 	{
 		if (_remoteCmdShell != null)
 		{
-			return _remoteCmdShell.isActive() && _cmdSubSystem.isConnected(); 
+			return _remoteCmdShell.isActive() && _cmdSubSystem.isConnected();
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Check for remote changes
 	 */
@@ -270,7 +268,7 @@ public abstract class RemoteCommandShellOperation
 	}
 
 	/**
-	 * Called whenever output is retrieved from the host
+	 * Called (on the main Thread) whenever output is retrieved from the host
 	 */
 	public void outputUpdated()
 	{
@@ -278,16 +276,16 @@ public abstract class RemoteCommandShellOperation
 		synchronized(_commandStack)
 		{
 		if (!_commandStack.empty())
-		{		
+		{
 			Object[] outputs = _remoteCmdShell.listOutput();
 			synchronized(outputs)
 			{
 			for (int i = _outputOffset; i < outputs.length && !_commandStack.empty(); i++)
 			{
 				boolean handledOutput = false;
-				
+
 				CommandAlias firstCommand = (CommandAlias)_commandStack.firstElement();
-	
+
 				Object output = outputs[_outputOffset];
 				if (output instanceof IRemoteOutput)
 				{
@@ -296,7 +294,7 @@ public abstract class RemoteCommandShellOperation
 					if (commandMatches(text, firstCommand))
 					{
 						_commandStack.remove(0);
-						handleCommandFinished(firstCommand.getCommand());					
+						handleCommandFinished(firstCommand.getCommand());
 						handledOutput = true;
 					}
 				}
@@ -307,14 +305,14 @@ public abstract class RemoteCommandShellOperation
 				_outputOffset++;
 			}
 			}
-				
+
 		}
 		}
 	}
-	
+
 	protected boolean commandMatches(String outputEcho, CommandAlias firstCommand)
 	{
-	    String expected = getEchoResult(firstCommand); 
+	    String expected = getEchoResult(firstCommand);
 	    if (outputEcho.equals(expected))
 	    {
 	        return true;
@@ -330,29 +328,31 @@ public abstract class RemoteCommandShellOperation
 	            }
 	        }
 	    }
-	    
+
 	    return false;
 	}
-	
-	/*
-	 * Called when the shell is complete
+
+	/**
+	 * Called (on the main Thread) when the shell is complete
 	 */
 	public void handleShellFinished()
 	{
 		finish();
 	}
 
-	/*
-	 * Called when the specified command is complete
+	/**
+	 * Called (on the main Thread) when the specified command is complete
+	 * 
 	 * @param cmd the completed command
 	 */
 	public abstract void handleCommandFinished(String cmd);
 
-	/*
-	 * Called whenever output has changed
+	/**
+	 * Called (on the main Thread) whenever output has changed
+	 * 
 	 * @param command the current command
 	 * @param output the new output object
 	 */
 	public abstract void handleOutputChanged(String command, Object output);
-	
+
 }

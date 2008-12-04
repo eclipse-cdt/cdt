@@ -23,6 +23,10 @@
    </url>
 
    <includes
+         id="org.eclipse.cdt.platform"
+         version="0.0.0"/>
+         
+   <includes
          id="org.eclipse.cdt.gnu.build"
          version="0.0.0"/>
 
@@ -30,8 +34,5 @@
          id="org.eclipse.cdt.gnu.debug"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.cdt.platform"
-         version="0.0.0"/>
 
 </feature>

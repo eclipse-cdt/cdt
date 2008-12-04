@@ -100,11 +100,11 @@ public class Addr64 implements IAddress {
 	}
 
 	public boolean isMax() {
-		return address.equals(MAX);
+		return address.equals(MAX.getValue());
 	}
 
 	public boolean isZero() {
-		return address.equals(ZERO);
+		return address.equals(ZERO.getValue());
 	}
 
 	public BigInteger getValue() {

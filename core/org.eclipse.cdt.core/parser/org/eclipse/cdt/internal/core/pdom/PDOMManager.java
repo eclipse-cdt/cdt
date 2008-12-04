@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Tim Kelly (Nokia)
+ *     Anna Dushistova (MontaVista)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -34,6 +35,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -53,6 +55,7 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -153,6 +156,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 	private static final ISchedulingRule INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 	private static final ISchedulingRule INIT_INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
+
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
+		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
+	};
 
 	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
@@ -1408,7 +1415,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			try {
 				for(ITranslationUnit tu : sources) {
 					IResource resource= tu.getResource();
-					if(resource instanceof IFile) {
+					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile)resource);
 						if(!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
 							return false;
@@ -1425,6 +1432,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return true;
 	}
 	
+	private boolean isSubjectToIndexing(ILanguage language) {
+		final int linkageID=language.getLinkageID();
+		for (int id : IDS_FOR_LINKAGES_TO_INDEX) {
+			if (linkageID == id)
+				return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Recursively checks that the specified file, and its include are up-to-date.
 	 * @param trail a set of previously checked include file locations

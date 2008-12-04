@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
@@ -238,9 +237,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				removeFilesInIndex(fFilesToRemove, ifilesToRemove, monitor);
 
 				parseFilesUpFront(monitor);
-				parseLinkage(ILinkage.CPP_LINKAGE_ID, files, monitor);
-				parseLinkage(ILinkage.C_LINKAGE_ID, files, monitor);
-				parseLinkage(ILinkage.FORTRAN_LINKAGE_ID, files, monitor);
+				for (int linkageID : PDOMManager.IDS_FOR_LINKAGES_TO_INDEX) {
+					parseLinkage(linkageID, files, monitor);
+				}
 			} finally {
 				fIndex.flush();
 			}

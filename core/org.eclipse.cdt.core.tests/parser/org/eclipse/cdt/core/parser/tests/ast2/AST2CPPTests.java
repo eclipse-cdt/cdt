@@ -6237,4 +6237,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDECLARATION, nc.getName(6).resolveBinding());
 		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDEFINITION, nc.getName(8).resolveBinding());
     }
+    
+    //    struct Foo {
+    //        void foo();
+    //    };
+    //    void Foo::foo(void) {
+    //    }
+    public void testVoidParamInDefinition_257376() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
 }

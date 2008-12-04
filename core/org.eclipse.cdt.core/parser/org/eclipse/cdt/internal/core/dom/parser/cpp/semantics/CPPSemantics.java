@@ -1854,14 +1854,25 @@ public class CPPSemantics {
 		return false;
 	}
 	
-	static private void reduceToViable(LookupData data, IBinding[] functions) throws DOMException{
+	static private void reduceToViable(LookupData data, IBinding[] functions) throws DOMException {
 	    if (functions == null || functions.length == 0)
 	        return;
 	    
-		Object[] fParams = data.functionParameters;
-		int numParameters = (fParams != null) ? fParams.length : 0;		
-		int num;	
-		boolean def = data.forFunctionDeclaration();	
+		final Object[] funcArgs = data.functionParameters;
+		int numArgs = (funcArgs != null) ? funcArgs.length : 0;		
+		final boolean def = data.forFunctionDeclaration();	
+		
+		if (def && numArgs == 1) {
+			// check for parameter of type void
+			IType[] argTypes= getSourceParameterTypes(funcArgs);
+			if (argTypes.length == 1) {
+				IType t= argTypes[0];
+				if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
+					numArgs= 0;
+				}
+			}
+		}
+			
 		// Trim the list down to the set of viable functions
 		IFunction function = null;
 		int size = functions.length;
@@ -1878,44 +1889,32 @@ public class CPPSemantics {
 				continue;
 			}
 				
-			num = function.getParameters().length;
+			final IParameter[] params = function.getParameters();
+			int numPars = params.length;
+			if (numArgs == 0 && numPars == 1) {
+				// check for void
+			    IType t = params[0].getType();
+			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
+			        numPars= 0;
+			}
 		
-			// if there are m arguments in the list, all candidate functions having m parameters
-			// are viable	 
-			if (num == numParameters) {
-				if (def && !isMatchingFunctionDeclaration(function, data)) {
+			if (def) {
+				if (numPars != numArgs || !isMatchingFunctionDeclaration(function, data)) {
 					functions[i] = null;
 				}
-				continue;
-			} else if (numParameters == 0 && num == 1) {
-				// check for void
-			    IParameter param = function.getParameters()[0];
-			    IType t = param.getType();
-			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
-			        continue;
-			}
-			
-			if (def) {
-				// if this is for a definition, we had to match the number of parameters.
-				functions[i] = null;
-				continue;
-			}
-			
-			if (num < numParameters) {
-				// A candidate function having fewer than m parameters is viable only if it has an 
-				// ellipsis in its parameter list.
-			    if (function.takesVarArgs())
-			        continue;
-				// not enough parameters, remove it
-				functions[i] = null;
 			} else {
-				//a candidate function having more than m parameters is viable only if the (m+1)-st
-				//parameter has a default argument
-			    IParameter[] params = function.getParameters();
-			    for (int j = num - 1; j >= numParameters; j--) {
-					if (!((ICPPParameter) params[j]).hasDefaultValue()) {
-					    functions[i] = null;
-						break;
+				// more arguments than parameters --> need ellipses
+				if (numArgs > numPars) {
+					if (!function.takesVarArgs()) {
+						functions[i] = null;
+					}
+				} else if (numArgs < numPars) {
+					// fewer arguments than parameters --> need default values
+					for (int j = numArgs; j < numPars; j++) {
+						if (!((ICPPParameter) params[j]).hasDefaultValue()) {
+							functions[i] = null;
+							break;
+						}
 					}
 				}
 			}

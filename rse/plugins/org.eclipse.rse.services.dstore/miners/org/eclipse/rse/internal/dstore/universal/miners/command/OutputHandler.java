@@ -54,9 +54,7 @@ public class OutputHandler extends Handler {
 	private boolean _endOfStream = false;
 
 	private List _encodings;
-	
-	// for bug 249715
-	private long _timeOfLastInput = 0;
+
 
 	public OutputHandler(DataInputStream reader, String qualifier,
 			boolean isTerminal, boolean isStdError, boolean isShell,
@@ -87,9 +85,6 @@ public class OutputHandler extends Handler {
 
 	}
 
-	public void setTimeOfLastInput(long time){
-		_timeOfLastInput = time;
-	}
 
 
 	public void handle() {
@@ -169,27 +164,12 @@ public class OutputHandler extends Handler {
 			int lookahead = 0;
 
 			// re-determine available if none available now
-			if (available == 0) {
-				
-				if (!_isStdError && !_isTerminal){
-					long lastInput = _timeOfLastInput;
-					while (lastInput == _timeOfLastInput && _keepRunning && available == 0){	// once there's something new, we can stop waiting
-						Thread.sleep(500); // wait in case there is something
-						available = checkAvailable();
-					}
-					if (available == 0){
-						// it's possible that there is no output for something
-						// in the non-TTY case we need to prompt									
-						return new String[0];
-					}
-				}
-				else {
-					lookahead = _reader.read();
-					if (lookahead == -1) {
-						return null;
-					} else {
-						available = _reader.available() + 1;
-					}
+			if (available == 0) {	
+				lookahead = _reader.read();
+				if (lookahead == -1) {
+					return null;
+				} else {
+					available = _reader.available() + 1;
 				}
 			}
 

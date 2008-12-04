@@ -613,10 +613,6 @@ public class CommandMinerThread extends MinerThread
 				writer.write(input);
 				writer.newLine();
 				writer.flush();
-				
-				// for bug 249715 - keeping track of time of last input
-				// in order know when to stop waiting for output
-				_stdOutputHandler.setTimeOfLastInput(System.currentTimeMillis());
 
 				if (!_isWindows && (input.startsWith("cd ") || input.equals("cd"))) //$NON-NLS-1$ //$NON-NLS-2$
 				{
@@ -628,24 +624,10 @@ public class CommandMinerThread extends MinerThread
 				}
 				if (!_isWindows && !_isTTY)
 				{
-					// special case for pattern interpretting
-					// if cwd is not set, then files aren't resolved
-					// create mock prompt to ensure that they do get resolved
-					if (input.startsWith("cd ") || input.equals("cd")) //$NON-NLS-1$ //$NON-NLS-2$
-					{
-						writer.write("echo $PWD'>'"); //$NON-NLS-1$
-						writer.newLine(); 
-						writer.flush();
-
-						// sleep to allow reader to interpret before going on
-						try
-						{
-							Thread.sleep(100);
-						}
-						catch (InterruptedException e)
-						{
-						}
-					}
+					// always prompt after the command
+					writer.write("echo $PWD'>'"); //$NON-NLS-1$
+					writer.newLine(); 
+					writer.flush();		
 				}
 			}
 			catch (IOException e)

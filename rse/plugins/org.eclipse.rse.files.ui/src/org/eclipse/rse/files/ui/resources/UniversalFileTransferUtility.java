@@ -131,8 +131,7 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class UniversalFileTransferUtility
-{
+public class UniversalFileTransferUtility {
 	static final boolean doCompressedTransfer = true;//false;
 
 	static final String _rootPath = SystemRemoteEditManager.getInstance().getRemoteEditProjectLocation().makeAbsolute().toOSString();
@@ -226,7 +225,8 @@ public class UniversalFileTransferUtility
 	 *
 	 * @param srcFileOrFolder the file to copy
 	 * @param monitor the progress monitor
-	 * @return the resulting local replica
+	 * @return the resulting local replica, or <code>null</code> if the
+	 *         operation was cancelled before the download was complete
 	 * @since 3.0
 	 */
 	protected static IFile downloadFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
@@ -400,13 +400,15 @@ public class UniversalFileTransferUtility
 	}
 
 	/**
-	 * This method downloads a set of remote resources to the workspace.  It uses
-	 * the downloadMultiple() API of the remote file subsystem and service layers so
-	 * for some service implementations, this is a big optimization
-	 *
+	 * This method downloads a set of remote resources to the workspace. It uses
+	 * the downloadMultiple() API of the remote file subsystem and service
+	 * layers so for some service implementations, this is a big optimization
+	 * 
 	 * @param remoteSet the set of resources to download
 	 * @param monitor the progress monitor
 	 * @return the set of temporary files created as a result of the download.
+	 *         This may contain fewer files than requested in case the operation
+	 *         was cancelled.
 	 * @since 3.0
 	 */
 	public static SystemWorkspaceResourceSet downloadResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
@@ -725,7 +727,7 @@ public class UniversalFileTransferUtility
 					if (monitor != null && monitor.isCanceled())
 					{
 						return resultSet;
-					}					
+					}
 					resultSet.addResource(tempFile);
 				}
 				else // folder transfer
@@ -1594,11 +1596,11 @@ public class UniversalFileTransferUtility
 
 
 						String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
-						
+
 						// for bug 236723, getting remote encoding for target instead of default for target fs
 						String remoteEncoding = targetFolder.getEncoding();
 						String systemEncoding = targetFS.getRemoteEncoding();
-												
+
 						targetFS.upload(srcFileLocation, srcCharSet, newPath, remoteEncoding,monitor);
 						newFilePathList.add(newPath);
 
@@ -1829,7 +1831,7 @@ public class UniversalFileTransferUtility
 							if (targetFS instanceof FileServiceSubSystem)
 							{
 								IFileService fileService = ((FileServiceSubSystem)targetFS).getFileService();
-								
+
 								// for bug 236723, getting remote encoding for target instead of default for target fs
 								String remoteEncoding = targetFolder.getEncoding();
 								fileService.upload(inStream, targetFolder.getAbsolutePath(), name, !isText, remoteEncoding, monitor);
@@ -1845,7 +1847,7 @@ public class UniversalFileTransferUtility
 				{
 					// just copy using local location
 					String srcFileLocation = location.toOSString();
-					
+
 					// for bug 236723, getting remote encoding for target instead of default for target fs
 					String remoteEncoding = targetFolder.getEncoding();
 					targetFS.upload(srcFileLocation, srcCharSet, newPath, remoteEncoding, monitor);

@@ -36,6 +36,7 @@ public class CASTDeclarationStatement extends ASTNode implements IASTDeclaration
     }
 
     public void setDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
 			declaration.setParent(this);

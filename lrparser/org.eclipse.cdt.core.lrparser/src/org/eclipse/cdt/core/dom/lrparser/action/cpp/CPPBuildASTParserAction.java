@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
@@ -67,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -100,6 +102,11 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -117,14 +124,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	private final ITokenMap tokenMap;
 	
 	/** Used to create the AST node objects */
-	protected final ICPPASTNodeFactory nodeFactory;
+	protected final ICPPNodeFactory nodeFactory;
 	
 	/**
 	 * @param parser
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public CPPBuildASTParserAction(ICPPASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
+	public CPPBuildASTParserAction(ICPPNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		super(nodeFactory, parser, tu);
 		this.nodeFactory = nodeFactory;
 		this.tokenMap = new TokenMap(CPPParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
@@ -186,7 +193,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTExpression placement = (IASTExpression) astStack.pop(); // may be null
 		boolean hasDoubleColon = astStack.pop() != null;
 		
-		ICPPASTNewExpression newExpression = nodeFactory.newCPPNewExpression(placement, initializer, typeId);
+		ICPPASTNewExpression newExpression = nodeFactory.newNewExpression(placement, initializer, typeId);
 		newExpression.setIsGlobal(hasDoubleColon);
 		newExpression.setIsNewTypeId(isNewTypeId);
 		
@@ -268,7 +275,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		IASTName name = (IASTName) astStack.pop();
 		IASTExpression owner = (IASTExpression) astStack.pop();
-		IASTFieldReference expr = nodeFactory.newFieldReference(name, owner, isPointerDereference, hasTemplateKeyword);
+		ICPPASTFieldReference expr = nodeFactory.newFieldReference(name, owner);
+		expr.setIsPointerDereference(isPointerDereference);
+		expr.setIsTemplate(hasTemplateKeyword);
 		
 		setOffsetAndLength(expr);
 		astStack.push(expr);
@@ -287,7 +296,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IToken token = (IToken) astStack.pop();
 		
 		int type = asICPPASTSimpleTypeConstructorExpressionType(token);
-		ICPPASTSimpleTypeConstructorExpression typeConstructor = nodeFactory.newCPPSimpleTypeConstructorExpression(type, expression);
+		ICPPASTSimpleTypeConstructorExpression typeConstructor = nodeFactory.newSimpleTypeConstructorExpression(type, expression);
 		
 		setOffsetAndLength(typeConstructor);
 		astStack.push(typeConstructor);
@@ -340,7 +349,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		int endOffset   = endOffset(name);
 		IASTName qualifiedName = createQualifiedName(nestedNames, startOffset, endOffset, dColon != null);
 		
-		ICPPASTTypenameExpression typenameExpr = nodeFactory.newCPPTypenameExpression(qualifiedName, expr, isTemplate);
+		ICPPASTTypenameExpression typenameExpr = nodeFactory.newTypenameExpression(qualifiedName, expr, isTemplate);
 		
 		setOffsetAndLength(typenameExpr);
 		astStack.push(typenameExpr);
@@ -387,7 +396,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		List<Object> templateArguments = astStack.closeScope();
 		IASTName name = (IASTName) astStack.pop();
 		
-		ICPPASTTemplateId templateId = nodeFactory.newCPPTemplateId(name);
+		ICPPASTTemplateId templateId = nodeFactory.newTemplateId(name);
 		
 		for(Object arg : templateArguments) {
 			if(arg instanceof IASTExpression)
@@ -422,7 +431,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTIdExpression idExpression = (IASTIdExpression) result;
 		
-		ICPPASTAmbiguousTemplateArgument ambiguityNode = nodeFactory.newAmbiguousTemplateArgument(typeId, idExpression);
+		ICPPASTAmbiguousTemplateArgument ambiguityNode = new CPPASTAmbiguousTemplateArgument(typeId, idExpression);
 		//setOffsetAndLength(ambiguityNode);
 		
 		astStack.push(ambiguityNode);
@@ -442,7 +451,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		tokens = tokens.subList(1, tokens.size());
 		OverloadableOperator operator = getOverloadableOperator(tokens);
 		
-		ICPPASTOperatorName name = nodeFactory.newCPPOperatorName(operator);
+		ICPPASTOperatorName name = nodeFactory.newOperatorName(operator.toCharArray());
 		setOffsetAndLength(name);
 		astStack.push(name); 
 		
@@ -485,7 +494,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		char[] chars = rep.toCharArray();
 		
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-		ICPPASTConversionName name = nodeFactory.newCPPConversionName(chars, typeId);
+		ICPPASTConversionName name = nodeFactory.newConversionName(chars, typeId);
 		setOffsetAndLength(name);
 		astStack.push(name);
 		
@@ -549,10 +558,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
   		IASTName name = (IASTName) astStack.pop();
   		
-  		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
+  		ICPPASTQualifiedName qualifiedName = nodeFactory.newQualifiedName();
   		qualifiedName.addName(name);
   		qualifiedName.setFullyQualified(true);
-  		((CPPASTQualifiedName)qualifiedName).setSignature("::" + name.toString()); //$NON-NLS-1$
+  		if(qualifiedName instanceof CPPASTQualifiedName)
+  			((CPPASTQualifiedName)qualifiedName).setSignature("::" + name.toString()); //$NON-NLS-1$
   		
   		setOffsetAndLength(qualifiedName);
   		astStack.push(qualifiedName);
@@ -573,9 +583,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		IASTSwitchStatement stat;
 		if(condition instanceof IASTExpression)
-			stat = nodeFactory.newSwitchStatment((IASTExpression)condition, body);
+			stat = nodeFactory.newSwitchStatement((IASTExpression)condition, body);
 		else
-			stat = nodeFactory.newSwitchStatment((IASTDeclaration)condition, body);
+			stat = nodeFactory.newSwitchStatement((IASTDeclaration)condition, body);
 		
 		
 		setOffsetAndLength(stat);
@@ -802,7 +812,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(!endsWithColonColon && !startsWithColonColon && names.size() == 1) 
 			return names.getFirst(); // its actually an unqualified name
 
-		ICPPASTQualifiedName qualifiedName = nodeFactory.newCPPQualifiedName();
+		ICPPASTQualifiedName qualifiedName = nodeFactory.newQualifiedName();
 		qualifiedName.setFullyQualified(startsWithColonColon);
 		setOffsetAndLength(qualifiedName, startOffset, endOffset - startOffset);
 		for(IASTName name : reverseIterable(names))
@@ -1170,7 +1180,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeDeclarationSpecifiersSimple() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		ICPPASTDeclSpecifier declSpec = nodeFactory.newCPPSimpleDeclSpecifier();
+		ICPPASTDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
 		
 		for(Object token : astStack.closeScope())
 			setSpecifier(declSpec, (IToken)token);
@@ -1217,7 +1227,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTName typeName = findFirstAndRemove(topScope, IASTName.class);
 		
 		// TODO what does the second argument mean?
-		ICPPASTNamedTypeSpecifier declSpec = nodeFactory.newCPPNamedTypeSpecifier(typeName, false);
+		ICPPASTNamedTypeSpecifier declSpec = nodeFactory.newTypedefNameSpecifier(typeName);
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope)
@@ -1286,14 +1296,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		// to be interpreted as a named type specifier for content assist to work.
 		else if(matchTokens(ruleTokens, tokenMap, TK_Completion, TK_EndOfCompletion)) {
 			IASTName name = createName(parser.getLeftIToken());
-			declSpecifier = nodeFactory.newCPPNamedTypeSpecifier(name, false);
+			declSpecifier = nodeFactory.newTypedefNameSpecifier(name);
 			setOffsetAndLength(declSpecifier, offset(name), length(name));
 			declarators = Collections.emptyList(); // throw away the bogus declarator
 		}
 		
 		// can happen if implicit int is used
 		else if(declSpecifier == null) { 
-			declSpecifier = nodeFactory.newCPPSimpleDeclSpecifier();
+			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			setOffsetAndLength(declSpecifier, parser.getLeftIToken().getStartOffset(), 0);
 		}
 		
@@ -1304,7 +1314,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		   ruleTokens.size() >= 2 &&
 		   baseKind(nameToken = ruleTokens.get(ruleTokens.size() - 2)) == TK_identifier) {
 			
-			declSpecifier = nodeFactory.newCPPSimpleDeclSpecifier();
+			declSpecifier = nodeFactory.newSimpleDeclSpecifier();
 			for(IToken t : ruleTokens.subList(0, ruleTokens.size()-1))
 				setSpecifier(declSpecifier, t);
 			
@@ -1493,7 +1503,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(className == null)
 			className = nodeFactory.newName();
 		
-		ICPPASTCompositeTypeSpecifier classSpecifier = nodeFactory.newCPPCompositeTypeSpecifier(key, className);
+		ICPPASTCompositeTypeSpecifier classSpecifier = nodeFactory.newCompositeTypeSpecifier(key, className);
 		
 		for(Object base : baseSpecifiers)
 			classSpecifier.addBaseSpecifier((ICPPASTBaseSpecifier)base);
@@ -1523,7 +1533,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     public void consumePointer() {
     	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
     	
-    	IASTPointer pointer = nodeFactory.newCPPPointer();
+    	IASTPointer pointer = nodeFactory.newPointer();
     	List<Object> tokens = astStack.closeScope();
     	addCVQualifiersToPointer(pointer, tokens);
 		setOffsetAndLength(pointer);
@@ -1620,7 +1630,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
  		
  		IASTName name = nodeFactory.newName();
- 		ICPPASTFunctionDeclarator declarator = nodeFactory.newCPPFunctionDeclarator(name);
+ 		ICPPASTFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
  		
  		for(Object typeId : astStack.closeScope()) {
  			declarator.addExceptionSpecificationTypeId((IASTTypeId) typeId);
@@ -1713,12 +1723,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		ICPPASTFunctionDefinition definition;
  		if (isTryBlockDeclarator) {
  			ICPPASTFunctionWithTryBlock tryblock= nodeFactory.newFunctionTryBlock(declSpec, declarator, body);
- 			for(Object handler : handlers) {
+ 			for(Object handler : handlers)
  				tryblock.addCatchHandler((ICPPASTCatchHandler)handler);
- 	 		}
- 			definition= tryblock;
+ 			definition = tryblock;
  		} else {
- 			definition= (ICPPASTFunctionDefinition) nodeFactory.newFunctionDefinition(declSpec, declarator, body);
+ 			definition = nodeFactory.newFunctionDefinition(declSpec, declarator, body);
  		}
  		
  		
@@ -1873,8 +1882,16 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     }
 
 
-	
-    
+	@Override
+	protected IASTAmbiguousExpression createAmbiguousExpression(IASTExpression... expressions) {
+		return new CPPASTAmbiguousExpression(expressions);
+	}
+
+
+	@Override
+	protected IASTAmbiguousStatement createAmbiguousStatement(IASTStatement... statements) {
+		return new CPPASTAmbiguousStatement(statements);
+	}
     
 }
 

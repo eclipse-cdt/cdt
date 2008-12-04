@@ -38,6 +38,7 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
     }
 
     public void setExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
 			expression.setParent(this);

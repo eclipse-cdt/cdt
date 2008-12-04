@@ -230,7 +230,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			e.printStackTrace();
 		}
 		
-		return new CPPASTNamedTypeSpecifier(name, false);
+		return new CPPASTNamedTypeSpecifier(name);
 	}
 
 	private ICPPASTQualifiedName getQname(IBinding classType, IBinding bind) {
@@ -258,7 +258,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new CPPASTNamedTypeSpecifier(name, false);
+		return new CPPASTNamedTypeSpecifier(name);
 	}
 	
 	private static IASTDeclSpecifier createSimpleDeclSpecifier(int type) {
@@ -302,7 +302,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 				}
 			}else if(binding instanceof CPPTypedef) {
 				CPPTypedef typedef = (CPPTypedef) binding;
-				return new CPPASTNamedTypeSpecifier(new CPPASTName(typedef.getNameCharArray()), false);
+				return new CPPASTNamedTypeSpecifier(new CPPASTName(typedef.getNameCharArray()));
 			}
 
 		}			

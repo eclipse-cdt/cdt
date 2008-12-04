@@ -30,11 +30,12 @@ public class CASTDesignatedInitializer extends ASTNode implements
     public CASTDesignatedInitializer() {
 	}
 
-	public CASTDesignatedInitializer(IASTInitializer rhs) {
-		setOperandInitializer(rhs);
+	public CASTDesignatedInitializer(IASTInitializer operandInitializer) {
+		setOperandInitializer(operandInitializer);
 	}
 
 	public void addDesignator(ICASTDesignator designator) {
+        assertNotFrozen();
     	if (designator != null) {
     		designator.setParent(this);
     		designator.setPropertyInParent(DESIGNATOR);
@@ -59,6 +60,7 @@ public class CASTDesignatedInitializer extends ASTNode implements
 
     
     public void setOperandInitializer(IASTInitializer rhs) {
+        assertNotFrozen();
         this.rhs = rhs;
         if (rhs != null) {
 			rhs.setParent(this);

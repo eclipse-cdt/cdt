@@ -57,6 +57,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void setIsGlobal(boolean value) {
+        assertNotFrozen();
         global = value;
     }
 
@@ -65,6 +66,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void setNewPlacement(IASTExpression expression) {
+        assertNotFrozen();
         placement = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -77,6 +79,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void setNewInitializer(IASTExpression expression) {
+        assertNotFrozen();
         initializer = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -89,6 +92,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);
@@ -101,6 +105,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void setIsNewTypeId(boolean value) {
+        assertNotFrozen();
         isNewTypeId = value;
     }
 
@@ -125,6 +130,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
 
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
+        assertNotFrozen();
     	Assert.isNotNull(typeId);
     	IASTDeclarator dtor= CPPVisitor.findInnermostDeclarator(typeId.getAbstractDeclarator());
     	if (dtor instanceof IASTArrayDeclarator == false) {

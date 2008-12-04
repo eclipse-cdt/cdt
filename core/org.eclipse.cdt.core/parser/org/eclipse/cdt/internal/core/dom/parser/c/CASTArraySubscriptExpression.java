@@ -41,6 +41,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
     }
 
     public void setArrayExpression(IASTExpression expression) {
+        assertNotFrozen();
         array = expression;
         if(expression != null) {
         	expression.setParent(this);
@@ -53,6 +54,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
     }
 
     public void setSubscriptExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.subscript = expression;
         if(expression != null) {
         	expression.setParent(this);

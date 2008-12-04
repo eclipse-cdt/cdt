@@ -33,6 +33,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 	}
 
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
+        assertNotFrozen();
     	if (statement != null) {
     		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
     		statement.setParent(this);

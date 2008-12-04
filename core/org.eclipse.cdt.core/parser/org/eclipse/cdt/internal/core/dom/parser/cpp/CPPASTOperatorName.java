@@ -15,12 +15,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 
 public class CPPASTOperatorName extends CPPASTName implements ICPPASTOperatorName {
 	
+	public CPPASTOperatorName() {
+		super();
+	}
+
 	/**
 	 * Primary constructor that should be used to initialize the CPPASTOperatorName.
 	 * @throws NullPointerException if operator is null
 	 */
-	public CPPASTOperatorName(OverloadableOperator operator) {
-		super(operator.toCharArray());
+	public CPPASTOperatorName(char[] name) {
+		super(name);
 	}
 
 }

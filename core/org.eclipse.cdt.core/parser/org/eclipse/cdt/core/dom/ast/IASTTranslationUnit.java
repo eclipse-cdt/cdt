@@ -274,4 +274,22 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * Sets whether this ast represents a header file.
 	 */
 	public void setIsHeaderUnit(boolean headerUnit);
+	
+	/**
+	 * Returns the node factory that was used to build the AST.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.1
+	 */
+	public INodeFactory getASTNodeFactory();
+	
+	/**
+	 * Causes this node and all the nodes rooted at this node to become immutable. 
+	 * Once the AST is frozen any calls to set or add methods on any of the nodes 
+	 * in the AST will result in an IllegalStateException.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.1
+	 */
+	public void freeze();
 }

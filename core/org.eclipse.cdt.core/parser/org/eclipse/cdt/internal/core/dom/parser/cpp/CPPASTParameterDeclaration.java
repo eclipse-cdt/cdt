@@ -45,6 +45,7 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
     }
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+        assertNotFrozen();
         this.declSpec = declSpec;
         if (declSpec != null) {
 			declSpec.setParent(this);
@@ -53,6 +54,7 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
     }
 
     public void setDeclarator(IASTDeclarator declarator) {
+        assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
 			declarator.setParent(this);

@@ -28,6 +28,7 @@ public class CPPASTInitializerList extends ASTNode implements IASTInitializerLis
     }
     
     public void addInitializer( IASTInitializer d ) {
+        assertNotFrozen();
     	if (d != null) {
     		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, ++initializersPos, d );
     		d.setParent(this);

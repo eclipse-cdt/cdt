@@ -37,6 +37,7 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
     }
 
     public void setConstantExpression(IASTExpression expression) {
+        assertNotFrozen();
         exp = expression;
         if (expression != null) {
 			expression.setParent(this);

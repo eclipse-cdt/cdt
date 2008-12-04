@@ -36,6 +36,7 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
     }
 
     public void setReturnValue(IASTExpression returnValue) {
+        assertNotFrozen();
         retValue = returnValue;
         if (returnValue != null) {
 			returnValue.setParent(this);

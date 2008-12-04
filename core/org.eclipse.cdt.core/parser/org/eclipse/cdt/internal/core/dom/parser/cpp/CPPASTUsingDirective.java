@@ -43,6 +43,7 @@ public class CPPASTUsingDirective extends ASTNode implements
     }
 
     public void setQualifiedName(IASTName qualifiedName) {
+        assertNotFrozen();
         this.name = qualifiedName;
         if (qualifiedName != null) {
 			qualifiedName.setParent(this);

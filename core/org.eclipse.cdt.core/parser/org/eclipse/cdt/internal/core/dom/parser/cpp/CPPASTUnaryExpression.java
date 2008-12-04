@@ -42,6 +42,7 @@ public class CPPASTUnaryExpression extends ASTNode implements
     }
 
     public void setOperator(int value) {
+        assertNotFrozen();
         this.operator = value;
     }
 
@@ -50,6 +51,7 @@ public class CPPASTUnaryExpression extends ASTNode implements
     }
 
     public void setOperand(IASTExpression expression) {
+        assertNotFrozen();
         operand = expression;
         if (expression != null) {
 			expression.setParent(this);

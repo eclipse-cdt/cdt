@@ -51,10 +51,12 @@ public class CPPASTBinaryExpression extends ASTNode implements
     }
 
     public void setOperator(int op) {
+        assertNotFrozen();
         this.op = op;
     }
 
     public void setOperand1(IASTExpression expression) {
+        assertNotFrozen();
         operand1 = expression;   
         if (expression != null) {
 			expression.setParent(this);
@@ -63,6 +65,7 @@ public class CPPASTBinaryExpression extends ASTNode implements
     }
 
     public void setOperand2(IASTExpression expression) {
+        assertNotFrozen();
         operand2 = expression;
         if (expression != null) {
 			expression.setParent(this);

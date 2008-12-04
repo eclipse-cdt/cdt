@@ -41,6 +41,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     }
 
     public void setSimpleType(int value) {
+        assertNotFrozen();
         st = value;
     }
 
@@ -49,6 +50,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     }
 
     public void setInitialValue(IASTExpression expression) {
+        assertNotFrozen();
         init = expression;
         if (expression != null) {
 			expression.setParent(this);

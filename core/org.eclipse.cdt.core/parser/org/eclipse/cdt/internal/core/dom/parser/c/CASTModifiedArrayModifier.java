@@ -48,18 +48,22 @@ public class CASTModifiedArrayModifier extends CASTArrayModifier implements ICAS
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         this.isConst = value;
     }
 
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         this.isVolatile = value;
     }
 
     public void setRestrict(boolean value) {
+        assertNotFrozen();
         this.isRestrict = value;
     }
 
     public void setStatic(boolean value) {
+        assertNotFrozen();
         this.isStatic = value;
     }
 
@@ -68,6 +72,7 @@ public class CASTModifiedArrayModifier extends CASTArrayModifier implements ICAS
     }
 
     public void setVariableSized(boolean value) {
+        assertNotFrozen();
         varSized = value;
     }
 }

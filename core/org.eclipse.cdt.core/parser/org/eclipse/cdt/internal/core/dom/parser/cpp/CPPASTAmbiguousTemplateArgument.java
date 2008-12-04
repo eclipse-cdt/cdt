@@ -61,10 +61,12 @@ public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements 
 	}
 
 	public void addTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
 		addNode(typeId);
 	}
 	
 	public void addIdExpression(IASTIdExpression idExpression) {
+        assertNotFrozen();
 		addNode(idExpression);
 	}
 	

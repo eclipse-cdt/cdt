@@ -38,6 +38,7 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
     }
 
     public void setAlias(IASTName name) {
+        assertNotFrozen();
         this.alias = name;
         if (name != null) {
 			name.setParent(this);
@@ -50,6 +51,7 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
     }
 
     public void setMappingName(IASTName qualifiedName) {
+        assertNotFrozen();
         this.qualifiedName = qualifiedName;
         if (qualifiedName != null) {
 			qualifiedName.setParent(this);

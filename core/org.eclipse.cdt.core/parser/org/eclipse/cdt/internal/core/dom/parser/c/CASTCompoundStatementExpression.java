@@ -37,6 +37,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements
     }
 
     public void setCompoundStatement(IASTCompoundStatement statement) {
+        assertNotFrozen();
         this.statement = statement;
         if (statement != null) {
 			statement.setParent(this);

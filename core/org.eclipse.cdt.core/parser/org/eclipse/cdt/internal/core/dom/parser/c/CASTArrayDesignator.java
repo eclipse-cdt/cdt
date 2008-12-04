@@ -42,6 +42,7 @@ public class CASTArrayDesignator extends ASTNode implements
     }
 
     public void setSubscriptExpression(IASTExpression value) {
+        assertNotFrozen();
         exp = value;
         if(value != null) {
         	value.setParent(this);

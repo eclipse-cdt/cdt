@@ -52,6 +52,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     }
 
     public void setConditionExpression(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -64,6 +65,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     }
 
     public void setThenClause(IASTStatement thenClause) {
+        assertNotFrozen();
         this.thenClause = thenClause;
         if (thenClause != null) {
 			thenClause.setParent(this);
@@ -76,6 +78,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     }
 
     public void setElseClause(IASTStatement elseClause) {
+        assertNotFrozen();
         this.elseClause = elseClause;
         if (elseClause != null) {
 			elseClause.setParent(this);
@@ -134,6 +137,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     }
 
     public void setConditionDeclaration(IASTDeclaration d) {
+        assertNotFrozen();
         condDecl = d;
         if (d != null) {
 			d.setParent(this);

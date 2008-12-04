@@ -32,8 +32,11 @@ public interface ISourceCodeParser {
 
     /**
      * Compute an abstract syntax tree (AST).
-     * @return the AST, should not return <code>null</code>
      * 
+     * The returned AST is frozen, any attempt modify any of the nodes in
+     * the AST will result in an IllegalStateException.
+     * 
+     * @return the AST, should not return <code>null</code>
      * @throws ParseError  if parsing has been cancelled or for other reasons
      */
     public IASTTranslationUnit parse();

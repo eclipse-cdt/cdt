@@ -40,6 +40,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAm
 	}
 
 	public void addDeclarator(IASTDeclarator d) {
+        assertNotFrozen();
     	if (d != null) {
     		dtors = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, dtors, ++dtorPos, d);
     		d.setParent(this);
@@ -78,18 +79,22 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAm
 	}
 
 	public void addPointerOperator(IASTPointerOperator operator) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	public void setInitializer(IASTInitializer initializer) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	public void setName(IASTName name) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	public void setNestedDeclarator(IASTDeclarator nested) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 }

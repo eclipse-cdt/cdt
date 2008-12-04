@@ -49,6 +49,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     }
 
     public void setTemplateName(IASTName name) {
+        assertNotFrozen();
     	assert !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId);
         templateName = name;
         if (name != null) {
@@ -58,6 +59,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     }
 
     public void addTemplateArgument(IASTTypeId typeId) {
+        assertNotFrozen();
         templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, typeId);
         if (typeId != null) {
 			typeId.setParent(this);
@@ -66,6 +68,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     }
 
     public void addTemplateArgument(IASTExpression expression) {
+        assertNotFrozen();
         templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, expression);
         if (expression != null) {
 			expression.setParent(this);
@@ -74,6 +77,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     }
     
     public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
+        assertNotFrozen();
     	templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, ata);
     	if (ata != null) {
     		ata.setParent(this);

@@ -38,6 +38,7 @@ public class CPPASTTypeId extends ASTNode implements IASTTypeId {
     }
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+        assertNotFrozen();
         this.declSpec = declSpec;
         if (declSpec != null) {
 			declSpec.setParent(this);
@@ -51,6 +52,7 @@ public class CPPASTTypeId extends ASTNode implements IASTTypeId {
 
 
     public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
+        assertNotFrozen();
         this.absDecl = abstractDeclarator;
         if (abstractDeclarator != null) {
 			abstractDeclarator.setParent(this);

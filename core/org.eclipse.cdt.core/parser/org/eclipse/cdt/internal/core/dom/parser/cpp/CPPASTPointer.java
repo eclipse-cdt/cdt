@@ -32,10 +32,12 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         isConst = value;
     }
 
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         isVolatile = value;
     }
 

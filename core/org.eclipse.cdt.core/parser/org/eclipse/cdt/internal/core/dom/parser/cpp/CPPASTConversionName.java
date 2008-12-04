@@ -41,6 +41,7 @@ public class CPPASTConversionName extends CPPASTName implements ICPPASTConversio
 	}
 
 	public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
 		this.typeId=typeId;
 		if (typeId != null) {
 			typeId.setParent(this);

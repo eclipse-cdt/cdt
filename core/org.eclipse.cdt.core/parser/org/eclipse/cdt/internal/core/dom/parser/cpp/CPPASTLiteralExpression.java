@@ -39,6 +39,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     }
 
     public void setKind(int value) {
+        assertNotFrozen();
         kind = value;
     }
 
@@ -47,6 +48,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     }
 
     public void setValue(char[] value) {
+        assertNotFrozen();
     	this.value= value;
     }
     
@@ -83,6 +85,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
      */
     @Deprecated
 	public void setValue(String value) {
+        assertNotFrozen();
         this.value = value.toCharArray();
     }
     

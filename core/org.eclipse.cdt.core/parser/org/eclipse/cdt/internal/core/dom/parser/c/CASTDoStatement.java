@@ -41,6 +41,7 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
     }
  
     public void setBody(IASTStatement body) {
+        assertNotFrozen();
         this.body = body;
         if (body != null) {
 			body.setParent(this);
@@ -55,6 +56,7 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 
 
     public void setCondition(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);

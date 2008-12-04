@@ -44,6 +44,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
     }
 
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
+        assertNotFrozen();
     	if(parm != null) {
     		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm );
     		parm.setParent(this);
@@ -61,6 +62,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name =name;
         if (name != null) {
 			name.setParent(this);
@@ -73,6 +75,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
     }
 
     public void setDefaultValue(IASTExpression expression) {
+        assertNotFrozen();
         this.defaultValue = expression;
         if (expression != null) {
 			expression.setParent(this);

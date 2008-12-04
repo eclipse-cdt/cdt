@@ -36,6 +36,7 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
     }
 
     public void setExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
 			expression.setParent(this);

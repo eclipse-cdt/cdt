@@ -32,9 +32,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     public CPPASTConstructorChainInitializer() {
 	}
 
-	public CPPASTConstructorChainInitializer(IASTName name, IASTExpression value) {
-		setMemberInitializerId(name);
-		setInitializerValue(value);
+	public CPPASTConstructorChainInitializer(IASTName memberInitializerid, IASTExpression initializerValue) {
+		setMemberInitializerId(memberInitializerid);
+		setInitializerValue(initializerValue);
 	}
 
 	public IASTName getMemberInitializerId() {
@@ -42,6 +42,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     }
 
     public void setMemberInitializerId(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if(name != null) {
 			name.setParent(this);
@@ -55,6 +56,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 
 
     public void setInitializerValue(IASTExpression expression) {
+        assertNotFrozen();
         value = expression;
         if(expression != null) {
 			expression.setParent(this);

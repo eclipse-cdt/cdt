@@ -46,22 +46,27 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDecl
     }
     
     public void setStorageClass(int storageClass) {
+        assertNotFrozen();
         this.storageClass = storageClass;
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         this.isConst = value;
     }
     
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         this.isVolatile = value;
     }
     
     public void setRestrict(boolean value) {
+        assertNotFrozen();
         this.isRestrict = value;
     }
     
     public void setInline(boolean value) {
+        assertNotFrozen();
         this.isInline = value;
     }
 }

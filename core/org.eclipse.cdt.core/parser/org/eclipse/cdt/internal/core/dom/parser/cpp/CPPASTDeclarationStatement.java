@@ -38,6 +38,7 @@ public class CPPASTDeclarationStatement extends ASTNode implements
     }
 
     public void setDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
 			declaration.setParent(this);

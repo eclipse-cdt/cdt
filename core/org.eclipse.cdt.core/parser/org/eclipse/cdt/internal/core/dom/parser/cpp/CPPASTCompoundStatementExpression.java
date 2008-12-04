@@ -37,6 +37,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
     }
 
     public void setCompoundStatement(IASTCompoundStatement statement) {
+        assertNotFrozen();
         this.statement = statement;
         if (statement != null) {
 			statement.setParent(this);

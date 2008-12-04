@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 
@@ -21,7 +22,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public class CPPASTProblemExpression extends CPPASTProblemOwner implements
         IASTProblemExpression {
 
-    @Override
+    public CPPASTProblemExpression() {
+		super();
+	}
+
+	public CPPASTProblemExpression(IASTProblem problem) {
+		super(problem);
+	}
+
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){

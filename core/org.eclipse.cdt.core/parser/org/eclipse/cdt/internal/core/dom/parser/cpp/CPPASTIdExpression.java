@@ -41,6 +41,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

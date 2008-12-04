@@ -45,6 +45,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
     }
 
     public void addArrayModifier(IASTArrayModifier arrayModifier) {
+        assertNotFrozen();
     	if (arrayModifier != null) {
     		arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);

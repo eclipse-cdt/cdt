@@ -41,6 +41,7 @@ public class CASTSwitchStatement extends ASTNode implements
     }
 
     public void setControllerExpression(IASTExpression controller) {
+        assertNotFrozen();
         this.controller = controller;
         if (controller != null) {
 			controller.setParent(this);
@@ -53,6 +54,7 @@ public class CASTSwitchStatement extends ASTNode implements
     }
 
     public void setBody(IASTStatement body) {
+        assertNotFrozen();
         this.body = body;
         if (body != null) {
 			body.setParent(this);

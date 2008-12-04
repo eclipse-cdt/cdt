@@ -36,6 +36,7 @@ public class CASTAmbiguousParameterDeclaration extends CASTAmbiguity implements 
 	}
 
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
+        assertNotFrozen();
     	if (d != null) {
     		paramDecls = (IASTParameterDeclaration[]) ArrayUtil.append(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
     		d.setParent(this);
@@ -62,10 +63,12 @@ public class CASTAmbiguousParameterDeclaration extends CASTAmbiguity implements 
 	}
 
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
 	public void setDeclarator(IASTDeclarator declarator) {
+        assertNotFrozen();
 		Assert.isLegal(false);
 	}
 }

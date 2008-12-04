@@ -33,6 +33,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setType(int type) {
+        assertNotFrozen();
         this.type = type;
     }
 
@@ -53,18 +54,22 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setSigned(boolean value) {
+        assertNotFrozen();
         isSigned = value;
     }
 
     public void setUnsigned(boolean value) {
+        assertNotFrozen();
         isUnsigned = value;
     }
 
     public void setLong(boolean value) {
+        assertNotFrozen();
         isLong = value;
     }
 
     public void setShort(boolean value) {
+        assertNotFrozen();
         isShort = value;
     }
 

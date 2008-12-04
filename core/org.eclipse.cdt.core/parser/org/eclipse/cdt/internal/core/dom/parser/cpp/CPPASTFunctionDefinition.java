@@ -55,6 +55,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
     }
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+        assertNotFrozen();
         declSpecifier = declSpec;
         if (declSpec != null) {
 			declSpec.setParent(this);
@@ -67,6 +68,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
     }
 
     public void setDeclarator(IASTFunctionDeclarator declarator) {
+        assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
         	IASTDeclarator outerDtor= CPPVisitor.findOutermostDeclarator(declarator);
@@ -80,6 +82,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
     }
 
     public void setBody(IASTStatement statement) {
+        assertNotFrozen();
         bodyStatement = statement;
         if (statement != null) {
 			statement.setParent(this);
@@ -89,6 +92,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 
     
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer) {
+        assertNotFrozen();
     	if (initializer != null) {
     		memInits= ArrayUtil.appendAt(ICPPASTConstructorChainInitializer.class, memInits, ++memInitPos, initializer);
     		initializer.setParent(this);

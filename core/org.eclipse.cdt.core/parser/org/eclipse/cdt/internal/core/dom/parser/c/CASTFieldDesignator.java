@@ -39,6 +39,7 @@ public class CASTFieldDesignator extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

@@ -41,6 +41,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     }
 
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
+        assertNotFrozen();
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
@@ -53,6 +54,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     }
 
     public void setVarArgs(boolean value) {
+        assertNotFrozen();
         varArgs = value;
     }
 

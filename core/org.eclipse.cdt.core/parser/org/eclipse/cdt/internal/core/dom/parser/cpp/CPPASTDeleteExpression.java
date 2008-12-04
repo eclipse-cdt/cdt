@@ -42,6 +42,7 @@ public class CPPASTDeleteExpression extends ASTNode implements
     }
 
     public void setOperand(IASTExpression expression) {
+        assertNotFrozen();
         operand = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -50,6 +51,7 @@ public class CPPASTDeleteExpression extends ASTNode implements
     }
 
     public void setIsGlobal(boolean global) {
+        assertNotFrozen();
         isGlobal = global;
     }
 
@@ -58,6 +60,7 @@ public class CPPASTDeleteExpression extends ASTNode implements
     }
 
     public void setIsVectored(boolean vectored) {
+        assertNotFrozen();
         isVectored = vectored;
     }
 

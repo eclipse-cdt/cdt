@@ -39,8 +39,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
     public CPPASTNamedTypeSpecifier() {
 	}
 
-	public CPPASTNamedTypeSpecifier(IASTName name, boolean typename) {
-		this.typename = typename;
+	public CPPASTNamedTypeSpecifier(IASTName name) {
 		setName(name);
 	}
 
@@ -49,6 +48,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
     }
 
     public void setIsTypename(boolean value) {
+        assertNotFrozen();
         typename = value;
     }
 
@@ -58,6 +58,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

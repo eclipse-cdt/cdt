@@ -40,6 +40,7 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
     }
 
     public void setBitFieldSize(IASTExpression size) {
+        assertNotFrozen();
         this.bitField = size;
         if (size != null) {
 			size.setParent(this);

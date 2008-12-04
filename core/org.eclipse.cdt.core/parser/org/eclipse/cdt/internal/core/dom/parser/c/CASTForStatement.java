@@ -48,6 +48,7 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     }
 
     public void setConditionExpression(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -60,6 +61,7 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     }
 
     public void setIterationExpression(IASTExpression iterator) {
+        assertNotFrozen();
         this.iterationExpression = iterator;
         if (iterator != null) {
 			iterator.setParent(this);
@@ -72,6 +74,7 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     }
 
     public void setInitializerStatement(IASTStatement statement) {
+        assertNotFrozen();
         init = statement;
         if (statement != null) {
 			statement.setParent(this);
@@ -83,6 +86,7 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     }
 
     public void setBody(IASTStatement statement) {
+        assertNotFrozen();
         body = statement;
         if (statement != null) {
 			statement.setParent(this);

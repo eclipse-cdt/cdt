@@ -41,6 +41,7 @@ public class CASTArrayRangeDesignator extends ASTNode implements
     }
 
     public void setRangeFloor(IASTExpression expression) {
+        assertNotFrozen();
         floor = expression;
         if(expression != null) {
         	expression.setParent(this);
@@ -53,6 +54,7 @@ public class CASTArrayRangeDesignator extends ASTNode implements
     }
 
     public void setRangeCeiling(IASTExpression expression) {
+        assertNotFrozen();
         ceiling = expression;
         if(expression != null) {
         	expression.setParent(this);

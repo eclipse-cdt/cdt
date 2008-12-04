@@ -39,10 +39,12 @@ public class CASTTypeIdExpression extends ASTNode implements
     }
 
     public void setOperator(int value) {
+        assertNotFrozen();
         this.op = value;
     }
 
     public void setTypeId(IASTTypeId typeId) {
+       assertNotFrozen();
        this.typeId = typeId;
        if (typeId != null) {
 			typeId.setParent(this);

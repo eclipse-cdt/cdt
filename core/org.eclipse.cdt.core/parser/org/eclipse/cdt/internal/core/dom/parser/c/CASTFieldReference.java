@@ -52,6 +52,7 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     }
 
     public void setFieldOwner(IASTExpression expression) {
+        assertNotFrozen();
         this.owner = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -64,6 +65,7 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     }
 
     public void setFieldName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -76,6 +78,7 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     }
 
     public void setIsPointerDereference(boolean value) {
+        assertNotFrozen();
         ptr = value;
     }
 

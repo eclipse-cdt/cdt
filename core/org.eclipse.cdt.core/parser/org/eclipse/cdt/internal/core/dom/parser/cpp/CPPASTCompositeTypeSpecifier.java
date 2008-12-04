@@ -52,6 +52,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
+        assertNotFrozen();
     	if (baseSpec != null) {
     		baseSpec.setParent(this);
 			baseSpec.setPropertyInParent(BASE_SPECIFIER);
@@ -64,6 +65,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setKey(int key) {
+        assertNotFrozen();
         k = key;
     }
 
@@ -72,6 +74,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.n = name;
         if (name != null) {
 			name.setParent(this);
@@ -86,6 +89,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void addMemberDeclaration(IASTDeclaration decl) {
+        assertNotFrozen();
         declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, decl );
         if(decl != null) {
         	decl.setParent(this);

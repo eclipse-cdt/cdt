@@ -50,6 +50,7 @@ public class CASTFunctionDefinition extends ASTNode implements
     }
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+        assertNotFrozen();
         declSpecifier = declSpec;
         if (declSpec != null) {
 			declSpec.setParent(this);
@@ -62,6 +63,7 @@ public class CASTFunctionDefinition extends ASTNode implements
     }
 
     public void setDeclarator(IASTFunctionDeclarator declarator) {
+        assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
         	IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
@@ -75,6 +77,7 @@ public class CASTFunctionDefinition extends ASTNode implements
     }
 
     public void setBody(IASTStatement statement) {
+        assertNotFrozen();
         bodyStatement = statement;
         if (statement != null) {
 			statement.setParent(this);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 
 /**
@@ -19,7 +20,15 @@ public class GPPASTExplicitTemplateInstantiation extends
         CPPASTExplicitTemplateInstantiation implements
         IGPPASTExplicitTemplateInstantiation {
 
-    private int mod;
+    public GPPASTExplicitTemplateInstantiation() {
+		super();
+	}
+
+	public GPPASTExplicitTemplateInstantiation(IASTDeclaration declaration) {
+		super(declaration);
+	}
+
+	private int mod;
 
     public int getModifier() {
         return mod;

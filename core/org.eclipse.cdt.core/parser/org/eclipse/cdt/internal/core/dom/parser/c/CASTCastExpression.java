@@ -32,6 +32,7 @@ public class CASTCastExpression extends CASTUnaryExpression implements IASTCastE
 	}
 
 	public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);

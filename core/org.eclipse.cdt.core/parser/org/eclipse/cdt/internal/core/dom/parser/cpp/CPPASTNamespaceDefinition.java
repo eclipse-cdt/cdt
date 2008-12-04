@@ -44,6 +44,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -57,6 +58,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
     }
 
     public void addDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
         declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
         if(declaration != null) {
         	declaration.setParent(this);

@@ -103,6 +103,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	}
 
 	public void addName(IASTName name) {
+        assertNotFrozen();
 		assert !(name instanceof ICPPASTQualifiedName);
 		if (name != null) {
 			names = (IASTName[]) ArrayUtil.append(IASTName.class, names, ++namesPos, name);
@@ -160,11 +161,13 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	}
 
 	public void setFullyQualified(boolean isFullyQualified) {
+        assertNotFrozen();
 		this.isFullyQualified = isFullyQualified;
 	}
 
 
 	public void setSignature(String signature) {
+        assertNotFrozen();
 		this.signature = signature;
 	}
 

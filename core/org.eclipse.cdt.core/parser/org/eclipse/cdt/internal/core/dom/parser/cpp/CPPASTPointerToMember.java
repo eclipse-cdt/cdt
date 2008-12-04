@@ -30,6 +30,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
 	}
 
 	public void setName(IASTName name) {
+        assertNotFrozen();
         n = name;
         if (name != null) {
 			name.setParent(this);

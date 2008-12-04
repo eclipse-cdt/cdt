@@ -39,6 +39,7 @@ public class CASTArrayModifier extends ASTNode implements IASTArrayModifier, IAS
     }
 
     public void setConstantExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.exp = expression;
         if(expression != null) {
         	expression.setParent(this);

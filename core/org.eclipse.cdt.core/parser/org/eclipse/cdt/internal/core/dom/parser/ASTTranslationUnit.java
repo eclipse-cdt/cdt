@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -58,6 +59,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private IIndex fIndex;
 	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
+	private INodeFactory fNodeFactory;
 
     @Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -280,6 +282,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
     	}
     }
 
+    public final INodeFactory getASTNodeFactory() {
+    	return fNodeFactory;
+    }
+    
+    public final void setASTNodeFactory(INodeFactory nodeFactory) {
+    	this.fNodeFactory = nodeFactory;
+    }
+    
 	public final IASTComment[] getComments() {
 		if (fLocationResolver != null) {
 			return fLocationResolver.getComments();

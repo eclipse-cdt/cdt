@@ -39,6 +39,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
     }
 
     public void setKind(int value) {
+        assertNotFrozen();
         kind = value;
     }
 
@@ -47,6 +48,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
     }
 
     public void setValue(char[] value) {
+        assertNotFrozen();
     	this.value= value;
     }
     
@@ -83,6 +85,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
      */
     @Deprecated
 	public void setValue(String value) {
+        assertNotFrozen();
         this.value = value.toCharArray();
     }
     

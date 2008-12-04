@@ -44,6 +44,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	}
 
 	public void addEnumerator(IASTEnumerator enumerator) {
+        assertNotFrozen();
     	if (enumerator != null) {
     		enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
@@ -63,6 +64,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 
  
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

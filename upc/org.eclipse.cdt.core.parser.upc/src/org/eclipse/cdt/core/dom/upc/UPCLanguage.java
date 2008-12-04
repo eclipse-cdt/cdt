@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeyword;
@@ -25,6 +24,7 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
@@ -92,7 +92,7 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	 */
 	@Override
 	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = C99ASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();
+		IASTTranslationUnit tu = CNodeFactory.getDefault().newTranslationUnit();
 		tu.setIndex(index);
 		if(tu instanceof CASTTranslationUnit) {
 			((CASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());

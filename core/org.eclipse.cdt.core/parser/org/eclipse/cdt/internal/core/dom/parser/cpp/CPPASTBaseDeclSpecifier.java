@@ -36,6 +36,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setStorageClass(int storageClass) {
+        assertNotFrozen();
         sc = storageClass;
     }
 
@@ -44,6 +45,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         isConst = value;
     }
 
@@ -52,6 +54,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         volatil = value;
     }
 
@@ -60,10 +63,12 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setInline(boolean value) {
+        assertNotFrozen();
         this.inline = value;
     }
 
     public void setFriend(boolean value) {
+        assertNotFrozen();
         friend = value;
     }
 
@@ -72,6 +77,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setVirtual(boolean value) {
+        assertNotFrozen();
         virtual = value;
     }
 
@@ -80,6 +86,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public void setExplicit(boolean value) {
+        assertNotFrozen();
         this.explicit = value;
     }
 

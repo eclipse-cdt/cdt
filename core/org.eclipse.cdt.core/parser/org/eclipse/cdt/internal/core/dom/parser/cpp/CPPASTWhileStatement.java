@@ -49,6 +49,7 @@ public class CPPASTWhileStatement extends ASTNode implements
     }
 
     public void setCondition(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -61,6 +62,7 @@ public class CPPASTWhileStatement extends ASTNode implements
     }
 
     public void setBody(IASTStatement body) {
+        assertNotFrozen();
         this.body = body;
         if (body != null) {
 			body.setParent(this);
@@ -73,6 +75,7 @@ public class CPPASTWhileStatement extends ASTNode implements
 	}
 
 	public void setConditionDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
 		condition2 = declaration;
 		if (declaration != null) {
 			declaration.setParent(this);

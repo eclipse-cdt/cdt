@@ -19,7 +19,6 @@ import java.util.*;
 
 import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.ast.cpp.*;
-import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 public class CPPParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
@@ -175,7 +175,7 @@ private void initActions(IASTTranslationUnit tu) {
     // binding resolution actions need access to IASTName nodes, temporary
     action = new  CPPParserAction ();
 	//action.resolver = new  C99TypedefTrackerParserAction (this);
-	action.builder  = new  CPPBuildASTParserAction ( CPPASTNodeFactory.DEFAULT_INSTANCE , this, tu);
+	action.builder  = new  CPPBuildASTParserAction ( CPPNodeFactory.getDefault() , this, tu);
 	//action.builder.setTokenMap(CPPParsersym.orderedTerminalSymbols);
 	
 	// comment this line to use with backtracking parser

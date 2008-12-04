@@ -41,6 +41,7 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
     }
 
     public void setCondition(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -53,6 +54,7 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
     }
 
     public void setBody(IASTStatement body) {
+        assertNotFrozen();
         this.body = body;
         if (body != null) {
 			body.setParent(this);

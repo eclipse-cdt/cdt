@@ -42,16 +42,10 @@ public class CPPASTFieldReference extends ASTNode implements
     
     public CPPASTFieldReference() {
 	}
-
-	public CPPASTFieldReference(IASTName name, IASTExpression owner, boolean isDeref, boolean isTemplate) {
-		setFieldName(name);
-		setFieldOwner(owner);
-		this.isTemplate = isTemplate;
-		this.isDeref = isDeref;
-	}
 	
 	public CPPASTFieldReference(IASTName name, IASTExpression owner) {
-		this(name, owner, false, false);
+		setFieldName(name);
+		setFieldOwner(owner);
 	}
 
 	public boolean isTemplate() {
@@ -59,6 +53,7 @@ public class CPPASTFieldReference extends ASTNode implements
     }
 
     public void setIsTemplate(boolean value) {
+        assertNotFrozen();
         isTemplate = value;
     }
 
@@ -67,6 +62,7 @@ public class CPPASTFieldReference extends ASTNode implements
     }
 
     public void setFieldOwner(IASTExpression expression) {
+        assertNotFrozen();
         owner = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -79,6 +75,7 @@ public class CPPASTFieldReference extends ASTNode implements
     }
 
     public void setFieldName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -91,6 +88,7 @@ public class CPPASTFieldReference extends ASTNode implements
     }
 
     public void setIsPointerDereference(boolean value) {
+        assertNotFrozen();
         isDeref = value;
     }
     

@@ -42,6 +42,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
     }
 
     public void setParameterType(int value) {
+        assertNotFrozen();
         this.type = value;
     }
 
@@ -50,6 +51,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -62,6 +64,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
     }
 
     public void setDefaultType(IASTTypeId typeId) {
+        assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);

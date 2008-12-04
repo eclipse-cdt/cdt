@@ -49,22 +49,27 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     }
     
     public void setType(int type) {
+        assertNotFrozen();
         simpleType = type;
     }
     
     public void setShort(boolean value) {
+        assertNotFrozen();
         isShort = value;
     }
     
     public void setLong(boolean value) {
+        assertNotFrozen();
         isLong = value;
     }
     
     public void setUnsigned(boolean value) {
+        assertNotFrozen();
         isUnsigned = value;
     }
     
     public void setSigned(boolean value) {
+        assertNotFrozen();
         isSigned = value;
     }
 
@@ -73,6 +78,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     }
 
     public void setLongLong(boolean value) {
+        assertNotFrozen();
         longlong = value;
     }
 
@@ -100,6 +106,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	}
 
 	public void setComplex(boolean value) {
+        assertNotFrozen();
 		this.complex = value;
 	}
 
@@ -108,6 +115,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	}
 
 	public void setImaginary(boolean value) {
+        assertNotFrozen();
 		this.imaginary = value;		
 	}
 }

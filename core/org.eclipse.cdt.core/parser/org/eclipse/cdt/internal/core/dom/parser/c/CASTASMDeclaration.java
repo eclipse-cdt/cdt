@@ -35,6 +35,7 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
     }
 
     public void setAssembly(String assembly) {
+        assertNotFrozen();
         this.assembly = assembly.toCharArray();
     }
 

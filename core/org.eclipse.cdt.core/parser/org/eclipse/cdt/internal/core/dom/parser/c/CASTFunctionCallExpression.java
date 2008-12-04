@@ -38,6 +38,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
 	}
 
 	public void setFunctionNameExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.functionName = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -50,6 +51,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
     }
 
     public void setParameterExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.parameter = expression;
         if (expression != null) {
 			expression.setParent(this);

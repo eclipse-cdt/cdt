@@ -44,6 +44,7 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setKind(int value) {
+        assertNotFrozen();
         this.kind = value;
     }
 
@@ -52,6 +53,7 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

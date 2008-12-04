@@ -58,6 +58,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public void setConditionExpression(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -70,6 +71,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public void setIterationExpression(IASTExpression iterator) {
+        assertNotFrozen();
         this.iterationExpression = iterator;
         if (iterator != null) {
 			iterator.setParent(this);
@@ -82,6 +84,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public void setBody(IASTStatement statement) {
+        assertNotFrozen();
         body = statement;
         if (statement != null) {
 			statement.setParent(this);
@@ -159,6 +162,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public void setInitializerStatement(IASTStatement statement) {
+        assertNotFrozen();
         init = statement;
         if (statement != null) {
 			statement.setParent(this);
@@ -167,6 +171,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public void setConditionDeclaration(IASTDeclaration d) {
+        assertNotFrozen();
         condDeclaration = d;
         if (d != null) {
 			d.setParent(this);

@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -71,6 +72,8 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 
 /**
@@ -113,7 +116,7 @@ public abstract class BuildASTParserAction {
 	protected final IASTTranslationUnit tu;
 
 	/** Abstract factory for creating AST node objects */
-	private final IASTNodeFactory nodeFactory;
+	private final INodeFactory nodeFactory;
 	
 	
 	/**
@@ -154,7 +157,7 @@ public abstract class BuildASTParserAction {
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public BuildASTParserAction(IASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
+	public BuildASTParserAction(INodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
 		if(nodeFactory == null)
 			throw new NullPointerException("nodeFactory is null"); //$NON-NLS-1$
 		if(parser == null)
@@ -175,12 +178,15 @@ public abstract class BuildASTParserAction {
 	protected void addNameToCompletionNode(IASTName name, String prefix) {
 		if(completionNode == null) {
 			prefix = (prefix == null || prefix.length() == 0) ? null : prefix;
-			completionNode = nodeFactory.newCompletionNode(prefix, tu);
+			completionNode = newCompletionNode(prefix, tu);
 		}
 		
 		completionNode.addName(name);
 	}
 	
+	public ASTCompletionNode newCompletionNode(String prefix, IASTTranslationUnit tu) {
+		return new ASTCompletionNode((prefix == null || prefix.length() == 0) ? null : prefix, tu);
+	}
 	
 	/**
 	 * Used to combine completion nodes from secondary parsers into
@@ -426,6 +432,7 @@ public abstract class BuildASTParserAction {
         } 
         
         resolveAmbiguityNodes();
+        tu.freeze();
 
         if(TRACE_AST_STACK) System.out.println(astStack);
 	}
@@ -443,7 +450,7 @@ public abstract class BuildASTParserAction {
 	 * ambiguity nodes were created.
 	 */
 	private void resolveAmbiguityNodes() {
-		tu.accept(EMPTY_VISITOR);
+		tu.accept(EMPTY_VISITOR); // TODO make sure the DOM parser still does it this way
 		if (tu instanceof ASTTranslationUnit) {
 			((ASTTranslationUnit)tu).cleanupAfterAmbiguityResolution();
 		}
@@ -509,7 +516,7 @@ public abstract class BuildASTParserAction {
 		else if(isImplicitInt(decl))
 			result = expressionStatement;
 		else {
-			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
+			result = createAmbiguousStatement(declarationStatement, expressionStatement);
 			setOffsetAndLength(result);
 		}
 			
@@ -517,6 +524,9 @@ public abstract class BuildASTParserAction {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	protected abstract IASTAmbiguousStatement createAmbiguousStatement(IASTStatement ... statements);
+	
 	
 	
 	/**
@@ -701,13 +711,16 @@ public abstract class BuildASTParserAction {
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
 		else {
-			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, (IASTExpression)alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
 
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
+	protected abstract IASTAmbiguousExpression createAmbiguousExpression(IASTExpression ... expressions);
 	
 	
 	/**
@@ -745,7 +758,7 @@ public abstract class BuildASTParserAction {
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
 			astStack.push(expr);
 		else {
-			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, (IASTExpression)alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
@@ -1416,15 +1429,14 @@ public abstract class BuildASTParserAction {
 	}
 	
 	
-	
-	
+
 	/**
 	 * statement ::= ERROR_TOKEN
 	 */
 	public void consumeStatementProblem() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		consumeProblem(nodeFactory.newProblemStatement());
+		consumeProblem(nodeFactory.newProblemStatement(null));
 	}
 
 	/**
@@ -1434,7 +1446,7 @@ public abstract class BuildASTParserAction {
 	public void consumeExpressionProblem() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		consumeProblem(nodeFactory.newProblemExpression());
+		consumeProblem(nodeFactory.newProblemExpression(null));
 	}
 
 	/**
@@ -1443,7 +1455,7 @@ public abstract class BuildASTParserAction {
 	public void consumeDeclarationProblem() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		consumeProblem(nodeFactory.newProblemDeclaration());
+		consumeProblem(nodeFactory.newProblemDeclaration(null));
 	}
 
 	

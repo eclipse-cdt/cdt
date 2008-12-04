@@ -35,6 +35,7 @@ public class CPPASTProblemTypeId extends CPPASTTypeId implements IASTProblemType
     }
     
     public void setProblem(IASTProblem p) {
+        assertNotFrozen();
         problem = p;
         if (p != null) {
 			p.setParent(this);

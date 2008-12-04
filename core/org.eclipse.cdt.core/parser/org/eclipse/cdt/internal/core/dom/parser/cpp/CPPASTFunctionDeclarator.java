@@ -54,6 +54,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
+        assertNotFrozen();
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
@@ -66,6 +67,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public void setVarArgs(boolean value) {
+        assertNotFrozen();
         varArgs = value;
     }
 
@@ -74,6 +76,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         this.isConst = value;
     }
 
@@ -82,6 +85,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         this.isVolatile = value;
     }
 
@@ -90,10 +94,12 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
     
     public void setEmptyExceptionSpecification() {
+        assertNotFrozen();
     	typeIds= IASTTypeId.EMPTY_TYPEID_ARRAY;
     }
 
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
     	if (typeId != null) {
     		typeIds = (IASTTypeId[]) ArrayUtil.append(IASTTypeId.class, typeIds, ++typeIdsPos, typeId);
     		typeId.setParent(this);
@@ -106,6 +112,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public void setPureVirtual(boolean isPureVirtual) {
+        assertNotFrozen();
         this.pureVirtual = isPureVirtual;
     }
 
@@ -127,6 +134,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
     @Deprecated
     public void addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer initializer) {
+        assertNotFrozen();
     }
 
     public ICPPFunctionScope getFunctionScope() {

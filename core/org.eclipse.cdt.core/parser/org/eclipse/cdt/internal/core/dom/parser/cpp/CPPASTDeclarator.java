@@ -69,6 +69,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     public void setInitializer(IASTInitializer initializer) {
+        assertNotFrozen();
         this.initializer = initializer;
         if (initializer != null) {
 			initializer.setParent(this);
@@ -77,6 +78,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     public void addPointerOperator(IASTPointerOperator operator) {
+        assertNotFrozen();
     	if (operator != null) {
     		operator.setParent(this);
 			operator.setPropertyInParent(POINTER_OPERATOR);
@@ -85,6 +87,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     public void setNestedDeclarator(IASTDeclarator nested) {
+        assertNotFrozen();
         this.nestedDeclarator = nested;
         if (nested != null) {
 			nested.setParent(this);
@@ -93,6 +96,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

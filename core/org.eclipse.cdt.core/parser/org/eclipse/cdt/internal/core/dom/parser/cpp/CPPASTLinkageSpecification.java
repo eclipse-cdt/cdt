@@ -38,6 +38,7 @@ public class CPPASTLinkageSpecification extends ASTNode implements
     }
 
     public void setLiteral(String value) {
+        assertNotFrozen();
         this.literal = value;
     }
 
@@ -47,6 +48,7 @@ public class CPPASTLinkageSpecification extends ASTNode implements
     }
 
     public void addDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
     	declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
     	if(declaration != null) {
     		declaration.setParent(this);

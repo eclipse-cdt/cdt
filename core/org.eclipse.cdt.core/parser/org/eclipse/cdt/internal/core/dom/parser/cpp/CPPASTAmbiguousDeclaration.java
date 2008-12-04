@@ -31,6 +31,7 @@ public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements IASTA
 	}
 
 	public void addDeclaration(IASTDeclaration d) {
+        assertNotFrozen();
     	if (d != null) {
     		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, ++declsPos, d );
     		d.setParent(this);

@@ -40,6 +40,7 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
     }
 
     public void setBody(IASTStatement body) {
+        assertNotFrozen();
         this.body = body;
         if (body != null) {
 			body.setParent(this);
@@ -52,6 +53,7 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
     }
 
     public void setCondition(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);

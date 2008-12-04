@@ -28,6 +28,7 @@ public class CASTPointer extends ASTNode implements ICASTPointer {
     }
 
     public void setRestrict(boolean value) {
+        assertNotFrozen();
         isRestrict = value;
     }
 
@@ -40,10 +41,12 @@ public class CASTPointer extends ASTNode implements ICASTPointer {
     }
 
     public void setConst(boolean value) {
+        assertNotFrozen();
         isConst = value;
     }
 
     public void setVolatile(boolean value) {
+        assertNotFrozen();
         isVolatile = value;
     }
 

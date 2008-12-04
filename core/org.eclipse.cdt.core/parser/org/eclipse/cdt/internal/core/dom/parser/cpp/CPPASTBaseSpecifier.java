@@ -51,6 +51,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements
     }
 
     public void setVirtual(boolean value) {
+        assertNotFrozen();
         isVirtual = value;
     }
 
@@ -59,6 +60,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements
     }
 
     public void setVisibility(int visibility) {
+        assertNotFrozen();
         this.visibility = visibility;
     }
 
@@ -67,6 +69,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

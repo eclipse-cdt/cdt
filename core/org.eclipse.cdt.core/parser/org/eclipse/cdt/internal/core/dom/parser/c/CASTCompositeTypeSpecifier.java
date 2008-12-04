@@ -42,6 +42,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     }
 
     public void setKey(int key) {
+        assertNotFrozen();
         this.key = key;
     }
 
@@ -50,6 +51,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     }
     
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -71,6 +73,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 
 
     public void addMemberDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
     	if (declaration != null) {
     		declaration.setParent(this);
     		declaration.setPropertyInParent(MEMBER_DECLARATION);

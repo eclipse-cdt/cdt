@@ -41,6 +41,7 @@ public class CPPASTUsingDeclaration extends ASTNode implements
 	}
 
 	public void setIsTypename(boolean value) {
+        assertNotFrozen();
         this.typeName = value;
     }
 
@@ -53,6 +54,7 @@ public class CPPASTUsingDeclaration extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

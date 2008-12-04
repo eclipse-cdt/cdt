@@ -32,6 +32,7 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
 	}
 
 	public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);
@@ -45,6 +46,7 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
     
     @Override
 	public void setOperand(IASTExpression expression) {
+        assertNotFrozen();
         super.setOperand(expression);
         // this needs to be overridden because CPPASTUnaryExpression sets
         // propertyInParent to ICPPASTUnaryExpression.OPERAND, we want 

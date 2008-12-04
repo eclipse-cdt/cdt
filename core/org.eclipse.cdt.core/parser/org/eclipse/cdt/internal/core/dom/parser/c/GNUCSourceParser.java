@@ -19,54 +19,37 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
-import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
-import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
-import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
-import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
@@ -76,27 +59,23 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -112,6 +91,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -128,9 +108,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean supportGCCStyleDesignators;
 	private IIndex index;
-    protected CASTTranslationUnit translationUnit;
+    protected IASTTranslationUnit translationUnit;
 
     private int fPreventKnrCheck= 0;
+    
+    private final ICNodeFactory nodeFactory;
 
     public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
             IParserLogService logService, ICParserExtensionConfiguration config) {
@@ -140,7 +122,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
             IParserLogService logService, ICParserExtensionConfiguration config,
             IIndex index) {
-        super(scanner, logService, parserMode, 
+        super(scanner, logService, parserMode, CNodeFactory.getDefault(),
         		config.supportStatementsInExpressions(), 
         		config.supportTypeofUnaryExpressions(),
         		config.supportAlignOfUnaryExpression(),
@@ -153,10 +135,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         supportExtendedSizeofOperator= config.supportExtendedSizeofOperator();
         supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
         this.index= index;
+        this.nodeFactory = CNodeFactory.getDefault();
     }
 
-    protected IASTInitializer optionalCInitializer() throws EndOfFileException,
-            BacktrackException {
+    protected IASTInitializer optionalCInitializer() throws EndOfFileException, BacktrackException {
         if (LT(1) == IToken.tASSIGN) {
             consume();
             return cInitializerClause(false);
@@ -172,16 +154,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             	if (!ASTQueries.canContainName(assignmentExpression))
             		return null;
             }
-            IASTInitializerExpression result= createInitializerExpression();
-            result.setExpression(assignmentExpression);
+            IASTInitializerExpression result= nodeFactory.newInitializerExpression(assignmentExpression);
             setRange(result, assignmentExpression);
             return result;
-
         }
         
         // it's an aggregate initializer
         consume(IToken.tLBRACE);
-        IASTInitializerList result = createInitializerList();
+        IASTInitializerList result = nodeFactory.newInitializerList();
 
         // bug 196468, gcc accepts empty braces.
         if (supportGCCStyleDesignators && LT(1) == IToken.tRBRACE) {
@@ -205,14 +185,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		if (LT(1) == IToken.tASSIGN)
         			consume();
         		IASTInitializer initializer= cInitializerClause(false);
-        		ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
+        		ICASTDesignatedInitializer desigInitializer = nodeFactory.newDesignatedInitializer(initializer);
         		setRange(desigInitializer, designator.get(0));
         		adjustLength(desigInitializer, initializer);
 
         		for (ICASTDesignator d : designator) {
         			desigInitializer.addDesignator(d);
         		}
-        		desigInitializer.setOperandInitializer(initializer);
         		result.addInitializer(desigInitializer);
         	}
 
@@ -239,17 +218,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         // consume the closing brace
     }
 
-    protected ICASTDesignatedInitializer createDesignatorInitializer() {
-        return new CASTDesignatedInitializer();
-    }
-
-    protected IASTInitializerList createInitializerList() {
-        return new CASTInitializerList();
-    }
-
-    protected IASTInitializerExpression createInitializerExpression() {
-        return new CASTInitializerExpression();
-    }
 
     private List<? extends ICASTDesignator> designatorList() throws EndOfFileException, BacktrackException {
     	final int lt1= LT(1);
@@ -261,9 +229,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     int offset = consume().getOffset();
                     IToken id = identifier();
                     IASTName n = createName(id);
-                    ICASTFieldDesignator fieldDesignator = createFieldDesignator();
+                    ICASTFieldDesignator fieldDesignator = nodeFactory.newFieldDesignator(n);
                 	setRange(fieldDesignator, offset, id.getEndOffset());
-                    fieldDesignator.setName(n);
                     if (designatorList == null)
                         designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     designatorList.add(fieldDesignator);
@@ -276,18 +243,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     	consume(IToken.tELLIPSIS);
                     	IASTExpression constantExpression2 = expression();
                     	int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
-                    	IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
+                    	IGCCASTArrayRangeDesignator designator = nodeFactory.newArrayRangeDesignatorGCC(constantExpression, constantExpression2);
                     	setRange(designator, offset, lastOffset);
-                    	designator.setRangeFloor(constantExpression);
-                    	designator.setRangeCeiling(constantExpression2);
                     	if (designatorList == null)
                     		designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
                     	designatorList.add(designator);
                     } else {
                         int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
-                        ICASTArrayDesignator designator = createArrayDesignator();
+                        ICASTArrayDesignator designator = nodeFactory.newArrayDesignator(constantExpression);
                     	setRange(designator, offset, lastOffset);
-                        designator.setSubscriptExpression(constantExpression);
                         if (designatorList == null)
                             designatorList = new ArrayList<ICASTDesignator>(DEFAULT_DESIGNATOR_LIST_SIZE);
                         designatorList.add(designator);
@@ -304,26 +268,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		if (supportGCCStyleDesignators && lt1 == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
 			IToken identifier = identifier();
 			int lastOffset = consume(IToken.tCOLON).getEndOffset();
-			ICASTFieldDesignator designator = createFieldDesignator();
-			((ASTNode) designator).setOffsetAndLength(identifier.getOffset(), lastOffset - identifier.getOffset());
 			IASTName n = createName(identifier);
-			designator.setName(n);
+			ICASTFieldDesignator designator = nodeFactory.newFieldDesignator(n);
+			((ASTNode) designator).setOffsetAndLength(identifier.getOffset(), lastOffset - identifier.getOffset());
 			return Collections.singletonList(designator);
 		}
 		
         return null;
-    }
-
-    protected IGCCASTArrayRangeDesignator createArrayRangeDesignator() {
-        return new CASTArrayRangeDesignator();
-    }
-
-    protected ICASTArrayDesignator createArrayDesignator() {
-        return new CASTArrayDesignator();
-    }
-
-    protected ICASTFieldDesignator createFieldDesignator() {
-        return new CASTFieldDesignator();
     }
     
 	@Override
@@ -333,8 +284,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             return asmDeclaration();
         case IToken.tSEMI:
         	IToken semi= consume();
-        	IASTSimpleDeclaration decl= createSimpleDeclaration();
-        	IASTDeclSpecifier declspec= createSimpleTypeSpecifier();
+        	IASTDeclSpecifier declspec= nodeFactory.newSimpleDeclSpecifier();
+        	IASTSimpleDeclaration decl= nodeFactory.newSimpleDeclaration(declspec);
         	decl.setDeclSpecifier(declspec);
         	((ASTNode) declspec).setOffsetAndLength(semi.getOffset(), 0);
         	((ASTNode) decl).setOffsetAndLength(semi.getOffset(), semi.getLength());
@@ -401,8 +352,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         } catch (BacktrackException e) {
         	IASTNode node= e.getNodeBeforeProblem();
         	if (node instanceof IASTDeclSpecifier) {
-        		IASTSimpleDeclaration d= createSimpleDeclaration();
-        		d.setDeclSpecifier((IASTDeclSpecifier) node);
+        		IASTSimpleDeclaration d= nodeFactory.newSimpleDeclaration((IASTDeclSpecifier) node);
         		setRange(d, node);
         		throwBacktrack(e.getProblem(), d);
         	}
@@ -459,11 +409,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         // no function body
-        IASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration();
-        simpleDeclaration.setDeclSpecifier(declSpec);
-        for (IASTDeclarator declarator : declarators) {
+        IASTSimpleDeclaration simpleDeclaration = nodeFactory.newSimpleDeclaration(declSpec);
+        for (IASTDeclarator declarator : declarators)
             simpleDeclaration.addDeclarator(declarator);
-        }
         
         ((ASTNode) simpleDeclaration).setOffsetAndLength(firstOffset, endOffset-firstOffset);
         
@@ -484,9 +432,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		if (fdtor instanceof IASTFunctionDeclarator == false)
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
-		IASTFunctionDefinition funcDefinition = createFunctionDefinition();
-		funcDefinition.setDeclSpecifier(declSpec);
-		funcDefinition.setDeclarator((IASTFunctionDeclarator) fdtor);
+		IASTFunctionDefinition funcDefinition = nodeFactory.newFunctionDefinition(declSpec, (IASTFunctionDeclarator) fdtor, null);
 		
 		try {
 			IASTStatement s= handleFunctionBody();
@@ -505,25 +451,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
-    @Override
-	protected IASTFunctionDefinition createFunctionDefinition() {
-        return new CASTFunctionDefinition();
-    }
-
-    @Override
-	protected IASTSimpleDeclaration createSimpleDeclaration() {
-        return new CASTSimpleDeclaration();
-    }
-
-    protected CASTTranslationUnit createTranslationUnit() {
-        CASTTranslationUnit t = new CASTTranslationUnit();
-        t.setOffset(0);
-        return t;
-    }
 
 	@Override
 	protected void setupTranslationUnit() throws DOMException {
-		translationUnit = createTranslationUnit();
+		translationUnit = nodeFactory.newTranslationUnit();
 		translationUnit.setIndex(index);
 
 		// add built-in names to the scope
@@ -535,13 +466,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				ASTInternal.addBinding(tuScope, binding);
 			}
 		}
-		translationUnit.setLocationResolver(scanner.getLocationResolver());
+		if(translationUnit instanceof ASTTranslationUnit)
+			((ASTTranslationUnit)translationUnit).setLocationResolver(scanner.getLocationResolver());
 	}
 
-    @Override
-	protected IASTProblemDeclaration createProblemDeclaration() {
-        return new CASTProblemDeclaration();
-    }
 
     @Override
 	protected IASTExpression assignmentExpression() throws EndOfFileException, BacktrackException {
@@ -582,8 +510,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression unaryExpression() throws EndOfFileException,
-            BacktrackException {
+	protected IASTExpression unaryExpression() throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
             return unarayExpression(IASTUnaryExpression.op_star);
@@ -618,21 +545,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     @Override
 	protected IASTExpression buildTypeIdExpression(int op, IASTTypeId typeId,
             int startingOffset, int endingOffset) {
-        IASTTypeIdExpression result = createTypeIdExpression();
-        result.setOperator(op);
+        IASTTypeIdExpression result = nodeFactory.newTypeIdExpression(op, typeId);
         ((ASTNode) result).setOffsetAndLength(startingOffset, endingOffset - startingOffset);
-        ((ASTNode) result).setLength(endingOffset - startingOffset);
-        result.setTypeId(typeId);
         return result;
     }
+    
 
-    protected IASTTypeIdExpression createTypeIdExpression() {
-        return new CASTTypeIdExpression();
-    }
-
-    protected IASTExpression postfixExpression() throws EndOfFileException,
-            BacktrackException {
-
+    protected IASTExpression postfixExpression() throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         switch (LT(1)) {
         case IToken.tLPAREN:
@@ -680,11 +599,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 					throw backtrack;
 				}
 				
-                IASTArraySubscriptExpression s = createArraySubscriptExpression();
+                IASTArraySubscriptExpression s = nodeFactory.newArraySubscriptExpression(firstExpression, secondExpression);
                 ((ASTNode) s).setOffsetAndLength(((ASTNode) firstExpression)
                         .getOffset(), last - ((ASTNode) firstExpression).getOffset());
-                s.setArrayExpression(firstExpression);
-                s.setSubscriptExpression(secondExpression);
                 firstExpression = s;
                 break;
             case IToken.tLPAREN:
@@ -697,14 +614,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				else
 					// must be EOC
 					last = Integer.MAX_VALUE;
-                IASTFunctionCallExpression f = createFunctionCallExpression();
+                IASTFunctionCallExpression f = nodeFactory.newFunctionCallExpression(firstExpression, secondExpression);
                 ((ASTNode) f).setOffsetAndLength(((ASTNode) firstExpression)
                         .getOffset(), last - ((ASTNode) firstExpression).getOffset());
-                f.setFunctionNameExpression(firstExpression);
-
-                if (secondExpression != null) {
-                    f.setParameterExpression(secondExpression);
-                }
                 firstExpression = f;
                 break;
             case IToken.tINCR:
@@ -726,14 +638,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (name == null)
                 	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
                 			((ASTNode) firstExpression).getLength() + dot.getLength());
-                IASTFieldReference result = createFieldReference();
+                IASTFieldReference result = nodeFactory.newFieldReference(name, firstExpression);
+                result.setIsPointerDereference(false);
                 ((ASTNode) result).setOffsetAndLength(
                         ((ASTNode) firstExpression).getOffset(),
-                        calculateEndOffset(name)
-                                - ((ASTNode) firstExpression).getOffset());
-                result.setFieldOwner(firstExpression);
-                result.setIsPointerDereference(false);
-                result.setFieldName(name);
+                        calculateEndOffset(name) - ((ASTNode) firstExpression).getOffset());
                 firstExpression = result;
                 break;
             case IToken.tARROW:
@@ -743,13 +652,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (name == null)
                 	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
                 			((ASTNode) firstExpression).getLength() + arrow.getLength());
-                result = createFieldReference();
+                result = nodeFactory.newFieldReference(name, firstExpression);
+                result.setIsPointerDereference(true);
                 ((ASTNode) result).setOffsetAndLength(
                         ((ASTNode) firstExpression).getOffset(),
                         calculateEndOffset(name) - ((ASTNode) firstExpression).getOffset());
-                result.setFieldOwner(firstExpression);
-                result.setIsPointerDereference(true);
-                result.setFieldName(name);
                 firstExpression = result;
                 break;
             default:
@@ -758,67 +665,41 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    @Override
-	protected IASTFunctionCallExpression createFunctionCallExpression() {
-        return new CASTFunctionCallExpression();
-    }
-
-    protected IASTArraySubscriptExpression createArraySubscriptExpression() {
-        return new CASTArraySubscriptExpression();
-    }
 
     protected ICASTTypeIdInitializerExpression buildTypeIdInitializerExpression(
             IASTTypeId t, IASTInitializer i, int offset, int lastOffset) {
-        ICASTTypeIdInitializerExpression result = createTypeIdInitializerExpression();
+        ICASTTypeIdInitializerExpression result = nodeFactory.newTypeIdInitializerExpression(t, i);
         ((ASTNode) result).setOffsetAndLength(offset, lastOffset - offset);
-        result.setTypeId(t);
-        result.setInitializer(i);
         return result;
     }
 
-    protected ICASTTypeIdInitializerExpression createTypeIdInitializerExpression() {
-        return new CASTTypeIdInitializerExpression();
-    }
-
-    protected IASTFieldReference createFieldReference() {
-        return new CASTFieldReference();
-    }
 
     @Override
-	protected IASTExpression primaryExpression() throws EndOfFileException,
-            BacktrackException {
+	protected IASTExpression primaryExpression() throws EndOfFileException, BacktrackException {
         IToken t = null;
         IASTLiteralExpression literalExpression = null;
         switch (LT(1)) {
         // TO DO: we need more literals...
         case IToken.tINTEGER:
             t = consume();
-            literalExpression = createLiteralExpression();
-            literalExpression.setKind(IASTLiteralExpression.lk_integer_constant);
-            literalExpression.setValue(t.getImage());
+            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.tFLOATINGPT:
             t = consume();
-            literalExpression = createLiteralExpression();
-            literalExpression.setKind(IASTLiteralExpression.lk_float_constant);
-            literalExpression.setValue(t.getImage());
+            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.tSTRING:
         case IToken.tLSTRING:
             t = consume();
-            literalExpression = createLiteralExpression();
-            literalExpression.setKind(IASTLiteralExpression.lk_string_literal);
-            literalExpression.setValue(t.getImage());
+            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_string_literal, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.tCHAR:
         case IToken.tLCHAR:
             t = consume();
-            literalExpression = createLiteralExpression();
-            literalExpression.setKind(IASTLiteralExpression.lk_char_constant);
-            literalExpression.setValue(t.getImage());
+            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getLength());
             return literalExpression;
         case IToken.tLPAREN:
@@ -842,9 +723,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tEOC:
             int startingOffset = LA(1).getOffset();
             IToken t1 = identifier();
-            IASTIdExpression idExpression = createIdExpression();
             IASTName name = createName(t1);
-            idExpression.setName(name);
+            IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
             ((ASTNode) idExpression).setOffsetAndLength((ASTNode) name);
             return idExpression;
         default:
@@ -856,14 +736,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    protected IASTLiteralExpression createLiteralExpression() {
-        return new CASTLiteralExpression();
-    }
-
-    @Override
-	protected IASTIdExpression createIdExpression() {
-        return new CASTIdExpression();
-    }
 
     @Override
 	protected IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException {
@@ -894,18 +766,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	fPreventKnrCheck--;
         }
 
-        IASTTypeId result = createTypeId();
+        IASTTypeId result = nodeFactory.newTypeId(declSpecifier, declarator);
         ((ASTNode) result).setOffsetAndLength(startingOffset, figureEndOffset(
                 declSpecifier, declarator) - startingOffset);
-
-        result.setDeclSpecifier(declSpecifier);
-        result.setAbstractDeclarator(declarator);
-
         return result;
-    }
-
-    protected IASTTypeId createTypeId() {
-        return new CASTTypeId();
     }
 
     /**
@@ -955,18 +819,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
             }
 
-            IASTPointerOperator po = createPointer();
+            ICASTPointer po = nodeFactory.newPointer();
             ((ASTNode) po).setOffsetAndLength(startOffset, last.getEndOffset() - startOffset);
-            ((ICASTPointer) po).setConst(isConst);
-            ((ICASTPointer) po).setVolatile(isVolatile);
-            ((ICASTPointer) po).setRestrict(isRestrict);
+            po.setConst(isConst);
+            po.setVolatile(isVolatile);
+            po.setRestrict(isRestrict);
             pointerOps.add(po);
         }
     }
 
-    protected ICASTPointer createPointer() {
-        return new CASTPointer();
-    }
 
 	private final static int INLINE=0x1, CONST=0x2, RESTRICT=0x4, VOLATILE=0x8, 
 	    SHORT=0x10,	UNSIGNED= 0x20, SIGNED=0x40, COMPLEX=0x80, IMAGINARY=0x100;
@@ -1133,10 +994,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 		lookAheadForDeclarator(declOption);
                 	}
                 } catch (FoundAggregateInitializer e) {
-                	e.fDeclSpec= createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
+                	e.fDeclSpec= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
                 	throw e;
                 } catch (FoundDeclaratorException e) {
-                	e.declSpec= createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
+                	e.declSpec= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
 
                 	IToken mark= mark();
                 	try {
@@ -1144,7 +1005,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             			final IASTDeclarator altDtor = initDeclarator(declOption);
                 		if (LA(1) == e.currToken) {
 							e.altDeclarator= altDtor;
-                			e.altSpec= createNamedTypeSpecifier(idToken, storageClass, options, offset, idToken.getEndOffset());
+                			e.altSpec= buildNamedTypeSpecifier(idToken, storageClass, options, offset, idToken.getEndOffset());
                 		}
                 	} catch (FoundAggregateInitializer lie) {
                 		lie.fDeclSpec= e.declSpec;
@@ -1255,31 +1116,28 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         if (identifier != null) 
-            return createNamedTypeSpecifier(identifier, storageClass, options, offset, endOffset);
+            return buildNamedTypeSpecifier(identifier, storageClass, options, offset, endOffset);
         
-        return createSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
+        return buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
     }
 
-	private ICASTTypedefNameSpecifier createNamedTypeSpecifier(IToken identifier, int storageClass,
+	private ICASTTypedefNameSpecifier buildNamedTypeSpecifier(IToken identifier, int storageClass,
 			int options, int offset, int endOffset) {
-		ICASTTypedefNameSpecifier declSpec = (ICASTTypedefNameSpecifier)createNamedTypeSpecifier();
 		IASTName name = createName(identifier);
-		declSpec.setName(name);
+		ICASTTypedefNameSpecifier declSpec = nodeFactory.newTypedefNameSpecifier(name);
 		configureDeclSpec(declSpec, storageClass, options);
 		declSpec.setRestrict((options & RESTRICT) != 0);
         ((ASTNode) declSpec).setOffsetAndLength(offset, endOffset - offset);
         return declSpec;
 	}
 
-	private ICASTSimpleDeclSpecifier createSimpleDeclSpec(int storageClass, int simpleType,
+	private ICASTSimpleDeclSpecifier buildSimpleDeclSpec(int storageClass, int simpleType,
 			int options, int isLong, IASTExpression typeofExpression, int offset, int endOffset) {
-		ICASTSimpleDeclSpecifier declSpec = null;
-		if (typeofExpression != null) {
-			declSpec = createGCCSimpleTypeSpecifier();
-            ((IGCCASTSimpleDeclSpecifier) declSpec).setTypeofExpression(typeofExpression);
-        } else {
-			declSpec = createSimpleTypeSpecifier();
-        }
+		ICASTSimpleDeclSpecifier declSpec;
+		if (typeofExpression != null)
+			declSpec = nodeFactory.newSimpleDeclSpecifierGCC(typeofExpression);
+        else
+			declSpec = nodeFactory.newSimpleDeclSpecifier();
 		
     	configureDeclSpec(declSpec, storageClass, options);
 		declSpec.setType(simpleType);
@@ -1327,18 +1185,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return false;
 	}
 	
-    protected ICASTSimpleDeclSpecifier createSimpleTypeSpecifier() {
-        return new CASTSimpleDeclSpecifier();
-    }
-
-	protected IGCCASTSimpleDeclSpecifier createGCCSimpleTypeSpecifier() {
-		return new GCCASTSimpleDeclSpecifier();
-	}
-	
-    @Override
-	protected IASTNamedTypeSpecifier createNamedTypeSpecifier() {
-        return new CASTTypedefNameSpecifier();
-    }
 
     /**
      * Parse a class/struct/union definition.
@@ -1386,10 +1232,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(errorPoint);
         }
 
-        IASTName name = (nameToken == null) ? createName() : createName(nameToken);
-        ICASTCompositeTypeSpecifier result = createCompositeTypeSpecifier();
-        result.setKey(classKind);
-        result.setName(name);
+        IASTName name = (nameToken == null) ? nodeFactory.newName() : createName(nameToken);
+        ICASTCompositeTypeSpecifier result = nodeFactory.newCompositeTypeSpecifier(classKind, name);
 
         int endOffset= consume().getEndOffset();
         int declOffset= -1;
@@ -1435,17 +1279,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    @Override
-	protected IASTName createName() {
-        return new CASTName();
-    }
 
-    protected ICASTCompositeTypeSpecifier createCompositeTypeSpecifier() {
-        return new CASTCompositeTypeSpecifier();
-    }
-
-    protected ICASTElaboratedTypeSpecifier elaboratedTypeSpecifier()
-            throws BacktrackException, EndOfFileException {
+    protected IASTElaboratedTypeSpecifier elaboratedTypeSpecifier() throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
         IToken t = consume();
         int eck = 0;
@@ -1470,16 +1305,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         IToken identifier = identifier();
         IASTName name = createName(identifier);
-        ICASTElaboratedTypeSpecifier result = createElaboratedTypeSpecifier();
-        result.setName(name);
-        result.setKind(eck);
+        IASTElaboratedTypeSpecifier result = nodeFactory.newElaboratedTypeSpecifier(eck, name);
         ((ASTNode) result).setOffsetAndLength(t.getOffset(), calculateEndOffset(name) - t.getOffset());
         return result;
     }
 
-    protected ICASTElaboratedTypeSpecifier createElaboratedTypeSpecifier() {
-        return new CASTElaboratedTypeSpecifier();
-    }
 
     @Override
 	protected IASTDeclarator initDeclarator(final DeclarationOptions option) 
@@ -1543,7 +1373,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (option.fAllowAbstract) {
         		final IToken mark= mark();
         		try {
-        			cand1= declarator(pointerOps, createName(), null, startingOffset, endOffset, option);
+        			cand1= declarator(pointerOps, nodeFactory.newName(), null, startingOffset, endOffset, option);
             		if (option.fRequireAbstract) 
             			return cand1;
 
@@ -1587,7 +1417,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (!option.fAllowBitField || LT(1) != IToken.tCOLON)
         		throwBacktrack(LA(1));
         }
-        return declarator(pointerOps, createName(), null, startingOffset, endOffset, option);
+        return declarator(pointerOps, nodeFactory.newName(), null, startingOffset, endOffset, option);
     }
         
 	private IASTDeclarator declarator(final List<IASTPointerOperator> pointerOps,	
@@ -1634,7 +1464,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         if (result == null) {
-        	result= createDeclarator();
+        	result= nodeFactory.newDeclarator(null);
         	setDeclaratorID(result, declaratorName, nestedDeclarator);
         } else {
         	endOffset= calculateEndOffset(result);
@@ -1666,7 +1496,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	private void setDeclaratorID(IASTDeclarator declarator, IASTName declaratorName, IASTDeclarator nestedDeclarator) {
 		if (nestedDeclarator != null) { 
 			declarator.setNestedDeclarator(nestedDeclarator);
-			declarator.setName(createName());
+			declarator.setName(nodeFactory.newName());
 		} else {
 			declarator.setName(declaratorName);
 		}
@@ -1729,10 +1559,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 						}
 					}
 
-		            ICASTKnRFunctionDeclarator functionDecltor = createKnRFunctionDeclarator();
-		            parmDeclarations = (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
-		            functionDecltor.setParameterDeclarations(parmDeclarations);
-		            functionDecltor.setParameterNames(parmNames);
+					parmDeclarations = (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
+		            ICASTKnRFunctionDeclarator functionDecltor = nodeFactory.newKnRFunctionDeclarator(parmNames, parmDeclarations);
 		            ((ASTNode) functionDecltor).setOffsetAndLength(startOffset, endOffset-startOffset);
 		            return functionDecltor;
 				}
@@ -1773,7 +1601,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				break;
 			}
 		}
-		IASTStandardFunctionDeclarator fc = createFunctionDeclarator();
+		IASTStandardFunctionDeclarator fc = nodeFactory.newFunctionDeclarator(null);
 		fc.setVarArgs(encounteredVarArgs);
 		if (parameters != null) {
 			for (IASTParameterDeclaration pd : parameters) {
@@ -1816,7 +1644,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			throwBacktrack(LA(1));
 		
 		final int endOffset = calculateEndOffset(arrayMods.get(arrayMods.size() - 1));
-		final IASTArrayDeclarator d = createArrayDeclarator();
+		final IASTArrayDeclarator d = nodeFactory.newArrayDeclarator(null);
 		for (IASTArrayModifier m : arrayMods) {
             d.addArrayModifier(m);
         }
@@ -1835,32 +1663,17 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		final IASTExpression bitField = constantExpression();
 		final int endOffset = calculateEndOffset(bitField);
 		
-        IASTFieldDeclarator d = createFieldDeclarator();
+        IASTFieldDeclarator d = nodeFactory.newFieldDeclarator(null, bitField);
         d.setBitFieldSize(bitField);
 
         ((ASTNode) d).setOffsetAndLength(start, endOffset-start);
 		return d;
 	}
 	
-	protected IASTArrayDeclarator createArrayDeclarator() {
-        return new CASTArrayDeclarator();
-    }
-
-    protected IASTFieldDeclarator createFieldDeclarator() {
-        return new CASTFieldDeclarator();
-    }
-
-    protected IASTStandardFunctionDeclarator createFunctionDeclarator() {
-        return new CASTFunctionDeclarator();
-    }
-
-    protected ICASTKnRFunctionDeclarator createKnRFunctionDeclarator() {
-        return new CASTKnRFunctionDeclarator();
-    }
 
     @Override
 	protected IASTName createName(IToken t) {
-        IASTName n = new CASTName(t.getCharImage());
+        IASTName n = nodeFactory.newName(t.getCharImage());
         switch (t.getType()) {
         case IToken.tCOMPLETION:
         case IToken.tEOC:
@@ -1871,9 +1684,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return n;
     }
 
-    protected IASTDeclarator createDeclarator() {
-        return new CASTDeclarator();
-    }
 
 	protected void consumeArrayModifiers(List<IASTArrayModifier> arrayMods) throws EndOfFileException, BacktrackException {
         while (LT(1) == IToken.tLBRACKET) {
@@ -1934,11 +1744,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			}
 
 
-            IASTArrayModifier arrayMod = null;
+            IASTArrayModifier arrayMod;
             if (!(isStatic || isRestrict || isConst || isVolatile || isVarSized))
-                arrayMod = createArrayModifier();
+                arrayMod = nodeFactory.newArrayModifier(null);
             else {
-                ICASTArrayModifier temp = createCArrayModifier();
+                ICASTArrayModifier temp = nodeFactory.newModifiedArrayModifier(null);
                 temp.setStatic(isStatic);
                 temp.setConst(isConst);
                 temp.setVolatile(isVolatile);
@@ -1954,13 +1764,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected ICASTArrayModifier createCArrayModifier() {
-        return new CASTModifiedArrayModifier();
-    }
-
-    protected IASTArrayModifier createArrayModifier() {
-        return new CASTArrayModifier();
-    }
 
     protected IASTParameterDeclaration parameterDeclaration(DeclarationOptions option) throws BacktrackException, EndOfFileException {
         final IToken current = LA(1);
@@ -1993,24 +1796,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         final int length = figureEndOffset(declSpec, declarator) - startingOffset;
-        IASTParameterDeclaration result = createParameterDeclaration();
+        IASTParameterDeclaration result = nodeFactory.newParameterDeclaration(declSpec, declarator);
 		((ASTNode) result).setOffsetAndLength(startingOffset, length);
-        result.setDeclSpecifier(declSpec);
-        result.setDeclarator(declarator);
         if (altDeclarator != null && altDeclSpec != null) {
-            IASTParameterDeclaration alt = createParameterDeclaration();
+            IASTParameterDeclaration alt = nodeFactory.newParameterDeclaration(altDeclSpec, altDeclarator);
     		((ASTNode) alt).setOffsetAndLength(startingOffset, length);
-            alt.setDeclSpecifier(altDeclSpec);
-            alt.setDeclarator(altDeclarator);
             // order is important, prefer alternative over the declarator found via the lookahead.
             result= new CASTAmbiguousParameterDeclaration(alt, result);
             ((ASTNode) result).setOffsetAndLength((ASTNode) alt);
         }
         return result;
-    }
-
-    protected IASTParameterDeclaration createParameterDeclaration() {
-        return new CASTParameterDeclaration();
     }
 
 
@@ -2019,131 +1814,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return translationUnit;
     }
 
-    @Override
-	protected IASTCompoundStatement createCompoundStatement() {
-        return new CASTCompoundStatement();
-    }
 
     @Override
-	protected IASTBinaryExpression createBinaryExpression() {
-        return new CASTBinaryExpression();
-    }
-
-    @Override
-	protected IASTConditionalExpression createConditionalExpression() {
-        return new CASTConditionalExpression();
-    }
-
-    @Override
-	protected IASTUnaryExpression createUnaryExpression() {
-        return new CASTUnaryExpression();
-    }
-
-    @Override
-	protected IGNUASTCompoundStatementExpression createCompoundStatementExpression() {
-        return new CASTCompoundStatementExpression();
-    }
-
-    @Override
-	protected IASTExpressionList createExpressionList() {
-        return new CASTExpressionList();
-    }
-
-    @Override
-	protected IASTEnumerator createEnumerator() {
-        return new CASTEnumerator();
-    }
-
-    @Override
-	protected IASTLabelStatement createLabelStatement() {
-        return new CASTLabelStatement();
-    }
-
-    @Override
-	protected IASTGotoStatement createGoToStatement() {
-        return new CASTGotoStatement();
-    }
-
-    @Override
-	protected IASTReturnStatement createReturnStatement() {
-        return new CASTReturnStatement();
-    }
-
-    protected IASTForStatement createForStatement() {
-        return new CASTForStatement();
-    }
-
-    @Override
-	protected IASTContinueStatement createContinueStatement() {
-        return new CASTContinueStatement();
-    }
-
-    @Override
-	protected IASTDoStatement createDoStatement() {
-        return new CASTDoStatement();
-    }
-
-    @Override
-	protected IASTBreakStatement createBreakStatement() {
-        return new CASTBreakStatement();
-    }
-
-    @Override
-	protected IASTWhileStatement createWhileStatement() {
-        return new CASTWhileStatement();
-    }
-
-    @Override
-	protected IASTNullStatement createNullStatement() {
-        return new CASTNullStatement();
-    }
-
-    protected IASTSwitchStatement createSwitchStatement() {
-        return new CASTSwitchStatement();
-    }
-
-    protected IASTIfStatement createIfStatement() {
-        return new CASTIfStatement();
-    }
-
-    @Override
-	protected IASTDefaultStatement createDefaultStatement() {
-        return new CASTDefaultStatement();
-    }
-
-    @Override
-	protected IASTCaseStatement createCaseStatement() {
-        return new CASTCaseStatement();
-    }
-
-    @Override
-	protected IASTExpressionStatement createExpressionStatement() {
-        return new CASTExpressionStatement();
-    }
-
-    @Override
-	protected IASTDeclarationStatement createDeclarationStatement() {
-        return new CASTDeclarationStatement();
-    }
-
-    @Override
-	protected IASTASMDeclaration createASMDirective() {
-        return new CASTASMDeclaration();
-    }
-
-    @Override
-	protected IASTEnumerationSpecifier createEnumerationSpecifier() {
-        return new CASTEnumerationSpecifier();
-    }
-
-    @Override
-	protected IASTCastExpression createCastExpression() {
-        return new CASTCastExpression();
-    }
-
-    @Override
-	protected IASTStatement statement() throws EndOfFileException,
-            BacktrackException {
+	protected IASTStatement statement() throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         // labeled statements
         case IToken.t_case:
@@ -2193,22 +1866,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         translationUnit = null;
     }
 
-    @Override
-	protected IASTProblemStatement createProblemStatement() {
-        return new CASTProblemStatement();
-    }
-
-    @Override
-	protected IASTProblemExpression createProblemExpression() {
-        return new CASTProblemExpression();
-    }
-
-    @Override
-	protected IASTProblem createProblem(int signal, int offset, int length) {
-        IASTProblem result = new CASTProblem(signal, CharArrayUtils.EMPTY, true);
-        ((ASTNode) result).setOffsetAndLength(offset, length);
-        return result;
-    }
 
     private int countKnRCParms() {
         IToken mark = null;
@@ -2288,8 +1945,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     private IASTProblemDeclaration createKnRCProblemDeclaration(int offset, int length) throws EndOfFileException {
         IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, offset, length);
-        IASTProblemDeclaration pd = createProblemDeclaration();
-        pd.setProblem(p);
+        IASTProblemDeclaration pd = nodeFactory.newProblemDeclaration(p);
         ((ASTNode) pd).setOffsetAndLength((ASTNode) p);
 
         // consume until LBRACE is found (to leave off at the function body and
@@ -2343,8 +1999,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTExpression condition= condition(true);
             if (LT(1) == IToken.tEOC) {
             	// Completing in the condition
-            	IASTIfStatement new_if = createIfStatement();
-            	new_if.setConditionExpression(condition);
+            	IASTIfStatement new_if = nodeFactory.newIfStatement(condition, null, null);
 
             	if (if_statement != null) {
             		if_statement.setElseClause(new_if);
@@ -2354,7 +2009,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRPAREN);
     
             IASTStatement thenClause = statement();
-            IASTIfStatement new_if_statement = createIfStatement();
+            IASTIfStatement new_if_statement = nodeFactory.newIfStatement(null, null, null);
             ((ASTNode) new_if_statement).setOffset(so);
             if( condition != null ) // shouldn't be possible but failure in condition() makes it so
             {
@@ -2436,15 +2091,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         IASTStatement switch_body = parseSwitchBody();
-        IASTSwitchStatement switch_statement = createSwitchStatement();
+        IASTSwitchStatement switch_statement = nodeFactory.newSwitchStatement(switch_condition, switch_body);
         ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
         		(switch_body != null ? calculateEndOffset(switch_body) : LA(1).getEndOffset()) - startOffset);
-        switch_statement.setControllerExpression(switch_condition);
-        
-        if (switch_body != null) {
-            switch_statement.setBody(switch_body);
-        }
-
         return switch_statement;
     }
 
@@ -2487,22 +2136,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         default:
             throw backtrack;
         }
-        IASTForStatement for_statement = createForStatement();
-        IASTStatement for_body = null;
-        if (LT(1) != IToken.tEOC) {
-            for_body = statement();
-            ((ASTNode) for_statement).setOffsetAndLength(startOffset, calculateEndOffset(for_body) - startOffset);
-        }
-    
-        for_statement.setInitializerStatement(init);
         
-        if (for_condition != null) {
-            for_statement.setConditionExpression(for_condition);
-        }
-        if (iterationExpression != null) {
-            for_statement.setIterationExpression(iterationExpression);
-        }
-        if (for_body != null) {
+        IASTForStatement for_statement = nodeFactory.newForStatement(init, for_condition, iterationExpression, null);
+        if (LT(1) != IToken.tEOC) {
+        	IASTStatement for_body = statement();
+            ((ASTNode) for_statement).setOffsetAndLength(startOffset, calculateEndOffset(for_body) - startOffset);
             for_statement.setBody(for_body);
         }
         return for_statement;

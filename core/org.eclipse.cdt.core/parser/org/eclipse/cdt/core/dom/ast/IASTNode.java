@@ -184,4 +184,13 @@ public interface IASTNode {
 	 * @since 5.1
 	 */
 	public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException;
+	
+	
+	/**
+	 * Returns true if this node is frozen, false otherwise.
+	 * If the node is frozen then any attempt to call a method that changes
+	 * the node's state will result in an IllegalStateException.
+	 * @since 5.1
+	 */
+	public boolean isFrozen();
 }

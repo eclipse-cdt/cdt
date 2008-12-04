@@ -36,6 +36,7 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
 	}
 
 	public void addExpression(IASTExpression e) {
+        assertNotFrozen();
     	if (e != null) {
     		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, ++expPos, e );
     		e.setParent(this);

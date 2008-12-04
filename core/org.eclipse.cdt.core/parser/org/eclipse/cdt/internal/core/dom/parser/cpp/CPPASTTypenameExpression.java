@@ -45,6 +45,7 @@ public class CPPASTTypenameExpression extends ASTNode implements
 	}
 
 	public void setIsTemplate(boolean templateTokenConsumed) {
+        assertNotFrozen();
         isTemplate = templateTokenConsumed;
     }
 
@@ -53,6 +54,7 @@ public class CPPASTTypenameExpression extends ASTNode implements
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -65,6 +67,7 @@ public class CPPASTTypenameExpression extends ASTNode implements
     }
 
     public void setInitialValue(IASTExpression expressionList) {
+        assertNotFrozen();
         init = expressionList;
         if (expressionList != null) {
 			expressionList.setParent(this);

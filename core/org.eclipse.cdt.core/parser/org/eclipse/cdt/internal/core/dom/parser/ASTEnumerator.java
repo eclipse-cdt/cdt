@@ -37,6 +37,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	}
 
 	public void setName(IASTName name) {
+		assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -49,6 +50,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
     }
 
     public void setValue(IASTExpression expression) {
+    	assertNotFrozen();
         this.value = expression;
         if (expression != null) {
 			expression.setParent(this);

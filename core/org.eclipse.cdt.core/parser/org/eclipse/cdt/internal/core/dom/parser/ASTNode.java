@@ -40,6 +40,8 @@ public abstract class ASTNode implements IASTNode {
     private int length;
     private int offset;
 
+    private boolean frozen = false;
+    
     public IASTNode getParent() {
     	return parent;
     }
@@ -48,8 +50,27 @@ public abstract class ASTNode implements IASTNode {
 		ChildCollector collector= new ChildCollector(this);
 		return collector.getChildren();
 	}
+	
+	public boolean isFrozen() {
+		return frozen;
+	}
+	
+	public void freeze() {
+		frozen = true;
+		for(IASTNode child : getChildren()) {
+			if(child != null) {
+				((ASTNode)child).freeze();
+			}
+		}
+	}
     
+	protected void assertNotFrozen() throws IllegalStateException {
+		if(frozen)
+			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
+	}
+	
     public void setParent(IASTNode node) {
+    	assertNotFrozen();
     	this.parent = node;
     }
     
@@ -58,6 +79,7 @@ public abstract class ASTNode implements IASTNode {
     }
     
     public void setPropertyInParent(ASTNodeProperty property) {
+    	assertNotFrozen();
     	this.property = property;
     }
     

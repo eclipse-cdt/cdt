@@ -41,6 +41,7 @@ public class CASTTypeIdInitializerExpression extends ASTNode implements
     }
 
     public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);
@@ -53,6 +54,7 @@ public class CASTTypeIdInitializerExpression extends ASTNode implements
     }
 
     public void setInitializer(IASTInitializer initializer) {
+        assertNotFrozen();
         this.initializer = initializer;
         if (initializer != null) {
 			initializer.setParent(this);

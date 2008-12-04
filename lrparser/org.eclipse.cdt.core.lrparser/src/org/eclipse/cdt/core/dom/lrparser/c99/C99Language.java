@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
+import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 
 /**
@@ -84,7 +84,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	 */
 	@Override
 	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = C99ASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();
+		IASTTranslationUnit tu = CNodeFactory.getDefault().newTranslationUnit();
 		tu.setIndex(index);
 		if(tu instanceof CASTTranslationUnit) {
 			((CASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());

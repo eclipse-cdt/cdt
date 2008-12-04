@@ -43,6 +43,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
     }
 
     public void setKind(int value) {
+        assertNotFrozen();
         this.kind = value;
     }
 
@@ -51,6 +52,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

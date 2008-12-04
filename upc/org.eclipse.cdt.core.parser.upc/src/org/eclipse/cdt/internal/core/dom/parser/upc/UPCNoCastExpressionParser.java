@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
 import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 
 public class UPCNoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {

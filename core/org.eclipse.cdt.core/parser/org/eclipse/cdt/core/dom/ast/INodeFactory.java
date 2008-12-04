@@ -8,78 +8,47 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action;
+package org.eclipse.cdt.core.dom.ast;
 
-import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
-import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
-import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
-import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
-import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 
 /**
- * Abstract factory interface for creating AST node objects.
+ * Factory for creating AST nodes. This interface contains factory methods
+ * for nodes that are available for both C and C++.
+ * 
+ * Extending interfaces should use covariant return types where appropriate to
+ * allow the construction of language-specific versions of certain nodes. 
+ * 
+ * Most methods accept child nodes as parameters when constructing a new node.
+ * For convenience it is always allowed to pass null for any of these parameters.
+ * In this case the newly constructed node may be initialized using its 
+ * set() and add() methods instead.
+ * 
+ * Nodes created by this factory are not frozen, i.e. for any node created by this
+ * factory the following holds <code> node.isFrozen() == false </code>.
+ * 
+ * None of the factory methods should return null.
  * 
  * @author Mike Kucera
+ * @since 5.1
  */
-@SuppressWarnings("restriction")
-public interface IASTNodeFactory {
+public interface INodeFactory {
 
-	public IASTName newName(char[] name);
-
+	/**
+	 * Creates a "dummy" name using an empty char array.
+	 */
 	public IASTName newName();
-
-	// TODO this should return IASTCompletionNode
-	public ASTCompletionNode newCompletionNode(String prefix, IASTTranslationUnit tu);
+	
+	public IASTName newName(char[] name);
+	
+	/**
+	 * Calling the method getASTNodeFactory() on the translation unit returned by this
+	 * method will return the node factory that was used to create the IASTTranslationUnit.
+	 */
+	public IASTTranslationUnit newTranslationUnit();
+	
 
 	public IASTLiteralExpression newLiteralExpression(int kind, String rep);
 	
@@ -111,7 +80,7 @@ public interface IASTNodeFactory {
 	
 	public IASTCompoundStatement newCompoundStatement();
 	
-	public IASTSwitchStatement newSwitchStatment(IASTExpression controller, IASTStatement body);
+	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body);
 
 	public IASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
 
@@ -146,18 +115,16 @@ public interface IASTNodeFactory {
 	
 	public IASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
-
-	public IASTTranslationUnit newTranslationUnit();
 	
 	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name);
 	
 	public IASTASMDeclaration newASMDeclaration(String assembly);
 	
-	public IASTProblemDeclaration newProblemDeclaration();
+	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem);
 
-	public IASTProblemStatement newProblemStatement();
+	public IASTProblemStatement newProblemStatement(IASTProblem problem);
 
-	public IASTProblemExpression newProblemExpression();
+	public IASTProblemExpression newProblemExpression(IASTProblem problem);
 
 	public IASTProblem newProblem(int id, char[] arg, boolean error);
 
@@ -174,11 +141,17 @@ public interface IASTNodeFactory {
 	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 	
 	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
-	
-	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements);
-	
-	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions);
 
-	public IASTDeclSpecifier newSimpleDeclSpecifier();
+	public IASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 	
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
+	
+	public IASTPointer newPointer();
+	
+	public IASTFieldReference newFieldReference(IASTName name, IASTExpression owner);
+	
+	public IASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
+	
+	public IASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
+
 }

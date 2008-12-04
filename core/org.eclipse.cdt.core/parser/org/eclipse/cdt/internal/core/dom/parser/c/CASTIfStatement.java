@@ -49,6 +49,7 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
     }
 
     public void setConditionExpression(IASTExpression condition) {
+        assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
 			condition.setParent(this);
@@ -61,6 +62,7 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
     }
 
     public void setThenClause(IASTStatement thenClause) {
+        assertNotFrozen();
         this.thenClause = thenClause;
         if (thenClause != null) {
 			thenClause.setParent(this);
@@ -73,6 +75,7 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
     }
 
     public void setElseClause(IASTStatement elseClause) {
+        assertNotFrozen();
         this.elseClause = elseClause;
         if (elseClause != null) {
 			elseClause.setParent(this);

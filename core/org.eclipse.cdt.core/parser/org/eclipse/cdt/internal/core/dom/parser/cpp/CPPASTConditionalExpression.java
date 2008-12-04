@@ -44,6 +44,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
     }
 
     public void setLogicalConditionExpression(IASTExpression expression) {
+        assertNotFrozen();
         condition = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -56,6 +57,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
     }
 
     public void setPositiveResultExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.postive = expression;
         if (expression != null) {
 			expression.setParent(this);
@@ -68,6 +70,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
     }
 
     public void setNegativeResultExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.negative = expression;
         if (expression != null) {
 			expression.setParent(this);

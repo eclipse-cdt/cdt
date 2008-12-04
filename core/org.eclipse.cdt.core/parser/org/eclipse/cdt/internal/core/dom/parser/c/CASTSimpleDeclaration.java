@@ -43,6 +43,7 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     }
     
     public void addDeclarator( IASTDeclarator d ) {
+        assertNotFrozen();
     	if (d != null) {
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
@@ -57,6 +58,7 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
+        assertNotFrozen();
         this.declSpecifier = declSpecifier;
         if (declSpecifier != null) {
 			declSpecifier.setParent(this);

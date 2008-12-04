@@ -37,6 +37,7 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 
 
     public void setBitFieldSize(IASTExpression size) {
+        assertNotFrozen();
         bitFieldSize = size;
         if (size != null) {
 			size.setParent(this);

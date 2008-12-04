@@ -36,6 +36,7 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements IASTAmbigu
     }
     
 	public void addExpression(IASTExpression e) {
+        assertNotFrozen();
     	if (e != null) {
     		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );
     		e.setParent(this);

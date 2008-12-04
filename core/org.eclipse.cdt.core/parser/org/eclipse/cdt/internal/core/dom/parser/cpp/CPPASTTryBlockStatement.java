@@ -34,6 +34,7 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 	}
 
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
+        assertNotFrozen();
     	if (statement != null) {
     		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
     		statement.setParent(this);
@@ -54,6 +55,7 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
     private IASTStatement tryBody;
 
     public void setTryBody(IASTStatement tryBlock) {
+        assertNotFrozen();
         tryBody = tryBlock;
         if (tryBlock != null) {
 			tryBlock.setParent(this);

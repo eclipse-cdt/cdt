@@ -34,6 +34,7 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
     }
 
     public void setAssembly(String assembly) {
+        assertNotFrozen();
         this.assembly = assembly.toCharArray();
     }
 

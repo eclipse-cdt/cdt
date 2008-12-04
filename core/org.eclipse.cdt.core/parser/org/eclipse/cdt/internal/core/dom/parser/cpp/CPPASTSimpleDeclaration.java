@@ -43,6 +43,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
     }
     
     public void addDeclarator( IASTDeclarator d ) {
+        assertNotFrozen();
     	if (d != null) {
     		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, ++declaratorsPos, d );
     		d.setParent(this);
@@ -58,6 +59,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
      * @param declSpecifier The declSpecifier to set.
      */
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
+        assertNotFrozen();
         this.declSpecifier = declSpecifier;
         if (declSpecifier != null) {
 			declSpecifier.setParent(this);

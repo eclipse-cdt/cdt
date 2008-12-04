@@ -38,6 +38,7 @@ public class CPPASTInitializerExpression extends ASTNode implements
     }
 
     public void setExpression(IASTExpression expression) {
+        assertNotFrozen();
         this.exp = expression;
         if (expression != null) {
 			expression.setParent(this);

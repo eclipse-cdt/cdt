@@ -91,4 +91,8 @@ public class ASTLiteralNode implements IASTNode {
 	public IToken getTrailingSyntax() {
 		throw new UnsupportedOperationException();
 	}
+	
+	public boolean isFrozen() {
+		return false;
+	}
 }

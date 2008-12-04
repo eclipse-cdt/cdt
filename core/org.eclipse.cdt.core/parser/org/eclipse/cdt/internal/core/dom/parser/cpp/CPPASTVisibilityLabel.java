@@ -34,6 +34,7 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
     }
 
     public void setVisibility(int visibility) {
+        assertNotFrozen();
         this.visibility = visibility;
     }
 

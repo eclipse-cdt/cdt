@@ -34,6 +34,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
     }
 
     public void addExpression(IASTExpression expression) {
+        assertNotFrozen();
         expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, expression );
         if(expression != null) {
         	expression.setParent(this);

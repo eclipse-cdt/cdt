@@ -42,6 +42,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	public void addEnumerator(IASTEnumerator enumerator) {
+        assertNotFrozen();
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
@@ -61,6 +62,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	private int enumeratorsPos=-1;
 
 	public void setName(IASTName name) {
+        assertNotFrozen();
 		this.name = name;
 		if (name != null) {
 			name.setParent(this);

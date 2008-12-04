@@ -41,6 +41,7 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);
@@ -80,6 +81,7 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
     }
 
     public void setNestedStatement(IASTStatement s) {
+        assertNotFrozen();
         nestedStatement = s;
         if (s != null) {
 			s.setParent(this);

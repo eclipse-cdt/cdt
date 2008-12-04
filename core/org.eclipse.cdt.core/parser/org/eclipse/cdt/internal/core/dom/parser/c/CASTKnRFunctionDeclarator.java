@@ -40,12 +40,14 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 
 	public void setParameterNames(IASTName[] names) {
+        assertNotFrozen();
 		parameterNames = names;
-		for(int i = 0; i < names.length; i++) {
-			IASTName name = names[i];
-			if (name != null) {
-				name.setParent(this);
-				name.setPropertyInParent(PARAMETER_NAME);
+		if(names != null) {
+			for(IASTName name : names) {
+				if (name != null) {
+					name.setParent(this);
+					name.setPropertyInParent(PARAMETER_NAME);
+				}
 			}
 		}
 	}
@@ -57,14 +59,16 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 
 	public void setParameterDeclarations(IASTDeclaration[] decls) {
+        assertNotFrozen();
 		parameterDeclarations = decls;
-		for(int i = 0; i < parameterDeclarations.length; i++) {
-			IASTDeclaration decl = parameterDeclarations[i];
-			if (decl != null) {
-				decl.setParent(this);
-				decl.setPropertyInParent(FUNCTION_PARAMETER);
+		if(decls != null) {
+			for(IASTDeclaration decl : decls) {
+				if (decl != null) {
+					decl.setParent(this);
+					decl.setPropertyInParent(FUNCTION_PARAMETER);
+				}
 			}
-		}
+		}	
 	}
 
 

@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 /**
@@ -86,7 +86,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	 */
 	@Override
 	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = CPPASTNodeFactory.DEFAULT_INSTANCE.newTranslationUnit();
+		IASTTranslationUnit tu = CPPNodeFactory.getDefault().newTranslationUnit();
 		tu.setIndex(index);
 		if(tu instanceof CPPASTTranslationUnit) {
 			((CPPASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());

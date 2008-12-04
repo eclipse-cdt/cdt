@@ -36,6 +36,7 @@ public class CPPASTCompoundStatement extends ASTNode implements
     }
 
     public void addStatement(IASTStatement statement) {
+        assertNotFrozen();
         statements = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, statements, statement );
         if (statement != null) {
 			statement.setParent(this);

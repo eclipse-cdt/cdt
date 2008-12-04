@@ -46,6 +46,7 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
     }
 
     public void setExported(boolean value) {
+        assertNotFrozen();
         exported = value;
     }
 
@@ -54,6 +55,7 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
     }
 
     public void setDeclaration(IASTDeclaration declaration) {
+        assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
 			declaration.setParent(this);
@@ -68,6 +70,7 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
     }
 
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
+        assertNotFrozen();
     	if (parm != null) {
     		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm );
     		parm.setParent(this);

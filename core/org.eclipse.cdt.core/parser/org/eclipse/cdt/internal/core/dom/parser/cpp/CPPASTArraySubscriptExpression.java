@@ -41,6 +41,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
     }
 
     public void setArrayExpression(IASTExpression expression) {
+        assertNotFrozen();
         arrayExpression = expression;        
         if (expression != null) {
 			expression.setParent(this);
@@ -53,6 +54,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
     }
 
     public void setSubscriptExpression(IASTExpression expression) {
+        assertNotFrozen();
         subscriptExp = expression;
         if (expression != null) {
 			expression.setParent(this);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 
 /**
@@ -18,7 +19,15 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 public class GPPASTPointerToMember extends CPPASTPointerToMember implements
         IGPPASTPointerToMember {
 
-    private boolean isRestrict;
+    public GPPASTPointerToMember() {
+		super();
+	}
+
+	public GPPASTPointerToMember(IASTName n) {
+		super(n);
+	}
+
+	private boolean isRestrict;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#isRestrict()

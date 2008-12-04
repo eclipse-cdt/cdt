@@ -39,6 +39,7 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
 	}
 
 	public void setIsCatchAll(boolean isEllipsis) {
+        assertNotFrozen();
         isCatchAll = isEllipsis;
     }
 
@@ -47,6 +48,7 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
     }
 
     public void setCatchBody(IASTStatement compoundStatement) {
+        assertNotFrozen();
         body = compoundStatement;
         if (compoundStatement != null) {
 			compoundStatement.setParent(this);
@@ -59,6 +61,7 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
     }
 
     public void setDeclaration(IASTDeclaration decl) {
+        assertNotFrozen();
         declaration = decl;
         if (decl != null) {
 			decl.setParent(this);

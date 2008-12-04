@@ -28,6 +28,12 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 	
 	public UPCASTTypedefNameSpecifier() {
 	}
+	
+	
+
+	public UPCASTTypedefNameSpecifier(IASTName name) {
+		super(name);
+	}
 
 	public UPCASTTypedefNameSpecifier(IASTName name, IASTExpression blockSizeExpression) {
 		super(name);

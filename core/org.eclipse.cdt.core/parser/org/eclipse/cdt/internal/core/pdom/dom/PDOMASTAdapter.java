@@ -70,6 +70,7 @@ public class PDOMASTAdapter {
 				public int getNodeOffset() {
 					return loc.getNodeOffset();
 				}
+				
 			};
 		}
 
@@ -186,6 +187,10 @@ public class PDOMASTAdapter {
 		public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException,
 				UnsupportedOperationException {
 			return fDelegate.getTrailingSyntax();
+		}
+		
+		public boolean isFrozen() {
+			return fDelegate.isFrozen();
 		}
 	}
 

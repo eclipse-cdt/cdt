@@ -44,6 +44,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
     }
 
     public void setName(IASTName name) {
+        assertNotFrozen();
         this.name = name;
         if (name != null) {
 			name.setParent(this);

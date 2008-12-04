@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.action.c99;
+package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -67,78 +66,19 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.lrparser.action.ASTCompletionNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTASMDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTArrayDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTArrayDesignator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTArrayModifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTArraySubscriptExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTBreakStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTCaseStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTCastExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTCompositeTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTCompoundStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTConditionalExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTContinueStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTDefaultStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTDesignatedInitializer;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTDoStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTEnumerationSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTEnumerator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFieldDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFieldDesignator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFieldReference;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTForStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionCallExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDefinition;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTGotoStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTIdExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTIfStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTInitializerExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTInitializerList;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTKnRFunctionDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTLabelStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTLiteralExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTModifiedArrayModifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTNullStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTProblem;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTProblemDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTProblemExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTProblemStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTSwitchStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeIdExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeIdInitializerExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypedefNameSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTUnaryExpression;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 
-@SuppressWarnings("restriction") // all AST node constructors are internal
 /**
  * Abstract factory implementation that creates AST nodes for C99.
  * These can be overridden in subclasses to change the 
@@ -146,10 +86,20 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTWhileStatement;
  * 
  * @author Mike Kucera
  */
-public class C99ASTNodeFactory implements IC99ASTNodeFactory {
+public class CNodeFactory implements ICNodeFactory {
 
-	public static final C99ASTNodeFactory DEFAULT_INSTANCE = new C99ASTNodeFactory();
+	private static final CNodeFactory DEFAULT_INSTANCE = new CNodeFactory();
 	
+	public static CNodeFactory getDefault() {
+		return DEFAULT_INSTANCE;
+	}
+	
+	
+	public IASTTranslationUnit newTranslationUnit() {
+		CASTTranslationUnit tu = new CASTTranslationUnit();
+		tu.setASTNodeFactory(this);
+		return tu;
+	}
 	
 	public IASTName newName(char[] name) {
 		return new CASTName(name);
@@ -159,15 +109,8 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTName();
 	}
 	
-	/**
-	 * TODO: this should return IASTCompletionNode
-	 */
-	public ASTCompletionNode newCompletionNode(String prefix, IASTTranslationUnit tu) {
-		return new ASTCompletionNode((prefix == null || prefix.length() == 0) ? null : prefix, tu);
-	}
-	
 	public IASTLiteralExpression newLiteralExpression(int kind, String rep) {
-		return new CASTLiteralExpression(kind, rep);
+		return new CASTLiteralExpression(kind, rep.toCharArray());
 	}
 	
 	public IASTIdExpression newIdExpression(IASTName name) {
@@ -194,8 +137,8 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTExpressionList();
 	}
 	
-	public IASTFieldReference newFieldReference(IASTName name, IASTExpression owner, boolean isPointerDereference) {
-		return new CASTFieldReference(name, owner, isPointerDereference);
+	public IASTFieldReference newFieldReference(IASTName name, IASTExpression owner) {
+		return new CASTFieldReference(name, owner);
 	}
 	
 	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
@@ -206,8 +149,8 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTTypeIdExpression(operator, typeId);
 	}
 	
-	public ICASTTypeIdInitializerExpression newCTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializerList list) {
-		return new CASTTypeIdInitializerExpression(typeId, list);
+	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
+		return new CASTTypeIdInitializerExpression(typeId, initializer);
 	}
 	
 	/**
@@ -229,23 +172,23 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTArrayDeclarator(name);
 	}
 	
-	public ICASTArrayModifier newModifiedArrayModifier() {
-		return new CASTModifiedArrayModifier();
+	public IASTArrayModifier newArrayModifier(IASTExpression expr) {
+		return new CASTArrayModifier(expr);
 	}
 	
-	public IASTArrayModifier newArrayModifier(IASTExpression expr) {
-        return new CASTArrayModifier(expr);
-    }
+	public ICASTArrayModifier newModifiedArrayModifier(IASTExpression expr) {
+		return new CASTModifiedArrayModifier(expr);
+	}
 	
 	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name) {
 		return new CASTFunctionDeclarator(name);
 	}
 	
-	public ICASTKnRFunctionDeclarator newCKnRFunctionDeclarator() {
-		return new CASTKnRFunctionDeclarator();
+	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations) {
+		return new CASTKnRFunctionDeclarator(parameterNames, parameterDeclarations);
 	}
 	
-	public ICASTPointer newCPointer() {
+	public ICASTPointer newPointer() {
 		return new CASTPointer();
 	}
 	
@@ -261,24 +204,20 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTInitializerList();
 	}
 	
-	public ICASTDesignatedInitializer newCDesignatedInitializer(IASTInitializer rhs) {
-		return new CASTDesignatedInitializer(rhs);
+	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer operandInitializer) {
+		return new CASTDesignatedInitializer(operandInitializer);
 	}
 	
-	public ICASTArrayDesignator newCArrayDesignator(IASTExpression exp) {
+	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp) {
 		return new CASTArrayDesignator(exp);
 	}
 	
-	public ICASTFieldDesignator newCFieldDesignator(IASTName name) {
+	public ICASTFieldDesignator newFieldDesignator(IASTName name) {
 		return new CASTFieldDesignator(name);
 	}
 	
-	public ICASTSimpleDeclSpecifier newCSimpleDeclSpecifier() {
-		return new CASTSimpleDeclSpecifier();
-	}
-	
-	public ICASTTypedefNameSpecifier newCTypedefNameSpecifier() {
-		return new CASTTypedefNameSpecifier();
+	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name) {
+		return new CASTTypedefNameSpecifier(name);
 	}
 	
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
@@ -289,11 +228,11 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTFieldDeclarator(name, bitFieldSize);
 	}
 	
-	public ICASTCompositeTypeSpecifier newCCompositeTypeSpecifier(int key, IASTName name) {
+	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name) {
 		return new CASTCompositeTypeSpecifier(key, name);
 	}
 	
-	public IASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
+	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
 		return new CASTElaboratedTypeSpecifier(kind, name);
 	}
 	
@@ -358,7 +297,7 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTDefaultStatement();
 	}
 	
-	public IASTSwitchStatement newSwitchStatment(IASTExpression controller, IASTStatement body) {
+	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
 		return new CASTSwitchStatement(controller, body);
 	}
 	
@@ -371,32 +310,20 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
 	}
 	
-	public IASTProblemDeclaration newProblemDeclaration() {
-		return new CASTProblemDeclaration();
+	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem) {
+		return new CASTProblemDeclaration(problem);
 	}
 	
-	public IASTProblemStatement newProblemStatement() {
-		return new CASTProblemStatement();
+	public IASTProblemStatement newProblemStatement(IASTProblem problem) {
+		return new CASTProblemStatement(problem);
 	}
 	
-	public IASTProblemExpression newProblemExpression() {
-		return new CASTProblemExpression();
+	public IASTProblemExpression newProblemExpression(IASTProblem problem) {
+		return new CASTProblemExpression(problem);
 	}
 	
 	public IASTProblem newProblem(int id, char[] arg, boolean error) {
 		return new CASTProblem(id, arg, error);
-	}
-
-	public IASTAmbiguousExpression newAmbiguousExpression(IASTExpression... expressions) {
-		return new CASTAmbiguousExpression(expressions);
-	}
-
-	public IASTAmbiguousStatement newAmbiguousStatement(IASTStatement... statements) {
-		return new CASTAmbiguousStatement(statements);
-	}
-
-	public IASTTranslationUnit newTranslationUnit() {
-		return new CASTTranslationUnit();
 	}
 
 	public IASTASMDeclaration newASMDeclaration(String assembly) {
@@ -407,11 +334,21 @@ public class C99ASTNodeFactory implements IC99ASTNodeFactory {
 		return new CASTEnumerationSpecifier(name);
 	}
 
-	public IASTDeclSpecifier newSimpleDeclSpecifier() {
-		return newCSimpleDeclSpecifier();
+	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
+		return new CASTSimpleDeclSpecifier();
 	}
 
-	
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
+		return new CASTCompoundStatementExpression(compoundStatement);
+	}
+
+	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling) {
+		return new CASTArrayRangeDesignator(floor, ceiling);
+	}
+
+	public IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
+		return new GCCASTSimpleDeclSpecifier(typeofExpression);
+	}
 } 
 
 

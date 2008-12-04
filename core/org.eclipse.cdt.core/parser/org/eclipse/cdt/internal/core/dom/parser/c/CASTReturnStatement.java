@@ -39,6 +39,7 @@ public class CASTReturnStatement extends ASTNode implements
 
 
     public void setReturnValue(IASTExpression returnValue) {
+        assertNotFrozen();
         retValue = returnValue;
         if (returnValue != null) {
 			returnValue.setParent(this);

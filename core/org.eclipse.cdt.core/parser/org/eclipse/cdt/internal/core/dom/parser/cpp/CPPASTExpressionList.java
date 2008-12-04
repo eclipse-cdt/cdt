@@ -32,6 +32,7 @@ public class CPPASTExpressionList extends ASTNode implements
     }
 
     public void addExpression(IASTExpression expression) {
+        assertNotFrozen();
         expressions = (IASTExpression [])ArrayUtil.append( IASTExpression.class, expressions, expression );
         if (expression != null) {
 			expression.setParent(this);

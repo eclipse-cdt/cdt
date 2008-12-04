@@ -2019,8 +2019,8 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write("void foo()                                                "); //$NON-NLS-1$
 		writer.write("{                                                         "); //$NON-NLS-1$
 		writer.write("   if (0) { }                                             "); //$NON-NLS-1$
-		writer.write("   /* 5,000 else if's.  */                               "); //$NON-NLS-1$
-		writer.write("   THOU THOU THOU THOU THOU "); //$NON-NLS-1$
+		writer.write("   /* 3,000 else if's.  */                               "); //$NON-NLS-1$
+		writer.write("   THOU THOU THOU "); //$NON-NLS-1$
 		writer.write("}                                                         "); //$NON-NLS-1$
 		
 		parse( writer.toString() );

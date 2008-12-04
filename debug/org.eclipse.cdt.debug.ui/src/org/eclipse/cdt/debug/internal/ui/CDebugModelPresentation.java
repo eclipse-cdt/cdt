@@ -177,10 +177,15 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 								// open the file from the breakpoints view it opens in the
 								// proper editor.
 								IProject project = b.getMarker().getResource().getProject();
-								ICProject cproject = CoreModel.getDefault().create(project);
-								String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
-								ExternalTranslationUnit tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(path), id);
-								return new ExternalEditorInput( tu );
+								if (project != null) {
+									ICProject cproject = CoreModel.getDefault().create(project);
+									String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
+									ExternalTranslationUnit tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(path), id);
+									return new ExternalEditorInput( tu );
+								}
+								else {
+									return new ExternalEditorInput(path);								
+								}
 							}
 						}
 					}

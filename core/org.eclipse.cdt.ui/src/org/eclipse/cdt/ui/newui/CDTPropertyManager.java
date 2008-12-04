@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.newui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

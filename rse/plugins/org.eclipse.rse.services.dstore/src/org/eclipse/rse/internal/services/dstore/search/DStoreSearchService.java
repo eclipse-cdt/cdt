@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [214378] don't mark as finished until we have the results - sleep instead of wait
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
+ * David McKnight  (IBM)  - [255390] don't assume one update means the search is done
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -91,27 +92,39 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			
 			try
 			{
-				getStatusMonitor(ds).waitForUpdate(status, monitor);
-				String statusStr = status.getName();
-				if (statusStr.equals("done")) //$NON-NLS-1$
-				{
-					if (status.getNestedSize() > 0){
-						config.setStatus(IHostSearchConstants.FINISHED);
-					}
-					else { // need to wait until we have all results on client
-						try
-						{
-							Thread.sleep(2000);
+				boolean working = true;
+				while (working){
+					getStatusMonitor(ds).waitForUpdate(status, monitor);
+					String statusStr = status.getName();
+					if (statusStr.equals("done")) //$NON-NLS-1$
+					{
+						if (status.getNestedSize() > 0){
+							config.setStatus(IHostSearchConstants.FINISHED);
 						}
-						catch (Exception e)
-						{				
+						else { // need to wait until we have all results on client
+							try
+							{
+								Thread.sleep(2000);
+							}
+							catch (Exception e)
+							{				
+							}
+							config.setStatus(IHostSearchConstants.FINISHED);					
 						}
-						config.setStatus(IHostSearchConstants.FINISHED);					
+						working = false;
 					}
-				}
-				else if (statusStr.equals("cancelled")) //$NON-NLS-1$
-				{
-					config.setStatus(IHostSearchConstants.CANCELLED);
+					else if (statusStr.equals("cancelled")) //$NON-NLS-1$
+					{
+						config.setStatus(IHostSearchConstants.CANCELLED);
+						working = false;
+					}
+					else if (statusStr.equals("working")){ //$NON-NLS-1$
+						// still searching
+						if (monitor.isCanceled()){
+							config.setStatus(IHostSearchConstants.CANCELLED);
+							working = false;
+						}
+					}
 				}
 			}
 			catch (Exception e)

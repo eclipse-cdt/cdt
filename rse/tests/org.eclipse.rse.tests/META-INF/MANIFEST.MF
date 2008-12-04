@@ -25,7 +25,8 @@ Require-Bundle: org.junit,
  org.eclipse.rse.files.ui,
  org.eclipse.rse.efs,
  org.eclipse.rse.tests.framework;bundle-version="[2.0.0,3.0.0)",
- org.apache.commons.net;bundle-version="[1.4.1,2.0.0)" 
+ org.apache.commons.net;bundle-version="[1.4.1,2.0.0)",
+ org.eclipse.rse.subsystems.terminals.core;bundle-version="0.1.1"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -5,9 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
- * Yu-Fen Kuo (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Yu-Fen Kuo      (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo      (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
  * Anna Dushistova (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
+ * Anna Dushistova (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui;
@@ -42,8 +43,7 @@ public class TerminalServiceHelper {
         ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
         ISubSystem[] subsystems = systemRegistry.getSubSystems(connection);
         for (int i = 0; i < subsystems.length; i++) {
-            if ("ssh.terminals".equals(subsystems[i]
-                    .getSubSystemConfiguration().getId())) {
+        	if (subsystems[i] instanceof ITerminalServiceSubSystem) {
                 ITerminalServiceSubSystem subSystem = (ITerminalServiceSubSystem) subsystems[i];
                 return subSystem;
             }

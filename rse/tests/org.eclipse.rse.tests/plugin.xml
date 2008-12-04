@@ -96,6 +96,13 @@
              value="true">
        </property>
     </systemType>
+      <systemType
+       description="Linux without shells subsystem"
+            id="org.eclipse.rse.tests.sshTerminal"
+            label="Ssh without shells"
+            name="Ssh without shells"
+            subsystemConfigurationIds="ssh.terminals;ssh.files;processes.shell.linux">
+      </systemType>
  </extension>
  
  <extension point="org.eclipse.rse.core.modelInitializers">

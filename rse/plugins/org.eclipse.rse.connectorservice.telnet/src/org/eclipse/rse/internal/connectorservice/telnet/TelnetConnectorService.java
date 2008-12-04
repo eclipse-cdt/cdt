@@ -7,18 +7,19 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
- * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Sheldon D'souza (Celunite) - adapted from SshConnectorService
+ * David Dykstal    (IBM)        - [168977] refactoring IConnectorService and ServerLauncher hierarchies
+ * Sheldon D'souza  (Celunite)   - adapted from SshConnectorService
  * Martin Oberhuber (Wind River) - apply refactorings for StandardConnectorService
  * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
- * Sheldon D'souza (Celunite) - [186536] login and password should be configurable
- * Sheldon D'souza (Celunite) - [186570] handle invalid user id and password more gracefully
+ * Sheldon D'souza  (Celunite)   - [186536] login and password should be configurable
+ * Sheldon D'souza  (Celunite)   - [186570] handle invalid user id and password more gracefully
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
- * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
- * Sheldon D'souza (Celunite) - [194464] fix create multiple telnet shells quickly
+ * Sheldon D'souza  (Celunite)   - [187301] support multiple telnet shells
+ * Sheldon D'souza  (Celunite)   - [194464] fix create multiple telnet shells quickly
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -148,8 +149,12 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		return port;
 	}
 
-	public TelnetClient makeNewTelnetClient( IProgressMonitor monitor ) throws Exception {
+	public TelnetClient makeNewTelnetClient(IProgressMonitor monitor ) throws Exception {
 		TelnetClient client = new TelnetClient();
+		return 	makeNewTelnetClient(client, monitor);		
+	}
+	
+	public TelnetClient makeNewTelnetClient(TelnetClient client, IProgressMonitor monitor ) throws Exception {
 		String host = getHostName();
 		String user = getUserId();
 		String password = ""; //$NON-NLS-1$

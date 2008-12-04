@@ -2,14 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.telnet
-Bundle-Version: 1.1.100.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.services.telnet.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)"
 Export-Package: org.eclipse.rse.internal.services.telnet;x-friends:="org.eclipse.rse.connectorservice.telnet,org.eclipse.rse.subsystems.files.telnet,org.eclipse.rse.subsystems.shells.telnet",
- org.eclipse.rse.internal.services.telnet.shell;x-friends:="org.eclipse.rse.connectorservice.telnet,org.eclipse.rse.subsystems.shells.telnet"
+ org.eclipse.rse.internal.services.telnet.shell;x-friends:="org.eclipse.rse.connectorservice.telnet,org.eclipse.rse.subsystems.shells.telnet",
+ org.eclipse.rse.internal.services.telnet.terminal;x-friends:="org.eclipse.rse.subsystems.shells.telnet"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName

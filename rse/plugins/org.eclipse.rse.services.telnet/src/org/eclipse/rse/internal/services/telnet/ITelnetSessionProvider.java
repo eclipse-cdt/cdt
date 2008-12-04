@@ -12,8 +12,9 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Sheldon D'souza (Celunite) - adapted from ISshSessionProvider
- * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
+ * Sheldon D'souza (Celunite)   - adapted from ISshSessionProvider
+ * Sheldon D'souza (Celunite)   - [187301] support multiple telnet shells
+ * Anna Dushistova (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet;
 
@@ -29,5 +30,14 @@ public interface ITelnetSessionProvider {
 	 * @throws Exception in case of any error
 	 */
 	public TelnetClient makeNewTelnetClient(IProgressMonitor monitor) throws Exception ;
+
+	/**
+	 * Initialize a new Commons.Net TelnetClient with a given ptyType.
+	 * @param client telnet client already created
+	 * @param monitor progress monitor
+	 * @return authenticated client for the given connection
+	 * @throws Exception in case of any error
+	 */
+	public TelnetClient makeNewTelnetClient(TelnetClient client, IProgressMonitor monitor) throws Exception ;
 	
 }

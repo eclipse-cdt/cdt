@@ -5,7 +5,8 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo       (MontaVista) - initial API and implementation
+ * Anna Dushistova  (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -18,21 +19,20 @@ import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.services.IService;
 
-
 public abstract class TerminalServiceSubSystemConfiguration extends
-        SubSystemConfiguration implements
-        ITerminalServiceSubSystemConfiguration {
+		SubSystemConfiguration implements
+		ITerminalServiceSubSystemConfiguration {
 
 	private Map _services;
 
-    protected TerminalServiceSubSystemConfiguration() {
-        super();
-        _services = new HashMap();
-    }
+	protected TerminalServiceSubSystemConfiguration() {
+		super();
+		_services = new HashMap();
+	}
 
-    public boolean supportsFilters() {
-        return false;
-    }
+	public boolean supportsFilters() {
+		return false;
+	}
 
 	public final ITerminalService getTerminalService(IHost host) {
 		ITerminalService service = (ITerminalService) _services.get(host);
@@ -49,6 +49,11 @@ public abstract class TerminalServiceSubSystemConfiguration extends
 
 	public Class getServiceType() {
 		return ITerminalService.class;
+	}
+
+	public boolean isFactoryFor(Class subSystemType) {
+		boolean isFor = TerminalServiceSubSystem.class.equals(subSystemType);
+		return isFor;
 	}
 
 }

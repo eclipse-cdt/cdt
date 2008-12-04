@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2007,2008 IBM Corporation and others. 
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Anna Dushistova (MontaVista)- initial API and implementation 
+-->
 <?eclipse version="3.2"?>
 <plugin>
    <extension-point id="archivehandlers" name="%extPoint.archivehandlers" schema="schema/archivehandlers.exsd"/>
    <extension-point id="codePageConverters" name="%extPoint.codePageConverters" schema="schema/codePageConverters.exsd"/>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.rse.internal.services.terminals.ITerminalService"
+            class="org.eclipse.rse.internal.services.shells.TerminalShellAdapterFactory">
+         <adapter
+               type="org.eclipse.rse.services.shells.IShellService">
+         </adapter>
+      </factory>
+   </extension>
    
 </plugin>

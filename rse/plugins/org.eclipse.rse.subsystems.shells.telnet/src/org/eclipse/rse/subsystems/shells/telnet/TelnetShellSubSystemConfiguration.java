@@ -13,7 +13,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted template for ssh service.
- * Sheldon D'souza (Celunite) - Adapted template for telnet service
+ * Sheldon D'souza  (Celunite)   - Adapted template for telnet service
+ * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  *******************************************************************************/
 package org.eclipse.rse.subsystems.shells.telnet;
 
@@ -23,7 +24,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.connectorservice.telnet.TelnetConnectorService;
 import org.eclipse.rse.internal.connectorservice.telnet.TelnetConnectorServiceManager;
 import org.eclipse.rse.internal.services.telnet.ITelnetService;
-import org.eclipse.rse.internal.services.telnet.shell.TelnetShellService;
+import org.eclipse.rse.internal.services.telnet.terminal.TelnetTerminalService;
 import org.eclipse.rse.internal.subsystems.shells.telnet.TelnetServiceCommandShell;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
@@ -61,7 +62,7 @@ public class TelnetShellSubSystemConfiguration extends
 
 	public IShellService createShellService(IHost host) {
 		TelnetConnectorService cserv = (TelnetConnectorService)getConnectorService(host);
-		return new TelnetShellService(cserv);
+		return (IShellService) (new TelnetTerminalService(cserv)).getAdapter(IShellService.class);
 	}
 
 	public IConnectorService getConnectorService(IHost host) {

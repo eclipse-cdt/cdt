@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
@@ -30,13 +31,13 @@ import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
 public class ShellServiceTest extends RSEBaseConnectionTestCase {
 
-	private String fPropertiesFileName;
+	protected String fPropertiesFileName;
 	// For testing the test: verify methods on Local
 	public static String fDefaultPropertiesFile = "localConnection.properties";
 
-	private IShellServiceSubSystem shellSubSystem;
-	private IShellService shellService;
-	private IProgressMonitor mon = new NullProgressMonitor();
+	protected IShellServiceSubSystem shellSubSystem;
+	protected IShellService shellService;
+	protected IProgressMonitor mon = new NullProgressMonitor();
 
 	/**
 	 * Constructor with specific test name.
@@ -71,9 +72,7 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 		TestSuite suite = new TestSuite(baseName);
 
 		// // Add a test suite for each connection type
-		String[] connTypes = { "local", "ssh", "telnet", "linux" };
-		// String[] connTypes = { "local" };
-		// String[] connTypes = { "ssh" };
+		String[] connTypes = { "local", "ssh", "telnet" };
 
 		for (int i = 0; i < connTypes.length; i++) {
 			String suiteName = connTypes[i];
@@ -110,6 +109,10 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 
 	public void setUp() throws Exception {
 		super.setUp();
+		initShellService();
+	}
+
+	protected void initShellService() throws SystemMessageException {
 		shellSubSystem = getShellServiceSubSystem();
 		shellService = shellSubSystem.getShellService();
 		shellSubSystem.checkIsConnected(getDefaultProgressMonitor());

@@ -13,8 +13,9 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalServiceCommandShell
- * Sheldon D'souza (Celunite) - Adapted from SshServiceCommandShell
+ * Sheldon D'souza  (Celunite)   - Adapted from SshServiceCommandShell
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
+ * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.shells.telnet;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.services.shells.TerminalServiceHostShell;
 import org.eclipse.rse.internal.services.telnet.shell.TelnetHostShell;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -175,6 +177,9 @@ public class TelnetServiceCommandShell extends ServiceCommandShell {
 	protected String getPromptCommand() {
 		IHostShell shell = getHostShell();
 		//assert shell instanceof TelnetHostShell;
+		if (shell instanceof TerminalServiceHostShell) {
+			return ((TerminalServiceHostShell)shell).getPromptCommand();
+		}
 		if (shell instanceof TelnetHostShell) {
 			return ((TelnetHostShell)shell).getPromptCommand();
 		}

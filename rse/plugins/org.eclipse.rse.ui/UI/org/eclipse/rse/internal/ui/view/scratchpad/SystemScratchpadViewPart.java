@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -18,7 +19,7 @@
  * Kevin Doyle (IBM) - [193155] Double Clicking on a String in Scratchpad Errors
  * Kevin Doyle (IBM) - [194867] Remote Scratchpad should have Refresh Action on toolbar
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
 

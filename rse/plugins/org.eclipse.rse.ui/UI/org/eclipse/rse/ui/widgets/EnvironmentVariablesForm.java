@@ -1,8 +1,9 @@
-/********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
@@ -14,7 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Justin Lin (IBM) - [244051] JJ: Environment Variables property page allows duplicates...
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
 

@@ -133,15 +133,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return this;
 	}
 
-	@Override
-	public boolean isGloballyQualified() throws DOMException {
-		try {
-			return getParentNode() instanceof PDOMLinkage;
-		} catch (CoreException e) {
-			return true;
-		}
-	}
-
 	public ICPPClassType getClassType() {
 		return this;
 	}

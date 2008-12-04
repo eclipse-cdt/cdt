@@ -246,15 +246,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 	
-	@Override
-	public boolean isGloballyQualified() throws DOMException {
-		try {
-			return getParentNode() instanceof PDOMLinkage;
-		} catch (CoreException e) {
-			return true;
-		}
-	}
-
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);

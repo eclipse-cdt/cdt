@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -74,7 +73,8 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 		}
 	}
 
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError("in " + getClass().getCanonicalName()); //$NON-NLS-1$
+	public final boolean isGloballyQualified() throws DOMException {
+		// local stuff is not stored in the index.
+		return true;
 	}	
 }

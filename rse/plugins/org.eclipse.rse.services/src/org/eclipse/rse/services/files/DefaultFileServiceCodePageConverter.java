@@ -11,6 +11,7 @@
  * Contributors:
  * David McKnight    (IBM)  -[209704] [api][dstore] Ability to override default encoding conversion needed.
  * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
+ * David McKnight    (IBM)  -[246857] Rename problem when a file is opened in the editor
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -18,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * @since 3.0
@@ -39,27 +41,40 @@ public class DefaultFileServiceCodePageConverter implements
 
 	public void convertFileFromRemoteEncoding(String remotePath, File file, String remoteEncoding,
 			String localEncoding, IFileService fs) {
-
+		FileInputStream inputStream = null;
+		FileOutputStream outStream = null;
 		// read in the file
 		try
 		{
 			int fileLength = (int)file.length();
-			FileInputStream inputStream = new FileInputStream(file);
-			BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, fileLength);
-			byte[] buffer = new byte[fileLength];
-			int bytesRead = bufInputStream.read(buffer, 0, fileLength);
-			bufInputStream.close();
-			inputStream.close();
-
-			byte[] localBuffer = new String(buffer, 0, bytesRead, remoteEncoding).getBytes(localEncoding);
-
-			FileOutputStream outStream = new FileOutputStream(file);
-			outStream.write(localBuffer, 0, localBuffer.length);
-			outStream.close();
+			if (fileLength > 0){
+				inputStream = new FileInputStream(file);
+				BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, fileLength);
+				byte[] buffer = new byte[fileLength];
+				int bytesRead = bufInputStream.read(buffer, 0, fileLength);
+				bufInputStream.close();
+				inputStream.close();
+	
+				byte[] localBuffer = new String(buffer, 0, bytesRead, remoteEncoding).getBytes(localEncoding);
+	
+				outStream = new FileOutputStream(file);
+				outStream.write(localBuffer, 0, localBuffer.length);
+				outStream.close();
+			}
 		}
 		catch (Exception e)
 		{
-
+			try {
+				if (inputStream != null){
+					inputStream.close();
+				}	
+				if (outStream != null){
+					outStream.close();
+				}
+			}
+			catch (IOException ioe){			
+			}
+			
 		}
 	}
 

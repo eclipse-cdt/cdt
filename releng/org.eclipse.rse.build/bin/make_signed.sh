@@ -6,16 +6,26 @@ mydir=`pwd`
 cd "${curdir}"
 
 SIGNED_JAR_SOURCE=${mydir}/eclipse_ext/tm
+##SIGNED_JAR_SOURCE=${mydir}/eclipse_ext
 OUTPUT=${curdir}/output.$$
 RESULT=${curdir}/result.$$
 TMP=${curdir}/tmp.$$
 
 if [ ! -d ${SIGNED_JAR_SOURCE}/server ]; then
   mkdir ${SIGNED_JAR_SOURCE}/server
+fi
+have_server=`ls "${SIGNED_JAR_SOURCE}"/server/*.jar 2>/dev/null`
+if [ "${have_server}" = "" ]; then
   cd ${SIGNED_JAR_SOURCE}/server
   unzip ${curdir}/rseserver-*-signed.zip
+  have_server=`ls *.jar 2>/dev/null`
+  cd "${curdir}"
+  if [ "${have_server}" = "" ]; then
+    echo 'ERROR: signed rseserver-*-signed.zip not found!'
+    echo "Please sign a server zip on build.eclipse.org, upload and retry."
+    exit 1
+  fi
 fi
-cd "${curdir}"
 
 if [ ! -d ${TMP} ]; then
   mkdir -p ${TMP} 
@@ -58,6 +68,7 @@ for zip in `ls *.zip *.tar` ; do
     *.tar) tar cfv ${OUTPUT}/${zip} * ; touch -r ${REF} ${OUTPUT}/${zip};
   esac
   rm -rf *
+  rm "${OUTPUT}"/rseserver-*-signed.zip
   cd ${RESULT}
   case ${zip} in
      rseserver*) mkdir ${zip} ; cd ${zip} ;

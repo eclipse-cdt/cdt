@@ -5327,7 +5327,7 @@ public class AST2Tests extends AST2BaseTest {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
-			final int expected = 1024*10 + code.length()*2; // a copy of the buffer + some
+			final int expected = 1024*20 + code.length()*2; // a copy of the buffer + some
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 		}
 	}

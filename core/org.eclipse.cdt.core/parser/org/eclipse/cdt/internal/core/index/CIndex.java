@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedEr
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -375,6 +376,44 @@ public class CIndex implements IIndex {
 			CCorePlugin.log(ce);
 		}
 		return null;
+	}
+
+	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
+			final IIndexFragment indexFragment = fFragments[0];
+			IIndexBinding result[];
+			result = findInFrag(indexFragment, name, filescope, filter, monitor);
+			return result;
+		} else {
+			List result = new ArrayList();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part= findInFrag(fFragments[i], name, filescope, retargetFilter(linkages[j], filter), monitor);
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
+		}
+	}
+
+	private IIndexBinding[] findInFrag(final IIndexFragment indexFragment, 
+			char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (indexFragment instanceof PDOM) {
+			return ((PDOM) indexFragment).findBindings(name, filescope, filter, monitor);
+		} 
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {

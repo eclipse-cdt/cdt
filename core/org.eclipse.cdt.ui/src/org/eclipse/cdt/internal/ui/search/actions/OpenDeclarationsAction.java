@@ -14,7 +14,10 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -32,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -40,6 +44,8 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -58,8 +64,10 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -73,6 +81,27 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 public class OpenDeclarationsAction extends SelectionParseAction {
 	public static boolean sIsJUnitTest = false;	
 	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
+	
+	private static class ASTNameCollector extends ASTVisitor {
+		private char[] fName;
+		private ArrayList fFound= new ArrayList(4);
+		public ASTNameCollector(char[] name) {
+			fName= name;
+			shouldVisitNames = true;
+		}
+		public int visit(IASTName name) {
+			if (name != null && !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId)) {
+				if (CharArrayUtils.equals(fName, name.toCharArray())) {
+					fFound.add(name);
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+		public IASTName[] getNames() {
+			return (IASTName[]) fFound.toArray(new IASTName[fFound.size()]);
+		}
+	}
+
 	ITextSelection selNode;
 
 	/**
@@ -202,9 +231,32 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					final ICProject project = fWorkingCopy.getCProject();
 					final char[] name = selectedText.toCharArray();
 					List elems= new ArrayList();
+
+					// bug 252549, search for names in the AST first
+					Set bindings= new HashSet();
+					Set ignoreIndexBindings= new HashSet();
+					ASTNameCollector nc= new ASTNameCollector(selectedText.toCharArray());
+					ast.accept(nc);
+					IASTName[] candidates= nc.getNames();
+					for (int i = 0; i < candidates.length; i++) {
+						IASTName astName= candidates[0];
+						try {
+							IBinding b= astName.resolveBinding();
+							if (b!=null && !(b instanceof IProblemBinding)) {
+								if (bindings.add(b)) {
+									ignoreIndexBindings.add(fIndex.adaptBinding(b));
+								}
+							}
+						} catch (RuntimeException e) {
+							CCorePlugin.log(e);
+						}
+					}
+					
+					// search the index, also
 					String id= ast instanceof ICPPASTTranslationUnit ? ILinkage.CPP_LINKAGE_ID : ILinkage.C_LINKAGE_ID;
 					final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(id, false);
 
+					// search for a macro in the index
 					IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
 					for (int i = 0; i < macros.length; i++) {
 						IIndexMacro macro = macros[i];
@@ -213,10 +265,22 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 							elems.add(elem);
 						}
 					}
-					// searches global names, only.
-					IIndexBinding[] bindings = fIndex.findBindings(name, filter, fMonitor);
-					for (int i = 0; i < bindings.length; i++) {
-						IIndexBinding binding = bindings[i];
+					IIndexBinding[] idxBindings;
+					if (fIndex instanceof CIndex) {
+						idxBindings= ((CIndex) fIndex).findBindings(name, false, filter, fMonitor);
+					} else {
+						idxBindings= fIndex.findBindings(name, filter, fMonitor);
+					}
+					for (int i = 0; i < idxBindings.length; i++) {
+						IIndexBinding idxBinding = idxBindings[i];
+						if (!ignoreIndexBindings.contains(idxBinding)) {
+							bindings.add(idxBinding);
+						}
+					}
+
+					// convert bindings to CElements
+					for (Iterator iterator = bindings.iterator(); iterator.hasNext();) {
+						IBinding binding= (IBinding) iterator.next();
 						final IName[] names = findNames(fIndex, ast, false, binding);
 						convertToCElements(project, fIndex, names, elems);
 					}

@@ -821,6 +821,29 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
+	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		ArrayList result= new ArrayList();
+		for (Iterator iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage= (PDOMLinkage) iter.next();
+			if (filter.acceptLinkage(linkage)) {
+				IBinding[] bindings;
+				BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
+				visitor.setMonitor(monitor);
+				try {
+					linkage.accept(visitor);
+					if (!filescope) {
+						linkage.getNestedBindingsIndex().accept(visitor);
+					}
+				}
+				catch (OperationCanceledException e) {
+				}
+				bindings= visitor.getBindings();
+				result.addAll(Arrays.asList(bindings));
+			}
+		}
+		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
+	}
+
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (!fHasBTreeForMacros) {
 			return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;

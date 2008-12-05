@@ -190,6 +190,12 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		return folder;
     }
     
+    
+    protected String getEditorID() {
+    	return "org.eclipse.cdt.ui.editor.CEditor";
+    }
+    
+    
 	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0);
 	}
@@ -201,7 +207,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor", true); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID(), true); //$NON-NLS-1$
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -252,7 +258,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID()); //$NON-NLS-1$
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -286,7 +292,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID()); //$NON-NLS-1$
         } catch (PartInitException e) {
             assertFalse(true);
         }

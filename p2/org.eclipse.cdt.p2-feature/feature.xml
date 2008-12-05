@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.p2"
       label="Eclipse SDK p2 support feature"
       version="1.0.0"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org"
+      plugin="org.eclipse.cdt.p2">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

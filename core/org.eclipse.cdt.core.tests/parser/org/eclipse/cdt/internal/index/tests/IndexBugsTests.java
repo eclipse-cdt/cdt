@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -721,7 +722,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test(B<int>::value_type x) {
 	//	  f(x);  // problem on f
 	//	}
-	public void _test257818() throws Exception {
+	public void _test257818_1() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(4);
@@ -737,6 +738,47 @@ public class IndexBugsTests extends BaseTestCase {
 		try {
 			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test2);
 			getBindingFromASTName(ast, testData[3], "f(x)", 1, ICPPFunction.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//	// test1.h
+	//	template<class U> struct A {
+	//	  typedef U value_type;
+	//	};
+
+	//	// test2.h
+	//	#include "test1.h"
+	//	template<class T> struct B {
+	//	  typedef A<T> container_type;
+	//	  typedef typename container_type::value_type value_type;
+	//	  void m(value_type* p);
+	//	};
+
+	//	#include "test1.h"
+
+	//	#include "test2.h"
+	//	class C {};
+	//	void test(B<C> x, C y) {
+	//	  x.m(&y);
+	//	}
+	public void _test257818_2() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "test1.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "test2.h", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "test1.cpp", testData[2]);
+		IFile test2= TestSourceReader.createFile(fCProject.getProject(), "test2.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test2);
+			getBindingFromASTName(ast, testData[3], "m(&y)", 1, ICPPMethod.class);
 		} finally {
 			index.releaseReadLock();
 		}

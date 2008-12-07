@@ -62,8 +62,9 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	private static final String DESCRIPTION = "Wind River Metadata Repository"; //$NON-NLS-1$
 	private static final String PROVIDER = "Wind River"; //$NON-NLS-1$
 	
-	
-	private Map<IArtifactKey, IArtifactDescriptor> artifacts = new HashMap<IArtifactKey, IArtifactDescriptor>();
+	// Map from artifact id to artifact descriptor. We only allow one version of each artifact
+	// to be installed at a time.
+	private Map<String, IArtifactDescriptor> artifacts = new HashMap<String, IArtifactDescriptor>();
 	
 	public InstallArtifactRepository(URL aLocation, String aName, Map aProperties) {
 		super(aName, InstallArtifactRepository.class.getName(), VERSION, aLocation, DESCRIPTION, PROVIDER, aProperties);
@@ -85,7 +86,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	InstallArtifactRepository(String _name, String _type, String _version, URL _location, String _description, String _provider, Set<ArtifactDescriptor> _artifacts, Map _properties) {
 		super(_name, _type, _version, _location, _description, _provider, _properties);
 		for (IArtifactDescriptor descriptor : _artifacts)
-			artifacts.put(descriptor.getArtifactKey(), descriptor);
+			artifacts.put(descriptor.getArtifactKey().getId(), descriptor);
 	}
 
 	public static URL getActualLocation(URL base) {
@@ -139,7 +140,10 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 
 	@Override
 	public boolean contains(IArtifactKey key) {
-		return artifacts.containsKey(key);
+		IArtifactDescriptor desc = artifacts.get(key.getId());
+		if (desc == null)
+			return false;
+		return desc.getArtifactKey().equals(key);
 	}
 
 	@Override
@@ -159,8 +163,12 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 
 	@Override
 	public IArtifactKey[] getArtifactKeys() {
-		Set<IArtifactKey> keyset = artifacts.keySet();
-		return keyset.toArray(new IArtifactKey[keyset.size()]);
+		Collection<IArtifactDescriptor> descs = artifacts.values();
+		IArtifactKey[] keys = new IArtifactKey[descs.size()];
+		int i = 0;
+		for (IArtifactDescriptor desc : descs)
+			keys[i++] = desc.getArtifactKey();
+		return keys;
 	}
 
 	@Override
@@ -172,7 +180,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	@Override
 	public synchronized void addDescriptor(IArtifactDescriptor descriptor) {
 		super.addDescriptor(descriptor);
-		artifacts.put(descriptor.getArtifactKey(), descriptor);
+		artifacts.put(descriptor.getArtifactKey().getId(), descriptor);
 		save();
 	}
 
@@ -180,7 +188,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	public synchronized void addDescriptors(IArtifactDescriptor[] descriptors) {
 		super.addDescriptors(descriptors);
 		for (IArtifactDescriptor descriptor : descriptors)
-			artifacts.put(descriptor.getArtifactKey(), descriptor);
+			artifacts.put(descriptor.getArtifactKey().getId(), descriptor);
 		save();
 	}
 
@@ -188,7 +196,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		return artifacts.values();
 	}
 	
-	private File getFileListFile(IArtifactKey artifact) throws IOException {
+	private File getFileListFile(String artifact) throws IOException {
 		File file;
 		try {
 			file = new File(URLUtil.toURI(location));
@@ -197,7 +205,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		}
 		if (file.getName().equals(FILENAME))
 			file = file.getParentFile();
-		return new File(file, artifact.getId() + "_" + artifact.getVersion()); //$NON-NLS-1$
+		return new File(file, artifact + ".txt"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -206,11 +214,12 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		super.getOutputStream(descriptor);
 		
 		// Add the descriptor to the list and save it
-		// TODO what if it's already there?
-		if (!contains(descriptor))
-			addDescriptor(descriptor);
+		IArtifactDescriptor oldDesc = artifacts.get(descriptor.getArtifactKey().getId());
+		if (oldDesc != null)
+			removeDescriptor(oldDesc);
+		addDescriptor(descriptor);
 		
-		// Return the extractor
+		// Start the extractor
 		try {
 			String installDirName = (String)getProperties().get(INSTALL_DIR);
 			if (installDirName == null)
@@ -226,7 +235,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 				// TODO a zip extractor
 			} else {
 				TarExtractor extractor = new TarExtractor(in, installDir, 
-						new FileListWriter(getFileListFile(descriptor.getArtifactKey())),
+						new FileListWriter(getFileListFile(descriptor.getArtifactKey().getId())),
 						compression);
 				extractor.start();
 			}
@@ -237,7 +246,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		}
 	}
 
-	private void deleteFiles(IArtifactKey artifact) {
+	private void deleteFiles(String artifact) {
 		File fileListFile = null;
 		try {
 			fileListFile = getFileListFile(artifact);
@@ -258,7 +267,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	@Override
 	public void removeAll() {
 		super.removeAll();
-		for (IArtifactKey artifact : artifacts.keySet())
+		for (String artifact : artifacts.keySet())
 			deleteFiles(artifact);
 		artifacts.clear();
 		save();
@@ -272,7 +281,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	@Override
 	public void removeDescriptor(IArtifactKey key) {
 		super.removeDescriptor(key);
-		deleteFiles(key);
+		deleteFiles(key.getId());
 		artifacts.remove(key);
 		save();
 	}

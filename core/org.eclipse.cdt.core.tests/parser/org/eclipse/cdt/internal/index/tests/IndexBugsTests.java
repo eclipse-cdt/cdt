@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -189,7 +191,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//   void one() {}
 	//   void two() {}
 	// };	
-	
+
 	// class A {
 	// public:
 	//   void three() {}
@@ -229,55 +231,117 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
-	
-	// class A {};
-	// class B {};
-	// A var;
-	
-	// class A {};
-	// class B {};
-	// B var;
-	public void test173997_2() throws Exception {
-		String[] content= getContentsForTest(2);
-		
-		IFile file= createFile(getProject(), "header.h", content[0]);
+
+    public void test150906() throws Exception {
+    	String fileName= "bug150906.c";
+    	String varName= "arrayDataSize";
+    	StringBuffer content= new StringBuffer();
+    	content.append("unsigned char arrayData[] = {\n");
+    	for (int i= 0; i< 1024 * 250 - 1; i++) {
+    		content.append("0x00,");
+    	}
+    	content.append("0x00};\n");
+    	content.append("unsigned int arrayDataSize = sizeof(arrayData);\n");
+		int indexOfDecl = content.indexOf(varName);
+
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEX_WAIT_TIME, NPM));
+		IFile file= createFile(getProject(), fileName, content.toString());
+		// must be done in a reasonable amount of time
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
-		
-		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
-		index.acquireReadLock();
+		fIndex.acquireReadLock();
 		try {
-			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bs.length); 
-			assertTrue(bs[0] instanceof ICPPVariable);
-			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
-			assertEquals("A", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+			IIndexBinding[] bindings= fIndex.findBindings(getPattern("arrayDataSize"), true, IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			
+			IIndexBinding binding= bindings[0];
+			
+			// check if we have the definition
+			IIndexName[] decls= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS);
+			assertEquals(1, decls.length);
+			assertEquals(indexOfDecl, decls[0].getNodeOffset());
 		} finally {
-			index.releaseReadLock();
+			fIndex.releaseReadLock();
 		}
-		
-		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, NPM);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
-		
-		index= CCorePlugin.getIndexManager().getIndex(fCProject);
-		index.acquireReadLock();
+    }
+
+	// enum {e20070206};
+	public void test156671() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0];
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test156671.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
 		try {
-			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bs.length); 
-			assertTrue(bs[0] instanceof ICPPVariable);
-			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
-			assertEquals("B", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+			IBinding[] bindings= fIndex.findBindings("e20070206".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IEnumerator);
 		} finally {
-			index.releaseReadLock();
+			fIndex.releaseReadLock();
 		}
 	}
-	
+
+	public void test160281_1() throws Exception {
+		waitForIndexer();
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_1.h", "");
+		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
+		TestScannerProvider.sIncludeFiles= new String[]{include.getName()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_1.cpp", "");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	public void test160281_2() throws Exception {
+		waitForIndexer();
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_2.h", "#define X y\n");
+		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
+		TestScannerProvider.sMacroFiles= new String[]{include.getName()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_2.cpp", "int X;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
+			IIndexBinding[] bindings= fIndex.findBindings("y".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IVariable);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
     //  namespace ns162011 {
     //    class Class162011 {
     //      friend void function162011(Class162011); 
     //    };
     //    void function162011(Class162011 x){};
     //  }
-    public void testBug162011() throws Exception {
+    public void test162011() throws Exception {
 		String content = getContentsForTest(1)[0];
 		String fileName = "bug162011.cpp";
 		String funcName = "function162011";
@@ -316,45 +380,10 @@ public class IndexBugsTests extends BaseTestCase {
 			decls= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS);
 			assertEquals(1, decls.length);
 			assertEquals(indexOfDef, decls[0].getNodeOffset());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
     }
-    
-    public void testBug150906() throws Exception {
-    	String fileName= "bug150906.c";
-    	String varName= "arrayDataSize";
-    	StringBuffer content= new StringBuffer();
-    	content.append("unsigned char arrayData[] = {\n");
-    	for(int i=0; i<1024*250-1; i++) {
-    		content.append("0x00,");
-    	}
-    	content.append("0x00};\n"); 
-    	content.append("unsigned int arrayDataSize = sizeof(arrayData);\n");
-		int indexOfDecl = content.indexOf(varName);
-
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEX_WAIT_TIME, NPM));
-		IFile file= createFile(getProject(), fileName, content.toString());
-		// must be done in a reasonable amount of time
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
-		fIndex.acquireReadLock();
-		try {
-			IIndexBinding[] bindings= fIndex.findBindings(getPattern("arrayDataSize"), true, IndexFilter.ALL, NPM);
-			assertEquals(1, bindings.length);
-			
-			IIndexBinding binding= bindings[0];
-			
-			// check if we have the definition
-			IIndexName[] decls= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS);
-			assertEquals(1, decls.length);
-			assertEquals(indexOfDecl, decls[0].getNodeOffset());
-		}
-		finally {
-			fIndex.releaseReadLock();
-		}
-    }
-
 	public void test164360_1() throws Exception {
 		waitForIndexer();
 		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
@@ -374,8 +403,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(true, i.isSystemInclude());
 			assertEquals(0, i.getNameOffset());
 			assertEquals(0, i.getNameLength());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -399,63 +427,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(true, i.isSystemInclude());
 			assertEquals(0, i.getNameOffset());
 			assertEquals(0, i.getNameLength());
-		}
-		finally {
-			fIndex.releaseReadLock();
-		}
-	}
-
-	public void test160281_1() throws Exception {
-		waitForIndexer();
-		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_1.h", "");
-		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
-		TestScannerProvider.sIncludeFiles= new String[]{include.getName()};
-		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_1.cpp", "");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
-
-		fIndex.acquireReadLock();
-		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
-			IIndexInclude[] includes= ifile.getIncludes();
-			assertEquals(1, includes.length);
-			IIndexInclude i= includes[0];
-			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-			assertEquals(true, i.isSystemInclude());
-			assertEquals(0, i.getNameOffset());
-			assertEquals(0, i.getNameLength());
-		}
-		finally {
-			fIndex.releaseReadLock();
-		}
-	}
-
-	public void test160281_2() throws Exception {
-		waitForIndexer();
-		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_2.h", "#define X y\n");
-		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
-		TestScannerProvider.sMacroFiles= new String[]{include.getName()};
-		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_2.cpp", "int X;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
-
-		fIndex.acquireReadLock();
-		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
-			IIndexInclude[] includes= ifile.getIncludes();
-			assertEquals(1, includes.length);
-			IIndexInclude i= includes[0];
-			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
-			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
-			assertEquals(true, i.isSystemInclude());
-			assertEquals(0, i.getNameOffset());
-			assertEquals(0, i.getNameLength());
-			IIndexBinding[] bindings= fIndex.findBindings("y".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bindings.length);
-			assertTrue(bindings[0] instanceof IVariable);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -483,71 +455,11 @@ public class IndexBugsTests extends BaseTestCase {
 			m= macros[2];
 			assertEquals("2", new String(m.getExpansionImage()));
 			assertEquals("macro164500", new String(m.getName()));
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
 
-	// class A {}; class B {}; class C {};
-	public void testIndexContentOverProjectDelete() throws Exception {
-		waitForIndexer();
-
-		/* Check that when a project is deleted, its index contents do not
-         * appear in the initial index of a newly created project of the same name */
-         
-		String pname = "deleteTest"+System.currentTimeMillis();
-		ICProject cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
-		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		String content= getContentsForTest(1)[0];
-		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
-		CProjectHelper.delete(cproject);
-
-		cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
-		index = CCorePlugin.getIndexManager().getIndex(cproject);
-		index.acquireReadLock();
-		try {
-			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
-			assertEquals(0, bindings.length);
-		}
-		finally {
-			index.releaseReadLock();
-			CProjectHelper.delete(cproject);
-		}
-	}
-
-	// class A {}; class B {}; class C {}; class D {};
-	public void testIndexContentOverProjectMove() throws Exception {
-		waitForIndexer();
-
-		/* Check that the contents of an index is preserved over a project
-         * move operation */
-
-		ICProject cproject = CProjectHelper.createCCProject("moveTest", "bin", IPDOMManager.ID_FAST_INDEXER);
-		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		String content= getContentsForTest(1)[0];
-		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
-
-		// move the project to a random new location
-		File newLocation = CProjectHelper.freshDir();
-		IProjectDescription description = cproject.getProject().getDescription();
-		description.setLocationURI(newLocation.toURI());
-		cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
-		
-		index = CCorePlugin.getIndexManager().getIndex(cproject);
-		index.acquireReadLock();
-		try {
-			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
-			assertEquals(4, bindings.length);
-		}
-		finally {
-			index.releaseReadLock();
-			CProjectHelper.delete(cproject);
-		}
-	}
-	
 	// // header.h
 	// class E {};
 	
@@ -596,40 +508,6 @@ public class IndexBugsTests extends BaseTestCase {
 			CProjectHelper.delete(cproject);
 		}
 	}
-	
-	//  // header.h
-	//	template <class T1> class Test {};
-	//	template <class T2> void f() {}
-	
-	//  #include "header.h"
-	//	struct A {};
-	//	Test<A> a;
-	//  void func() {
-	//    f<A>();
-	//  }
-
-	//	template <class U1> class Test;
-	//	template <class U2> void f();
-	public void test253080() throws Exception {
-		waitForIndexer();
-
-		String[] testData = getContentsForTest(3);
-		TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
-		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
-		TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
-		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		indexManager.reindex(fCProject);
-		waitForIndexer();
-		IIndex index= indexManager.getIndex(fCProject);
-		index.acquireReadLock();
-		try {
-			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
-			getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
-			getBindingFromASTName(ast, testData[1], "f<A>", 4, ICPPTemplateInstance.class);
-		} finally {
-			index.releaseReadLock();
-		}
-	}
 
 	// typedef struct S20070201 {
 	//    int a;
@@ -660,8 +538,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertTrue(typedef instanceof ITypedef);
 			assertTrue(((ITypedef) typedef).getType() instanceof ICompositeType);
 			assertTrue(((ITypedef) typedef).isSameType((ICompositeType) struct));
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -698,31 +575,11 @@ public class IndexBugsTests extends BaseTestCase {
 			assertTrue(aliased instanceof ICPPClassType);
 			assertTrue(((ICPPClassType)aliased).getKey()==ICompositeType.k_struct);
 			assertTrue(((ITypedef) typedef).isSameType((ICompositeType) struct));
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
 
-	// enum {e20070206};
-	public void test156671() throws Exception {
-		waitForIndexer();
-		String content= getContentsForTest(1)[0];
-
-		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test156671.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
-
-		fIndex.acquireReadLock();
-		try {
-			IBinding[] bindings= fIndex.findBindings("e20070206".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
-			assertEquals(1, bindings.length);
-			assertTrue(bindings[0] instanceof IEnumerator);
-		}
-		finally {
-			fIndex.releaseReadLock();
-		}
-	}
-	
 	// typedef int T20070213;
 	public void test173997() throws Exception {
 		waitForIndexer();
@@ -741,8 +598,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertTrue(type instanceof IBasicType);
 			IBasicType btype= (IBasicType) type;
 			assertEquals(IBasicType.t_int, btype.getType());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 		
@@ -766,12 +622,183 @@ public class IndexBugsTests extends BaseTestCase {
 			IBasicType btype= (IBasicType) type;
 			assertTrue(IBasicType.t_int != btype.getType());
 			assertEquals(IBasicType.t_float, btype.getType());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
+
+	// class A {};
+	// class B {};
+	// A var;
 	
+	// class A {};
+	// class B {};
+	// B var;
+	public void test173997_2() throws Exception {
+		String[] content= getContentsForTest(2);
+		
+		IFile file= createFile(getProject(), "header.h", content[0]);
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPVariable);
+			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
+			assertEquals("A", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, NPM);
+		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		
+		index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs= index.findBindings("var".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bs.length); 
+			assertTrue(bs[0] instanceof ICPPVariable);
+			assertTrue(((ICPPVariable)bs[0]).getType() instanceof ICPPClassType);
+			assertEquals("B", ((ICPPClassType)(((ICPPVariable)bs[0]).getType())).getName());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // header.h
+	//	template <class T1> class Test {};
+	//	template <class T2> void f() {}
+	
+	//  #include "header.h"
+	//	struct A {};
+	//	Test<A> a;
+	//  void func() {
+	//    f<A>();
+	//  }
+
+	//	template <class U1> class Test;
+	//	template <class U2> void f();
+	public void test253080() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(3);
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
+		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
+			getBindingFromASTName(ast, testData[1], "Test<A>", 7, ICPPTemplateInstance.class);
+			getBindingFromASTName(ast, testData[1], "f<A>", 4, ICPPTemplateInstance.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//	// test1.h
+	//	template<class U> struct A {
+	//	  typedef U value_type;
+	//	};
+
+	//	// test2.h
+	//	#include "test1.h"
+	//	template<class T> struct B {
+	//	  typedef A<T> container_type;
+	//	  typedef typename container_type::value_type value_type;
+	//	};
+
+	//	#include "test1.h"
+
+	//	#include "test2.h"
+	//	void f(int x);
+	//	void test(B<int>::value_type x) {
+	//	  f(x);  // problem on f
+	//	}
+	public void _test257818() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "test1.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "test2.h", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "test1.cpp", testData[2]);
+		IFile test2= TestSourceReader.createFile(fCProject.getProject(), "test2.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test2);
+			getBindingFromASTName(ast, testData[3], "f(x)", 1, ICPPFunction.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	// class A {}; class B {}; class C {};
+	public void testIndexContentOverProjectDelete() throws Exception {
+		waitForIndexer();
+
+		/* Check that when a project is deleted, its index contents do not
+         * appear in the initial index of a newly created project of the same name */
+         
+		String pname = "deleteTest"+System.currentTimeMillis();
+		ICProject cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+		String content= getContentsForTest(1)[0];
+		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
+		CProjectHelper.delete(cproject);
+
+		cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(0, bindings.length);
+		} finally {
+			index.releaseReadLock();
+			CProjectHelper.delete(cproject);
+		}
+	}
+
+	// class A {}; class B {}; class C {}; class D {};
+	public void testIndexContentOverProjectMove() throws Exception {
+		waitForIndexer();
+
+		/* Check that the contents of an index is preserved over a project
+         * move operation */
+
+		ICProject cproject = CProjectHelper.createCCProject("moveTest", "bin", IPDOMManager.ID_FAST_INDEXER);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+		String content= getContentsForTest(1)[0];
+		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
+
+		// move the project to a random new location
+		File newLocation = CProjectHelper.freshDir();
+		IProjectDescription description = cproject.getProject().getDescription();
+		description.setLocationURI(newLocation.toURI());
+		cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
+		
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(4, bindings.length);
+		} finally {
+			index.releaseReadLock();
+			CProjectHelper.delete(cproject);
+		}
+	}
+
 	// class a {};
 	// class A {};
 	// namespace aa {
@@ -808,8 +835,7 @@ public class IndexBugsTests extends BaseTestCase {
 			
 			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, false, NON_FUNCTIONS, null);
 			assertEquals(2, bindings.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}		
 	}
@@ -833,8 +859,7 @@ public class IndexBugsTests extends BaseTestCase {
 			
 			IBinding[] bindings= fIndex.findBindings(new char[][]{{'a'},{'b'},{'c'},{'f'}}, NON_CLASS, NPM);
 			assertEquals(1,bindings.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}		
 	}
@@ -869,12 +894,10 @@ public class IndexBugsTests extends BaseTestCase {
 				assertEquals(2, names.length);
 				names= index.findDeclarations(binding);
 				assertEquals(1, names.length);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
-		}
-		finally {
+		} finally {
 			CProjectHelper.delete(p2);
 		}
 	}
@@ -965,8 +988,7 @@ public class IndexBugsTests extends BaseTestCase {
 				assertEquals(2, names.length);
 				names= index.findDeclarations(binding);
 				assertEquals(1, names.length);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 			
@@ -983,12 +1005,10 @@ public class IndexBugsTests extends BaseTestCase {
 				assertEquals(2, names.length);
 				names= index.findDeclarations(binding);
 				assertEquals(1, names.length);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
-		}
-		finally {
+		} finally {
 			CProjectHelper.delete(p2);
 		}
 	}
@@ -1014,8 +1034,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] refs= fIndex.findReferences(bindings[0]);
 			assertEquals(3, refs.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -1041,8 +1060,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] refs= fIndex.findReferences(bindings[0]);
 			assertEquals(3, refs.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -1066,8 +1084,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof ITypedef);
 			checkTypedefDepth((ITypedef) bindings[0]);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 
@@ -1084,8 +1101,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof ITypedef);
 			checkTypedefDepth((ITypedef) bindings[0]);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -1117,8 +1133,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof ITypedef);
 			checkTypedefDepth((ITypedef) bindings[0]);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 
@@ -1135,8 +1150,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof ITypedef);
 			checkTypedefDepth((ITypedef) bindings[0]);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -1166,17 +1180,15 @@ public class IndexBugsTests extends BaseTestCase {
 			th.start();
 			th.join(5000);
 			assertFalse(th.isAlive());
-		}
-		finally {
+		} finally {
 			try {
 				th.stop();
-			}
-			finally {
+			} finally {
 				fIndex.releaseReadLock();
 			}
 		}
 	}
-	
+
 	// void func_209049(long long x);
 	public void testGPPTypes_Bug209049() throws Exception {
 		String[] contents= getContentsForTest(1);

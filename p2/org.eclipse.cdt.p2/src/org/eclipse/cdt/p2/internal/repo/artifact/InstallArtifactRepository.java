@@ -139,7 +139,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 
 	@Override
-	public boolean contains(IArtifactKey key) {
+	public synchronized boolean contains(IArtifactKey key) {
 		IArtifactDescriptor desc = artifacts.get(key.getId());
 		if (desc == null)
 			return false;
@@ -153,7 +153,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 
 	@Override
-	public IArtifactDescriptor[] getArtifactDescriptors(IArtifactKey key) {
+	public synchronized IArtifactDescriptor[] getArtifactDescriptors(IArtifactKey key) {
 		// we only have one artifact descriptor per key
 		IArtifactDescriptor desc = artifacts.get(key);
 		if (desc != null)
@@ -162,7 +162,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 
 	@Override
-	public IArtifactKey[] getArtifactKeys() {
+	public synchronized IArtifactKey[] getArtifactKeys() {
 		Collection<IArtifactDescriptor> descs = artifacts.values();
 		IArtifactKey[] keys = new IArtifactKey[descs.size()];
 		int i = 0;
@@ -192,7 +192,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		save();
 	}
 
-	Collection<IArtifactDescriptor> getDescriptors() {
+	synchronized Collection<IArtifactDescriptor> getDescriptors() {
 		return artifacts.values();
 	}
 	
@@ -265,7 +265,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 	
 	@Override
-	public void removeAll() {
+	public synchronized void removeAll() {
 		super.removeAll();
 		for (String artifact : artifacts.keySet())
 			deleteFiles(artifact);
@@ -279,7 +279,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 
 	@Override
-	public void removeDescriptor(IArtifactKey key) {
+	public synchronized void removeDescriptor(IArtifactKey key) {
 		super.removeDescriptor(key);
 		deleteFiles(key.getId());
 		artifacts.remove(key);

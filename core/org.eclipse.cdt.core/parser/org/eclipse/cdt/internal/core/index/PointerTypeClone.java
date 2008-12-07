@@ -70,4 +70,9 @@ public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexTyp
 	public Object clone() {
 		return new PointerTypeClone(this);
 	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
+	}
 }

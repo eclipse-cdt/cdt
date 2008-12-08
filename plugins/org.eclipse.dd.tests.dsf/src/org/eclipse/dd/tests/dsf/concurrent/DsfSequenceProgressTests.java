@@ -64,7 +64,7 @@ public class DsfSequenceProgressTests {
     	
         @Override
 		public int getTicks() {
-			return 4;
+			return 6;
 		}
         
 		@Override public void execute(RequestMonitor requestMonitor) {
@@ -89,16 +89,20 @@ public class DsfSequenceProgressTests {
     	
         @Override
 		public int getTicks() {
-			return 4;
+			return 6;
 		}
+        
+        private final static int SUB_TICKS = 3;
         
 		@Override 
 		public void execute(RequestMonitor rm, IProgressMonitor pm) {
         	stepCounter.fInteger++;
         	
-            // step has its own sub-progress ticks. 
-        	pm.beginTask(getTaskName() + ": ", getTicks());
-        	sleep(getTicks(), rm, pm);
+        	
+            // step has its own sub-progress ticks which take the total ticks
+        	// of this step and divides them into subticks
+        	pm.beginTask(getTaskName() + ": ", SUB_TICKS);
+        	sleep(SUB_TICKS, rm, pm);
         	
             rm.done(); 
             pm.done();

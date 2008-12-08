@@ -30,6 +30,7 @@
          category="org.eclipse.debug.ui.DebugPreferencePage"
          class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
          id="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
+         helpContextId="TraditionalRenderingPreferencePage_context"
          name="Traditional Memory Rendering"/>
 </extension>
 <extension

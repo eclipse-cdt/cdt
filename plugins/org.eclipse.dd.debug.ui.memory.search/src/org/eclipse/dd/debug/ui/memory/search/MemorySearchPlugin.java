@@ -19,7 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class MemorySearchPlugin extends AbstractUIPlugin 
 {
-	private static final String PLUGIN_ID = "org.eclipse.dd.debug.memory.renderings.traditional"; //$NON-NLS-1$
+	private static final String PLUGIN_ID = "org.eclipse.dd.debug.ui.memory.search"; //$NON-NLS-1$
 	
 	private static MemorySearchPlugin plugin;
 	

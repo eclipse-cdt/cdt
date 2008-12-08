@@ -530,7 +530,7 @@ public class FindReplaceDialog extends SelectionDialog
 	 */
 	protected Control createDialogArea(Composite parent) {
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$ // FIXME
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemorySearchPlugin.getUniqueIdentifier() + ".MemorySearchDialog_context"); //$NON-NLS-1$
 		Composite composite = new Composite(parent, SWT.NONE);
 		FormLayout formLayout = new FormLayout();
 		formLayout.spacing = 5;

@@ -49,7 +49,7 @@
 	            <action
                    class="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
                    enablesFor="1"
-                   helpContextId="ExportMemoryAction_context"
+                   helpContextId="ImportMemoryAction_context"
                    icon="icons/import.png"
                    id="org.eclipse.dd.debug.ui.memory.transport.actions.ImportMemoryAction"
                    label="%ImportMemoryAction.label"

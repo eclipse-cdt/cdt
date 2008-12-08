@@ -13,12 +13,13 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
-Yu-Fen Kuo (MontaVista) - [170910] Integrate Terminal with RSE
+Yu-Fen Kuo (MontaVista)       - [170910] Integrate Terminal with RSE
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled when selection is empty
 Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
 Kevin Doyle		 (IBM)		  - [249320] Launch Shell action not available in Remote System Details/Monitor views
+Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
 -->
 <?eclipse version="3.2"?>
 <plugin>
@@ -109,4 +110,15 @@ Kevin Doyle		 (IBM)		  - [249320] Launch Shell action not available in Remote Sy
               commandId="org.eclipse.rse.terminals.ui.actions.LaunchTerminalCommand">
         </handler>
      </extension>
+     <extension
+         point="org.eclipse.ui.propertyPages">   
+      <page
+            name="%Terminals.Service"
+            class="org.eclipse.rse.internal.terminals.ui.propertypages.TerminalServicesPropertyPage"
+            id="org.eclipse.rse.terminals.ui.propertypages.TerminalServicesPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem"/>
+         </enabledWhen>
+      </page>
+   </extension>
 </plugin>

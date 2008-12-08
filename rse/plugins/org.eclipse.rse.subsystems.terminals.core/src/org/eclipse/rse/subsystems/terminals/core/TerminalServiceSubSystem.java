@@ -11,6 +11,7 @@
  * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  * Martin Oberhuber (Wind River) - [228577] [rseterminal] Further cleanup
  * Anna Dushistova  (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
+ * Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -194,4 +195,10 @@ public class TerminalServiceSubSystem extends SubSystem implements
 	public boolean canSwitchTo(ISubSystemConfiguration configuration) {
 		return (configuration instanceof ITerminalServiceSubSystemConfiguration);
 	}
+
+	public ITerminalServiceSubSystemConfiguration getParentRemoteTerminalSubSystemConfiguration() {
+		return (ITerminalServiceSubSystemConfiguration) super
+				.getSubSystemConfiguration();
+	}
+
 }

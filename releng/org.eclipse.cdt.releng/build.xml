@@ -133,6 +133,9 @@
 		<!-- for some reason LPG isn't getting picked up-->		
 		<copy file="${buildDirectory}/plugins/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar"
 			todir="${buildDirectory}/site/eclipse/plugins"/>
+		
+		<!-- generate p2 metadata -->
+		<p2.generator updateSite="${buildDirectory}/site/eclipse" site="file:${buildDirectory}/site/eclipse/site.xml" metadataRepository="file:${buildDirectory}/site/eclipse" artifactRepository="file:${buildDirectory}/site/eclipse" metadataRepositoryName="CDT Update Site" artifactRepositoryName="CDT Artifacts" publishArtifacts="true" compress="true" append="true" noDefaultIUs="true" />
 
 		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>

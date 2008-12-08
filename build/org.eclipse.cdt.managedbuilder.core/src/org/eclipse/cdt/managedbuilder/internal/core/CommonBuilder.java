@@ -78,6 +78,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -1679,6 +1680,7 @@ public class CommonBuilder extends ACBuilder {
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			consoleOutStream.close();
+			curProject.refreshLocal(IContainer.DEPTH_INFINITE, null);
 		}  catch (IOException io) {}	//  Ignore console failures...		
 
 	}

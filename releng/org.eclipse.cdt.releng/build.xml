@@ -135,7 +135,7 @@
 			todir="${buildDirectory}/site/eclipse/plugins"/>
 		
 		<!-- generate p2 metadata -->
-		<p2.generator updateSite="${buildDirectory}/site/eclipse" metadataRepository="file:${buildDirectory}/site/eclipse" artifactRepository="file:${buildDirectory}/site/eclipse" metadataRepositoryName="CDT Update Site" artifactRepositoryName="CDT Artifacts" publishArtifacts="true" compress="true" append="true" />
+		<!--p2.generator updateSite="${buildDirectory}/site/eclipse" metadataRepository="file:${buildDirectory}/site/eclipse" artifactRepository="file:${buildDirectory}/site/eclipse" metadataRepositoryName="CDT Update Site" artifactRepositoryName="CDT Artifacts" publishArtifacts="true" compress="true" append="true" /-->
 
 		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>

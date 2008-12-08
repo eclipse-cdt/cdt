@@ -64,13 +64,13 @@ public class DsfSequenceProgressTests {
     	
         @Override
 		public int getTicks() {
-			return 3;
+			return 4;
 		}
         
 		@Override public void execute(RequestMonitor requestMonitor) {
         	stepCounter.fInteger++;
         	
-        	sleep(getTicks(), null, null);
+        	sleep(getTicks(), requestMonitor, null);
         	
             requestMonitor.done(); 
         }
@@ -89,7 +89,7 @@ public class DsfSequenceProgressTests {
     	
         @Override
 		public int getTicks() {
-			return 12;
+			return 4;
 		}
         
 		@Override 
@@ -97,8 +97,8 @@ public class DsfSequenceProgressTests {
         	stepCounter.fInteger++;
         	
             // step has its own sub-progress ticks. 
-        	pm.beginTask(getTaskName() + ": ", 6);
-        	sleep(6, rm, pm);
+        	pm.beginTask(getTaskName() + ": ", getTicks());
+        	sleep(getTicks(), rm, pm);
         	
             rm.done(); 
             pm.done();
@@ -233,6 +233,10 @@ public class DsfSequenceProgressTests {
     				if (pm.isCanceled()) {
     					return;
     				}
+    			}
+    			
+    			if (rm != null && rm.isCanceled()) {
+    				return;
     			}
     		}
     		

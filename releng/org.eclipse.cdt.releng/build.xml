@@ -144,7 +144,8 @@
 	
     <target name="generate.p2.metadata">
     	<echo message="Generate Metadata" />
-        <java jar="${buildDirectory}/eclipse/plugins/org.eclipse.equinox.launcher.jar" fork="true" timeout="10800000" jvm="/opt/public/common/ibm-java2-ppc-50/bin/java" failonerror="true" maxmemory="768m" error="${zipsdir}/errorlog.txt" dir="${buildDirectory}/eclipse" output="${zipsdir}/p2metadata.txt">
+    	<property name="launcher" value="/opt/public/download-staging.priv/tools/cdt/releng/org.eclipse.cdt/all/org.eclipse.cdt.releng/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
+        <java jar="${launcher}" fork="true" timeout="10800000" jvm="/opt/public/common/ibm-java2-ppc-50/bin/java" failonerror="true" maxmemory="768m" error="${zipsdir}/errorlog.txt" dir="${buildDirectory}/eclipse" output="${zipsdir}/p2metadata.txt">
             <arg line="-application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator" />
             <arg line="-updateSite ${buildDirectory}/site/eclipse"/>
         	<arg line="-site file:${buildDirectory}/site/eclipse/site.xml"/>

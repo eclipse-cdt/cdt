@@ -583,7 +583,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //		constructorDeclarations.children.add(fConstructorDeclarationsParametersCategory);
 //		constructorDeclarations.children.add(fConstructorThrowsClauseCategory);
 
-		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_method_decls,FormatterMessages.LineWrappingTabPage_method_decls_lowercase); 
+		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_function_decls,FormatterMessages.LineWrappingTabPage_function_decls_lowercase); 
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 		methodDeclarations.children.add(fMethodThrowsClauseCategory);
 

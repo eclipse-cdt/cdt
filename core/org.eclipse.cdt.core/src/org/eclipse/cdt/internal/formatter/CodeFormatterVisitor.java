@@ -1084,14 +1084,12 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				try {
 					scribe.alignFragment(alignment, 0);
 					scribe.printNextToken(Token.t_throw, true);
-					// preferences.insert_space_before_opening_paren_in_exception_specification_throw
-					scribe.printNextToken(Token.tLPAREN, scribe.printComment());
-					if (false /* preferences.insert_space_after_opening_paren_in_exception_specification_throw */ ) {
+					scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_exception_specification);
+					if (preferences.insert_space_after_opening_paren_in_exception_specification) {
 						scribe.space();
 					}
 					exceptionSpecification[0].accept(this);
 					for (int i = 1; i < exceptionSpecification.length; i++) {
-						// insert_space_before_comma_in_method_declaration_throws
 						scribe.printNextToken(Token.tCOMMA, preferences.insert_space_before_comma_in_method_declaration_throws);
 						scribe.printTrailingComment();
 						if (preferences.insert_space_after_comma_in_method_declaration_throws) {
@@ -1101,8 +1099,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		    			exceptionSpecification[i].accept(this);
 					}
 					if (peekNextToken() == Token.tRPAREN) {
-						// preferences.insert_space_before_closing_paren_in_exception_specification_throw
-						scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+						scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_exception_specification);
 					}
 					ok = true;
 				} catch (AlignmentException e) {
@@ -1112,8 +1109,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.exitAlignment(alignment, true);
 		} else {
 			scribe.printNextToken(Token.t_throw, true);
-			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
-			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_exception_specification);
+			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_between_empty_parens_in_exception_specification);
 		}
 	}
 

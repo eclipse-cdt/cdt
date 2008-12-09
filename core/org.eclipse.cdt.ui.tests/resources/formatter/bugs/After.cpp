@@ -11,11 +11,11 @@ protected:
 	ABaseClass(int x);
 };
 class AClass: public ABaseClass {
-	AClass(int x) throw(int);
-	void test1() const throw(int);
-	void test2() throw();
+	AClass(int x) throw (int);
+	void test1() const throw (int);
+	void test2() throw ();
 };
-AClass::AClass(int x) throw(int) :
+AClass::AClass(int x) throw (int) :
 	ABaseClass(x) {
 	for (int i = 0; i < 12; i++) {
 	}

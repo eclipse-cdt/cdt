@@ -1136,6 +1136,18 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_method_invocation"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a space after the opening parenthesis in an exception specification
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_exception_specification"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 5.1
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_paren_in_exception_specification"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to insert a space after the opening parenthesis in a parenthesized expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_paren_in_parenthesized_expression"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
@@ -1354,6 +1366,18 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_method_invocation"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before the closing parenthesis in an exception specification
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_paren_in_exception_specification"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 5.1
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_paren_in_exception_specification"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the closing parenthesis in a parenthesized expression
@@ -1752,10 +1776,22 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_method_invocation"; //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option to insert a space before the opening parenthesis in an exception specification
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_exception_specification"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 5.1
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_paren_in_exception_specification"; //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening parenthesis in a parenthesized expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_paren_in_parenthesized_expression"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-	 *     - default:           DO_NOT_INSERT
+	 *     - default:           INSERT
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
@@ -1905,6 +1941,18 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_parens_in_method_invocation"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space between empty parenthesis in an exception specification
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_parens_in_exception_specification"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 5.1
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_EXCEPTION_SPECIFICATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_parens_in_exception_specification"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to keep else statement on the same line

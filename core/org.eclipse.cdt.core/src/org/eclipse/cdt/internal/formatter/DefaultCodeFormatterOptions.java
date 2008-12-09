@@ -157,6 +157,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_after_opening_paren_in_if;
 	public boolean insert_space_after_opening_paren_in_method_declaration;
 	public boolean insert_space_after_opening_paren_in_method_invocation;
+	public boolean insert_space_after_opening_paren_in_exception_specification;
 	public boolean insert_space_after_opening_paren_in_parenthesized_expression;
 	public boolean insert_space_after_opening_paren_in_switch;
 	public boolean insert_space_after_opening_paren_in_while;
@@ -177,6 +178,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_closing_paren_in_if;
 	public boolean insert_space_before_closing_paren_in_method_declaration;
 	public boolean insert_space_before_closing_paren_in_method_invocation;
+	public boolean insert_space_before_closing_paren_in_exception_specification;
 	public boolean insert_space_before_closing_paren_in_parenthesized_expression;
 	public boolean insert_space_before_closing_paren_in_switch;
 	public boolean insert_space_before_closing_paren_in_while;
@@ -212,6 +214,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_opening_paren_in_for;
 	public boolean insert_space_before_opening_paren_in_if;
 	public boolean insert_space_before_opening_paren_in_method_invocation;
+	public boolean insert_space_before_opening_paren_in_exception_specification;
 	public boolean insert_space_before_opening_paren_in_method_declaration;
 	public boolean insert_space_before_opening_paren_in_switch;
 	public boolean insert_space_before_opening_brace_in_switch;
@@ -227,6 +230,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_between_empty_brackets;
 	public boolean insert_space_between_empty_parens_in_method_declaration;
 	public boolean insert_space_between_empty_parens_in_method_invocation;
+	public boolean insert_space_between_empty_parens_in_exception_specification;
 	public boolean compact_else_if;
 	public boolean keep_guardian_clause_on_one_line;
 	public boolean keep_else_statement_on_same_line;
@@ -353,6 +357,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_FOR, this.insert_space_after_opening_paren_in_for? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_IF, this.insert_space_after_opening_paren_in_if? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_DECLARATION, this.insert_space_after_opening_paren_in_method_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, this.insert_space_after_opening_paren_in_exception_specification? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION, this.insert_space_after_opening_paren_in_method_invocation? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_PARENTHESIZED_EXPRESSION, this.insert_space_after_opening_paren_in_parenthesized_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_SWITCH, this.insert_space_after_opening_paren_in_switch? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -373,6 +378,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_FOR, this.insert_space_before_closing_paren_in_for? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_IF, this.insert_space_before_closing_paren_in_if? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION, this.insert_space_before_closing_paren_in_method_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION, this.insert_space_before_closing_paren_in_exception_specification? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION, this.insert_space_before_closing_paren_in_method_invocation? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_PARENTHESIZED_EXPRESSION, this.insert_space_before_closing_paren_in_parenthesized_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_SWITCH, this.insert_space_before_closing_paren_in_switch? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -409,6 +415,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_IF, this.insert_space_before_opening_paren_in_if? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, this.insert_space_before_opening_paren_in_method_invocation? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_DECLARATION, this.insert_space_before_opening_paren_in_method_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, this.insert_space_before_opening_paren_in_exception_specification? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_SWITCH, this.insert_space_before_opening_paren_in_switch? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_SWITCH, this.insert_space_before_opening_brace_in_switch? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_PARENTHESIZED_EXPRESSION, this.insert_space_before_opening_paren_in_parenthesized_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -424,6 +431,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACKETS, this.insert_space_between_empty_brackets? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_DECLARATION, this.insert_space_between_empty_parens_in_method_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION, this.insert_space_between_empty_parens_in_method_invocation? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_EXCEPTION_SPECIFICATION, this.insert_space_between_empty_parens_in_exception_specification? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF, this.compact_else_if ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_GUARDIAN_CLAUSE_ON_ONE_LINE, this.keep_guardian_clause_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_ELSE_STATEMENT_ON_SAME_LINE, this.keep_else_statement_on_same_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
@@ -1018,6 +1026,10 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceAfterOpeningParenInMethodDeclarationOption != null) {
 			this.insert_space_after_opening_paren_in_method_declaration = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningParenInMethodDeclarationOption);
 		}
+		final Object insertSpaceAfterOpeningParenInExceptionSpecificationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION);
+		if (insertSpaceAfterOpeningParenInExceptionSpecificationOption != null) {
+			this.insert_space_after_opening_paren_in_exception_specification = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningParenInExceptionSpecificationOption);
+		}
 		final Object insertSpaceAfterOpeningParenInMethodInvocationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION);
 		if (insertSpaceAfterOpeningParenInMethodInvocationOption != null) {
 			this.insert_space_after_opening_paren_in_method_invocation = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningParenInMethodInvocationOption);
@@ -1097,6 +1109,10 @@ public class DefaultCodeFormatterOptions {
 		final Object insertSpaceBeforeClosingParenInMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION);
 		if (insertSpaceBeforeClosingParenInMethodDeclarationOption != null) {
 			this.insert_space_before_closing_paren_in_method_declaration = CCorePlugin.INSERT.equals(insertSpaceBeforeClosingParenInMethodDeclarationOption);
+		}
+		final Object insertSpaceBeforeClosingParenInExceptionSpecificationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION);
+		if (insertSpaceBeforeClosingParenInExceptionSpecificationOption != null) {
+			this.insert_space_before_closing_paren_in_exception_specification = CCorePlugin.INSERT.equals(insertSpaceBeforeClosingParenInExceptionSpecificationOption);
 		}
 		final Object insertSpaceBeforeClosingParenInMethodInvocationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION);
 		if (insertSpaceBeforeClosingParenInMethodInvocationOption != null) {
@@ -1242,6 +1258,10 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceBeforeOpeningParenInMethodDeclarationOption != null) {
 			this.insert_space_before_opening_paren_in_method_declaration = CCorePlugin.INSERT.equals(insertSpaceBeforeOpeningParenInMethodDeclarationOption);
 		}
+		final Object insertSpaceBeforeOpeningParenInExceptionSpecificationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION);
+		if (insertSpaceBeforeOpeningParenInExceptionSpecificationOption != null) {
+			this.insert_space_before_opening_paren_in_exception_specification = CCorePlugin.INSERT.equals(insertSpaceBeforeOpeningParenInExceptionSpecificationOption);
+		}
 		final Object insertSpaceBeforeOpeningParenInSwitchOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_SWITCH);
 		if (insertSpaceBeforeOpeningParenInSwitchOption != null) {
 			this.insert_space_before_opening_paren_in_switch = CCorePlugin.INSERT.equals(insertSpaceBeforeOpeningParenInSwitchOption);
@@ -1301,6 +1321,10 @@ public class DefaultCodeFormatterOptions {
 		final Object insertSpaceBetweenEmptyParensInMethodInvocationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION);
 		if (insertSpaceBetweenEmptyParensInMethodInvocationOption != null) {
 			this.insert_space_between_empty_parens_in_method_invocation = CCorePlugin.INSERT.equals(insertSpaceBetweenEmptyParensInMethodInvocationOption);
+		}
+		final Object insertSpaceBetweenEmptyParensInExceptionSpecificationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_EXCEPTION_SPECIFICATION);
+		if (insertSpaceBetweenEmptyParensInExceptionSpecificationOption != null) {
+			this.insert_space_between_empty_parens_in_exception_specification = CCorePlugin.INSERT.equals(insertSpaceBetweenEmptyParensInExceptionSpecificationOption);
 		}
 		final Object compactElseIfOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF);
 		if (compactElseIfOption != null) {
@@ -1526,6 +1550,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_before_opening_brace_in_namespace_declaration = true;
 		this.insert_space_before_opening_bracket = false;
 		this.insert_space_before_opening_paren_in_catch = true;
+		this.insert_space_before_opening_paren_in_exception_specification = true;
 		this.insert_space_before_opening_paren_in_for = true;
 		this.insert_space_before_opening_paren_in_if = true;
 		this.insert_space_before_opening_paren_in_method_invocation = false;
@@ -1543,6 +1568,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_between_empty_brackets = false;
 		this.insert_space_between_empty_parens_in_method_declaration = false;
 		this.insert_space_between_empty_parens_in_method_invocation = false;
+		this.insert_space_between_empty_parens_in_exception_specification = false;
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;

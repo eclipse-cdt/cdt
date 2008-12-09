@@ -222,7 +222,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void functionWithLooooooooooooooooooooooooooooooooooooooooooooooooongName() throw(float);
 	
 	//void functionWithLooooooooooooooooooooooooooooooooooooooooooooooooongName()
-	//		throw(float);
+	//		throw (float);
 	public void testLineWrappingOfThrowSpecification_Bug200959() throws Exception {
 		assertFormatterResult();
 	}
@@ -523,10 +523,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//class Example: {
 	//	void foo()
-	//		throw(int);
+	//		throw (int);
 	//};
 	//void Example::foo()
-	//	throw(int) {
+	//	throw (int) {
 	//}
 	public void testAlignmentOfExceptionSpecificationInMethodDeclaration_Bug191980() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION,
@@ -1070,5 +1070,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testUniversalCharacters_Bug255949() throws Exception {
 		assertFormatterResult();
 	}
-	
+
+	//void foo() throw(E1,E2);
+
+	//void foo() throw ( E1, E2 );
+	public void testWhitespaceOptionsForExceptionSpecification_Bug243567() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
 }

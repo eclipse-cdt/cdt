@@ -181,10 +181,10 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	
 	
 	
-	private final class JavaElementComponent implements ISelectionChangedListener, ICheckStateListener {
+	private final class CElementComponent implements ISelectionChangedListener, ICheckStateListener {
 	    
-	    private final String PREF_INNER_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.java_view.inner"; //$NON-NLS-1$ 
-		private final String PREF_OPTION_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.java_view.option"; //$NON-NLS-1$
+	    private final String PREF_INNER_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.c_view.inner"; //$NON-NLS-1$ 
+		private final String PREF_OPTION_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.white_space.c_view.option"; //$NON-NLS-1$
 		
 	    private final ArrayList<Node> fIndexedNodeList;
 	    private final ArrayList<InnerNode> fTree;
@@ -196,9 +196,9 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    
 	    private Composite fComposite;
 	    
-	    public JavaElementComponent() {
+	    public CElementComponent() {
 			fIndexedNodeList= new ArrayList<Node>();
-			fTree= new WhiteSpaceOptions().createTreeByJavaElement(fWorkingValues);
+			fTree= new WhiteSpaceOptions().createTreeByCElement(fWorkingValues);
 			WhiteSpaceOptions.makeIndexForNodes(fTree, fIndexedNodeList);
 	    }
 
@@ -377,11 +377,11 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	    private Combo fSwitchCombo; 
 	    private PageBook fPageBook;
 	    private final SyntaxComponent fSyntaxComponent;
-	    private final JavaElementComponent fJavaElementComponent;
+	    private final CElementComponent fCElementComponent;
 	    
 	    public SwitchComponent() {
 	        fSyntaxComponent= new SyntaxComponent();
-	        fJavaElementComponent= new JavaElementComponent();
+	        fCElementComponent= new CElementComponent();
 	    }
 	    
         @Override
@@ -389,8 +389,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
             final int index= fSwitchCombo.getSelectionIndex();
             if (index == 0) {
     		    fDialogSettings.put(PREF_VIEW_KEY, false);
-    		    fJavaElementComponent.refreshState();
-                fPageBook.showPage(fJavaElementComponent.getControl());
+    		    fCElementComponent.refreshState();
+                fPageBook.showPage(fCElementComponent.getControl());
             }
             else if (index == 1) { 
     		    fDialogSettings.put(PREF_VIEW_KEY, true);
@@ -404,7 +404,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
             fPageBook= new PageBook(parent, SWT.NONE);
             fPageBook.setLayoutData(createGridData(numColumns, GridData.FILL_BOTH, SWT.DEFAULT));
             
-            fJavaElementComponent.createContents(numColumns, fPageBook);		
+            fCElementComponent.createContents(numColumns, fPageBook);		
             fSyntaxComponent.createContents(numColumns, fPageBook);
             
             fSwitchCombo= new Combo(parent, SWT.READ_ONLY);
@@ -415,7 +415,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
         
         public void initialize() {
             fSwitchCombo.addSelectionListener(this);
-    	    fJavaElementComponent.initialize();
+    	    fCElementComponent.initialize();
     	    fSyntaxComponent.initialize();
     	    restoreSelection();
         }
@@ -427,9 +427,9 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
                 fSwitchCombo.setText(fItems[1]);
                 fPageBook.showPage(fSyntaxComponent.getControl());
 			} else {
-            	fJavaElementComponent.refreshState();
+            	fCElementComponent.refreshState();
 			    fSwitchCombo.setText(fItems[0]);
-			    fPageBook.showPage(fJavaElementComponent.getControl());
+			    fPageBook.showPage(fCElementComponent.getControl());
 			}
         }
 	}

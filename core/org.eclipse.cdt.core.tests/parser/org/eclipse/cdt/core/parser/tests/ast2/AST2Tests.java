@@ -5331,6 +5331,19 @@ public class AST2Tests extends AST2BaseTest {
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 		}
 	}
+	
+	//	struct s {
+	//		int (mem);
+	//	};
+	//	void foo() {
+	//		struct s v;
+	//		v.mem = 1;
+	//	}
+	public void testNestedDeclarator_Bug257540() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 
 	private long memoryUsed() {
 		System.gc();System.gc();System.gc();

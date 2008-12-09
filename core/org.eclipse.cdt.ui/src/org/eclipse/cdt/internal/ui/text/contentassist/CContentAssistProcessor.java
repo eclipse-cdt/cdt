@@ -153,8 +153,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		// wrap proposals which are no ICCompletionProposals
 		boolean wrapped= false;
 		int i=0;
-		for (Object element : proposals) {
-			ICompletionProposal proposal= (ICompletionProposal) element;
+		for (ICompletionProposal proposal : proposals) {
 			if (proposal instanceof ICCompletionProposal) {
 				proposalsInput[i++]= (ICCompletionProposal)proposal;
 			} else {

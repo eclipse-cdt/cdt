@@ -516,7 +516,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			return false;
 		
 		final int wordLength= word.length();
-		if (offset >=  fReplacementOffset + wordLength)
+		if (offset >  fReplacementOffset + wordLength)
 			return false;
 		
 		try {

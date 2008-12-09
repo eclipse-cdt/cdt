@@ -722,7 +722,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test(B<int>::value_type x) {
 	//	  f(x);  // problem on f
 	//	}
-	public void _test257818_1() throws Exception {
+	public void test257818_1() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(4);
@@ -763,7 +763,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test(B<C> x, C y) {
 	//	  x.m(&y);
 	//	}
-	public void _test257818_2() throws Exception {
+	public void test257818_2() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(4);

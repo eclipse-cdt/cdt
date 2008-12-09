@@ -6,17 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Jan 17, 2005
- */
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author aniefer
+ * Interface for problem bindings.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemBinding extends IBinding, IScope, IType {
 
@@ -123,5 +120,15 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     
 	public static final int SEMANTIC_RECURSION_IN_LOOKUP = 0x00E;
 
-	public static final int LAST_PROBLEM = SEMANTIC_RECURSION_IN_LOOKUP;
+	/**
+	 * @deprecated, there may be additional problems.
+	 */
+	@Deprecated
+	public static final int LAST_PROBLEM = 0x00E;
+
+	/**
+	 * @since 5.1
+	 */
+	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = 0x00F;
+
 }

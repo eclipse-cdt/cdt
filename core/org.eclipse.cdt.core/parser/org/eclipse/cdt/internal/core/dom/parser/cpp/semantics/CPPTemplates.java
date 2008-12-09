@@ -162,7 +162,7 @@ public class CPPTemplates {
 			final int numArgs = arguments.length;
 			final int numParams= parameters.length;
 			if (numParams == 0 || numParams < numArgs) 
-				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_USING);
+				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 
 			ICPPTemplateArgument[] completeArgs= new ICPPTemplateArgument[numParams];
 			CPPTemplateParameterMap map= new CPPTemplateParameterMap(numParams);
@@ -176,7 +176,7 @@ public class CPPTemplates {
 				} else {
 					ICPPTemplateArgument defaultArg= param.getDefaultValue();
 					if (defaultArg == null) {
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_USING);
+						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 					}
 					arg= instantiateArgument(defaultArg, map, null);
 					arg= SemanticUtil.getSimplifiedArgument(arg);
@@ -186,7 +186,7 @@ public class CPPTemplates {
 				if (!hasDependentDefaultArg) {
 					arg= CPPTemplates.matchTemplateParameterAndArgument(param, arg, map);
 					if (arg == null)
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_USING);
+						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 				}
 				
 				map.put(param, arg);
@@ -212,19 +212,7 @@ public class CPPTemplates {
 	}
 
 	private static IBinding createProblem(ICPPClassTemplate template, int id) {
-		IASTNode node= null;
-		if (template instanceof ICPPInternalBinding) {
-			ICPPInternalBinding internal= (ICPPInternalBinding) template;
-			node= internal.getDefinition();
-			if (node == null) {
-				IASTNode[] decls= internal.getDeclarations();
-				if (decls != null && decls.length > 0)
-					node= decls[0];
-			}
-		}
-		if (node == null) {
-			node= new CPPASTName(template.getNameCharArray());
-		}
+		IASTNode node= new CPPASTName(template.getNameCharArray());
 		return new ProblemBinding(node, id, template.getNameCharArray());
 	}
 

@@ -4397,7 +4397,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTDeclarator d = p2m.getDeclarators()[0];
 		ICPPASTPointerToMember po = (ICPPASTPointerToMember) d
 		.getPointerOperators()[0];
-		assertEquals(po.getName().toString(), "X::"); //$NON-NLS-1$
+		assertEquals("X::", po.getName().toString()); //$NON-NLS-1$
 	}
 	
 	// struct B {};
@@ -6150,9 +6150,11 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	struct B {
 	//	  operator ns::A(); // problems on operator ns and on A
 	//	};
-	public void _testNamespaceQualifiedOperator_256840() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+	public void testNamespaceQualifiedOperator_256840() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("operator ns::A", 14);
+        parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 	
 	//	void f();

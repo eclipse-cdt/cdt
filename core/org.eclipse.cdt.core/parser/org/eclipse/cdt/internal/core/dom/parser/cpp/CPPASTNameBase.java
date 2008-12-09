@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -97,7 +98,15 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
     			fBinding= new RecursionResolvingBinding(this);
     		} else {
     			fIsFinal= false;
-    			fBinding= createIntermediateBinding();
+    			final IBinding b= createIntermediateBinding();
+    			if (b instanceof ProblemBinding) {
+    				ProblemBinding pb= (ProblemBinding) b;
+    				final IASTNode node= pb.getASTNode();
+    				if (node == null || node.getParent() == null) {
+    					pb.setASTNode(this, toCharArray());
+    				}
+    			}
+    			fBinding= b;
     		}
     	}
     	if (!fIsFinal)

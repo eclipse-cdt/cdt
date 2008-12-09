@@ -415,17 +415,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IToken identifier() throws EndOfFileException, BacktrackException {
-        switch (LT(1)) {
-        case IToken.tIDENTIFIER:
-        case IToken.tCOMPLETION:
-        case IToken.tEOC:
-            return consume();
-        default:
-            throw backtrack;
-        }
-
-    }
+    protected abstract IASTName identifier() throws EndOfFileException, BacktrackException;
 
     /**
      * @return Returns the backtrackCount.
@@ -887,8 +877,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression unaryExpression() throws BacktrackException, EndOfFileException;
     protected abstract IASTExpression primaryExpression() throws BacktrackException, EndOfFileException;
 
-    protected abstract IASTExpression buildTypeIdExpression(int op, IASTTypeId typeId, int startingOffset, int endingOffset);
-
     protected abstract IASTTranslationUnit getTranslationUnit();
 
 	protected abstract void setupTranslationUnit() throws Exception;
@@ -1268,7 +1256,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         IASTName name;
         if (LT(1) == IToken.tIDENTIFIER) {
-            name= createName(identifier());
+            name= identifier();
         } else {
             name= nodeFactory.newName();
         }
@@ -1308,7 +1296,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         			if (needComma)
         				throw backtrack;
         			
-        			final IASTName etorName= createName(identifier());
+        			final IASTName etorName= identifier();
         			final IASTEnumerator enumerator= nodeFactory.newEnumerator(etorName, null);
         			endOffset= calculateEndOffset(etorName);
         			setRange(enumerator, problemOffset, endOffset);
@@ -1338,8 +1326,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected abstract IASTStatement statement() throws EndOfFileException, BacktrackException;
-
-    protected abstract IASTName createName(IToken token);
 
     protected IASTExpression condition(boolean followedByParenthesis) throws BacktrackException, EndOfFileException {
     	IToken mark= mark();
@@ -1666,15 +1652,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTAmbiguousStatement createAmbiguousStatement();
 
     protected IASTStatement parseLabelStatement() throws EndOfFileException, BacktrackException {
-        IToken labelName = consume(); // tIDENTIFIER
-        consume(); // tCOLON
+    	int offset= LA(1).getOffset();
+    	IASTName name = identifier(); // tIDENTIFIER
+        consume(IToken.tCOLON); // tCOLON
         IASTStatement nestedStatement = statement();
         int lastOffset = calculateEndOffset( nestedStatement );
         
-        IASTName name = createName(labelName);
         
         IASTLabelStatement label_statement = nodeFactory.newLabelStatement(name, nestedStatement);
-        ((ASTNode) label_statement).setOffsetAndLength(labelName.getOffset(), lastOffset - labelName.getOffset());
+        setRange(label_statement, offset, lastOffset);
         return label_statement;
     }
 
@@ -1688,10 +1674,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTStatement parseGotoStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset(); // t_goto
-        IToken identifier = consume(IToken.tIDENTIFIER);
+        IASTName goto_label_name = identifier();
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
 
-        IASTName goto_label_name = createName(identifier);
         IASTGotoStatement goto_statement = nodeFactory.newGotoStatement(goto_label_name);
         ((ASTNode) goto_statement).setOffsetAndLength(startOffset, lastOffset - startOffset);
         return goto_statement;
@@ -1745,7 +1730,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         switch (LT(1)) {
         case IToken.tEOC:
             // We're trying to start one
-            IASTName name = createName(LA(1));
+            IASTName name = identifier();
             IASTIdExpression idExpr = nodeFactory.newIdExpression(name);
             result = idExpr;
             break;
@@ -1945,8 +1930,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             			consume();
             			IASTExpression expr2= expression();
             			endOffset1= consumeOrEOC(IToken.tRPAREN).getEndOffset();
-            			
-            			expr= buildTypeIdExpression(IASTTypeIdExpression.op_typeof, typeid, typeidOffset, calculateEndOffset(typeid));
+						expr= nodeFactory.newTypeIdExpression(IASTTypeIdExpression.op_typeof, typeid);
+						setRange(expr, typeidOffset, calculateEndOffset(typeid));
 
             	        IASTExpressionList expressionList = nodeFactory.newExpressionList();
             	        ((ASTNode) expressionList).setOffsetAndLength(typeidOffset, calculateEndOffset(expr2)-typeidOffset);
@@ -1989,7 +1974,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         IASTExpression result1= null;
         if (typeid != null && endOffset1 >= endOffset2) {
-			result1= buildTypeIdExpression(typeExprKind, typeid, offset, endOffset1);
+			IASTTypeIdExpression typeIdExpression = nodeFactory.newTypeIdExpression(typeExprKind, typeid);
+			setRange(typeIdExpression, offset, endOffset1);
+			result1= typeIdExpression;
         	backup(typeidLA);
         	
         	if (expr == null || endOffset1 > endOffset2)

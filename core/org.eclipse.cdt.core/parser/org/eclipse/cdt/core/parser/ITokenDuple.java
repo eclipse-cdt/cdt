@@ -18,8 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 
 /**
- * @author jcamelon
+ * @deprecated
  */
+@Deprecated
 public interface ITokenDuple {
 
 	public abstract IToken getFirstToken();

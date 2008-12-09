@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope, IASTInternalScope {
     protected final int id;
-    protected final char[] arg;
+    protected char[] arg;
     protected IASTNode node;
     private String message = null;
     
@@ -56,7 +56,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     
     protected static final String[] errorMessages;
     static {
-        errorMessages = new String[IProblemBinding.LAST_PROBLEM];
+        errorMessages = new String[IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS];
         errorMessages[SEMANTIC_NAME_NOT_FOUND - 1] 		 		= ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_AMBIGUOUS_LOOKUP - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.ambiguousLookup"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_INVALID_TYPE - 1]				= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidType"); //$NON-NLS-1$ 
@@ -71,6 +71,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         errorMessages[SEMANTIC_BAD_SCOPE - 1]					= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.badScope"); //$NON-NLS-1$
         errorMessages[SEMANTIC_RECURSION_IN_LOOKUP - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.recursionInResolution"); //$NON-NLS-1$
         errorMessages[SEMANTIC_MEMBER_DECLARATION_NOT_FOUND - 1]= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.memberDeclNotFound"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_INVALID_TEMPLATE_ARGUMENTS - 1]=   ParserMessages.getString("ASTProblemFactory.error.semantic.dom.invalidTemplateArgs"); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -87,7 +88,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         if (message != null)
             return message;
 
-        String msg = (id >= 0 && id <= LAST_PROBLEM) ? errorMessages[id - 1] : ""; //$NON-NLS-1$
+        String msg = (id > 0 && id <= errorMessages.length) ? errorMessages[id - 1] : ""; //$NON-NLS-1$
 
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
@@ -224,7 +225,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public int getLineNumber() {
 		if (node != null) {
 			IASTFileLocation fileLoc = node.getFileLocation();
-			return fileLoc.getStartingLineNumber();
+			if (fileLoc != null)
+				return fileLoc.getStartingLineNumber();
 		}
 		return -1;
 	}
@@ -244,5 +246,12 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	public IBinding getOwner() throws DOMException {
 		return null;
+	}
+
+	public void setASTNode(IASTNode node, char[] arg) {
+		if (node != null)
+			this.node= node;
+		if (arg != null)
+			this.arg= arg;
 	}
 }

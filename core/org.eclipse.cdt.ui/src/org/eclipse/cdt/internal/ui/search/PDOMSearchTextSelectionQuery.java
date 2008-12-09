@@ -18,13 +18,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -66,7 +65,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 									scope = binding.getScope();
 								} catch (DOMException e) {
 								}
-								if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
+								if (scope != null && scope.getKind() == EScopeKind.eLocal) {
 									createLocalMatches(ast, binding);
 									return Status.OK_STATUS;
 								}

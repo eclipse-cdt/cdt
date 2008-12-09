@@ -46,7 +46,7 @@ public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatem
 
     public IScope getScope() {
         if( scope == null )
-            scope = new CScope( this, EScopeKind.eClassType);
+            scope = new CScope(this, EScopeKind.eLocal);
         return scope;
     }
 

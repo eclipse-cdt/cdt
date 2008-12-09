@@ -115,7 +115,7 @@ public class Checksums {
 				IPath location= file.getLocation();
 				if (location != null) {
 					File f= location.toFile();
-					if (f.exists()) {
+					if (f.isFile()) {
 						try {
 							byte[] checksum= computeChecksum(md, f);
 							putChecksum(result, file, checksum);

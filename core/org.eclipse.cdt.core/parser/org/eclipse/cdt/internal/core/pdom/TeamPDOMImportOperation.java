@@ -304,9 +304,14 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				IPath location= tu.getLocation();
 				if (location != null) {
 					try {
-						byte[] checksum= Checksums.computeChecksum(md, location.toFile());
-						if (!Arrays.equals(checksum, cs.fChecksum)) {
+						final File file = location.toFile();
+						if (!file.isFile()) {
 							i.remove();
+						} else {
+							byte[] checksum= Checksums.computeChecksum(md, file);
+							if (!Arrays.equals(checksum, cs.fChecksum)) {
+								i.remove();
+							}
 						}
 					}
 					catch (IOException e) {

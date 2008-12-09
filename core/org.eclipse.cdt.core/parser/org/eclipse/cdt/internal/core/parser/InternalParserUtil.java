@@ -23,8 +23,7 @@ public class InternalParserUtil extends ParserFactory {
 
 	public static CodeReader createFileReader(String finalPath) {
 		File includeFile = new File(finalPath);
-		if (includeFile.exists() && includeFile.isFile()) 
-		{
+		if (includeFile.isFile()) {
 			try {
 			    //use the canonical path so that in case of non-case-sensitive OSs
 			    //the CodeReader always has the same name as the file on disk with

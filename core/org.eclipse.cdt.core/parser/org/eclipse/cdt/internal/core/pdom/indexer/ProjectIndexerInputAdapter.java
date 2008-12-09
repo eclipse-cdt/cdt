@@ -81,7 +81,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		if (fIflCache == null) {
 			return doResolveASTPath(includePath);
 		}
-		if (!fExistsCache.exists(includePath)) {
+		if (!fExistsCache.isFile(includePath)) {
 			return null;
 		}
 		IIndexFileLocation result= fIflCache.get(includePath);
@@ -108,9 +108,9 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public boolean doesIncludeFileExist(String includePath) {
 		if (fExistsCache != null) {
-			return fExistsCache.exists(includePath);
+			return fExistsCache.isFile(includePath);
 		}
-		return new File(includePath).exists();
+		return new File(includePath).isFile();
 	}
 
 	@Override

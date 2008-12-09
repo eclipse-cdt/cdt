@@ -80,7 +80,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 	}
 
 	public IScope getCompositeScope() throws DOMException {
-		return ((ICPPClassType) getSpecializedBinding()).getCompositeScope();
+		return asScope();
 	}
 		
 	public boolean isSameType(IType type) {

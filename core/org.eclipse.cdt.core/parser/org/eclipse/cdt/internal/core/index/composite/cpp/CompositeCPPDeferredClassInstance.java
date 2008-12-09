@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -57,7 +56,12 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return ((ICPPDeferredClassInstance) rbinding).getUnknownName();
 	}
 
-	public ICPPScope asScope() throws DOMException {
+	@Override
+	public ICPPScope getCompositeScope() {
+		return asScope();
+	}
+
+	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
 		}

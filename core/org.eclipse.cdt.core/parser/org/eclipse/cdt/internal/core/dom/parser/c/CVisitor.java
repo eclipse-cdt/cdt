@@ -886,32 +886,18 @@ public class CVisitor {
 
 	private static IBinding createBinding(IASTDeclarator declarator) {
 		IASTNode parent = declarator.getParent();
-
 		while (parent instanceof IASTDeclarator) {
 			parent = parent.getParent();
 		}
 
-		while (declarator.getNestedDeclarator() != null)
-			declarator = declarator.getNestedDeclarator();
-		
+		declarator= CVisitor.findInnermostDeclarator(declarator);
+		IASTDeclarator typeRelevant= CVisitor.findTypeRelevantDeclarator(declarator);
 		IASTFunctionDeclarator funcDeclarator= null;
-		IASTNode node= declarator;
-		do {
-			if (node instanceof IASTFunctionDeclarator) {
-				funcDeclarator= (IASTFunctionDeclarator) node;
-				break;
-			}
-			if (((IASTDeclarator) node).getPointerOperators().length > 0 ||
-					node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR) {
-				break;
-			}
-			node= node.getParent();
+		if (typeRelevant instanceof IASTFunctionDeclarator) {
+			funcDeclarator= (IASTFunctionDeclarator) typeRelevant;
 		}
-		while (node instanceof IASTDeclarator)
-			;
-			
-		IScope scope =  getContainingScope(parent);
 		
+		IScope scope= getContainingScope(parent);
 		ASTNodeProperty prop = parent.getPropertyInParent();
 		if (prop == IASTDeclarationStatement.DECLARATION) {
 		    //implicit scope, see 6.8.4-3

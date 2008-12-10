@@ -1187,4 +1187,16 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {"var : float"};
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
+	
+	//	struct X {
+	//	   typedef int TInt;
+	//	};
+	//	void main() {
+	//		X::T/*cursor*/  // content assist does not propose TInt
+	//	}
+	public void testNestedTypesInQualifiedNames_Bug255898() throws Exception {
+		final String[] expected= {"TInt"};
+		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
+	}
+
 }

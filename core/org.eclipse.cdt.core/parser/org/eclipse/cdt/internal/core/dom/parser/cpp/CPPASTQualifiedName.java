@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -314,25 +314,28 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		
 		try {
 			for (int i = 0; i < bindings.length; i++) {
-				if (bindings[i] instanceof IField) {
-					IField field = (IField) bindings[i];
-					if (!field.isStatic()) continue;
-				} else if (bindings[i] instanceof ICPPMethod) {
-					ICPPMethod method = (ICPPMethod) bindings[i];
-					if (method.isImplicit()) continue;
-					if (method.isDestructor() || method instanceof ICPPConstructor) {
-						if (!isDeclaration) continue;
-					} else if (!method.isStatic() && !isDeclaration) {
+				final IBinding binding = bindings[i];
+				if (binding instanceof IField) {
+					IField field = (IField) binding;
+					if (!field.isStatic()) 
 						continue;
+				} else if (binding instanceof ICPPMethod) {
+					ICPPMethod method = (ICPPMethod) binding;
+					if (method.isImplicit()) 
+						continue;
+					if (!isDeclaration) {
+						if (method.isDestructor() || method instanceof ICPPConstructor || !method.isStatic())
+							continue;
 					}
-				} else if (bindings[i] instanceof ICPPClassType) {
-					ICPPClassType type = (ICPPClassType) bindings[i];
-					if (type.isSameType(classType)) continue;
-				} else if (!(bindings[i] instanceof IEnumerator || bindings[i] instanceof IEnumeration) || isDeclaration) {
-					continue;
-				}
-				
-				filtered.add(bindings[i]);
+				} else if (binding instanceof IEnumerator || binding instanceof IEnumerator) {
+					if (isDeclaration)
+						continue;
+				} else if (binding instanceof IType) {
+					IType type = (IType) binding;
+					if (type.isSameType(classType)) 
+						continue;
+				} 
+				filtered.add(binding);
 			}
 		} catch (DOMException e) {
 		}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
+ *    Andrew Niefer (IBM Rational Software) - Initial API and implementation 
  *    Markus Schorn (Wind River Systems)
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
@@ -109,8 +109,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Created on Nov 5, 2004
- * @author aniefer
+ * Collection of methods to find information in an AST.
  */
 public class CVisitor {
 	public static class ClearBindingAction extends CASTVisitor {

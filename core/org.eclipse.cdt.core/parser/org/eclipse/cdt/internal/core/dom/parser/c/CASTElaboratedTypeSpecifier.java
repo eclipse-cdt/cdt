@@ -6,25 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 
 /**
- * @author jcamelon
+ * Node for elaborated type specifiers (examples: struct S; union U; enum E;)
  */
 public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTElaboratedTypeSpecifier {
+        ICASTElaboratedTypeSpecifier, IASTCompletionContext {
 
     private int kind;
     private IASTName name;
@@ -101,5 +106,42 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 				return r_declaration;
 		}
 		return r_reference;
+	}
+
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		IBinding[] result= CVisitor.findBindingsForContentAssist(n, isPrefix);
+		int nextPos= 0;
+		for (int i = 0; i < result.length; i++) {
+			IBinding b= result[i];
+			if (b instanceof ICompositeType) {
+				ICompositeType ct= (ICompositeType) b;
+				try {
+					switch (ct.getKey()) {
+					case ICompositeType.k_struct:
+						if (getKind() != k_struct) 
+							b= null;
+						break;
+					case ICompositeType.k_union:
+						if (getKind() != k_union) 
+							b= null;
+						break;
+					}
+				} catch (DOMException e) {
+					// ignore and propose binding
+				}
+			} else if (b instanceof IEnumeration) {
+				if (getKind() != k_enum)
+					b= null;
+			}
+			if (b != null) {
+				result[nextPos++]= b;
+			}
+		}
+		if (nextPos != result.length) {
+			IBinding[] copy = new IBinding[nextPos];
+			System.arraycopy(result, 0, copy, 0, nextPos);
+			return copy;
+		}
+		return result;
 	}
 }

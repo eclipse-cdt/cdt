@@ -2294,7 +2294,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 identifier= qualifiedName();
-                if (identifier.getLastName().toCharArray().length == 0)
+                if (identifier.getLastName().toCharArray().length == 0 && LT(1) != IToken.tEOC)
                 	throwBacktrack(LA(1));
                 
                 endOffset= calculateEndOffset(identifier);

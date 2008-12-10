@@ -51,6 +51,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		return BaseTestCase.suite(ParameterHintTests.class, "_");
 	}
 	
+	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
 		StringBuffer sourceContent= getContentsForTest(1)[0];
@@ -142,7 +143,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testTemplateConstructor() throws Exception {
 		assertParameterHints(new String[] {
 				"tClass(T t)",
-				"tClass(const tClass &)"
+				"tClass(const tClass<T> &)"
 		});
 	}
 	

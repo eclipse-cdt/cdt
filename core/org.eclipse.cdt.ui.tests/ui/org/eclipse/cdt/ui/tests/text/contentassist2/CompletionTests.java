@@ -1174,4 +1174,17 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {"_f204758(_e204758 x) : void"};
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
+	
+	//	#define CATCH(X) } catch (X) {
+	//	void foo() {
+	//		try {
+	//			CATCH(float var)
+	//			v/*cursor*/
+	//		} catch (int var2) {
+	//		}
+	//	}
+	public void testContentAssistWithBraceInMacro_Bug257915() throws Exception {
+		final String[] expected= {"var : float"};
+		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
+	}
 }

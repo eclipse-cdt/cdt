@@ -406,7 +406,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     public boolean isOnTopContext() {
-    	return fCurrentContext == fRootContext;
+    	ScannerContext ctx= fCurrentContext;
+    	while (ctx != null && ctx.getLocationCtx() instanceof LocationCtxMacroExpansion) {
+    		ctx= ctx.getParent();
+    	}
+    	return ctx == fRootContext;
     }
 
     public void cancel() {

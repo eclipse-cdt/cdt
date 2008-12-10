@@ -62,7 +62,7 @@ public class InternalParserUtil extends ParserFactory {
 	 */
 	public static CodeReader createWorkspaceFileReader(String path, IFile file) throws CoreException, IOException{
 		path = normalizePath(path, file);
-		InputStream in= file.getContents();
+		InputStream in= file.getContents(true);
 		try {
 			return new CodeReader(path, file.getCharset(), in);
 		} finally {

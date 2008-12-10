@@ -82,7 +82,7 @@ public class ParserUtil
 				InputStream in = null;
 				try
 				{
-					in = ((IFile)resultingResource).getContents();
+					in = ((IFile)resultingResource).getContents(true);
 					return new CodeReader(finalPath, ((IFile)resultingResource).getCharset(), in);
 				} finally {
 					if (in != null)

@@ -18,18 +18,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
@@ -61,14 +62,14 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 						IBinding binding= searchName.resolveBinding();
 						if (binding instanceof IProblemBinding == false) {
 							if (binding != null) {
-								IScope scope= null;
 								try {
-									scope = binding.getScope();
+									IScope scope = binding.getScope();
+									if (scope instanceof ICFunctionScope || 
+											(scope != null && ASTInternal.getPhysicalNodeOfScope(scope) instanceof IASTCompoundStatement)) {
+										createLocalMatches(ast, binding);
+										return Status.OK_STATUS;
+									}
 								} catch (DOMException e) {
-								}
-								if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
-									createLocalMatches(ast, binding);
-									return Status.OK_STATUS;
 								}
 							}
 							binding = index.findBinding(searchName);

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.shells;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 import junit.framework.Test;
@@ -22,6 +25,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.shells.HostShellProcessAdapter;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
@@ -169,6 +173,35 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 					.equals("test");
 			if (matchFound)
 				break;
+		}
+		assertTrue(matchFound);
+	}
+
+	public void testRunCommandViaHostShellProcessAdapter() throws Exception {
+		IHostShell hostShell = null;
+		hostShell = shellService.runCommand("", "echo test"
+				+ shellSubSystem.getParentRemoteCmdSubSystemConfiguration()
+						.getCommandSeparator() + " exit", new String[] {}, mon);
+		HostShellProcessAdapter p = null;
+		try {
+			p = new HostShellProcessAdapter(hostShell);
+		} catch (Exception e) {
+			fail(e.getMessage());
+			return;
+		}
+		BufferedReader bufferReader = new BufferedReader(new InputStreamReader(
+				p.getInputStream()));
+
+		String nextLine;
+		boolean matchFound = false;
+		try {
+			while ((nextLine = bufferReader.readLine()) != null) {
+				matchFound = nextLine.equals("test");
+			}
+			bufferReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
 		}
 		assertTrue(matchFound);
 	}

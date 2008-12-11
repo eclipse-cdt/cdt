@@ -575,7 +575,11 @@ final class DeltaProcessor {
 				if (element != null) {
 					elementAdded(element, delta);
 					// no need to traverse further
-//					return element instanceof ICContainer;
+					if (element instanceof ICContainer) {
+						return ((ICContainer) element).isOpen();
+					} else if (element instanceof ICProject) {
+						return ((ICProject) element).isOpen();
+					}
 				}
 				return false;
 
@@ -599,7 +603,7 @@ final class DeltaProcessor {
 						if (element != null) {
 							if (project.isOpen()) {
 								elementOpened(element, delta);
-								return false;
+								return element instanceof ICProject && ((ICProject) element).isOpen();
 							}
 							elementClosed(element, delta);
 							//Don't process children

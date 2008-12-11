@@ -340,7 +340,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 					if(!shouldVisit((IProject)projDelta.getResource()))
 						continue;
 					
-					if((projDelta.getFlags() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED)
+					if((projDelta.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED)
 						continue;
 					
 					IResourceDelta children[] = projDelta.getAffectedChildren();
@@ -354,9 +354,10 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 							continue;
 						
 						//the .cproject file is changed
-						if((child.getFlags() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED){
+						if((child.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED){
 							//project file does not exist or corrupted, remove
 							((RcMoveHandler)handler).setProjectDescription(rc.getProject(), null);
+							continue;
 						}
 						
 						try {

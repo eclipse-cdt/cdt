@@ -478,8 +478,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				if (newContents != null) {
 					ByteArrayOutputStream oldOut = write(oldEl);
 					InputStream oldContents = new ByteArrayInputStream(oldOut.toByteArray());
-					if(streamsMatch(newContents, oldContents))
-						return null;
+					try {
+						if(streamsMatch(newContents, oldContents))
+							return null;
+					} finally {
+						newContents.close();
+					}
 				}
 			}
 		} catch (CoreException e){

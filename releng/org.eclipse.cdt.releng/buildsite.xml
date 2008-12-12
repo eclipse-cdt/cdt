@@ -18,10 +18,10 @@
 	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_5.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_5.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_6.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.xlc.sdk" url="features/org.eclipse.cdt.xlc.sdk_5.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.xlc.sdk" url="features/org.eclipse.cdt.xlc.sdk_6.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.util" url="features/org.eclipse.cdt.util_5.0.0.@timeStamp@.jar" version="5.0.0.@timeStamp@">

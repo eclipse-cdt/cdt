@@ -171,6 +171,8 @@
 			dest="${testDirectory}/test/eclipse"/>		
 		<delete file="${testDirectory}/eclipse/site.xml"/>
 		<delete file="${testDirectory}/eclipse/pack.properties"/>
+		<delete file="${testDirectory}/eclipse/artifacts.jar"/>
+		<delete file="${testDirectory}/eclipse/content.jar"/>
 		<ant antfile="test.xml" dir="${testDirectory}/test/cdt">
 			<property name="eclipse-home" value="${testDirectory}/eclipse"/>
 			<property name="library-file" value="${testDirectory}/test/eclipse/library.xml"/>

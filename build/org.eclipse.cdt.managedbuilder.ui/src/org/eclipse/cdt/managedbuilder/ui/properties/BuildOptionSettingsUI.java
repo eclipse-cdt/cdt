@@ -30,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
@@ -53,8 +54,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		new HashMap<String, FieldEditor>();
 	private IOptionCategory category;
 	private IHoldsOptions optionHolder;
+	/** Option Holders involved */
 	private IHoldsOptions[] ohs;
-	private int curr;
+	/** The index of the current IHoldsOptions in ohs */
+	private int curr = -1;
 	private Map<FieldEditor, Composite> fieldEditorsToParentMap = 
 		new HashMap<FieldEditor, Composite>();
 
@@ -69,25 +72,43 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			MultiResourceInfo mri = (MultiResourceInfo)info; 
 			IResourceInfo[] ris = (IResourceInfo[])mri.getItems();
 			String id = category.getId();
-			String ext = ((ITool)optionHolder).getDefaultInputExtension();
-			ArrayList<ITool> lst = new ArrayList<ITool>();
-			for (int i=0; i<ris.length; i++) {
-				ITool[] ts = ris[i].getTools();
-				for (int j=0; j<ts.length; j++) {
-					IOptionCategory op = ts[j].getOptionCategory(id);
-					if (op != null) {
-						if (ext.equals(ts[j].getDefaultInputExtension()))
-							lst.add(ts[j]);
+
+			/*
+			 * Collect together all the IHoldsOptions (ITools & IToolChains)
+			 * from the MultiResourceInfo's set of selected configs
+			 * which contain the option category and accept the input type
+			 * of this option holder.
+			 */
+			ArrayList<IHoldsOptions> lst = new ArrayList<IHoldsOptions>();
+			if (optionHolder instanceof ITool) {
+				String ext = ((ITool)optionHolder).getDefaultInputExtension();
+				for (int i=0; i<ris.length; i++) {
+					ITool[] ts = ris[i].getTools();
+					for (int j=0; j<ts.length; j++) {
+						IOptionCategory op = ts[j].getOptionCategory(id);
+						if (op != null) {
+							if (ext.equals(ts[j].getDefaultInputExtension())) {
+								lst.add(ts[j]);
+							}
+						}
 					}
-				}				
+				}
+			} else if (optionHolder instanceof IToolChain) {
+				for (int i=0; i<ris.length; i++) {
+					IToolChain tc = ris[i].getParent().getToolChain();
+					IOptionCategory op = tc.getOptionCategory(id);
+					if (op != null)
+						lst.add(tc);
+				}
 			}
+
 			ohs = (IHoldsOptions[])lst.toArray(new IHoldsOptions[lst.size()]);
 			for (int i=0; i<ohs.length; i++) {
 				if (ohs[i].equals(optionHolder)) {
 					curr = i;
 					break;
 				}
-			}	
+			}
 		} else {
 			ohs = null;
 			curr = 0;

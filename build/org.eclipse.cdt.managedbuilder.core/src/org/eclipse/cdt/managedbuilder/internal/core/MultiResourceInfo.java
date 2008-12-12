@@ -15,10 +15,12 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -228,25 +230,33 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 		
 		String sid = getSuperClassId(option);
 		for (int i=0; i<fRis.length; i++) {
-			ITool[] ts = fRis[i].getTools();
-			for (int j=0; j<ts.length; j++) {
+			IHoldsOptions[] hos;
+			if (parent instanceof ITool)
+				hos = fRis[i].getTools();
+			else if (parent instanceof IToolChain)
+				// If parent is an IToolChain then the resource infos must be at folder level
+				hos = new IHoldsOptions[] {((IFolderInfo)fRis[i]).getToolChain()};
+			else // Shouldn't happen
+				throw new BuildException(ManagedMakeMessages.getString("MultiResourceInfo.MultiResourceInfo.UnhandledIHoldsOptionsType")); //$NON-NLS-1$
+
+			for (int j=0; j<hos.length; j++) {
 				if (ext != null && 
-						! ext.equals(ts[j].getDefaultInputExtension()))
+						! ext.equals(((ITool)hos[j]).getDefaultInputExtension()))
 					continue;
-				IOption op2 = ts[j].getOptionBySuperClassId(sid);
+				IOption op2 = hos[j].getOptionBySuperClassId(sid);
 				if (op2 != null) {
 					switch (mode) {
 					case MODE_BOOL:	
-						op = fRis[i].setOption(ts[j], op2, ((Boolean)value).booleanValue());
+						op = fRis[i].setOption(hos[j], op2, ((Boolean)value).booleanValue());
 						break;
 					case MODE_STR:	
-						op = fRis[i].setOption(ts[j], op2, (String)value);
+						op = fRis[i].setOption(hos[j], op2, (String)value);
 						break;
 					case MODE_SAR:	
-						op = fRis[i].setOption(ts[j], op2, (String[])value);
+						op = fRis[i].setOption(hos[j], op2, (String[])value);
 						break;
 					case MODE_OSV:	
-						op = fRis[i].setOption(ts[j], op2, (OptionStringValue[])value);
+						op = fRis[i].setOption(hos[j], op2, (OptionStringValue[])value);
 						break;
 					}
 				}

@@ -1520,4 +1520,21 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType owner= m.getClassOwner();
 		assertInstance(owner, ICPPClassTemplatePartialSpecialization.class);
     }
+
+	//  namespace ns {
+	//	template<typename T1>
+	//	struct A {
+	//	  static int a;
+	//	};
+	//	}
+    //
+	//	template<typename T2>
+	//	struct B : public ns::A<T2> {};
+
+	//	void test() {
+	//	  B<int>::a;
+	//	}
+    public void _testBug258745() throws Exception {
+    	ICPPField m= getBindingFromASTName("a", 1, ICPPField.class);
+    }
 }

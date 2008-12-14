@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [196301] Check that the remote encoding isn't null before using it
  * Martin Oberhuber (Wind River) - [204744] Honor encoding in SSH command input field
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -115,7 +116,8 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    	&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
 		    ) {
 			    writeToShell("cd "+PathUtility.enQuoteUnix(initialWorkingDirectory)); //$NON-NLS-1$
-		    } else if (SHELL_INVOCATION.equals(commandToRun)) {
+		    } 
+		    if (SHELL_INVOCATION.equals(commandToRun)) {
 		    	writeToShell(getPromptCommand());
 		    } else if(commandToRun!=null && commandToRun.length()>0) {
 		    	writeToShell(commandToRun);

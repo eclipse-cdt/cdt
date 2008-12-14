@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
  * Anna Dushistova  (MontaVista) - adapted from SshHostShell
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
@@ -88,7 +89,8 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 					&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
 			) {
 				writeToShell("cd " + PathUtility.enQuoteUnix(initialWorkingDirectory)); //$NON-NLS-1$
-			} else if (SHELL_INVOCATION.equals(commandToRun)) {
+			} 
+			if (SHELL_INVOCATION.equals(commandToRun)) {
 				writeToShell(getPromptCommand());
 			} else if (commandToRun != null && commandToRun.length() > 0) {
 				writeToShell(commandToRun);

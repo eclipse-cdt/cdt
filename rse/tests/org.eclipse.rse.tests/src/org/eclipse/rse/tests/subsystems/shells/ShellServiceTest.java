@@ -131,57 +131,92 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testLaunchShell() throws Exception {
-		IHostShell hostShell = shellService.launchShell("", new String[] {},
+		Object[] allOutput = launchShell("", "echo test", new String[] {});
+		boolean matchFound = false;
+		for (int i = 0; i < allOutput.length; i++) {
+			matchFound = ((IHostOutput) allOutput[i]).getString()
+					.equals("test");
+			System.out.println(((IHostOutput) allOutput[i]).getString());
+			if (matchFound)
+				break;
+		}
+		assertTrue(matchFound);
+		// now set working directory -- Linux only
+		allOutput = launchShell("/", "echo test", new String[] {});
+		matchFound = false;
+		for (int i = 0; i < allOutput.length; i++) {
+			matchFound = ((IHostOutput) allOutput[i]).getString()
+					.equals("test");
+			System.out.println(((IHostOutput) allOutput[i]).getString());
+			if (matchFound)
+				break;
+		}
+	}
+
+	public Object[] launchShell(String workingDirectory, String cmd,
+			String[] env) throws SystemMessageException, InterruptedException {
+		IHostShell hostShell = shellService.launchShell(workingDirectory, env,
 				mon);
 		assertNotNull(hostShell);
 		assertNotNull(hostShell.getStandardOutputReader());
 		ShellOutputListener outputListener = new ShellOutputListener();
 		hostShell.addOutputListener(outputListener);
 		// run command
-		hostShell.writeToShell("echo test");
+		hostShell.writeToShell(cmd);
 		hostShell.writeToShell("exit");
 		while (hostShell.isActive()) {
-			Thread.sleep(200);
+			Thread.sleep(1000);
 		}
 		Object[] allOutput = outputListener.getAllOutput();
+		return allOutput;
+	}
+
+	public void testRunCommand() throws Exception {
+		Object[] allOutput = runCommand("", "echo test", new String[] {});
 		boolean matchFound = false;
 		for (int i = 0; i < allOutput.length; i++) {
+			System.out.println(((IHostOutput) allOutput[i]).getString());
 			matchFound = ((IHostOutput) allOutput[i]).getString()
 					.equals("test");
 			if (matchFound)
 				break;
 		}
-		assertTrue(matchFound);
+		assertTrue("Failed without changing initial working directory",matchFound);
+		//set initial working directory -- Linux only
+		allOutput = runCommand("/", "echo test", new String[] {});
+		matchFound = false;
+		for (int i = 0; i < allOutput.length; i++) {
+			System.out.println(((IHostOutput) allOutput[i]).getString());
+			matchFound = ((IHostOutput) allOutput[i]).getString()
+					.equals("test");
+			if (matchFound)
+				break;
+		}
+		assertTrue("Failed with changing initial working directory",matchFound);
 	}
 
-	public void testRunCommand() throws Exception {
+	public Object[] runCommand(String workingDirectory, String cmd, String[] env)
+			throws SystemMessageException, InterruptedException {
 		IHostShell hostShell = null;
-		hostShell = shellService.runCommand("", "echo test", new String[] {},
-				mon);
+		hostShell = shellService.runCommand(workingDirectory, cmd, env, mon);
 		ShellOutputListener outputListener = new ShellOutputListener();
 		hostShell.addOutputListener(outputListener);
 		hostShell.writeToShell("exit");
 		assertNotNull(hostShell);
 		assertNotNull(hostShell.getStandardOutputReader());
 		while (hostShell.isActive()) {
-			Thread.sleep(200);
+			Thread.sleep(1000);
 		}
 		Object[] allOutput = outputListener.getAllOutput();
-		boolean matchFound = false;
-		for (int i = 0; i < allOutput.length; i++) {
-			matchFound = ((IHostOutput) allOutput[i]).getString()
-					.equals("test");
-			if (matchFound)
-				break;
-		}
-		assertTrue(matchFound);
+		return allOutput;
 	}
 
 	public void testRunCommandViaHostShellProcessAdapter() throws Exception {
 		IHostShell hostShell = null;
+		String commandSeparator = (shellSubSystem!=null)?shellSubSystem.getParentRemoteCmdSubSystemConfiguration()
+				.getCommandSeparator():"\r\n";
 		hostShell = shellService.runCommand("", "echo test"
-				+ shellSubSystem.getParentRemoteCmdSubSystemConfiguration()
-						.getCommandSeparator() + " exit", new String[] {}, mon);
+				+ commandSeparator + " exit", new String[] {}, mon);
 		HostShellProcessAdapter p = null;
 		try {
 			p = new HostShellProcessAdapter(hostShell);
@@ -196,7 +231,10 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 		boolean matchFound = false;
 		try {
 			while ((nextLine = bufferReader.readLine()) != null) {
+				System.out.println(nextLine);
 				matchFound = nextLine.equals("test");
+				if(matchFound)
+					break;
 			}
 			bufferReader.close();
 		} catch (IOException e) {

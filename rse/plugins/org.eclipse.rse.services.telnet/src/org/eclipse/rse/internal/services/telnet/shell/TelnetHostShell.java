@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
- * Sheldon D'souza (Celunite) - Adapted from SshHostShell
- * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
- * David McKnight  (IBM)      - [191599] Use the remote encoding specified in the host property page
+ * Sheldon D'souza  (Celunite)   - Adapted from SshHostShell
+ * Sheldon D'souza  (Celunite)   - [187301] support multiple telnet shells
+ * David McKnight   (IBM)        - [191599] Use the remote encoding specified in the host property page
  * Martin Oberhuber (Wind River) - [194466] Fix shell terminated state when stream is closed
+ * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
@@ -75,7 +76,8 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 		    	&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
 		    ) { 
 			    writeToShell("cd "+PathUtility.enQuoteUnix(initialWorkingDirectory)); //$NON-NLS-1$
-		    } else if (SHELL_INVOCATION.equals(commandToRun)) {
+		    } 
+		    if (SHELL_INVOCATION.equals(commandToRun)) {
 		    	writeToShell(getPromptCommand());
 		    } else if(commandToRun!=null && commandToRun.length()>0) {
 		    	writeToShell(commandToRun);

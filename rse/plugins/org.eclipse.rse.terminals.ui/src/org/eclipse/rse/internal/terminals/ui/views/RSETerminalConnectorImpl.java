@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 

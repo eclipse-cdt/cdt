@@ -30,11 +30,11 @@ import org.apache.commons.net.telnet.TelnetOption;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
-import org.eclipse.rse.internal.services.terminals.AbstractTerminalShell;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileException;
+import org.eclipse.rse.services.terminals.AbstractTerminalShell;
+import org.eclipse.rse.services.terminals.ITerminalService;
 
 /**
  * A remote shell connection supporting Streams for I/O.

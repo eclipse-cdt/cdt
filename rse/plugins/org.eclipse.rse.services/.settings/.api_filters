@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.rse.services" version="2">
+<resource path="src/org/eclipse/rse/internal/services/terminals/ProcessBaseShell.java" type="org.eclipse.rse.internal.services.terminals.ProcessBaseShell">
+<filter id="337682486">
+<message_arguments>
+<message_argument value="org.eclipse.rse.internal.services.terminals.ProcessBaseShell"/>
+</message_arguments>
+</filter>
+</resource>
+</component>

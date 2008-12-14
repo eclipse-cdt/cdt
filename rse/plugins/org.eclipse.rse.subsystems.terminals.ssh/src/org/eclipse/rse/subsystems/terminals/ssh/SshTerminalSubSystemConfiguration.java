@@ -18,7 +18,7 @@ import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.terminal.SshTerminalService;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystemConfiguration;
 

@@ -16,7 +16,7 @@ Anna Dushistova (MontaVista)- initial API and implementation
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="org.eclipse.rse.internal.services.terminals.ITerminalService"
+            adaptableType="org.eclipse.rse.services.terminals.ITerminalService"
             class="org.eclipse.rse.internal.services.shells.TerminalShellAdapterFactory">
          <adapter
                type="org.eclipse.rse.services.shells.IShellService">

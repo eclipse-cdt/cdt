@@ -17,10 +17,10 @@ import java.io.InterruptedIOException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.internal.terminals.ui.TerminalServiceHelper;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;

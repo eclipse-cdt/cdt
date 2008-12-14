@@ -7,14 +7,16 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Anna Dushistova  (MontaVista) - [258631][api] ITerminalService should be public API
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.terminals;
+package org.eclipse.rse.services.terminals;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.PlatformObject;
+
 
 /**
  * Abstract base class for clients to decorate an IBaseShell instance they have
@@ -25,15 +27,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * and output streams for some well-known data that gives such additional
  * knowledge.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
- * team.
- * </p>
- * 
- * @since org.eclipse.rse.services 3.0
+ * @since org.eclipse.rse.services 3.1
  */
 public abstract class BaseShellDecorator extends PlatformObject implements IBaseShell {
 

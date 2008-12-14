@@ -19,9 +19,9 @@ import junit.framework.TestSuite;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.IShellService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
 
 public class TerminalShellServiceTest extends ShellServiceTest{

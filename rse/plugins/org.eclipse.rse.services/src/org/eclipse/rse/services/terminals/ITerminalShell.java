@@ -7,9 +7,10 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Anna Dushistova  (MontaVista) - [258631][api] ITerminalService should be public API
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.terminals;
+package org.eclipse.rse.services.terminals;
 
 import org.eclipse.rse.services.shells.IHostShell;
 
@@ -35,19 +36,11 @@ import org.eclipse.rse.services.shells.IHostShell;
  *              or {@link TerminalShellDecorator} classes rather than
  *              implementing this interface directly.
  *
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
- * team.
- * </p>
- *
  * @see IBaseShell
  * @see ITerminalService
  * @see AbstractTerminalShell
  * @see TerminalShellDecorator
- * @since org.eclipse.rse.services 3.0
+ * @since org.eclipse.rse.services 3.1
  */
 public interface ITerminalShell extends IBaseShell {
 

@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
+import org.eclipse.rse.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * @since 3.1

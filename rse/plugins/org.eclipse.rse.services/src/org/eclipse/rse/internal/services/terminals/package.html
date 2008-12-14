@@ -8,14 +8,7 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-<strong>PROVISIONAL</strong> Application programming interface for the RSE Base Shell and Terminal Services.
-<p>
-<strong>EXPERIMENTAL</strong>. This class or interface has been added as
-part of a work in progress. There is no guarantee that this API will work or
-that it will remain the same. Please do not use this API without consulting
-with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
-team.
-</p>
+Application programming interface for the RSE Base Shell and Terminal Services.
 <h2>
 Package Specification</h2>
 <p>
@@ -24,40 +17,10 @@ for shell or terminal connections. The classes in this package are especially de
 to be extendable by means of the <b>Decorator</b> pattern as well as the <b>Adapter</b>
 pattern:
 <ul>
-<li><code><a href="IBaseShell.html">IBaseShell</a></code>
-    is the basic interface for communicating with a (potentially remote) process
-    through a channel supporting Streams. The Interface is modeled after the
-    <code><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Process.html">java.lang.Process</a></code>
-    class, but provides some nice enhancements such as a timeout for the
-    <code>waitFor()</code> method, as well as an <code>isActive()</code>
-    method.</li>
 <li><code><a href="ProcessBaseShell.html">ProcessBaseShell</a></code>
     is a sample class implementing IBaseShell, that wraps an existing
     <code><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Process.html">java.lang.Process</a></code>
     object in the IBaseShell interface for easier consumption.</li>
-<li><code><a href="ITerminalShell.html">ITerminalShell</a></code>
-    extends IBaseShell, adding methods specific to the presentation of the data
-    transferred from the (remote) process: it provides for getDefaultEncoding(),
-    getPtyType(), isLocalEcho() as well as setTerminalSize() methods.</li>
-<li><code><a href="AbstractTerminalShell.html">AbstractTerminalShell</a></code>
-    is an abstract base class that implementers of ITerminalShell must extend.
-    It provides default implementations of all methods where possible, and
-    ensures that future evolving of the ITerminalShell interface
-    can be done without breaking binary compatibility with extenders implementing it.</li>
-<li><code><a href="BaseShellDecorator.html">BaseShellDecorator</a></code> and
-    <code><a href="">TerminalShellDecorator</a></code> abstract base 
-    classes should be used when clients want to add functionality by decorating
-    an existing IBaseShell or ITerminalShell object they have. Again, extending 
-    these not only saves the extender typing default delegation methods, but also
-    ensures that they remain binary compatible in case the interfaces evolve.</li>
-<li><code><a href="ITerminalService.html">ITerminalService</a></code>
-    is the RSE Service Interface, and currently only 
-    provides one factory method <code>launchTerminal()</code> for creating
-    a new Terminal Connection.
-    <code><a href="">AbstractTerminalService</a></code> must be used as base
-    class by extenders who wish to implement the ITerminalService, in order to ensure
-    binary compatibility in case the interface evolves - even though
-    the AbstractTerminalService is currently empty.</li>  
 </ul>
 The classes and interfaces in this package are designed to have only minimal 
 dependency into Eclipse core APIs, such that Services can eventually be re-used in

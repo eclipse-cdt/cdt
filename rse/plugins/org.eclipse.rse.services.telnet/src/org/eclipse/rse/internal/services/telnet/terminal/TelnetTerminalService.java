@@ -20,10 +20,10 @@ import org.eclipse.rse.internal.services.shells.TerminalShellService;
 import org.eclipse.rse.internal.services.telnet.ITelnetService;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.internal.services.telnet.TelnetServiceResources;
-import org.eclipse.rse.internal.services.terminals.AbstractTerminalService;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.IShellService;
+import org.eclipse.rse.services.terminals.AbstractTerminalService;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * A Terminal Service for telnet.

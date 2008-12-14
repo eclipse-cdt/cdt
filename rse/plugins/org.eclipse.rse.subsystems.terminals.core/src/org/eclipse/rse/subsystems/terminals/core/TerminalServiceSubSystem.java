@@ -30,7 +30,7 @@ import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.swt.widgets.Display;
 

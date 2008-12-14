@@ -12,7 +12,7 @@ package org.eclipse.rse.subsystems.terminals.core;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 
 public interface ITerminalServiceSubSystemConfiguration extends
         ISubSystemConfiguration {

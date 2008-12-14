@@ -16,10 +16,10 @@ package org.eclipse.rse.internal.subsystems.terminals.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 
 public class DelegatingTerminalService implements ITerminalService {
 

@@ -19,9 +19,9 @@ import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.internal.services.ssh.SshServiceResources;
 import org.eclipse.rse.internal.services.ssh.shell.SshShellService;
-import org.eclipse.rse.internal.services.terminals.AbstractTerminalService;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.terminals.AbstractTerminalService;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * A Terminal Service for ssh.

@@ -14,7 +14,7 @@
 package org.eclipse.rse.subsystems.terminals.core.elements;
 
 import org.eclipse.rse.core.subsystems.AbstractResource;
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 
 /**

@@ -12,8 +12,8 @@ package org.eclipse.rse.internal.services.shells;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.services.shells.IShellService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 
 /**
  * @since 3.1

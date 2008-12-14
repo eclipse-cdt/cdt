@@ -7,15 +7,18 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Anna Dushistova  (MontaVista) - [258631][api] ITerminalService should be public API
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.terminals;
+package org.eclipse.rse.services.terminals;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
+
+import org.eclipse.rse.internal.services.terminals.ProcessBaseShell;
 
 /**
  * A basic shell, representing the connection to some process that may be
@@ -34,18 +37,10 @@ import org.eclipse.core.runtime.PlatformObject;
  * functionality easily by instantiating their subclassed variant of
  * {@link BaseShellDecorator}.
  *
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
- * team.
- * </p>
- *
  * @see java.lang.Process
- * @see ProcessBaseShell
+ * @see org.eclipse.rse.internal.services.terminals.ProcessBaseShell
  * @see BaseShellDecorator
- * @since org.eclipse.rse.services 3.0
+ * @since org.eclipse.rse.services 3.1
  */
 public interface IBaseShell extends IAdaptable {
 

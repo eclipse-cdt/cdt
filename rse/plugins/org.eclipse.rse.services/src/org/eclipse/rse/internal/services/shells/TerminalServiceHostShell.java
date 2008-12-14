@@ -32,10 +32,10 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
-import org.eclipse.rse.internal.services.terminals.ITerminalShell;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.shells.AbstractHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
+import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * @since 3.1

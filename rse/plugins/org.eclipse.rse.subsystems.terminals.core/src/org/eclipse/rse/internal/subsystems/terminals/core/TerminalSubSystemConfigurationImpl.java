@@ -15,7 +15,7 @@ package org.eclipse.rse.internal.subsystems.terminals.core;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystemConfiguration;
 

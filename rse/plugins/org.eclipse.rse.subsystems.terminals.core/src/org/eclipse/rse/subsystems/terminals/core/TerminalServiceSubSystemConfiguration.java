@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.internal.services.terminals.ITerminalService;
 import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.terminals.ITerminalService;
 
 public abstract class TerminalServiceSubSystemConfiguration extends
 		SubSystemConfiguration implements

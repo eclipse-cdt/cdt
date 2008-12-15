@@ -17,6 +17,7 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -44,6 +45,10 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	
 	protected StandaloneIndexer fIndexer;
 
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
+		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
+	};
+	
 	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added, Collection<String> changed, Collection<String> removed, boolean isFast) {
 		super(concat(added, changed), removed.toArray(), new StandaloneIndexerInputAdapter(indexer), isFast);
 		fIndexer= indexer;
@@ -234,5 +239,11 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		return super.createDefaultScannerConfig(linkageID);
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getLinkagesToParse()
+	 */
+	@Override
+	protected int[] getLinkagesToParse() {
+		return IDS_FOR_LINKAGES_TO_INDEX;
+	}
 }

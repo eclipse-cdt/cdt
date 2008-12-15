@@ -193,12 +193,6 @@ public class CPPVisitor extends ASTQueries {
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	
 	public static IBinding createBinding(IASTName name) {
-		if (name.toString().equals("GetCharset"))
-			// mstodo 
-			{
-				int ____i = 0;
-				____i++;
-			}
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
 		if (parent instanceof IASTNamedTypeSpecifier ||

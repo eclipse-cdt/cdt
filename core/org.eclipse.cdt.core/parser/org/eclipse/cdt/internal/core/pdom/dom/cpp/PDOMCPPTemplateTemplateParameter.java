@@ -45,8 +45,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * mstodo
- *
+ * Implementation of template template parameters for the index.
  */
 public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding 
 		implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType, 

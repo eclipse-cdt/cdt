@@ -227,10 +227,8 @@ public class SemanticUtil {
 
 	/**
 	 * Descends into a typedef sequence.
-	 * @param type
-	 * @return
 	 */
-	static IType getUltimateTypeViaTypedefs(IType type) {
+	public static IType getUltimateTypeViaTypedefs(IType type) {
 		try {
 			while (type instanceof ITypedef) {
 				IType t= ((ITypedef) type).getType();

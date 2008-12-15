@@ -6266,4 +6266,14 @@ public class AST2CPPTests extends AST2BaseTest {
     	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 
+    //    typedef void VOID;
+    //    void donothing();
+    //    void donothing(VOID){}
+    //    void donothing(VOID);
+    //    void test() {
+    //      donothing(); 
+    //    }
+    public void testVoidViaTypedef_Bug258694() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
 }

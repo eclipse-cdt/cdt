@@ -6,12 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Dec 13, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -21,9 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * @author aniefer
+ * Represents c++ function types. Note that we keep typedefs as part of the function type.
  */
 public class CPPFunctionType implements ICPPFunctionType {
     private IType[] parameters;
@@ -68,10 +66,12 @@ public class CPPFunctionType implements ICPPFunctionType {
 			
 			try {
 				if (parameters.length == 1 && fps.length == 0) {
-					if (!(parameters[0] instanceof IBasicType) || ((IBasicType) parameters[0]).getType() != IBasicType.t_void)
+					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(parameters[0]);
+					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (fps.length == 1 && parameters.length == 0) {
-					if (!(fps[0] instanceof IBasicType) || ((IBasicType) fps[0]).getType() != IBasicType.t_void)
+					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(fps[0]);
+					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (parameters.length != fps.length) {
 	                return false;

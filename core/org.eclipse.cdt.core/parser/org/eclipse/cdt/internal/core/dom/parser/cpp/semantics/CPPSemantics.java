@@ -1883,7 +1883,7 @@ public class CPPSemantics {
 			// check for parameter of type void
 			IType[] argTypes= getSourceParameterTypes(funcArgs);
 			if (argTypes.length == 1) {
-				IType t= argTypes[0];
+				IType t= SemanticUtil.getUltimateTypeViaTypedefs(argTypes[0]);
 				if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
 					numArgs= 0;
 				}
@@ -1910,7 +1910,7 @@ public class CPPSemantics {
 			int numPars = params.length;
 			if (numArgs == 0 && numPars == 1) {
 				// check for void
-			    IType t = params[0].getType();
+			    IType t = SemanticUtil.getUltimateTypeViaTypedefs(params[0].getType());
 			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
 			        numPars= 0;
 			}

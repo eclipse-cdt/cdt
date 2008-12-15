@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -124,10 +125,12 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 				IType[] params1= getParameterTypes();
 				IType[] params2= ft.getParameterTypes();
 				if (params1.length == 1 && params2.length == 0) {
-					if (!(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void)
+					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(params1[0]);
+					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (params2.length == 1 && params1.length == 0) {
-					if (!(params2[0] instanceof IBasicType) || ((IBasicType) params2[0]).getType() != IBasicType.t_void)
+					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(params2[0]);
+					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (params1.length != params2.length) {
 					return false;

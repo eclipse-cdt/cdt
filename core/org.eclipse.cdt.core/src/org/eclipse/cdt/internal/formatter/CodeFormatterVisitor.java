@@ -2100,6 +2100,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
 
 				switch (node.getOperator()) {
+				case IASTBinaryExpression.op_pmdot:
+				case IASTBinaryExpression.op_pmarrow:
+    				scribe.printNextToken(nextToken, false);
+    				break;
     			case IASTBinaryExpression.op_assign:
     			case IASTBinaryExpression.op_binaryAndAssign:
     			case IASTBinaryExpression.op_binaryOrAssign:

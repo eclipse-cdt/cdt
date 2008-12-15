@@ -1036,4 +1036,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void Foo::bar() {
+	//*this.*FncPointer () ;  this->*FncPointer( ); }
+
+	//void Foo::bar() {
+	//	*this.*FncPointer();
+	//	this->*FncPointer();
+	//}
+	public void testDotStarAndArrowStarOperators_Bug257700() throws Exception {
+		assertFormatterResult();
+	}
+
 }

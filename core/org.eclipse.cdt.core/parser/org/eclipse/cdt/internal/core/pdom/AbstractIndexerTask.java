@@ -236,7 +236,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				removeFilesInIndex(fFilesToRemove, ifilesToRemove, monitor);
 
 				parseFilesUpFront(monitor);
-				for (int linkageID : PDOMManager.IDS_FOR_LINKAGES_TO_INDEX) {
+				for (int linkageID : getLinkagesToParse()) {
 					parseLinkage(linkageID, files, monitor);
 				}
 			}
@@ -821,5 +821,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	protected IStatus createStatus(String msg) {
 		return CCorePlugin.createStatus(msg);
+	}
+	
+	/**
+	 * @return array of linkage IDs that should be parsed
+	 */
+	protected int[] getLinkagesToParse() {
+		return PDOMManager.IDS_FOR_LINKAGES_TO_INDEX;
 	}
 }

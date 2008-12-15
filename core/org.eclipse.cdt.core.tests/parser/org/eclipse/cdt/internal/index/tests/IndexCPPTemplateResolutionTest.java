@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -500,18 +501,37 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  
 		for (IBinding b : bs) {
 			assertInstance(b, ICPPClassType.class);
- 			ICPPClassType C= (ICPPClassType) b;
- 			assertEquals(1, C.getBases().length);
- 			ICPPClassType xb= (ICPPClassType) C.getBases()[0].getBaseClass();
+ 			ICPPClassType c= (ICPPClassType) b;
+ 			assertEquals(1, c.getBases().length);
+ 			ICPPClassType xb= (ICPPClassType) c.getBases()[0].getBaseClass();
  			assertInstance(xb, ICPPTemplateInstance.class);
- 			ObjectMap args= ((ICPPTemplateInstance) xb).getArgumentMap();
- 			assertInstance(args.keyAt(0), ICPPTemplateTypeParameter.class);
- 			assertInstance(args.keyAt(1), ICPPTemplateTypeParameter.class);
- 			assertInstance(args.getAt(0), ICPPClassType.class);
- 			assertInstance(args.getAt(1), ICPPClassType.class);
+ 			ICPPTemplateParameter[] templateParameters =
+ 				((ICPPTemplateInstance) xb).getTemplateDefinition().getTemplateParameters();
+ 			assertInstance(templateParameters[0], ICPPTemplateTypeParameter.class);
+ 			assertInstance(templateParameters[1], ICPPTemplateTypeParameter.class);
+ 			ICPPTemplateParameterMap args= ((ICPPTemplateInstance) xb).getTemplateParameterMap();
+ 			assertInstance(args.getArgument(0).getTypeValue(), ICPPClassType.class);
+ 			assertInstance(args.getArgument(1).getTypeValue(), ICPPClassType.class);
  		}
  	}
- 	
+
+	//  namespace ns {
+	//	template<typename T1>
+	//	struct A {
+	//	  static int a;
+	//	};
+	//	}
+	//
+	//	template<typename T2>
+	//	struct B : public ns::A<T2> {};
+
+	//	void test() {
+	//	  B<int>::a;
+	//	}
+	public void _testInstanceInheritance_258745() throws Exception {
+		getBindingFromASTName("a", 1, ICPPField.class);
+	}
+
 	// class A {}; class B {}; class C {};
 	// template<typename T1, typename T2>
 	// class D {};
@@ -1519,22 +1539,5 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPMethod m= getBindingFromASTName("foo", 3, ICPPMethod.class);
 		ICPPClassType owner= m.getClassOwner();
 		assertInstance(owner, ICPPClassTemplatePartialSpecialization.class);
-    }
-
-	//  namespace ns {
-	//	template<typename T1>
-	//	struct A {
-	//	  static int a;
-	//	};
-	//	}
-    //
-	//	template<typename T2>
-	//	struct B : public ns::A<T2> {};
-
-	//	void test() {
-	//	  B<int>::a;
-	//	}
-    public void _testBug258745() throws Exception {
-    	ICPPField m= getBindingFromASTName("a", 1, ICPPField.class);
     }
 }

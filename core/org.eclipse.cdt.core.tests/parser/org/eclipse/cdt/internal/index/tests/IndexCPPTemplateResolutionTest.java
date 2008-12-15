@@ -432,7 +432,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		Foo<A,X> f;
 	//		f.s.foo(*new A());
 	//	}
-	public void _testTemplateTemplateParameter() throws Exception {
+	public void testTemplateTemplateParameter() throws Exception {
 		IBinding b0= getBindingFromASTName("Foo<A,X>", 3);
 		IBinding b1= getBindingFromASTName("Foo<A,X>", 8);
 		IBinding b2= getBindingFromASTName("f.s.foo", 1);
@@ -768,7 +768,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b0= getBindingFromASTName("foo(a,b)", 3);
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPTemplateInstance.class);
-		ICPPFunctionType b0type= (ICPPFunctionType) ((ICPPFunction)b0).getType();
+		ICPPFunctionType b0type= ((ICPPFunction)b0).getType();
 		assertInstance(b0type.getReturnType(), ICPPBasicType.class);
 		IType[] b0_ptypes= b0type.getParameterTypes();
 		assertEquals(2, b0_ptypes.length);
@@ -806,7 +806,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("A", ((ICPPClassType)b0_am.getAt(0)).getName());
 		assertEquals("B", ((ICPPClassType)b0_am.getAt(1)).getName());
 		
-		ICPPFunctionType b0_spcd_type= (ICPPFunctionType) ((ICPPFunction)b0_spcd).getType();
+		ICPPFunctionType b0_spcd_type= ((ICPPFunction)b0_spcd).getType();
 		assertInstance(b0_spcd_type.getReturnType(), ICPPBasicType.class);
 		IType[] b0_spcd_ptypes= b0_spcd_type.getParameterTypes();
 		assertEquals(2, b0_spcd_ptypes.length);
@@ -817,7 +817,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		
 		IBinding b1= getBindingFromASTName("foo(c,a)", 3);
 		assertInstance(b1, ICPPFunction.class);
-		ICPPFunctionType b1type= (ICPPFunctionType) ((ICPPFunction)b1).getType();
+		ICPPFunctionType b1type= ((ICPPFunction)b1).getType();
 		assertInstance(b1type.getReturnType(), ICPPBasicType.class);
 		IType[] b1_ptypes= b1type.getParameterTypes();
 		assertEquals(2, b1_ptypes.length);
@@ -839,7 +839,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1_spcd, ICPPFunction.class);
 		assertInstance(b1_spcd, ICPPTemplateDefinition.class);
 		
-		ICPPFunctionType b1_spcd_type= (ICPPFunctionType) ((ICPPFunction)b1_spcd).getType();
+		ICPPFunctionType b1_spcd_type= ((ICPPFunction)b1_spcd).getType();
 		assertInstance(b1_spcd_type.getReturnType(), ICPPBasicType.class);
 		IType[] b1_spcd_ptypes= b1_spcd_type.getParameterTypes();
 		assertEquals(2, b1_spcd_ptypes.length);
@@ -882,7 +882,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPFunction.class);
 		
 		ICPPFunction f= (ICPPFunction) b0;
-		ICPPFunctionType type= (ICPPFunctionType) f.getType();
+		ICPPFunctionType type= f.getType();
 		IType rt= type.getReturnType();
 		IType[] pts= type.getParameterTypes();
 		

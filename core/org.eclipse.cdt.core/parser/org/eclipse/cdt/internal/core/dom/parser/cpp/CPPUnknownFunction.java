@@ -14,11 +14,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 
 /**
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
@@ -30,7 +30,7 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return new CPPUnknownFunction(sample.getOwner(), name.getLastName());
 	}
 
-	private IFunctionType fType;
+	private ICPPFunctionType fType;
 
 	public CPPUnknownFunction(IBinding owner, IASTName name) {
 		super(owner, name);
@@ -60,7 +60,7 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return IParameter.EMPTY_PARAMETER_ARRAY;
 	}
 
-	public IFunctionType getType() throws DOMException {
+	public ICPPFunctionType getType() throws DOMException {
 		if (fType == null) {
 			fType= new CPPUnknownFunctionType();
 		}

@@ -202,7 +202,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::constMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertTrue(type.isConst());
 	}
 	
@@ -210,7 +210,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::volatileMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertTrue(type.isVolatile());
 	}
 		
@@ -218,7 +218,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::constVolatileMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertTrue(type.isConst());
 		assertTrue(type.isVolatile());
 	}
@@ -227,7 +227,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notConstMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertFalse(type.isConst());
 	}
 	
@@ -235,7 +235,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notVolatileMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertFalse(type.isVolatile());
 	}
 		
@@ -243,7 +243,7 @@ public class MethodTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::notConstVolatileMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];
-		ICPPFunctionType type = (ICPPFunctionType) method.getType();
+		ICPPFunctionType type = method.getType();
 		assertFalse(type.isConst());
 		assertFalse(type.isVolatile());
 	}

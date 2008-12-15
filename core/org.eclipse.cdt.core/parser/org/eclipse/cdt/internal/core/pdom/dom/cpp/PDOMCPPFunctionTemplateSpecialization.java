@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -34,7 +33,7 @@ class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecializatio
 	
 	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, (ICPPFunction) template, specialized);
+		super(pdom, parent, template, specialized);
 	}
 
 	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, int bindingRecord) {

@@ -1,21 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *******************************************************************************/
-/*
- * Created on Mar 31, 2005
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
- * @author aniefer
+ * Interface for function templates
  */
-public interface ICPPFunctionTemplate extends ICPPTemplateDefinition {
+public interface ICPPFunctionTemplate extends ICPPFunction, ICPPTemplateDefinition {
 
 }

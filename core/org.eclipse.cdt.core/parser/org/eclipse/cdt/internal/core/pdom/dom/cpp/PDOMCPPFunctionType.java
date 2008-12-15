@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -23,6 +26,32 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCFunctionType;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFunctionType {
+	private static IType FALLBACK_RETURN_TYPE= new CPPBasicType(IBasicType.t_void, 0);
+	static ICPPFunctionType FALLBACK= new ICPPFunctionType() {
+		public IPointerType getThisType() {
+			return null;
+		}
+		public boolean isConst() {
+			return false;
+		}
+		public boolean isVolatile() {
+			return false;
+		}
+		public IType[] getParameterTypes() throws DOMException {
+			return IType.EMPTY_TYPE_ARRAY;
+		}
+		public IType getReturnType() throws DOMException {
+			return FALLBACK_RETURN_TYPE;
+		}
+		public boolean isSameType(IType type) {
+			return this == type || type.isSameType(this);
+		}
+		@Override
+		public Object clone() {
+			return this;
+		}
+	};
+
 	/**
 	 * Offset for <code>this</code> type of this function (relative to
 	 * the beginning of the record).

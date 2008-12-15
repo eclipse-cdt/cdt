@@ -17,8 +17,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -39,21 +43,42 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 		super(pdom, parent, name);
 	}
 			
-	protected boolean hasQualifiedName(char[][] qname, int idx) {
-		try {
-			if (getDBName().equals(qname[idx])) {
-				PDOMNode parent= getParentNode(); 
-				if (--idx < 0) {
-					return parent == null;
-				}
-				if (parent instanceof PDOMCPPBinding) {
-					return ((PDOMCPPBinding) parent).hasQualifiedName(qname, idx);
-				}
+	protected boolean isSameOwner(IBinding owner1, IBinding owner2) {
+		if (owner1 == null)
+			return owner2 == null;
+		if (owner2 == null)
+			return false;
+		
+		if (owner1 instanceof IType) {
+			if (owner2 instanceof IType) {
+				return ((IType) owner1).isSameType((IType) owner2);
 			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			return false;
 		}
-		return false;
+		try {
+			while(owner1 instanceof ICPPNamespace && owner2 instanceof ICPPNamespace) {
+				final char[] n1 = owner1.getNameCharArray();
+				// ignore unknown namespaces
+				if (n1.length == 0) {
+					owner1= owner1.getOwner();
+					continue;
+				} 
+				final char[] n2= owner2.getNameCharArray();
+				if (n2.length == 0) {
+					owner2= owner2.getOwner();
+					continue;
+				} 
+				if (!CharArrayUtils.equals(n1, n2)) 
+					return false;
+				
+				owner1= owner1.getOwner();
+				owner2= owner2.getOwner();
+			}
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+		return owner1 == null && owner2 == null;
 	}
 
 	final public char[][] getQualifiedNameCharArray() throws DOMException {

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -36,6 +37,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -43,9 +48,11 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 public class IndexUpdateTests extends IndexTestBase {
 
@@ -755,6 +762,140 @@ public class IndexUpdateTests extends IndexTestBase {
 		try {
 			binding = findBinding("myType");
 			assertTrue(binding instanceof IEnumeration);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// template<typename T> class CT {};
+
+	// template<typename T=int> class CT {};
+
+	// template<typename T=char> class CT {};
+
+	// template<int U, typename T> struct CT {};
+	
+	// template<template<typename T> class V> class CT {};
+
+	// template<template<template<typename I> class T> class V> class CT {};
+
+	// template<typename U> class CT {};
+	public void testClassTemplates() throws Exception {
+		setupFile(7, true);
+		ICPPClassTemplate binding;
+		ICompositeType ct;
+		fIndex.acquireReadLock();
+		int pdomid;
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
+			assertEquals(0, tpars[0].getParameterID());
+			assertEquals("T", tpars[0].getName());
+			assertNull(tpars[0].getDefaultValue());
+			pdomid= ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getId();
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
+			assertEquals(0, tpars[0].getParameterID());
+			assertEquals("T", tpars[0].getName());
+			assertEquals("int", ASTTypeUtil.getType(tpars[0].getDefaultValue().getTypeValue()));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
+			assertEquals(0, tpars[0].getParameterID());
+			assertEquals("T", tpars[0].getName());
+			assertEquals("char", ASTTypeUtil.getType(tpars[0].getDefaultValue().getTypeValue()));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICompositeType.k_struct , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(2, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateNonTypeParameter);
+			assertEquals("U", tpars[0].getName());
+			assertEquals(0, tpars[0].getParameterID());
+			assertTrue(tpars[1] instanceof ICPPTemplateTypeParameter);
+			assertEquals("T", tpars[1].getName());
+			assertEquals(1, tpars[1].getParameterID());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
+			assertEquals("V", tpars[0].getName());
+			assertEquals(0, tpars[0].getParameterID());
+			tpars= ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
+			assertEquals(0x10000, tpars[0].getParameterID());
+			assertEquals("T", tpars[0].getName());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
+			assertEquals("V", tpars[0].getName());
+			assertEquals(0, tpars[0].getParameterID());
+			tpars= ((ICPPTemplateTemplateParameter) tpars[0]).getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTemplateParameter);
+			assertEquals(0x10000, tpars[0].getParameterID());
+			assertEquals("T", tpars[0].getName());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = (ICPPClassTemplate) findBinding("CT");
+			assertEquals(ICPPClassType.k_class , binding.getKey());
+			ICPPTemplateParameter[] tpars = binding.getTemplateParameters();
+			assertEquals(1, tpars.length);
+			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
+			assertEquals(0, tpars[0].getParameterID());
+			assertEquals("U", tpars[0].getName());
+			assertEquals(pdomid, ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getId());
 		} finally {
 			fIndex.releaseReadLock();
 		}

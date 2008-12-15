@@ -55,7 +55,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		Database db = pdom.getDB();
 
 		try {
-			ICPPFunctionType type = (ICPPFunctionType) method.getType();
+			ICPPFunctionType type = method.getType();
 			byte annotation = 0;
 			annotation |= PDOMCAnnotation.encodeCVQualifiers(type) << CV_OFFSET;
 			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);

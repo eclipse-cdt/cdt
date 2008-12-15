@@ -247,7 +247,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertInstance(f0.getParameterTypes()[0], ICPPBasicType.class);
 		
 		assertInstance(b1, ICPPFunction.class);
-		ICPPFunctionType f1= (ICPPFunctionType) ((ICPPFunction)b1).getType();
+		ICPPFunctionType f1= ((ICPPFunction)b1).getType();
 		assertInstance(f1.getReturnType(), ICPPBasicType.class);
 		assertEquals(1, f1.getParameterTypes().length);
 		assertInstance(f1.getParameterTypes()[0], ICPPBasicType.class);

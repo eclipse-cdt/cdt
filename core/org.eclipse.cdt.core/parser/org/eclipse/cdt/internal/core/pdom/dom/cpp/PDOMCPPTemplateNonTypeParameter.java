@@ -14,31 +14,35 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Binding for template non-type parameter in the index.
  */
-class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMemberOwner,
-		ICPPTemplateNonTypeParameter {
+class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMemberOwner,
+		ICPPTemplateNonTypeParameter, IPDOMCPPTemplateParameter {
 
-	private static final int MEMBERLIST = PDOMCPPVariable.RECORD_SIZE;
-	private static final int PARAMETERID= PDOMCPPVariable.RECORD_SIZE + 4;
-	private static final int DEFAULTVAL= PDOMCPPVariable.RECORD_SIZE + 8;
+	private static final int TYPE_OFFSET= PDOMCPPBinding.RECORD_SIZE;
+	private static final int PARAMETERID= PDOMCPPBinding.RECORD_SIZE + 4;
+	private static final int DEFAULTVAL= PDOMCPPBinding.RECORD_SIZE + 8;
 
 	private int fCachedParamID= -1;
 
@@ -50,17 +54,9 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 	
 	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {
-		super(pdom, parent, param);
+		super(pdom, parent, param.getNameCharArray());
 		final Database db = pdom.getDB();
 		db.putInt(record + PARAMETERID, param.getParameterID());
-		ICPPTemplateArgument val= param.getDefaultValue();
-		if (val != null) {
-			IValue sval= val.getNonTypeValue();
-			if (sval != null) {
-				IString s= db.newString(sval.getCanonicalRepresentation());
-				db.putInt(record + DEFAULTVAL, s.getRecord());
-			}
-		}
 	}
 
 	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, int bindingRecord) {
@@ -92,6 +88,40 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 			return null;
 		}
 	}
+	
+	@Override
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
+			updateName(newBinding.getNameCharArray());
+			final Database db = pdom.getDB();
+			IType mytype= getType();
+			int valueRec= db.getInt(record + DEFAULTVAL);
+			try {
+				IType newType= ntp.getType();
+				setType(linkage, newType);
+				if (mytype != null) 
+					linkage.deleteType(mytype, record);
+				if (setDefaultValue(db, ntp) && valueRec != 0) {
+					db.getString(valueRec).delete();
+				}
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
+	}
+
+	public void forceDelete(PDOMLinkage linkage) throws CoreException {
+		getDBName().delete();
+		IType type= getType();
+		if (type instanceof PDOMNode) {
+			((PDOMNode) type).delete(linkage);
+		}
+		Database db= pdom.getDB();
+		int valueRec= db.getInt(record + DEFAULTVAL);
+		if (valueRec != 0)
+			db.getString(valueRec).delete();
+	}
 
 	public short getParameterPosition() {
 		readParamID();
@@ -119,24 +149,83 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPVariable implements IPDOMMe
 			}
 		}
 	}
-
-	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
-		list.addMember(member);
+	
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
+		PDOMNode typeNode = linkage.addType(this, newType);
+		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
-	@Override
-	public void accept(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
-		list.accept(visitor);
+	public void configure(ICPPTemplateParameter param) {
+		try {
+			if (param instanceof ICPPTemplateNonTypeParameter) {
+				ICPPTemplateNonTypeParameter nonTypeParm= (ICPPTemplateNonTypeParameter) param;
+				setType(getLinkage(), nonTypeParm.getType());
+				final Database db= pdom.getDB();
+				setDefaultValue(db, nonTypeParm);
+			} 
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	private boolean setDefaultValue(Database db, ICPPTemplateNonTypeParameter nonTypeParm) throws CoreException {
+		ICPPTemplateArgument val= nonTypeParm.getDefaultValue();
+		if (val != null) {
+			IValue sval= val.getNonTypeValue();
+			if (sval != null) {
+				IString s= db.newString(sval.getCanonicalRepresentation());
+				db.putInt(record + DEFAULTVAL, s.getRecord());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public IType getType() {
+		try {
+			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
+			return (IType)getLinkageImpl().getNode(typeRec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	public IValue getInitialValue() {
+		return null;
+	}
+	public boolean isAuto() {
+		return false;
+	}
+	public boolean isExtern() {
+		return false;
+	}
+	public boolean isRegister() {
+		return false;
+	}
+	public boolean isStatic() {
+		return false;
+	}
+	public boolean isExternC() {
+		return false;
+	}
+	public boolean isMutable() {
+		return false;
 	}
 	
 	@Override
-	public Object clone() { fail(); return null; }
-
-
+	public Object clone() {
+		fail();
+		return null;
+	}
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
 	public IASTExpression getDefault() {
 		return null;
 	}
+
 }

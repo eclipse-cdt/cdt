@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -40,7 +41,6 @@ import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -260,12 +260,17 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
 			ICPPClassType ctype= (ICPPClassType) type;
-			ctype= (ICPPClassType) PDOMASTAdapter.getAdapterForAnonymousASTBinding(ctype);
 			try {
-				if (ctype.getKey() == getKey()) {
-					char[][] qname= ctype.getQualifiedNameCharArray();
-					return hasQualifiedName(qname, qname.length-1);
+				if (ctype.getKey() != getKey())
+					return false;
+				char[] nchars = ctype.getNameCharArray();
+				if (nchars.length == 0) {
+					nchars= ASTTypeUtil.createNameForAnonymous(ctype);
 				}
+				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+					return false;
+
+				return isSameOwner(getOwner(), ctype.getOwner());
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}

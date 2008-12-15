@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -88,6 +89,8 @@ public class TemplateInstanceUtil {
 	}
 
 	static ICPPTemplateArgument convert(ICompositesFactory cf, ICPPTemplateArgument arg) throws DOMException {
+		if (arg == null)
+			return null;
 		if (arg.isNonTypeValue()) {
 			return arg;
 		}
@@ -147,6 +150,14 @@ public class TemplateInstanceUtil {
 			}
 		} catch(DOMException de) {
 			CCorePlugin.log(de);
+		}
+		return result;
+	}
+
+	public static ICPPTemplateParameter[] convert(ICompositesFactory cf, ICPPTemplateParameter[] preResult) {
+		ICPPTemplateParameter[] result= new ICPPTemplateParameter[preResult.length];
+		for (int i= 0; i < result.length; i++) {
+			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
 	}

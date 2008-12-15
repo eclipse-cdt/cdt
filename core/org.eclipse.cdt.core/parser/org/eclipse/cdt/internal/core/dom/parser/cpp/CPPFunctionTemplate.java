@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -33,12 +33,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * Implementation of function templates
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
 		implements ICPPFunctionTemplate, ICPPFunction, ICPPInternalFunction {
@@ -77,7 +78,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		public IScope getFunctionScope() throws DOMException {
 			throw new DOMException(this);
 		}
-		public IFunctionType getType() throws DOMException {
+		public ICPPFunctionType getType() throws DOMException {
 			throw new DOMException(this);
 		}
 		public boolean isStatic() throws DOMException {
@@ -100,7 +101,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		}
 	}
 	
-	protected IFunctionType type = null;
+	protected ICPPFunctionType type = null;
 
 	public CPPFunctionTemplate(IASTName name) {
 		super(name);
@@ -167,7 +168,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		return null;
 	}
 
-	public IFunctionType getType() {
+	public ICPPFunctionType getType() {
 		if (type == null) {
 			IASTName name = getTemplateName();
 			IASTNode parent = name.getParent();
@@ -175,8 +176,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 				parent = parent.getParent();
 			
 			IType temp = CPPVisitor.createType((IASTDeclarator)parent);
-			if (temp instanceof IFunctionType)
-				type = (IFunctionType) temp;
+			if (temp instanceof ICPPFunctionType)
+				type = (ICPPFunctionType) temp;
 		}
 		return type;
 	}

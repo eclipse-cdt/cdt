@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -49,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -60,7 +60,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * Base implementation for c++ scopes.
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray(); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			//copy assignment operator: A& operator = (const A &)
 			IType refType = new CPPReferenceType(clsType);
 			IPointerType thisType= new CPPPointerType(clsType);
-			IFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, thisType);
+			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, thisType);
 			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, ps);
 			implicits[i++] = m;
 			addBinding(m);
@@ -138,7 +138,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (!ia.hasUserDeclaredDestructor()) {
 			//destructor: ~A()
 			IPointerType thisType= new CPPPointerType(clsType);
-			IFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, thisType);
+			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, thisType);
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
 			ICPPMethod m = new CPPImplicitMethod(this, dtorName, ft, voidPs);
 			implicits[i++] = m;

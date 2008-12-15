@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -172,7 +173,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		}
 	}
 
-	public IFunctionType getType() throws DOMException {		
+	public ICPPFunctionType getType() throws DOMException {		
 		try {
 			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(pdom, offset); 

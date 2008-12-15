@@ -53,11 +53,7 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPClassTemplate) rbinding).getTemplateParameters();
-		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return TemplateInstanceUtil.convert(cf, ((ICPPClassTemplate) rbinding).getTemplateParameters());
 	}
 
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {

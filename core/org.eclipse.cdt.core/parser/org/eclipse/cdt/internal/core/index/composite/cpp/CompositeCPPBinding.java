@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -23,22 +21,6 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 abstract class CompositeCPPBinding extends CompositeIndexBinding implements ICPPBinding {
 	public CompositeCPPBinding(ICompositesFactory cf, IBinding rbinding) {
 		super(cf, (IIndexFragmentBinding) rbinding);
-	}
-
-	public boolean hasQualifiedName(char[][] qname) {
-		boolean result = true;
-		try {
-			char[][] myQN = getQualifiedNameCharArray();
-			result &= qname.length == myQN.length; 
-			for(int i=0; result && i<qname.length; i++) {
-				char[] qnamePart = qname[i];
-				result &= Arrays.equals(qnamePart, myQN[i]);
-			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
-			return false;
-		}
-		return result;
 	}
 
 	@Override

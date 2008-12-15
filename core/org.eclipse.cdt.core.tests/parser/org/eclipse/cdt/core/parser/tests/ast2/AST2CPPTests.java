@@ -4065,8 +4065,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		assertNotSame(d1, d2);
 		
-		assertFalse(((ICPPFunctionType) d1.getType()).isConst());
-		assertTrue(((ICPPFunctionType) d2.getType()).isConst());
+		assertFalse(d1.getType().isConst());
+		assertTrue((d2.getType()).isConst());
 		
 		ICPPFunction dr1 = (ICPPFunction) col.getName(5).resolveBinding();
 		ICPPFunction dr2 = (ICPPFunction) col.getName(8).resolveBinding();
@@ -6248,4 +6248,22 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testVoidParamInDefinition_257376() throws Exception {
     	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
+    
+    //    namespace ns {
+    //    	struct C {
+    //    		C(C* c){}
+    //    	};
+    //    	int a;
+    //    }
+    //    struct C {
+    //    	C(ns::C*){}
+    //    };
+    //    void testbla() {
+    //    	ns::C* cptr= 0;
+    //    	C c= C(cptr);
+    //    }
+    public void testNoKoenigForConstructors() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
+
 }

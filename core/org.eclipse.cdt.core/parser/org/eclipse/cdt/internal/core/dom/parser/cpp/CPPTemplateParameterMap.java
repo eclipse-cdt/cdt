@@ -56,6 +56,8 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 * Returns the value for the given parameter.
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param) {
+		if (param == null)
+			return null;
 		return (ICPPTemplateArgument) fMap.get(param.getParameterID());
 	}
 

@@ -53,9 +53,10 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassTemplate.RECORD_SIZE + 16;
 	
-	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom,
-			PDOMNode parent, ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) throws CoreException {
-		super(pdom, parent, partial);
+	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom, PDOMCPPLinkage linkage,
+			PDOMNode parent, ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
+			throws CoreException, DOMException {
+		super(pdom, linkage, parent, partial);
 		pdom.getDB().putInt(record + PRIMARY, primary.getRecord());
 		primary.addPartial(this);
 		
@@ -65,6 +66,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+		linkage.new ConfigurePartialSpecialization(this, partial);
 	}
 	
 	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom,

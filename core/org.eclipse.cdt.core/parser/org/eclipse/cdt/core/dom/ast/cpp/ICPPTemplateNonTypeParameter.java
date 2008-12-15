@@ -12,12 +12,11 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
- * @author Doug Schaefer
+ * Interface for template non type parameters.
  */
-public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter, IVariable {
+public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter, ICPPVariable {
 
 	/** 
 	 * @deprecated, use {@link ICPPTemplateParameter#getDefaultValue()}.

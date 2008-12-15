@@ -47,14 +47,14 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 	
-	public PDOMCPPMethodTemplate(PDOM pdom, PDOMNode parent,
-			ICPPMethod method) throws CoreException {
-		super(pdom, parent, (ICPPFunctionTemplate) method);
+	public PDOMCPPMethodTemplate(PDOM pdom, PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
+			throws CoreException, DOMException {
+		super(pdom, linkage, parent, (ICPPFunctionTemplate) method);
 		
 		Database db = pdom.getDB();
 
 		try {
-			ICPPFunctionType type = (ICPPFunctionType) method.getType();
+			ICPPFunctionType type = method.getType();
 			byte annotation = 0;
 			annotation |= PDOMCAnnotation.encodeCVQualifiers(type) << CV_OFFSET;
 			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);

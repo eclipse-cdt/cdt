@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -25,18 +25,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * unit but are not actually part of the physical AST created by CDT.
  * 
  * An example is GCC built-in functions.
- * 
- * @author dsteffle
  */
 public class CPPImplicitFunction extends CPPFunction {
 
 	private IParameter[] parms=null;
 	private IScope scope=null;
-    private IFunctionType functionType=null;
+    private ICPPFunctionType functionType=null;
 	private boolean takesVarArgs=false;
 	private char[] name=null;
 	
-	public CPPImplicitFunction(char[] name, IScope scope, IFunctionType type, IParameter[] parms, boolean takesVarArgs) {
+	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, IParameter[] parms, boolean takesVarArgs) {
         super( null );
         this.name=name;
 		this.scope=scope;
@@ -51,7 +49,7 @@ public class CPPImplicitFunction extends CPPFunction {
     }
     
     @Override
-	public IFunctionType getType() {
+	public ICPPFunctionType getType() {
     	return functionType;
     }
     

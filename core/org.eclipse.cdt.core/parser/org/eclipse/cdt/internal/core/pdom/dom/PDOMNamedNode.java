@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -83,7 +84,25 @@ public abstract class PDOMNamedNode extends PDOMNode {
 			
 		return getDBName().equals(name);
 	}
-	
+
+	/**
+	 * Template parameters need to update their name.
+	 * @throws CoreException 
+	 */
+	protected void updateName(char[] nameCharArray) throws CoreException {
+		if (fName != null && CharArrayUtils.equals(fName, nameCharArray))
+			return;
+		
+		IString name= getDBName();
+		if (!name.equals(nameCharArray)) {
+			name.delete();
+			final Database db= pdom.getDB();
+			db.putInt(record + NAME, db.newString(nameCharArray).getRecord());
+		}
+		fName= nameCharArray;
+	}
+
+
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		final Database db = pdom.getDB();

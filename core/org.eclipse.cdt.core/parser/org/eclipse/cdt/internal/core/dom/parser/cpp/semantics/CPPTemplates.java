@@ -115,7 +115,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecializat
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
@@ -789,7 +788,8 @@ public class CPPTemplates {
 			}		
 
 			if (type instanceof ITypeContainer) {
-				IType nestedType = ((ITypeContainer) type).getType();
+				final ITypeContainer tc = (ITypeContainer) type;
+				IType nestedType = tc.getType();
 				IType newNestedType = instantiateType(nestedType, tpMap, within);
 				if (type instanceof ICPPPointerToMemberType) {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) type;
@@ -804,20 +804,7 @@ public class CPPTemplates {
 					}
 				}
 				if (newNestedType != nestedType) {
-					// bug 249085 make sure not to add unnecessary qualifications
-					if (type instanceof IQualifierType) {
-						IQualifierType qt1= (IQualifierType) type;
-						if (newNestedType instanceof IQualifierType) {
-							IQualifierType qt2= (IQualifierType) newNestedType;
-							return new CPPQualifierType(qt2.getType(), qt1.isConst() || qt2.isConst(), qt1.isVolatile() || qt2.isVolatile());
-						} else if (newNestedType instanceof IPointerType) {
-							IPointerType pt2= (IPointerType) newNestedType;
-							return new CPPPointerType(pt2.getType(), qt1.isConst() || pt2.isConst(), qt1.isVolatile() || pt2.isVolatile());
-						}
-					}
-					type = (IType) type.clone();
-					((ITypeContainer) type).setType(newNestedType);
-					return type;
+					return SemanticUtil.replaceNestedType(tc, newNestedType);
 				} 
 				return type;
 			} 
@@ -1404,9 +1391,8 @@ public class CPPTemplates {
 	 * returns <code>false</code> if there is no mapping.
 	 */
 	private static boolean deduceTemplateParameterMapFromFunctionParameters(ICPPFunctionTemplate template, IType[] fnArgs, CPPTemplateParameterMap map) throws DOMException{
-		ICPPFunction function = (ICPPFunction) template;
 		try {
-			IType[] fnPars = function.getType().getParameterTypes();
+			IType[] fnPars = template.getType().getParameterTypes();
 			int len= Math.min(fnPars.length, fnArgs.length);
 			for (int j= 0; j < len; j++) {
 				IType par= fnPars[j];
@@ -1810,7 +1796,7 @@ public class CPPTemplates {
 			return null;
 		}
 		@Override
-		public IFunctionType getType() {
+		public ICPPFunctionType getType() {
 			if (type == null) {
 				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters, null);
 			}

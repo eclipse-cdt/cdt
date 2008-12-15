@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -37,7 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * also used as base class for function instances.
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
-	private IFunctionType type = null;
+	private ICPPFunctionType type = null;
 	private IParameter[] specializedParams = null;
 	private IType[] specializedExceptionSpec = null;
 
@@ -72,10 +73,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return null;
 	}
 
-	public IFunctionType getType() throws DOMException {
+	public ICPPFunctionType getType() throws DOMException {
 		if (type == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
-			type = (IFunctionType) specializeType(function.getType());
+			type = (ICPPFunctionType) specializeType(function.getType());
 		}
 		
 		return type;

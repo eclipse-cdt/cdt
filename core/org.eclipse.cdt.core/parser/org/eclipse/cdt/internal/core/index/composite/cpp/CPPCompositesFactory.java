@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -230,6 +231,16 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
+			} else if(binding instanceof ICPPTemplateParameter) {
+				if (binding instanceof ICPPTemplateTypeParameter) {
+					result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
+				} else if (binding instanceof ICPPTemplateNonTypeParameter) {
+					result = new CompositeCPPTemplateNonTypeParameter(this, (ICPPTemplateNonTypeParameter) binding);
+				} else if (binding instanceof ICPPTemplateTemplateParameter) {
+					result = new CompositeCPPTemplateTemplateParameter(this, (ICPPTemplateTemplateParameter) binding);
+				} else {
+					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			} else if (binding instanceof ICPPTemplateDefinition) {
 				if (binding instanceof ICPPClassTemplate) {
 					ICPPClassType def= (ICPPClassType) findOneBinding(binding);
@@ -240,14 +251,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					return new CompositeCPPMethodTemplate(this, (ICPPMethod) binding);
 				} else if (binding instanceof ICPPFunctionTemplate) {
 					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
-				} else {
-					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else if(binding instanceof ICPPTemplateParameter) {
-				if (binding instanceof ICPPTemplateTypeParameter) {
-					result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
-				} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-					result = new CompositeCPPTemplateNonTypeParameter(this, (ICPPTemplateNonTypeParameter) binding);
 				} else {
 					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}

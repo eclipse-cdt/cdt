@@ -849,10 +849,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	ICPPMethod bar_v=  getBindingFromASTName("bar();/*2*/", 3, ICPPMethod.class);
     	ICPPMethod bar_c=  getBindingFromASTName("bar();/*3*/", 3, ICPPMethod.class);
     	ICPPMethod bar=    getBindingFromASTName("bar();/*4*/", 3, ICPPMethod.class);
-    	ICPPFunctionType bar_cv_ft= (ICPPFunctionType) bar_cv.getType();
-    	ICPPFunctionType bar_v_ft=  (ICPPFunctionType) bar_v.getType();
-    	ICPPFunctionType bar_c_ft=  (ICPPFunctionType) bar_c.getType();
-    	ICPPFunctionType bar_ft=    (ICPPFunctionType) bar.getType();
+    	ICPPFunctionType bar_cv_ft= bar_cv.getType();
+    	ICPPFunctionType bar_v_ft=  bar_v.getType();
+    	ICPPFunctionType bar_c_ft=  bar_c.getType();
+    	ICPPFunctionType bar_ft=    bar.getType();
     	
     	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
     	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());

@@ -6,21 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -31,14 +25,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
+ * Represents a function template, base class for method/constructor templates.
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IPDOMCPPTemplateParameterOwner {
@@ -51,9 +45,17 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 4;
 	
-	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template)
-			throws CoreException {
-		super(pdom, parent, (ICPPFunction) template, false);
+	private IPDOMCPPTemplateParameter[] params;  // Cached template parameters.
+
+	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template)
+			throws CoreException, DOMException {
+		super(pdom, parent, template, false);
+		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
+		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(pdom, this, origParams);
+		final Database db = pdom.getDB();
+		int rec= PDOMTemplateParameterArray.putArray(db, params);
+		db.putInt(record + TEMPLATE_PARAMS, rec);
+		linkage.new ConfigureFunctionTemplate(template, this);
 	}
 
 	public PDOMCPPFunctionTemplate(PDOM pdom, int bindingRecord) {
@@ -75,48 +77,23 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE;
 	}
 
-	private static class TemplateParameterCollector implements IPDOMVisitor {
-		private List<IPDOMNode> params = new ArrayList<IPDOMNode>();
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPTemplateParameter)
-				params.add(node);
-			return false;
+	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
+		if (params == null) {
+			try {
+				int rec= pdom.getDB().getInt(record + TEMPLATE_PARAMS);
+				if (rec == 0) {
+					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+				} else {
+					params= PDOMTemplateParameterArray.getArray(this, rec);
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				params = IPDOMCPPTemplateParameter.EMPTY_ARRAY;
+			}
 		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public ICPPTemplateParameter[] getTemplateParameters() {
-			return params.toArray(new ICPPTemplateParameter[params.size()]);
-		}
+		return params;
 	}
 	
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			TemplateParameterCollector visitor = new TemplateParameterCollector();
-			list.accept(visitor);
-			
-			return visitor.getTemplateParameters();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPTemplateParameter[0];
-		}
-	}
-	
-	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		if (member instanceof ICPPTemplateParameter) {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			list.addMember(member);
-		} 
-	}
-
-	@Override
-	public void accept(IPDOMVisitor visitor) throws CoreException {
-		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-		list.accept(visitor);
-	}
-
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
 	}
@@ -132,21 +109,21 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		// Template parameters are identified by their position in the parameter list.
 		int pos = param.getParameterPosition();
-		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TEMPLATE_PARAMS, getLinkageImpl());
-			ICPPTemplateParameter result= (ICPPTemplateParameter) list.getNodeAt(pos);
-			if (param instanceof ICPPTemplateTypeParameter) {
-				if (result instanceof ICPPTemplateTypeParameter)
-					return result;
-			} else if (param instanceof ICPPTemplateNonTypeParameter) {
-				if (result instanceof ICPPTemplateNonTypeParameter)
-					return result;
-			} else if (param instanceof ICPPTemplateTemplateParameter) {
-				if (result instanceof ICPPTemplateTemplateParameter)
-					return result;
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+		ICPPTemplateParameter[] pars = getTemplateParameters();
+		
+		if (pars == null || pos >= pars.length)
+			return null;
+		
+		ICPPTemplateParameter result= pars[pos];
+		if (param instanceof ICPPTemplateTypeParameter) {
+			if (result instanceof ICPPTemplateTypeParameter)
+				return result;
+		} else if (param instanceof ICPPTemplateNonTypeParameter) {
+			if (result instanceof ICPPTemplateNonTypeParameter)
+				return result;
+		} else if (param instanceof ICPPTemplateTemplateParameter) {
+			if (result instanceof ICPPTemplateTemplateParameter)
+				return result;
 		}
 		return null;
 	}

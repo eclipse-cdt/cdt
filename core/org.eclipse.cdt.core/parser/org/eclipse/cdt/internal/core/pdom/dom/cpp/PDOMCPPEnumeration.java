@@ -15,16 +15,16 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -110,17 +110,15 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 		
 		try {
 			if (type instanceof IEnumeration) {
-				if (type instanceof ICPPBinding) {
-					ICPPBinding etype= (ICPPBinding) type;
-					etype= (ICPPBinding) PDOMASTAdapter.getAdapterForAnonymousASTBinding(etype);
-					char[][] qname = etype.getQualifiedNameCharArray();
-					return hasQualifiedName(qname, qname.length-1);
+				IEnumeration etype= (IEnumeration) type;
+				char[] nchars = etype.getNameCharArray();
+				if (nchars.length == 0) {
+					nchars= ASTTypeUtil.createNameForAnonymous(etype);
 				}
-				else if (type instanceof PDOMCPPEnumeration) {
-					PDOMCPPEnumeration etype= (PDOMCPPEnumeration) type;
-					char[][] qname= etype.getQualifiedNameCharArray();
-					return hasQualifiedName(qname, qname.length-1);
-				}
+				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+					return false;
+
+				return isSameOwner(getOwner(), etype.getOwner());
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);

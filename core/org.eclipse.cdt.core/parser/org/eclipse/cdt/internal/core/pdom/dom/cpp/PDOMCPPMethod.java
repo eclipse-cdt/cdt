@@ -60,7 +60,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 
-	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, ICPPMethod method) throws CoreException {
+	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
 		super(pdom, parent, method, true);
 
 		Database db = pdom.getDB();

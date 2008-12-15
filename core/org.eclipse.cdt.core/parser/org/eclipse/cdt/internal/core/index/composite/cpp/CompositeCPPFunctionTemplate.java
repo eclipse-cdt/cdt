@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPFunctionTemplate extends CompositeCPPFunction 
@@ -29,11 +28,7 @@ public class CompositeCPPFunctionTemplate extends CompositeCPPFunction
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPFunctionTemplate) rbinding).getTemplateParameters();
-		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return TemplateInstanceUtil.convert(cf, ((ICPPFunctionTemplate) rbinding).getTemplateParameters());
 	}
 
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {

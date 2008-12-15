@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -63,7 +64,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             throw new DOMException(this);
         }
 
-        public IFunctionType getType() throws DOMException {
+        public ICPPFunctionType getType() throws DOMException {
             throw new DOMException(this);
         }
         public boolean isStatic() throws DOMException {
@@ -106,7 +107,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     
 	protected ICPPASTFunctionDeclarator[] declarations;
 	protected ICPPASTFunctionDeclarator definition;
-	protected IFunctionType type = null;
+	protected ICPPFunctionType type = null;
 	
 	private static final int FULLY_RESOLVED         = 1;
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
@@ -297,9 +298,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 
-    public IFunctionType getType() {
+    public ICPPFunctionType getType() {
         if (type == null)
-            type = (IFunctionType) CPPVisitor.createType((definition != null) ? definition : declarations[0]);
+            type = (ICPPFunctionType) CPPVisitor.createType((definition != null) ? definition : declarations[0]);
         return type;
     }
 

@@ -227,7 +227,14 @@ public class CPPSemantics {
         if (data.checkAssociatedScopes()) {
             //3.4.2 argument dependent name lookup, aka Koenig lookup
             try {
-            	if (binding == null || binding.getOwner() instanceof ICPPClassType == false) {
+            	boolean doKoenig= true;
+            	if (binding != null) {
+            		if (binding.getOwner() instanceof ICPPClassType)
+            			doKoenig= false;
+            		else if (binding instanceof ICPPClassType && data.considerConstructors)
+            			doKoenig= false;
+            	}
+            	if (doKoenig) {
                     data.ignoreUsingDirectives = true;
                     data.forceQualified = true;
                     for (int i = 0; i < data.associated.size(); i++) {
@@ -800,7 +807,7 @@ public class CPPSemantics {
 		return (ICPPScope) parentScope;
 	}
 
-	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope) throws DOMException{
+	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope) {
 		if (lookIn instanceof ICPPClassScope == false)
 			return null;
 		
@@ -808,7 +815,13 @@ public class CPPSemantics {
 		if (classType == null) 
 			return null;
 		
-		final ICPPBase[] bases= classType.getBases();
+		ICPPBase[] bases= null;
+		try {
+			 bases= classType.getBases();
+		} catch (DOMException e) {
+			// assume that there are no bases
+			return null;
+		}
 		if (bases == null || bases.length == 0)
 			return null;
 	
@@ -831,96 +844,100 @@ public class CPPSemantics {
 			if (base instanceof IProblemBinding)
 				continue;
 			
-			IBinding b = base.getBaseClass();
-			if (!(b instanceof ICPPClassType)) {
-				// 14.6.2.3 scope is not examined 
-				if (b instanceof ICPPUnknownBinding) {
+			try {
+				IBinding b = base.getBaseClass();
+				if (!(b instanceof ICPPClassType)) {
+					// 14.6.2.3 scope is not examined 
+					if (b instanceof ICPPUnknownBinding) {
+						if (data.skippedScope == null)
+							data.skippedScope= overallScope;
+					}
+					continue;
+				}
+
+				inherited = null;
+				
+				final ICPPClassType cls = (ICPPClassType) b;
+				final ICPPScope classScope = (ICPPScope) cls.getCompositeScope();
+				if (classScope == null || classScope instanceof ICPPInternalUnknownScope) {
+					// 14.6.2.3 scope is not examined 
 					if (data.skippedScope == null)
 						data.skippedScope= overallScope;
+					continue;
 				}
-				continue;
-			}
+				if (!base.isVirtual() || !data.visited.containsKey(classScope)) {
+					if (base.isVirtual()) {
+						data.visited.put(classScope);
+					}
 
-			inherited = null;
-			
-			final ICPPClassType cls = (ICPPClassType) b;
-			final ICPPScope classScope = (ICPPScope) cls.getCompositeScope();
-			if (classScope == null || classScope instanceof ICPPInternalUnknownScope) {
-				// 14.6.2.3 scope is not examined 
-				if (data.skippedScope == null)
-					data.skippedScope= overallScope;
-				continue;
-			}
-			if (!base.isVirtual() || !data.visited.containsKey(classScope)) {
-				if (base.isVirtual()) {
-					data.visited.put(classScope);
-				}
-	
-				//if the inheritanceChain already contains the parent, then that 
-				//is circular inheritance
-				if (!data.inheritanceChain.containsKey(classScope)) {
-					//is this name define in this scope?
-					if (ASTInternal.isFullyCached(classScope)) {
-						if (data.astName != null && !data.contentAssist) {
-							inherited = classScope.getBinding(data.astName, true);
-						} else if (data.astName != null) {
-							inherited = classScope.getBindings(data.astName, true, data.prefixLookup);
-						}
-					} else {
-						inherited = lookupInScope(data, classScope, null);
-					}
-					
-					if (inherited == null || data.contentAssist) {
-						Object temp = lookupInParents(data, classScope, overallScope);
-						if (inherited != null) {
-							inherited = mergePrefixResults(null, inherited, true);
-							inherited = mergePrefixResults((CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true);
+					//if the inheritanceChain already contains the parent, then that 
+					//is circular inheritance
+					if (!data.inheritanceChain.containsKey(classScope)) {
+						//is this name define in this scope?
+						if (ASTInternal.isFullyCached(classScope)) {
+							if (data.astName != null && !data.contentAssist) {
+								inherited = classScope.getBinding(data.astName, true);
+							} else if (data.astName != null) {
+								inherited = classScope.getBindings(data.astName, true, data.prefixLookup);
+							}
 						} else {
-							inherited = temp;
+							inherited = lookupInScope(data, classScope, null);
+						}
+						
+						if (inherited == null || data.contentAssist) {
+							Object temp = lookupInParents(data, classScope, overallScope);
+							if (inherited != null) {
+								inherited = mergePrefixResults(null, inherited, true);
+								inherited = mergePrefixResults((CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true);
+							} else {
+								inherited = temp;
+							}
+						} else {
+						    visitVirtualBaseClasses(data, cls);
 						}
 					} else {
-					    visitVirtualBaseClasses(data, cls);
+					    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray());
+					    return null;
 					}
-				} else {
-				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray());
-				    return null;
-				}
-			}	
-			
-			if (inherited != null) {
-				if (result == null) {
-					result = inherited;
-				} else if (!data.contentAssist) {
-					if (result instanceof Object[]) {
-						Object[] r = (Object[]) result;
-						for (int j = 0; j < r.length && r[j] != null; j++) {
-							if (checkForAmbiguity(data, r[j], inherited)) {
+				}	
+				
+				if (inherited != null) {
+					if (result == null) {
+						result = inherited;
+					} else if (!data.contentAssist) {
+						if (result instanceof Object[]) {
+							Object[] r = (Object[]) result;
+							for (int j = 0; j < r.length && r[j] != null; j++) {
+								if (checkForAmbiguity(data, r[j], inherited)) {
+								    data.problem = new ProblemBinding(data.astName,
+								    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name()); 
+								    return null;
+								}
+							}
+						} else {
+							if (checkForAmbiguity(data, result, inherited)) {
 							    data.problem = new ProblemBinding(data.astName,
 							    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name()); 
 							    return null;
 							}
 						}
 					} else {
-						if (checkForAmbiguity(data, result, inherited)) {
-						    data.problem = new ProblemBinding(data.astName,
-						    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name()); 
-						    return null;
-						}
-					}
-				} else {
-					CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
-					CharArrayObjectMap r = (CharArrayObjectMap) result;
-					char[] key = null;
-					int tempSize = temp.size();
-					for (int ii = 0; ii < tempSize; ii++) {
-					    key = temp.keyAt(ii);
-						if (!r.containsKey(key)) {
-							r.put(key, temp.get(key));
-						} else {
-							//TODO: prefixLookup ambiguity checking
+						CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
+						CharArrayObjectMap r = (CharArrayObjectMap) result;
+						char[] key = null;
+						int tempSize = temp.size();
+						for (int ii = 0; ii < tempSize; ii++) {
+						    key = temp.keyAt(ii);
+							if (!r.containsKey(key)) {
+								r.put(key, temp.get(key));
+							} else {
+								//TODO: prefixLookup ambiguity checking
+							}
 						}
 					}
 				}
+			} catch (DOMException e) {
+				// assume that the base has not been specified
 			}
 		}
 	

@@ -81,26 +81,27 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 21;
 	
-	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException {
+	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException, DOMException {
 		super(pdom, parent, function.getNameCharArray());
 		Database db = pdom.getDB();		
-		try {
-			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
-			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
-			
-			if (setTypes) {
-				initData((ICPPFunctionType) function.getType(), function.getParameters());
-			}
-			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
-			storeExceptionSpec(db, function);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
+		pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
+
+		if (setTypes) {
+			initData(function.getType(), function.getParameters());
 		}
+		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
+		storeExceptionSpec(db, function);
 	}
 
-	public void initData(ICPPFunctionType ftype, IParameter[] params) throws CoreException {
-		PDOMCPPFunctionType pft= setType(ftype);
-		setParameters(pft, params);	
+	public void initData(ICPPFunctionType ftype, IParameter[] params) {
+		PDOMCPPFunctionType pft;
+		try {
+			pft = setType(ftype);
+			setParameters(pft, params);	
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	@Override
@@ -111,7 +112,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			IParameter[] newParams;
 			byte newAnnotation;
 			try {
-				newType= (ICPPFunctionType) func.getType();
+				newType= func.getType();
 				newParams = func.getParameters();
 				newAnnotation = PDOMCPPAnnotation.encodeAnnotation(func);
 			} catch (DOMException e) {
@@ -120,7 +121,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 				
 			IFunctionType oldType= getType();
 			PDOMCPPParameter oldParams= getFirstParameter();
-			initData(newType, newParams);
+			PDOMCPPFunctionType pft= setType(newType);
+			setParameters(pft, newParams);
 			if (oldType != null) {
 				linkage.deleteType(oldType, record);
 			}
@@ -235,7 +237,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public IFunctionType getType() {		
+	public ICPPFunctionType getType() {		
 		try {
 			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(pdom, offset); 

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -260,16 +262,21 @@ public class SemanticUtil {
 				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).getThisType());
 			} 
 
+			if (type instanceof ITypeDef) {
+				IType t= ((ITypedef) type).getType();
+				if (t != null)
+					return getSimplifiedType(t);
+				return type;
+			}
 			if (type instanceof ITypeContainer) {
-				final IType nestedType= ((ITypeContainer) type).getType();
+				final ITypeContainer tc = (ITypeContainer) type;
+				final IType nestedType= tc.getType();
 				if (nestedType == null) 
 					return type;
 				
 				IType newType= getSimplifiedType(nestedType);
 				if (newType != nestedType) {
-					type= (IType) type.clone();
-					((ITypeContainer) type).setType(newType);
-					return type;
+					return replaceNestedType(tc, newType);
 				} 
 				return type;
 			} 
@@ -277,6 +284,24 @@ public class SemanticUtil {
 		}
 		return type;
 	}
+
+	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) throws DOMException {
+		// bug 249085 make sure not to add unnecessary qualifications
+		if (type instanceof IQualifierType) {
+			IQualifierType qt1= (IQualifierType) type;
+			if (newNestedType instanceof IQualifierType) {
+				IQualifierType qt2= (IQualifierType) newNestedType;
+				return new CPPQualifierType(qt2.getType(), qt1.isConst() || qt2.isConst(), qt1.isVolatile() || qt2.isVolatile());
+			} else if (newNestedType instanceof IPointerType) {
+				IPointerType pt2= (IPointerType) newNestedType;
+				return new CPPPointerType(pt2.getType(), qt1.isConst() || pt2.isConst(), qt1.isVolatile() || pt2.isVolatile());
+			}
+		}
+		type = (ITypeContainer) type.clone();
+		type.setType(newNestedType);
+		return type;
+	}
+
 
 	public static IType[] getSimplifiedTypes(IType[] types) {
 		// Don't create a new array until it's really needed.

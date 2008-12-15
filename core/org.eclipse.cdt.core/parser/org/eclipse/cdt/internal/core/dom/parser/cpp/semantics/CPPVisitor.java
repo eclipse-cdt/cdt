@@ -193,6 +193,12 @@ public class CPPVisitor extends ASTQueries {
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	
 	public static IBinding createBinding(IASTName name) {
+		if (name.toString().equals("GetCharset"))
+			// mstodo 
+			{
+				int ____i = 0;
+				____i++;
+			}
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
 		if (parent instanceof IASTNamedTypeSpecifier ||
@@ -1491,7 +1497,7 @@ public class CPPVisitor extends ASTQueries {
 	 * Generate a function type for an implicit function.
 	 * NOTE: This does not correctly handle parameters with typedef types.
 	 */
-	public static IFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters, IPointerType thisType) {
+	public static ICPPFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters, IPointerType thisType) {
 	    IType[] pTypes = new IType[parameters.length];
 	    IType pt = null;
 	    

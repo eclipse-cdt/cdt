@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -33,9 +32,6 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 
 	private IType type = null;
 	
-	/**
-	 * @param name
-	 */
 	public CPPTemplateNonTypeParameter(IASTName name) {
 		super(name);
 	}
@@ -70,39 +66,24 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public boolean isStatic() throws DOMException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	public boolean isExtern() throws DOMException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	public boolean isAuto() throws DOMException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	public boolean isRegister() throws DOMException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public IValue getInitialValue() {
 		return null;
 	}
-
+	public boolean isExternC() {
+		return false;
+	}
+	public boolean isMutable() {
+		return false;
+	}
 }

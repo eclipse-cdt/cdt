@@ -60,8 +60,8 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
     	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
     		try {
     			final ICPPTemplateInstance inst = (ICPPTemplateInstance)obj;
-    			ICPPFunctionType ct1= (ICPPFunctionType) ((ICPPFunction)getSpecializedBinding()).getType();
-				ICPPFunctionType ct2= (ICPPFunctionType) ((ICPPFunction)inst.getTemplateDefinition()).getType();
+    			ICPPFunctionType ct1= ((ICPPFunction)getSpecializedBinding()).getType();
+				ICPPFunctionType ct2= ((ICPPFunction)inst.getTemplateDefinition()).getType();
     			if(!ct1.isSameType(ct2))
     				return false;
 

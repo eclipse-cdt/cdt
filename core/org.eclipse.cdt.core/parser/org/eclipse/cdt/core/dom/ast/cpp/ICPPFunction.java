@@ -45,4 +45,10 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
      * @since 5.1
      */
     public IType[] getExceptionSpecification() throws DOMException;
+    
+    /**
+     * {@inheritDoc}
+	 * @since 5.1
+	 */
+    public ICPPFunctionType getType() throws DOMException;
 }

@@ -528,7 +528,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void test() {
 	//	  B<int>::a;
 	//	}
-	public void _testInstanceInheritance_258745() throws Exception {
+	public void testInstanceInheritance_258745() throws Exception {
 		getBindingFromASTName("a", 1, ICPPField.class);
 	}
 

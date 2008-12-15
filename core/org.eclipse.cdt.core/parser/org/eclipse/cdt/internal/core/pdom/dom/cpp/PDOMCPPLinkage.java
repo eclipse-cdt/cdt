@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -847,9 +848,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		super.onCreateName(file, name, pdomName);
 		
 		IASTNode parentNode= name.getParent();
+		IASTNode nameNode = name;
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
+				parentNode.getParent() instanceof ICPPASTQualifiedName) {
+			nameNode = parentNode;
+			parentNode = parentNode.getParent();
+		}
 		if (parentNode instanceof ICPPASTQualifiedName) {
-		    IASTName[] ns = ((ICPPASTQualifiedName) parentNode).getNames();
-		    if (name != ns[ns.length - 1]) {
+		    if (nameNode != ((ICPPASTQualifiedName) parentNode).getLastName()) {
 		    	return;
 		    }
 	    	parentNode = parentNode.getParent();

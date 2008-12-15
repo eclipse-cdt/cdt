@@ -306,72 +306,66 @@ public class SimpleScanner {
 	            	++digits;
 	                c = getChar();
 	            }
-	
-	            if (!hex && c == '.') {
-	                if (floatingPoint && digits == 0) {
-	                	// encountered ..
-	                    if ((c= getChar()) == '.') {
-	                        return newToken(Token.tELIPSE);
-	                    } else {
-	                    	ungetChar(c);
-	                    	ungetChar('.');
-	                        return newToken(Token.tDOT);
-	                    }
-	                }
-	
-	                floatingPoint = true;
-	                c = getChar();
-	                while ((c >= '0' && c <= '9')) {
-		            	++digits;
-	                    c = getChar();
-	                }
-	            }
-	
-	            if (!hex && digits > 0 && (c == 'e' || c == 'E')) {
-	                if (!floatingPoint) {
-	                    floatingPoint = true;
-	                }
-	                
-	                // exponent type for floating point
-	                c = getChar();
 
-	                // optional + or -
-	                if (c == '+' || c == '-') {
-	                    c = getChar();
-	                }
-	
-	                // digit sequence of exponent part
-	                while ((c >= '0' && c <= '9')) {
-	                    c = getChar();
-	                }
-	
-	                // optional suffix
-	                if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
-	                    c = getChar();
-	                }
+	            if (!hex) {
+	            	if (c == '*') {
+	            		return newToken(Token.tDOTSTAR);
+	            	} else if (c == '.') {
+	            		if (floatingPoint && digits == 0) {
+	            			// encountered ..
+	            			if ((c= getChar()) == '.') {
+	            				return newToken(Token.tELIPSE);
+	            			} else {
+	            				ungetChar(c);
+	            				ungetChar('.');
+	            				return newToken(Token.tDOT);
+	            			}
+	            		}
+
+	            		floatingPoint = true;
+	            		c = getChar();
+	            		while ((c >= '0' && c <= '9')) {
+	            			++digits;
+	            			c = getChar();
+	            		}
+	            	} else if (digits > 0 && (c == 'e' || c == 'E')) {
+	            		floatingPoint = true;
+
+	            		// exponent type for floating point
+	            		c = getChar();
+
+	            		// optional + or -
+	            		if (c == '+' || c == '-') {
+	            			c = getChar();
+	            		}
+
+	            		// digit sequence of exponent part
+	            		while ((c >= '0' && c <= '9')) {
+	            			c = getChar();
+	            		}
+	            	}
+	            }
+	            if (floatingPoint) {
+	            	if (digits > 0) {
+	            		//floating-suffix
+	            		if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
+	            			c = getChar();
+	            		}
+	            	} else {
+	            		ungetChar(c);
+	            		return newToken(Token.tDOT);
+	            	}
 	            } else {
-	                if (floatingPoint) {
-	                	if (digits > 0) {
-		                    //floating-suffix
-		                    if (c == 'l' || c == 'L' || c == 'f' || c == 'F') {
-		                        c = getChar();
-		                    }
-	                	} else {
-	                    	ungetChar(c);
-	                        return newToken(Token.tDOT);
-	                	}
-	                } else {
-	                    //integer suffix
-	                    if (c == 'u' || c == 'U') {
-	                        c = getChar();
-	                        if (c == 'l' || c == 'L')
-	                            c = getChar();
-	                    } else if (c == 'l' || c == 'L') {
-	                        c = getChar();
-	                        if (c == 'u' || c == 'U')
-	                            c = getChar();
-	                    }
-	                }
+	            	//integer suffix
+	            	if (c == 'u' || c == 'U') {
+	            		c = getChar();
+	            		if (c == 'l' || c == 'L')
+	            			c = getChar();
+	            	} else if (c == 'l' || c == 'L') {
+	            		c = getChar();
+	            		if (c == 'u' || c == 'U')
+	            			c = getChar();
+	            	}
 	            }
 	
 	            ungetChar(c);

@@ -144,6 +144,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
@@ -2434,59 +2435,55 @@ public class CPPSemantics {
      */
     public static IType getChainedMemberAccessOperatorReturnType(ICPPASTFieldReference fieldReference) throws DOMException {
     	IASTExpression owner = fieldReference.getFieldOwner();
-    	IType result= CPPVisitor.getExpressionType(owner);
+    	IType type= CPPVisitor.getExpressionType(owner);
+    	
+    	if (!fieldReference.isPointerDereference())
+    		return type;
+    	
+    	// bug 205964: as long as the type is a class type, recurse. 
+    	// Be defensive and allow a max of 10 levels.
+    	boolean foundOperator= false;
+    	for (int j = 0; j < 10; j++) {
+    		IType uTemp= getUltimateTypeUptoPointers(type);
+    		if (uTemp instanceof IPointerType)
+    			return type;
 
-    	if (fieldReference.isPointerDereference() && !(result instanceof ICPPUnknownType)) {
-    		IType type= getUltimateTypeUptoPointers(result);
-    		boolean needCheckClassMemberAccessOperator= true;
-    		if (type instanceof IPointerType) {
-    			type= getUltimateTypeUptoPointers(((IPointerType) type).getType());
-    			if (type instanceof ICPPClassType) {
-    				needCheckClassMemberAccessOperator= false;
-    			}
+    		// for unknown types we cannot determine the overloaded -> operator
+    		if (uTemp instanceof ICPPUnknownType)
+    			return CPPUnknownClass.createUnnamedInstance();
+
+    		if (!(uTemp instanceof ICPPClassType)) 
+    			break;
+    		
+    		/*
+    		 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
+    		 * class object x of type T
+    		 * 
+    		 * Construct an AST fragment for x.operator-> which the lookup routines can
+    		 * examine for type information.
+    		 */
+
+    		CPPASTName x= new CPPASTName();
+    		boolean isConst= false, isVolatile= false;
+    		if (type instanceof IQualifierType) {
+    			isConst= ((IQualifierType)type).isConst();
+    			isVolatile= ((IQualifierType)type).isVolatile();
     		}
+    		x.setBinding(createVariable(x, uTemp, isConst, isVolatile));
 
-    		if (needCheckClassMemberAccessOperator) {
-    			IType temp= result;
-    			result= null;
+    		IASTName arw= new CPPASTName(OverloadableOperator.ARROW.toCharArray());
+    		IASTFieldReference innerFR= new CPPASTFieldReference(arw, new CPPASTIdExpression(x));
+    		innerFR.setParent(fieldReference); // connect to the AST 
 
-    			// bug 205964: as long as the type is a class type, recurse. 
-    			// Be defensive and allow a max of 10 levels.
-    			for (int j = 0; j < 10; j++) {
-    				IType uTemp= getUltimateTypeUptoPointers(temp);
-    				if (uTemp instanceof ICPPClassType) {
-    					/*
-    					 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
-    					 * class object x of type T
-    					 * 
-    					 * Construct an AST fragment for x.operator-> which the lookup routines can
-    					 * examine for type information.
-    					 */
+    		ICPPFunction op = CPPSemantics.findOperator(innerFR, (ICPPClassType) uTemp);
+    		if (op == null) 
+    			break;
 
-    					CPPASTName x= new CPPASTName();
-    					boolean isConst= false, isVolatile= false;
-    					if (temp instanceof IQualifierType) {
-    						isConst= ((IQualifierType)temp).isConst();
-    						isVolatile= ((IQualifierType)temp).isVolatile();
-    					}
-    					x.setBinding(createVariable(x, uTemp, isConst, isVolatile));
-    					
-    					IASTName arw= new CPPASTName(OverloadableOperator.ARROW.toCharArray());
-    					IASTFieldReference innerFR= new CPPASTFieldReference(arw, new CPPASTIdExpression(x));
-    					innerFR.setParent(fieldReference); // connect to the AST 
-
-    					ICPPFunction op = CPPSemantics.findOperator(innerFR, (ICPPClassType) uTemp);
-    					if (op != null) {
-    						result= temp= op.getType().getReturnType();
-    						continue;
-    					}
-    				}
-    				break;
-    			}
-    		}
+    		type= op.getType().getReturnType();
+    		foundOperator= true;
     	}
-
-    	return result;
+    	
+    	return foundOperator ? type : null;
     }
     
     private static ICPPVariable createVariable(IASTName name, final IType type, final boolean isConst, final boolean isVolatile) {

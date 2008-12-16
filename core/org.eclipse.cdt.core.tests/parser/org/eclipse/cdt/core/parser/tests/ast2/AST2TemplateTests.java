@@ -3426,7 +3426,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    		f(b); g(b); h(b); m(b);
     //    	}
     //    };
-    public void testUnknownReferences_Bug257186() throws Exception {
+    public void testUnknownReferences_Bug257194() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -3446,9 +3446,10 @@ public class AST2TemplateTests extends AST2BaseTest {
     //	        T::b.f();
     //    		T::b.f().d;
     //          T::f1();
+    //			T.x; T.y();
     //    	}
     //    };
-    public void testTypeOfUnknownReferences_Bug257186a() throws Exception {
+    public void testTypeOfUnknownReferences_Bug257194a() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP); 
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -3459,6 +3460,8 @@ public class AST2TemplateTests extends AST2BaseTest {
         bh.assertNonProblem("f().", 1, ICPPUnknownBinding.class, IFunction.class);
         bh.assertNonProblem("d;", 1, ICPPUnknownBinding.class);
         bh.assertNonProblem("f1();", 2, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("x;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("y();", 1, ICPPUnknownBinding.class, IFunction.class);
     }
 
     //    template<typename T> struct A  {
@@ -3467,9 +3470,10 @@ public class AST2TemplateTests extends AST2BaseTest {
     //	        T::b->f();
     //    		T::b->f()->d;
     //          T::f1();
+    //          T->x; T->y();
     //    	}
     //    };
-    public void testTypeOfUnknownReferences_Bug257186b() throws Exception {
+    public void testTypeOfUnknownReferences_Bug257194b() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP); 
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -3480,6 +3484,8 @@ public class AST2TemplateTests extends AST2BaseTest {
         bh.assertNonProblem("f()->", 1, ICPPUnknownBinding.class, IFunction.class);
         bh.assertNonProblem("d;", 1, ICPPUnknownBinding.class);
         bh.assertNonProblem("f1();", 2, ICPPUnknownBinding.class, IFunction.class);
+        bh.assertNonProblem("x;", 1, ICPPUnknownBinding.class);
+        bh.assertNonProblem("y();", 1, ICPPUnknownBinding.class, IFunction.class);
     }
 
     //    template<typename T> class XT {

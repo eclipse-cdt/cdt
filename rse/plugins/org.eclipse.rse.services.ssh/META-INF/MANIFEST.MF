@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.rse.internal.services.ssh.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.services;bundle-version="[3.1.0,4.0.0)",
  com.jcraft.jsch;bundle-version="[0.1.31,1.0.0)"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

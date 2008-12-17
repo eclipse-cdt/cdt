@@ -95,10 +95,10 @@ public class MinGWGenerator implements IApplication {
 
 		// binutils
 		String binutilsId = "wascana.mingw.binutils";
-		Version binutilsVersion = new Version("2.18.50.20080109-2");
+		Version binutilsVersion = new Version("2.19");
 		InstallableUnitDescription binutilsIUDesc = createIUDesc(binutilsId, binutilsVersion, "MinGW binutils", gplLic);
 		IInstallableUnit binutilsIU = createIU(binutilsIUDesc, binutilsId, binutilsVersion,
-				"http://downloads.sourceforge.net/mingw/binutils-2.18.50-20080109-2.tar.gz",
+				"http://downloads.sourceforge.net/mingw/binutils-2.19-mingw32-bin.tar.gz",
 				mingwSubdir,
 				InstallArtifactRepository.GZIP_COMPRESSON);
 		

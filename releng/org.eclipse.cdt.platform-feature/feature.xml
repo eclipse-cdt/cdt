@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/galileo"/>
    </url>
 
    <requires>
@@ -69,7 +69,8 @@
          id="org.eclipse.cdt"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core"
@@ -224,6 +225,7 @@
          id="org.eclipse.cdt.doc.user"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

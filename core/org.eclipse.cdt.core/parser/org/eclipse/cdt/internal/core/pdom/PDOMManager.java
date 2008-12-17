@@ -1406,6 +1406,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException
 	 */
 	public boolean isProjectContentSynced(ICProject cproject) throws CoreException {
+		if (!"true".equals(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))  //$NON-NLS-1$
+			return true; // no check performed in this case
+			
 		Set<ITranslationUnit> sources= new HashSet<ITranslationUnit>();
 		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
 

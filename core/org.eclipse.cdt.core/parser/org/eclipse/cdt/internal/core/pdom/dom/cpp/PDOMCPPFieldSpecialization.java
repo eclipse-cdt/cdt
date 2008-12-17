@@ -20,12 +20,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -56,15 +57,14 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		try {
 			final Database db = pdom.getDB();
 			IType type = field.getType();
-			PDOMNode typeNode = getLinkageImpl().addType(this, type);
+			final PDOMLinkage linkage = getLinkage();
+			PDOMNode typeNode = linkage.addType(this, type);
 			if (typeNode != null) {
 				db.putInt(record + TYPE, typeNode.getRecord());
 			}
 			IValue val= field.getInitialValue();
-			if (val != null) {
-				db.putInt(record + VALUE_OFFSET, db.newString(val.getCanonicalRepresentation()).getRecord());
-			}
-
+			int rec= PDOMValue.store(db, linkage, val);
+			db.putInt(record + VALUE_OFFSET, rec);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -108,9 +108,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		try {
 			final Database db = pdom.getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
-			if (valRec == 0)
-				return null;
-			return Value.fromCanonicalRepresentation(db.getString(valRec).toString());
+			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

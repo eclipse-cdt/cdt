@@ -3184,7 +3184,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  cb.b = 6;
 	//	  func(cb);
 	//	}
-	public void _testTemplateMetaProgramming_245027() throws Exception {
+	public void testTemplateMetaProgramming_245027() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPMethod method= ba.assertNonProblem("method();", 6, ICPPMethod.class);
 		ICPPVariable a= ba.assertNonProblem("a =", 1, ICPPVariable.class);

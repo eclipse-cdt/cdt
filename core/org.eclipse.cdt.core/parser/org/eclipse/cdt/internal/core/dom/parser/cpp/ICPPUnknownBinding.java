@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
  * Represents the binding for a dependent name within a template declaration.
  */
 public interface ICPPUnknownBinding extends ICPPBinding {
-	
+	ICPPUnknownBinding[] EMPTY_UNKNOWN_BINDING_ARRAY = {};
+
 	/**
 	 * Returns the scope this binding represents.
 	 * @throws DOMException 

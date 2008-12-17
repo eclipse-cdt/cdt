@@ -222,6 +222,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return pdomBinding;
 	}
 
+	@Override
+	public PDOMBinding addUnknownValue(IBinding binding) throws CoreException {
+		return addBinding(binding, null);
+	}
+
 	/**
 	 * Adds or returns existing binding for the given one. If <code>fromName</code> is not <code>null</code>
 	 * then an existing binding is updated with the properties of the name.

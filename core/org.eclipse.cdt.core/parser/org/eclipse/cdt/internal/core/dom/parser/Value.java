@@ -10,7 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -25,9 +30,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
@@ -39,49 +45,135 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
  */
 public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
-	public final static IValue UNKNOWN= new Value("<unknown>"); //$NON-NLS-1$
+	public final static IValue UNKNOWN= new Value("<unknown>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
 	
-	private final static IValue[] TYPICAL= {new Value(String.valueOf(0)), 
-		new Value(String.valueOf(1)), new Value(String.valueOf(2)), new Value(String.valueOf(3)), 
-		new Value(String.valueOf(4)), new Value(String.valueOf(5)), new Value(String.valueOf(6))};
+	private static final String SCOPE_OP = "::"; //$NON-NLS-1$
+	private static final char UNIQUE_CHAR = '_';
+	private static final char TEMPLATE_PARAM_CHAR = '#';
+	private static final char REFERENCE_CHAR = '&';
+	private static final char UNARY_OP_CHAR = '$';
+	private static final char BINARY_OP_CHAR = '@';
+	private static final char CONDITIONAL_CHAR= '?';
+	
+	private static final char SEPARATOR = ',';
+
+	private final static IValue[] TYPICAL= {
+		new Value(new char[] {'0'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'1'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'2'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'3'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'4'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'5'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'6'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY)};
 
 	
+	private static class Reevaluation {
+		public final char[] fExpression;
+		public int pos=0;
+		public final Map<String, Integer> fUnknownSigs;
+		public final List<ICPPUnknownBinding> fUnknowns;
+		public final IBinding[] fResolvedUnknown;
+		public final ICPPTemplateParameterMap fMap;
+		public Reevaluation(char[] expr, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map) {
+			fExpression= expr;
+			fUnknownSigs= unknownSigs;
+			fUnknowns= unknowns;
+			fResolvedUnknown= resolvedUnknowns;
+			fMap= map;
+		}
+		public void nextSeperator() throws UnknownValueException {
+			final char[] expression = fExpression;
+			final int len = expression.length;
+			int idx = pos;
+			while(idx < len) {
+				if (expression[idx++] == SEPARATOR)
+					break;
+			}
+			pos= idx;
+		}
+	}
 	private static class UnknownValueException extends Exception {}
 	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
 	private static int sUnique=0;
 
-	private final String fValue;
-	private Value(String rep) {
+	private final char[] fExpression;
+	private final ICPPUnknownBinding[] fUnknownBindings;
+	private char[] fSignature;
+	
+	private Value(char[] rep, ICPPUnknownBinding[] unknown) {
 		assert rep != null;
-		fValue= rep;
+		fExpression= rep;
+		fUnknownBindings= unknown;
 	}
-	public String getCanonicalRepresentation() {
-		return fValue;
+	
+	public char[] getInternalExpression() {
+		return fExpression;
 	}
 
-	public Long numericalValue() {
-		try {
-			return Long.parseLong(fValue);
-		} catch (NumberFormatException e) {
+	public IBinding[] getUnknownBindings() {
+		return fUnknownBindings;
+	}
+	
+	public char[] getSignature() {
+		if (fSignature == null) {
+			if (fUnknownBindings.length == 0) {
+				fSignature= fExpression;
+			} else {
+				StringBuilder buf= new StringBuilder();
+				buf.append(fExpression);
+				buf.append('[');
+				for (int i = 0; i < fUnknownBindings.length; i++) {
+					if (i>0)
+						buf.append(',');
+					buf.append(getSignatureForUnknown(fUnknownBindings[i]));
+				}
+				buf.append(']');
+				final int end= buf.length();
+				fSignature= new char[end];
+				buf.getChars(0, end, fSignature, 0);
+			}
 		}
-		return null;
+		return fSignature;
+	}
+	
+	public Long numericalValue() {
+		return parseLong(fExpression);
 	}
 	
 	@Override
 	public int hashCode() {
-		return fValue.hashCode();
+		return CharArrayUtils.hash(fExpression);
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof IValue)) {
 			return false;
 		}
-		return fValue.equals(((IValue) obj).getCanonicalRepresentation());
+		final IValue rhs = (IValue) obj;
+		if (!CharArrayUtils.equals(fExpression, rhs.getInternalExpression()))
+			return false;
+		
+		IBinding[] rhsUnknowns= rhs.getUnknownBindings();
+		if (fUnknownBindings.length != rhsUnknowns.length)
+			return false;
+		
+		for (int i = 0; i < rhsUnknowns.length; i++) {
+			final IBinding rhsUnknown = rhsUnknowns[i];
+			if (rhsUnknown instanceof ICPPUnknownBinding) {
+				if (!getSignatureForUnknown((ICPPUnknownBinding) rhsUnknown).equals(getSignatureForUnknown(fUnknownBindings[i]))) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@Override
 	public String toString() {
-		return fValue;
+		return new String(getSignature());
 	}
 
 	/**
@@ -90,37 +182,68 @@ public class Value implements IValue {
 	public static IValue create(long value) {
 		if (value >=0 && value < TYPICAL.length)
 			return TYPICAL[(int) value];
-		return new Value(String.valueOf(value));
+		return new Value(toCharArray(value), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
 	}
 	
 	/**
 	 * Creates a value representing the given template parameter.
 	 */
 	public static IValue create(ICPPTemplateNonTypeParameter tntp) {
-		return new Value(evaluate(tntp));
+		final String expr = createTemplateParamExpression(tntp.getParameterID());
+		return new Value(expr.toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
+	}
+
+	private static String createTemplateParamExpression(int id) {
+		StringBuilder buf= new StringBuilder();
+		buf.append(TEMPLATE_PARAM_CHAR);
+		buf.append(Integer.toHexString(id));
+		return buf.toString();
 	}
 
 	/**
 	 * Tests whether the value is a template parameter, returns the parameter id of the
-	 * parameter, or <code>null</code> if it is not a template parameter.
+	 * parameter, or <code>-1</code> if it is not a template parameter.
 	 */
 	public static int isTemplateParameter(IValue tval) {
-		final String rep= tval.getCanonicalRepresentation();
-		if (rep.indexOf('#') == 0 && rep.indexOf(',') == -1) {
-			try {
-				return Integer.parseInt(rep.substring(1), 16);
-			} catch (NumberFormatException e) {
+		final char[] rep= tval.getInternalExpression();
+		if (rep.length > 0) {
+			if (rep[0] == TEMPLATE_PARAM_CHAR) {
+				for (int i = 1; i < rep.length; i++) {
+					if (rep[i] == SEPARATOR)
+						return -1;
+				}
+				try {
+					return parseHex(rep, 1);
+				} catch (UnknownValueException e) {
+				}
 			}
 		}
 		return -1;
+	}
+	
+	/**
+	 * Tests whether the value directly references some template parameter.
+	 */
+	public static boolean referencesTemplateParameter(IValue tval) {
+		final char[] rep= tval.getInternalExpression();
+		for (int i = 0; i < rep.length; i++) {
+			if (rep[i] == TEMPLATE_PARAM_CHAR)
+				return true;
+		}
+		return false;
 	}
 
 	/**
 	 * Tests whether the value depends on a template parameter.
 	 */
 	public static boolean isDependentValue(IValue nonTypeValue) {
-		final String rep= nonTypeValue.getCanonicalRepresentation();
-		return rep.indexOf('#') >= 0;
+		final char[] rep= nonTypeValue.getInternalExpression();
+		for (int i = 0; i < rep.length; i++) {
+			final char c = rep[i];
+			if (c == REFERENCE_CHAR || c == TEMPLATE_PARAM_CHAR)
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -128,10 +251,19 @@ public class Value implements IValue {
 	 */
 	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
 		try {
-			Object obj= evaluate(expr, maxRecursionDepth);
-			if (obj instanceof Long)
-				return create(((Long) obj).longValue());
-			return new Value(obj.toString());
+			Map<String, Integer> unknownSigs= new HashMap<String, Integer>();
+			List<ICPPUnknownBinding> unknown= new ArrayList<ICPPUnknownBinding>();
+			Object obj= evaluate(expr, unknownSigs, unknown, maxRecursionDepth);
+			if (obj instanceof Number)
+				return create(((Number) obj).longValue());
+			
+			ICPPUnknownBinding[] ua;
+			if (unknown.isEmpty()) {
+				ua= ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY;
+			} else {
+				ua= unknown.toArray(new ICPPUnknownBinding[unknown.size()]);
+			}
+			return new Value(((String)obj).toCharArray(), ua);
 		} catch (UnknownValueException e) {
 		}
 		return UNKNOWN;
@@ -140,104 +272,78 @@ public class Value implements IValue {
 	/**
 	 * Creates a value off its canonical representation.
 	 */
-	public static IValue fromCanonicalRepresentation(String rep) {
-		if (rep.equals(UNKNOWN.getCanonicalRepresentation()))
+	public static IValue fromInternalRepresentation(char[] rep, ICPPUnknownBinding[] unknown) {
+		if (CharArrayUtils.equals(rep, UNKNOWN.getInternalExpression()))
 			return UNKNOWN;
 		
-		try {
-			return create(Long.parseLong(rep));
-		} catch (NumberFormatException e) {}
+		Long l= parseLong(rep);
+		if (l != null) 
+			return create(l.longValue());
 	
-		return new Value(rep);
+		return new Value(rep, unknown);
 	}
 
 	/**
 	 * Creates a unique value needed during template instantiation.
 	 */
 	public static IValue unique() {
-		return new Value("@" + (++sUnique)); //$NON-NLS-1$
+		StringBuilder buf= new StringBuilder(10);
+		buf.append(UNIQUE_CHAR);
+		buf.append(++sUnique);
+		return new Value(extractChars(buf), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); 
 	}
 
 	/**
-	 * Computes the canonical representation of the value of the expression. Returns a {@code Long} for
-	 * numerical values or a {@code String}, otherwise.
+	 * Computes the canonical representation of the value of the expression. 
+	 * Returns a {@code Number} for numerical values or a {@code String}, otherwise.
 	 * @throws UnknownValueException
 	 */
-	@SuppressWarnings("nls")
-	private static Object evaluate(IASTExpression e, int maxdepth) throws UnknownValueException {
+	private static Object evaluate(IASTExpression e, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		if (maxdepth < 0 || e == null)
 			throw UNKNOWN_EX;
 		
 		if (e instanceof IASTArraySubscriptExpression) {
-			IASTArraySubscriptExpression sub= (IASTArraySubscriptExpression) e;
-			return evaluate(sub.getArrayExpression(), maxdepth) + "," + 
-					evaluate(sub.getSubscriptExpression(), maxdepth) + ",[]"; 
+			throw UNKNOWN_EX;
 		}
 		if (e instanceof IASTBinaryExpression) {
-			return evaluateBinaryExpression((IASTBinaryExpression) e, maxdepth);
+			return evaluateBinaryExpression((IASTBinaryExpression) e, unknownSigs, unknowns, maxdepth);
 		}
 		if (e instanceof IASTCastExpression) { // must be ahead of unary
-			return evaluate(((IASTCastExpression) e).getOperand(), maxdepth);
+			return evaluate(((IASTCastExpression) e).getOperand(), unknownSigs, unknowns, maxdepth);
 		}
 		if (e instanceof IASTUnaryExpression) {
-			return evaluateUnaryExpression((IASTUnaryExpression) e, maxdepth);
+			return evaluateUnaryExpression((IASTUnaryExpression) e, unknownSigs, unknowns, maxdepth);
 		}
 		if (e instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) e;
-			Object o= evaluate(cexpr.getLogicalConditionExpression(), maxdepth);
+			Object o= evaluate(cexpr.getLogicalConditionExpression(), unknownSigs, unknowns, maxdepth);
 			if (o instanceof Long) {
 				Long v= (Long) o;
 				if (v.longValue() == 0) {
-					return evaluate(cexpr.getNegativeResultExpression(), maxdepth);
+					return evaluate(cexpr.getNegativeResultExpression(), unknownSigs, unknowns, maxdepth);
 				}
 				final IASTExpression pe = cexpr.getPositiveResultExpression();
 				if (pe == null) // gnu-extension allows to omit the positive expression.
 					return o;
-				return evaluate(pe, maxdepth);
+				return evaluate(pe, unknownSigs, unknowns, maxdepth);
 			}
 
 			final IASTExpression pe = cexpr.getPositiveResultExpression();
-			Object po= pe == null ? o : evaluate(pe, maxdepth);
-			return o + "," + evaluate(cexpr.getNegativeResultExpression(), maxdepth) + "," + po + '?';
+			Object po= pe == null ? o : evaluate(pe, unknownSigs, unknowns, maxdepth);
+			Object neg= evaluate(cexpr.getNegativeResultExpression(), unknownSigs, unknowns, maxdepth);
+			return CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString();
 		}
 		if (e instanceof IASTIdExpression) {
 			IBinding b= CPPASTNameBase.resolvePreBinding(((IASTIdExpression) e).getName());
-			if (b instanceof ICPPTemplateParameter) {
-				if (b instanceof ICPPTemplateNonTypeParameter) {
-					return evaluate((ICPPTemplateParameter) b);
-				}
-				throw UNKNOWN_EX;
-			}
-			IValue cv= null;
-			if (b instanceof IInternalVariable) {
-				cv= ((IInternalVariable) b).getInitialValue(maxdepth-1);
-			} else if (b instanceof IVariable) {
-				cv= ((IVariable) b).getInitialValue();
-			} else if (b instanceof IEnumerator) {
-				cv= ((IEnumerator) b).getValue();
-			} else if (b instanceof ICPPUnknownBinding && !(b instanceof IType)) {
-				return "#0x0fffffff"; 
-				// mstodo unknown bindings must be stored with the value, such that they can
-				// be instantiated lated on, bug 245027
-			}
-			if (cv != null)
-				return toObject(cv);
-			
-			try {
-				if (b instanceof ICPPBinding)
-					return ((ICPPBinding) b).getQualifiedName();
-				return b.getName();
-			} catch (DOMException e1) {
-				throw UNKNOWN_EX;
-			}
+			return evaluateBinding(b, unknownSigs, unknowns, maxdepth);
 		}
 		if (e instanceof IASTLiteralExpression) {
 			IASTLiteralExpression litEx= (IASTLiteralExpression) e;
 			switch (litEx.getKind()) {
 			case IASTLiteralExpression.lk_false:
-				return "0";
+				return 0;
 			case IASTLiteralExpression.lk_true:
-				return "1";
+				return 1;
 			case IASTLiteralExpression.lk_integer_constant:
 				try {
 					return ExpressionEvaluator.getNumber(litEx.getValue());
@@ -259,28 +365,104 @@ public class Value implements IValue {
 		throw UNKNOWN_EX;
 	}
 	
-	private static Object toObject(IValue cv) throws UnknownValueException {
+	/**
+	 * Extract a value off a binding.
+	 */
+	private static Object evaluateBinding(IBinding b, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+		if (b instanceof IType) {
+			throw UNKNOWN_EX;
+		}
+		if (b instanceof ICPPTemplateNonTypeParameter)
+			return createTemplateParamExpression(((ICPPTemplateNonTypeParameter) b).getParameterID());
+		
+		if (b instanceof ICPPUnknownBinding) {
+			return createReference((ICPPUnknownBinding) b, unknownSigs, unknowns);
+		}
+			
+		IValue value= null;
+		if (b instanceof IInternalVariable) {
+			value= ((IInternalVariable) b).getInitialValue(maxdepth-1);
+		} else if (b instanceof IVariable) {
+			value= ((IVariable) b).getInitialValue();
+		} else if (b instanceof IEnumerator) {
+			value= ((IEnumerator) b).getValue();
+		} 
+		if (value != null)
+			return evaluateValue(value, unknownSigs, unknowns);
+		
+		throw UNKNOWN_EX;
+	}
+
+	private static Object createReference(ICPPUnknownBinding unknown, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) {
+		String sig= getSignatureForUnknown(unknown);
+		Integer idx= unknownSigs.get(sig);
+		if (idx == null) {
+			idx= unknownSigs.size();
+			unknownSigs.put(sig, idx);
+			unknowns.add(unknown);
+		}
+		return REFERENCE_CHAR + idx.toString(); 
+	}
+	
+	private static Object evaluateValue(IValue cv, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) throws UnknownValueException {
 		if (cv == Value.UNKNOWN) 
 			throw UNKNOWN_EX;
 		
 		Long lv= cv.numericalValue();
 		if (lv != null)
 			return lv;
-		return cv.getCanonicalRepresentation();
+		
+		final IBinding[] oldUnknowns = cv.getUnknownBindings();
+		final char[] expr= cv.getInternalExpression();
+		if (oldUnknowns.length == 0)
+			return new String(expr);
+		
+		StringBuilder buf= new StringBuilder(expr.length);
+		boolean skipToSeparator= false;
+		for (int i = 0; i < expr.length; i++) {
+			final char c= expr[i];
+			switch(c) {
+			case REFERENCE_CHAR: {
+				int idx= parseNonNegative(expr, i+1);
+				if (idx >= oldUnknowns.length)
+					throw UNKNOWN_EX;
+				final IBinding old = oldUnknowns[idx];
+				if (!(old instanceof ICPPUnknownBinding)) 
+					throw UNKNOWN_EX;
+
+				buf.append(createReference((ICPPUnknownBinding) old, unknownSigs, unknowns));
+				skipToSeparator= true;
+				break;
+			}
+			case SEPARATOR:
+				skipToSeparator= false;
+				buf.append(c);
+				break;
+			default:
+				if (!skipToSeparator)
+					buf.append(c);
+				break;
+			}
+		}
+		return buf.toString();
 	}
 	
-	@SuppressWarnings("nls")
-	private static String evaluate(ICPPTemplateParameter param) {
-		return "#" + Integer.toHexString(param.getParameterID());
-	}
-	
-	@SuppressWarnings("nls")
-	private static Object evaluateUnaryExpression(IASTUnaryExpression ue, int maxdepth) throws UnknownValueException {
+	private static Object evaluateUnaryExpression(IASTUnaryExpression ue, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		final int unaryOp= ue.getOperator();
 		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star) 
 			throw UNKNOWN_EX;
 			
-		final Object value= evaluate(ue.getOperand(), maxdepth);
+		final Object value= evaluate(ue.getOperand(), unknownSigs, unknowns, maxdepth);
+		return combineUnary(unaryOp, value); 
+	}
+	
+	private static Object combineUnary(final int unaryOp, final Object value) throws UnknownValueException {
+		switch (unaryOp) {
+		case IASTUnaryExpression.op_bracketedPrimary:
+		case IASTUnaryExpression.op_plus:
+			return value;
+		}
+		
 		if (value instanceof Long) {
 			long v= (Long) value;
 			switch(unaryOp) {
@@ -290,9 +472,6 @@ public class Value implements IValue {
 			case IASTUnaryExpression.op_prefixDecr :
 			case IASTUnaryExpression.op_postFixDecr:
 				return --v;
-			case IASTUnaryExpression.op_bracketedPrimary:
-			case IASTUnaryExpression.op_plus:
-				return value;
 			case IASTUnaryExpression.op_minus:
 				return -v;
 			case IASTUnaryExpression.op_tilde:
@@ -300,22 +479,32 @@ public class Value implements IValue {
 			case IASTUnaryExpression.op_not:
 				return v == 0 ? 1 : 0;
 			}
-		}
-		switch (unaryOp) {
-		case IASTUnaryExpression.op_bracketedPrimary:
-		case IASTUnaryExpression.op_plus:
-			return value;
-		}
+			throw UNKNOWN_EX;
+		} 
 		
-		return value + "," + ASTSignatureUtil.getUnaryOperatorString(ue); 
+		switch (unaryOp) {
+		case IASTUnaryExpression.op_prefixIncr:
+		case IASTUnaryExpression.op_postFixIncr:
+		case IASTUnaryExpression.op_prefixDecr :
+		case IASTUnaryExpression.op_postFixDecr:
+		case IASTUnaryExpression.op_minus:
+		case IASTUnaryExpression.op_tilde:
+		case IASTUnaryExpression.op_not:
+			return UNARY_OP_CHAR + unaryOp + SEPARATOR + value.toString(); 
+		}
+		throw UNKNOWN_EX;
 	}
 
-	@SuppressWarnings("nls")
-	private static Object evaluateBinaryExpression(IASTBinaryExpression be, int maxdepth) throws UnknownValueException {
-		final Object o1= evaluate(be.getOperand1(), maxdepth);
-		final Object o2= evaluate(be.getOperand2(), maxdepth);
+	private static Object evaluateBinaryExpression(IASTBinaryExpression be, 
+			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+		final Object o1= evaluate(be.getOperand1(), unknownSigs, unknowns, maxdepth);
+		final Object o2= evaluate(be.getOperand2(), unknownSigs, unknowns, maxdepth);
 
 		final int op= be.getOperator();
+		return combineBinary(op, o1, o2);
+	}
+	
+	private static Object combineBinary(final int op, final Object o1, final Object o2) throws UnknownValueException {
 		if (o1 instanceof Long && o2 instanceof Long) {
 			long v1= (Long) o1;
 			long v2= (Long) o2;
@@ -365,14 +554,274 @@ public class Value implements IValue {
             case IASTBinaryExpression.op_min:
 				return Math.min(v1, v2);
 			}
+			throw UNKNOWN_EX;
 		}
 		switch (op) {
+		case IASTBinaryExpression.op_multiply:
+		case IASTBinaryExpression.op_divide:
+		case IASTBinaryExpression.op_modulo:
+		case IASTBinaryExpression.op_plus:
+		case IASTBinaryExpression.op_minus:
+		case IASTBinaryExpression.op_shiftLeft:
+		case IASTBinaryExpression.op_shiftRight:
+		case IASTBinaryExpression.op_lessThan:
+		case IASTBinaryExpression.op_greaterThan:
+		case IASTBinaryExpression.op_lessEqual:
+		case IASTBinaryExpression.op_greaterEqual:
+		case IASTBinaryExpression.op_binaryAnd:
+		case IASTBinaryExpression.op_binaryXor:
+		case IASTBinaryExpression.op_binaryOr:
+		case IASTBinaryExpression.op_logicalAnd:
+		case IASTBinaryExpression.op_logicalOr:
+        case IASTBinaryExpression.op_max:
+        case IASTBinaryExpression.op_min:
+			break;
 		case IASTBinaryExpression.op_equals:
-			return o1.equals(o2) ? 1 : 0;
+			if (o1.equals(o2))
+				return 1;
+			break;
 		case IASTBinaryExpression.op_notequals:
-			return !o1.equals(o2) ? 1 : 0;
+			if (o1.equals(o2))
+				return 0;
+			break;
+		default:
+			throw UNKNOWN_EX;
 		}
 		
-		return o1 + "," + o2 + "," + ASTSignatureUtil.getBinaryOperatorString(be);
+		return BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString();
+	}
+	
+	public static IValue reevaluate(IValue val, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map, int maxdepth) {
+		try {
+			Map<String, Integer> unknownSigs= new HashMap<String, Integer>();
+			List<ICPPUnknownBinding> unknown= new ArrayList<ICPPUnknownBinding>();
+			Reevaluation reeval= new Reevaluation(val.getInternalExpression(),
+					unknownSigs, unknown,
+					resolvedUnknowns, map);
+			Object obj= reevaluate(reeval, maxdepth);
+			if (reeval.pos != reeval.fExpression.length)
+				return UNKNOWN;
+			
+			if (obj instanceof Long)
+				return create(((Long) obj).longValue());
+			
+			ICPPUnknownBinding[] ua;
+			if (unknown.isEmpty()) {
+				ua= ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY;
+			} else {
+				ua= unknown.toArray(new ICPPUnknownBinding[unknown.size()]);
+			}
+			return new Value(((String)obj).toCharArray(), ua);
+		} catch (UnknownValueException e) {
+		}
+		return UNKNOWN;
+	}
+
+	private static Object reevaluate(Reevaluation reeval, int maxdepth) 
+			throws UnknownValueException {
+		if (maxdepth < 0)
+			throw UNKNOWN_EX;
+
+		final int idx= reeval.pos;
+		final char[] buf= reeval.fExpression;
+		final int length = buf.length;
+		if (idx >= length)
+			throw UNKNOWN_EX;
+		
+		final char c= buf[idx];
+		switch(c) {
+		case BINARY_OP_CHAR: 
+			int op= parseNonNegative(buf, idx+1);
+			reeval.nextSeperator();
+			Object o1= reevaluate(reeval, maxdepth);
+			Object o2= reevaluate(reeval, maxdepth);
+			return combineBinary(op, o1, o2);
+		case UNARY_OP_CHAR: 
+			op= parseNonNegative(buf, idx+1);
+			reeval.nextSeperator();
+			o1= reevaluate(reeval, maxdepth);
+			return combineUnary(op, o1);
+		case CONDITIONAL_CHAR:
+			reeval.nextSeperator();
+			Object cond= reevaluate(reeval, maxdepth);
+			Object po= reevaluate(reeval, maxdepth);
+			Object neg= reevaluate(reeval, maxdepth);
+			if (cond instanceof Long) {
+				Long v= (Long) cond;
+				if (v.longValue() == 0) {
+					return neg;
+				}
+				return po;
+			}
+			return CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString();
+		case REFERENCE_CHAR: 
+			int num= parseNonNegative(buf, idx+1);
+			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;
+			if (num >= resolvedUnknowns.length)
+				throw UNKNOWN_EX;
+			reeval.nextSeperator();
+			return evaluateBinding(resolvedUnknowns[num], reeval.fUnknownSigs, reeval.fUnknowns, maxdepth);
+
+		case TEMPLATE_PARAM_CHAR:
+			num= parseHex(buf, idx+1);
+			reeval.nextSeperator();
+			ICPPTemplateArgument arg = reeval.fMap.getArgument(num);
+			if (arg != null) {
+				IValue val= arg.getNonTypeValue();
+				if (val == null)
+					throw UNKNOWN_EX;
+				return evaluateValue(val, reeval.fUnknownSigs, reeval.fUnknowns);
+			}
+			return createTemplateParamExpression(num);
+			
+		default:
+			reeval.nextSeperator();
+			return parseLong(buf, idx);
+		}
+	}
+
+	/**
+	 * Parses a non negative int.
+	 */
+	private static int parseNonNegative(char[] value, int offset) throws UnknownValueException {
+		final long maxvalue= Integer.MAX_VALUE/10;
+		final int len= value.length;
+		int result = 0;
+		boolean ok= false;
+		for(; offset< len; offset++) {
+			final int digit= (value[offset]- '0');
+			if (digit < 0 || digit > 9)
+				break;
+			if (result > maxvalue)
+				return -1;
+			
+			result= result*10 + digit;
+			ok= true;
+		}
+		if (!ok)
+			throw UNKNOWN_EX;
+		return result;
+	}
+
+	/**
+	 * Parses a a hex value.
+	 */
+	private static int parseHex(char[] value, int offset) throws UnknownValueException {
+		int result = 0;
+		boolean ok= false;
+		final int len= value.length;
+		for(; offset< len; offset++) {
+			int digit= (value[offset]- '0');
+			if (digit < 0 || digit > 9) {
+				digit += '0'-'a'+10;
+				if (digit < 10 || digit > 15) {
+					digit += 'a'-'A';
+					if (digit < 10 || digit > 15) {
+						break;
+					}
+				}
+			}
+			if ((result & 0xf0000000) != 0)
+				throw UNKNOWN_EX;
+			
+			result= (result << 4) + digit;
+			ok= true;
+		}
+		if (!ok)
+			throw UNKNOWN_EX;
+		
+		return result;
+	}
+
+	/**
+	 * Parses a long.
+	 */
+	private static long parseLong(char[] value, int offset) throws UnknownValueException {
+		final long maxvalue= Long.MAX_VALUE/10;
+		final int len= value.length;
+		boolean negative= false;
+		long result = 0;
+		
+		boolean ok= false;
+		if (offset < len && value[offset] == '-') {
+			negative = true;
+			offset++;
+		}
+		for(; offset < len; offset++) {
+			final int digit= (value[offset]- '0');
+			if (digit < 0 || digit > 9)
+				break;
+			
+			if (result > maxvalue)
+				throw UNKNOWN_EX;
+			
+			result= result*10 + digit;
+			ok= true;
+		}
+		if (!ok)
+			throw UNKNOWN_EX;
+		
+		return negative ? -result : result;
+	}
+
+	/**
+	 * Parses a long, returns <code>null</code> if not possible
+	 */
+	private static Long parseLong(char[] value) {
+		final long maxvalue= Long.MAX_VALUE/10;
+		final int len= value.length;
+		boolean negative= false;
+		long result = 0;
+		int i= 0;
+		
+		if (len > 0 && value[0] == '-') {
+			negative = true;
+			i++;
+		}
+		if (i==len)
+			return null;
+		
+		for(; i< len; i++) {
+			if (result > maxvalue)
+				return null;
+			
+			final int digit= (value[i]- '0');
+			if (digit < 0 || digit > 9)
+				return null;
+			result= result*10 + digit;
+		}
+		return negative ? -result : result;
+	}
+
+	/**
+	 * Computes a signature for an unknown binding.
+	 */
+	private static String getSignatureForUnknown(ICPPUnknownBinding binding) {
+		try {
+			IBinding owner= binding.getOwner();
+			if (owner instanceof IType) {
+				return ASTTypeUtil.getType((IType) owner, true) + SCOPE_OP + binding.getName();
+			}
+		} catch (DOMException e) {
+			// ignore qualification
+		}
+		return binding.getName();
+	}
+	
+
+	/**
+	 * Converts long to a char array
+	 */
+	private static char[] toCharArray(long value) {
+		StringBuilder buf= new StringBuilder();
+		buf.append(value);
+		return extractChars(buf);
+	}
+
+	private static char[] extractChars(StringBuilder buf) {
+		final int len = buf.length();
+		char[] result= new char[len];
+		buf.getChars(0, len, result, 0);
+		return result;
 	}
 }

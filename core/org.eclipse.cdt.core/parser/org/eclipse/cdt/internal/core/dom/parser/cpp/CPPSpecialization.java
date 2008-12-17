@@ -59,8 +59,12 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		}
 	}
 	
-	public IValue specializeValue(IValue value) {
-		return CPPTemplates.instantiateValue(value, getTemplateParameterMap());
+	public IValue specializeValue(IValue value, int maxdepth) {
+		if (owner instanceof ICPPClassSpecialization) {
+			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), (ICPPClassSpecialization) owner, maxdepth);
+		} else {
+			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), null, maxdepth);
+		}
 	}
 
 	public IBinding getSpecializedBinding() {

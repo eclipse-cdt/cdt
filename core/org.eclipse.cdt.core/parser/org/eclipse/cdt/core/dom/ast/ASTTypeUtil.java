@@ -139,8 +139,9 @@ public class ASTTypeUtil {
 	 * @since 5.1
 	 */
 	public static String getArgumentString(ICPPTemplateArgument arg, boolean normalize) {
-		if (arg.isNonTypeValue()) 
-			return arg.getNonTypeValue().getCanonicalRepresentation();
+		IValue val= arg.getNonTypeValue();
+		if (val != null)
+			return new String(val.getSignature());
 
 		return getType(arg.getTypeValue(), normalize);
 	}

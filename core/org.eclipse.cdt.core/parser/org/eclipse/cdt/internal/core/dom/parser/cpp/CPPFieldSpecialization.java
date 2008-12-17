@@ -91,9 +91,9 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 			if (field instanceof IInternalVariable) {
 				v= ((IInternalVariable) field).getInitialValue(maxRecursionDepth);
 			} else {
-				v= specializeValue(getField().getInitialValue());
+				v= getField().getInitialValue();
 			}
-			value= specializeValue(v);
+			value= specializeValue(v, maxRecursionDepth);
 		}
 		return value;
 	}

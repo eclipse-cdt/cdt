@@ -122,6 +122,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
@@ -712,19 +713,38 @@ public class CPPTemplates {
 		return spec;
 	}
 	
-	public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpMap) {
+	public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within, int maxdepth) {
 		if (value == null)
 			return null;
-		// mstodo- instantiate values correctly
-		int parPos= Value.isTemplateParameter(value);
-		if (parPos >= 0) {
-			ICPPTemplateArgument arg = tpMap.getArgument(parPos);
-			if (arg != null) {
-				IValue mappedValue = arg.getNonTypeValue();
-				if (mappedValue != null)
-					return mappedValue;
+		IBinding[] unknowns= value.getUnknownBindings();
+		IBinding[] resolvedUnknowns= null;
+		if (unknowns.length != 0) {
+			for (int i = 0; i < unknowns.length; i++) {
+				IBinding unknown= unknowns[i];
+				IBinding resolved= unknown;
+				if (unknown instanceof ICPPUnknownBinding) {
+					try {
+						resolved= resolveUnknown((ICPPUnknownBinding) unknown, tpMap, within);
+					} catch (DOMException e) {
+						return Value.UNKNOWN;
+					}
+				}
+				if (resolvedUnknowns != null) {
+					resolvedUnknowns[i]= resolved;
+				} else if (resolved != unknown) {
+					resolvedUnknowns= new IBinding[unknowns.length];
+					System.arraycopy(unknowns, 0, resolvedUnknowns, 0, i);
+					resolvedUnknowns[i]= resolved;
+				}
 			}
 		}
+		
+		if (resolvedUnknowns != null) 
+			return Value.reevaluate(value, resolvedUnknowns, tpMap, maxdepth);
+			
+		if (Value.referencesTemplateParameter(value)) 
+			return Value.reevaluate(value, unknowns, tpMap, maxdepth);
+
 		return value;
 	}
 
@@ -867,7 +887,7 @@ public class CPPTemplates {
 			ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) {
 		if (arg.isNonTypeValue()) {
 			final IValue orig= arg.getNonTypeValue();
-			final IValue inst= instantiateValue(orig, tpMap);
+			final IValue inst= instantiateValue(orig, tpMap, within, Value.MAX_RECURSION_DEPTH);
 			if (orig == inst)
 				return arg;
 			return new CPPTemplateArgument(inst, arg.getTypeOfNonTypeValue());
@@ -1899,7 +1919,7 @@ public class CPPTemplates {
 				if (map != null && pType != null) {
 					pType= instantiateType(pType, map, null);
 				}
-				if (isNonTypeArgumentConvertible(pType, argType)) {
+				if (argType instanceof ICPPUnknownType || isNonTypeArgumentConvertible(pType, argType)) {
 					return new CPPTemplateArgument(arg.getNonTypeValue(), pType);
 				}
 				return null;
@@ -2047,11 +2067,15 @@ public class CPPTemplates {
             		if (!t.equals(owner) && newArgs != arguments) {
             			result= new CPPUnknownClassInstance((ICPPUnknownBinding) t, ucli.getUnknownName(), newArgs);
             		}
-            	} else if (unknown instanceof ICPPUnknownClassType) {
-            		if (!t.equals(owner)) {
-            			result= new CPPUnknownClass((ICPPUnknownBinding)t, ((ICPPUnknownClassType)unknown).getUnknownName());
+            	} else if (!t.equals(owner)) {
+            		if (unknown instanceof ICPPUnknownClassType) {
+            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getUnknownName());
+            		} else if (unknown instanceof IFunction) {
+            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getUnknownName());
+            		} else {
+            			result= new CPPUnknownBinding((ICPPUnknownBinding) t, unknown.getUnknownName());
             		}
-            	}
+            	} 
             } else if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null && ASTInternal.isFullyCached(s)) {
@@ -2081,7 +2105,7 @@ public class CPPTemplates {
         
         return result;
 	}
-	
+
 	private static IBinding resolveDeferredClassInstance(ICPPDeferredClassInstance dci, ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) {
 		ICPPTemplateArgument[] arguments = dci.getTemplateArguments();
 		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(arguments, tpMap, within);

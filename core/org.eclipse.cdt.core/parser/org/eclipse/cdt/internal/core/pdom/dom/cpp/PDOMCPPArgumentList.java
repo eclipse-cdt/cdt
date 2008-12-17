@@ -11,14 +11,14 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
@@ -45,8 +45,8 @@ public class PDOMCPPArgumentList {
 				final PDOMNode type= linkage.addType(parent, arg.getTypeOfNonTypeValue());
 				// type can be null, if it is a local type
 				db.putInt(p, type == null ? 0 : type.getRecord()); 
-				final IString s= db.newString(arg.getNonTypeValue().getCanonicalRepresentation());
-				db.putInt(p+4, s.getRecord()); 
+				int valueRec= PDOMValue.store(db, linkage, arg.getNonTypeValue());
+				db.putInt(p+4, valueRec); 
 			} else {
 				final PDOMNode type= linkage.addType(parent, arg.getTypeValue());
 				// type can be null, if it is a local type.
@@ -74,9 +74,7 @@ public class PDOMCPPArgumentList {
 				linkage.deleteType(t, parent.getRecord());
 			}			
 			final int nonTypeValueRec= db.getInt(p+4);
-			if (nonTypeValueRec != 0) {
-				db.getString(nonTypeValueRec).delete();
-			} 
+			PDOMValue.delete(db, nonTypeValueRec);
 			p+= 8;
 		}
 		db.free(record);
@@ -102,8 +100,8 @@ public class PDOMCPPArgumentList {
 			final IType type= typeRec == 0 ? new CPPBasicType(-1,0) : (IType) linkage.getNode(typeRec);
 			final int nonTypeValRec= db.getInt(rec+4); 
 			if (nonTypeValRec != 0) {
-				final IString s= db.getString(nonTypeValRec);
-				result[i]= new CPPTemplateArgument(Value.fromCanonicalRepresentation(s.getString()), type);
+				final IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
+				result[i]= new CPPTemplateArgument(val, type);
 			} else {
 				result[i]= new CPPTemplateArgument(type);
 			}

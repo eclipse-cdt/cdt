@@ -23,9 +23,22 @@ public interface IValue {
 	Long numericalValue();
 	
 	/**
-	 * Returns a canonical representation that is suitable for distinguishing 
-	 * constant values for the purpose of template instantiation.
-	 * The representation may not be used to display the value.
+	 * Returns an internal representation of the expression that builds up the
+	 * value. It is suitable for instantiating dependent values but may not be
+	 * used for the purpose of displaying values.
 	 */
-	String getCanonicalRepresentation(); 
+	char[] getInternalExpression(); 
+	
+	/**
+	 * A value may be dependent on template parameters, in which case a list
+	 * of unknown bindings is maintained for later instantiation.
+	 */
+	IBinding[] getUnknownBindings();
+	
+	/**
+	 * Returns a signature containing both the internal representation and the 
+	 * unknown bindings. The representation is sufficient to distinguish values
+	 * for the purpose of instantiation, it may not be used to display the value.
+	 */
+	char[] getSignature();
 }

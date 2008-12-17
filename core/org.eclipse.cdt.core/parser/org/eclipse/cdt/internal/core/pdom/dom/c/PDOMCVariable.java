@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -76,7 +76,8 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	private void setValue(final Database db, IVariable variable) throws CoreException {
 		IValue val= variable.getInitialValue();
-		db.putInt(record + VALUE_OFFSET, val == null ? 0 : db.newString(val.getCanonicalRepresentation()).getRecord());
+		int valrec= PDOMValue.store(db, getLinkage(), val);
+		db.putInt(record + VALUE_OFFSET, valrec);
 	}
 	
 	@Override
@@ -94,8 +95,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 				
 				if (mytype != null) 
 					linkage.deleteType(mytype, record);
-				if (valueRec != 0)
-					db.getString(valueRec).delete();
+				PDOMValue.delete(db, valueRec);
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
@@ -135,9 +135,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		try {
 			final Database db = pdom.getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
-			if (valRec == 0)
-				return null;
-			return Value.fromCanonicalRepresentation(db.getString(valRec).getString());
+			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

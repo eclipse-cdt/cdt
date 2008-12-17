@@ -14,14 +14,15 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * Models the mapping of template parameters to values.
  * @since 5.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateParameterMap {
 
 	/**
-	 * Returns the value for the template parameter at the given position.
-	 * @see ICPPTemplateParameter#getParameterPosition()
+	 * Returns the value for the template parameter with the given id.
+	 * @see ICPPTemplateParameter#getParameterID()
 	 */
-	public ICPPTemplateArgument getArgument(int paramPosition);
+	public ICPPTemplateArgument getArgument(int paramID);
 
 	/**
 	 * Returns the value for the template parameter in the map, or <code>null</code> if 

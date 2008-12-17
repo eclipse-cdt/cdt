@@ -23,15 +23,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -77,12 +76,10 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		try {
 			final Database db = pdom.getDB();
 			int rec= db.getInt(record + DEFAULTVAL);
-			if (rec == 0)
-				return null;
-			String val= db.getString(rec).getString();
+			IValue val= PDOMValue.restore(db, getLinkage(), rec);
 			if (val == null) 
 				return null;
-			return new CPPTemplateArgument(Value.fromCanonicalRepresentation(val), getType());
+			return new CPPTemplateArgument(val, getType());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -102,8 +99,8 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 				setType(linkage, newType);
 				if (mytype != null) 
 					linkage.deleteType(mytype, record);
-				if (setDefaultValue(db, ntp) && valueRec != 0) {
-					db.getString(valueRec).delete();
+				if (setDefaultValue(db, ntp)) {
+					PDOMValue.delete(db, valueRec);
 				}
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
@@ -119,8 +116,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		}
 		Database db= pdom.getDB();
 		int valueRec= db.getInt(record + DEFAULTVAL);
-		if (valueRec != 0)
-			db.getString(valueRec).delete();
+		PDOMValue.delete(db, valueRec);
 	}
 
 	public short getParameterPosition() {
@@ -175,8 +171,8 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		if (val != null) {
 			IValue sval= val.getNonTypeValue();
 			if (sval != null) {
-				IString s= db.newString(sval.getCanonicalRepresentation());
-				db.putInt(record + DEFAULTVAL, s.getRecord());
+				int valueRec= PDOMValue.store(db, getLinkage(), sval);
+				db.putInt(record + DEFAULTVAL, valueRec);
 				return true;
 			}
 		}

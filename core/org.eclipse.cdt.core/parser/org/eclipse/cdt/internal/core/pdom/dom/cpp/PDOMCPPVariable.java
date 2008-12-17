@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -78,7 +78,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
 		IValue val= variable.getInitialValue();
-		int valueRec= val == null ? 0 : db.newString(val.getCanonicalRepresentation()).getRecord();
+		int valueRec= PDOMValue.store(db, getLinkage(), val);
 		db.putInt(record + VALUE_OFFSET, valueRec);
 	}
 
@@ -96,8 +96,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 				setValue(db, var);
 				if (mytype != null) 
 					linkage.deleteType(mytype, record);
-				if (valueRec != 0)
-					db.getString(valueRec).delete();
+				PDOMValue.delete(db, valueRec);
 				
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
@@ -148,9 +147,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		try {
 			final Database db = pdom.getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
-			if (valRec == 0)
-				return null;
-			return Value.fromCanonicalRepresentation(db.getString(valRec).getString());
+			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

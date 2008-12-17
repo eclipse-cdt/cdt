@@ -4,17 +4,7 @@
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Initial Contributors:
- * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
- * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
  * Contributors:
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
- * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
- * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
- * David Dykstal    (IBM)        - [217556] remove service subsystem types
  * Anna Dushistova  (MontaVista) - adapted from ProcessServicesPropertyPage
  * Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
  ********************************************************************************/

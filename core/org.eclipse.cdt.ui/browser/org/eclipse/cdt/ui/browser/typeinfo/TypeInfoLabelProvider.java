@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.browser.IFunctionInfo;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -91,9 +92,13 @@ public class TypeInfoLabelProvider extends LabelProvider {
 				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope); 
 			}
 		} else if (isSet(SHOW_FULLY_QUALIFIED)) {
-			if (typeInfo.getCElementType() != ICElement.C_VARIABLE_LOCAL && qualifiedName.isGlobal()) {
-				buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope);
-				buf.append(' ');
+			final int elemType = typeInfo.getCElementType();
+			if (elemType != ICElement.C_VARIABLE_LOCAL && qualifiedName.isGlobal()) {
+				if ((elemType != ICElement.C_FUNCTION && elemType != ICElement.C_VARIABLE) ||
+						!(typeInfo instanceof IndexTypeInfo && ((IndexTypeInfo) typeInfo).isFileLocal())) {
+					buf.append(TypeInfoMessages.TypeInfoLabelProvider_globalScope);
+					buf.append(' ');
+				}
 			}
 			buf.append(qualifiedName.getFullyQualifiedName());
 		}

@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.browser;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -27,8 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -141,7 +140,7 @@ public class IndexModelUtil {
 				scope = binding.getScope();
 			} catch (DOMException e) {
 			}
-			if (scope instanceof ICPPBlockScope || scope instanceof ICFunctionScope) {
+			if (scope != null && scope.getKind() == EScopeKind.eLocal) {
 				elementType= ICElement.C_VARIABLE_LOCAL;
 			} else {
 				elementType = ICElement.C_VARIABLE;

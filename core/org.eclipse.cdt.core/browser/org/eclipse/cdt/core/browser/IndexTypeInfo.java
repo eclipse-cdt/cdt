@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private static int hashCode(String[] array) {
@@ -561,5 +561,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		if (!Arrays.equals(params, other.params))
 			return false;
 		return true;
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	public boolean isFileLocal() {
+		return fileLocal != null;
 	}
 }

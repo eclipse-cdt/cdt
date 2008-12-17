@@ -39,6 +39,12 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		setName(name);
 	}
 
+	public CASTIdExpression copy() {
+		CASTIdExpression copy = new CASTIdExpression(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return name;
     }

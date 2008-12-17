@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
  * G++ introduces additional operators.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 
@@ -36,5 +37,10 @@ public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 	 */
 	@Deprecated
 	public static final int op_last = IASTBinaryExpression.op_last;
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTBinaryExpression copy();
 
 }

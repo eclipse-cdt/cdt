@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * A declaration statement that introduces a declaration.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDeclarationStatement extends IASTStatement {
 
@@ -37,5 +38,10 @@ public interface IASTDeclarationStatement extends IASTStatement {
 	 * @param declaration
 	 */
 	public void setDeclaration(IASTDeclaration declaration);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTDeclarationStatement copy();
 
 }

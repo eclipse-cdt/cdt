@@ -193,4 +193,23 @@ public interface IASTNode {
 	 * @since 5.1
 	 */
 	public boolean isFrozen();
+	
+	
+	/**
+	 * Returns a copy of the tree rooted at this node. 
+	 * The following postconditions hold:
+	 * 
+	 * <code>
+	 * copy.getParent() == null
+	 * copy.getPropertyInParent() == null
+	 * copy.isFrozen() == false
+	 * </code>
+	 * 
+	 * Preprocessor nodes do not currently support being copied.
+	 * 
+	 * @since 5.1
+	 * @throws UnsupportedOperationException if this node or one of its descendants
+	 * does not support copying
+	 */
+	public IASTNode copy();
 }

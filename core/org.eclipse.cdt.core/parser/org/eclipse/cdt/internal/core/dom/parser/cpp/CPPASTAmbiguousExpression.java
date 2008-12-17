@@ -35,6 +35,11 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
 			addExpression(e);
 	}
 
+    
+    public IASTExpression copy() {
+		throw new UnsupportedOperationException();
+	}
+    
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {

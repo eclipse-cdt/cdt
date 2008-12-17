@@ -49,6 +49,10 @@ public class CPPASTAmbiguousTemplateArgument extends CPPASTAmbiguity implements 
 		}
 	}
 
+	public IASTNode copy() {
+		throw new UnsupportedOperationException();
+	}
+	
 	@Override
 	protected IScope getAffectedScope() {
     	// a template argument does not introduce names to a parent scope.

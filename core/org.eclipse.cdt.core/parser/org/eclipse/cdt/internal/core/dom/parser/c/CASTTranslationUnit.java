@@ -30,6 +30,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 public class CASTTranslationUnit extends ASTTranslationUnit {
 	private CScope compilationUnit = null;
 
+	
+	public CASTTranslationUnit copy() {
+		CASTTranslationUnit copy = new CASTTranslationUnit();
+		copyAbstractTU(copy);
+		return copy;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

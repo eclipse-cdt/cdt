@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This represents a block of statements.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompoundStatement extends IASTStatement {
 
@@ -47,4 +48,9 @@ public interface IASTCompoundStatement extends IASTStatement {
 	 * @return the <code>IScope</code>
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTCompoundStatement copy();
 }

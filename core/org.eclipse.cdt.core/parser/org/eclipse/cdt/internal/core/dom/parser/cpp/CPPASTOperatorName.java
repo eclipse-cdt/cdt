@@ -27,4 +27,12 @@ public class CPPASTOperatorName extends CPPASTName implements ICPPASTOperatorNam
 		super(name);
 	}
 
+	
+	@Override
+	public CPPASTOperatorName copy() {
+		char[] name = toCharArray();
+		CPPASTOperatorName copy = new CPPASTOperatorName(name == null ? null : name.clone());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

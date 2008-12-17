@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * followed by a list of declarators.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTSimpleDeclaration extends IASTDeclaration {
 
@@ -65,4 +66,8 @@ public interface IASTSimpleDeclaration extends IASTDeclaration {
 	 */
 	public void addDeclarator(IASTDeclarator declarator);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTSimpleDeclaration copy();
 }

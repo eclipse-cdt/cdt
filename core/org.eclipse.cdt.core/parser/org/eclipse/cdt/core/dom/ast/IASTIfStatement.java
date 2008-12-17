@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * The if statement including the optional else clause.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTIfStatement extends IASTStatement {
 
@@ -84,4 +85,8 @@ public interface IASTIfStatement extends IASTStatement {
 	 */
 	public void setElseClause(IASTStatement elseClause);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTIfStatement copy();
 }

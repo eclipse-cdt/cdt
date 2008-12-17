@@ -37,6 +37,15 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
 		setCatchBody(body);
 		setDeclaration(declaration);
 	}
+	
+	public CPPASTCatchHandler copy() {
+		CPPASTCatchHandler copy = new CPPASTCatchHandler();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setCatchBody(body == null ? null : body.copy());
+		copy.setIsCatchAll(isCatchAll);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public void setIsCatchAll(boolean isEllipsis) {
         assertNotFrozen();

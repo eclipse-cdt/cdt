@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 
 /**
  * Internal interface for c- or c++ enumeration specifiers.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTInternalEnumerationSpecifier extends IASTEnumerationSpecifier {
 	/**
@@ -21,4 +22,9 @@ public interface IASTInternalEnumerationSpecifier extends IASTEnumerationSpecifi
 	 * first attempt to do so.
 	 */
 	boolean startValueComputation();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTInternalEnumerationSpecifier copy();
 }

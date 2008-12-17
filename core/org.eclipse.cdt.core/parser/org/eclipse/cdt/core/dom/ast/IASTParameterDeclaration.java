@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This class represents a parameter declaration
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTParameterDeclaration extends IASTNode {
 	/**
@@ -67,4 +68,8 @@ public interface IASTParameterDeclaration extends IASTNode {
 	 */
 	public void setDeclarator(IASTDeclarator declarator);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTParameterDeclaration copy();
 }

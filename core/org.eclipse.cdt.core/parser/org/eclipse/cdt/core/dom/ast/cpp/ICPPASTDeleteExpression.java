@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * This interface represents a delete expression. delete [] operand;
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTDeleteExpression extends IASTExpression {
 
@@ -69,4 +70,10 @@ public interface ICPPASTDeleteExpression extends IASTExpression {
 	 */
 	public boolean isVectored();
 
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTDeleteExpression copy();
+	
 }

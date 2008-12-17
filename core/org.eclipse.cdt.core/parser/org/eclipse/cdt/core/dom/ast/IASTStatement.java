@@ -14,11 +14,17 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the root interface for statements.
  * 
  * @author Doug Schaefer
+ * @noimplement
  */
 public interface IASTStatement extends IASTNode {
 	/**
 	 * Constant.
 	 */
 	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = new IASTStatement[0];
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTStatement copy();
 
 }

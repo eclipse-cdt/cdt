@@ -32,6 +32,14 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		setDeclSpecifier(declSpecifier);
 		setAbstractDeclarator(declarator);
 	}
+	
+	public CASTTypeId copy() {
+		CASTTypeId copy = new CASTTypeId();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		copy.setAbstractDeclarator(declarator == null ? null : declarator.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTReturnStatement extends IASTStatement {
 
@@ -38,4 +39,8 @@ public interface IASTReturnStatement extends IASTStatement {
 	 */
 	public void setReturnValue(IASTExpression returnValue);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTReturnStatement copy();
 }

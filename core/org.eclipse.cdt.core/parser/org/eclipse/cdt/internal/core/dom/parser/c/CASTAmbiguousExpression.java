@@ -57,5 +57,9 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements IASTAmbigu
     public IType getExpressionType() {
     	return CVisitor.getExpressionType(this);
     }
+
+	public IASTExpression copy() {
+		throw new UnsupportedOperationException();
+	}
     
 }

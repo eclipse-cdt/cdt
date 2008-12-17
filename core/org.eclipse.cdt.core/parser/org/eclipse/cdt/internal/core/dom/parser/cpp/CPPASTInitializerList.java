@@ -21,6 +21,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CPPASTInitializerList extends ASTNode implements IASTInitializerList {
 
+	public CPPASTInitializerList copy() {
+		CPPASTInitializerList copy = new CPPASTInitializerList();
+		for(IASTInitializer initializer : getInitializers())
+			copy.addInitializer(initializer == null ? null : initializer.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     public IASTInitializer [] getInitializers() {
         if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
         initializers = (IASTInitializer[]) ArrayUtil.removeNullsAfter( IASTInitializer.class, initializers, initializersPos );

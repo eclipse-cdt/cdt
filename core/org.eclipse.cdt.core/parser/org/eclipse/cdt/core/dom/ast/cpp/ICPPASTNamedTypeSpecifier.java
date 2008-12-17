@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
  * typename.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier,
 		ICPPASTDeclSpecifier {
@@ -35,5 +36,10 @@ public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier,
 	 *            boolean
 	 */
 	public void setIsTypename(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTNamedTypeSpecifier copy();
 
 }

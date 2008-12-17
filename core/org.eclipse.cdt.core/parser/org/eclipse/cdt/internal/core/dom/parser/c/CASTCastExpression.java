@@ -24,11 +24,22 @@ public class CASTCastExpression extends CASTUnaryExpression implements IASTCastE
 
 
     public CASTCastExpression() {
+    	super(op_cast, null);
 	}
 
 	public CASTCastExpression(IASTTypeId typeId, IASTExpression operand) {
 		super(op_cast, operand);
 		setTypeId(typeId);
+	}
+	
+	@Override
+	public CASTCastExpression copy() {
+		CASTCastExpression copy = new CASTCastExpression();
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		IASTExpression operand = getOperand();
+		copy.setOperand(operand == null ? null : operand.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 
 	public void setTypeId(IASTTypeId typeId) {

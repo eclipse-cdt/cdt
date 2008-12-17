@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     private IASTInitializer initializer;
     private IASTName name;
-    private IASTDeclarator nestedDeclarator;
+    private IASTDeclarator nested;
     private IASTPointerOperator[] pointerOps = null;
     private int pointerOpsPos= -1;
    
@@ -50,6 +50,22 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 		setInitializer(initializer);
 	}
 
+    
+    public CPPASTDeclarator copy() {
+		CPPASTDeclarator copy = new CPPASTDeclarator();
+		copyBaseDeclarator(copy);
+		return copy;
+	}
+    
+    protected void copyBaseDeclarator(CPPASTDeclarator copy) {
+    	copy.setName(name == null ? null : name.copy());
+    	copy.setInitializer(initializer == null ? null : initializer.copy());
+		copy.setNestedDeclarator(nested == null ? null : nested.copy());
+		for(IASTPointerOperator pointer : getPointerOperators())
+			copy.addPointerOperator(pointer == null ? null : pointer.copy());
+		copy.setOffsetAndLength(this);
+    }
+    
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
         pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);
@@ -57,7 +73,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     }
 
     public IASTDeclarator getNestedDeclarator() {
-        return nestedDeclarator;
+        return nested;
     }
 
     public IASTName getName() {
@@ -88,7 +104,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 
     public void setNestedDeclarator(IASTDeclarator nested) {
         assertNotFrozen();
-        this.nestedDeclarator = nested;
+        this.nested = nested;
         if (nested != null) {
 			nested.setParent(this);
 			nested.setPropertyInParent(NESTED_DECLARATOR);
@@ -119,15 +135,15 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
             if (!ptrOps[i].accept(action)) return false;
         }
         
-        if (nestedDeclarator == null && name != null) {
+        if (nested == null && name != null) {
         	IASTDeclarator outermost= CPPVisitor.findOutermostDeclarator(this);
         	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
         		if (!name.accept(action)) return false;
             }
 		}
         
-        if (nestedDeclarator != null) {
-        	if (!nestedDeclarator.accept(action)) return false;
+        if (nested != null) {
+        	if (!nested.accept(action)) return false;
         }
       
         if (!postAccept(action))

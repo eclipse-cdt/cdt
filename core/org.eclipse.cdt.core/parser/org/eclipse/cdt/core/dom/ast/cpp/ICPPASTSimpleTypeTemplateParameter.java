@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * This interface represents a simple type template parameter.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTSimpleTypeTemplateParameter extends
 		ICPPASTTemplateParameter, IASTNameOwner {
@@ -89,5 +90,10 @@ public interface ICPPASTSimpleTypeTemplateParameter extends
 	 *            <code>IASTTypeId</code>
 	 */
 	public void setDefaultType(IASTTypeId typeId);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTSimpleTypeTemplateParameter copy();
 
 }

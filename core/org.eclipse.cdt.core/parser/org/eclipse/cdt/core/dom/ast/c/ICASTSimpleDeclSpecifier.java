@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
  * This interface represents a built-in type in C.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
 		ICASTDeclSpecifier {
@@ -70,5 +71,10 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
 	 *            boolean
 	 */
 	public void setLongLong(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTSimpleDeclSpecifier copy();
 
 }

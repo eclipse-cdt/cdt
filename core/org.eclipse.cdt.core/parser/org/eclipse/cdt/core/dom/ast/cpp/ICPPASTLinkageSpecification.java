@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * This interface represents a linkage specification. e.g. extern "C" { ... }
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTLinkageSpecification extends IASTDeclaration {
 
@@ -56,4 +57,9 @@ public interface ICPPASTLinkageSpecification extends IASTDeclaration {
 	 *            <code>IASTDeclaration</code>
 	 */
 	public void addDeclaration(IASTDeclaration declaration);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTLinkageSpecification copy();
 }

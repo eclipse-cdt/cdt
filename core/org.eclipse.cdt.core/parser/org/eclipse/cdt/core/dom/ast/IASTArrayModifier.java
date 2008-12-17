@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * declares a variable/type which is an array.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTArrayModifier extends IASTNode {
 
@@ -45,4 +46,8 @@ public interface IASTArrayModifier extends IASTNode {
 	 */
 	public void setConstantExpression(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTArrayModifier copy();
 }

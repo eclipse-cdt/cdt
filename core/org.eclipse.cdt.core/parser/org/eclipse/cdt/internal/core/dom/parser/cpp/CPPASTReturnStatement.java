@@ -31,6 +31,12 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 		setReturnValue(retValue);
 	}
 
+	public CPPASTReturnStatement copy() {
+		CPPASTReturnStatement copy = new CPPASTReturnStatement(retValue == null ? null : retValue.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getReturnValue() {
         return retValue;
     }

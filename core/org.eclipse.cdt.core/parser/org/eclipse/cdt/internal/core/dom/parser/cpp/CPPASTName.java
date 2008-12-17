@@ -47,6 +47,12 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
         name = CharArrayUtils.EMPTY;
     }
 
+    public CPPASTName copy() {
+		CPPASTName copy = new CPPASTName(name == null ? null : name.clone());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
 	@Override
 	protected IBinding createIntermediateBinding() {
 		return CPPVisitor.createBinding(this);

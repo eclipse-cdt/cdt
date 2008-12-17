@@ -37,6 +37,14 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		setParameterExpression(parameter);
 	}
 
+	public CASTFunctionCallExpression copy() {
+		CASTFunctionCallExpression copy = new CASTFunctionCallExpression();
+		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy());
+		copy.setParameterExpression(parameter == null ? null : parameter.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void setFunctionNameExpression(IASTExpression expression) {
         assertNotFrozen();
         this.functionName = expression;

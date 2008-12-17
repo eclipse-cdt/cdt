@@ -33,6 +33,13 @@ public class CASTInitializerExpression extends ASTNode implements
 	public CASTInitializerExpression(IASTExpression expression) {
 		setExpression(expression);
 	}
+	
+	public CASTInitializerExpression copy() {
+		CASTInitializerExpression copy = new CASTInitializerExpression();
+		copy.setExpression(expression == null ? null : expression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getExpression() {
         return expression;

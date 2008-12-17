@@ -36,6 +36,16 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		setName(name);
 		setDefaultValue(defaultValue);
 	}
+	
+	public CPPASTTemplatedTypeTemplateParameter copy() {
+		CPPASTTemplatedTypeTemplateParameter copy = new CPPASTTemplatedTypeTemplateParameter();
+		copy.setName(name == null ? null : name.copy());
+		copy.setDefaultValue(defaultValue == null ? null : defaultValue.copy());
+		for(ICPPASTTemplateParameter param : getTemplateParameters()) 
+			copy.addTemplateParamter(param == null ? null : param.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public ICPPASTTemplateParameter[] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;

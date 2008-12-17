@@ -12,11 +12,16 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousBinaryVsCastExpression;
 
 public class CPPASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousBinaryVsCastExpression {
 
     public CPPASTAmbiguousBinaryVsCastExpression(IASTBinaryExpression bexp, IASTCastExpression castExpr) {
     	super(bexp, castExpr);
+	}
+
+	public IASTExpression copy() {
+		throw new UnsupportedOperationException();
 	}
 }

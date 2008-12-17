@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
  * This interface represents a built-in type in C++.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
 		ICPPASTDeclSpecifier {
@@ -34,5 +35,10 @@ public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
 	 * <code>t_last</code> is specified for subinterfaces.
 	 */
 	public static final int t_last = t_wchar_t;
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTSimpleDeclSpecifier copy();
 
 }

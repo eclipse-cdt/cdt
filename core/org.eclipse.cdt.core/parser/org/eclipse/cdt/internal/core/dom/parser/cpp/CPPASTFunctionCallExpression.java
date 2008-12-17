@@ -37,6 +37,14 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		setParameterExpression(parameter);
 	}
 
+	public CPPASTFunctionCallExpression copy() {
+		CPPASTFunctionCallExpression copy = new CPPASTFunctionCallExpression();
+		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy());
+		copy.setParameterExpression(parameter == null ? null : parameter.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void setFunctionNameExpression(IASTExpression expression) {
         assertNotFrozen();
         this.functionName = expression;

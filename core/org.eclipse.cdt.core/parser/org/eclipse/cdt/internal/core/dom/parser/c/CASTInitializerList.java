@@ -21,10 +21,16 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CASTInitializerList extends ASTNode implements
-        IASTInitializerList {
-
+public class CASTInitializerList extends ASTNode implements IASTInitializerList {
     
+	public CASTInitializerList copy() {
+		CASTInitializerList copy = new CASTInitializerList();
+		for(IASTInitializer initializer : getInitializers())
+			copy.addInitializer(initializer == null ? null : initializer.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     public IASTInitializer[] getInitializers() {
         if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
         initializers = (IASTInitializer[]) ArrayUtil.removeNullsAfter( IASTInitializer.class, initializers, initializersPos );

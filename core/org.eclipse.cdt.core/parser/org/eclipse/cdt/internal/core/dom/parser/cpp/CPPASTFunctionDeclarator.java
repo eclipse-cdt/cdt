@@ -45,6 +45,23 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	public CPPASTFunctionDeclarator(IASTName name) {
 		super(name);
 	}
+	
+	@Override
+	public CPPASTFunctionDeclarator copy() {
+		CPPASTFunctionDeclarator copy = new CPPASTFunctionDeclarator();
+		copyBaseDeclarator(copy);
+		copy.varArgs = varArgs;
+		copy.pureVirtual = pureVirtual;
+		copy.isVolatile = isVolatile;
+		copy.isConst = isConst;
+		
+		for(IASTParameterDeclaration param : getParameters())
+			copy.addParameterDeclaration(param == null ? null : param.copy());
+		for(IASTTypeId typeId : getExceptionSpecification())
+			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy());
+		
+		return copy;
+	}
 
 	public IASTParameterDeclaration[] getParameters() {
         if (parameters == null) 

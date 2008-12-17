@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the base interface that represents a declaration specifier sequence.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDeclSpecifier extends IASTNode {
 
@@ -124,5 +125,10 @@ public interface IASTDeclSpecifier extends IASTNode {
 	 * @return String
 	 */
 	public String getRawSignature();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTDeclSpecifier copy();
 
 }

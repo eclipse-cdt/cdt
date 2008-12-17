@@ -32,6 +32,14 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 		setTypeofExpression(typeofExpression);
 	}
 
+	@Override
+	public GCCASTSimpleDeclSpecifier copy() {
+		GCCASTSimpleDeclSpecifier copy = new GCCASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy);
+		copy.setTypeofExpression(typeOfExpression == null ? null : typeOfExpression.copy());
+		return copy;
+	}
+	
 	public void setTypeofExpression(IASTExpression typeofExpression) {
 		this.typeOfExpression = typeofExpression;
 		if (typeofExpression != null) {

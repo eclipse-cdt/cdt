@@ -18,11 +18,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
  * C-specific enumerator
  */
 public class CASTEnumerator extends ASTEnumerator {
+	
     public CASTEnumerator() {
     	super();
 	}
 
 	public CASTEnumerator(IASTName name, IASTExpression value) {
 		super(name, value);
+	}
+	
+	public CASTEnumerator copy() {
+		CASTEnumerator copy = new CASTEnumerator();
+		copyAbstractEnumerator(copy);
+		return copy;
 	}
 }

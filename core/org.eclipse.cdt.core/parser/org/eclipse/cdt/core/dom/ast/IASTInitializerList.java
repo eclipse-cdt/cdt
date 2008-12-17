@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is an an initializer that is a list of initializers.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTInitializerList extends IASTInitializer {
 
@@ -38,4 +39,9 @@ public interface IASTInitializerList extends IASTInitializer {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void addInitializer(IASTInitializer initializer);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTInitializerList copy();
 }

@@ -23,6 +23,15 @@ public class CASTPointer extends ASTNode implements ICASTPointer {
     private boolean isVolatile;
     private boolean isConst;
 
+    public CASTPointer copy() {
+		CASTPointer copy = new CASTPointer();
+		copy.isRestrict = isRestrict;
+		copy.isVolatile = isVolatile;
+		copy.isConst = isConst;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
 	public boolean isRestrict() {
         return isRestrict;
     }

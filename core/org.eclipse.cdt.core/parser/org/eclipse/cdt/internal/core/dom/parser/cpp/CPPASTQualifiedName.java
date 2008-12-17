@@ -56,6 +56,16 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public CPPASTQualifiedName() {
 	}
 
+	public CPPASTQualifiedName copy() {
+		CPPASTQualifiedName copy = new CPPASTQualifiedName();
+		for(IASTName name : getNames())
+			copy.addName(name == null ? null : name.copy());
+		copy.setFullyQualified(isFullyQualified);
+		copy.setSignature(signature);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	@Override
 	public final IBinding resolvePreBinding() {
 		// The full qualified name resolves to the same thing as the last name

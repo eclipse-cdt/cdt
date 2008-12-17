@@ -36,6 +36,14 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		setInitialValue(init);
 	}
 
+	public CPPASTSimpleTypeConstructorExpression copy() {
+		CPPASTSimpleTypeConstructorExpression copy = new CPPASTSimpleTypeConstructorExpression();
+		copy.st = st;
+		copy.setInitialValue(init == null ? null : init.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getSimpleType() {
         return st;
     }

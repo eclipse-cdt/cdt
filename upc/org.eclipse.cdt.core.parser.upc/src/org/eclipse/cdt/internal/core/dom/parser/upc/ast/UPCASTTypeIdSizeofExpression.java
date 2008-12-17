@@ -21,6 +21,7 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 	private int upcSizeofOperator;
 	
 	public UPCASTTypeIdSizeofExpression() {
+		this(null);
 	}
 
 	public UPCASTTypeIdSizeofExpression(IASTTypeId typeId) {
@@ -30,6 +31,16 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 	public UPCASTTypeIdSizeofExpression(int upcSizeofOperator, IASTTypeId typeId) {
 		super(IASTTypeIdExpression.op_sizeof, typeId);
 		this.upcSizeofOperator = upcSizeofOperator;
+	}
+	
+	@Override
+	public UPCASTTypeIdSizeofExpression copy() {
+		UPCASTTypeIdSizeofExpression copy = new UPCASTTypeIdSizeofExpression();
+		copy.setUPCSizeofOperator(upcSizeofOperator);
+		IASTTypeId typeId = getTypeId();
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 	
 	public int getUPCSizeofOperator() {

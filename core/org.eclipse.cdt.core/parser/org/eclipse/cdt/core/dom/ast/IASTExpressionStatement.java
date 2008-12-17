@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Expression statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTExpressionStatement extends IASTStatement {
 
@@ -37,4 +38,9 @@ public interface IASTExpressionStatement extends IASTStatement {
 	 * @param expression
 	 */
 	public void setExpression(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTExpressionStatement copy();
 }

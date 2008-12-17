@@ -17,8 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
  * for the addition of the restrict keyword.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTElaboratedTypeSpecifier extends
 		IASTElaboratedTypeSpecifier, ICASTDeclSpecifier {
 
+	/**
+	 * @since 5.1
+	 */
+	public ICASTElaboratedTypeSpecifier copy();
 }

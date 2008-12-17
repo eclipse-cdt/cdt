@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
  * struct ABC { int def[10]; } abc = { def[4...10] = 3 };
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 
@@ -67,4 +68,9 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setRangeCeiling(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGCCASTArrayRangeDesignator copy();
 }

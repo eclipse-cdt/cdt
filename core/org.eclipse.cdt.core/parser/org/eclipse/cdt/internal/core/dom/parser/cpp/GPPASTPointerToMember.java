@@ -29,6 +29,17 @@ public class GPPASTPointerToMember extends CPPASTPointerToMember implements
 
 	private boolean isRestrict;
 
+	@Override
+	public GPPASTPointerToMember copy() {
+		IASTName name = getName();
+		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null : name.copy());
+		copy.setConst(isConst());
+		copy.setVolatile(isVolatile());
+		copy.setRestrict(isRestrict);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#isRestrict()
      */

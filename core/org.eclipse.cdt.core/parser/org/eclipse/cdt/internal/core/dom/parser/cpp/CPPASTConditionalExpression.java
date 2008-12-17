@@ -27,7 +27,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
 	
     private IASTExpression condition;
     private IASTExpression negative;
-    private IASTExpression postive;
+    private IASTExpression positive;
 
     
     public CPPASTConditionalExpression() {
@@ -39,6 +39,16 @@ public class CPPASTConditionalExpression extends ASTNode implements
     	setNegativeResultExpression(negative);
 	}
 
+	
+	public CPPASTConditionalExpression copy() {
+		CPPASTConditionalExpression copy = new CPPASTConditionalExpression();
+		copy.setLogicalConditionExpression(condition == null ? null : condition.copy());
+		copy.setPositiveResultExpression(positive == null ? null : positive.copy());
+		copy.setNegativeResultExpression(negative == null ? null : negative.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getLogicalConditionExpression() {
         return condition;
     }
@@ -53,12 +63,12 @@ public class CPPASTConditionalExpression extends ASTNode implements
     }
 
     public IASTExpression getPositiveResultExpression() {
-        return postive;
+        return positive;
     }
 
     public void setPositiveResultExpression(IASTExpression expression) {
         assertNotFrozen();
-        this.postive = expression;
+        this.positive = expression;
         if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(POSITIVE_RESULT);
@@ -89,7 +99,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
 		}
         
         if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( postive != null ) if( !postive.accept( action ) ) return false;
+        if( positive != null ) if( !positive.accept( action ) ) return false;
         if( negative != null ) if( !negative.accept( action ) ) return false;
         
         if( action.shouldVisitExpressions ){
@@ -109,11 +119,11 @@ public class CPPASTConditionalExpression extends ASTNode implements
             other.setParent( child.getParent() );
             condition  = (IASTExpression) other;
         }
-        if( child == postive )
+        if( child == positive )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
-            postive  = (IASTExpression) other;
+            positive  = (IASTExpression) other;
         }
         if( child == negative )
         {

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
  * specify the parse.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTFieldReference extends IASTFieldReference {
 
@@ -32,5 +33,10 @@ public interface ICPPASTFieldReference extends IASTFieldReference {
 	 * @param value
 	 */
 	public void setIsTemplate(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTFieldReference copy();
 
 }

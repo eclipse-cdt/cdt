@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * The switch statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTSwitchStatement extends IASTStatement {
 
@@ -64,4 +65,8 @@ public interface IASTSwitchStatement extends IASTStatement {
 	 */
 	public void setBody(IASTStatement body);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTSwitchStatement copy();
 }

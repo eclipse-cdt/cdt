@@ -39,6 +39,13 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 	public CPPASTTemplateSpecialization(IASTDeclaration declaration) {
 		setDeclaration(declaration);
 	}
+	
+	public CPPASTTemplateSpecialization copy() {
+		CPPASTTemplateSpecialization copy = new CPPASTTemplateSpecialization();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTDeclaration getDeclaration() {
         return declaration;

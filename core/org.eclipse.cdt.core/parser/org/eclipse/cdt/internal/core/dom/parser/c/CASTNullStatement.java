@@ -38,4 +38,10 @@ public class CASTNullStatement extends ASTNode implements IASTNullStatement {
 		}
         return true;
     }
+    
+    public CASTNullStatement copy() {
+		CASTNullStatement copy = new CASTNullStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

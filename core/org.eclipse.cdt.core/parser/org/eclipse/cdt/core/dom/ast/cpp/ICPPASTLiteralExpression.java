@@ -38,4 +38,10 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression {
 	 * <code>lk_last</code> is maintained for future subinterfaces.
 	 */
 	public static final int lk_last = lk_false;
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTLiteralExpression copy();
 }

@@ -36,6 +36,14 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		setSubscriptExpression(subscript);
 	}
 
+	public CASTArraySubscriptExpression copy() {
+		CASTArraySubscriptExpression copy = new CASTArraySubscriptExpression();
+		copy.setArrayExpression(array == null ? null : array.copy());
+		copy.setSubscriptExpression(subscript == null ? null : subscript.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getArrayExpression() {
         return array;
     }

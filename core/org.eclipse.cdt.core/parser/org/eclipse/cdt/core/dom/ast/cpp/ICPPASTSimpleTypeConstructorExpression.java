@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * Simple type constructor postfix expression.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTSimpleTypeConstructorExpression extends IASTExpression {
 
@@ -121,4 +122,8 @@ public interface ICPPASTSimpleTypeConstructorExpression extends IASTExpression {
 	 */
 	public void setInitialValue(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTSimpleTypeConstructorExpression copy();
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 
@@ -82,5 +83,10 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	 * @return <code>IASTNode []</code>
 	 */
 	public IASTNode[] getTemplateArguments();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTemplateId copy();
 
 }

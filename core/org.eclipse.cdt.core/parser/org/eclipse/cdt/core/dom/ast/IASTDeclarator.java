@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Base interface for a declarator.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 
@@ -106,5 +107,10 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void setInitializer(IASTInitializer initializer);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTDeclarator copy();
 
 }

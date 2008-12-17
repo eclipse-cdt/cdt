@@ -30,6 +30,12 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 		super(problem);
 	}
 
+	public CASTProblemExpression copy() {
+		CASTProblemExpression copy = new CASTProblemExpression();
+		copyBaseProblem(copy);
+		return copy;
+	}
+	
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){

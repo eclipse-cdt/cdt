@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This interface represents enumerations in C and C++.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 
@@ -21,6 +22,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	 * This interface represents an enumerator member of an enum specifier.
 	 * 
 	 * @author jcamelon
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IASTEnumerator extends IASTNode, IASTNameOwner {
 		/**
@@ -69,6 +71,11 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		 * @return <code>IASTExpression</code> value
 		 */
 		public IASTExpression getValue();
+		
+		/**
+		 * @since 5.1
+		 */
+		public IASTEnumerator copy();
 
 	}
 
@@ -114,4 +121,8 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	 */
 	public IASTName getName();
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTEnumerationSpecifier copy();
 }

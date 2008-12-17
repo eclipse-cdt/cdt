@@ -28,6 +28,12 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 		super(problem);
 	}
 
+	public CASTProblemStatement copy() {
+		CASTProblemStatement copy = new CASTProblemStatement();
+		copyBaseProblem(copy);
+		return copy;
+	}
+	
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){

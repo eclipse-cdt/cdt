@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * specifiers.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTVisibilityLabel extends IASTDeclaration {
 
@@ -50,4 +51,9 @@ public interface ICPPASTVisibilityLabel extends IASTDeclaration {
 	 */
 	public void setVisibility(int visibility);
 
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTVisibilityLabel copy();
 }

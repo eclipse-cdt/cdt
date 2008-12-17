@@ -103,4 +103,9 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 
 	@Deprecated
 	public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTFunctionDeclarator copy();
 }

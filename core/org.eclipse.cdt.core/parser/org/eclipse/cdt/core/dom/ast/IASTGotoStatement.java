@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Represents a goto statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 
@@ -33,5 +34,10 @@ public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 	 *            <code>IASTName</code>
 	 */
 	public void setName(IASTName name);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTGotoStatement copy();
 
 }

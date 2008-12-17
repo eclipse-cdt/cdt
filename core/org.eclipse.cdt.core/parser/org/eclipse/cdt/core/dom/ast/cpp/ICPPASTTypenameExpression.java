@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTypenameExpression extends IASTExpression, IASTNameOwner {
 
@@ -76,5 +77,10 @@ public interface ICPPASTTypenameExpression extends IASTExpression, IASTNameOwner
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getInitialValue();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTypenameExpression copy();
 
 }

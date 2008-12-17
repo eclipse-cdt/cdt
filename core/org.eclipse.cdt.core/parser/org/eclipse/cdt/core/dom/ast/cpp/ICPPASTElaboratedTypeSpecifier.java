@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
  * Elaborated types in C++ include classes.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTElaboratedTypeSpecifier extends
 		IASTElaboratedTypeSpecifier, ICPPASTDeclSpecifier {
@@ -29,5 +30,10 @@ public interface ICPPASTElaboratedTypeSpecifier extends
 	 * <code>k_last</code> is defined for subinterfaces.
 	 */
 	public static final int k_last = k_class;
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTElaboratedTypeSpecifier copy();
 
 }

@@ -26,7 +26,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     private int sc;
     private boolean virtual;
     private boolean explicit;
-
+    
     public boolean isFriend() {
         return friend;
     }
@@ -90,6 +90,17 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
         this.explicit = value;
     }
 
+    protected void copyBaseDeclSpec(CPPASTBaseDeclSpecifier other) {
+    	other.friend = friend;
+    	other.inline = inline;
+    	other.volatil = volatil;
+    	other.isConst = isConst;
+    	other.virtual = virtual;
+    	other.explicit = explicit;
+    	other.sc = sc;
+    	other.setOffsetAndLength(this);
+    }
+    
     @Override
 	public String toString() {
     	return ASTSignatureUtil.getSignature(this);

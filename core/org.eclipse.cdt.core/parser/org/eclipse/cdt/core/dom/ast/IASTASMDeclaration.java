@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * ASM Statement as a Declaration.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTASMDeclaration extends IASTDeclaration {
 
@@ -29,4 +30,10 @@ public interface IASTASMDeclaration extends IASTDeclaration {
 	 * @param assembly
 	 */
 	public void setAssembly(String assembly);
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTASMDeclaration copy();
 }

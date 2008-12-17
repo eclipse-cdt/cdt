@@ -21,6 +21,10 @@ public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements IASTA
 	protected IASTNode[] getNodes() {
         return getDeclarations();
     }
+    
+    public IASTDeclaration copy() {
+		throw new UnsupportedOperationException();
+	}
 
     private IASTDeclaration [] decls = new IASTDeclaration[2];
     private int declsPos=-1;

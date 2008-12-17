@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  * .t[1] = 3 };
  * 
  * @author jcamelon
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTDesignatedInitializer extends IASTInitializer {
 
@@ -72,4 +72,9 @@ public interface ICASTDesignatedInitializer extends IASTInitializer {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void setOperandInitializer(IASTInitializer rhs);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTDesignatedInitializer copy();
 }

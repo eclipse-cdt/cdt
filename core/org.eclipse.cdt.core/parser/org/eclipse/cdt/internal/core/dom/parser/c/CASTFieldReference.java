@@ -46,6 +46,15 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		setFieldName(name);
 		this.ptr = ptr;
 	}
+	
+	public CASTFieldReference copy() {
+		CASTFieldReference copy = new CASTFieldReference();
+		copy.setFieldOwner(owner == null ? null : owner.copy());
+		copy.setFieldName(name == null ? null : name.copy());
+		copy.ptr = ptr;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getFieldOwner() {
         return owner;

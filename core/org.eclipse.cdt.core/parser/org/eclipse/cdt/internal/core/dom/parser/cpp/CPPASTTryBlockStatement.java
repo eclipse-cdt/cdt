@@ -33,6 +33,14 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 		setTryBody(tryBody);
 	}
 
+	public CPPASTTryBlockStatement copy() {
+		CPPASTTryBlockStatement copy = new CPPASTTryBlockStatement(tryBody == null ? null : tryBody.copy());
+		for(ICPPASTCatchHandler handler : getCatchHandlers())
+			copy.addCatchHandler(handler == null ? null : handler.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {

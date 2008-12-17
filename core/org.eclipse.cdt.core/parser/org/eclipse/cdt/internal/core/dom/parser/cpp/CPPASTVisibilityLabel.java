@@ -29,6 +29,12 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 		this.visibility = visibility;
 	}
 
+	public CPPASTVisibilityLabel copy() {
+		CPPASTVisibilityLabel copy = new CPPASTVisibilityLabel(visibility);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getVisibility() {
         return visibility;
     }

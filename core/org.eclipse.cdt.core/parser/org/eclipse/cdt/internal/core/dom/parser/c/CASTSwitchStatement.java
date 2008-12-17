@@ -35,6 +35,14 @@ public class CASTSwitchStatement extends ASTNode implements
 		setControllerExpression(controller);
 		setBody(body);
 	}
+	
+	public CASTSwitchStatement copy() {
+		CASTSwitchStatement copy = new CASTSwitchStatement();
+		copy.setControllerExpression(controller == null ? null : controller.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getControllerExpression() {
         return controller;

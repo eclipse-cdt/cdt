@@ -39,6 +39,14 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 		setName(name);
 	}
 
+	public CPPASTNamespaceDefinition copy() {
+		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(name == null ? null : name.copy());
+		for(IASTDeclaration declaration : getDeclarations())
+			copy.addDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return name;
     }

@@ -14,7 +14,12 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the break clause in a loop.
  * 
  * @author Doug Schaefer
+ * @noimplement
  */
 public interface IASTBreakStatement extends IASTStatement {
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTBreakStatement copy();
 }

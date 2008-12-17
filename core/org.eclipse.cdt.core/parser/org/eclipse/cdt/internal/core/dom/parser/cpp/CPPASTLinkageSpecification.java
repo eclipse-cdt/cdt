@@ -32,6 +32,15 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 	public CPPASTLinkageSpecification(String literal) {
 		this.literal = literal;
 	}
+	
+	public CPPASTLinkageSpecification copy() {
+		CPPASTLinkageSpecification copy = new CPPASTLinkageSpecification(literal);
+		for(IASTDeclaration declaration : getDeclarations())
+			copy.addDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 
 	public String getLiteral() {
         return literal;

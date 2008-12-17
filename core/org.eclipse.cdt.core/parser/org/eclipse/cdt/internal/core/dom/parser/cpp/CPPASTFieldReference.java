@@ -47,6 +47,16 @@ public class CPPASTFieldReference extends ASTNode implements
 		setFieldName(name);
 		setFieldOwner(owner);
 	}
+	
+	public CPPASTFieldReference copy() {
+		CPPASTFieldReference copy = new CPPASTFieldReference();
+		copy.setFieldName(name == null ? null : name.copy());
+		copy.setFieldOwner(owner == null ? null : owner.copy());
+		copy.isTemplate = isTemplate;
+		copy.isDeref = isDeref;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public boolean isTemplate() {
         return isTemplate;

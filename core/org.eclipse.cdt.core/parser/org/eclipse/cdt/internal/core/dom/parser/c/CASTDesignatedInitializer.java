@@ -21,8 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CASTDesignatedInitializer extends ASTNode implements
-        ICASTDesignatedInitializer {
+public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignatedInitializer {
 
     private IASTInitializer rhs;
 
@@ -34,6 +33,14 @@ public class CASTDesignatedInitializer extends ASTNode implements
 		setOperandInitializer(operandInitializer);
 	}
 
+	public CASTDesignatedInitializer copy() {
+		CASTDesignatedInitializer copy = new CASTDesignatedInitializer(rhs == null ? null : rhs.copy());
+		for(ICASTDesignator designator : getDesignators())
+			copy.addDesignator(designator == null ? null : designator.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void addDesignator(ICASTDesignator designator) {
         assertNotFrozen();
     	if (designator != null) {

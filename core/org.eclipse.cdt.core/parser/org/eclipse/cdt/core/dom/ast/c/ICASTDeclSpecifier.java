@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * C extension to IASTDeclSpecifier. (restrict keyword)
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 
@@ -32,5 +33,10 @@ public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 	 * @param value
 	 */
 	public void setRestrict(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTDeclSpecifier copy();
 
 }

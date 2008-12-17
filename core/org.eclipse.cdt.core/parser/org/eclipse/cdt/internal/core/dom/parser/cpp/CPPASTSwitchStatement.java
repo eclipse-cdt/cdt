@@ -44,6 +44,15 @@ public class CPPASTSwitchStatement extends ASTNode implements
 		setControllerExpression(controller);
 		setBody(body);
 	}
+    
+    public CPPASTSwitchStatement copy() {
+		CPPASTSwitchStatement copy = new CPPASTSwitchStatement();
+		copy.setControllerDeclaration(decl == null ? null : decl.copy());
+		copy.setControllerExpression(controller == null ? null : controller.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getControllerExpression() {
         return controller;

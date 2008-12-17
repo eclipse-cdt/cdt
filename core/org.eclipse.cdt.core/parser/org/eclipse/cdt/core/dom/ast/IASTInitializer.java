@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This represents an initializer for a declarator.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTInitializer extends IASTNode {
 
@@ -22,4 +23,8 @@ public interface IASTInitializer extends IASTNode {
 	 */
 	public final static IASTInitializer[] EMPTY_INITIALIZER_ARRAY = new IASTInitializer[0];
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTInitializer copy();
 }

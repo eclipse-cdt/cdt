@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * size for a bit field.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFieldDeclarator extends IASTDeclarator {
 
@@ -41,4 +42,8 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 	 */
 	public void setBitFieldSize(IASTExpression size);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTFieldDeclarator copy();
 }

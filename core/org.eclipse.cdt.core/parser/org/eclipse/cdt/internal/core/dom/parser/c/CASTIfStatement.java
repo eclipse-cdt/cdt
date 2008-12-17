@@ -44,6 +44,15 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		setElseClause(elseClause);
 	}
 
+	public CASTIfStatement copy() {
+		CASTIfStatement copy = new CASTIfStatement();
+		copy.setConditionExpression(condition == null ? null : condition.copy());
+		copy.setThenClause(thenClause == null ? null : thenClause.copy());
+		copy.setElseClause(elseClause == null ? null : elseClause.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getConditionExpression() {
         return condition;
     }

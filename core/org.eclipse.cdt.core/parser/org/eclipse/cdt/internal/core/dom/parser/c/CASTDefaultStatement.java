@@ -18,8 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CASTDefaultStatement extends ASTNode implements
-        IASTDefaultStatement {
+public class CASTDefaultStatement extends ASTNode implements IASTDefaultStatement {
 
     @Override
 	public boolean accept( ASTVisitor action ){
@@ -39,4 +38,10 @@ public class CASTDefaultStatement extends ASTNode implements
 		}
         return true;
     }
+    
+    public CASTDefaultStatement copy() {
+		CASTDefaultStatement copy = new CASTDefaultStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

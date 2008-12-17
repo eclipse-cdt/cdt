@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTTypeIdExpression extends IASTExpression {
 
@@ -75,4 +76,8 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	 */
 	public IASTTypeId getTypeId();
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTTypeIdExpression copy();
 }

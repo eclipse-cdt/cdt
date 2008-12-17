@@ -17,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * following this clause.
  * 
  * @author Doug Schaefer
+ * @noimplement
  */
 public interface IASTCaseStatement extends IASTStatement {
 
@@ -40,4 +41,8 @@ public interface IASTCaseStatement extends IASTStatement {
 	 */
 	public void setExpression(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTCaseStatement copy();
 }

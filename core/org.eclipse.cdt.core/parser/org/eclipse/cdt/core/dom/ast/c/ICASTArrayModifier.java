@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
  * modifiers (const, restrict, etc.) as well as variable sized arrays.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTArrayModifier extends IASTArrayModifier {
 
@@ -94,4 +95,9 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 	 *            boolean
 	 */
 	public void setVariableSized(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTArrayModifier copy();
 }

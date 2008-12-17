@@ -36,6 +36,11 @@ public class CASTArrayDesignator extends ASTNode implements
 		setSubscriptExpression(exp);
 	}
 
+	public CASTArrayDesignator copy() {
+		CASTArrayDesignator copy = new CASTArrayDesignator(exp == null ? null : exp.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 	
     public IASTExpression getSubscriptExpression() {
         return exp;

@@ -37,5 +37,11 @@ public class CPPASTDefaultStatement extends ASTNode implements IASTDefaultStatem
 		}
         return true;
     }
+    
+    public CPPASTDefaultStatement copy() {
+		CPPASTDefaultStatement copy = new CPPASTDefaultStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 }

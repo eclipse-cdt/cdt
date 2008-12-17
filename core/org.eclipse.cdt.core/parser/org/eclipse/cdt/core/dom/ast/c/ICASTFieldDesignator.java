@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * Specific Designator that represents a field reference.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTFieldDesignator extends ICASTDesignator {
 
@@ -41,4 +42,9 @@ public interface ICASTFieldDesignator extends ICASTDesignator {
 	 *            <code>IASTName</code>
 	 */
 	public void setName(IASTName name);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTFieldDesignator copy();
 }

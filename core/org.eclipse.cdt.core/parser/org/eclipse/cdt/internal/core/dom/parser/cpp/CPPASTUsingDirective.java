@@ -38,6 +38,12 @@ public class CPPASTUsingDirective extends ASTNode implements
 		setQualifiedName(name);
 	}
 
+	public CPPASTUsingDirective copy() {
+		CPPASTUsingDirective copy = new CPPASTUsingDirective(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getQualifiedName() {
         return name;
     }

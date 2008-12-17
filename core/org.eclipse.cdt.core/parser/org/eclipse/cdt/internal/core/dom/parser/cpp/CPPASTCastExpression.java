@@ -30,6 +30,18 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
     	super(operator, operand);
 		setTypeId(typeId);
 	}
+    
+    @Override
+	public CPPASTCastExpression copy() {
+		CPPASTCastExpression copy = new CPPASTCastExpression();
+		copy.setOperator(getOperator());
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		IASTExpression operand = getOperand();
+		copy.setOperand(operand == null ? null : operand.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
 
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();

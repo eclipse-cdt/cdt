@@ -17,9 +17,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CPPASTReferenceOperator extends ASTNode implements
-        ICPPASTReferenceOperator {
+public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReferenceOperator {
     
+	public CPPASTReferenceOperator copy() {
+		CPPASTReferenceOperator copy = new CPPASTReferenceOperator();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     @Override
 	public boolean accept( ASTVisitor action ){
         return true;

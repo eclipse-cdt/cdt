@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * function name expression, x is the parameter expression.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFunctionCallExpression extends IASTExpression {
 
@@ -63,5 +64,10 @@ public interface IASTFunctionCallExpression extends IASTExpression {
 	 * @return <code>IASTExpression</code> representing the parameters
 	 */
 	public IASTExpression getParameterExpression();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTFunctionCallExpression copy();
 
 }

@@ -35,6 +35,15 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
 		setArrayExpression(arrayExpression);
 		setSubscriptExpression(subscriptExp);
 	}
+	
+	public CPPASTArraySubscriptExpression copy() {
+		CPPASTArraySubscriptExpression copy = new CPPASTArraySubscriptExpression();
+		copy.setArrayExpression(arrayExpression == null ? null : arrayExpression.copy());
+		copy.setSubscriptExpression(subscriptExp == null ? null : subscriptExp.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 
 	public IASTExpression getArrayExpression() {
         return arrayExpression;

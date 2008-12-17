@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the root class of expressions.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTExpression extends IASTNode {
 	/**
@@ -23,4 +24,8 @@ public interface IASTExpression extends IASTNode {
 	
 	public IType getExpressionType();
 	
+	/**
+	 * @since 5.1
+	 */
+	public IASTExpression copy();
 }

@@ -33,6 +33,11 @@ public class CASTArrayModifier extends ASTNode implements IASTArrayModifier, IAS
 		setConstantExpression(exp);
 	}
 
+	public CASTArrayModifier copy() {
+		CASTArrayModifier copy = new CASTArrayModifier(exp == null ? null : exp.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 	
     public IASTExpression getConstantExpression() {
         return exp;

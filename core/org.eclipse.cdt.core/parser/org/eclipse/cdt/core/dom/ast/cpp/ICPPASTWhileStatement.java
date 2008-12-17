@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * This inteface accommodates C++ allows for broader while loop syntax.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTWhileStatement extends IASTWhileStatement {
 
@@ -49,4 +50,9 @@ public interface ICPPASTWhileStatement extends IASTWhileStatement {
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTWhileStatement copy();
 }

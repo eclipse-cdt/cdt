@@ -17,8 +17,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CPPASTContinueStatement extends ASTNode implements
-        IASTContinueStatement {
+public class CPPASTContinueStatement extends ASTNode implements IASTContinueStatement {
 
     @Override
 	public boolean accept( ASTVisitor action ){
@@ -38,4 +37,10 @@ public class CPPASTContinueStatement extends ASTNode implements
 		}
         return true;
     }
+    
+    public CPPASTContinueStatement copy() {
+		CPPASTContinueStatement copy = new CPPASTContinueStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

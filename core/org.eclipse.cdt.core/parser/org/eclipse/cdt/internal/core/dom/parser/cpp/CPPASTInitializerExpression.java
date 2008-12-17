@@ -33,6 +33,12 @@ public class CPPASTInitializerExpression extends ASTNode implements
 		setExpression(exp);
 	}
 
+	public CPPASTInitializerExpression copy() {
+		CPPASTInitializerExpression copy = new CPPASTInitializerExpression(exp == null ? null : exp.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getExpression() {
         return exp;
     }

@@ -38,6 +38,15 @@ public class CASTConditionalExpression extends ASTNode implements
 		setPositiveResultExpression(positive);
 		setNegativeResultExpression(negative);
 	}
+	
+	public CASTConditionalExpression copy() {
+		CASTConditionalExpression copy = new CASTConditionalExpression();
+		copy.setLogicalConditionExpression(condition == null ? null : condition.copy());
+		copy.setPositiveResultExpression(positive == null ? null : positive.copy());
+		copy.setNegativeResultExpression(negative == null ? null : negative.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getLogicalConditionExpression() {
         return condition;

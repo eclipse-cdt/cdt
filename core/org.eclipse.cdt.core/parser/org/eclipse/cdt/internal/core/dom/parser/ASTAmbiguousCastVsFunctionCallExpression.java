@@ -46,6 +46,10 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
     	fFunctionCallExpression= functionCall;
     }
     
+    public IASTExpression copy() {
+		throw new UnsupportedOperationException();
+	}
+    
     public void addExpression(IASTExpression e) {
 		Assert.isLegal(false);
     }

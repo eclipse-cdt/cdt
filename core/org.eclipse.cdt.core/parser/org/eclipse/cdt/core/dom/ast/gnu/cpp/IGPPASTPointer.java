@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
  * g++ allows for restrict pointers.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGPPASTPointer extends IASTPointer {
 
@@ -33,4 +34,9 @@ public interface IGPPASTPointer extends IASTPointer {
 	 *            boolean
 	 */
 	public void setRestrict(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTPointer copy();
 }

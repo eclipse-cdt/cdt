@@ -95,4 +95,8 @@ public class ASTLiteralNode implements IASTNode {
 	public boolean isFrozen() {
 		return false;
 	}
+	
+	public IASTNode copy() {
+		throw new UnsupportedOperationException();
+	}
 }

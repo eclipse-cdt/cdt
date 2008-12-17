@@ -35,6 +35,14 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		setDeclSpecifier(declSpec);
 		setDeclarator(declarator);
 	}
+	
+	public CPPASTParameterDeclaration copy() {
+		CPPASTParameterDeclaration copy = new CPPASTParameterDeclaration();
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
+		copy.setDeclarator(declarator == null ? null : declarator.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;

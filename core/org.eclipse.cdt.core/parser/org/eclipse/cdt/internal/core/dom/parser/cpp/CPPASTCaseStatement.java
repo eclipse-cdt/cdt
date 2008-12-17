@@ -30,6 +30,12 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
 	public CPPASTCaseStatement(IASTExpression expression) {
 		setExpression(expression);
 	}
+	
+	public CPPASTCaseStatement copy() {
+		CPPASTCaseStatement copy = new CPPASTCaseStatement(expression == null ? null : expression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getExpression() {
         return expression;

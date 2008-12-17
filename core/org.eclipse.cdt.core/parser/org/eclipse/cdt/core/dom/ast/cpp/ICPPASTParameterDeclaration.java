@@ -14,8 +14,13 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter,
 		IASTParameterDeclaration {
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTParameterDeclaration copy();
 }

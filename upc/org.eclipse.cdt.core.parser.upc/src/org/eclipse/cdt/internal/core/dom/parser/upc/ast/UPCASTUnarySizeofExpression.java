@@ -22,6 +22,7 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 	
 	
 	public UPCASTUnarySizeofExpression() {
+		this(null);
 	}
 
 	public UPCASTUnarySizeofExpression(IASTExpression operand) {
@@ -31,6 +32,16 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 	public UPCASTUnarySizeofExpression(int upcSizeofOperator, IASTExpression operand) {
 		super(IASTUnaryExpression.op_sizeof, operand);
 		this.upcSizeofOperator = upcSizeofOperator;
+	}
+
+	@Override
+	public UPCASTUnarySizeofExpression copy() {
+		UPCASTUnarySizeofExpression copy = new UPCASTUnarySizeofExpression();
+		copy.setUPCSizeofOperator(upcSizeofOperator);
+		IASTExpression operand = getOperand();
+		copy.setOperand(operand == null ? null : operand.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 	
 	public int getUPCSizeofOperator() {

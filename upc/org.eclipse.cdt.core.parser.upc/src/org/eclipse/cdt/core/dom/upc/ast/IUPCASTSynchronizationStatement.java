@@ -37,4 +37,7 @@ public interface IUPCASTSynchronizationStatement extends IASTStatement {
 	public int getStatementKind();
 	
 	public void setStatementKind(int kind);
+	
+
+	public IUPCASTSynchronizationStatement copy();
 }

@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
  * G++ adds its own modifiers and types to the Simple Decl Specifier.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
-		ICPPASTSimpleDeclSpecifier {
+public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPASTSimpleDeclSpecifier {
 
 	/**
 	 * <code>t_typeof</code> represents a typeof() expression type.
@@ -92,5 +92,10 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getTypeofExpression();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTSimpleDeclSpecifier copy();
 
 }

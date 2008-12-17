@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * This interface represents a C++ using directive.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	/**
@@ -47,5 +48,10 @@ public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	 *            <code>IASTName</code>
 	 */
 	public void setQualifiedName(IASTName qualifiedName);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTUsingDirective copy();
 
 }

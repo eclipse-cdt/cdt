@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * y.z()[ t * t ]
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTArraySubscriptExpression extends IASTExpression {
 
@@ -63,4 +64,8 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 */
 	public void setSubscriptExpression(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTArraySubscriptExpression copy();
 }

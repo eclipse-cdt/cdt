@@ -31,6 +31,19 @@ public class CASTModifiedArrayModifier extends CASTArrayModifier implements ICAS
 		super(exp);
 	}
 
+	@Override
+	public CASTModifiedArrayModifier copy() {
+		IASTExpression exp = getConstantExpression();
+		CASTModifiedArrayModifier copy = new CASTModifiedArrayModifier(exp == null ? null : exp.copy());
+		copy.isVolatile = isVolatile;
+		copy.isRestrict = isRestrict;
+		copy.isStatic = isStatic;
+		copy.isConst = isConst;
+		copy.varSized = varSized;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public boolean isConst() {
         return isConst;
     }

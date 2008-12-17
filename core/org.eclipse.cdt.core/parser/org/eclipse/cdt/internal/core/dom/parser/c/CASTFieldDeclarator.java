@@ -31,6 +31,14 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 		setBitFieldSize(bitFieldSize);
 	}
 
+	@Override
+	public CASTFieldDeclarator copy() {
+		CASTFieldDeclarator copy = new CASTFieldDeclarator();
+		copyBaseDeclarator(copy);
+		copy.setBitFieldSize(bitFieldSize == null ? null : bitFieldSize.copy());
+		return copy;
+	}
+	
 	public IASTExpression getBitFieldSize() {
         return bitFieldSize;
     }

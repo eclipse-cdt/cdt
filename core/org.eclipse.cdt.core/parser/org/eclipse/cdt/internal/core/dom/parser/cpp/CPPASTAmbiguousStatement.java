@@ -26,6 +26,10 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
 			addStatement(s);
 	}
 
+    public IASTStatement copy() {
+    	throw new UnsupportedOperationException();
+    }
+    
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * Template declaration.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 
@@ -83,4 +84,9 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	 * @return <code>ICPPTemplateScope</code>
 	 */
 	public ICPPTemplateScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTemplateDeclaration copy();
 }

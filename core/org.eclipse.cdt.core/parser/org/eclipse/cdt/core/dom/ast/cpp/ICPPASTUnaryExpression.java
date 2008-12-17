@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTUnaryExpression extends IASTUnaryExpression {
 
@@ -32,4 +33,9 @@ public interface ICPPASTUnaryExpression extends IASTUnaryExpression {
 	 */
 	@Deprecated
 	public static final int op_last = IASTUnaryExpression.op_last;
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTUnaryExpression copy();
 }

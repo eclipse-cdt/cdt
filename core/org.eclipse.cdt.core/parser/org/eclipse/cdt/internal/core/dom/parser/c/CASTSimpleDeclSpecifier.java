@@ -28,6 +28,25 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     private boolean complex=false;
     private boolean imaginary=false;
 
+    public CASTSimpleDeclSpecifier copy() {
+		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy);
+		return copy;
+	}
+    
+    protected void copySimpleDeclSpec(CASTSimpleDeclSpecifier copy) {
+    	copyBaseDeclSpec(copy);
+    	copy.simpleType = simpleType;
+    	copy.isSigned = isSigned;
+    	copy.isUnsigned = isUnsigned;
+    	copy.isShort = isShort;
+    	copy.isLong = isLong;
+    	copy.longlong = longlong;
+    	copy.complex = complex;
+    	copy.imaginary = imaginary;
+    }
+    
+    
     public int getType() {
         return simpleType;
     }

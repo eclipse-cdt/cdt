@@ -97,4 +97,8 @@ public class CASTAmbiguousDeclarator extends CASTAmbiguity implements IASTAmbigu
         assertNotFrozen();
 		Assert.isLegal(false);
 	}
+
+	public IASTDeclarator copy() {
+		throw new UnsupportedOperationException();
+	}
 }

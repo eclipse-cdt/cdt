@@ -16,7 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * Base interface for all C-style designators.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTDesignator extends IASTNode {
 
+	/**
+	 * @since 5.1
+	 */
+	public ICASTDesignator copy();
 }

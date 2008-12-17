@@ -16,8 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTSimpleDeclSpecifier {
+public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTSimpleDeclSpecifier {
 
     private int type;
     private boolean isSigned;
@@ -25,7 +24,22 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     private boolean isShort;
     private boolean isLong;
 
-    /**
+    public CPPASTSimpleDeclSpecifier copy() {
+		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy);
+		return copy;
+	}
+    
+    protected void copySimpleDeclSpec(CPPASTSimpleDeclSpecifier other) {
+    	copyBaseDeclSpec(other);
+    	other.type = type;
+    	other.isSigned = isSigned;
+    	other.isUnsigned = isUnsigned;
+    	other.isShort = isShort;
+    	other.isLong = isLong;
+    }
+
+	/**
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier
      */
     public int getType() {

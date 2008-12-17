@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -30,6 +31,26 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 	public CPPASTFunctionWithTryBlock(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
 		super(declSpecifier, declarator, bodyStatement);
+	}
+	
+	@Override
+	public CPPASTFunctionWithTryBlock copy() {
+		IASTDeclSpecifier declSpecifier = getDeclSpecifier();
+	    IASTFunctionDeclarator declarator = getDeclarator();
+	    IASTStatement bodyStatement = getBody();
+		
+		CPPASTFunctionWithTryBlock copy = new CPPASTFunctionWithTryBlock();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		copy.setDeclarator(declarator == null ? null : declarator.copy());
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
+		
+		for(ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
+		for(ICPPASTCatchHandler handler : getCatchHandlers())
+			copy.addCatchHandler(handler == null ? null : handler.copy());
+		
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 
 	public void addCatchHandler(ICPPASTCatchHandler statement) {

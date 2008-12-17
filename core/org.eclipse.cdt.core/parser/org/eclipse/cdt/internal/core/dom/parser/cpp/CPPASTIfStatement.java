@@ -46,7 +46,18 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		setThenClause(thenClause);
 		setElseClause(elseClause);
 	}
+    
+    public CPPASTIfStatement copy() {
+		CPPASTIfStatement copy = new CPPASTIfStatement();
+		copy.setConditionDeclaration(condDecl == null ? null : condDecl.copy());
+		copy.setConditionExpression(condition == null ? null : condition.copy());
+		copy.setThenClause(thenClause == null ? null : thenClause.copy());
+		copy.setElseClause(elseClause == null ? null : elseClause.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
+    
 	public IASTExpression getConditionExpression() {
         return condition;
     }

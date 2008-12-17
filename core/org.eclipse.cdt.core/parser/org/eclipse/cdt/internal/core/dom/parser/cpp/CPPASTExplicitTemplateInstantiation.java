@@ -33,6 +33,13 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 		setDeclaration(declaration);
 	}
 
+	public CPPASTExplicitTemplateInstantiation copy() {
+		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }

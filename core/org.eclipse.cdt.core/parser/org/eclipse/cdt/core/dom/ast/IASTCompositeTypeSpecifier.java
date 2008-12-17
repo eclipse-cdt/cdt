@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * declarations).
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTNameOwner {
 
@@ -96,4 +97,9 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTName
 	 * 
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTCompositeTypeSpecifier copy();
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
  * C++ adds in additional cast-style expressions.
  * 
  * @author jcamelon
+ * @noimplement
  */
 public interface ICPPASTCastExpression extends IASTCastExpression {
 
@@ -43,4 +44,10 @@ public interface ICPPASTCastExpression extends IASTCastExpression {
 	 * <code>op_last</code> is for subinterfaces to extend.
 	 */
 	public static final int op_last = op_const_cast;
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTCastExpression copy();
 }

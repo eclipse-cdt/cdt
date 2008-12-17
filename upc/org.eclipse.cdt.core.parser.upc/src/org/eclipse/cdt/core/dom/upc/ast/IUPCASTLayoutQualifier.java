@@ -30,4 +30,6 @@ public interface IUPCASTLayoutQualifier {
 
 	public void setBlockSizeExpression(IASTExpression expr);
 	
+	
+	public IUPCASTLayoutQualifier copy();
 }

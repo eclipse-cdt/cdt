@@ -36,6 +36,12 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 		setName(name);
 	}
 
+	public CPPASTIdExpression copy() {
+		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return name;
     }

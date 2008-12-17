@@ -40,4 +40,10 @@ public class CASTBreakStatement extends ASTNode implements IASTBreakStatement {
         
         return true;
     }
+    
+    public CASTBreakStatement copy() {
+		CASTBreakStatement copy = new CASTBreakStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

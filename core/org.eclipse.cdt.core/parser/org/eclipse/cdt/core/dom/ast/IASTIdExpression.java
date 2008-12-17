@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is a name used in an expression.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 
@@ -37,4 +38,9 @@ public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 	 * @param name
 	 */
 	public void setName(IASTName name);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTIdExpression copy();
 }

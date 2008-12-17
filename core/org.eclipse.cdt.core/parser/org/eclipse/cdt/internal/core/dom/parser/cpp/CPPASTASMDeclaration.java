@@ -27,6 +27,13 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 		setAssembly(assembly);
 	}
 
+	public CPPASTASMDeclaration copy() {
+		CPPASTASMDeclaration copy = new CPPASTASMDeclaration();
+		copy.assembly = assembly.clone();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public String getAssembly() {
         if( assembly == null ) 
         	return ""; //$NON-NLS-1$

@@ -19,11 +19,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
  * C++-specific enumerator.
  */
 public class CPPASTEnumerator extends ASTEnumerator {
+	
     public CPPASTEnumerator() {
     	super();
 	}
 
 	public CPPASTEnumerator(IASTName name, IASTExpression value) {
 		super(name, value);
+	}
+	
+	public CPPASTEnumerator copy() {
+		CPPASTEnumerator copy = new CPPASTEnumerator();
+		copyAbstractEnumerator(copy);
+		return copy;
 	}
 }

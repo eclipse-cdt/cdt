@@ -30,6 +30,12 @@ public class CPPASTGotoStatement extends ASTNode implements IASTGotoStatement {
 		setName(name);
 	}
 
+	public CPPASTGotoStatement copy() {
+		CPPASTGotoStatement copy = new CPPASTGotoStatement(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return this.name;
     }

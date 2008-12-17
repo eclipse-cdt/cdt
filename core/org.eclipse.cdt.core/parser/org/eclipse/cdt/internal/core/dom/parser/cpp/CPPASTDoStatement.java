@@ -35,6 +35,14 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
 		setCondition(condition);
 	}
 
+	public CPPASTDoStatement copy() {
+		CPPASTDoStatement copy = new CPPASTDoStatement();
+		copy.setBody(body == null ? null : body.copy());
+		copy.setCondition(condition == null ? null : condition.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTStatement getBody() {
         return body;
     }

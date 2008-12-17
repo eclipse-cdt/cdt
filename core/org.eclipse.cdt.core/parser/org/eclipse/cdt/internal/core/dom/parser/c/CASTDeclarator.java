@@ -51,6 +51,22 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		setName(name);
 	}
 	
+	public CASTDeclarator copy() {
+		CASTDeclarator copy = new CASTDeclarator();
+		copyBaseDeclarator(copy);
+		return copy;
+	}
+	
+	protected void copyBaseDeclarator(CASTDeclarator copy) {
+		copy.setName(name == null ? null : name.copy());
+		copy.setInitializer(initializer == null ? null : initializer.copy());
+		copy.setNestedDeclarator(nestedDeclarator == null ? null : nestedDeclarator.copy());
+		for(IASTPointerOperator pointer : getPointerOperators())
+			copy.addPointerOperator(pointer == null ? null : pointer.copy());
+		copy.setOffsetAndLength(this);
+	}
+	
+	
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
         pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);

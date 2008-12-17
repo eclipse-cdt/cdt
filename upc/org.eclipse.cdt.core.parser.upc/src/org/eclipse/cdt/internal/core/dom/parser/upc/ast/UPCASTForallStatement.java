@@ -32,6 +32,15 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 		setAffinityExpression(affinity);
 	}
 
+	@Override
+	public UPCASTForallStatement copy() {
+		UPCASTForallStatement copy = new UPCASTForallStatement();
+		copyForStatement(copy);
+		copy.setAffinityExpression(affinity == null ? null : affinity.copy());
+		return copy;
+	}
+	
+	
 	public boolean isAffinityContinue() {
 		return affinityContinue;
 	}

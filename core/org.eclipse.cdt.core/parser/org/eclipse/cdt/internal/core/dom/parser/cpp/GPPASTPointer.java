@@ -19,6 +19,16 @@ public class GPPASTPointer extends CPPASTPointer implements IGPPASTPointer {
 
     private boolean isRestrict;
 
+    @Override
+	public GPPASTPointer copy() {
+		GPPASTPointer copy = new GPPASTPointer();
+		copy.setConst(isConst());
+		copy.setVolatile(isVolatile());
+		copy.setRestrict(isRestrict);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
     public boolean isRestrict() {
         return isRestrict;
     }

@@ -33,6 +33,13 @@ public class CPPASTDeclarationStatement extends ASTNode implements
 		setDeclaration(declaration);
 	}
 
+	public CPPASTDeclarationStatement copy() {
+		CPPASTDeclarationStatement copy = new CPPASTDeclarationStatement();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }

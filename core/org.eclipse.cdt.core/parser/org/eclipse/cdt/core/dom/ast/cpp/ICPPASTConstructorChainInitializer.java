@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  *     X();
  * };
  * X::X : a(0) {}  // a(0) is a constructor chain initializer.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTConstructorChainInitializer extends IASTInitializer, IASTNameOwner {
 	/**
@@ -73,4 +75,8 @@ public interface ICPPASTConstructorChainInitializer extends IASTInitializer, IAS
 	 */
 	public void setInitializerValue(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTConstructorChainInitializer copy();
 }

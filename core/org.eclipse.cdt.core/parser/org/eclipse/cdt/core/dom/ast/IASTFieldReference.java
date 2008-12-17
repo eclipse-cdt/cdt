@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * expression, def is the field name.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 
@@ -78,5 +79,10 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	 *            boolean
 	 */
 	public void setIsPointerDereference(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTFieldReference copy();
 
 }

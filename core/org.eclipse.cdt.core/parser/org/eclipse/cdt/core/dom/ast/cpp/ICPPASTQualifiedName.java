@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * This interface is a qualified name in C++.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 
@@ -69,4 +70,9 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * 
 	 */
 	public boolean isConversionOrOperator();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTQualifiedName copy();
 }

@@ -78,6 +78,10 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	void findNode(ASTNodeSpecification<?> nodeSpec) {
 		nodeSpec.visit(this);
 	}
+	
+	public IASTNode copy() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public IToken getLeadingSyntax() throws UnsupportedOperationException {

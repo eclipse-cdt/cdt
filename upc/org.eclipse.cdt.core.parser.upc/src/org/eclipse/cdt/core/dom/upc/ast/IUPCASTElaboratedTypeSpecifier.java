@@ -15,4 +15,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 public interface IUPCASTElaboratedTypeSpecifier extends IUPCASTDeclSpecifier,
 		ICASTElaboratedTypeSpecifier {
 
+
+	public IUPCASTElaboratedTypeSpecifier copy();
 }

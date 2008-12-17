@@ -36,6 +36,15 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 	public CASTArrayDeclarator(IASTName name) {
 		super(name);
 	}
+	
+	@Override
+	public CASTArrayDeclarator copy() {
+		CASTArrayDeclarator copy = new CASTArrayDeclarator();
+		copyBaseDeclarator(copy);
+		for(IASTArrayModifier modifier : getArrayModifiers())
+			copy.addArrayModifier(modifier == null ? null : modifier.copy());
+		return copy;
+	}
 
 	public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;

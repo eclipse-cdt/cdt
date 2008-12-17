@@ -14,6 +14,9 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 
+/**
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {
 	
 	/**
@@ -47,4 +50,9 @@ public interface IGCCASTSimpleDeclSpecifier extends ICASTSimpleDeclSpecifier {
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getTypeofExpression();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGCCASTSimpleDeclSpecifier copy();
 }

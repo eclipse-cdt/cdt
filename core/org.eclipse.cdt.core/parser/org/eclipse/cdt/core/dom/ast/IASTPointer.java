@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This represents the good ol' * pointer operator.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTPointer extends IASTPointerOperator {
 
@@ -47,5 +48,11 @@ public interface IASTPointer extends IASTPointerOperator {
 	 *            the value
 	 */
 	public void setVolatile(boolean value);
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTPointer copy();
 
 }

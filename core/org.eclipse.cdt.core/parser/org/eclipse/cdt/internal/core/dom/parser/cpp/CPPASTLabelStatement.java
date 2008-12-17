@@ -35,6 +35,14 @@ public class CPPASTLabelStatement extends ASTNode implements
 		setName(name);
 		setNestedStatement(nestedStatement);
 	}
+	
+	public CPPASTLabelStatement copy() {
+		CPPASTLabelStatement copy = new CPPASTLabelStatement();
+		copy.setName(name == null ? null : name.copy());
+		copy.setNestedStatement(nestedStatement == null ? null : nestedStatement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTName getName() {
         return name;

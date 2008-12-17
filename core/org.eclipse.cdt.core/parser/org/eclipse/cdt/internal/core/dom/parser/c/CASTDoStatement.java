@@ -36,6 +36,14 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 		setCondition(condition);
 	}
 
+	public CASTDoStatement copy() {
+		CASTDoStatement copy = new CASTDoStatement();
+		copy.setBody(body == null ? null : body.copy());
+		copy.setCondition(condition == null ? null : condition.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTStatement getBody() {
         return body;
     }

@@ -14,8 +14,13 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the root class of all declarations.
  * 
  * @author Doug Schaefer
+ * @noimplement
  */
 public interface IASTDeclaration extends IASTNode {
 	public static final IASTDeclaration[] EMPTY_DECLARATION_ARRAY = new IASTDeclaration[0];
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTDeclaration copy();
 }

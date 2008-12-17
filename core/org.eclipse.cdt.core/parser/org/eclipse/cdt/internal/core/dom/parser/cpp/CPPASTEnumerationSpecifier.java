@@ -33,6 +33,15 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		setName(name);
 	}
 	
+	public CPPASTEnumerationSpecifier copy() {
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(name == null ? null : name.copy());
+		for(IASTEnumerator enumerator : getEnumerators())
+			copy.addEnumerator(enumerator == null ? null : enumerator.copy());
+		copyBaseDeclSpec(copy);
+		return copy;
+	}
+	
+	
 	public boolean startValueComputation() {
 		if (valuesComputed)
 			return false;

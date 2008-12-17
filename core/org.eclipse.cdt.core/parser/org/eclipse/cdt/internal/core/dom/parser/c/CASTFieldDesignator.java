@@ -21,8 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CASTFieldDesignator extends ASTNode implements
-        ICASTFieldDesignator {
+public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator {
 
     private IASTName name;
 
@@ -32,6 +31,12 @@ public class CASTFieldDesignator extends ASTNode implements
 
 	public CASTFieldDesignator(IASTName name) {
 		setName(name);
+	}
+	
+	public CASTFieldDesignator copy() {
+		CASTFieldDesignator copy = new CASTFieldDesignator(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 
 	public IASTName getName() {

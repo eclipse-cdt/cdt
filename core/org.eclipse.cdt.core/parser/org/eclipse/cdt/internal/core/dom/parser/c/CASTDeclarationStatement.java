@@ -31,6 +31,14 @@ public class CASTDeclarationStatement extends ASTNode implements IASTDeclaration
 		setDeclaration(declaration);
 	}
 
+	
+	public CASTDeclarationStatement copy() {
+		CASTDeclarationStatement copy = new CASTDeclarationStatement();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }

@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * This interface represents an explict template instantiation.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
+ * 
  */
 public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 
@@ -42,4 +44,8 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 	 */
 	public void setDeclaration(IASTDeclaration declaration);
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTExplicitTemplateInstantiation copy();
 }

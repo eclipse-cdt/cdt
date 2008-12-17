@@ -43,6 +43,13 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		setName(name);
 	}
 
+	public CPPASTNamedTypeSpecifier copy() {
+		CPPASTNamedTypeSpecifier copy = new CPPASTNamedTypeSpecifier(name == null ? null : name.copy());
+		copyBaseDeclSpec(copy);
+		copy.typename = typename;
+		return copy;
+	}
+	
 	public boolean isTypename() {
         return typename;
     }

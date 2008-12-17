@@ -37,4 +37,9 @@ public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition {
 	 * Adds a member initializer to this function definition.
 	 */
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTFunctionDefinition copy();
 }

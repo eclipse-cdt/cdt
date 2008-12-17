@@ -95,4 +95,9 @@ public interface IASTName extends IASTNode, IName {
 	 * @since 5.1
 	 */
 	public IASTName getLastName();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTName copy();
 }

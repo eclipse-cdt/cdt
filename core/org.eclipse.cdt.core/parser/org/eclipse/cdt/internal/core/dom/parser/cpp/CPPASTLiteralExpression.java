@@ -34,6 +34,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		this.value = value;
 	}
 
+	public CPPASTLiteralExpression copy() {
+		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind, value == null ? null : value.clone());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getKind() {
         return kind;
     }

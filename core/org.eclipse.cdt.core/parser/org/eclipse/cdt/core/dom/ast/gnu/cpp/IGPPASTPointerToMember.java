@@ -16,8 +16,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
  * G++ Pointer 2 Members accept the restrict qualified as well.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IGPPASTPointerToMember extends IGPPASTPointer,
-		ICPPASTPointerToMember {
+public interface IGPPASTPointerToMember extends IGPPASTPointer, ICPPASTPointerToMember {
 
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTPointerToMember copy();
 }

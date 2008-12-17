@@ -33,6 +33,14 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		setMappingName(qualifiedName);
 	}
 
+	public CPPASTNamespaceAlias copy() {
+		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias();
+		copy.setAlias(alias == null ? null : alias.copy());
+		copy.setMappingName(qualifiedName == null ? null : qualifiedName.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getAlias() {
         return alias;
     }

@@ -33,6 +33,13 @@ public class CPPASTExpressionStatement extends ASTNode implements
 		setExpression(expression);
 	}
 
+	public CPPASTExpressionStatement copy() {
+		CPPASTExpressionStatement copy = new CPPASTExpressionStatement();
+		copy.setExpression(expression == null ? null : expression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getExpression() {
         return expression;
     }

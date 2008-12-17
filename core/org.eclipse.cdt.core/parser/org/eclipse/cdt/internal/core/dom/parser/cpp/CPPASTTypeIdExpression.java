@@ -33,6 +33,12 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		setTypeId(typeId);
 	}
 
+	public CPPASTTypeIdExpression copy() {
+		CPPASTTypeIdExpression copy = new CPPASTTypeIdExpression(op, typeId == null ? null : typeId.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getOperator() {
         return op;
     }

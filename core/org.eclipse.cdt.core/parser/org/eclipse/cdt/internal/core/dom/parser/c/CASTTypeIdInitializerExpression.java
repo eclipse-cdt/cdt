@@ -36,6 +36,14 @@ public class CASTTypeIdInitializerExpression extends ASTNode implements
 		setInitializer(i);
 	}
 
+	public CASTTypeIdInitializerExpression copy() {
+		CASTTypeIdInitializerExpression copy = new CASTTypeIdInitializerExpression();
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		copy.setInitializer(initializer == null ? null : initializer.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTTypeId getTypeId() {
         return typeId;
     }

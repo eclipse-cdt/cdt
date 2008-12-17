@@ -30,6 +30,17 @@ public class GPPASTExplicitTemplateInstantiation extends
 
 	private int mod;
 
+	
+	@Override
+	public GPPASTExplicitTemplateInstantiation copy() {
+		GPPASTExplicitTemplateInstantiation copy = new GPPASTExplicitTemplateInstantiation();
+		IASTDeclaration declaration = getDeclaration();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.mod = mod;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     public int getModifier() {
         return mod;
     }

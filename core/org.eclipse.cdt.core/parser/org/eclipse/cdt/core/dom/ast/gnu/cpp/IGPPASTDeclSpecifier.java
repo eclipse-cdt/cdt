@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * G++ allows for restrict to be a modifier for the decl spec.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {
 
@@ -34,4 +35,8 @@ public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {
 	 */
 	public void setRestrict(boolean value);
 
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTDeclSpecifier copy();
 }

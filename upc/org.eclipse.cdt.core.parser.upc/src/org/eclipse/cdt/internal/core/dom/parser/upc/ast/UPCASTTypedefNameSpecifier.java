@@ -17,9 +17,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypedefNameSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypedefNameSpecifier;
 
 @SuppressWarnings("restriction")
-public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
-		implements IUPCASTTypedefNameSpecifier {
-	
+public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier implements IUPCASTTypedefNameSpecifier {
 	
 	private int referenceType;
 	private int sharedQualifier;
@@ -28,8 +26,6 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 	
 	public UPCASTTypedefNameSpecifier() {
 	}
-	
-	
 
 	public UPCASTTypedefNameSpecifier(IASTName name) {
 		super(name);
@@ -40,6 +36,17 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 		setBlockSizeExpression(blockSizeExpression);
 	}
 
+	@Override
+	public UPCASTTypedefNameSpecifier copy() {
+		IASTName name = getName();
+		UPCASTTypedefNameSpecifier copy = new UPCASTTypedefNameSpecifier(name == null ? null : name.copy());
+		copyBaseDeclSpec(copy);
+		copy.referenceType = referenceType;
+		copy.sharedQualifier = sharedQualifier;
+		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy());
+		return copy;
+	}
+	
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

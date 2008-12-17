@@ -16,8 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
-public class CASTAmbiguousStatement extends CASTAmbiguity implements
-        IASTAmbiguousStatement {
+public class CASTAmbiguousStatement extends CASTAmbiguity implements IASTAmbiguousStatement {
 
     private IASTStatement [] stmts = new IASTStatement[2];
     private int stmtsPos=-1;
@@ -48,6 +47,11 @@ public class CASTAmbiguousStatement extends CASTAmbiguity implements
 	protected IASTNode[] getNodes() {
         return getStatements();
     }
+
+
+	public IASTStatement copy() {
+		throw new UnsupportedOperationException();
+	}
 
 
 }

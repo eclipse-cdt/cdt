@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is a function definition, i.e. it has a body.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFunctionDefinition extends IASTDeclaration {
 
@@ -98,4 +99,9 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * @return <code>IScope</code> representing function body.
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTFunctionDefinition copy();
 }

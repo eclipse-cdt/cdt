@@ -39,5 +39,10 @@ public interface ICPPASTFunctionWithTryBlock extends ICPPASTFunctionDefinition {
 	 * Returns an array of catch handlers.
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTFunctionWithTryBlock copy();
 
 }

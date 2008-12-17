@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTPointerOperator extends IASTNode {
 
@@ -20,4 +21,8 @@ public interface IASTPointerOperator extends IASTNode {
 	 */
 	public static final IASTPointerOperator[] EMPTY_ARRAY = new IASTPointerOperator[0];
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTPointerOperator copy();
 }

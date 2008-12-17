@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the declarator for an array.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTArrayDeclarator extends IASTDeclarator {
 
@@ -38,5 +39,10 @@ public interface IASTArrayDeclarator extends IASTDeclarator {
 	 *            <code>IASTArrayModifier</code> to be added
 	 */
 	public void addArrayModifier(IASTArrayModifier arrayModifier);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTArrayDeclarator copy();
 
 }

@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * class/struct/union names in C.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 
@@ -39,4 +40,8 @@ public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner
 	 */
 	public void setName(IASTName name);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTNamedTypeSpecifier copy();
 }

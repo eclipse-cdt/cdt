@@ -31,6 +31,16 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 		setBlockSizeExpression(blockSizeExpression);
 	}
 
+	@Override
+	public UPCASTSimpleDeclSpecifier copy() {
+		UPCASTSimpleDeclSpecifier copy = new UPCASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy);
+		copy.referenceType = referenceType;
+		copy.sharedQualifier = sharedQualifier;
+		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy());
+		return copy;
+	}
+	
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

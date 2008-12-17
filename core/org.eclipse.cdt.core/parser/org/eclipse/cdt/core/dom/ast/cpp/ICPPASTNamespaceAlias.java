@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * x; } namspace DEF = ABC;
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 
@@ -66,5 +67,11 @@ public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 	 *            <code>IASTName</code>
 	 */
 	public void setMappingName(IASTName qualifiedName);
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTNamespaceAlias copy();
 
 }

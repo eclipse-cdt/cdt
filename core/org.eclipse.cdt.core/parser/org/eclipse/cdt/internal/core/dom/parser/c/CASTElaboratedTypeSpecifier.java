@@ -43,6 +43,12 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 		setName(name);
 	}
 
+	public CASTElaboratedTypeSpecifier copy() {
+		CASTElaboratedTypeSpecifier copy = new CASTElaboratedTypeSpecifier(kind, name == null ? null : name.copy());
+		copyBaseDeclSpec(copy);
+		return copy;
+	}
+	
 	public int getKind() {
         return kind;
     }

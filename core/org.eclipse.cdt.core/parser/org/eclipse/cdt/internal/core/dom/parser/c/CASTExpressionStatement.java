@@ -34,6 +34,13 @@ public class CASTExpressionStatement extends ASTNode implements
 		setExpression(expression);
 	}
 
+	public CASTExpressionStatement copy() {
+		CASTExpressionStatement copy = new CASTExpressionStatement();
+		copy.setExpression(expression == null ? null : expression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getExpression() {
         return expression;
     }

@@ -38,6 +38,15 @@ public class CPPASTBinaryExpression extends ASTNode implements
 		setOperand2(operand2);
 	}
 
+	public CPPASTBinaryExpression copy() {
+		CPPASTBinaryExpression copy = new CPPASTBinaryExpression();
+		copy.op = op;
+		copy.setOperand1(operand1 == null ? null : operand1.copy());
+		copy.setOperand2(operand2 == null ? null : operand2.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getOperator() {
         return op;
     }

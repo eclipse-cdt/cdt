@@ -15,6 +15,12 @@ import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * Interface for problems in the ast tree.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTProblem extends IProblem, IASTNode {
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTProblem copy();
 }

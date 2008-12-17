@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author aniefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
 
@@ -28,4 +29,9 @@ public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
 	 */
 	public IBinding resolveBinding();
 
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTranslationUnit copy();
 }

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * This is the declarator for a K&R C Function.
  * 
  * @author dsteffle
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IASTNameOwner {
 
@@ -74,4 +75,9 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IAST
 	 * @param name <code>IASTName</code>
 	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTKnRFunctionDeclarator copy();
 }

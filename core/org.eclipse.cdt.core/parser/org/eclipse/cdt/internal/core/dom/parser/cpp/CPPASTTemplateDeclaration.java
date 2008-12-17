@@ -41,6 +41,16 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
 		setDeclaration(declaration);
 	}
 
+	public CPPASTTemplateDeclaration copy() {
+		CPPASTTemplateDeclaration copy = new CPPASTTemplateDeclaration();
+		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.exported = exported;
+		for(ICPPASTTemplateParameter param : getTemplateParameters()) 
+			copy.addTemplateParamter(param == null ? null : param.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public boolean isExported() {
         return exported;
     }

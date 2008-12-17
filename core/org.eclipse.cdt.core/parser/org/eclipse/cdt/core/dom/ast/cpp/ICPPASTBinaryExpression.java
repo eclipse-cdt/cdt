@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
  * C++ adds a few more binary expressions over C.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTBinaryExpression extends IASTBinaryExpression {
 
@@ -35,4 +36,9 @@ public interface ICPPASTBinaryExpression extends IASTBinaryExpression {
 	 */
 	@Deprecated
 	public static final int op_last = IASTBinaryExpression.op_last;
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTBinaryExpression copy();
 }

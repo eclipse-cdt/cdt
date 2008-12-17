@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * expressions for _alignOf() and typeof() along the lines of sizeof().
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 
@@ -37,4 +38,9 @@ public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 	 */
 	@Deprecated
 	public static final int op_last = IASTUnaryExpression.op_last;
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGNUASTUnaryExpression copy();
 }

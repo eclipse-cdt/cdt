@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Ye ol' do statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDoStatement extends IASTStatement {
 
@@ -61,5 +62,10 @@ public interface IASTDoStatement extends IASTStatement {
 	 *            an IASTExpression
 	 */
 	public void setCondition(IASTExpression condition);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTDoStatement copy();
 
 }

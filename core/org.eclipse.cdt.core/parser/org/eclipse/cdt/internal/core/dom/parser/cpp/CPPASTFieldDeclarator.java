@@ -29,12 +29,24 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
     
     public CPPASTFieldDeclarator() {
 	}
+    
+    public CPPASTFieldDeclarator(IASTName name) {
+		super(name);
+	}
 
 	public CPPASTFieldDeclarator(IASTName name, IASTExpression bitField) {
 		super(name);
 		setBitFieldSize(bitField);
 	}
 
+	@Override
+	public CPPASTFieldDeclarator copy() {
+		CPPASTFieldDeclarator copy = new CPPASTFieldDeclarator();
+		copyBaseDeclarator(copy);
+		copy.setBitFieldSize(bitField == null ? null : bitField.copy());
+		return copy;
+	}
+	 
 	public IASTExpression getBitFieldSize() {
         return bitField;
     }

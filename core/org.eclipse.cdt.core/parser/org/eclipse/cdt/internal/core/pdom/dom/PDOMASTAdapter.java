@@ -192,6 +192,10 @@ public class PDOMASTAdapter {
 		public boolean isFrozen() {
 			return fDelegate.isFrozen();
 		}
+		
+		public IASTName copy() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private static class AnonymousEnumeration implements IEnumeration {

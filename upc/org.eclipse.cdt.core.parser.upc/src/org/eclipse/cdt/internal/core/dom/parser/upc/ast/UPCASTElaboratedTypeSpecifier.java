@@ -36,6 +36,17 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 		setBlockSizeExpression(blockSizeExpression);
 	}
 
+	@Override
+	public UPCASTElaboratedTypeSpecifier copy() {
+		IASTName name = getName();
+		UPCASTElaboratedTypeSpecifier copy = new UPCASTElaboratedTypeSpecifier(getKind(), name == null ? null : name.copy());
+		copy.referenceType = referenceType;
+		copy.sharedQualifier = sharedQualifier;
+		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

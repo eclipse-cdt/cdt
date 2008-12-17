@@ -36,6 +36,14 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
 		setBody(body);
 	}
 
+	public CASTWhileStatement copy() {
+		CASTWhileStatement copy = new CASTWhileStatement();
+		copy.setCondition(condition == null ? null : condition.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getCondition() {
         return condition;
     }

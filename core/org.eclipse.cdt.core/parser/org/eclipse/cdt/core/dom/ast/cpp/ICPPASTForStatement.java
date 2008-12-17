@@ -14,10 +14,19 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 
+/**
+ * 
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ICPPASTForStatement extends IASTForStatement {
     
     public static final ASTNodeProperty CONDITION_DECLARATION = new ASTNodeProperty( "org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement"); //$NON-NLS-1$
     public void setConditionDeclaration( IASTDeclaration d );
     public IASTDeclaration getConditionDeclaration();
 
+    /**
+	 * @since 5.1
+	 */
+	public ICPPASTForStatement copy();
 }

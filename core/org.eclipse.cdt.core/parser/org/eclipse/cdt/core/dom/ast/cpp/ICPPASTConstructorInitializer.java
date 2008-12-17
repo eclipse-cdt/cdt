@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  * This is an initializer that is a call to the constructor for the declarator.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTConstructorInitializer extends IASTInitializer {
 
@@ -42,4 +43,8 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 	 */
 	public void setExpression(IASTExpression expression);
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTConstructorInitializer copy();
 }

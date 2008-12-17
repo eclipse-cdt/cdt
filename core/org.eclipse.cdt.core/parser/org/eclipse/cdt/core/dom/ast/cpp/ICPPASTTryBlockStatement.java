@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  *  }
  * 
  * @author jcamelon
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTryBlockStatement extends IASTStatement {
 
@@ -63,5 +63,10 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 	 * @return <code>ICPPASTCatchHandler []</code>
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTryBlockStatement copy();
 
 }

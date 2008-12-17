@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * statement's as expressions.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 
@@ -45,4 +46,8 @@ public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 	 */
 	public void setCompoundStatement(IASTCompoundStatement statement);
 
+	/**
+	 * @since 5.1
+	 */
+	public IGNUASTCompoundStatementExpression copy();
 }

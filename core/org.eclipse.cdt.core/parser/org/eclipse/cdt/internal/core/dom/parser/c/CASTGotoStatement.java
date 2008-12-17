@@ -30,6 +30,12 @@ public class CASTGotoStatement extends ASTNode implements IASTGotoStatement {
 		setName(name);
 	}
 
+	public CASTGotoStatement copy() {
+		CASTGotoStatement copy = new CASTGotoStatement(name == null ? null : name.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return this.name;
     }

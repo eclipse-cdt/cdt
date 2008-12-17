@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression {
 
@@ -25,4 +26,10 @@ public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression {
 	 */
 	@Deprecated
 	public static final int op_last = IASTTypeIdExpression.op_last;
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTypeIdExpression copy();
 }

@@ -32,6 +32,13 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		setCompoundStatement(statement);
 	}
 
+	public CPPASTCompoundStatementExpression copy() {
+		CPPASTCompoundStatementExpression copy = new CPPASTCompoundStatementExpression();
+		copy.setCompoundStatement(statement == null ? null : statement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }

@@ -25,6 +25,14 @@ public class CPPASTProblem extends ASTProblem {
     }
 
     @Override
+	public CPPASTProblem copy() {
+    	char[] arg = getArgument();
+    	CPPASTProblem problem = new CPPASTProblem(getID(), arg == null ? null : arg.clone(), isError());
+		problem.setOffsetAndLength(this);
+		return problem;
+	}
+    
+    @Override
 	public boolean accept( ASTVisitor action ){
     	if( action.shouldVisitProblems ){
 		    switch( action.visit( this ) ){

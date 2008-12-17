@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 
@@ -30,6 +32,21 @@ public class CPPASTProblemTypeId extends CPPASTTypeId implements IASTProblemType
 		setProblem(problem);
 	}
 
+	@Override
+	public CPPASTProblemTypeId copy() {
+		IASTProblem problem = getProblem();
+		IASTDeclSpecifier declSpec = getDeclSpecifier();
+		IASTDeclarator absDecl = getAbstractDeclarator();
+		
+		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
+		copy.setProblem(problem == null ? null : problem.copy());
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
+		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy());
+		
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTProblem getProblem() {
         return problem;
     }

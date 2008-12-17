@@ -49,6 +49,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public CPPASTTranslationUnit() {
 	}
 	
+	public CPPASTTranslationUnit copy() {
+		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
+		copyAbstractTU(copy);
+		return copy;
+	}
+	
     public CPPNamespaceScope getScope() {
         if (fScope == null) {
             fScope = new CPPNamespaceScope(this);

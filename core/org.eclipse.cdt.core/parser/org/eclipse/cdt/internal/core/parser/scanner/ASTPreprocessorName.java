@@ -74,6 +74,10 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public IASTName getLastName() {
 		return this;
 	}
+	@Override
+	public IASTName copy() {
+		throw new UnsupportedOperationException();
+	}
 }
 
 class ASTPreprocessorDefinition extends ASTPreprocessorName {

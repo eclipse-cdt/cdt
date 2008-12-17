@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Represents a label statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 
@@ -41,5 +42,10 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
      * @param s
      */
     public void setNestedStatement( IASTStatement s );
+    
+    /**
+	 * @since 5.1
+	 */
+	public IASTLabelStatement copy();
 
 }

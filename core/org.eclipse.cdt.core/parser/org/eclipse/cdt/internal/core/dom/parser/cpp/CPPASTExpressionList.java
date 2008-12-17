@@ -26,6 +26,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTExpressionList extends ASTNode implements
         IASTExpressionList, IASTAmbiguityParent {
 
+	public CPPASTExpressionList copy() {
+		CPPASTExpressionList copy = new CPPASTExpressionList();
+		for(IASTExpression expr : getExpressions())
+			copy.addExpression(expr == null ? null : expr.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression [] getExpressions() {
         if( expressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
         return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, expressions );

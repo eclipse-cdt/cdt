@@ -17,8 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 /**
  * @author jcamelon
  */
-public class CPPASTPointerToMember extends CPPASTPointer implements
-        ICPPASTPointerToMember {
+public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPointerToMember {
 
     private IASTName n;
 
@@ -29,6 +28,15 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
 		setName(n);
 	}
 
+	@Override
+	public CPPASTPointerToMember copy() {
+		CPPASTPointerToMember copy = new CPPASTPointerToMember(n == null ? null : n.copy());
+		copy.setConst(isConst());
+		copy.setVolatile(isVolatile());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void setName(IASTName name) {
         assertNotFrozen();
         n = name;

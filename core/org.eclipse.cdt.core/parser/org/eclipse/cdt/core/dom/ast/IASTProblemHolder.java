@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * holder.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTProblemHolder {
 	/**
@@ -37,4 +38,5 @@ public interface IASTProblemHolder {
 	 *            <code>IASTProblem</code>
 	 */
 	public void setProblem(IASTProblem p);
+	
 }

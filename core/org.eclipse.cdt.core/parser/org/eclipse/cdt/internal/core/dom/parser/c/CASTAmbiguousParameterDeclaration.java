@@ -71,4 +71,9 @@ public class CASTAmbiguousParameterDeclaration extends CASTAmbiguity implements 
         assertNotFrozen();
 		Assert.isLegal(false);
 	}
+
+	public IASTParameterDeclaration copy() {
+		throw new UnsupportedOperationException();
+	}
+	
 }

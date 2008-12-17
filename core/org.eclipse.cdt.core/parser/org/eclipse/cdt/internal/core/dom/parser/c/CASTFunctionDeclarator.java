@@ -34,6 +34,18 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 		super(name);
 	}
 
+	@Override
+	public CASTFunctionDeclarator copy() {
+		CASTFunctionDeclarator copy = new CASTFunctionDeclarator();
+		copyBaseDeclarator(copy);
+		copy.varArgs = varArgs;
+		
+		for(IASTParameterDeclaration param : getParameters())
+			copy.addParameterDeclaration(param == null ? null : param.copy());
+		
+		return copy;
+	}
+	
 	public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
         parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );

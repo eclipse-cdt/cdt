@@ -50,6 +50,12 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         name = EMPTY_CHAR_ARRAY;
     }
 
+    public CASTName copy() {
+		CASTName copy = new CASTName(name == null ? null : name.clone());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
     public IBinding resolveBinding() {
         if (binding == null) {
        		CVisitor.createBinding(this);

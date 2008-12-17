@@ -14,5 +14,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 
 public interface IUPCASTTypedefNameSpecifier extends IUPCASTDeclSpecifier,
 		ICASTTypedefNameSpecifier {
+	
+
+	public IUPCASTTypedefNameSpecifier copy();
 
 }

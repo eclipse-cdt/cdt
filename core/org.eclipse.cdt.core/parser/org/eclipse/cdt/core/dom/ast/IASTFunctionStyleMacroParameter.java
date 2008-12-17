@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * is not an IASTName, as there are not any bindings for
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFunctionStyleMacroParameter extends IASTNode {
 

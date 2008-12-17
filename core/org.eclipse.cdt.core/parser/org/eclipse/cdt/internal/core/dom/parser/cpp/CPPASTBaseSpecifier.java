@@ -39,6 +39,10 @@ public class CPPASTBaseSpecifier extends ASTNode implements
     
     public CPPASTBaseSpecifier() {
 	}
+    
+    public CPPASTBaseSpecifier(IASTName name) {
+		setName(name);
+	}
 
 	public CPPASTBaseSpecifier(IASTName name, int visibility, boolean isVirtual) {
 		this.isVirtual = isVirtual;
@@ -46,6 +50,14 @@ public class CPPASTBaseSpecifier extends ASTNode implements
 		setName(name);
 	}
 
+	public CPPASTBaseSpecifier copy() {
+		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(name == null ? null : name.copy());
+		copy.isVirtual = isVirtual;
+		copy.visibility = visibility;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public boolean isVirtual() {
         return isVirtual;
     }

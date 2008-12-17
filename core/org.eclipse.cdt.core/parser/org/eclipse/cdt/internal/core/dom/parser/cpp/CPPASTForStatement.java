@@ -53,6 +53,17 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     	setBody(body);
 	}
 
+    public CPPASTForStatement copy() {
+		CPPASTForStatement copy = new CPPASTForStatement();
+		copy.setInitializerStatement(init == null ? null : init.copy());
+		copy.setConditionDeclaration(condDeclaration == null ? null : condDeclaration.copy());
+		copy.setConditionExpression(condition == null ? null : condition.copy());
+		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
 	public IASTExpression getConditionExpression() {
         return condition;
     }

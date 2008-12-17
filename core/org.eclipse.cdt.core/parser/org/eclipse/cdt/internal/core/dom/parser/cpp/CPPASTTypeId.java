@@ -32,6 +32,14 @@ public class CPPASTTypeId extends ASTNode implements IASTTypeId {
 		setDeclSpecifier(declSpec);
 		setAbstractDeclarator(absDecl);
 	}
+	
+	public CPPASTTypeId copy() {
+		CPPASTTypeId copy = new CPPASTTypeId();
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
+		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;

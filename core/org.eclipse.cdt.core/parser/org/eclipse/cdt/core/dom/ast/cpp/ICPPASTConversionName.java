@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * This interface represents a C++ conversion member function.
  *  
  * @author dsteffle
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTConversionName extends IASTName {
 	public static final ASTNodeProperty TYPE_ID=new ASTNodeProperty(
@@ -37,4 +38,9 @@ public interface ICPPASTConversionName extends IASTName {
 	 * @param typeId
 	 */
 	public void setTypeId(IASTTypeId typeId);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTConversionName copy();
 }

@@ -29,6 +29,14 @@ public class UPCASTSynchronizationStatement extends ASTNode implements IUPCASTSy
 		setBarrierExpression(barrierExpression);
 		this.statmentKind = statmentKind;
 	}
+	
+	public UPCASTSynchronizationStatement copy() {
+		UPCASTSynchronizationStatement copy = new UPCASTSynchronizationStatement();
+		copy.statmentKind = statmentKind;
+		copy.setBarrierExpression(barrierExpression == null ? null : barrierExpression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getBarrierExpression() {
 		return barrierExpression;

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -70,6 +71,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.tests.ASTComparer;
 import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -141,6 +143,8 @@ public class AST2BaseTest extends BaseTestCase {
         	parser.setSkipTrivialExpressionsInAggregateInitializers(true);
         
         IASTTranslationUnit tu = parser.parse();
+        assertTrue(tu.isFrozen());
+        validateCopy(tu);
 
         if (parser.encounteredError() && expectNoProblems)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
@@ -260,6 +264,14 @@ public class AST2BaseTest extends BaseTestCase {
         return s.getExpression();
     }
 
+    protected <T extends IASTNode> T validateCopy(T tu) {
+		IASTNode copy = tu.copy();
+		assertFalse(copy.isFrozen());
+		ASTComparer.assertCopy(tu, copy);
+		return (T) copy;
+	}
+	
+    
     static protected class CNameCollector extends CASTVisitor {
         {
             shouldVisitNames = true;

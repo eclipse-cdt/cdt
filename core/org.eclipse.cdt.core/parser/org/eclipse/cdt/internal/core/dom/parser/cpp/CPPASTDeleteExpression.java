@@ -20,14 +20,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * @author jcamelon
  */
-public class CPPASTDeleteExpression extends ASTNode implements
-        ICPPASTDeleteExpression {
+public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression {
 
     private IASTExpression operand;
     private boolean isGlobal;
     private boolean isVectored;
 
-    
     
     public CPPASTDeleteExpression() {
 	}
@@ -36,7 +34,18 @@ public class CPPASTDeleteExpression extends ASTNode implements
 		setOperand(operand);
 	}
 	
-
+	public CPPASTDeleteExpression(CPPASTDeleteExpression from) {
+		setOperand(from.operand);
+	}
+	
+	public CPPASTDeleteExpression copy() {
+		CPPASTDeleteExpression copy = new CPPASTDeleteExpression(operand == null ? null : operand.copy());
+		copy.isGlobal = isGlobal;
+		copy.isVectored = isVectored;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getOperand() {
         return operand;
     }

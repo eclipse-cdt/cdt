@@ -30,6 +30,12 @@ public class CASTProblemDeclaration extends CASTProblemOwner implements
 		super(problem);
 	}
 
+	public CASTProblemDeclaration copy() {
+		CASTProblemDeclaration copy = new CASTProblemDeclaration();
+		copyBaseProblem(copy);
+		return copy;
+	}
+	
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarations ){

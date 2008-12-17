@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * C Expression of the format type-id { initializer }
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
+ * 
  */
 public interface ICASTTypeIdInitializerExpression extends IASTExpression {
 
@@ -66,5 +68,10 @@ public interface ICASTTypeIdInitializerExpression extends IASTExpression {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void setInitializer(IASTInitializer initializer);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTTypeIdInitializerExpression copy();
 
 }

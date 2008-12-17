@@ -18,8 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 /**
  * @author jcamelon
  */
-public class CPPASTProblemDeclaration extends CPPASTProblemOwner implements
-        IASTProblemDeclaration {
+public class CPPASTProblemDeclaration extends CPPASTProblemOwner implements IASTProblemDeclaration {
 
     public CPPASTProblemDeclaration() {
 		super();
@@ -29,6 +28,13 @@ public class CPPASTProblemDeclaration extends CPPASTProblemOwner implements
 		super(problem);
 	}
 
+	public CPPASTProblemDeclaration copy() {
+		CPPASTProblemDeclaration copy = new CPPASTProblemDeclaration();
+		copyBaseProblem(copy);
+		return copy;
+	}
+	
+	
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclarations ){

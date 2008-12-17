@@ -39,6 +39,12 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		setName(name);
 	}
 
+	public CPPASTElaboratedTypeSpecifier copy() {
+		CPPASTElaboratedTypeSpecifier copy = new CPPASTElaboratedTypeSpecifier(kind, name == null ? null : name.copy());
+		copyBaseDeclSpec(copy);
+		return copy;
+	}
+	
 	public int getKind() {
         return kind;
     }

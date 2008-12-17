@@ -49,6 +49,12 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         this.isError= isError;
 	}
 
+	public ASTProblem copy() {
+		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
+		problem.setOffsetAndLength(this);
+		return problem;
+	}
+	
 	public int getID() {
         return id;
     }
@@ -93,6 +99,10 @@ public class ASTProblem extends ASTNode implements IASTProblem {
         return arg == null ? new String[0] : new String[] {new String(arg)};
     }
 
+    public char[] getArgument() {
+    	return arg;
+    }
+    
 
     protected static final Map<Integer, String> errorMessages;
     static {

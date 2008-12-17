@@ -43,6 +43,20 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     	setBody(body);
 	}
 
+	public CASTForStatement copy() {
+		CASTForStatement copy = new CASTForStatement();
+		copyForStatement(copy);
+		return copy;
+	}
+	
+	protected void copyForStatement(CASTForStatement copy) {
+		copy.setInitializerStatement(init == null ? null : init.copy());
+		copy.setConditionExpression(condition == null ? null : condition.copy());
+		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+	}
+	
 	public IASTExpression getConditionExpression() {
         return condition;
     }

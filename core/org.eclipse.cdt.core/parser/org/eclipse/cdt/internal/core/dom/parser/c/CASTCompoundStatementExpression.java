@@ -31,6 +31,13 @@ public class CASTCompoundStatementExpression extends ASTNode implements
 	public CASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);
 	}
+	
+	public CASTCompoundStatementExpression copy() {
+		CASTCompoundStatementExpression copy = new CASTCompoundStatementExpression();
+		copy.setCompoundStatement(statement == null ? null : statement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTCompoundStatement getCompoundStatement() {
         return statement;

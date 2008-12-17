@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * This interface represents a new expression.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNewExpression extends IASTExpression {
 
@@ -126,5 +127,11 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	 */
 	@Deprecated
 	public void addNewTypeIdArrayExpression(IASTExpression expression);
+	
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTNewExpression copy();
 
 }

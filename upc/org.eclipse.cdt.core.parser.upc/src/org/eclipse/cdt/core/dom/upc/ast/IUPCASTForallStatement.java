@@ -44,4 +44,7 @@ public interface IUPCASTForallStatement extends IASTForStatement {
 	public IASTStatement getBody();
 
 	public void setBody(IASTStatement statement);
+	
+
+	public IUPCASTForallStatement copy();
 }

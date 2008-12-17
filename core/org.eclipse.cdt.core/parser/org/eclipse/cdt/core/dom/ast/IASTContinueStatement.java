@@ -14,7 +14,12 @@ package org.eclipse.cdt.core.dom.ast;
  * This is the continue clause in a loop.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTContinueStatement extends IASTStatement {
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTContinueStatement copy();
 }

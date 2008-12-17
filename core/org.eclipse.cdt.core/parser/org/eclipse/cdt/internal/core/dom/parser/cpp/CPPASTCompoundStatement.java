@@ -29,6 +29,14 @@ public class CPPASTCompoundStatement extends ASTNode implements
     private IASTStatement [] statements = new IASTStatement[2];
     private ICPPScope scope = null;
 
+    
+    public CPPASTCompoundStatement copy() {
+		CPPASTCompoundStatement copy = new CPPASTCompoundStatement();
+		for(IASTStatement statement : getStatements())
+			copy.addStatement(statement == null ? null : statement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
     public IASTStatement[] getStatements() {
         if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;

@@ -30,6 +30,11 @@ abstract class CPPASTProblemOwner extends ASTNode implements IASTProblemHolder {
 	public CPPASTProblemOwner(IASTProblem problem) {
 		setProblem(problem);
 	}
+	
+	protected void copyBaseProblem(CPPASTProblemOwner copy) {
+		copy.setProblem(problem == null ? null : problem.copy());
+		copy.setOffsetAndLength(this);
+	}
 
 	public IASTProblem getProblem() {
         return problem;

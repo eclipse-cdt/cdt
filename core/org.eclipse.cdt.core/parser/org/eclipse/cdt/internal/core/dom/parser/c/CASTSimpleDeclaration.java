@@ -32,6 +32,17 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 		setDeclSpecifier(declSpecifier);
 	}
 
+	public CASTSimpleDeclaration copy() {
+		CASTSimpleDeclaration copy = new CASTSimpleDeclaration();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		
+		for(IASTDeclarator declarator : getDeclarators())
+			copy.addDeclarator(declarator == null ? null : declarator.copy());
+		
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }

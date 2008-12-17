@@ -42,6 +42,14 @@ public class ContainerNode extends ASTNode {
 		}
 	}
 	
+	public ContainerNode copy() {
+		ContainerNode copy = new ContainerNode();
+		for(IASTNode node : getNodes())
+			copy.addNode(node == null ? null : node.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void addNode(IASTNode node) {
 		nodes.add(node);
 		if(node.getParent() == null) {

@@ -35,6 +35,14 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
 		setName(name);
 		setNestedStatement(nestedStatement);
 	}
+	
+	public CASTLabelStatement copy() {
+		CASTLabelStatement copy = new CASTLabelStatement();
+		copy.setName(name == null ? null : name.copy());
+		copy.setNestedStatement(nestedStatement == null ? null : nestedStatement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTName getName() {
         return name;

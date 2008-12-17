@@ -27,6 +27,14 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         IASTAmbiguityParent {
 
+	public CASTExpressionList copy() {
+		CASTExpressionList copy = new CASTExpressionList();
+		for(IASTExpression expr : getExpressions())
+			copy.addExpression(expr == null ? null : expr.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     public IASTExpression[] getExpressions() {
         if (expressions == null)
             return IASTExpression.EMPTY_EXPRESSION_ARRAY;

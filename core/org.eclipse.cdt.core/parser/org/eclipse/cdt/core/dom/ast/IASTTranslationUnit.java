@@ -292,4 +292,16 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * @since 5.1
 	 */
 	public void freeze();
+	
+	
+	/**
+	 * Returns a copy of the AST, however the ILocationResolver 
+	 * and the preprocessor nodes are not copied.
+	 * 
+	 * @see IASTNode#copy()
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.1
+	 */
+	public IASTTranslationUnit copy();
 }

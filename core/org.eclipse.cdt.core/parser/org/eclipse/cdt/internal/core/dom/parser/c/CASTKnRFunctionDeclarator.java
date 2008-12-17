@@ -38,6 +38,31 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		setParameterDeclarations(parameterDeclarations);
 	}
 
+	@Override
+	public CASTKnRFunctionDeclarator copy() {
+		CASTKnRFunctionDeclarator copy = new CASTKnRFunctionDeclarator();
+		copyBaseDeclarator(copy);
+		
+		copy.parameterNames = new IASTName[parameterNames.length];
+		for(int i = 0; i < parameterNames.length; i++) {
+			if(parameterNames[i] != null) {
+				copy.parameterNames[i] = parameterNames[i].copy();
+				copy.parameterNames[i].setParent(copy);
+				copy.parameterNames[i].setPropertyInParent(PARAMETER_NAME);
+			}
+		}
+		
+		copy.parameterDeclarations = new IASTDeclaration[parameterDeclarations.length];
+		for(int i = 0; i < parameterDeclarations.length; i++) {
+			if(parameterDeclarations[i] != null) {
+				copy.parameterDeclarations[i] = parameterDeclarations[i].copy();
+				copy.parameterDeclarations[i].setParent(copy);
+				copy.parameterDeclarations[i].setPropertyInParent(FUNCTION_PARAMETER);
+			}
+		}
+		
+		return copy;
+	}
 
 	public void setParameterNames(IASTName[] names) {
         assertNotFrozen();

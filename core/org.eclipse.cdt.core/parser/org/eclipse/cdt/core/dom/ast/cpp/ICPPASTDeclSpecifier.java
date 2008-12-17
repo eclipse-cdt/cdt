@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * C++ adds additional modifiers and types for decl specifier sequence.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 
@@ -75,5 +76,10 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 	 *            boolean
 	 */
 	public void setExplicit(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTDeclSpecifier copy();
 
 }

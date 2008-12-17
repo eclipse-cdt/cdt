@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * This interface represents a using declaration.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner {
 
@@ -57,4 +58,8 @@ public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner 
 	 */
 	public void setName(IASTName name);
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTUsingDeclaration copy();
 }

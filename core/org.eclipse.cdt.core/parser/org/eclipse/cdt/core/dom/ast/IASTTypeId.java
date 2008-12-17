@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTTypeId extends IASTNode {
 
@@ -58,4 +59,9 @@ public interface IASTTypeId extends IASTNode {
 	 * @param abstractDeclarator <code>IASTDeclarator</code>
 	 */
 	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTTypeId copy();
 }

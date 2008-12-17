@@ -17,8 +17,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CPPASTBreakStatement extends ASTNode implements
-        IASTBreakStatement {
+public class CPPASTBreakStatement extends ASTNode implements IASTBreakStatement {
 
     @Override
 	public boolean accept( ASTVisitor action ){
@@ -40,4 +39,9 @@ public class CPPASTBreakStatement extends ASTNode implements
         return true;
     }
 
+    public CPPASTBreakStatement copy() {
+		CPPASTBreakStatement copy = new CPPASTBreakStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

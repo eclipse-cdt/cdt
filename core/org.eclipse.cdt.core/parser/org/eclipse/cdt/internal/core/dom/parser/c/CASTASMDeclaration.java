@@ -29,6 +29,13 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 		setAssembly(assembly);
 	}
 
+	public CASTASMDeclaration copy() {
+		CASTASMDeclaration copy = new CASTASMDeclaration();
+		copy.assembly = assembly == null ? null : assembly.clone();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public String getAssembly() {
         if( assembly == null ) return ""; //$NON-NLS-1$
         return new String( assembly );
@@ -36,7 +43,7 @@ public class CASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 
     public void setAssembly(String assembly) {
         assertNotFrozen();
-        this.assembly = assembly.toCharArray();
+        this.assembly = assembly == null ? null : assembly.toCharArray();
     }
 
     @Override

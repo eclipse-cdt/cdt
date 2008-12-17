@@ -36,6 +36,15 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
 		setName(name);
 		setDefaultType(typeId);
 	}
+	
+	public CPPASTSimpleTypeTemplateParameter copy() {
+		CPPASTSimpleTypeTemplateParameter copy = new CPPASTSimpleTypeTemplateParameter();
+		copy.type = type;
+		copy.setName(name == null ? null : name.copy());
+		copy.setDefaultType(typeId == null ? null : typeId.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public int getParameterType() {
         return type;

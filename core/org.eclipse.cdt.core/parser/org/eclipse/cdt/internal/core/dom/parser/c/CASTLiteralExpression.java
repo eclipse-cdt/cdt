@@ -33,6 +33,12 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		this.kind = kind;
 		this.value = value;
 	}
+	
+	public CASTLiteralExpression copy() {
+		CASTLiteralExpression copy = new CASTLiteralExpression(kind, value == null ? null : value.clone());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public int getKind() {
         return kind;

@@ -20,8 +20,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CASTTypeIdExpression extends ASTNode implements
-        IASTTypeIdExpression {
+public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpression {
 
     private int op;
     private IASTTypeId typeId;
@@ -32,6 +31,12 @@ public class CASTTypeIdExpression extends ASTNode implements
 	public CASTTypeIdExpression(int op, IASTTypeId typeId) {
 		this.op = op;
 		setTypeId(typeId);
+	}
+	
+	public CASTTypeIdExpression copy() {
+		CASTTypeIdExpression copy = new CASTTypeIdExpression(op, typeId == null ? null : typeId.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 
 	public int getOperator() {

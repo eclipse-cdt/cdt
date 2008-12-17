@@ -35,6 +35,12 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		setName(name);
 		setValue(value);
 	}
+	
+	protected void copyAbstractEnumerator(ASTEnumerator copy) {
+		copy.setName(name == null ? null : name.copy());
+		copy.setValue(value == null ? null : value.copy());
+		copy.setOffsetAndLength(this);
+	}
 
 	public void setName(IASTName name) {
 		assertNotFrozen();

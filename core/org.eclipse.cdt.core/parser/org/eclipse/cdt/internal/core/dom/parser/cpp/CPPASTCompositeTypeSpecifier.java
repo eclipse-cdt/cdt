@@ -40,6 +40,16 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		setName(n);
 	}
 
+	public CPPASTCompositeTypeSpecifier copy() {
+		CPPASTCompositeTypeSpecifier copy = new CPPASTCompositeTypeSpecifier(k, n == null ? null : n.copy());
+		copyBaseDeclSpec(copy);
+		for(IASTDeclaration member : getMembers())
+			copy.addMemberDeclaration(member == null ? null : member.copy());
+		for(ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
+			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy());
+		return copy;
+	}
+	
 	@Override
 	public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$

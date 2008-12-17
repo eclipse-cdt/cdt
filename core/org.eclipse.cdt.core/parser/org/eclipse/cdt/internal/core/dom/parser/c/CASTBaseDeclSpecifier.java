@@ -25,6 +25,7 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDecl
     protected boolean isRestrict;
     protected boolean isInline;
 
+    
 	public boolean isRestrict() {
         return isRestrict;
     }
@@ -68,5 +69,14 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDecl
     public void setInline(boolean value) {
         assertNotFrozen();
         this.isInline = value;
+    }
+    
+    protected void copyBaseDeclSpec(CASTBaseDeclSpecifier copy) {
+    	copy.storageClass = storageClass;
+    	copy.isConst = isConst;
+    	copy.isVolatile = isVolatile;
+    	copy.isRestrict = isRestrict;
+    	copy.isInline = isInline;
+    	copy.setOffsetAndLength(this);
     }
 }

@@ -35,6 +35,16 @@ public class CPPASTConversionName extends CPPASTName implements ICPPASTConversio
 		super(name);
 		setTypeId(typeId);
 	}
+	
+	@Override
+	public CPPASTConversionName copy() {
+		char[] name = toCharArray();
+		CPPASTConversionName copy = new CPPASTConversionName(name == null ? null : name.clone());
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 
 	public IASTTypeId getTypeId() {
 		return typeId;

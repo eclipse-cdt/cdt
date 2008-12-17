@@ -24,10 +24,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTParameterDeclaration extends ASTNode implements IASTParameterDeclaration, IASTAmbiguityParent {
+	
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator declarator;
 
-    
     public CASTParameterDeclaration() {
 	}
 
@@ -36,6 +36,14 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		setDeclarator(declarator);
 	}
 
+	public CASTParameterDeclaration copy() {
+		CASTParameterDeclaration copy = new CASTParameterDeclaration();
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
+		copy.setDeclarator(declarator == null ? null : declarator.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
     }

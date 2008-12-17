@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousBinaryVsCastExpression;
 
 public class CASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousBinaryVsCastExpression {
@@ -19,4 +20,8 @@ public class CASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousBinaryVsCas
     public CASTAmbiguousBinaryVsCastExpression(IASTBinaryExpression binaryExpr, IASTCastExpression castExpr) {
     	super(binaryExpr, castExpr);
 	}
+    
+    public IASTExpression copy() {
+    	throw new UnsupportedOperationException();
+    }
 }

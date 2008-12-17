@@ -51,6 +51,25 @@ public class CPPASTNewExpression extends ASTNode implements
 		setNewInitializer(initializer);
 		setTypeId(typeId);
 	}
+	
+	public CPPASTNewExpression copy() {
+		CPPASTNewExpression copy = new CPPASTNewExpression();
+		copy.setIsGlobal(global);
+		copy.setIsNewTypeId(isNewTypeId);
+		copy.setNewPlacement(placement == null ? null : placement.copy());
+		copy.setNewInitializer(initializer == null ? null : initializer.copy());
+		copy.setTypeId(typeId == null ? null : typeId.copy());
+		
+		if(arrayExpressions != null) {
+			copy.arrayExpressions = new IASTExpression[arrayExpressions.length];
+			for(int i = 0; i < arrayExpressions.length; i++) {
+				copy.arrayExpressions[i] = arrayExpressions[i] == null ? null : arrayExpressions[i].copy();
+			}
+		}
+		
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public boolean isGlobal() {
         return global;

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * Base interface for all template parameters.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateParameter extends IASTNode {
 	/**
@@ -23,4 +24,8 @@ public interface ICPPASTTemplateParameter extends IASTNode {
 	 */
 	public static final ICPPASTTemplateParameter[] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
 
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTemplateParameter copy();
 }

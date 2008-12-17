@@ -36,6 +36,12 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
         return exp;
     }
 
+	public CPPASTArrayModifier copy() {
+		CPPASTArrayModifier copy = new CPPASTArrayModifier(exp == null ? null : exp.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
     public void setConstantExpression(IASTExpression expression) {
         assertNotFrozen();
         exp = expression;

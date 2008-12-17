@@ -15,4 +15,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 public interface IUPCASTCompositeTypeSpecifier extends 
 	IUPCASTDeclSpecifier, ICASTCompositeTypeSpecifier {
 
+
+	public IUPCASTCompositeTypeSpecifier copy();
 }

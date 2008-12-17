@@ -32,6 +32,12 @@ public class CASTReturnStatement extends ASTNode implements
 	public CASTReturnStatement(IASTExpression retValue) {
 		setReturnValue(retValue);
 	}
+	
+	public CASTReturnStatement copy() {
+		CASTReturnStatement copy = new CASTReturnStatement(retValue == null ? null : retValue.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getReturnValue() {
         return retValue;

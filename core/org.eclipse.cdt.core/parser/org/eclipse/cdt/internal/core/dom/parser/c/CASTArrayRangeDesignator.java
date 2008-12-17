@@ -36,6 +36,14 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 		setRangeCeiling(ceiling);
 	}
 
+	public CASTArrayRangeDesignator copy() {
+		CASTArrayRangeDesignator copy = new CASTArrayRangeDesignator();
+		copy.setRangeFloor(floor == null ? null : floor.copy());
+		copy.setRangeCeiling(ceiling == null ? null : ceiling.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTExpression getRangeFloor() {
         return this.floor;
     }

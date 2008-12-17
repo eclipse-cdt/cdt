@@ -14,6 +14,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
+/**
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *
+ */
 public interface ICPPASTIfStatement extends IASTIfStatement {
 
     public IASTDeclaration getConditionDeclaration();
@@ -25,4 +30,9 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTIfStatement copy();
 }

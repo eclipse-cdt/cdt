@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
  * C-specific pointer. (includes restrict modifier).
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTPointer extends IASTPointer {
 
@@ -32,5 +33,10 @@ public interface ICASTPointer extends IASTPointer {
 	 * @param value
 	 */
 	void setRestrict(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICASTPointer copy();
 
 }

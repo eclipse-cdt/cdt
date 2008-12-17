@@ -44,6 +44,15 @@ public class CPPASTWhileStatement extends ASTNode implements
 		setBody(body);
 	}
 
+    public CPPASTWhileStatement copy() {
+		CPPASTWhileStatement copy = new CPPASTWhileStatement();
+		copy.setConditionDeclaration(condition2 == null ? null : condition2.copy());
+		copy.setCondition(condition == null ? null : condition.copy());
+		copy.setBody(body == null ? null : body.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
 	public IASTExpression getCondition() {
         return condition;
     }

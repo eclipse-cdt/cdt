@@ -33,9 +33,21 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
     
     public GPPASTSimpleDeclSpecifier() {
 	}
-
+    
 	public GPPASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
 		setTypeofExpression(typeofExpression);
+	}
+	
+	@Override
+	public GPPASTSimpleDeclSpecifier copy() {
+		GPPASTSimpleDeclSpecifier copy = new GPPASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy);
+		copy.setTypeofExpression(typeOfExpression == null ? null : typeOfExpression.copy());
+		copy.longLong = longLong;
+		copy.restrict = restrict;
+		copy.complex = complex;
+		copy.imaginary = imaginary;
+		return copy;
 	}
 
 	public boolean isLongLong() {

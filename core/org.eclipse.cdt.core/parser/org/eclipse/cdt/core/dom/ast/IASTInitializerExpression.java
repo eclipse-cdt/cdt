@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is an initializer that is simply an expression.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTInitializerExpression extends IASTInitializer {
 
@@ -38,4 +39,9 @@ public interface IASTInitializerExpression extends IASTInitializer {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setExpression(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTInitializerExpression copy();
 }

@@ -95,5 +95,10 @@ public interface IASTLiteralExpression extends IASTExpression {
 	 * @deprecated, use {@link #setValue(char[])}, instead. 
 	 */
 	public void setValue(String value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTLiteralExpression copy();
 
 }

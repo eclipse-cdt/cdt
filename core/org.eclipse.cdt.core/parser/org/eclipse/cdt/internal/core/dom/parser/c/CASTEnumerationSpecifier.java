@@ -35,6 +35,20 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		setName(name);
 	}
 
+	public CASTEnumerationSpecifier copy() {
+		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
+		copyEnumerationSpecifier(copy);
+		return copy;
+	}
+	
+	protected void copyEnumerationSpecifier(CASTEnumerationSpecifier copy) {
+		copyBaseDeclSpec(copy);
+		copy.setName(name == null ? null : name.copy());
+		for(IASTEnumerator enumerator : getEnumerators())
+			copy.addEnumerator(enumerator == null ? null : enumerator.copy());
+	}
+	
+	
 	public boolean startValueComputation() {
 		if (valuesComputed)
 			return false;

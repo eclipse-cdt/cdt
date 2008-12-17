@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This interface represents a binary expression.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTBinaryExpression extends IASTExpression {
 
@@ -258,4 +259,9 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 *            <code>IASTExpression</code> value
 	 */
 	public void setOperand2(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTBinaryExpression copy();
 }

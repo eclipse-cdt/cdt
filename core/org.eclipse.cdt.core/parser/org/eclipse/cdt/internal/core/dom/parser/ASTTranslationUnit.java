@@ -60,7 +60,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
 	private INodeFactory fNodeFactory;
-
+	
+	
     @Override
 	public final IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -361,5 +362,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				return PROCESS_CONTINUE;
 			}
 		});
+	}
+	
+	
+	protected void copyAbstractTU(ASTTranslationUnit copy) {
+		copy.setIndex(fIndex);
+		copy.setIsHeaderUnit(fIsHeader);
+		copy.setASTNodeFactory(fNodeFactory);
+		copy.setLocationResolver(fLocationResolver);
+		
+		for(IASTDeclaration declaration : getDeclarations())
+			copy.addDeclaration(declaration == null ? null : declaration.copy());
+		
+		copy.setOffsetAndLength(this);
 	}
 }

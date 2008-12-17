@@ -37,6 +37,21 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		setName(name);
 	}
     
+	public CASTCompositeTypeSpecifier copy() {
+		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
+		copyCompositeTypeSpecifier(copy);
+		return copy;
+	}
+	
+	protected void copyCompositeTypeSpecifier(CASTCompositeTypeSpecifier copy) {
+		copyBaseDeclSpec(copy);
+		copy.setKey(key);
+		copy.setName(name == null ? null : name.copy());
+		for(IASTDeclaration member : getMembers())
+			copy.addMemberDeclaration(member == null ? null : member.copy());	
+	}
+	
+	
     public int getKey() {
         return key;
     }

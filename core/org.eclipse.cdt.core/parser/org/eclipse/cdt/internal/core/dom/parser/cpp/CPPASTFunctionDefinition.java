@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -48,6 +49,25 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		setDeclSpecifier(declSpecifier);
 		setDeclarator(declarator);
 		setBody(bodyStatement);
+	}
+	
+	public CPPASTFunctionDefinition copy() {
+		CPPASTFunctionDefinition copy = new CPPASTFunctionDefinition();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		
+		if(declarator != null) {
+			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
+			outer = outer.copy();
+			copy.setDeclarator((IASTFunctionDeclarator)CVisitor.findTypeRelevantDeclarator(outer));
+		}	
+		
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
+		
+		for(ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
+		
+		copy.setOffsetAndLength(this);
+		return copy;
 	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {

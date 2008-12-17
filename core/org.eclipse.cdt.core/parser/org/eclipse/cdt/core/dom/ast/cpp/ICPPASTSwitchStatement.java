@@ -15,6 +15,10 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
+/**
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 
     /**
@@ -46,4 +50,8 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 	 */
 	public IScope getScope();
     
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTSwitchStatement copy();
 }

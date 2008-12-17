@@ -14,7 +14,12 @@ package org.eclipse.cdt.core.dom.ast;
  * This is a declarator for a function.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFunctionDeclarator extends IASTDeclarator {
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTFunctionDeclarator copy();
 }

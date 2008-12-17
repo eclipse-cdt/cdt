@@ -39,6 +39,10 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAm
 		}
 	}
 
+    public IASTDeclarator copy() {
+		throw new UnsupportedOperationException();
+	}
+    
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {

@@ -32,6 +32,12 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 	public CASTCaseStatement(IASTExpression expression) {
 		setExpression(expression);
 	}
+	
+	public CASTCaseStatement copy() {
+		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public IASTExpression getExpression() {
         return expression;

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
  * G++ allows for instantiations to be qualified w/modifiers for scoping.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGPPASTExplicitTemplateInstantiation extends
 		ICPPASTExplicitTemplateInstantiation {
@@ -49,4 +50,9 @@ public interface IGPPASTExplicitTemplateInstantiation extends
 	 *            (int)
 	 */
 	public void setModifier(int value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IGPPASTExplicitTemplateInstantiation copy();
 }

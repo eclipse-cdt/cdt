@@ -21,8 +21,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
-        IASTArrayDeclarator {
+public class CPPASTArrayDeclarator extends CPPASTDeclarator implements IASTArrayDeclarator {
     
     private IASTArrayModifier [] arrayMods = null;
     private int arrayModsPos=-1;
@@ -40,6 +39,16 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     public CPPASTArrayDeclarator() {
 	}
 
+    @Override
+	public CPPASTArrayDeclarator copy() {
+    	CPPASTArrayDeclarator copy = new CPPASTArrayDeclarator();
+		copyBaseDeclarator(copy);
+		for(IASTArrayModifier modifier : getArrayModifiers())
+			copy.addArrayModifier(modifier == null ? null : modifier.copy());
+		return copy;
+	}
+    
+    
 	public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
         arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter( IASTArrayModifier.class, arrayMods, arrayModsPos );

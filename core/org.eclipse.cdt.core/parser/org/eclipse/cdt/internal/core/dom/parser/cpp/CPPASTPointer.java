@@ -23,6 +23,15 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 
     private boolean isVolatile;
 
+    
+    public CPPASTPointer copy() {
+		CPPASTPointer copy = new CPPASTPointer();
+		copy.isConst = isConst;
+		copy.isVolatile = isVolatile;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+    
     public boolean isConst() {
         return isConst;
     }

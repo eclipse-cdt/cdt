@@ -29,6 +29,12 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 	public UPCASTKeywordExpression(int keywordKind) {
 		this.keywordKind = keywordKind;
 	}
+	
+	public UPCASTKeywordExpression copy() {
+		UPCASTKeywordExpression copy = new UPCASTKeywordExpression(keywordKind);
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public int getKeywordKind() {
 		return keywordKind;

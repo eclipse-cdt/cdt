@@ -55,4 +55,7 @@ public interface IUPCASTDeclSpecifier extends ICASTDeclSpecifier {
 	public IASTExpression getBlockSizeExpression();
 
 	public void setBlockSizeExpression(IASTExpression expr);
+	
+	
+	public IUPCASTDeclSpecifier copy();
 }

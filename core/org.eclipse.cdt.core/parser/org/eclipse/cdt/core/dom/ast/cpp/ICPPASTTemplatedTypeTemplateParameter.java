@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * This is a templated template parameter.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplatedTypeTemplateParameter extends
 		ICPPASTTemplateParameter, IASTNameOwner {
@@ -85,4 +86,9 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends
 	 *            <code>IASTExpression</code>
 	 */
 	public void setDefaultValue(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTTemplatedTypeTemplateParameter copy();
 }

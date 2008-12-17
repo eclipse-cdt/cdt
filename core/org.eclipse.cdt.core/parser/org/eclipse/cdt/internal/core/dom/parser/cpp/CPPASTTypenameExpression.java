@@ -44,6 +44,16 @@ public class CPPASTTypenameExpression extends ASTNode implements
 		this.isTemplate = isTemplate;
 	}
 
+	public CPPASTTypenameExpression copy() {
+		CPPASTTypenameExpression copy = new CPPASTTypenameExpression();
+		copy.setName(name == null ? null : name.copy());
+		copy.setInitialValue(init == null ? null : init.copy());
+		copy.isTemplate = isTemplate;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
+	
 	public void setIsTemplate(boolean templateTokenConsumed) {
         assertNotFrozen();
         isTemplate = templateTokenConsumed;

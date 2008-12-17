@@ -32,6 +32,15 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 		setDeclSpecifier(declSpecifier);
 	}
 
+	public CPPASTSimpleDeclaration copy() {
+		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		for(IASTDeclarator declarator : getDeclarators())
+			copy.addDeclarator(declarator == null ? null : declarator.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }

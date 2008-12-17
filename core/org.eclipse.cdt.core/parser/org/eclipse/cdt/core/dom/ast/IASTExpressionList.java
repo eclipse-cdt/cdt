@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Expression List (Comma separated list of expressions).
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTExpressionList extends IASTExpression {
 
@@ -39,4 +40,9 @@ public interface IASTExpressionList extends IASTExpression {
 	 *            <code>IASTExpression</code> value to be added.
 	 */
 	public void addExpression(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTExpressionList copy();
 }

@@ -36,6 +36,12 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 		setName(name);
 	}
 
+	public CASTTypedefNameSpecifier copy() {
+		CASTTypedefNameSpecifier copy = new CASTTypedefNameSpecifier(name == null ? null : name.copy());
+		copyBaseDeclSpec(copy);
+		return copy;
+	}
+	
 	public IASTName getName() {
         return name;
     }

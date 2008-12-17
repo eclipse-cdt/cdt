@@ -20,7 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguity;
 
-
+/**
+ * TODO delete this class and use the one from the core instead
+ * 
+ * @author Mike Kucera
+ *
+ */
 @SuppressWarnings("restriction")
 public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDeclarator {
 
@@ -87,4 +92,10 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTDe
 	public int getRoleForName(IASTName n) {
 		return getDefaultDeclarator().getRoleForName(n);
 	}
+
+	public IASTDeclarator copy() {
+		throw new UnsupportedOperationException();
+	}
+	
+	
 }

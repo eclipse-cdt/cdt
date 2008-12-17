@@ -15,4 +15,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 public interface IUPCASTSimpleDeclSpecifier extends IUPCASTDeclSpecifier,
 		ICASTSimpleDeclSpecifier {
 
+
+	public IUPCASTSimpleDeclSpecifier copy();
 }

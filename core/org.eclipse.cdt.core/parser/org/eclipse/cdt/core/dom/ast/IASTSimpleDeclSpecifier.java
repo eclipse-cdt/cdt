@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This represents a decl specifier for a built-in type.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 
@@ -129,5 +130,10 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 *            boolean
 	 */
 	public void setShort(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTSimpleDeclSpecifier copy();
 
 }

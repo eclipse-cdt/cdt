@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @see ICPPASTFunctionWithTryBlock
  * @see ICPPASTTryBlockStatement
  * 
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noimplement
  */
 public interface ICPPASTCatchHandler extends IASTStatement {
 
@@ -73,4 +73,9 @@ public interface ICPPASTCatchHandler extends IASTStatement {
 	 * @since 5.1
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTCatchHandler copy();
 }

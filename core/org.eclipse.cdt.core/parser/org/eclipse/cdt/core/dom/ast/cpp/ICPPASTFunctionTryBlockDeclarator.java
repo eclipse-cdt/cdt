@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
  * @deprecated, use {@link ICPPASTFunctionWithTryBlock}, instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 @Deprecated
 public interface ICPPASTFunctionTryBlockDeclarator extends
@@ -41,4 +42,9 @@ public interface ICPPASTFunctionTryBlockDeclarator extends
 	 * @return <code>ICPPASTCatchHandler</code>
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
+	
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTFunctionTryBlockDeclarator copy();
 }

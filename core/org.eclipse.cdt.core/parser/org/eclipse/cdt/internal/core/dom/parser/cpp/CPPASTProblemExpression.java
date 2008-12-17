@@ -19,8 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * @author jcamelon
  */
-public class CPPASTProblemExpression extends CPPASTProblemOwner implements
-        IASTProblemExpression {
+public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression {
 
     public CPPASTProblemExpression() {
 		super();
@@ -30,6 +29,12 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements
 		super(problem);
 	}
 
+	public CPPASTProblemExpression copy() {
+		CPPASTProblemExpression copy = new CPPASTProblemExpression();
+		copyBaseProblem(copy);
+		return copy;
+	}
+	
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){

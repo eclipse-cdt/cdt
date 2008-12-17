@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPASTUnaryExpression extends ASTNode implements
         ICPPASTUnaryExpression, IASTAmbiguityParent {
 
-    private int operator;
+    private int op;
     private IASTExpression operand;
 
     
@@ -33,17 +33,23 @@ public class CPPASTUnaryExpression extends ASTNode implements
 	}
 
 	public CPPASTUnaryExpression(int operator, IASTExpression operand) {
-		this.operator = operator;
+		this.op = operator;
 		setOperand(operand);
 	}
 
+	public CPPASTUnaryExpression copy() {
+		CPPASTUnaryExpression copy = new CPPASTUnaryExpression(op, operand == null ? null : operand.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getOperator() {
-        return operator;
+        return op;
     }
 
     public void setOperator(int value) {
         assertNotFrozen();
-        this.operator = value;
+        this.op = value;
     }
 
     public IASTExpression getOperand() {

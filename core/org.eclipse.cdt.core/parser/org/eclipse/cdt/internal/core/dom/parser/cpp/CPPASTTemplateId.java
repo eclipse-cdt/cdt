@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
     private IASTNode[] templateArguments = null;
+
     public CPPASTTemplateId() {
 	}
 
@@ -44,6 +45,14 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		setTemplateName(templateName);
 	}
 
+	public CPPASTTemplateId copy() {
+		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ? null : templateName.copy());
+		for(IASTNode arg : getTemplateArguments())
+			copy.internalAddTemplateArgument(arg == null ? null : arg.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getTemplateName() {
         return templateName;
     }
@@ -57,32 +66,26 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 			name.setPropertyInParent(TEMPLATE_NAME);
 		}
     }
+    
+    private void internalAddTemplateArgument(IASTNode node) {
+		assertNotFrozen();
+	    templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, node);
+	    if (node != null) {
+	    	node.setParent(this);
+	    	node.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
+ 		}
+    }
 
     public void addTemplateArgument(IASTTypeId typeId) {
-        assertNotFrozen();
-        templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, typeId);
-        if (typeId != null) {
-			typeId.setParent(this);
-			typeId.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
-		}
+    	internalAddTemplateArgument(typeId);
     }
 
     public void addTemplateArgument(IASTExpression expression) {
-        assertNotFrozen();
-        templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, expression);
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
-		}
+    	internalAddTemplateArgument(expression);
     }
     
     public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
-        assertNotFrozen();
-    	templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, ata);
-    	if (ata != null) {
-    		ata.setParent(this);
-    		ata.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
-    	}
+    	internalAddTemplateArgument(ata);
     }
 
     public IASTNode[] getTemplateArguments() {

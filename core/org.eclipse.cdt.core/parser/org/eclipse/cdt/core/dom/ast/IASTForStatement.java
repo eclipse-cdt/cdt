@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * declaration but not both.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTForStatement extends IASTStatement {
     
@@ -111,4 +112,9 @@ public interface IASTForStatement extends IASTStatement {
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTForStatement copy();
 }

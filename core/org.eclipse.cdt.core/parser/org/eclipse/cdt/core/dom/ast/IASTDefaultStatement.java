@@ -17,7 +17,12 @@ package org.eclipse.cdt.core.dom.ast;
  * one statement following this clause.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDefaultStatement extends IASTStatement {
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTDefaultStatement copy();
 }

@@ -37,4 +37,10 @@ public class CPPASTNullStatement extends ASTNode implements IASTNullStatement {
 		}
         return true;
     }
+    
+    public CPPASTNullStatement copy() {
+		CPPASTNullStatement copy = new CPPASTNullStatement();
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 }

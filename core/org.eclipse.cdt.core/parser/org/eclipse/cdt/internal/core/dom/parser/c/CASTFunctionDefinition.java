@@ -45,6 +45,21 @@ public class CASTFunctionDefinition extends ASTNode implements
     	setBody(bodyStatement);
 	}
 
+	public CASTFunctionDefinition copy() {
+		CASTFunctionDefinition copy = new CASTFunctionDefinition();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		
+		if(declarator != null) {
+			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
+			outer = outer.copy();
+			copy.setDeclarator((IASTFunctionDeclarator)CVisitor.findTypeRelevantDeclarator(outer));
+		}	
+		
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }

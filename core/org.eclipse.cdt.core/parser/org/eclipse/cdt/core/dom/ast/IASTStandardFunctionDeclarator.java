@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * This is a declarator for a non K&R C function.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 
@@ -54,4 +55,9 @@ public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 	 *            boolean
 	 */
 	public void setVarArgs(boolean value);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTStandardFunctionDeclarator copy();
 }

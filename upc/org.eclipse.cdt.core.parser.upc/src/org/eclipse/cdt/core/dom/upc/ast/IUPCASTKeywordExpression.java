@@ -25,4 +25,6 @@ public interface IUPCASTKeywordExpression extends IASTExpression {
 	
 	public void setKeywordKind(int kind);
 	
+
+	public IUPCASTKeywordExpression copy();
 }

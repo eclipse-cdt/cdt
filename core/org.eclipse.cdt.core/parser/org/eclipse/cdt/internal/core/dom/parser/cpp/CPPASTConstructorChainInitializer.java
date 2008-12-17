@@ -37,6 +37,14 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		setInitializerValue(initializerValue);
 	}
 
+	public CPPASTConstructorChainInitializer copy() {
+		CPPASTConstructorChainInitializer copy = new CPPASTConstructorChainInitializer();
+		copy.setMemberInitializerId(name == null ? null : name.copy());
+		copy.setInitializerValue(value == null ? null : value.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public IASTName getMemberInitializerId() {
         return name;
     }

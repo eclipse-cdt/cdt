@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Conditional Expression of the format X ? Y : Z
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTConditionalExpression extends IASTExpression {
 
@@ -86,5 +87,10 @@ public interface IASTConditionalExpression extends IASTExpression {
 	 *            <code>IASTExpression</code>
 	 */
 	public void setNegativeResultExpression(IASTExpression expression);
+	
+	/**
+	 * @since 5.1
+	 */
+	public IASTConditionalExpression copy();
 
 }

@@ -37,6 +37,15 @@ public class CASTBinaryExpression extends ASTNode implements
 		setOperand1(operand1);
 		setOperand2(operand2);
 	}
+	
+	public CASTBinaryExpression copy() {
+		CASTBinaryExpression copy = new CASTBinaryExpression();
+		copy.op = op;
+		copy.setOperand1(operand1 == null ? null : operand1.copy());
+		copy.setOperand2(operand2 == null ? null : operand2.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
 
 	public int getOperator() {
         return op;

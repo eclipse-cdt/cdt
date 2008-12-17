@@ -37,6 +37,12 @@ public class CASTUnaryExpression extends ASTNode implements
 		setOperand(operand);
 	}
 
+	public CASTUnaryExpression copy() {
+		CASTUnaryExpression copy = new CASTUnaryExpression(operator, operand == null ? null : operand.copy());
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public int getOperator() {
         return operator;
     }

@@ -40,6 +40,13 @@ public class CPPASTUsingDeclaration extends ASTNode implements
 		setName(name);	
 	}
 
+	public CPPASTUsingDeclaration copy() {
+		CPPASTUsingDeclaration copy = new CPPASTUsingDeclaration(name == null ? null : name.copy());
+		copy.typeName = typeName;
+		copy.setOffsetAndLength(this);
+		return copy;
+	}
+	
 	public void setIsTypename(boolean value) {
         assertNotFrozen();
         this.typeName = value;

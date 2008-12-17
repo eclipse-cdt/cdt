@@ -15,8 +15,12 @@ package org.eclipse.cdt.core.dom.ast;
  * expression.
  * 
  * @author jcamelon
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTProblemExpression extends IASTExpression,
-		IASTProblemHolder {
+public interface IASTProblemExpression extends IASTExpression, IASTProblemHolder {
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTProblemExpression copy();
 }

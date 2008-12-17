@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * Ye ol' while statement.
  * 
  * @author Doug Schaefer
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTWhileStatement extends IASTStatement {
 
@@ -58,4 +59,8 @@ public interface IASTWhileStatement extends IASTStatement {
 	 */
 	public void setBody(IASTStatement body);
 
+	/**
+	 * @since 5.1
+	 */
+	public IASTWhileStatement copy();
 }

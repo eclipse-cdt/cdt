@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
@@ -20,16 +23,27 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 
        private final ImplementMethodRefactoring refactoring;
+       private Map<MethodToImplementConfig, ParameterNamesInputPage>pagesMap = new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
 
 	public ImplementMethodRefactoringWizard(ImplementMethodRefactoring refactoring) {
     	   super(refactoring, WIZARD_BASED_USER_INTERFACE);
     	   this.refactoring = refactoring;
        }
 
-       @Override
-       protected void addUserInputPages() {
-    	   if(refactoring.getParameterHandler().needsAdditionalArgumentNames()) {
-    		   addPage(new ParameterNamesInputPage(refactoring.getParameterHandler()));
-    	   }
-       }
+	@Override
+	protected void addUserInputPages() {
+		addPage(new ImplementMethodInputPage(refactoring.getRefactoringData(), this));
+		ImplementMethodData data = refactoring.getRefactoringData();
+		for (MethodToImplementConfig config : data.getMethodDeclarations()) {
+			if(config.getParaHandler().needsAdditionalArgumentNames()) {
+				ParameterNamesInputPage page = new ParameterNamesInputPage(config, this);
+				pagesMap.put(config, page);
+				addPage(page);
+			}
+		}
+	}
+	
+	public ParameterNamesInputPage getPageForConfig(MethodToImplementConfig config) {
+		return pagesMap.get(config);
+	}
 }

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +23,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -53,20 +57,18 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * Main class of the ImplementMethodRefactoring (Source generator).
  * Checks conditions, finds insert location and generates the ImplementationNode.
  * 
- * @author Mirko Stocker, Lukas Felber
+ * @author Mirko Stocker, Lukas Felber, Emanuel Graf
  * 
  */
 public class ImplementMethodRefactoring extends CRefactoring {
 
-	private IASTSimpleDeclaration methodDeclaration;
 	private InsertLocation insertLocation;
-	private ParameterHandler parameterHandler;
-	private IASTDeclaration createdMethodDefinition;
 	private CPPASTFunctionDeclarator createdMethodDeclarator;
+	private ImplementMethodData data;
 	
 	public ImplementMethodRefactoring(IFile file, ISelection selection, ICElement element) {
 		super(file, selection, element);
-		parameterHandler = new ParameterHandler(this);
+		data = new ImplementMethodData();
 	}
 	
 	@Override
@@ -74,47 +76,81 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		super.checkInitialConditions(sm.newChild(6));
 
-		methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
+		data.setMethodDeclarations(findUnimplementedMethodDeclarations(unit));
 
-		if (!NodeHelper.isMethodDeclaration(methodDeclaration)) {
-			initStatus.addFatalError(Messages.ImplementMethodRefactoring_NoMethodSelected);
-			return initStatus;
+		if(region.getLength()>0) {
+			IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
+			if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
+				for (MethodToImplementConfig config : data.getMethodDeclarations()) {
+					if(config.getDeclaration() == methodDeclaration) {
+						config.setChecked(true);
+					}
+				}
+			}
 		}
 		
-		if(isProgressMonitorCanceld(sm, initStatus))return initStatus;
-		sm.worked(1);
-		
-		if (DefinitionFinder.getDefinition(methodDeclaration, file) != null) {
-			initStatus.addFatalError(Messages.ImplementMethodRefactoring_MethodHasImpl);
-			return initStatus;
-		}
-		if(isProgressMonitorCanceld(sm, initStatus))return initStatus;
-		sm.worked(1);
-		sm.done();
-		parameterHandler.initArgumentNames();
-		sm.worked(1);
-		sm.done();
-		insertLocation = findInsertLocation();
-		sm.worked(1);
 		sm.done();
 		return initStatus;
 	}
 
 
+	private List<IASTSimpleDeclaration> findUnimplementedMethodDeclarations(
+			IASTTranslationUnit unit) {
+		final List<IASTSimpleDeclaration> list = new ArrayList<IASTSimpleDeclaration>();
+		unit.accept(new ASTVisitor() {
+			{
+				shouldVisitDeclarations = true;
+			}
+
+			@Override
+			public int visit(IASTDeclaration declaration) {
+				if (declaration instanceof IASTSimpleDeclaration) {
+					IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
+					try {
+						if(NodeHelper.isMethodDeclaration(simpleDeclaration) && DefinitionFinder.getDefinition(simpleDeclaration, file) == null) {
+							list.add(simpleDeclaration);
+						}
+					} catch (CoreException e) {}
+				}
+				return ASTVisitor.PROCESS_CONTINUE;
+			}
+			
+			
+			
+		});
+		return list;
+	}
+
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) throws CoreException,	OperationCanceledException {
-		IASTTranslationUnit targetUnit = insertLocation.getTargetTranslationUnit();
- 		IASTNode parent = insertLocation.getPartenOfNodeToInsertBefore();
- 		createFunctionDefinition(targetUnit);
-		IASTNode nodeToInsertBefore = insertLocation.getNodeToInsertBefore();
-		ASTRewrite translationUnitRewrite = collector.rewriterForTranslationUnit(targetUnit);
-		ASTRewrite methodRewrite = translationUnitRewrite.insertBefore(parent, nodeToInsertBefore, createdMethodDefinition, null);
 		
-		createParameterModifications(methodRewrite);
+		List<MethodToImplementConfig> methodsToImplement = data.getMethodsToImplement();
+		SubMonitor sm = SubMonitor.convert(pm, 4*methodsToImplement.size());
+		for(MethodToImplementConfig config : methodsToImplement) {
+			createDefinition(collector, config, sm.newChild(4));
+		}		
+	}
+
+	protected void createDefinition(ModificationCollector collector,
+			MethodToImplementConfig config, IProgressMonitor subMonitor) throws CoreException {
+		IASTSimpleDeclaration decl = config.getDeclaration();
+		insertLocation = findInsertLocation(decl);
+		subMonitor.worked(1);
+		IASTTranslationUnit targetUnit = insertLocation.getTargetTranslationUnit();
+		IASTNode parent = insertLocation.getPartenOfNodeToInsertBefore();
+		ASTRewrite translationUnitRewrite = collector.rewriterForTranslationUnit(targetUnit);
+		subMonitor.worked(1);
+
+		IASTNode nodeToInsertBefore = insertLocation.getNodeToInsertBefore();
+		IASTNode createdMethodDefinition = createFunctionDefinition(targetUnit, decl);
+		subMonitor.worked(1);
+		ASTRewrite methodRewrite = translationUnitRewrite.insertBefore(parent, nodeToInsertBefore, createdMethodDefinition , null);
+		createParameterModifications(methodRewrite, config.getParaHandler());
+		subMonitor.done();
 	}
 	
-	private void createParameterModifications(ASTRewrite methodRewrite) {
-		for(ParameterInfo actParameterInfo : parameterHandler.getParameterInfos()) {
+	private void createParameterModifications(ASTRewrite methodRewrite, ParameterHandler handler) {
+		for(ParameterInfo actParameterInfo : handler.getParameterInfos()) {
 			ASTRewrite parameterRewrite = methodRewrite.insertBefore(createdMethodDeclarator, null, actParameterInfo.getParameter(), null);
 			createNewNameInsertModification(actParameterInfo, parameterRewrite);
 			createRemoveDefaultValueModification(actParameterInfo, parameterRewrite);
@@ -136,7 +172,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		}
 	}
 
-	private InsertLocation findInsertLocation() throws CoreException {
+	private InsertLocation findInsertLocation(IASTSimpleDeclaration methodDeclaration) throws CoreException {
 		InsertLocation insertLocation = MethodDefinitionInsertLocationFinder.find(methodDeclaration.getFileLocation(), methodDeclaration.getParent(), file);
 
 		if (!insertLocation.hasFile() || NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {
@@ -147,19 +183,14 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		return insertLocation;
 	}
 
-	private void createFunctionDefinition(IASTTranslationUnit unit) throws CoreException {
-		createFunctionDefinition(
+	private IASTDeclaration createFunctionDefinition(IASTTranslationUnit unit, IASTSimpleDeclaration methodDeclaration) throws CoreException {
+		return createFunctionDefinition(
 				methodDeclaration.getDeclSpecifier().copy(), 
 				(ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0], 
 				methodDeclaration.getParent(), unit);
 	}
-	
-	public IASTDeclaration createFunctionDefinition() throws CoreException {
-		createFunctionDefinition(unit);
-		return createdMethodDefinition;		
-	}
 
-	private void createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, 
+	private IASTDeclaration createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, 
 			IASTNode declarationParent, IASTTranslationUnit unit) throws CoreException {
 		
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
@@ -169,7 +200,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			((ICPPASTDeclSpecifier) declSpecifier).setVirtual(false); 
 		}
 		
-		String currentFileName = methodDeclaration.getNodeLocations()[0].asFileLocation().getFileName();
+		String currentFileName = declarationParent.getNodeLocations()[0].asFileLocation().getFileName();
 		if(Path.fromOSString(currentFileName).equals(insertLocation.getInsertFile().getLocation())) {
 			declSpecifier.setInline(true);
 		}
@@ -201,10 +232,9 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			}
 			
 			templateDeclaration.setDeclaration(func);
-			createdMethodDefinition = templateDeclaration;
-			return;
+			return templateDeclaration;
 		}
-		createdMethodDefinition = func;
+		return func;
 	}
 
 	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) 
@@ -212,12 +242,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, region.getOffset(), insertLocation.getInsertFile(), insertOffset);
 	}
-
-	public IASTSimpleDeclaration getMethodDeclaration() {
-		return methodDeclaration;
-	}
-
-	public ParameterHandler getParameterHandler() {
-		return parameterHandler;
+	
+	public ImplementMethodData getRefactoringData() {
+		return data;
 	}
 }

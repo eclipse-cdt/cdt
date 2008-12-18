@@ -14,18 +14,10 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MultiTextEdit;
-
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.PseudoNameGenerator;
@@ -40,10 +32,11 @@ public class ParameterHandler {
 	private boolean needsAditionalArgumentNames;
 	private PseudoNameGenerator pseudoNameGenerator;
 	private ArrayList<ParameterInfo> parameterInfos;
-	private ImplementMethodRefactoring refactoring;
+	private IASTSimpleDeclaration method;
 	
-	public ParameterHandler(ImplementMethodRefactoring refactoring) {
-		this.refactoring = refactoring;
+	public ParameterHandler(IASTSimpleDeclaration method) {
+		this.method = method;
+		initArgumentNames();
 	}
 	
 	public boolean needsAdditionalArgumentNames() {
@@ -85,38 +78,10 @@ public class ParameterHandler {
 	}
 	
 	private IASTParameterDeclaration[] getParametersFromMethodNode() {
-		if(refactoring.getMethodDeclaration().getDeclarators().length < 1) {
+		if(method.getDeclarators().length < 1) {
 			return null;
 		}
-		return ((ICPPASTFunctionDeclarator) refactoring.getMethodDeclaration().getDeclarators()[0]).getParameters();
-	}
-	
-	public String createFunctionDefinitionSignature() {
-		try {
-			CompositeChange compositeChange = (CompositeChange) refactoring.createChange(new NullProgressMonitor());
-			InsertEdit insertEdit = getInsertEdit(compositeChange);
-			return insertEdit.getText().trim();
-		} catch (OperationCanceledException e) {
-			return Messages.PreviewGenerationNotPossible;
-		} catch (CoreException e) {
-			return Messages.PreviewGenerationNotPossible;
-		}
-	}
-
-	private InsertEdit getInsertEdit(CompositeChange compositeChange) {
-		for(Change actChange : compositeChange.getChildren()) {
-			if(actChange instanceof CompositeChange) {
-				return getInsertEdit((CompositeChange) actChange);
-			} else if (actChange instanceof CTextFileChange) {
-				CTextFileChange textFileChange = (CTextFileChange) actChange;
-				MultiTextEdit multiEdit = (MultiTextEdit) textFileChange.getEdit();
-				if(multiEdit.getChildrenSize() == 0) {
-					continue;
-				}
-				return (InsertEdit) multiEdit.getChildren()[0];
-			}
-		}
-		return null;
+		return ((ICPPASTFunctionDeclarator) method.getDeclarators()[0]).getParameters();
 	}
 
 	public Collection<ParameterInfo> getParameterInfos() {

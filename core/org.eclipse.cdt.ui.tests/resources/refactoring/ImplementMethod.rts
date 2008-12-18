@@ -72,30 +72,6 @@ template<class T> inline void A<T>::test()
 //=
 #include "A.h"
 
-//!Test Warning when Method definition in Class selected
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-initialWarnings=1
-//@A.h
-
-struct Test
-{
-	void /*$*/bla/*$$*/() {}
-};
-
-//!Test Warning when ClassName selected
-//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
-//@.config
-filename=A.h
-initialWarnings=1
-//@A.h
-
-struct /*$*/Test/*$$*/
-{
-	void bla2();
-};
-
 //!class template member functions
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config

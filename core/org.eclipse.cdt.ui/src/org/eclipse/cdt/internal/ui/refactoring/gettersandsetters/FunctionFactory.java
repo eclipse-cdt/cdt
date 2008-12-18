@@ -39,7 +39,7 @@ public class FunctionFactory {
 		
 		IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 		
-		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier());
+		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());
 				
 		CPPASTName getterName = new CPPASTName();
 		String varPartOfGetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
@@ -81,9 +81,9 @@ public class FunctionFactory {
 		declarator.setName(setterName);
 		setter.setDeclarator(declarator);
 		CPPASTParameterDeclaration parameterDeclaration = new CPPASTParameterDeclaration();
-		parameterDeclaration.setDeclarator(fieldDeclaration.getDeclarators()[0]);
-		parameterDeclaration.setDeclSpecifier(fieldDeclaration.getDeclSpecifier());
-		declarator.addParameterDeclaration(parameterDeclaration);
+		parameterDeclaration.setDeclarator(fieldDeclaration.getDeclarators()[0].copy());
+		parameterDeclaration.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());
+		declarator.addParameterDeclaration(parameterDeclaration.copy());
 		
 		CPPASTCompoundStatement compound = new CPPASTCompoundStatement();
 		CPPASTExpressionStatement exprStmt = new CPPASTExpressionStatement();
@@ -92,12 +92,12 @@ public class FunctionFactory {
 		CPPASTLiteralExpression litExpr = new CPPASTLiteralExpression();
 		litExpr.setValue(Keywords.cTHIS); 
 		fieldRef.setFieldOwner(litExpr);
-		fieldRef.setFieldName(fieldDeclaration.getDeclarators()[0].getName());
+		fieldRef.setFieldName(fieldDeclaration.getDeclarators()[0].getName().copy());
 		fieldRef.setIsPointerDereference(true);
 		binExpr.setOperand1(fieldRef);
 		binExpr.setOperator(IASTBinaryExpression.op_assign);
 		CPPASTIdExpression idExpr = new CPPASTIdExpression();
-		idExpr.setName(fieldDeclaration.getDeclarators()[0].getName());
+		idExpr.setName(fieldDeclaration.getDeclarators()[0].getName().copy());
 		binExpr.setOperand2(idExpr);
 		exprStmt.setExpression(binExpr);
 		compound.addStatement(exprStmt);

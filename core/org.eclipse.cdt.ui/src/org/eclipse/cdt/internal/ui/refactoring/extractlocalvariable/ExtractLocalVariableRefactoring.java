@@ -275,7 +275,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		decl.setName(name);
 
 		IASTInitializerExpression init = new CPPASTInitializerExpression();
-		init.setExpression(deblock(target));
+		init.setExpression(deblock(target.copy()));
 		decl.setInitializer(init);
 		simple.addDeclarator(decl);
 

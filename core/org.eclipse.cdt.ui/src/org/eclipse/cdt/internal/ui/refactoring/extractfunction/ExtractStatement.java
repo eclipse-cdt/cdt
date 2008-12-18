@@ -48,11 +48,11 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 		
 		if(returnVariable != null) {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclaration());
-			return ASTHelper.getDeclarationSpecifier(decl);
+			return ASTHelper.getDeclarationSpecifier(decl).copy();
 		}
 		IASTDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
 		((IASTSimpleDeclSpecifier)declSpec).setType(IASTSimpleDeclSpecifier.t_void);
-		return declSpec;
+		return declSpec.copy();
 	}
 
 	@Override

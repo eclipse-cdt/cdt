@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -89,6 +90,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -121,6 +123,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	HashMap<String, Integer> nameTrail;
 
 	private ExtractedFunctionConstructionHelper extractedFunctionConstructionHelper;
+	private INodeFactory factory = CPPNodeFactory.getDefault();
 
 	public ExtractFunctionRefactoring(IFile file, ISelection selection,
 			ExtractFunctionInformation info) {
@@ -368,7 +371,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
 				.getMethodDeclaration().getParent();
 
-		IASTSimpleDeclaration methodDeclaration = getDeclaration(astMethodName);
+		IASTSimpleDeclaration methodDeclaration = getDeclaration(collector, astMethodName);
 
 		AddDeclarationNodeToClassChange.createChange(classDeclaration, info
 				.getVisibility(), methodDeclaration, false, collector);
@@ -475,7 +478,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			templateDeclaration.setParent(unit);
 			
 			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
-				templateDeclaration.addTemplateParamter(templateParameter);
+				templateDeclaration.addTemplateParamter(templateParameter.copy());
 			}
 			
 			templateDeclaration.setDeclaration(func);
@@ -623,7 +626,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					.getReturnVariable().getDeclaration());
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
 
-			decl.setDeclSpecifier(orgDecl.getDeclSpecifier());
+			decl.setDeclSpecifier(orgDecl.getDeclSpecifier().copy());
 
 			IASTDeclarator declarator = new CPPASTDeclarator();
 
@@ -661,12 +664,21 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				stmt, callExpression);
 
 	}
-
+	
 	private IASTSimpleDeclaration getDeclaration(IASTName name) {
 		IASTSimpleDeclaration simpleDecl = new CPPASTSimpleDeclaration();
-		simpleDecl.setParent(unit);
+		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
+				.createFunctionDeclarator(name, info.getDeclarator(), info
+						.getReturnVariable(), container.getNodesToWrite(), info
+						.getAllUsedNames());
+		simpleDecl.addDeclarator(declarator);
+		return simpleDecl;
+	}
+
+	private IASTSimpleDeclaration getDeclaration(ModificationCollector collector,IASTName name) {
 		IASTDeclSpecifier declSpec = getReturnType();
-		simpleDecl.setDeclSpecifier(declSpec);
+		IASTSimpleDeclaration simpleDecl = factory.newSimpleDeclaration(declSpec);
+		simpleDecl.setParent(unit);
 		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info

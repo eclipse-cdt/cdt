@@ -27,7 +27,6 @@ public class UtilTestSuite extends TestSuite {
 		suite.addTest(IdentifierHelperTest.suite());
 		suite.addTest(RefactoringTester.suite("TranslationUnitHelperTest", "resources/refactoring/TranslationunitHelper.rts")); //$NON-NLS-1$ //$NON-NLS-2$
 		suite.addTestSuite(PseudoNameGeneratorTest.class);
-		suite.addTestSuite(ExpressionCopyTest.class);
 		return suite;
 	}
 }

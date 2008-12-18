@@ -77,7 +77,7 @@ public class NameHelper {
 			}
 		}
 
-		qname.addName(declaratorName);
+		qname.addName(declaratorName.copy());
 		return qname;
 	}
 	

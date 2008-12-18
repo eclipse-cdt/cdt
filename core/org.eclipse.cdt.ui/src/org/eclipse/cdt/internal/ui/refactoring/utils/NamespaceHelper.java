@@ -61,7 +61,7 @@ public class NamespaceHelper {
 				@Override
 				public int visit(ICPPASTNamespaceDefinition namespace) {
 					if (checkFileNameAndLocation(insertFile, offset, namespace)) {
-						qualifiedName.addName((namespace).getName()); 
+						qualifiedName.addName((namespace).getName().copy()); 
 					}
 					
 					return super.visit(namespace);
@@ -79,7 +79,7 @@ public class NamespaceHelper {
 	
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {
 		IASTName parentName;
-		parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName();
+		parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy();
 		
 		if(classHasTemplates(declarationParent)) {
 			CPPASTTemplateId templateId = new CPPASTTemplateId();
@@ -93,7 +93,7 @@ public class NamespaceHelper {
 					CPPASTTypeId id = new CPPASTTypeId();
 					
 					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
-					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName());
+					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy());
 					id.setDeclSpecifier(namedTypeSpecifier);
 					
 					templateId.addTemplateArgument(id);

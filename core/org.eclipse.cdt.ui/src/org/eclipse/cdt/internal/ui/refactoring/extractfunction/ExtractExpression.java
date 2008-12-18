@@ -52,7 +52,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
-import org.eclipse.cdt.internal.ui.refactoring.utils.ExpressionCopier;
 
 /**
  * Handles the extraction of expression nodes, like return type determination.
@@ -62,7 +61,6 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.ExpressionCopier;
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	
-	ExpressionCopier expCopier = new ExpressionCopier();
 	final static char[] ZERO= {'0'};
 
 	@Override
@@ -82,12 +80,12 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		if(list.size()> 1 ) {
 			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
 			bExp.setParent(list.get(0).getParent());
-			bExp.setOperand1(expCopier.createCopy((IASTExpression) list.get(0)));
+			bExp.setOperand1((IASTExpression) list.get(0).copy());
 			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
 			bExp.setOperand2(getExpression(list.subList(1, list.size())));
 			return bExp;
 		}else {
-			return expCopier.createCopy((IASTExpression) list.get(0));
+			return (IASTExpression) list.get(0).copy();
 		}
 		
 	}
@@ -116,7 +114,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_void);
 		}
 		
-		return declSpecifier;
+		return declSpecifier.copy();
 	}
 
 	private IASTDeclSpecifier handleLiteralExpression(IASTLiteralExpression extractedNode) {
@@ -220,7 +218,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			IBinding bind = classType.getOwner();
 			if (bind instanceof CPPNamespace) {
 				ICPPASTQualifiedName qname = getQname(classType, bind);
-				qname.addName((IASTName) classType.getDefinition());
+				qname.addName((IASTName) classType.getDefinition().copy());
 				name = qname;
 			}else {
 				name = (IASTName) classType.getDefinition();
@@ -230,7 +228,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			e.printStackTrace();
 		}
 		
-		return new CPPASTNamedTypeSpecifier(name);
+		return new CPPASTNamedTypeSpecifier(name.copy());
 	}
 
 	private ICPPASTQualifiedName getQname(IBinding classType, IBinding bind) {
@@ -249,7 +247,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			IBinding bind = typedef.getOwner();
 			if (bind instanceof CPPNamespace) {
 				ICPPASTQualifiedName qname = getQname(typedef, bind);
-				qname.addName((IASTName) typedef.getDefinition());
+				qname.addName((IASTName) typedef.getDefinition().copy());
 				name = qname;
 			}else {
 				name = (IASTName) typedef.getDefinition();
@@ -258,7 +256,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new CPPASTNamedTypeSpecifier(name);
+		return new CPPASTNamedTypeSpecifier(name.copy());
 	}
 	
 	private static IASTDeclSpecifier createSimpleDeclSpecifier(int type) {

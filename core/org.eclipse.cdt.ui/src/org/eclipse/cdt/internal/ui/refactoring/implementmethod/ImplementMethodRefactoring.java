@@ -149,7 +149,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 	private void createFunctionDefinition(IASTTranslationUnit unit) throws CoreException {
 		createFunctionDefinition(
-				methodDeclaration.getDeclSpecifier(), 
+				methodDeclaration.getDeclSpecifier().copy(), 
 				(ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0], 
 				methodDeclaration.getParent(), unit);
 	}
@@ -197,7 +197,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			templateDeclaration.setParent(unit);
 			
 			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
-				templateDeclaration.addTemplateParamter(templateParameter);
+				templateDeclaration.addTemplateParamter(templateParameter.copy());
 			}
 			
 			templateDeclaration.setDeclaration(func);

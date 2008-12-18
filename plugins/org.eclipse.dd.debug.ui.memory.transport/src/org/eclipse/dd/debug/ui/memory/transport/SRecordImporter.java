@@ -115,6 +115,24 @@ public class SRecordImporter implements IMemoryImporter {
 		data.width = 100;
 		fStartText.setLayoutData(data);
 		
+		fComboRestoreToFileAddress.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				validate();
+			}
+		});
+		
+		fComboRestoreToThisAddress.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				validate();
+			}
+		});
+		
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
@@ -239,9 +257,17 @@ public class SRecordImporter implements IMemoryImporter {
 		
 		try
 		{
-			getStartAddress();
-			if(!getFile().exists())
-				isValid = false;
+			boolean restoreToAddress = fComboRestoreToThisAddress.getSelection();
+			if ( restoreToAddress ) {
+				getStartAddress();
+			}
+			
+			boolean restoreToAddressFromFile = fComboRestoreToFileAddress.getSelection();
+			if ( restoreToAddressFromFile ) {
+				if(!getFile().exists()) {
+					isValid = false;
+				}
+			}
 		}
 		catch(Exception e)
 		{

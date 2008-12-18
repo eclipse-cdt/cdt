@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -71,7 +72,11 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 		if (files.length == 0)
 			return null;
 		
-		return selectBest(files, ifl.getFullPath().toCharArray()).getLocation().toString();
+		final IPath bestLocation = selectBest(files, ifl.getFullPath().toCharArray()).getLocation();
+		if (bestLocation == null)
+			return null;
+		
+		return bestLocation.toString();
 	}
 	
 	

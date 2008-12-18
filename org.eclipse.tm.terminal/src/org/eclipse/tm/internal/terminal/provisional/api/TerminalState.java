@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class TerminalState {
 	public final static TerminalState CLOSED=new TerminalState("CLOSED"); //$NON-NLS-1$
 
 	/**
-	 * TODO: Michael Scharf: it's not clear to me what the meaning of the open state is
+	 * FIXME Get rid of this state it is equivalent to CONNECTING.
 	 */
 	public final static TerminalState OPENED=new TerminalState("OPENED"); //$NON-NLS-1$
 

@@ -124,7 +124,6 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//void foo(){aClass a=new aClass( 
 	public void testConstructor() throws Exception {
 		assertParameterHints(new String[] {
-				"aClass(void)",
 				"aClass(const aClass &)"
 		});
 	}

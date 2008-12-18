@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,10 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Invocation context for the CHelpProviderManager
+ * Invocation context for the CHelpProviderManager.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICHelpInvocationContext {
 	

@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorInput;
 
 /**
  * Extension interface for <code>IWorkingCopyManager</code>.
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 2.1
  */
 public interface IWorkingCopyManagerExtension {

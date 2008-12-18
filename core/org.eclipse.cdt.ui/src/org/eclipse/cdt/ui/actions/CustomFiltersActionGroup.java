@@ -65,6 +65,7 @@ import org.eclipse.cdt.internal.ui.filters.NamePatternFilter;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 2.0
  */
 public class CustomFiltersActionGroup extends ActionGroup {

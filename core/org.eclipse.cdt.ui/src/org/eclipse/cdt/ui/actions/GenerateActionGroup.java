@@ -51,6 +51,7 @@ import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 4.0
  */
 public class GenerateActionGroup extends ActionGroup {
@@ -137,6 +138,8 @@ public class GenerateActionGroup extends ActionGroup {
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 * @param editor the C editor
 	 * @param groupName the group name to add the action to
+	 * 
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public GenerateActionGroup(CEditor editor, String groupName) {
 		fSite= editor.getSite();

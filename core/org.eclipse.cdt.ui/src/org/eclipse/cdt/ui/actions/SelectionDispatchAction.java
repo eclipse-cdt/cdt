@@ -41,9 +41,10 @@ import org.eclipse.ui.IWorkbenchSite;
  * </ul>
  * 
  * <p>
- * Note: This class is not intended to be subclassed outside the JDT UI plugin.
+ * Note: This class is not intended to be subclassed outside the CDT UI plugin.
  * </p>
  * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 2.0
  */
 public abstract class SelectionDispatchAction extends Action implements ISelectionChangedListener {

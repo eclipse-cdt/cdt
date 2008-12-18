@@ -84,6 +84,8 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
 	 * 
 	 * @param page the page that owns this action group
+	 * 
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public OpenViewActionGroup(Page page, CEditor editor) {
 		createSiteActions(page.getSite(), editor);

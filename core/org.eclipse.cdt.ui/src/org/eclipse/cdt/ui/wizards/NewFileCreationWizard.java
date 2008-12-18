@@ -12,5 +12,9 @@ package org.eclipse.cdt.ui.wizards;
 
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
+/**
+ * @deprecated Use {@link BasicNewFileResourceWizard} instead.
+ */
+@Deprecated
 public class NewFileCreationWizard extends BasicNewFileResourceWizard {
 }

@@ -14,6 +14,9 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 
+/**
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface IBuildConsoleManager {
 	IConsole getConsole(IProject project);
 	IDocument getConsoleDocument(IProject project);

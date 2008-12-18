@@ -12,6 +12,9 @@ package org.eclipse.cdt.ui.text;
 
 /**
  * Problem information for quick fix and quick assist processors.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProblemLocation {
 	/**

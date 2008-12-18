@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,13 @@ package org.eclipse.cdt.ui;
 
 import org.eclipse.core.resources.IProject;
 
+/**
+ * A build console event.
+ * 
+ * @see IBuildConsoleListener
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface IBuildConsoleEvent {
 	final static int CONSOLE_START = 1;
 	final static int CONSOLE_CLOSE = 2;

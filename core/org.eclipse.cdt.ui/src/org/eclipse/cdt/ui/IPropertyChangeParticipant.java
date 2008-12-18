@@ -16,6 +16,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * Implemented by classes which can optionally participate in property
  * change events, and report whether an event would affect them without
  * adapting to it.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * 
  * @since 5.0
  */

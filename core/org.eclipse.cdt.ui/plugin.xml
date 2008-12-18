@@ -352,7 +352,7 @@
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+         <class class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard">
             <parameter name="cfolder" value="true"/>
          </class>
          <description>
@@ -436,7 +436,7 @@
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+         <class class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard">
             <parameter name="cfolder" value="true"/>
          </class>
          <description>

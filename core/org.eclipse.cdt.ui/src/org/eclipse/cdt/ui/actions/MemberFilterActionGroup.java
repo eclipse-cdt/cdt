@@ -21,6 +21,11 @@ package org.eclipse.cdt.ui.actions;
  * to the actions installed in the view part's toolbar menu and is updated when the 
  * state of the buttons changes.
  * <p>
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 import java.util.ArrayList;
 

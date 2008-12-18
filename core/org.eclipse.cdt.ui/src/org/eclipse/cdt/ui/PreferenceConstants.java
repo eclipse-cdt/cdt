@@ -41,9 +41,11 @@ import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
  * Preference constants used in the CDT-UI preference store. Clients should only read the
  * CDT-UI preference store using these values. Clients are not allowed to modify the
  * preference store programmatically.
- *
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 2.0
-  */
+ */
 public class PreferenceConstants {
 
 	private PreferenceConstants() {

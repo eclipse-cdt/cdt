@@ -76,6 +76,8 @@ public class OpenAction extends SelectionDispatchAction {
 	
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * 
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public OpenAction(CEditor editor) {
 		this(editor.getEditorSite());

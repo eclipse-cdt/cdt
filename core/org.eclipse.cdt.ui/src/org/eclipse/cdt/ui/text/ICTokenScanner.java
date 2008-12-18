@@ -16,6 +16,9 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 /**
  * Interface for CDT Scanners. Scanners used in CDT must additionally be
  * IPropertyChangeParticipant's.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  *
  * @since 5.0
  */

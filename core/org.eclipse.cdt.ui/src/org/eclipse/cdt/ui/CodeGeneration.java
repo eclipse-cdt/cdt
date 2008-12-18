@@ -22,6 +22,8 @@ import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 /**
  * Class that offers access to the templates contained in the 'Code Templates' preference page.
  * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 2.1
  */
 public class CodeGeneration {

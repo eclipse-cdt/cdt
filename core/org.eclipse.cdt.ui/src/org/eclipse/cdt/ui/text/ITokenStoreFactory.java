@@ -12,6 +12,9 @@ package org.eclipse.cdt.ui.text;
 
 /**
  * A means of obtaining ITokenStore objects.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 5.0
  */
 public interface ITokenStoreFactory {

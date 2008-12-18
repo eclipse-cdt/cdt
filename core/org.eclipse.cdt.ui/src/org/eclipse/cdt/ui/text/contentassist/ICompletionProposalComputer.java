@@ -19,8 +19,10 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * Computes completions and context information displayed by the C/C++ editor content assistant.
+ * <p>
  * Contributions to the <tt>org.eclipse.cdt.ui.completionProposalComputer</tt> extension point
  * must implement this interface.
+ * </p>
  * 
  * @since 4.0
  */

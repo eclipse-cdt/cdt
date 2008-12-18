@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eclipse.cdt.ui;
 /**
  * Represents the help book, that is a set of articles on some topic.
  * Such as "C functions", "Qt library", etc., provided by help provider.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see ICHelpProvider
  * @since 2.1
  */

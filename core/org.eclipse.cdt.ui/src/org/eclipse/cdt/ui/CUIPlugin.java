@@ -98,6 +98,10 @@ import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CUIPlugin extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.ui"; //$NON-NLS-1$
@@ -135,7 +139,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The id of the C hierarchy perspective
 	 * (value <code>"org.eclipse.cdt.ui.CHierarchyPerspective"</code>).
+	 * 
+	 * @deprecated This perspective no longer exists.
 	 */	
+	@Deprecated
 	public static final String ID_CHIERARCHY_PERSPECTIVE = PLUGIN_ID + ".CHierarchyPerspective"; //$NON-NLS-1$
 
 	/**
@@ -143,7 +150,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.CBrowsingPerspective"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated This perspective no longer exists.
 	 */
+	@Deprecated
 	public static final String ID_CBROWSING_PERSPECTIVE = PLUGIN_ID + ".CBrowsingPerspective"; //$NON-NLS-1$
 
 	/**
@@ -151,7 +160,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.ProjectsView"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated This view no longer exists.
 	 */
+	@Deprecated
 	public static String ID_PROJECTS_VIEW = PLUGIN_ID + ".ProjectsView"; //$NON-NLS-1$
 
 	/**
@@ -159,7 +170,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.NamespacesView"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated This view no longer exists.
 	 */
+	@Deprecated
 	public static String ID_NAMESPACES_VIEW = PLUGIN_ID + ".NamespacesView"; //$NON-NLS-1$
 
 	/**
@@ -167,7 +180,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.TypesView"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated This view no longer exists.
 	 */
+	@Deprecated
 	public static String ID_TYPES_VIEW = PLUGIN_ID + ".TypesView"; //$NON-NLS-1$
 
 	/**
@@ -175,7 +190,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.MembersView"</code>).
 	 * 
 	 * @since 2.0
+	 * @deprecated This view no longer exists.
 	 */
+	@Deprecated
 	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
 
 	/**
@@ -216,6 +233,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public synchronized IBufferFactory getBufferFactory() {
 		if (fBufferFactory == null)
 			fBufferFactory= new CustomBufferFactory();
@@ -399,7 +419,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 		
 	/**
-	 * Returns the used document provider
+	 * Returns the used document provider.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public synchronized CDocumentProvider getDocumentProvider() {
 		if (fDocumentProvider == null) {
@@ -563,6 +585,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return PLUGIN_ID;
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public static ImageDescriptorRegistry getImageDescriptorRegistry() {
 		return getDefault().internalGetImageDescriptorRegistry();
 	}
@@ -574,7 +599,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the problem marker manager
+	 * Returns the problem marker manager.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ProblemMarkerManager getProblemMarkerManager() {
 		if (fProblemMarkerManager == null)
@@ -710,6 +737,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns all C editor text hovers contributed to the workbench.
 	 * 
 	 * @return an array of CEditorTextHoverDescriptor
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public CEditorTextHoverDescriptor[] getCEditorTextHoverDescriptors() {
 		if (fCEditorTextHoverDescriptors == null) {
@@ -806,6 +835,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * extension point.
 	 * 
 	 * @return the registry of contributed <code>ICFoldingStructureProvider</code>
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.0
 	 */
 	public synchronized CFoldingStructureProviderRegistry getFoldingStructureProviderRegistry() {
@@ -893,6 +924,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns the AST provider.
 	 * 
 	 * @return the AST provider
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 4.0
 	 */
 	public synchronized ASTProvider getASTProvider() {

@@ -29,7 +29,8 @@ import org.eclipse.ui.IEditorInput;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- *
+ * @noimplement This interface is not intended to be implemented by clients.
+ * 
  * @see CUIPlugin#getWorkingCopyManager
  */
 public interface IWorkingCopyManager {

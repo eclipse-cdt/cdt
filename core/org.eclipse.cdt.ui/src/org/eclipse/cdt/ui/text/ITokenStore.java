@@ -41,6 +41,9 @@ import org.eclipse.cdt.ui.PreferenceConstants;
  * Preference color key + {@link PreferenceConstants#EDITOR_UNDERLINE_SUFFIX} are used
  * to retrieve whether the token is rendered in underline.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  *
  * @see ITokenStoreFactory
  * @since 5.0

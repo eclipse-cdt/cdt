@@ -232,7 +232,9 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 			PipedInputStream in = new PipedInputStream(out);
 			String compression = descriptor.getProperty(COMPRESSION);
 			if (ZIP_COMPRESSION.equals(compression)) {
-				// TODO a zip extractor
+				ZipExtractor extractor = new ZipExtractor(in, installDir,
+						new FileListWriter(getFileListFile(descriptor.getArtifactKey().getId())));
+				extractor.start();
 			} else {
 				TarExtractor extractor = new TarExtractor(in, installDir, 
 						new FileListWriter(getFileListFile(descriptor.getArtifactKey().getId())),

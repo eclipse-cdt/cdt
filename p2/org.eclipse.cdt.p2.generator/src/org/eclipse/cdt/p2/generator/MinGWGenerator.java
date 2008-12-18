@@ -71,6 +71,7 @@ public class MinGWGenerator implements IApplication {
 		License publicDomainLic = MetadataFactory.createLicense(null, publicDomain);
 		License gplLic = MetadataFactory.createLicense(gplURL, gpl);
 		License lgplLic = MetadataFactory.createLicense(lgplURL, lgpl);
+		License zlibLic = MetadataFactory.createLicense(zlibLicURL, zlibLicText);
 		
 		Version wascanaVersion = new Version("1.0.0");
 		String mingwSubdir = "mingw";
@@ -78,7 +79,7 @@ public class MinGWGenerator implements IApplication {
 		// MinGW Runtime
 		String runtimeId = "wascana.mingw.mingwrt";
 		Version runtimeVersion = new Version("4.15.1");
-		InstallableUnitDescription runtimeIUDesc = createIUDesc(runtimeId, runtimeVersion, "MinGW Runtime Library", publicDomainLic);
+		InstallableUnitDescription runtimeIUDesc = createIUDesc(runtimeId, runtimeVersion, "Wascana MinGW Runtime Library", publicDomainLic);
 		IInstallableUnit runtimeIU = createIU(runtimeIUDesc, runtimeId,	runtimeVersion,
 				"http://downloads.sourceforge.net/mingw/mingwrt-3.15.1-mingw32.tar.gz",
 				mingwSubdir,
@@ -87,7 +88,7 @@ public class MinGWGenerator implements IApplication {
 		// w32api
 		String w32apiId = "wascana.mingw.w32api";
 		Version w32apiVersion = new Version("3.13");
-		InstallableUnitDescription w32apiIUDesc = createIUDesc(w32apiId, w32apiVersion, "MinGW Windows Library", publicDomainLic);
+		InstallableUnitDescription w32apiIUDesc = createIUDesc(w32apiId, w32apiVersion, "Wascana MinGW Windows Library", publicDomainLic);
 		IInstallableUnit w32apiIU = createIU(w32apiIUDesc, w32apiId, w32apiVersion,
 				"http://downloads.sourceforge.net/mingw/w32api-3.13-mingw32-dev.tar.gz",
 				mingwSubdir,
@@ -96,7 +97,7 @@ public class MinGWGenerator implements IApplication {
 		// binutils
 		String binutilsId = "wascana.mingw.binutils";
 		Version binutilsVersion = new Version("2.19");
-		InstallableUnitDescription binutilsIUDesc = createIUDesc(binutilsId, binutilsVersion, "MinGW binutils", gplLic);
+		InstallableUnitDescription binutilsIUDesc = createIUDesc(binutilsId, binutilsVersion, "Wascana MinGW binutils", gplLic);
 		IInstallableUnit binutilsIU = createIU(binutilsIUDesc, binutilsId, binutilsVersion,
 				"http://downloads.sourceforge.net/mingw/binutils-2.19-mingw32-bin.tar.gz",
 				mingwSubdir,
@@ -105,7 +106,7 @@ public class MinGWGenerator implements IApplication {
 		// gcc-4 core
 		String gcc4coreId = "wascana.mingw.gcc4.core";
 		Version gcc4Version = new Version("4.3.2.tdm-1");
-		InstallableUnitDescription gcc4coreIUDesc = createIUDesc(gcc4coreId, gcc4Version, "MinGW gcc-4 core", gplLic);
+		InstallableUnitDescription gcc4coreIUDesc = createIUDesc(gcc4coreId, gcc4Version, "Wascana MinGW gcc-4 core", gplLic);
 		RequiredCapability[] gcc4coreReqs = new RequiredCapability[] {
 				MetadataFactory.createRequiredCapability(
 						IInstallableUnit.NAMESPACE_IU_ID,
@@ -125,7 +126,7 @@ public class MinGWGenerator implements IApplication {
 
 		// gcc-4 g++
 		String gcc4gppId = "wascana.mingw.gcc4.g++";
-		InstallableUnitDescription gcc4gppIUDesc = createIUDesc(gcc4gppId, gcc4Version, "MinGW gcc-4 g++", gplLic);
+		InstallableUnitDescription gcc4gppIUDesc = createIUDesc(gcc4gppId, gcc4Version, "Wascana MinGW gcc-4 g++", gplLic);
 		gcc4gppIUDesc.setLicense(gplLic);
 		RequiredCapability[] gcc4gppReqs = new RequiredCapability[] {
 				MetadataFactory.createRequiredCapability(
@@ -141,7 +142,7 @@ public class MinGWGenerator implements IApplication {
 		// gdb
 		String gdbId = "wascana.mingw.gdb";
 		Version gdbVersion = new Version("6.8.0.4");
-		InstallableUnitDescription gdbIUDesc = createIUDesc(gdbId, gdbVersion, "MinGW gdb", gplLic);
+		InstallableUnitDescription gdbIUDesc = createIUDesc(gdbId, gdbVersion, "Wascana MinGW gdb", gplLic);
 		IInstallableUnit gdbIU = createIU(gdbIUDesc, gdbId, gdbVersion,
 				"http://downloads.sourceforge.net/mingw/gdb-6.8-mingw-3.tar.bz2",
 				mingwSubdir,
@@ -150,7 +151,7 @@ public class MinGWGenerator implements IApplication {
 		// msys
 		String msysId = "wascana.msys.core";
 		Version msysVersion = new Version("1.0.11.20080826");
-		InstallableUnitDescription msysIUDesc = createIUDesc(msysId, msysVersion, "MSYS Build System", gplLic);
+		InstallableUnitDescription msysIUDesc = createIUDesc(msysId, msysVersion, "Wascana MSYS Build System", gplLic);
 		IInstallableUnit msysIU = createIU(msysIUDesc, msysId, msysVersion,
 				"http://downloads.sourceforge.net/mingw/msysCORE-1.0.11-20080826.tar.gz",
 				"msys",
@@ -185,10 +186,19 @@ public class MinGWGenerator implements IApplication {
 		mingwToolchainDesc.setRequiredCapabilities(mingwToolchainReqs);
 		IInstallableUnit mingwToolchainIU = MetadataFactory.createInstallableUnit(mingwToolchainDesc);
 		
+		// zlib
+		String zlibId = "wascana.zlib";
+		Version zlibVersion = new Version("1.2.3");
+		InstallableUnitDescription zlibIUDesc = createIUDesc(zlibId, zlibVersion, "Wascana zlib Library", zlibLic);
+		IInstallableUnit zlibIU = createIU(zlibIUDesc, zlibId, zlibVersion,
+				"http://downloads.sourceforge.net/wascana/zlib-mingw-1.2.3.zip",
+				mingwSubdir,
+				InstallArtifactRepository.ZIP_COMPRESSION);
+		
 		// SDL
 		String sdlId = "wascana.sdl";
 		Version sdlVersion = new Version("1.2.13");
-		InstallableUnitDescription sdlIUDesc = createIUDesc(sdlId, sdlVersion, "SDL (Simple Directmedia Layer) Library", lgplLic);
+		InstallableUnitDescription sdlIUDesc = createIUDesc(sdlId, sdlVersion, "Wascana SDL (Simple Directmedia Layer) Library", lgplLic);
 		IInstallableUnit sdlIU = createIU(sdlIUDesc, sdlId, sdlVersion,
 				"http://www.libsdl.org/release/SDL-devel-1.2.13-mingw32.tar.gz",
 				mingwSubdir,
@@ -200,7 +210,7 @@ public class MinGWGenerator implements IApplication {
 		RequiredCapability[] libsReqs = new RequiredCapability[] {
 				MetadataFactory.createRequiredCapability(
 						IInstallableUnit.NAMESPACE_IU_ID,
-						sdlIU.getId(), new VersionRange(null), null, false, false),
+						zlibIU.getId(), new VersionRange(null), null, false, false),
 		};
 		libsIUDesc.setRequiredCapabilities(libsReqs);
 		IInstallableUnit libsIU = MetadataFactory.createInstallableUnit(libsIUDesc);
@@ -215,8 +225,8 @@ public class MinGWGenerator implements IApplication {
 				msysIU,
 				mingwToolchainIU,
 				
-//				sdlIU,
-//				libsIU
+				zlibIU,
+				libsIU
 			});
 
 		System.out.println("done");
@@ -269,4 +279,7 @@ public class MinGWGenerator implements IApplication {
 	
 	public static final String lgpl = "GNU LESSER GENERAL PUBLIC LICENSE\n" + lgplURL;
 	
+	public static final String zlibLicURL = "http://www.zlib.net/zlib_license.html";
+	
+	public static final String zlibLicText = "http://www.zlib.net/zlib_license.html";
 }

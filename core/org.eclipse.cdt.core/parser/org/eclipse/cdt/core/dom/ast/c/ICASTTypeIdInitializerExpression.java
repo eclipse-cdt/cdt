@@ -1,77 +1,30 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 
 /**
  * C Expression of the format type-id { initializer }
  * 
- * @author jcamelon
- * @noimplement This interface is not intended to be implemented by clients.
+ * GCC allows compound literals for c++, therefore the interface was moved to the common
+ * ast interfaces ({@link IASTTypeIdInitializerExpression}). For compatibility this interface
+ * is kept.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICASTTypeIdInitializerExpression extends IASTExpression {
-
-	/**
-	 * <code>TYPE_ID</code> represents the relationship between an
-	 * <code>ICASTTypeIdInitializerExpression</code> and
-	 * <code>IASTTypeId</code>.
-	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for ICASTTypeIdInitializerExpression"); //$NON-NLS-1$
-
-	/**
-	 * <code>INITIALIZER</code> represents the relationship between an
-	 * <code>ICASTTypeIdInitializerExpression</code> and
-	 * <code>IASTInitializer</code>.
-	 */
-	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-			"ICASTTypeIdInitializerExpression.INITIALIZER - IASTInitializer for ICASTTypeIdInitializerExpression"); //$NON-NLS-1$
-
-	/**
-	 * Get the type-id.
-	 * 
-	 * @return <code>IASTTypeId</code>
-	 */
-	public IASTTypeId getTypeId();
-
-	/**
-	 * Set the typeId.
-	 * 
-	 * @param typeId
-	 *            <code>IASTTypeId</code>
-	 */
-	public void setTypeId(IASTTypeId typeId);
-
-	/**
-	 * Get the initializer.
-	 * 
-	 * @return <code>IASTInitializer</code>
-	 */
-	public IASTInitializer getInitializer();
-
-	/**
-	 * Set the initializer.
-	 * 
-	 * @param initializer
-	 *            <code>IASTInitializer</code>
-	 */
-	public void setInitializer(IASTInitializer initializer);
-	
+public interface ICASTTypeIdInitializerExpression extends IASTTypeIdInitializerExpression {
 	/**
 	 * @since 5.1
 	 */
 	public ICASTTypeIdInitializerExpression copy();
-
 }

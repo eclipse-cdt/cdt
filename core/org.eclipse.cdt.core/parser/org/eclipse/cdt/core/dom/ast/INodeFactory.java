@@ -68,6 +68,8 @@ public interface INodeFactory {
 
 	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3);
 
+	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
+
 	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement);
 
 	public IASTCaseStatement newCaseStatement(IASTExpression expr);

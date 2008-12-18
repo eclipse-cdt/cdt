@@ -974,6 +974,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         boolean isTemplate = false;
 
         switch (LT(1)) {
+        case IToken.tLPAREN:
+        	// ( type-name ) { initializer-list }
+        	// ( type-name ) { initializer-list , }
+        	IToken m = mark();
+        	try {
+        		int offset = consume().getOffset();
+        		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
+        		if (t != null) {
+        			consume(IToken.tRPAREN);
+        			if (LT(1) == IToken.tLBRACE) {
+        				IASTInitializer i = initializerClause(false);
+        		        firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
+        		        setRange(firstExpression, offset, calculateEndOffset(i));
+        				break;        
+        			}
+        		}
+        	} catch (BacktrackException bt) {
+        	}
+        	backup(m); 
+        	firstExpression= primaryExpression();
+        	break;
+
         case IToken.t_typename:
             int typenameOffset= consume().getOffset();
 

@@ -1065,6 +1065,7 @@ public class CPPTemplates {
 		tdecl= outerMostTDecl;
 		while(true) {
 			tdecl.setNestingLevel((short) level++);
+			tdecl.setAssociatedWithLastName(false);
 			node= tdecl.getDeclaration();
 			if (node instanceof ICPPASTInternalTemplateDeclaration) {
 				tdecl= (ICPPASTInternalTemplateDeclaration) node;

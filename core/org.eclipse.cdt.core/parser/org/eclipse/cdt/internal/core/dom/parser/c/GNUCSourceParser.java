@@ -69,7 +69,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
@@ -552,10 +551,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		int offset = consume().getOffset();
         		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
         		if (t != null) {
-        			consume(IToken.tRPAREN).getEndOffset();
+        			consume(IToken.tRPAREN);
                 	if (LT(1) == IToken.tLBRACE) {
 						IASTInitializer i = cInitializerClause(false);
-        				firstExpression = buildTypeIdInitializerExpression(t, i, offset, calculateEndOffset(i));
+						firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
+						setRange(firstExpression, offset, calculateEndOffset(i));
         				break;        
                 	}
         		}
@@ -654,15 +654,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
         }
     }
-
-
-    protected ICASTTypeIdInitializerExpression buildTypeIdInitializerExpression(
-            IASTTypeId t, IASTInitializer i, int offset, int lastOffset) {
-        ICASTTypeIdInitializerExpression result = nodeFactory.newTypeIdInitializerExpression(t, i);
-        ((ASTNode) result).setOffsetAndLength(offset, lastOffset - offset);
-        return result;
-    }
-
 
     @Override
 	protected IASTExpression primaryExpression() throws EndOfFileException, BacktrackException {

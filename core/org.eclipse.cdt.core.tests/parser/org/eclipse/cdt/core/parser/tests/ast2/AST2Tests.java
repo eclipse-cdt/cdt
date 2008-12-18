@@ -5803,4 +5803,19 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	typedef struct {
+	//	    float a;
+	//	    int b;
+	//	} cs;
+	//	void x(void){
+	//	    cs foo;
+	//	    foo = ((cs){1.2,1});
+	//	}
+	public void testCompoundLiterals_Bug258496() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 }

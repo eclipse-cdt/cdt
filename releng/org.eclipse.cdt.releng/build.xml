@@ -136,7 +136,7 @@
 			todir="${buildDirectory}/site/eclipse/plugins"/>
 		
 		<!-- remove the master feature from the update site -->
-		<delete file="${buildDirectory}/site/eclipse/plugins/${masterFeature}"/>
+		<delete verbose="true" file="${buildDirectory}/site/eclipse/plugins/${masterFeature}"/>
 		
 		<!-- generate p2 metadata -->
 		<antcall target="generate.p2.metadata" />

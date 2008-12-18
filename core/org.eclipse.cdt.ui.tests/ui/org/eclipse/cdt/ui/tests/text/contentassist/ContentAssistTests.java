@@ -122,6 +122,9 @@ public class ContentAssistTests extends BaseUITestCase {
         
         closeAllEditors();
 
+        // wait for indexer before deleting project to avoid errors in the log
+        CCorePlugin.getIndexManager().joinIndexer(10000, monitor);
+		
         IResource [] members = project.members();
         for (IResource member : members) {
             if( member.getName().equals( ".project" ) || member.getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$

@@ -29,14 +29,14 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * communications. This pattern allows for lazy initialization, bundle
  * activation and class loading of the actual {@link TerminalConnectorImpl}
  * instance.
- * 
+ *
  * Clients can get terminal connector instances from the
  * {@link TerminalConnectorExtension} class, or from
  * {@link ITerminalViewControl#getTerminalConnector()} when running inside an
  * active terminal widget.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @author Michael Scharf
  *         <p>
  *         <strong>EXPERIMENTAL</strong>. This class or interface has been
@@ -125,10 +125,14 @@ public interface ITerminalConnector extends IAdaptable {
 	void save(ISettingsStore store);
 
 	/**
+	 * FIXME should not have UI related stuff in ITerminalConnector, since
+	 * connectors may be totally programmatic and UI-less. Better make the
+	 * connector adapt to an interface that controls the UI aspect.
+	 * 
 	 * @return a new page that can be used in a dialog to setup this connection.
-	 * The dialog should persist its settings with the {@link #load(ISettingsStore)}
-	 * and {@link #save(ISettingsStore)} methods.
-	 *
+	 *         The dialog should persist its settings with the
+	 *         {@link #load(ISettingsStore)} and {@link #save(ISettingsStore)}
+	 *         methods.
 	 */
 	ISettingsPage makeSettingsPage();
 

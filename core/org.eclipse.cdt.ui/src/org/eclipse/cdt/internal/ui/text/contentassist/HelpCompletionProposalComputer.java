@@ -110,8 +110,13 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 			}
 
 			if (!cContext.isContextInformationStyle()) {
-				// set the cursor before the closing bracket
-				proposal.setCursorPosition(fname.length() - 1);
+				if (fargs != null && fargs.length() > 0) {
+					// set the cursor before the closing bracket
+					proposal.setCursorPosition(fname.length() - 1);
+				} else {
+					// set the cursor behind the closing bracked
+					proposal.setCursorPosition(fname.length());
+				}
 			}
 			
 			if (fargs != null && fargs.length() > 0) {

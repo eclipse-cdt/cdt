@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the
@@ -75,6 +76,33 @@ public class ASTTypeUtil {
 		}
 		result.append(Keywords.cpRPAREN);
 		return result.toString();
+	}
+
+	/**
+	 * @return Whether the function matching the given function binding takes
+	 *         parameters or not.
+	 * @throws DOMException
+	 * 
+	 * @since 5.1
+	 */
+	public static boolean functionTakesParameters(IFunction function)
+			throws DOMException {
+		IParameter[] parameters = function.getParameters();
+
+		if (parameters.length == 0) {
+			return false;
+		} else if (parameters.length == 1) {
+			IType ultimateType = SemanticUtil
+					.getUltimateTypeViaTypedefs(parameters[0].getType());
+
+			if (ultimateType instanceof IBasicType) {
+				if (((IBasicType) ultimateType).getType() == IBasicType.t_void) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	/**

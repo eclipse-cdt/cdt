@@ -238,7 +238,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			
 			CCompletionProposal proposal = createProposal(repString, descString, prefix.length(), image, baseRelevance + RelevanceConstants.MACRO_TYPE_RELEVANCE, context);
 			if (!context.isContextInformationStyle()) {
-				proposal.setCursorPosition(repString.length() - 1);
+				if (argString.length() > 0) {
+					proposal.setCursorPosition(repString.length() - 1);
+				} else {
+					proposal.setCursorPosition(repString.length());
+				}
 			}
 			
 			if (argString.length() > 0) {
@@ -336,8 +340,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		repStringBuff.append(function.getName());
 		repStringBuff.append('(');
 		
-		StringBuilder dispargs = new StringBuilder(); // for the displayString
-        StringBuilder idargs = new StringBuilder();   // for the idString
+		StringBuilder dispargs = new StringBuilder(); // for the dispargString
+        StringBuilder idargs = new StringBuilder();   // for the idargString
+		boolean hasArgs = true;
 		String returnTypeStr = null;
 		try {
 			IParameter[] params = function.getParameters();
@@ -376,12 +381,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				if (returnType != null)
 					returnTypeStr = ASTTypeUtil.getType(returnType, false);
 			}
+
+	        hasArgs = ASTTypeUtil.functionTakesParameters(function);
 		} catch (DOMException e) {
 		}
         
         String dispargString = dispargs.toString();
         String idargString = idargs.toString();
-		
+		String contextDispargString = hasArgs ? dispargString : null;
         StringBuilder dispStringBuff = new StringBuilder(repStringBuff.toString());
 		dispStringBuff.append(dispargString);
         dispStringBuff.append(')');
@@ -402,11 +409,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         final int relevance = function instanceof ICPPMethod ? RelevanceConstants.METHOD_TYPE_RELEVANCE : RelevanceConstants.FUNCTION_TYPE_RELEVANCE;
 		CCompletionProposal proposal = createProposal(repString, dispString, idString, context.getCompletionNode().getLength(), image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
-			proposal.setCursorPosition(repString.length() - 1);
+			int cursorPosition = hasArgs ? (repString.length() - 1) : repString.length();
+			proposal.setCursorPosition(cursorPosition);
 		}
 		
-		if (dispargString.length() > 0) {
-			CProposalContextInformation info = new CProposalContextInformation(image, dispString, dispargString);
+		if (contextDispargString != null) {
+			CProposalContextInformation info = new CProposalContextInformation(image, dispString, contextDispargString);
 			info.setContextInformationPosition(context.getContextInformationOffset());
 			proposal.setContextInformation(info);
 		}

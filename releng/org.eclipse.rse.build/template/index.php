@@ -162,6 +162,17 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-terminals-@buildId@.zip">RSE-terminals-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			Integration of the TM Terminal Widget into RSE, such that a Terminals Subsystem
+			is provided to show a tabbed view of Terminals similar to the 
+			Remote Command View. Implementations ship for Telnet and SSH, but the subsystem
+			is generic to use with other remote channels. The integration includes the
+			Terminal Widget, but requires RSE core runtime and RSE ssh or RSE telnet installed.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-useractions-@buildId@.zip">RSE-useractions-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
@@ -208,16 +219,6 @@
 			Provides a File subsystem for transparent remote file access.
 			Requires Microsoft RAPI libraries installed.
 			Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All <img src="egg.gif" width=20 height=20></td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-terminals-incubation-@buildId@.zip">RSE-terminals-incubation-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-			Integration of the TM Terminal Widget into RSE, such that an SSH Terminals
-			Subsystem is provided to show a tabbed view of Terminals similar to the 
-			Remote Command View. This component is already included in the RSE-SDK
-			download. It requires RSE core runtime and RSE ssh installed.
         </td>
     </tr>
 </table>

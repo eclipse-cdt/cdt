@@ -163,7 +163,7 @@
 	</target>
 
 	<target name="assemble.org.eclipse.rse.terminals">
-		<property name="archiveName" value="RSE-terminals-incubation-${buildId}.zip"/>
+		<property name="archiveName" value="RSE-terminals-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

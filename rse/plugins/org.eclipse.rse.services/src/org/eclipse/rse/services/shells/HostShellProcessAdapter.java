@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 PalmSource, Inc.
+ * Copyright (c) 2006 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Ewa Matejska (PalmSource) - initial version
+ * Ewa Matejska     (PalmSource) - initial version
  * Martin Oberhuber (Wind River) - adapt to IHostOutput API (bug 161773, 158312)
  * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
  * Martin Oberhuber (Wind River) - renamed from HostShellAdapter (bug 161777)
  * Martin Oberhuber (Wind River) - improved Javadoc
+ * Greg Watson      (IBM)        - patch for bug #252060
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -154,13 +155,20 @@ IHostShellOutputListener {
 	 */
 	public void shellOutputChanged(IHostShellChangeEvent event) {
 		IHostOutput[] input = event.getLines();
+		if (input.length == 0) {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+			}
+			return;
+		}
 		OutputStream outputStream = event.isError() ? hostShellError : hostShellInput;
 		try {
-		for(int i = 0; i < input.length; i++) {
-			outputStream.write(input[i].getString().getBytes());
-			outputStream.write('\n');
-			outputStream.flush();
-		}
+			for(int i = 0; i < input.length; i++) {
+				outputStream.write(input[i].getString().getBytes());
+				outputStream.write('\n');
+				outputStream.flush();
+			}
 		} catch(IOException e) {
 			// Ignore
 		}

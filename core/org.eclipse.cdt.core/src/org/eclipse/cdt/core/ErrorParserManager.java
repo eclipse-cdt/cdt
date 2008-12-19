@@ -14,6 +14,7 @@ package org.eclipse.cdt.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -258,6 +259,11 @@ public class ErrorParserManager extends OutputStream {
 				matchingFile = file;
 			}
 		}
+		
+		if(matchingFile == null) {
+			return (IFile) fFilesInProject.get(path.lastSegment()); // last ditch attempt... look for a file with that name in the project
+		}
+		
 		return matchingFile;
 	}
 
@@ -270,7 +276,28 @@ public class ErrorParserManager extends OutputStream {
 	private static boolean isPossibleMatch(IPath location, IResource resource) {
 		IPath resourceLocation = resource.getLocation();
 		if (resourceLocation == null) {
-			return false;
+			// could be an EFS path
+			URI locationURI = resource.getLocationURI();
+			if(locationURI == null)
+				return false;
+			
+			// Use the path information from the URI to see if the path as seen by the build
+			// matches the path that the resource points to.
+			
+			// This relies on the assumption that the EFS filesystem being used stores path information in the path
+			// portion of the URI.  This may not be in fact the case, but most filesystems adhere to such a format.
+			String path = locationURI.getPath();
+			
+			if(path == null)
+				return false;
+			
+			if(location.isAbsolute())
+				return location.toString().equals(path);
+			
+			IPath uriPath = new Path(path);
+			int prefixLen = uriPath.segmentCount() - location.segmentCount(); 
+			return prefixLen >= 0 && uriPath.removeFirstSegments(prefixLen).equals(location);
+			
 		}
 		if (location.getDevice()==null) {
 			resourceLocation = resourceLocation.setDevice(null);

@@ -66,8 +66,8 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		ITranslationUnit tu = context.getTranslationUnit();
         if(tu != null) {
         	ILanguage language = tu.getLanguage();
-        	if(language instanceof ICLanguageKeywords)
-        		languageKeywords = (ICLanguageKeywords)language;
+        	if(language != null)
+        		languageKeywords = (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
         }
         	
         if(languageKeywords == null)

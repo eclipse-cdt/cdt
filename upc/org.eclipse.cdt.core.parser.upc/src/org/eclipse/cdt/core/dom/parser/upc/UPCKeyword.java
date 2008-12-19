@@ -1,12 +1,22 @@
 package org.eclipse.cdt.core.dom.parser.upc;
 
-import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_MYTHREAD;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_THREADS;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_UPC_MAX_BLOCKSIZE;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_relaxed;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_shared;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_strict;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_barrier;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_blocksizeof;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_elemsizeof;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_fence;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_forall;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_localsizeof;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_notify;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_upc_wait;
 
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 
 /**
@@ -34,19 +44,30 @@ public enum UPCKeyword {
 	
 	private final int tokenKind;
 	
-	private static List<String> names = new ArrayList<String>();
+	
 	private static final CharArrayMap<Integer> tokenMap = new CharArrayMap<Integer>();
+	private static final String[] upcKeywords;
+	private static final String[] allKeywords;
 	
 	UPCKeyword(int tokenKind) {
 		this.tokenKind = tokenKind;
 	}
 	
-	static { // cannot refer to static fields from constructor
-		for(UPCKeyword keyword : values()) { 
+	static {
+		UPCKeyword[] keywords = values();
+		upcKeywords = new String[keywords.length];
+		for(int i = 0; i < keywords.length; i++) { 
+			UPCKeyword keyword = keywords[i]; 
 			String name = keyword.name();
-			names.add(name);
+			upcKeywords[i] = name;
 			tokenMap.put(name.toCharArray(), keyword.tokenKind);
 		}
+		
+		ICLanguageKeywords c99Keywords = (ICLanguageKeywords) C99Language.getDefault().getAdapter(ICLanguageKeywords.class);
+		String[] c99ks = c99Keywords.getKeywords();
+		allKeywords = new String[upcKeywords.length + c99ks.length];
+		System.arraycopy(c99ks, 0, allKeywords, 0, c99ks.length);
+		System.arraycopy(upcKeywords, 0, allKeywords, c99ks.length, upcKeywords.length);
 	}
 	
 	public int getTokenKind() {
@@ -54,16 +75,16 @@ public enum UPCKeyword {
 	}
 	
 	public static String[] getUPCOnlyKeywords() {
-		return names.toArray(new String[names.size()]);
+		return upcKeywords;
 	}
 	
 	public static String[] getAllKeywords() {
-		List<String> allKeywords = new ArrayList<String>(names);
-		allKeywords.addAll(Arrays.asList(C99Language.getDefault().getKeywords()));
-		return allKeywords.toArray(new String[allKeywords.size()]);
+		return allKeywords;
 	}
 	
 	public static Integer getTokenKind(char[] image) {
+		if(image == null)
+			return null;
 		return tokenMap.get(image);
 	}
 }

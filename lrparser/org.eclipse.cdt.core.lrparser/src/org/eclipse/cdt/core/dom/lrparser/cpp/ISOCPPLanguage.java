@@ -16,15 +16,19 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 
 /**
  * ILanguage implementation for the C++ parser.
@@ -81,6 +85,20 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 		return ParserLanguage.CPP;
 	}
 
+	private ICLanguageKeywords cppLanguageKeywords = new CLanguageKeywords(ParserLanguage.CPP, SCANNER_CONFIGURATION);
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(IPDOMLinkageFactory.class.equals(adapter))
+			return new PDOMCPPLinkageFactory();
+		if(ICLanguageKeywords.class.equals(adapter))
+			return cppLanguageKeywords;
+		
+		return super.getAdapter(adapter);
+	}
+	
 	/**
 	 * Gets the translation unit object and sets the index and the location resolver. 
 	 */

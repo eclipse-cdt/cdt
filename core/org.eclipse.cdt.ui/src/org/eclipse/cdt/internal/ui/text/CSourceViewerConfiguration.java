@@ -182,11 +182,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			return fPreprocessorScanner;
 		}
 		AbstractCScanner scanner= null;
-		if (language instanceof ICLanguageKeywords) {
-			scanner= new CPreprocessorScanner(getTokenStoreFactory(), (ICLanguageKeywords)language);
+		ICLanguageKeywords keywords = language == null ? null : (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
+		if (keywords != null) {
+			scanner = new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
 		if (scanner == null) {
-			scanner= new CPreprocessorScanner(getTokenStoreFactory(), GPPLanguage.getDefault());
+			keywords = (ICLanguageKeywords) GPPLanguage.getDefault().getAdapter(ICLanguageKeywords.class);
+			scanner= new CPreprocessorScanner(getTokenStoreFactory(), keywords);
 		}
 		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
@@ -372,14 +374,19 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			return fCodeScanner;
 		}
 		RuleBasedScanner scanner= null;
-		if (language instanceof ICLanguageKeywords) {
-			ICLanguageKeywords cLang= (ICLanguageKeywords)language;
-			scanner = new CCodeScanner(getTokenStoreFactory(), cLang);
-		} else if (language != null) {
-			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
-			if (languageUI != null)
-				scanner = languageUI.getCodeScanner();
+		
+		if(language != null) {
+			ICLanguageKeywords keywords = (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
+			if(keywords != null) {
+				scanner = new CCodeScanner(getTokenStoreFactory(), keywords);
+			}
+			else {
+				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+				if (languageUI != null)
+					scanner = languageUI.getCodeScanner();
+			}
 		}
+		
 		if (scanner == null) {
 			scanner = new CCodeScanner(getTokenStoreFactory(), GPPLanguage.getDefault());
 		}

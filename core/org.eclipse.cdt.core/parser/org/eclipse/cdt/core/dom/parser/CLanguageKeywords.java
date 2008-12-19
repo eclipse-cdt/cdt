@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser;
+package org.eclipse.cdt.core.dom.parser;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -25,15 +24,10 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * This class allows provides a reusable implementation of ICLanguageKeywords
  * for use by ILanguage implementations.
  * 
- * Note: this code was mostly copied from AbstractCLikeLanguage.
- * 
- * 
- * TODO move this into the core and use it with AbstractCLikeLanguage.
- * 
  * @author Mike Kucera
+ * @since 5.1
  */
-@SuppressWarnings({"restriction", "nls"})
-class CLanguageKeywords implements ICLanguageKeywords {
+public class CLanguageKeywords implements ICLanguageKeywords {
 
 	private final ParserLanguage language;
 	private final IScannerExtensionConfiguration config;
@@ -49,9 +43,9 @@ class CLanguageKeywords implements ICLanguageKeywords {
 	 */
 	public CLanguageKeywords(ParserLanguage language, IScannerExtensionConfiguration config) {
 		if(language == null)
-			throw new NullPointerException("language is null");
+			throw new NullPointerException("language is null"); //$NON-NLS-1$
 		if(config == null)
-			throw new NullPointerException("config is null");
+			throw new NullPointerException("config is null"); //$NON-NLS-1$
 		
 		this.language = language;
 		this.config = config;

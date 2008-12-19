@@ -16,8 +16,10 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -25,6 +27,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 /**
  * ILanguage implementation for the C99 parser.
@@ -77,6 +81,20 @@ public class C99Language extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
+	}
+
+	private ICLanguageKeywords cLanguageKeywords = new CLanguageKeywords(ParserLanguage.C, SCANNER_CONFIGURATION);
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(IPDOMLinkageFactory.class.equals(adapter))
+			return new PDOMCLinkageFactory();
+		if(ICLanguageKeywords.class.equals(adapter))
+			return cLanguageKeywords;
+		
+		return super.getAdapter(adapter);
 	}
 
 	/**

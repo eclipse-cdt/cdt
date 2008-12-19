@@ -13,10 +13,7 @@
 package org.eclipse.cdt.core.dom.parser;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -34,13 +31,10 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.util.ICancelable;
 import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.core.runtime.CoreException;
@@ -231,51 +225,35 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return null;
 	}
 
+
+	private ICLanguageKeywords cLanguageKeywords = null;
 	
-	private String[] keywords = null;
-	private String[] builtinTypes = null;
-	private String[] preprocessorKeywords = null;
+	private synchronized ICLanguageKeywords getCLanguageKeywords() {
+		if(cLanguageKeywords == null)
+			cLanguageKeywords = new CLanguageKeywords(getParserLanguage(), getScannerExtensionConfiguration());
+		return cLanguageKeywords;
+	}
 	
-	
-	public String[] getKeywords() {
-		if(keywords == null) {
-			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, getParserLanguage()));
-			
-			CharArrayIntMap additionalKeywords = getScannerExtensionConfiguration().getAdditionalKeywords();
-			if (additionalKeywords != null) {
-				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-					char[] name = iterator.next();
-					keywordSet.add(new String(name));
-				}
-			}
-			keywords = keywordSet.toArray(new String[keywordSet.size()]);
-		}
-		return keywords;
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(ICLanguageKeywords.class.equals(adapter))
+			return getCLanguageKeywords();
+		
+		return super.getAdapter(adapter);
 	}
 
-
+	// for backwards compatibility
 	public String[] getBuiltinTypes() {
-		if(builtinTypes == null) {
-			Set<String> types = KeywordSets.getKeywords(KeywordSetKey.TYPES, getParserLanguage());
-			builtinTypes = types.toArray(new String[types.size()]);
-		}
-		return builtinTypes;
+		return getCLanguageKeywords().getBuiltinTypes();
 	}
 
+	public String[] getKeywords() {
+		return getCLanguageKeywords().getKeywords();
+	}
 
 	public String[] getPreprocessorKeywords() {
-		if(preprocessorKeywords == null) {
-			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, getParserLanguage()));
-			CharArrayIntMap additionalKeywords= getScannerExtensionConfiguration().getAdditionalPreprocessorKeywords();
-			if (additionalKeywords != null) {
-				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
-					char[] name = iterator.next();
-					keywords.add(new String(name));
-				}
-			}
-			preprocessorKeywords = keywords.toArray(new String[keywords.size()]);
-		}
-		return preprocessorKeywords;
+		return getCLanguageKeywords().getPreprocessorKeywords();
 	}
-	
+
 }

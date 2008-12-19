@@ -15,11 +15,9 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
-import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -30,8 +28,6 @@ import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -42,13 +38,11 @@ import org.eclipse.core.runtime.CoreException;
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
-public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ILanguage, ICLanguageKeywords {
+public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 	
-	private static final boolean DEBUG_PRINT_GCC_AST = false;
-	private static final boolean DEBUG_PRINT_AST     = false;
-	
-	private ICLanguageKeywords keywords = null;
+	private static final boolean DEBUG_PRINT_GCC_AST = true;
+	private static final boolean DEBUG_PRINT_AST     = true;
 	
 	
 	/**
@@ -95,25 +89,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	
 	
 	
-	private void getCLanguageKeywords() {
-		ParserLanguage lang = getParserLanguage();
-		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
-		keywords = new CLanguageKeywords(lang, config);
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPDOMLinkageFactory.class)
-			return new PDOMCLinkageFactory();
-		
-		return super.getAdapter(adapter);
-	}
-	
-	
-	
-	
 	@SuppressWarnings("nls")
 	@Override
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
@@ -141,12 +116,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		preprocessor.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
-		IParser parser = getParser();
+		// The translation unit has to be created here so that the preprocessor
+		// can fill in the preprocessor AST nodes.
 		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
-		
+		IParser parser = getParser();
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
-		parser.parse(tu); // the parser will fill in the rest of the AST
+		parser.parse(tu); // The parser will fill in the rest of the AST
 		
 		// the TU is marked as either a source file or a header file
 		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
@@ -241,25 +217,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 	
-	public String[] getBuiltinTypes() {
-		if(keywords == null)
-			getCLanguageKeywords();
-			
-		return keywords.getBuiltinTypes();
-	}
-
-	public String[] getKeywords() {
-		if(keywords == null)
-			getCLanguageKeywords();
-		
-		return keywords.getKeywords();
-	}
-
-	public String[] getPreprocessorKeywords() {
-		if(keywords == null)
-			getCLanguageKeywords();
-		
-		return keywords.getPreprocessorKeywords();
-	}
+	
 	
 }

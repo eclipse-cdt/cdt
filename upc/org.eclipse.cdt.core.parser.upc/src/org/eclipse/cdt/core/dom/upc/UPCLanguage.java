@@ -18,15 +18,18 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
-import org.eclipse.cdt.core.dom.parser.upc.UPCKeyword;
+import org.eclipse.cdt.core.dom.parser.upc.UPCLanguageKeywords;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 
 /**
@@ -43,7 +46,6 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	private static final IDOMTokenMap TOKEN_MAP = new DOMToUPCTokenMap();
 	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
-	private static final String[] upcKeywords = UPCKeyword.getAllKeywords();
 
 	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
 	
@@ -77,11 +79,20 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return ILinkage.C_LINKAGE_ID;
 	}
 
-	@Override
-	public String[] getKeywords() {
-		return upcKeywords;
-	}
 
+	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(SCANNER_CONFIGURATION);
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(IPDOMLinkageFactory.class.equals(adapter))
+			return new PDOMCLinkageFactory();
+		if(ICLanguageKeywords.class.equals(adapter))
+			return upcKeywords;
+		
+		return super.getAdapter(adapter);
+	}
+	
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;

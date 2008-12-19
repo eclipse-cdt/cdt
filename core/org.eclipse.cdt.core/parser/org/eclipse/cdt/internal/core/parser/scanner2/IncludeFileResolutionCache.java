@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +25,18 @@ import java.util.Map;
  * @since 5.0
  */
 public final class IncludeFileResolutionCache {
-	private static final String[] EMPTY_STRING_ARRAY= {};
+	private static final Content EMPTY_STRING_ARRAY= new Content(new String[0]);
 	private static final boolean CASE_INSENSITIVE = new File("a").equals(new File("A")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static boolean BYPASS_CACHE= Boolean.getBoolean("CDT_INDEXER_BYPASS_FILE_EXISTS_CACHE"); //$NON-NLS-1$
 
+	private static class Content {
+		public Content(String[] names) {
+			fNames= names;
+			fIsFile= new BitSet(names.length*2);
+		}
+		public String[] fNames;
+		public BitSet fIsFile;
+	}
 	private Reference fExistsCache= null;
 		
 	public IncludeFileResolutionCache() {
@@ -37,7 +46,7 @@ public final class IncludeFileResolutionCache {
 	public boolean exists(String path) {
 		File file= new File(path);
 		if (BYPASS_CACHE) {
-			return file.exists();
+			return file.isFile();
 		}
 		
 		String parent= file.getParent();
@@ -45,23 +54,40 @@ public final class IncludeFileResolutionCache {
 		if (CASE_INSENSITIVE)
 			name= name.toUpperCase();
 		
-		String[] avail= (String[]) getExistsCache().get(parent); 
+		Content avail= (Content) getExistsCache().get(parent); 
 		if (avail == null) {
-			avail= new File(parent).list();
-			if (avail == null || avail.length == 0) {
+			String[] files= new File(parent).list();
+			if (files == null || files.length == 0) {
 				avail= EMPTY_STRING_ARRAY;
 			}
 			else {
 				if (CASE_INSENSITIVE) {
-					for (int i = 0; i < avail.length; i++) {
-						avail[i]= avail[i].toUpperCase();
+					for (int i = 0; i < files.length; i++) {
+						files[i]= files[i].toUpperCase();
 					}
 				}
-				Arrays.sort(avail);
+				Arrays.sort(files);
+				avail= new Content(files);
 			}
 			getExistsCache().put(parent, avail);
 		}
-		return Arrays.binarySearch(avail, name) >= 0;
+		int idx= Arrays.binarySearch(avail.fNames, name);
+		if (idx < 0)
+			return false;
+		idx *= 2;
+		
+		final BitSet isFileBitset = avail.fIsFile;
+		if (isFileBitset.get(idx))
+			return true;
+		if (isFileBitset.get(idx+1))
+			return false;
+		
+		if (file.isFile()) {
+			isFileBitset.set(idx);
+			return true;
+		}
+		isFileBitset.set(idx+1);
+		return false;
 	}
 
 	private Map getExistsCache() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1079,4 +1079,29 @@ public class IndexBugsTests extends BaseTestCase {
 			}
 		}
 	}
+	
+	// #include "dir"
+	// #include "header.h"
+	public void testIncludsionOfFolders_Bug243682() throws Exception {
+		String contents= getContentsForTest(1)[0].toString();
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toString() + "/f1"};
+
+		IFile sol= TestSourceReader.createFile(fCProject.getProject(), "f1/header.h", "");
+		TestSourceReader.createFile(fCProject.getProject(), "dir/dummy.h", "");
+		TestSourceReader.createFile(fCProject.getProject(), "header.h/dummy.h", "");
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile f= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(f1));
+			IIndexInclude[] is= f.getIncludes();
+			assertFalse(is[0].isResolved());
+			assertTrue(is[1].isResolved());
+			assertEquals(sol.getFullPath().toString(), is[1].getIncludesLocation().getFullPath());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}	
 }

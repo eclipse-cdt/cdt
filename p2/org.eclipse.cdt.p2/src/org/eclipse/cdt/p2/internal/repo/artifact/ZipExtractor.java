@@ -41,6 +41,8 @@ public class ZipExtractor extends Thread {
 				}
 				zipIn.closeEntry();
 			}
+			// Keep reading until there's none left
+			while (in.read() != -1);
 			zipIn.close();
 			fileListWriter.close();
 		} catch (IOException e) {

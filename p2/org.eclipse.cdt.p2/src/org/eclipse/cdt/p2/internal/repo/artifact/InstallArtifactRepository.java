@@ -54,7 +54,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	public static final String FILENAME = "installArtifact.xml"; //$NON-NLS-1$
 	
 	public static final String COMPRESSION = "compression";
-	public static final String GZIP_COMPRESSON = "tar.gz";
+	public static final String GZIP_COMPRESSION = "tar.gz";
 	public static final String BZIP2_COMPRESSION = "tar.bz2";
 	public static final String ZIP_COMPRESSION = "zip";
 	

@@ -43,7 +43,7 @@ public class TarExtractor extends Thread {
 	public void run() {
 		try {
 			InputStream compIn;
-			if (InstallArtifactRepository.GZIP_COMPRESSON.equals(compression))
+			if (InstallArtifactRepository.GZIP_COMPRESSION.equals(compression))
 				compIn = new GZIPInputStream(in);
 			else if (InstallArtifactRepository.BZIP2_COMPRESSION.equals(compression)) {
 				// Skip the magic bytes first		

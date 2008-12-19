@@ -83,7 +83,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit runtimeIU = createIU(runtimeIUDesc, runtimeId,	runtimeVersion,
 				"http://downloads.sourceforge.net/mingw/mingwrt-3.15.1-mingw32.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 
 		// w32api
 		String w32apiId = "wascana.mingw.w32api";
@@ -92,7 +92,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit w32apiIU = createIU(w32apiIUDesc, w32apiId, w32apiVersion,
 				"http://downloads.sourceforge.net/mingw/w32api-3.13-mingw32-dev.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 
 		// binutils
 		String binutilsId = "wascana.mingw.binutils";
@@ -101,7 +101,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit binutilsIU = createIU(binutilsIUDesc, binutilsId, binutilsVersion,
 				"http://downloads.sourceforge.net/mingw/binutils-2.19-mingw32-bin.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 		
 		// gcc-4 core
 		String gcc4coreId = "wascana.mingw.gcc4.core";
@@ -122,7 +122,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit gcc4coreIU = createIU(gcc4coreIUDesc, gcc4coreId, gcc4Version,
 				"http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-1-core.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 
 		// gcc-4 g++
 		String gcc4gppId = "wascana.mingw.gcc4.g++";
@@ -137,7 +137,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit gcc4gppIU = createIU(gcc4gppIUDesc, gcc4gppId, gcc4Version,
 				"http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-1-g++.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 		
 		// gdb
 		String gdbId = "wascana.mingw.gdb";
@@ -155,7 +155,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit msysIU = createIU(msysIUDesc, msysId, msysVersion,
 				"http://downloads.sourceforge.net/mingw/msysCORE-1.0.11-20080826.tar.gz",
 				"msys",
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.GZIP_COMPRESSION);
 		
 		// MinGW toolchain category
 		InstallableUnitDescription mingwToolchainDesc = createIUDesc("wascana.mingw", wascanaVersion, "MinGW Toolchain", null);;
@@ -200,9 +200,9 @@ public class MinGWGenerator implements IApplication {
 		Version sdlVersion = new Version("1.2.13");
 		InstallableUnitDescription sdlIUDesc = createIUDesc(sdlId, sdlVersion, "Wascana SDL (Simple Directmedia Layer) Library", lgplLic);
 		IInstallableUnit sdlIU = createIU(sdlIUDesc, sdlId, sdlVersion,
-				"http://www.libsdl.org/release/SDL-devel-1.2.13-mingw32.tar.gz",
+				"http://downloads.sourceforge.net/wascana/SDL-mingw-1.2.13.zip",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSON);
+				InstallArtifactRepository.ZIP_COMPRESSION);
 		
 		// Libraries toolchain category
 		InstallableUnitDescription libsIUDesc = createIUDesc("wascana.libs", wascanaVersion, "Libraries", null);;
@@ -211,6 +211,9 @@ public class MinGWGenerator implements IApplication {
 				MetadataFactory.createRequiredCapability(
 						IInstallableUnit.NAMESPACE_IU_ID,
 						zlibIU.getId(), new VersionRange(null), null, false, false),
+				MetadataFactory.createRequiredCapability(
+						IInstallableUnit.NAMESPACE_IU_ID,
+						sdlIU.getId(), new VersionRange(null), null, false, false),
 		};
 		libsIUDesc.setRequiredCapabilities(libsReqs);
 		IInstallableUnit libsIU = MetadataFactory.createInstallableUnit(libsIUDesc);
@@ -226,6 +229,7 @@ public class MinGWGenerator implements IApplication {
 				mingwToolchainIU,
 				
 				zlibIU,
+				sdlIU,
 				libsIU
 			});
 

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal    (IBM)        - [168977] refactoring IConnectorService and ServerLauncher hierarchies
  * Sheldon D'souza  (Celunite)   - adapted from SshConnectorService
@@ -13,7 +13,7 @@
  * Martin Oberhuber (Wind River) - [178606] fix endless loop in readUntil()
  * Sheldon D'souza  (Celunite)   - [186536] login and password should be configurable
  * Sheldon D'souza  (Celunite)   - [186570] handle invalid user id and password more gracefully
- * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect()
  * Sheldon D'souza  (Celunite)   - [187301] support multiple telnet shells
  * Sheldon D'souza  (Celunite)   - [194464] fix create multiple telnet shells quickly
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
@@ -94,7 +94,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	 * Return the telnet property set, and fill it with default values if it has
 	 * not been created yet. Extenders may override in order to set different
 	 * default values.
-	 * 
+	 *
 	 * @return a property set holding properties understood by the telnet
 	 *         connector service.
 	 */
@@ -106,9 +106,9 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			telnetSet.addProperty(PROPERTY_LOGIN_REQUIRED,
 							"true", PropertyType.getEnumPropertyType(new String[] { "true", "false" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			telnetSet.addProperty(PROPERTY_LOGIN_PROMPT,
-					"ogin: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$ 
+					"ogin: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$
 			telnetSet.addProperty(PROPERTY_PASSWORD_PROMPT,
-					"assword: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$ 
+					"assword: ", PropertyType.getStringPropertyType()); //$NON-NLS-1$
 			telnetSet.addProperty(PROPERTY_COMMAND_PROMPT,
 					"$", PropertyType.getStringPropertyType()); //$NON-NLS-1$
 		}
@@ -151,10 +151,10 @@ public class TelnetConnectorService extends StandardConnectorService implements
 
 	public TelnetClient makeNewTelnetClient(IProgressMonitor monitor ) throws Exception {
 		TelnetClient client = new TelnetClient();
-		return 	makeNewTelnetClient(client, monitor);		
+		return 	loginTelnetClient(client, monitor);
 	}
-	
-	public TelnetClient makeNewTelnetClient(TelnetClient client, IProgressMonitor monitor ) throws Exception {
+
+	public TelnetClient loginTelnetClient(TelnetClient client, IProgressMonitor monitor) throws SystemMessageException {
 		String host = getHostName();
 		String user = getUserId();
 		String password = ""; //$NON-NLS-1$
@@ -213,14 +213,14 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				//from the remote side with the SystemMessageException for user diagnostics
 				SystemMessage msg;
 				if (nestedException!=null) {
-					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ICommonMessageIds.MSG_EXCEPTION_OCCURRED,
-							IStatus.ERROR, 
+							IStatus.ERROR,
 							CommonMessages.MSG_EXCEPTION_OCCURRED, nestedException);
 				} else {
-					msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+					msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 							ICommonMessageIds.MSG_COMM_AUTH_FAILED,
-							IStatus.ERROR, 
+							IStatus.ERROR,
 							CommonMessages.MSG_COMM_AUTH_FAILED,
 							NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHost().getAliasName()));
 
@@ -326,7 +326,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	 * Handle session-lost events. This is generic for any sort of connector
 	 * service. Most of this is extracted from dstore's
 	 * ConnectionStatusListener.
-	 * 
+	 *
 	 * TODO should be refactored to make it generally available, and allow
 	 * dstore to derive from it.
 	 */
@@ -371,11 +371,11 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			// TODO allow users to reconnect from this dialog
 			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_CONNECT_CANCELLED,
-					IStatus.CANCEL, 
+					IStatus.CANCEL,
 					NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
-	
+
 			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
 			dialog.open();
 			try {
@@ -489,11 +489,11 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		 */
 		protected void showDisconnectErrorMessage(Shell shell, String hostName,
 				int port, Exception exc) {
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_DISCONNECT_FAILED,
 					IStatus.ERROR,
 					NLS.bind(CommonMessages.MSG_DISCONNECT_FAILED, hostName), exc);
-			
+
 			SystemMessageDialog msgDlg = new SystemMessageDialog(shell,msg);
 			msgDlg.setException(exc);
 			msgDlg.open();
@@ -505,7 +505,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		 */
 		protected void showDisconnectCancelledMessage(Shell shell,
 				String hostName, int port) {
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
 					ICommonMessageIds.MSG_DISCONNECT_CANCELLED,
 					IStatus.CANCEL,
 					NLS.bind(CommonMessages.MSG_DISCONNECT_CANCELLED, hostName));
@@ -602,7 +602,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	 * Test if this connector service requires a password. Telnet connector
 	 * service returns false since a password is not necessarily required, i.e.
 	 * the corresponding password field may be empty.
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
 	 * @return false
 	 */
@@ -614,7 +614,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	 * Test if this connector service requires a user id. Telnet connector
 	 * service returns false since a user id is not necessarily required, i.e.
 	 * the corresponding user id field may be empty.
-	 * 
+	 *
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
 	 * @return false
 	 */
@@ -624,7 +624,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 
 	/**
 	 * Test if this connector service requires logging in.
-	 * 
+	 *
 	 * @return false if the Property {@link #PROPERTY_LOGIN_REQUIRED} is set and
 	 *         false. Returns true otherwise.
 	 */

@@ -99,7 +99,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 					true, true, true));
 			fTelnetClient.addOptionHandler(new TerminalTypeOptionHandler(
 					ptyType, true, true, true, true));
-			fTelnetClient = fSessionProvider.makeNewTelnetClient(fTelnetClient,
+			fTelnetClient = fSessionProvider.loginTelnetClient(fTelnetClient,
 					new NullProgressMonitor());
 			fOutputStream = fTelnetClient.getOutputStream();
 			if (onUNIX)

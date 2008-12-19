@@ -19,6 +19,18 @@ import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.terminals.ITerminalService;
 
+/**
+ * The implementation of the ITerminalServiceSubSystemConfiguration interface
+ * contains information about what features the subsystem supports, and creates
+ * TerminalServiceSubSystem instances.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
+ */
 public abstract class TerminalServiceSubSystemConfiguration extends
 		SubSystemConfiguration implements
 		ITerminalServiceSubSystemConfiguration {
@@ -34,6 +46,10 @@ public abstract class TerminalServiceSubSystemConfiguration extends
 		return false;
 	}
 
+	/**
+	 * @inheritDoc
+	 * @since 1.0
+	 */
 	public final ITerminalService getTerminalService(IHost host) {
 		ITerminalService service = (ITerminalService) _services.get(host);
 		if (service == null) {

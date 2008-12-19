@@ -25,6 +25,8 @@
 ;../org.eclipse.rse.subsystems.shells.local/src
 ;../org.eclipse.rse.subsystems.shells.ssh/src
 ;../org.eclipse.rse.subsystems.shells.telnet/src
+;../org.eclipse.rse.subsystems.terminals.core/src
+;../org.eclipse.rse.subsystems.terminals.ssh/src
 ;../org.eclipse.rse.ui/model
 ;../org.eclipse.rse.ui/UI
 ;../org.eclipse.rse.ui/subsystems"
@@ -72,7 +74,6 @@ org.eclipse.rse.files.ui.dialogs
 org.eclipse.rse.files.ui.resources
 org.eclipse.rse.files.ui.widgets
 org.eclipse.rse.filters
-org.eclipse.rse.internal.services.terminals
 org.eclipse.rse.logging
 org.eclipse.rse.model
 org.eclipse.rse.persistence
@@ -92,6 +93,7 @@ org.eclipse.rse.services.files
 org.eclipse.rse.services.processes
 org.eclipse.rse.services.search
 org.eclipse.rse.services.shells
+org.eclipse.rse.services.terminals
 org.eclipse.rse.shells.ui
 org.eclipse.rse.shells.ui.view
 org.eclipse.rse.subsystems.files.core
@@ -117,6 +119,9 @@ org.eclipse.rse.subsystems.shells.dstore
 org.eclipse.rse.subsystems.shells.local
 org.eclipse.rse.subsystems.shells.ssh
 org.eclipse.rse.subsystems.shells.telnet
+org.eclipse.rse.subsystems.terminals.core
+org.eclipse.rse.subsystems.terminals.core.elements
+org.eclipse.rse.subsystems.terminals.ssh
 org.eclipse.rse.ui
 org.eclipse.rse.ui.actions
 org.eclipse.rse.ui.dialogs

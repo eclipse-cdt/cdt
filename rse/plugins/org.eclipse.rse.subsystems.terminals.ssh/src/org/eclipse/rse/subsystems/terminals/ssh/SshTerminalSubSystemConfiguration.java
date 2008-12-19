@@ -22,6 +22,16 @@ import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystem;
 import org.eclipse.rse.subsystems.terminals.core.TerminalServiceSubSystemConfiguration;
 
+/**
+ * An SSH Terminal Subsystem Factory.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
+ */
 public class SshTerminalSubSystemConfiguration extends
         TerminalServiceSubSystemConfiguration {
 
@@ -47,6 +57,10 @@ public class SshTerminalSubSystemConfiguration extends
         return subsys;
     }
 
+	/**
+	 * @inheritDoc
+	 * @since 1.0
+	 */
     public ITerminalService createTerminalService(IHost host) {
 		SshConnectorService cserv = (SshConnectorService) getConnectorService(host);
 		return new SshTerminalService(cserv);

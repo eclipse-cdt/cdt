@@ -14,6 +14,16 @@ package org.eclipse.rse.subsystems.terminals.core;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 
+/**
+ * Specialized interface for remote terminal subsystems.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
+ */
 public interface ITerminalServiceSubSystem extends ISubSystem {
 	public void addChild(TerminalElement element);
 
@@ -26,6 +36,7 @@ public interface ITerminalServiceSubSystem extends ISubSystem {
 	/**
 	 * @return parent subsystem factory, cast to a
 	 *         ITerminalServiceSubSystemConfiguration
+	 * @since 1.0
 	 */
 	public ITerminalServiceSubSystemConfiguration getParentRemoteTerminalSubSystemConfiguration();
 

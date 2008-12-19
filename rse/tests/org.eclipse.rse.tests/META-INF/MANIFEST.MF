@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.tests;singleton:=true
-Bundle-Version: 3.0.100.qualifier
+Bundle-Version: 3.1.0.qualifier
 Bundle-Activator: org.eclipse.rse.tests.RSETestsPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -18,7 +18,7 @@ Require-Bundle: org.junit,
  org.eclipse.rse.subsystems.files.local;bundle-version="[2.1.0,3.0.0)",
  org.eclipse.rse.subsystems.processes.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.subsystems.shells.core;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.services;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.rse.services.files.ftp;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.services.ssh;bundle-version="[2.1.0,3.0.0)",
  org.eclipse.rse.subsystems.files.ftp;bundle-version="[2.1.0,3.0.0)",
@@ -26,7 +26,7 @@ Require-Bundle: org.junit,
  org.eclipse.rse.efs,
  org.eclipse.rse.tests.framework;bundle-version="[2.0.0,3.0.0)",
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)",
- org.eclipse.rse.subsystems.terminals.core;bundle-version="0.1.1"
+ org.eclipse.rse.subsystems.terminals.core;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

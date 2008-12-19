@@ -1,13 +1,13 @@
 /********************************************************************************
  * Copyright (c) 2008 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight.
- * 
+ *
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
@@ -21,6 +21,20 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.services.terminals.ITerminalShell;
 
+/**
+ * Base class that can be used for decorating an existing terminal service with
+ * additional functionality. By default, all method calls are passed through to
+ * the original service.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
+ *
+ * @since org.eclipse.rse.subsystems.terminals.core 1.0
+ */
 public class DelegatingTerminalService implements ITerminalService {
 
 	private IHost _host;

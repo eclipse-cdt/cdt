@@ -19,6 +19,13 @@ import org.eclipse.rse.subsystems.terminals.core.ITerminalServiceSubSystem;
 
 /**
  * An element in the RSE Tree that resembles a Terminal connection.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class TerminalElement extends AbstractResource {
     private String name;
@@ -63,15 +70,19 @@ public class TerminalElement extends AbstractResource {
         return name.hashCode() ;
     }
 
-    /**
+	/**
 	 * Return the back-end connection of this terminal instance.
+	 *
+	 * @since 1.0
 	 */
     public ITerminalShell getTerminalShell() {
         return terminalShell;
     }
 
-    /**
+	/**
 	 * Set the back-end connection of this terminal instance.
+	 * 
+	 * @since 1.0
 	 */
     public void setTerminalShell(ITerminalShell terminalShell) {
         this.terminalShell = terminalShell;

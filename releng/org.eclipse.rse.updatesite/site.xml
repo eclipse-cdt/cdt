@@ -435,10 +435,10 @@
    <feature url="features/org.eclipse.rse.remotecdt_2.1.100.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.1.100.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals_0.1.100.qualifier.jar" id="org.eclipse.rse.terminals" version="0.1.100.qualifier">
+   <feature url="features/org.eclipse.rse.terminals_1.0.0.qualifier.jar" id="org.eclipse.rse.terminals" version="1.0.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.0.100.qualifier.jar" id="org.eclipse.rse.tests" version="3.0.100.qualifier">
+   <feature url="features/org.eclipse.rse.tests_3.1.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.1.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_1.1.100.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.100.qualifier">

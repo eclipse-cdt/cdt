@@ -36,6 +36,13 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * A Subsystem that has terminal instances as children.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public class TerminalServiceSubSystem extends SubSystem implements
 		ITerminalServiceSubSystem, ICommunicationsListener {
@@ -46,6 +53,8 @@ public class TerminalServiceSubSystem extends SubSystem implements
 
 	/**
 	 * Constructor.
+	 *
+	 * @since 1.0
 	 */
 	public TerminalServiceSubSystem(IHost host,
 			IConnectorService connectorService, ITerminalService hostService) {
@@ -66,6 +75,8 @@ public class TerminalServiceSubSystem extends SubSystem implements
 
 	/**
 	 * Return the Terminal Service associated with this subsystem.
+	 *
+	 * @since 1.0
 	 */
 	public ITerminalService getTerminalService() {
 		return _hostService;
@@ -122,6 +133,8 @@ public class TerminalServiceSubSystem extends SubSystem implements
 
 	/**
 	 * Set the terminal service associated with this subsystem.
+	 *
+	 * @since 1.0
 	 */
 	public void setTerminalService(ITerminalService service) {
 		_hostService = service;
@@ -196,6 +209,10 @@ public class TerminalServiceSubSystem extends SubSystem implements
 		return (configuration instanceof ITerminalServiceSubSystemConfiguration);
 	}
 
+	/**
+	 * @inheritDoc
+	 * @since 1.0
+	 */
 	public ITerminalServiceSubSystemConfiguration getParentRemoteTerminalSubSystemConfiguration() {
 		return (ITerminalServiceSubSystemConfiguration) super
 				.getSubSystemConfiguration();

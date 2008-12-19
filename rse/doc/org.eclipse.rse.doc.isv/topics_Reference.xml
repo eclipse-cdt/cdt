@@ -61,7 +61,7 @@
 			<topic label="org.eclipse.rse.services.processes" href="reference/api/org/eclipse/rse/services/processes/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.search" href="reference/api/org/eclipse/rse/services/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.shells" href="reference/api/org/eclipse/rse/services/shells/package-summary.html"/>
-			<topic label="org.eclipse.rse.internal.services.terminals" href="reference/api/org/eclipse/rse/internal/services/terminals/package-summary.html"/>
+			<topic label="org.eclipse.rse.services.terminals" href="reference/api/org/eclipse/rse/services/terminals/package-summary.html"/>
 		</topic>
 		<topic label="Services Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services.dstore" href="reference/api/org/eclipse/rse/services/dstore/package-summary.html"/>
@@ -102,6 +102,11 @@
 			<topic label="org.eclipse.rse.subsystems.shells.local" href="reference/api/org/eclipse/rse/subsystems/shells/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.ssh" href="reference/api/org/eclipse/rse/subsystems/shells/ssh/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.telnet" href="reference/api/org/eclipse/rse/subsystems/shells/telnet/package-summary.html"/>
+		</topic>
+		<topic label="Terminal Subsystem" href="provisional_api.html">
+			<topic label="org.eclipse.rse.subsystems.terminals.core" href="reference/api/org/eclipse/rse/subsystems/terminals/core/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.terminals.core.elements" href="reference/api/org/eclipse/rse/subsystems/terminals/core/elements/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.terminals.ssh" href="reference/api/org/eclipse/rse/subsystems/terminals/ssh/package-summary.html"/>
 		</topic>
 		<topic label="User Interface" href="provisional_api.html">
 			<topic label="org.eclipse.rse.ui" href="reference/api/org/eclipse/rse/ui/package-summary.html"/>

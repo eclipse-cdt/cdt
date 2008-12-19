@@ -69,7 +69,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		
 		setFlag(encodeFlags(include, targetFile == null));
 		setIncludedBy(containerFile);
-		setIncludes(targetFile, name.toCharArray());
+		setIncludes(targetFile, name.getSimpleID());
 	}
 	
 	private byte encodeFlags(IASTPreprocessorIncludeStatement include, boolean unresolved) {

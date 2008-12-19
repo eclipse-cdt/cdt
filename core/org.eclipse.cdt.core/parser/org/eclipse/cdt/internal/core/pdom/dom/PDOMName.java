@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -180,8 +181,16 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public void setNextInFile(PDOMName name) throws CoreException {
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
-		
+
+	/**
+	 * @deprecated use {@link #getSimpleID()}, instead.
+	 */
+	@Deprecated
 	public char[] toCharArray() {
+		return getSimpleID();
+	}
+
+	public char[] getSimpleID() {
 		try {
 			Database db = pdom.getDB();
 			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
@@ -189,21 +198,13 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			return binding != null ? binding.getNameCharArray() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
+			return CharArrayUtils.EMPTY;
 		}
 	}
 
 	@Override
 	public String toString() {
-		try {
-			Database db = pdom.getDB();
-			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
-			PDOMBinding binding = pdom.getBinding(bindingRec);
-			return binding != null ? binding.getName() : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return new String(getSimpleID());
 	}
 	
 	private int getFlags(int mask) throws CoreException {

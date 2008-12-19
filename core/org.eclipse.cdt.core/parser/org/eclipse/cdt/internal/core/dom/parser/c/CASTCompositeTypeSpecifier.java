@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
- * @author jcamelon
+ * Implementation for C composite specifiers.
  */
 public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         ICASTCompositeTypeSpecifier {
@@ -100,12 +100,6 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         if( scope == null )
             scope = new CCompositeTypeScope( this );
         return scope;
-    }
-
-
-    @Override
-	public String getRawSignature() {
-       return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
 
     @Override

@@ -50,11 +50,11 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
     }
 
     public String getName() {
-        return alias.toString();
+    	return new String(getNameCharArray());
     }
 
     public char[] getNameCharArray() {
-        return alias.toCharArray();
+        return alias.getSimpleID();
     }
 
     public String[] getQualifiedName() {

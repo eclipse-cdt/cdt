@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
@@ -143,16 +144,20 @@ public abstract class ASTNode implements IASTNode {
         return null;
     }
 
-    public String getRawSignature() {
+    protected char[] getRawSignatureChars() {
     	final IASTFileLocation floc= getFileLocation();
         final IASTTranslationUnit ast = getTranslationUnit();
         if (floc != null && ast != null) {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {
-        		return new String(lr.getUnpreprocessedSignature(getFileLocation()));
+        		return lr.getUnpreprocessedSignature(getFileLocation());
         	}
         }
-        return ""; //$NON-NLS-1$
+        return CharArrayUtils.EMPTY;
+    }
+
+    public String getRawSignature() {
+    	return new String(getRawSignatureChars());
     }
 
     public String getContainingFilename() {

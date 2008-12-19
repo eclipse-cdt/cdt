@@ -12,23 +12,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Template ids consist of an unqualified name (or operator or conversion name) 
@@ -53,6 +54,10 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		return copy;
 	}
 	
+	public char[] getSimpleID() {
+		return templateName.getSimpleID();
+	}
+
 	public IASTName getTemplateName() {
         return templateName;
     }
@@ -98,17 +103,43 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
        return CPPTemplates.createBinding(this);
     }
 
-	public IASTCompletionContext getCompletionContext() {
-		return null;
-	}
-
     public char[] toCharArray() {
-        return templateName.toCharArray();
-    }
-
-    @Override
-	public String toString() {
-        return templateName.toString();
+    	assert sAllowNameComputation;
+    	
+    	StringBuilder buf= new StringBuilder();
+    	buf.append(getTemplateName().toCharArray());
+    	buf.append('<');
+    	boolean needComma= false;
+    	boolean cleanupWhitespace= false;
+    	final IASTNode[] args= getTemplateArguments();
+    	for (IASTNode arg : args) {
+    		if (needComma)
+    			buf.append(", "); //$NON-NLS-1$
+    		needComma= true;
+    		if (arg instanceof IASTExpression) {
+    			IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
+    			if (value != Value.UNKNOWN && !Value.isDependentValue(value)) {
+        			buf.append(value.getSignature());
+    			} else {
+    				buf.append(arg.getRawSignature());
+    				cleanupWhitespace= true;
+    			}
+    		} else {
+    			IType type= CPPVisitor.createType(arg);
+    			if (type == null || type instanceof IProblemBinding) {
+    				buf.append(arg.getRawSignature());
+    			} else {
+    				buf.append(ASTTypeUtil.getType(type, false));
+    			}
+    		}
+    		if (cleanupWhitespace)
+    			WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
+    	}
+    	buf.append('>');
+    	final int len= buf.length();
+    	final char[] result= new char[len];
+    	buf.getChars(0, len, result, 0);
+    	return result;
     }
 
     @Override
@@ -136,10 +167,12 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
         return true;
     }
 
+	@Override
 	public boolean isDeclaration() {
 		return false; //for now this seems to be true
 	}
 
+	@Override
 	public boolean isReference() {
 		return true; //for now this seems to be true
 	}
@@ -160,28 +193,4 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
             }
         }
     }
-
-	public int getRoleOfName(boolean allowResolution) {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTInternalNameOwner) {
-        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
-        }
-        if (parent instanceof IASTNameOwner) {
-            return ((IASTNameOwner) parent).getRoleForName(this);
-        }
-        return IASTNameOwner.r_unclear;
-	}
-
-    public boolean isDefinition() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            return role == IASTNameOwner.r_definition;
-        }
-        return false;
-    }
-
-	public ILinkage getLinkage() {
-		return Linkage.CPP_LINKAGE;
-	}
 }

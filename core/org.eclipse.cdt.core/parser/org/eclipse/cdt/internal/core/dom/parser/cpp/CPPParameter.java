@@ -144,10 +144,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    IASTName name = getPrimaryDeclaration();
-	    if (name != null)
-	        return name.toString();
-	    return CPPSemantics.EMPTY_NAME;
+		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
@@ -156,7 +153,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	public char[] getNameCharArray() {
 	    IASTName name = getPrimaryDeclaration();
 	    if (name != null)
-	        return name.toCharArray();
+	        return name.getSimpleID();
 	    return CPPSemantics.EMPTY_NAME_ARRAY;
 	}
 

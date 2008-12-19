@@ -103,7 +103,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
     		}
     		@Override
     		public int leave(ICPPASTNamespaceDefinition namespace) {
-    			if (namespace.getName().toCharArray().length > 0) {
+    			if (namespace.getName().getSimpleID().length > 0) {
     				--depth;
     			}
     			return PROCESS_CONTINUE;

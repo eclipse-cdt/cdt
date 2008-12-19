@@ -57,6 +57,7 @@ public class BaseTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		CPPASTNameBase.sAllowRecursionBindings= false;
+		CPPASTNameBase.sAllowNameComputation= false;
 	}
 	
 	@Override

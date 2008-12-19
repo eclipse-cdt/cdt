@@ -16,21 +16,23 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Common interface for names in the index and the AST.
- * <p> This interface is not intended to be implemented by clients. </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the CDT team.
- * </p>
  * @since 4.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IName {
 	/**
-	 * Return a char array representation of the name.
-	 * 
-	 * @return ~ toString().toCharArray()
+	 * Returns the name without qualification and without template arguments.
+	 * @since 5.1
 	 */
+	public char[] getSimpleID();
+
+	/**
+	 * @deprecated Using this method is problematic, because for names from the
+	 * index never contain qualification or template arguments, which is different
+	 * for names from the AST.
+	 * Use {@link #getSimpleID()}, instead.
+	 */
+	@Deprecated
 	public char[] toCharArray();
 	
 	/**

@@ -99,23 +99,14 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return getSimpleName().toString();
-	}
-
-	private IASTName getSimpleName() {
-		IASTName name= declarations[0];
-		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
-			name= na[na.length-1];
-		}
-		return name;
+		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return getSimpleName().toCharArray();
+		return declarations[0].getSimpleID();
 	}
 
 	/* (non-Javadoc)

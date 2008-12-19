@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author jcamelon
+ * C++ specific declarator.
  */
 public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     private IASTInitializer initializer;
@@ -205,7 +205,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
                 return r_reference;
         }
         if (getParent instanceof IASTParameterDeclaration)
-            return (n.toCharArray().length > 0) ? r_definition : r_declaration;
+            return (n.getSimpleID().length > 0) ? r_definition : r_declaration;
         
         return r_unclear;
 	}

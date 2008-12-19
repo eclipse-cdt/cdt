@@ -188,7 +188,7 @@ public class IndexUI {
 						IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
 						for (int j = 0; j < names.length; j++) {
 							IIndexName name = names[j];
-							if (!name.isReference() && elementName.endsWith(new String(name.toCharArray()))) {
+							if (!name.isReference() && elementName.endsWith(new String(name.getSimpleID()))) {
 								return name;
 							}
 						}

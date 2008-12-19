@@ -70,7 +70,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
 	public IBinding getBinding(IASTName name) {
-	    return (IBinding) labels.get(name.toCharArray());
+	    return (IBinding) labels.get(name.getSimpleID());
 	}
 
 	/* (non-Javadoc)

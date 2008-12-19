@@ -51,11 +51,11 @@ public class CPPLabel extends PlatformObject implements ILabel, ICPPInternalBind
     }
 
     public String getName() {
-        return statement.toString();
+        return new String(getNameCharArray());
     }
 
     public char[] getNameCharArray() {
-        return statement.toCharArray();
+        return statement.getSimpleID();
     }
 
     public IScope getScope() {

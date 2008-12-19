@@ -60,7 +60,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private void addMacroDefinition(CharArrayMap<PreprocessorMacro> map, IASTName name) {
 		IBinding binding= name.getBinding();
 		if (binding instanceof PreprocessorMacro) {
-			map.put(name.toCharArray(), (PreprocessorMacro) binding);
+			map.put(name.getSimpleID(), (PreprocessorMacro) binding);
 		}
 	}
 

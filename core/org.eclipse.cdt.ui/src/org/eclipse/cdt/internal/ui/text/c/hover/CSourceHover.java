@@ -271,7 +271,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			int nodeLength= fileLocation.getNodeLength();
 			
 			String fileName= fileLocation.getFileName();
-			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + new String(name.toCharArray()) + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
+			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + name + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
 			IPath location= Path.fromOSString(fileName);
 			LocationKind locationKind= LocationKind.LOCATION;
 			if (name instanceof IASTName && !name.isReference()) {

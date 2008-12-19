@@ -122,7 +122,15 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
 		
+	/**
+	 * @deprecated use {@link #getSimpleID()}.
+	 */
+	@Deprecated
 	public char[] toCharArray() {
+		return getSimpleID();
+	}
+	
+	public char[] getSimpleID() {
 		try {
 			return getContainer().getNameCharArray();
 		} catch (CoreException e) {
@@ -133,7 +141,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	@Override
 	public String toString() {
-		return new String(toCharArray());
+		return new String(getSimpleID());
 	}
 	
 	public boolean isBaseSpecifier() throws CoreException {

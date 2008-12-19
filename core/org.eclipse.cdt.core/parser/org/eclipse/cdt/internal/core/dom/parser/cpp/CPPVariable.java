@@ -216,16 +216,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    if (declarations != null) {
-	        return declarations[0].toString();
-	    } 
-        IASTName name = definition;
-        if (name instanceof ICPPASTQualifiedName) {
-            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-            name = ns[ns.length - 1];
-        }
-	        
-	    return name.toString();
+		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
@@ -233,15 +224,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 */
 	public char[] getNameCharArray() {
 	    if (declarations != null) {
-	        return declarations[0].toCharArray();
+	        return declarations[0].getSimpleID();
 	    } 
-        IASTName name = definition;
-        if (name instanceof ICPPASTQualifiedName) {
-            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-            name = ns[ns.length - 1];
-        }
-	        
-	    return name.toCharArray();
+	    return definition.getSimpleID();
 	}
 
 	/* (non-Javadoc)

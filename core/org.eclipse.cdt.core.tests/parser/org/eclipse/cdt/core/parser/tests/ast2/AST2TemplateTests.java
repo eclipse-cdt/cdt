@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -463,6 +464,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// A <int, char*, 1> a4;		//uses #5, T is int, T2 is char, I is1       
 	// A <int*, int*, 2> a5;		//ambiguous, matches #3 & #5.                
 	public void test_14_5_4_1s2_MatchingTemplateSpecializations() throws Exception{
+		CPPASTNameBase.sAllowNameComputation= true;
+
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -1765,6 +1768,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	}
 	
 	public void testBug98666() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse("A::template B<T> b;", ParserLanguage.CPP); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -1772,7 +1776,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
 		IASTName[] ns = qn.getNames();
 		assertTrue(ns[1] instanceof ICPPASTTemplateId);
-		assertEquals(((ICPPASTTemplateId)ns[1]).toString(), "B"); //$NON-NLS-1$
+		assertEquals(ns[1].toString(), "B<T>"); //$NON-NLS-1$
 	}
 	
 	// template <class T> struct A{                          
@@ -2293,6 +2297,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	// void f(B<int>::tb r) {}
 	public void testTemplateTypedef_214447() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		
 		CPPNameCollector col = new CPPNameCollector();
@@ -2326,6 +2331,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	// void f(Vec<int>::reference r) {}
 	public void testRebindPattern_214447_1() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		
 		CPPNameCollector col = new CPPNameCollector();
@@ -2365,6 +2371,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	// void f(Vec<int>::reference r) {}
 	public void testRebindPattern_214447_2() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		
 		CPPNameCollector col = new CPPNameCollector();
@@ -2403,6 +2410,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	// void f(map<int>::value_type r) {}
 	public void testRebindPattern_236197() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2434,6 +2442,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     //
     // void main(Iter<int*>::iter_reference r);
     public void testSpecializationSelection_229218() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2462,6 +2471,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	// B<int>::b::a x;
 	public void testDefaultTemplateParameter() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		
 		CPPNameCollector col = new CPPNameCollector();
@@ -2746,6 +2756,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	C c1;   
 	//	C<> c2; // ok - default args
 	public void testMissingTemplateArgumentLists() throws Exception {
+		CPPASTNameBase.sAllowNameComputation=true;
 		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("B b1", 1);
 		ba.assertNonProblem("B<> b2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
@@ -2918,6 +2929,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	A<int> aint; // should be an error
 	public void testTypeArgumentToNonTypeParameter() throws Exception {
+		CPPASTNameBase.sAllowNameComputation=true;
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("A<int>", 6);
 	}

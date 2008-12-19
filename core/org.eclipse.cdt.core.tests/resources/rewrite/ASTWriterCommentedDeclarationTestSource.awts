@@ -153,6 +153,7 @@ template<template <class T> class K> class vector /*TEST 2*/
 //!Commented TemplateSpecialization 1
 //%CPP
 //TEST 1
+template<typename T> class MyQueue;
 template<> class MyQueue<double> //TEST 2
 {
     //TEST 3
@@ -167,6 +168,7 @@ public:
 //!Commented TemplateSpecialization 2
 //%CPP
 /*TEST 1*/
+template<typename T> class MyQueue;
 template<> class MyQueue<double> /*TEST 2*/
 {
     /*TEST 3*/

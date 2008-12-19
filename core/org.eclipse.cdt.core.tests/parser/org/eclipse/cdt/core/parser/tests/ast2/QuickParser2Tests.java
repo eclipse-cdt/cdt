@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -60,7 +61,14 @@ public class QuickParser2Tests extends TestCase {
         super(name);
     }
 
-    /**
+    
+    @Override
+	protected void setUp() throws Exception {
+    	CPPASTNameBase.sAllowRecursionBindings= false;
+    	CPPASTNameBase.sAllowNameComputation= false;
+	}
+
+	/**
      * Test code: int x = 5; Purpose: to test the simple decaration in it's
      * simplest form.
      */
@@ -549,6 +557,8 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug36704() throws Exception {
         Writer code = new StringWriter();
+        code.write("template<typename T, typename U> class Typelist;");
+        code.write("template<typename T> struct Length {};");
         code.write("template <class T, class U>\n"); 
         code.write("struct Length< Typelist<T, U> >\n"); 
         code.write("{\n"); 

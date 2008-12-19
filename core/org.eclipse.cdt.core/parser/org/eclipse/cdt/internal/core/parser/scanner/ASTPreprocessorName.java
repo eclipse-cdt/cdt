@@ -62,6 +62,10 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public char[] toCharArray() {
 		return fName;
 	}    	
+	public char[] getSimpleID() {
+		return fName;
+	}
+
 	@Override
 	public String toString() {
 		return new String(fName);

@@ -64,11 +64,11 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     }
 
     public String getName() {
-    	return name.toString();
+    	return new String(getNameCharArray());
     }
 
     public char[] getNameCharArray() {
-    	return name.toCharArray();
+    	return name.getSimpleID();
     }
 
     public IScope getScope() {

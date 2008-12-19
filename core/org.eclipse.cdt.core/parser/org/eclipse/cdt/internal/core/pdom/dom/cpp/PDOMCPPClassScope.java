@@ -75,7 +75,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
-		    final char[] nameChars = name.toCharArray();
+		    final char[] nameChars = name.getSimpleID();
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
 		        if (CPPClassScope.isConstructorReference(name)){
 		            return CPPSemantics.resolveAmbiguities(name, fBinding.getConstructors());
@@ -99,7 +99,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
-			final char[] nameChars = name.toCharArray();
+			final char[] nameChars = name.getSimpleID();
 			if (!prefixLookup) {
 				return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			}

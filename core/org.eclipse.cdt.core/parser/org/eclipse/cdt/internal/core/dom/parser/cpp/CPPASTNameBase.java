@@ -10,11 +10,21 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.regex.Pattern;
+
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.Assert;
 
@@ -23,11 +33,13 @@ import org.eclipse.core.runtime.Assert;
  * names plus template-ids
  */
 public abstract class CPPASTNameBase extends ASTNode implements IASTName {
+	protected static final Pattern WHITESPACE_SEQ = Pattern.compile("\\s+"); //$NON-NLS-1$
 
 	/**
 	 * For test-purposes, only.
 	 */
 	public static boolean sAllowRecursionBindings = true;
+	public static boolean sAllowNameComputation = true;
 	private static final byte MAX_RESOLUTION_DEPTH= 6;
 
 	protected final static class RecursionResolvingBinding extends ProblemBinding {
@@ -59,6 +71,18 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 			return ((CPPASTNameBase) name).getPreBinding();
 		
 		return name.getBinding();
+	}
+
+	/**
+	 * Helper method, returns "operator" for conversion names, and {@code IASTName#getSimpleName()}, otherwise. 
+	 */
+	public static char[] getLookupKey(IASTName name) {
+		name= name.getLastName();
+		if (name instanceof ICPPASTTemplateId)
+			name= ((ICPPASTTemplateId) name).getTemplateName();
+		if (name instanceof ICPPASTConversionName)
+			return Keywords.cOPERATOR;
+		return name.toCharArray();
 	}
 
 	private IBinding fBinding = null;
@@ -161,5 +185,73 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 	
 	public IASTName getLastName() {
 		return this;
+	}
+	
+	@Override
+	public final String toString() {
+		return new String(toCharArray());
+	}
+	
+	public IASTCompletionContext getCompletionContext() {
+        IASTNode node = getParent();
+    	while (node != null) {
+    		if (node instanceof IASTCompletionContext) {
+    			return (IASTCompletionContext) node;
+    		}
+    		node = node.getParent();
+    	}
+    	
+    	return null;
+	}
+
+	public int getRoleOfName(boolean allowResolution) {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTInternalNameOwner) {
+        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
+        }
+        if (parent instanceof IASTNameOwner) {
+            return ((IASTNameOwner) parent).getRoleForName(this);
+        }
+        return IASTNameOwner.r_unclear;
+	}
+
+    public boolean isDeclaration() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            switch (role) {
+            case IASTNameOwner.r_reference:
+            case IASTNameOwner.r_unclear:
+                return false;
+            default:
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isReference() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            return role == IASTNameOwner.r_reference;
+        }
+        return false;
+    }
+    
+    public boolean isDefinition() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            return role == IASTNameOwner.r_definition;
+        }
+        return false;
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getLinkage()
+	 */
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
 	}
 }

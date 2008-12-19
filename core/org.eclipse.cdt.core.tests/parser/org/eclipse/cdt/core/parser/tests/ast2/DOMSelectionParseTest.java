@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.core.resources.IFile;
 
@@ -630,6 +631,8 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 	}
 	
 	public void testBug72814() throws Exception{
+		CPPASTNameBase.sAllowNameComputation= true;
+
 	    Writer writer = new StringWriter();
 	    writer.write( "namespace N{                                \n"); //$NON-NLS-1$
 	    writer.write( "   template < class T > class AAA { T _t; };\n"); //$NON-NLS-1$
@@ -653,7 +656,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 	    
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
-		assertEquals( ((IASTName)node).toString(), "AAA" ); //$NON-NLS-1$
+		assertEquals( ((IASTName)node).toString(), "AAA<int>" ); //$NON-NLS-1$
 		decls = getDeclarationOffTU((IASTName)node);
 		// TODO raised bug 92632 for below
 //		assertEquals(decls.length, 1);
@@ -1740,7 +1743,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertNotNull( node );
         assertTrue( node instanceof IASTName );
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPTemplateInstance );
-        assertEquals( ((IASTName)node).toString(), "AAA" ); //$NON-NLS-1$
+        assertEquals( ((IASTName)node).toString(), "AAA<int>" ); //$NON-NLS-1$
         IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "AAA" ); //$NON-NLS-1$

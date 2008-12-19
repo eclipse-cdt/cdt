@@ -60,7 +60,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 
 	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
-		char[] c = name.toCharArray();
+		char[] c = name.getSimpleID();
 		
 	    if (CharArrayUtils.equals(c, specialClass.getNameCharArray()) && !CPPClassScope.isConstructorReference(name)) {
 	    	return specialClass;
@@ -83,7 +83,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
 			IIndexFileSet fileSet) throws DOMException {
-		char[] c = name.toCharArray();
+		char[] c = name.getSimpleID();
 		IBinding[] result = null;
 		
 	    if ((!prefixLookup && CharArrayUtils.equals(c, specialClass.getNameCharArray())) ||

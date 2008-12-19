@@ -129,7 +129,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
-			IBinding[] bindings= getBindingsViaCache(name.toCharArray());
+			IBinding[] bindings= getBindingsViaCache(name.getSimpleID());
 			if (fileSet != null) {
 				bindings= fileSet.filterFileLocalBindings(bindings);
 			}
@@ -146,9 +146,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
-				return getBindingsViaCache(name.toCharArray());
+				return getBindingsViaCache(name.getSimpleID());
 			}
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(),
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.getSimpleID(),
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			IBinding[] bindings = visitor.getBindings();

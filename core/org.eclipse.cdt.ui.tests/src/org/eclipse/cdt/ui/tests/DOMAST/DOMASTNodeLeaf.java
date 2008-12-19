@@ -30,8 +30,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -56,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -130,10 +133,10 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		StringBuffer buffer = new StringBuffer();
 		List<Class<?>> search= new LinkedList<Class<?>>();
 		boolean done= false;
+		boolean needComma= false;
 		
 		for (search.add(node.getClass()); !search.isEmpty(); ) {
 			Class<?> clazz= search.remove(0);
-			boolean needComma= false;
 			if (clazz.isInterface()) {
 				if (clazz.getPackage().toString().indexOf(INTERNAL) < 0) {
 					String interfaceName= clazz.getName();
@@ -197,7 +200,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		} else if( node instanceof IASTDeclSpecifier )
 		{
 		    buffer.append( START_OF_LIST );
-		    buffer.append( ((IASTDeclSpecifier)node).getRawSignature() );
+		    buffer.append( getSignature((IASTDeclSpecifier)node) );
 		    return buffer.toString();
 		} else if ( node instanceof IASTPreprocessorIncludeStatement ) {
 			String path = ((IASTPreprocessorIncludeStatement)node).getPath();
@@ -287,6 +290,35 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		}
 		
 		return buffer.toString();
+	}
+	private String getSignature(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTCompositeTypeSpecifier) {
+			StringBuilder buf= new StringBuilder();
+			IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) declSpec;
+			switch(comp.getKey()) {
+			case IASTCompositeTypeSpecifier.k_struct:
+				buf.append(Keywords.cSTRUCT);
+				break;
+			case IASTCompositeTypeSpecifier.k_union:
+				buf.append(Keywords.cUNION);
+				break;
+			default:
+				buf.append(Keywords.cCLASS);
+				break;
+			}
+			buf.append(' ');
+			buf.append(comp.getName().toString());
+			return buf.toString();
+		} else if (declSpec instanceof IASTEnumerationSpecifier) {
+			StringBuilder buf= new StringBuilder();
+			IASTEnumerationSpecifier comp = (IASTEnumerationSpecifier) declSpec;
+			buf.append(Keywords.cENUM);
+			buf.append(' ');
+			buf.append(comp.getName().toString());
+			return buf.toString();
+		}
+		String intermed= declSpec.getRawSignature();
+		return intermed.replaceAll("\\s+", " ");
 	}
 	
 	private String getDeclaratorName(IASTDeclarator decltor) {

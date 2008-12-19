@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -142,7 +144,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 		for (IASTNode actNode : keyTree) {
 			ArrayList<IASTComment> comments = map.get(actNode);
 
-			output.append(actNode.getRawSignature() + " = "); //$NON-NLS-1$
+			output.append(getSignature(actNode) + " = "); //$NON-NLS-1$
 			boolean first = true;
 			for (IASTComment actComment : comments) {
 				if (!first) {
@@ -154,6 +156,17 @@ public class CommentHandlingTest extends RewriteBaseTest {
 			output.append(SEPARATOR);
 		}
 		return output.toString().trim();
+	}
+
+	private String getSignature(IASTNode actNode) {
+		if (actNode instanceof IASTCompositeTypeSpecifier) {
+			IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) actNode;
+			return comp.getName().toString();
+		} else if (actNode instanceof IASTEnumerationSpecifier) {
+			IASTEnumerationSpecifier comp = (IASTEnumerationSpecifier) actNode;
+			return comp.getName().toString();
+		}
+		return actNode.getRawSignature();
 	}
 
 	private static String getSeparatingRegexp() {

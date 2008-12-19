@@ -68,7 +68,7 @@ class TrailName extends CPPASTName {
 	}
 	
 	@Override
-	public String toString() {
-		return realName.toString();
+	public char[] toCharArray() {
+		return realName.toCharArray();
 	}
 }

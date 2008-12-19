@@ -183,14 +183,14 @@ public class CPPScopeMapper {
 		StringBuilder buf= new StringBuilder();
 		IName scopeName = scope.getScopeName();
 		if (scopeName != null) {
-			buf.append(scopeName.toCharArray());
+			buf.append(scopeName.getSimpleID());
 		}
 		scope= scope.getParent();
 		while (scope != null && scope != tuscope) {
 			buf.append(':');  
 			scopeName= scope.getScopeName();
 			if (scopeName != null) {
-				buf.append(scope.getScopeName().toCharArray());
+				buf.append(scope.getScopeName().getSimpleID());
 			}
 			scope= scope.getParent();
 		}

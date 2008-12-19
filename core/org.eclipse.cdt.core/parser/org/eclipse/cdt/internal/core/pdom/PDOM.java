@@ -380,7 +380,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		} else if (name.getPropertyInParent() == IASTPreprocessorStatement.MACRO_NAME) {
 			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
 			if (linkage != null) {
-				return linkage.findMacroContainer(name.toCharArray());
+				return linkage.findMacroContainer(name.getSimpleID());
 			}
 		}
 		return null;

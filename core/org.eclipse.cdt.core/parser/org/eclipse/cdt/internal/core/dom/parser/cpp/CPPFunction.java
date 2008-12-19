@@ -257,7 +257,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 
 	public char[] getNameCharArray() {
-		return getASTName().toCharArray();
+		return getASTName().getSimpleID();
 	}
 	
 	protected IASTName getASTName() {

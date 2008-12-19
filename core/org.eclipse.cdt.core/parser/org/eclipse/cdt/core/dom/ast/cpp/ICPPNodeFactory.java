@@ -66,7 +66,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTTemplateId newTemplateId(IASTName templateName);
 
-	public ICPPASTConversionName newConversionName(char[] name, IASTTypeId typeId);
+	public ICPPASTConversionName newConversionName(IASTTypeId typeId);
 
 	public ICPPASTQualifiedName newQualifiedName();
 	

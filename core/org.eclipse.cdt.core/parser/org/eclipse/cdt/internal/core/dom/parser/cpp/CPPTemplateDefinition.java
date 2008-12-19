@@ -134,14 +134,14 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return getTemplateName().toString();
+		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return getTemplateName().toCharArray();
+		return getTemplateName().getSimpleID();
 	}
 
 	/* (non-Javadoc)

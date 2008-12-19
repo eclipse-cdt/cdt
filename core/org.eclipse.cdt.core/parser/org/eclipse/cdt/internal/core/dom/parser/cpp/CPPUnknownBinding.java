@@ -75,7 +75,7 @@ public class CPPUnknownBinding extends PlatformObject
     }
 
     public char[] getNameCharArray() {
-        return name.toCharArray();
+        return name.getSimpleID();
     }
 
     public IScope getScope() throws DOMException {

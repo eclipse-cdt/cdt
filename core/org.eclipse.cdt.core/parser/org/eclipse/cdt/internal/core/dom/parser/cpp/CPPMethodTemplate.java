@@ -73,7 +73,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
 						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
-						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+						if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
 							name.resolveBinding() == this )
 						{
 							return member;
@@ -81,7 +81,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 					}
 				} else if( decl instanceof IASTFunctionDefinition ){
 					IASTName name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
-					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+					if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
 						name.resolveBinding() == this )
 					{
 						return member;

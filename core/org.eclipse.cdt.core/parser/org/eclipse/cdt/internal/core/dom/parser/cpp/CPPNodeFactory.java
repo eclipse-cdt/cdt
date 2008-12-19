@@ -206,8 +206,8 @@ public class CPPNodeFactory implements ICPPNodeFactory {
 		return new CPPASTTemplateId(templateName);
 	}
 
-	public ICPPASTConversionName newConversionName(char[] name, IASTTypeId typeId) {
-		return new CPPASTConversionName(name, typeId);
+	public ICPPASTConversionName newConversionName(IASTTypeId typeId) {
+		return new CPPASTConversionName(typeId);
 	}
 
 	public ICPPASTQualifiedName newQualifiedName() {

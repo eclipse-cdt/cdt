@@ -406,7 +406,7 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 	@Override
 	public String toString() {
 		StringBuilder result= new StringBuilder();
-		result.append(getName().toCharArray());
+		result.append(getName().getSimpleID());
 		result.append('(');
 		boolean needComma= false;
 		for (IASTFunctionStyleMacroParameter param : getParameters()) {

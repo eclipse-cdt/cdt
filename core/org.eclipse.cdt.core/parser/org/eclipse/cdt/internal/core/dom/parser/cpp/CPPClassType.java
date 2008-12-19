@@ -257,12 +257,12 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return null;
 	}
 
-	public String getName() {
-		return ( definition != null ) ? definition.toString() : declarations[0].toString();
+	public final String getName() {
+		return new String(getNameCharArray());
 	}
 
 	public char[] getNameCharArray() {
-		return ( definition != null ) ? definition.toCharArray() : declarations[0].toCharArray();
+		return ( definition != null ) ? definition.getSimpleID() : declarations[0].getSimpleID();
 	}
 
 	public IScope getScope() {

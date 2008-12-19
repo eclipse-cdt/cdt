@@ -470,7 +470,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				}
 			}
 			IASTName name= node.getName();
-			if (name != null && name.toCharArray().length != 0) {
+			if (name != null && name.getSimpleID().length != 0) {
 				if (isFirstDeclarator(node)) {
 					// preserve non-space between pointer operator and name
 					if (pointerOperators.length == 0 || scribe.printComment()) {

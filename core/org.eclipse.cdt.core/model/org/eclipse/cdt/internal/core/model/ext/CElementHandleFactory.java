@@ -154,7 +154,7 @@ public class CElementHandleFactory {
 			return null;
 		}
 		else if (scope instanceof ICPPNamespaceScope) {
-			element= new NamespaceHandle(parentElement, new String(scopeName.toCharArray()));
+			element= new NamespaceHandle(parentElement, new String(scopeName.getSimpleID()));
 		}		
 		return element;
 	}

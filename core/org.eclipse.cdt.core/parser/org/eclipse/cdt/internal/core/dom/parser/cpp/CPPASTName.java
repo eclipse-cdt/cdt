@@ -14,13 +14,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -29,8 +27,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -58,7 +54,8 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
 		return CPPVisitor.createBinding(this);
 	}
 
-    public IASTCompletionContext getCompletionContext() {
+    @Override
+	public IASTCompletionContext getCompletionContext() {
         IASTNode node = getParent();
     	while (node != null) {
     		if (node instanceof IASTCompletionContext) {
@@ -135,18 +132,15 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
 		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
-    @Override
-	public String toString() {
-        if (name.length == 0)
-            return ""; //$NON-NLS-1$
-        return new String(name);
-    }
-
     public char[] toCharArray() {
         return name;
     }
 
-    public void setName(char[] name) {
+    public char[] getSimpleID() {
+		return name;
+	}
+
+	public void setName(char[] name) {
         assertNotFrozen();
         this.name = name;
     }
@@ -177,65 +171,4 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
         }
         return true;
     }
-    
-	public int getRoleOfName(boolean allowResolution) {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTInternalNameOwner) {
-        	return ((IASTInternalNameOwner) parent).getRoleForName(this, allowResolution);
-        }
-        if (parent instanceof IASTNameOwner) {
-            return ((IASTNameOwner) parent).getRoleForName(this);
-        }
-        return IASTNameOwner.r_unclear;
-	}
-
-    public boolean isDeclaration() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_reference:
-            case IASTNameOwner.r_unclear:
-                return false;
-            default:
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isReference() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_reference:
-                return true;
-            default:
-                return false;
-            }
-        }
-        return false;
-    }
-
-    public boolean isDefinition() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            switch (role) {
-            case IASTNameOwner.r_definition:
-                return true;
-            default:
-                return false;
-            }
-        }
-        return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getLinkage()
-	 */
-	public ILinkage getLinkage() {
-		return Linkage.CPP_LINKAGE;
-	}
 }

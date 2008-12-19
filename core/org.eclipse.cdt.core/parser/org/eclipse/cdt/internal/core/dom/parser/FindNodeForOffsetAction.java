@@ -122,9 +122,7 @@ public class FindNodeForOffsetAction extends CPPASTVisitor implements ICASTVisit
 
 	@Override
 	public int visit(IASTName name) {
-		if (name.toString() != null)
-			return processNode(name);
-		return PROCESS_CONTINUE;
+		return processNode(name);
 	}
 
 	@Override

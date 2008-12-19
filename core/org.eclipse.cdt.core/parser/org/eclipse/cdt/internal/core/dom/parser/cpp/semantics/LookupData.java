@@ -115,7 +115,7 @@ class LookupData {
 	
 	public final char[] name() {
 		if (astName != null)
-			return astName.toCharArray();
+			return astName.getSimpleID();
 		return CPPSemantics.EMPTY_NAME_ARRAY;
 	}
 	

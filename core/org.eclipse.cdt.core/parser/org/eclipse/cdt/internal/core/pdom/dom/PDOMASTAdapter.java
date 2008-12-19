@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMASTAdapter {
@@ -160,6 +161,10 @@ public class PDOMASTAdapter {
 
 		public char[] toCharArray() {
 			return fDelegate.toCharArray();
+		}
+
+		public char[] getSimpleID() {
+			return fDelegate.getSimpleID();
 		}
 
 		public IASTImageLocation getImageLocation() {
@@ -494,7 +499,7 @@ public class PDOMASTAdapter {
 	 * it is returned unchanged.
 	 */
 	public static IASTName getAdapterIfAnonymous(IASTName name) {
-		if (name.toCharArray().length == 0) {
+		if (CPPASTNameBase.getLookupKey(name).length == 0) {
 			if (name.getFileLocation() == null) {
 				IASTNode parent= name.getParent();
 				if (parent != null) {

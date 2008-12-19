@@ -6,40 +6,35 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Emanuel Graf IFS - Bugfix for #198259
+ *    Devin Steffler (IBM) - Initial API and implementation
+ *    Emanuel Graf IFS - Fix for #198259
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * The implemented ICPPASTConversionName.
- *  
- * @author dsteffle
+ * Implementation of conversion function ids
  */
-public class CPPASTConversionName extends CPPASTName implements ICPPASTConversionName {
-	
+public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConversionName {
 	private IASTTypeId typeId = null;
+	private char[] fName;
 	
 	public CPPASTConversionName() {
 	}
 	
-	public CPPASTConversionName(char[] name) {
-		super(name);
-	}
-	
-	public CPPASTConversionName(char[] name, IASTTypeId typeId) {
-		super(name);
+	public CPPASTConversionName(IASTTypeId typeId) {
 		setTypeId(typeId);
 	}
 	
-	@Override
 	public CPPASTConversionName copy() {
-		char[] name = toCharArray();
-		CPPASTConversionName copy = new CPPASTConversionName(name == null ? null : name.clone());
+		CPPASTConversionName copy = new CPPASTConversionName();
 		copy.setTypeId(typeId == null ? null : typeId.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
@@ -85,5 +80,30 @@ public class CPPASTConversionName extends CPPASTName implements ICPPASTConversio
 			}
 		}
 		return true;
+	}
+
+	@Override
+	protected IBinding createIntermediateBinding() {
+		return CPPVisitor.createBinding(this);
+	}
+
+	public char[] toCharArray() {
+		if (fName == null) {
+			StringBuilder buf= new StringBuilder();
+			buf.append(Keywords.cOPERATOR);
+			buf.append(' ');
+			if (typeId != null) {
+				buf.append(typeId.getRawSignature());
+				WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
+			}
+	    	final int len= buf.length();
+	    	fName= new char[len];
+	    	buf.getChars(0, len, fName, 0);
+		}
+		return fName;
+	}
+
+	public char[] getSimpleID() {
+		return toCharArray();
 	}
 }

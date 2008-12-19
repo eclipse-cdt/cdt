@@ -591,7 +591,7 @@ public class CPPSemantics {
         		so= map.get(key);
         	} else if (objs != null) {
         		so= objs[i];
-        		key= (so instanceof IBinding) ? ((IBinding) so).getNameCharArray() : ((IASTName) so).toCharArray();
+        		key= (so instanceof IBinding) ? ((IBinding) so).getNameCharArray() : ((IASTName) so).getSimpleID();
         	} else {
         		return resultMap;
         	}
@@ -1189,7 +1189,7 @@ public class CPPSemantics {
 					nsscope.addUsingDirective(new CPPUsingDirective(usingDirective));
 				}
 			} else if (item instanceof ICPPASTNamespaceDefinition &&
-					   ((ICPPASTNamespaceDefinition)item).getName().toCharArray().length == 0) {
+					   ((ICPPASTNamespaceDefinition)item).getName().getSimpleID().length == 0) {
 				if (scope instanceof ICPPNamespaceScope) {
 				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
 				    final ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) item;
@@ -1414,7 +1414,7 @@ public class CPPSemantics {
 				
 				//anonymous union?             //GCC supports anonymous structs too
 				if (declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
-				    specName.toCharArray().length == 0)
+				    specName.getSimpleID().length == 0)
 				{
 				    Object o = null;
 				    IASTDeclaration[] decls = compSpec.getMembers();
@@ -1531,7 +1531,7 @@ public class CPPSemantics {
 				
 			potential= qname.getLastName();
 	    }
-	    char[] c = potential.toCharArray();
+	    char[] c = potential.getSimpleID();
 	    char[] n = data.name();
 	    return (data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, true))
 			|| (!data.prefixLookup && CharArrayUtils.equals(c, n));

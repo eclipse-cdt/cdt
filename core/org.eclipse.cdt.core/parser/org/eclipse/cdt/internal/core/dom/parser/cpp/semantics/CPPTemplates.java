@@ -1083,7 +1083,7 @@ public class CPPTemplates {
 			for (ICPPASTTemplateParameter par : pars) {
 				IASTName name= CPPTemplates.getTemplateParameterName(par);
 				if (name != null)
-					set.put(name.toCharArray());
+					set.put(name.getSimpleID());
 			}
 			final IASTNode next= tdecl.getDeclaration();
 			if (next instanceof ICPPASTTemplateDeclaration) {
@@ -1110,7 +1110,7 @@ public class CPPTemplates {
 					return PROCESS_CONTINUE;
 				}
 				
-				if (names.containsKey(name.toCharArray())) {
+				if (names.containsKey(name.getSimpleID())) {
 					IASTNode parent= name.getParent();
 					if (parent instanceof ICPPASTQualifiedName) {
 						if (((ICPPASTQualifiedName) parent).getNames()[0] != name) {
@@ -1289,7 +1289,7 @@ public class CPPTemplates {
 					return true;
 				} 
 				
-				return CharArrayUtils.equals(definition.getNameCharArray(), name.toCharArray());
+				return CharArrayUtils.equals(definition.getNameCharArray(), name.getSimpleID());
 			}
 		} catch (DOMException e) {
 		}

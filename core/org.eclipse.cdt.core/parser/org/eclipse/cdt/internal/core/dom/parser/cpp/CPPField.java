@@ -89,7 +89,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
 					IASTName name = dtor.getName();
-					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+					if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
 						name.resolveBinding() == this )
 					{
 						return member;

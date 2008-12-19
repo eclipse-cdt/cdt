@@ -63,14 +63,14 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return enumName.toString();
+        return new String(getNameCharArray());
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return enumName.toCharArray();
+        return enumName.getSimpleID();
     }
 
     /* (non-Javadoc)

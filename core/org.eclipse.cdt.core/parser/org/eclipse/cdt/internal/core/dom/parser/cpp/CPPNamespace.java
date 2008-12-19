@@ -109,7 +109,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 	    	ICPPASTNamespaceDefinition orig = namespaceDef, candidate = namespace;
 	    	while(candidate != null) {
-	    		if (!CharArrayUtils.equals(orig.getName().toCharArray(), candidate.getName().toCharArray()))
+	    		if (!CharArrayUtils.equals(orig.getName().getSimpleID(), candidate.getName().getSimpleID()))
 	    			return PROCESS_CONTINUE;
 	    		if (orig.getParent() instanceof ICPPASTNamespaceDefinition) {
 	    			if (!(candidate.getParent() instanceof ICPPASTNamespaceDefinition))
@@ -238,14 +238,14 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return tu != null ? null : namespaceDefinitions[0].toString(); 
+        return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return tu != null ? EMPTY_CHAR_ARRAY : namespaceDefinitions[0].toCharArray();
+		return tu != null ? EMPTY_CHAR_ARRAY : namespaceDefinitions[0].getSimpleID();
 	}
 
 	/* (non-Javadoc)

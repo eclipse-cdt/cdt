@@ -671,7 +671,7 @@ public class ASTStringUtil {
 			}
 			buffer.append(Keywords.cpGT);
 		} else if (name != null) {
-			buffer.append(name.toCharArray());
+			buffer.append(name.getSimpleID());
 		}
 		return buffer;
 	}

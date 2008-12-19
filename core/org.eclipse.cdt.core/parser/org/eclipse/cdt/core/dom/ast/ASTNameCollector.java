@@ -45,7 +45,7 @@ public final class ASTNameCollector extends ASTVisitor {
 	@Override
 	public int visit(IASTName name) {
 		if (name != null && !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId)) {
-			if (CharArrayUtils.equals(fName, name.toCharArray())) {
+			if (CharArrayUtils.equals(fName, name.getSimpleID())) {
 				fFound.add(name);
 			}
 		}

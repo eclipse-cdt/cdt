@@ -61,6 +61,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Base implementation for c++ scopes.
+ * 
+ * mstodo store user defined conversions under the same key, see {@link CPPASTNameBase#getLookupKey(IASTName)}
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray(); //$NON-NLS-1$
@@ -84,11 +86,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    //will resolve to these bindings.
 	    ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 
-        IASTName name = compTypeSpec.getName();
-        if (name instanceof ICPPASTQualifiedName) {
-        	name = ((ICPPASTQualifiedName) name).getLastName();
-        }
-
+        IASTName name = compTypeSpec.getName().getLastName();
         IBinding binding = name.resolveBinding();
         if (!(binding instanceof ICPPClassType))
         	return;
@@ -100,7 +98,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             } catch (DOMException e) {
             }
         }
-        char[] className = name.toCharArray();
+        char[] className = name.getSimpleID();
 
 		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE) };
 		IType pType = new CPPReferenceType(new CPPQualifierType(clsType, true, false));
@@ -173,7 +171,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			final IASTName[] names= qname.getNames();
 			for (int i = names.length-2; i>=0; i--) {
-				if (b == null || !CharArrayUtils.equals(names[i].toCharArray(), b.getNameCharArray()))
+				if (b == null || !CharArrayUtils.equals(names[i].getSimpleID(), b.getNameCharArray()))
 					return;
 				
 				b= b.getOwner();
@@ -215,14 +213,14 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 */
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
-	    char[] c = name.toCharArray();
+	    char[] c = name.getSimpleID();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
 			compName= ((ICPPASTTemplateId) compName).getTemplateName();
 		}
-	    if (CharArrayUtils.equals(c, compName.toCharArray())) {
+	    if (CharArrayUtils.equals(c, compName.getSimpleID())) {
 	        if (isConstructorReference(name)) {
 	            return CPPSemantics.resolveAmbiguities(name, getConstructors(bindings, resolve, name));
 	        }
@@ -234,7 +232,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
-	    char[] c = name.toCharArray();
+	    char[] c = name.getSimpleID();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName().getLastName();
@@ -242,8 +240,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			compName= ((ICPPASTTemplateId) compName).getTemplateName();
 		}
 	    IBinding[] result = null;
-	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.toCharArray()))
-	    	|| (prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, c.length, c, true))) {
+	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getSimpleID()))
+	    	|| (prefixLookup && CharArrayUtils.equals(compName.getSimpleID(), 0, c.length, c, true))) {
 	        if (isConstructorReference(name)) {
 	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(bindings, resolve, name));
 	        }
@@ -321,13 +319,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	public IBinding[] find(String name) throws DOMException {
 	    char[] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    IASTName compName = compType.getName();
-	    if (compName instanceof ICPPASTQualifiedName) {
-	    	compName = ((ICPPASTQualifiedName) compName).getLastName();
-	    }
+	    IASTName compName = compType.getName().getLastName();
+		if (compName instanceof ICPPASTTemplateId) {
+			compName= ((ICPPASTTemplateId) compName).getTemplateName();
+		}
 
-	    if (CharArrayUtils.equals(compName.toCharArray(), n)) {
-	        return new IBinding[] { getClassType() };
+	    if (CharArrayUtils.equals(compName.getSimpleID(), n)) {
+	        return new IBinding[] {compName.resolveBinding()};
 	    }
 
 	    return super.find(name);
@@ -358,11 +356,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 */
 	public ICPPClassType getClassType() {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-		IBinding binding = compSpec.getName().resolveBinding();
+		final IASTName name = compSpec.getName();
+		IBinding binding = name.resolveBinding();
 		if (binding instanceof ICPPClassType)
 			return (ICPPClassType) binding;
 
-		return new CPPClassType.CPPClassTypeProblem(compSpec.getName(), IProblemBinding.SEMANTIC_BAD_SCOPE, compSpec.getName().toCharArray());
+		return new CPPClassType.CPPClassTypeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray());
 	}
 
 	/* (non-Javadoc)
@@ -449,7 +448,7 @@ class ImplicitsAnalysis {
 	private static ICPPASTFunctionDeclarator[] getUserDeclaredCtorOrDtor(ICPPASTCompositeTypeSpecifier compSpec, boolean constructor) {
 		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration[] members = compSpec.getMembers();
-		char[] name = compSpec.getName().toCharArray();
+		char[] name = compSpec.getName().getSimpleID();
 		IASTDeclarator dcltor = null;
 		IASTDeclSpecifier spec = null;
         for (IASTDeclaration member : members) {
@@ -471,7 +470,7 @@ class ImplicitsAnalysis {
 			}
 
 			boolean nameEquals= false;
-			char[] dtorname= CPPVisitor.findInnermostDeclarator(dcltor).getName().toCharArray();
+			char[] dtorname= CPPASTNameBase.getLookupKey(CPPVisitor.findInnermostDeclarator(dcltor).getName());
 			if (constructor) {
 				nameEquals= CharArrayUtils.equals(dtorname, name);
 			} else {
@@ -504,7 +503,7 @@ class ImplicitsAnalysis {
 			if (dcltor instanceof ICPPASTFunctionDeclarator == false)
 				continue;
 			
-			final char[] nchars= CPPVisitor.findInnermostDeclarator(dcltor).getName().toCharArray();
+			final char[] nchars= CPPASTNameBase.getLookupKey(CPPVisitor.findInnermostDeclarator(dcltor).getName());
 			if (!CharArrayUtils.equals(nchars, OverloadableOperator.ASSIGN.toCharArray())) 
 	        	continue;
 			

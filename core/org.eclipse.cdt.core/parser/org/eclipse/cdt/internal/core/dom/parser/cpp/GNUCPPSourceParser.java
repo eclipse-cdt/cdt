@@ -220,8 +220,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException request a backtrack
      */
     private IASTName qualifiedName() throws BacktrackException, EndOfFileException {
-    	// mstodo
-    	IToken first= LA(1);
     	ICPPASTQualifiedName qname= null;
     	IASTName name= null;
     	final int offset= LA(1).getOffset();
@@ -293,8 +291,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		return name;
 
     	setRange(qname, offset, endOffset);
-    	// mstodo
-    	((CPPASTQualifiedName) qname).setSignature(new String(computeOperatorImage(first, LA(1))));
     	return qname;
     }
 
@@ -579,40 +575,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if (typeId == null) 
         	throwBacktrack(t);
 
-        char[] image= computeOperatorImage(firstToken, LA(1));
-        IASTName name = nodeFactory.newConversionName(image, typeId);
+        IASTName name = nodeFactory.newConversionName(typeId);
         setRange(name, firstToken.getOffset(), calculateEndOffset(typeId));
         return name;
     }
-
-	private char[] computeOperatorImage(IToken from, final IToken to) throws EndOfFileException {
-		if(from == to) 
-			return CharArrayUtils.EMPTY;
-		
-		StringBuilder buf= new StringBuilder();
-		int prevKind= -1;
-		while (from != to && from != null) {
-			final int nextKind= from.getType();
-			if (prevKind != -1 && 
-					prevKind != IToken.tCOLONCOLON && 
-					prevKind != IToken.tIDENTIFIER && 
-					prevKind != IToken.tLT &&
-					prevKind != IToken.tBITCOMPLEMENT &&
-				    prevKind != IToken.tLBRACKET && 
-				    nextKind != IToken.tGT && 
-				    nextKind != IToken.tRBRACKET && 
-				    nextKind != IToken.tCOLONCOLON) {
-				buf.append(' ');
-			}
-			buf.append(from.getCharImage());
-			prevKind= nextKind;
-			from= from.getNext();
-		}
-		final int len= buf.length();
-		final char[] result= new char[len];
-		buf.getChars(0, len, result, 0);
-		return result;
-	}
 
     @Override
 	protected IASTExpression expression() throws EndOfFileException, BacktrackException {
@@ -2316,7 +2282,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 identifier= qualifiedName();
-                if (identifier.getLastName().toCharArray().length == 0 && LT(1) != IToken.tEOC)
+                if (identifier.getSimpleID().length == 0 && LT(1) != IToken.tEOC)
                 	throwBacktrack(LA(1));
                 
                 endOffset= calculateEndOffset(identifier);
@@ -2427,23 +2393,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 					final IASTName names[]= qname.getNames();
 					final int len = names.length;
-					if (len > 1 && CharArrayUtils.equals(names[len-2].toCharArray(), names[len-1].toCharArray())) 
+					final IASTName lastName = names[len-1];
+					
+					if (len > 1 && CharArrayUtils.equals(CPPASTNameBase.getLookupKey(names[len-2]), CPPASTNameBase.getLookupKey(lastName))) 
 						return true; // constructor
 					
-					name= qname.getLastName();
+					name= lastName;
 				}
+				if (name instanceof ICPPASTTemplateId)
+					name= ((ICPPASTTemplateId) name).getTemplateName();
+
 				if (name instanceof ICPPASTConversionName)
-					return true; // conversion
-				if (name instanceof ICPPASTTemplateId) {
-					if (((ICPPASTTemplateId) name).getTemplateName() instanceof ICPPASTConversionName) {
-						return true;
-					}
-					
-				}
-				final char[] nchars= name.toCharArray();
+					return true;
+				
+				final char[] nchars= name.getSimpleID();
 				if (nchars.length > 0 && nchars[0] == '~') 
 					return true; // destructor
-				
 				if (declOption == DeclarationOptions.CPP_MEMBER && CharArrayUtils.equals(nchars, currentClassName))
 					return true;
 			}
@@ -2977,7 +2942,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (coloncolon != 0) {
                 try {
                 	name= qualifiedName();
-                	if (name.getLastName().toCharArray().length != 0) {
+                	if (CPPASTNameBase.getLookupKey(name).length != 0) {
                 		backup(mark);
                 		return;
                 	}
@@ -3321,11 +3286,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         int endOffset= consume().getEndOffset();
         final char[] outerName= currentClassName;
-        if (name instanceof ICPPASTQualifiedName) {
-        	currentClassName= ((ICPPASTQualifiedName)name).getLastName().toCharArray();
-        } else {
-        	currentClassName= name.toCharArray();
-        }
+        currentClassName= name.getSimpleID();
+
         try {
         	int declOffset= -1;
         	loop: while (true) {
@@ -3396,7 +3358,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode) astClassSpecifier).setOffsetAndLength(offset, endOffset - offset);
         return astClassSpecifier;
     }
-    
 
     protected int token2Visibility(int type) {
         switch (type) {

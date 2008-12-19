@@ -204,11 +204,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;
 
-		// Check for null name
-		char[] namechars = name.toCharArray();
-		if (namechars == null)
-			return null;
-		
 		IBinding binding = name.resolveBinding();
 
 		PDOMBinding pdomBinding = addBinding(binding, name);

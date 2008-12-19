@@ -50,11 +50,6 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return copy;
 	}
 	
-	@Override
-	public String getRawSignature() {
-       return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
-    }
-
     public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
         if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
         baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.removeNullsAfter( ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos );

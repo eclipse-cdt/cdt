@@ -68,7 +68,17 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 	public boolean isReference() {
 		return false;
 	}
+
+	@Deprecated
 	public char[] toCharArray() {
+		return fMacro.getNameCharArray();
+	}
+	@Override
+	public String toString() {
+		return new String(getSimpleID());
+	}
+	
+	public char[] getSimpleID() {
 		return fMacro.getNameCharArray();
 	}
 	public IIndexFragmentBinding getBinding() {

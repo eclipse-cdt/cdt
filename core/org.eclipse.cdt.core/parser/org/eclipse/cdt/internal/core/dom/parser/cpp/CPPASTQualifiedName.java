@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
@@ -34,9 +33,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.Assert;
@@ -51,8 +50,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	private IASTName[] names = null;
 	private int namesPos= -1;
 	private boolean isFullyQualified;
-	private String signature;
-
+	private char[] signature;
 	public CPPASTQualifiedName() {
 	}
 
@@ -61,7 +59,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		for(IASTName name : getNames())
 			copy.addName(name == null ? null : name.copy());
 		copy.setFullyQualified(isFullyQualified);
-		copy.setSignature(signature);
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -95,22 +92,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		getLastName().setBinding(binding);
 	}
 
-	public IASTCompletionContext getCompletionContext() {
-        IASTNode node = getParent();
-    	while (node != null) {
-    		if (node instanceof IASTCompletionContext) {
-    			return (IASTCompletionContext) node;
-    		}
-    		node = node.getParent();
-    	}
-    	
-    	return null;
-	}
-
-	@Override
-	public String toString() {
-		return (signature == null) ? "" : signature; //$NON-NLS-1$
-	}
 
 	public void addName(IASTName name) {
         assertNotFrozen();
@@ -137,33 +118,26 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		
 		return names[namesPos];
 	}
+
+	public char[] getSimpleID() {
+		return names[namesPos].getSimpleID();
+	}
 	
 	public char[] toCharArray() {
-		if (namesPos < 0)
-			return new char[0];
-
-		// count first
-		int len = -2;
-		for (int i = 0; i <= namesPos; ++i) {
-			char[] n = names[i].toCharArray();
-			if (n == null)
-				return null;
-			len+= 2;
-			len+= n.length;
-		}
-		
-		char[] nameArray = new char[len];
-		int pos = 0;
-		for (int i = 0; i <= namesPos; i++) {
-			if (i != 0) {
-				nameArray[pos++] = ':';
-				nameArray[pos++] = ':';
+		if (signature == null) {
+			StringBuilder buf= new StringBuilder();
+			for (int i = 0; i <= namesPos; i++) {
+				if (i > 0 || isFullyQualified) {
+					buf.append(Keywords.cpCOLONCOLON);
+				}
+				buf.append(names[i].toCharArray());
 			}
-			final char[] n = names[i].toCharArray();
-			System.arraycopy(n, 0, nameArray, pos, n.length);
-			pos += n.length;
+
+			final int len= buf.length();
+			signature= new char[len];
+			buf.getChars(0, len, signature, 0);
 		}
-		return nameArray;
+		return signature;
 	}
 
 	public boolean isFullyQualified() {
@@ -175,10 +149,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		this.isFullyQualified = isFullyQualified;
 	}
 
-
+	/**
+	 * @deprecated there is no need to set the signature, it will be computed lazily.
+	 */
+	@Deprecated
 	public void setSignature(String signature) {
-        assertNotFrozen();
-		this.signature = signature;
 	}
 
 	@Override
@@ -194,11 +169,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			}
 		}
 		for (int i = 0; i <= namesPos; i++) {
+			final IASTName name = names[i];
 			if (i == namesPos) {
 				// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
-				if (names[i].toCharArray().length > 0 && !names[i].accept(action))
+				if (getLookupKey(name).length > 0 && !name.accept(action))
 					return false;
-			} else if (!names[i].accept(action))
+			} else if (!name.accept(action))
 				return false;
 		}
 		
@@ -216,6 +192,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return true;
 	}
 	
+	@Override
 	public int getRoleOfName(boolean allowResolution) {
         IASTNode parent = getParent();
         if (parent instanceof IASTInternalNameOwner) {
@@ -225,26 +202,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
             return ((IASTNameOwner) parent).getRoleForName(this);
         }
         return IASTNameOwner.r_unclear;
-	}
-
-	public boolean isDeclaration() {
-		IASTNode parent = getParent();
-		if (parent instanceof IASTNameOwner) {
-			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if (role == IASTNameOwner.r_reference) return false;
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isReference() {
-		IASTNode parent = getParent();
-		if (parent instanceof IASTNameOwner) {
-			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if (role == IASTNameOwner.r_reference) return true;
-			return false;
-		}
-		return false;
 	}
 
 	public int getRoleForName(IASTName n) {
@@ -278,16 +235,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return false;
 	}
     
-    public boolean isDefinition() {
-        IASTNode parent = getParent();
-        if (parent instanceof IASTNameOwner) {
-            int role = ((IASTNameOwner) parent).getRoleForName(this);
-            if (role == IASTNameOwner.r_definition) return true;
-            return false;
-        }
-        return false;
-    }
-
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		
@@ -299,7 +246,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 			
 				if (isDeclaration && nameMatches(classType.getNameCharArray(),
-						n.toCharArray(), isPrefix)) {
+						n.getSimpleID(), isPrefix)) {
 					try {
 						ICPPConstructor[] constructors = classType.getConstructors();
 						for (int i = 0; i < constructors.length; i++) {
@@ -357,13 +304,6 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		if (isPrefix)
 			return CharArrayUtils.equals(potential, 0, name.length, name, true);
 		return CharArrayUtils.equals(potential, name);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getLinkage()
-	 */
-	public ILinkage getLinkage() {
-		return Linkage.CPP_LINKAGE;
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Yuan Zhang / Beth Tibbitts (IBM Research)
  *    Bryan Wilkinson (QNX)
@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 
 /**
- * @author jcamelon
+ * Implementation for names in C translation units.
  */
 public class CASTName extends ASTNode implements IASTName, IASTCompletionContext {
 
@@ -97,6 +97,10 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     public char[] toCharArray() {
         return name;
     }
+
+	public char[] getSimpleID() {
+		return name;
+	}
 
     @Override
 	public boolean accept(ASTVisitor action) {

@@ -161,7 +161,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (name == null)
 			return null;
 
-		char[] namechars = name.toCharArray();
+		char[] namechars = name.getSimpleID();
 		if (namechars == null)
 			return null;
 

@@ -54,6 +54,7 @@ template<template <class T> class K> class vector
 
 //!TemplateSpecialization
 //%CPP
+template<typename T> class MyQueue;
 template<> class MyQueue<double>
 {
     std::vector<double> data;

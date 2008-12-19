@@ -109,7 +109,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
 						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
-						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+						if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
 								name.resolveBinding() == this )
 						{
 							return member;
@@ -118,7 +118,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 				} else if( member instanceof IASTFunctionDefinition ){
 					final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) member).getDeclarator();
 					IASTName name = CPPVisitor.findInnermostDeclarator(declarator).getName();
-					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+					if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
 							name.resolveBinding() == this )
 					{
 						return member;

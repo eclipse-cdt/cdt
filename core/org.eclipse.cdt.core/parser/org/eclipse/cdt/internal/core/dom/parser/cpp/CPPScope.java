@@ -76,22 +76,17 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	public void addName(IASTName name) throws DOMException {
 		if (bindings == null)
 			bindings = new CharArrayObjectMap(1);
-		char[] c;
 		if (name instanceof ICPPASTQualifiedName) {
 			if (!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
 					!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
 				return;
 			}
 
-			//name belongs to a different scope, don't add it here except it names this scope
-			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
-			final IASTName[] ns= qname.getNames();
-		    if (!canDenoteScopeMember(qname))
+			// name belongs to a different scope, don't add it here except it names this scope
+		    if (!canDenoteScopeMember((ICPPASTQualifiedName) name))
 		    	return;
-			c=  ns[ns.length - 1].toCharArray(); 
-		} else {
-			c= name.toCharArray();
-		}
+		} 
+		final char[] c= name.getSimpleID();
 		Object o = bindings.get(c);
 		if (o != null) {
 		    if (o instanceof ObjectSet) {
@@ -114,9 +109,11 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			for (int i= na.length - 2; i >= 0; i++) {
 				if (scope == null) 
 					return false;
-				IASTName n= na[i];
-				final IName scopeName = scope.getScopeName();
-				if (scopeName == null || !CharArrayUtils.equals(scopeName.toCharArray(), n.toCharArray())) 
+				IName scopeName = scope.getScopeName();
+				if (scopeName == null)
+					return false;
+				
+				if (!CharArrayUtils.equals(scopeName.getSimpleID(), na[i].getSimpleID())) 
 					return false;
 				scope= scope.getParent();
 			}
@@ -135,10 +132,11 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			final IASTTranslationUnit tu = name.getTranslationUnit();
 			IIndex index = tu == null ? null : tu.getIndex();
 			if (index != null) {
+				final char[] nchars = name.getSimpleID();
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
-						IBinding[] bindings= index.findBindings(name.toCharArray(),
+						IBinding[] bindings= index.findBindings(nchars, 
 								IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, NPM);
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
@@ -158,7 +156,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 					if (nsbinding instanceof ICPPNamespace) {
 						ICPPNamespace nsbindingAdapted = (ICPPNamespace) index.adaptBinding(nsbinding);
 						if (nsbindingAdapted!=null) {
-							IBinding[] bindings = nsbindingAdapted.getNamespaceScope().find(name.toString());
+							IBinding[] bindings = nsbindingAdapted.getNamespaceScope().find(new String(nchars));
 							if (fileSet != null) {
 								bindings= fileSet.filterFileLocalBindings(bindings);
 							}
@@ -176,7 +174,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
-	    char[] c = name.toCharArray();
+	    char[] c = name.getSimpleID();
 	    //can't look up bindings that don't have a name
 	    if (c.length == 0)
 	        return null;
@@ -236,9 +234,10 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
 						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE;
+						final char[] nchars = name.getSimpleID();
 						IBinding[] bindings = prefixLookup ?
-								index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
-								index.findBindings(name.toCharArray(), filter, null);
+								index.findBindingsForPrefix(nchars, true, filter, null) :
+								index.findBindings(nchars, filter, null);
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
 						}
@@ -270,7 +269,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 
 	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup)
 			throws DOMException {
-	    char[] c = name.toCharArray();
+	    char[] c = name.getSimpleID();
 	    IBinding[] result = null;
 	    
 	    Object[] obj = null;
@@ -294,11 +293,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
         		for (int j = 0; j < os.size(); j++) {
         			Object o = os.keyAt(j);
         			if (o instanceof IASTName) {
-        				IASTName n = (IASTName) o;
-        				if (n instanceof ICPPASTQualifiedName) {
-        					IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
-        					n = ns[ns.length - 1];
-        				}
+        				IASTName n = ((IASTName) o).getLastName();
         				IBinding binding = forceResolve ? n.resolveBinding() : n.getBinding();
         				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
         			} else {
@@ -310,11 +305,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	        	if (forceResolve && element != name && element != name.getParent()) {
 	        		binding = ((IASTName) element).resolveBinding();
 	        	} else {
-	        		IASTName n = (IASTName) element;
-    				if (n instanceof ICPPASTQualifiedName) {
-    					IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
-    					n = ns[ns.length - 1];
-    				}
+	        		IASTName n = ((IASTName) element).getLastName();
 	        		binding = n.getBinding();
 	        	}
 	        	if (binding instanceof ICPPUsingDeclaration) {

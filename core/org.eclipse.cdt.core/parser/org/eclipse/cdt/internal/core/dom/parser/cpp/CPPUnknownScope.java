@@ -147,7 +147,7 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         if (map == null)
             map = new CharArrayObjectMap(2);
 
-        char[] c = name.toCharArray();
+        char[] c = name.getSimpleID();
         IBinding[] o= (IBinding[]) map.get(c);
         if (o == null) {
         	o= new IBinding[3];

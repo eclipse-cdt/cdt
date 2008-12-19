@@ -92,14 +92,14 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarations[0].toString();
+		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return declarations[0].toCharArray();
+		return declarations[0].getSimpleID();
 	}
 
 	public int getParameterID() {

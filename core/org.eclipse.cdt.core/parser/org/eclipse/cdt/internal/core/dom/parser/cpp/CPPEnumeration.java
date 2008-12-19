@@ -49,11 +49,11 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     }
 
     public String getName() {
-        return enumName.toString();
+        return new String(getNameCharArray());
     }
 
     public char[] getNameCharArray() {
-        return enumName.toCharArray();
+        return enumName.getSimpleID();
     }
 
     public IScope getScope() {

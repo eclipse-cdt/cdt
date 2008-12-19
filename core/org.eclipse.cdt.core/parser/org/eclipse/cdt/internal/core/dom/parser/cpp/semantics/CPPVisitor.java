@@ -267,7 +267,7 @@ public class CPPVisitor extends ASTQueries {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 		
-		if (name.toCharArray().length > 0)
+		if (name.getSimpleID().length > 0)
 			return binding;
 		return null;
 	}
@@ -444,7 +444,7 @@ public class CPPVisitor extends ASTQueries {
     		if (name instanceof ICPPASTTemplateId) {
     			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
     		} 
-        	if (name.toCharArray().length > 0 && scope != null) //can't lookup anonymous things
+        	if (name.getSimpleID().length > 0 && scope != null) //can't lookup anonymous things
         		binding = scope.getBinding(name, false);
             if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)) {
             	if (template) {
@@ -732,11 +732,7 @@ public class CPPVisitor extends ASTQueries {
 	        return false;
         
 	    IASTName name = findInnermostDeclarator(declarator).getName();
-	    if (name instanceof ICPPASTQualifiedName) {
-	        IASTName[] names = ((ICPPASTQualifiedName)name).getNames(); 
-	        name = names[names.length - 1];
-	    }
-	    if (!CharArrayUtils.equals(name.toCharArray(), parentName.toCharArray()))
+	    if (!CharArrayUtils.equals(CPPASTNameBase.getLookupKey(name), CPPASTNameBase.getLookupKey(parentName)))
 	        return false;
 	    
 	    IASTDeclSpecifier declSpec = null;

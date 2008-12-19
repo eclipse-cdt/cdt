@@ -241,11 +241,11 @@ public class PDOMFile implements IIndexFragmentFile {
 			PDOMMacro pdomMacro= null;
 			if (stmt instanceof IASTPreprocessorMacroDefinition) {
 				IASTPreprocessorMacroDefinition macro= (IASTPreprocessorMacroDefinition) stmt;
-				PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().toCharArray());
+				PDOMMacroContainer container= linkage.getMacroContainer(macro.getName().getSimpleID());
 				pdomMacro = new PDOMMacro(pdom, container, macro, this);
 			} else if (stmt instanceof IASTPreprocessorUndefStatement) {
 				IASTPreprocessorUndefStatement undef= (IASTPreprocessorUndefStatement) stmt;
-				PDOMMacroContainer container= linkage.getMacroContainer(undef.getMacroName().toCharArray());
+				PDOMMacroContainer container= linkage.getMacroContainer(undef.getMacroName().getSimpleID());
 				pdomMacro = new PDOMMacro(pdom, container, undef, this);
 			}
 			if (pdomMacro != null) {
@@ -326,7 +326,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	private IIndexFragmentName createPDOMMacroReferenceName(PDOMLinkage linkage, IASTName name) throws CoreException {
-		PDOMMacroContainer cont= linkage.getMacroContainer(name.toCharArray());
+		PDOMMacroContainer cont= linkage.getMacroContainer(name.getSimpleID());
 		return new PDOMMacroReferenceName(pdom, name, this, cont);
 	}
 

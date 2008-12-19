@@ -96,7 +96,7 @@ public class SelectionParseAction extends Action {
 
     	IASTFileLocation fileloc = name.getFileLocation();
     	if (fileloc == null) {
-    		reportSymbolLookupFailure(new String(name.toCharArray()));
+    		reportSymbolLookupFailure(name.toString());
     		return;
     	}
     	

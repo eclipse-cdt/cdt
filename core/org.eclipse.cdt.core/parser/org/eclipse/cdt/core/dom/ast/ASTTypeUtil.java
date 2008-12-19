@@ -13,24 +13,18 @@ package org.eclipse.cdt.core.dom.ast;
 
 import java.util.LinkedList;
 
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
@@ -653,30 +647,21 @@ public class ASTTypeUtil {
 	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding) throws DOMException {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
-		ICPPScope scope = (ICPPScope) binding.getScope();
-		while (scope != null) {
-			if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) { 
-				break;
-			}
-			if (!(scope instanceof ICPPTemplateScope)) {
-				IName n = scope.getScopeName();
-				if (n == null) {
-					break;
-				}
-				char[] name= n.toCharArray();
-				if (name.length == 0) {
-					if (!(scope instanceof ICPPNamespaceScope)) {
-						name= createNameForAnonymous(scope);
-						if (name == null) {
-							break;
-						}
-						result.addFirst(new String(name));
+		
+		IBinding owner= binding.getOwner();
+		while(owner instanceof ICPPNamespace || owner instanceof ICPPClassType) {
+			char[] name= owner.getNameCharArray();
+			if (name == null || name.length == 0) {
+				if (!(binding instanceof ICPPNamespace)) {
+					char[] altname= createNameForAnonymous(binding);
+					if (altname != null) {
+						result.addFirst(new String(altname));
 					}
-				} else {
-					result.addFirst(new String(name));
 				}
+			} else {
+				result.addFirst(new String(name));
 			}
-			scope = (ICPPScope) scope.getParent();
+			owner= owner.getOwner();
 		}
 	    return result.toArray(new String[result.size()]);
 	}
@@ -690,13 +675,6 @@ public class ASTTypeUtil {
 			}
 		}
 		return new String(name);
-	}
-
-	private static char[] createNameForAnonymous(ICPPScope scope) {
-		if (scope instanceof ICPPClassScope) {
-			return createNameForAnonymous(((ICPPClassScope) scope).getClassType());
-		}
-		return null;
 	}
 
 	public static char[] createNameForAnonymous(IBinding binding) {

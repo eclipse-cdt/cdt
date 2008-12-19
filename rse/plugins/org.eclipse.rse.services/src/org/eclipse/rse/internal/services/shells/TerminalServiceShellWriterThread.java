@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation
  * Anna Dushistova  (MontaVista) - adapted from SshShellWriterThread
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class TerminalServiceShellWriterThread extends Thread {
 
 	/**
 	 * constructor for terminal service shell writer thread
-	 * 
+	 *
 	 * @param outputWriter
 	 *            PrintWriter to write to in separate Thread
 	 */
@@ -47,7 +47,7 @@ public class TerminalServiceShellWriterThread extends Thread {
 	/**
 	 * Write command to remote side. Wait until the thread takes the command (no
 	 * queuing).
-	 * 
+	 *
 	 * @param command
 	 *            to send
 	 * @return boolean true if command was sent ok

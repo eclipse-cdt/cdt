@@ -18,8 +18,6 @@ import java.io.OutputStream;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
 
-import org.eclipse.rse.internal.services.terminals.ProcessBaseShell;
-
 /**
  * A basic shell, representing the connection to some process that may be
  * running local or remote. Clients may implement this interface.
@@ -28,17 +26,11 @@ import org.eclipse.rse.internal.services.terminals.ProcessBaseShell;
  * {@link PlatformObject} for providing the {@link #getAdapter(Class)}
  * functionality.
  *
- * A simple implementation of IBaseShell is the {@link ProcessBaseShell}, which
- * wraps a Java {@link java.lang.Process} object in the IBaseShell interface to
- * provide more convenient access to it through the {{@link #isActive()} and {{@link #waitFor(long)}
- * methods, as well as making it adaptable.
- *
  * The resulting IBaseShell can be decorated by clients with additional
  * functionality easily by instantiating their subclassed variant of
  * {@link BaseShellDecorator}.
  *
  * @see java.lang.Process
- * @see org.eclipse.rse.internal.services.terminals.ProcessBaseShell
  * @see BaseShellDecorator
  * @since org.eclipse.rse.services 3.1
  */

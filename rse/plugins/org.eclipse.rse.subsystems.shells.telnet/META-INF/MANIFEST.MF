@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.shells.telnet;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.subsystems.shells.telnet.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.rse.services;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.services;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.rse.connectorservice.telnet;bundle-version="[1.1.0,2.0.0)",
  org.eclipse.rse.services.telnet;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.rse.subsystems.shells.core;bundle-version="[3.0.0,4.0.0)",

@@ -72,6 +72,7 @@ public class MinGWGenerator implements IApplication {
 		License gplLic = MetadataFactory.createLicense(gplURL, gpl);
 		License lgplLic = MetadataFactory.createLicense(lgplURL, lgpl);
 		License zlibLic = MetadataFactory.createLicense(zlibLicURL, zlibLicText);
+		License wxLic = MetadataFactory.createLicense(wxLicURL, wxLicText);
 		
 		Version wascanaVersion = new Version("1.0.0");
 		String mingwSubdir = "mingw";
@@ -161,27 +162,13 @@ public class MinGWGenerator implements IApplication {
 		InstallableUnitDescription mingwToolchainDesc = createIUDesc("wascana.mingw", wascanaVersion, "MinGW Toolchain", null);;
 		mingwToolchainDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
 		RequiredCapability[] mingwToolchainReqs = new RequiredCapability[] {
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						runtimeIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						w32apiIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						binutilsIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						gcc4coreIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						gcc4gppIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						gdbIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						msysIU.getId(), new VersionRange(null), null, false, false),
+				createRequiredCap(runtimeId),
+				createRequiredCap(w32apiId),
+				createRequiredCap(binutilsId),
+				createRequiredCap(gcc4coreId),
+				createRequiredCap(gcc4gppId),
+				createRequiredCap(gdbId),
+				createRequiredCap(msysId),
 		};
 		mingwToolchainDesc.setRequiredCapabilities(mingwToolchainReqs);
 		IInstallableUnit mingwToolchainIU = MetadataFactory.createInstallableUnit(mingwToolchainDesc);
@@ -203,17 +190,23 @@ public class MinGWGenerator implements IApplication {
 				"http://downloads.sourceforge.net/wascana/SDL-mingw-1.2.13.zip",
 				mingwSubdir,
 				InstallArtifactRepository.ZIP_COMPRESSION);
-		
+
+		// wxWidgets
+		String wxId = "wascana.wxWidgets";
+		Version wxVersion = new Version("2.8.9");
+		InstallableUnitDescription wxDesc = createIUDesc(wxId, wxVersion, "Wascana wxWidgets Library", wxLic);
+		IInstallableUnit wxIU = createIU(wxDesc, wxId, wxVersion,
+				"http://downloads.sourceforge.net/wascana/wxMSW-mingw-2.8.9.zip",
+				mingwSubdir,
+				InstallArtifactRepository.ZIP_COMPRESSION);
+
 		// Libraries toolchain category
 		InstallableUnitDescription libsIUDesc = createIUDesc("wascana.libs", wascanaVersion, "Libraries", null);;
 		libsIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
 		RequiredCapability[] libsReqs = new RequiredCapability[] {
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						zlibIU.getId(), new VersionRange(null), null, false, false),
-				MetadataFactory.createRequiredCapability(
-						IInstallableUnit.NAMESPACE_IU_ID,
-						sdlIU.getId(), new VersionRange(null), null, false, false),
+				createRequiredCap(zlibId),
+				createRequiredCap(sdlId),
+				createRequiredCap(wxId),
 		};
 		libsIUDesc.setRequiredCapabilities(libsReqs);
 		IInstallableUnit libsIU = MetadataFactory.createInstallableUnit(libsIUDesc);
@@ -228,6 +221,7 @@ public class MinGWGenerator implements IApplication {
 				msysIU,
 				mingwToolchainIU,
 				
+				wxIU,
 				zlibIU,
 				sdlIU,
 				libsIU
@@ -272,6 +266,12 @@ public class MinGWGenerator implements IApplication {
 		return MetadataFactory.createInstallableUnit(iuDesc);
 	}
 
+	private RequiredCapability createRequiredCap(String id) {
+		return MetadataFactory.createRequiredCapability(
+				IInstallableUnit.NAMESPACE_IU_ID,
+				id, new VersionRange(null), null, false, false);
+	}
+	
 	public static final String publicDomain = "This package is placed in the Public Domain."
 		+ " No warranty is given; refer to the header files within the package.";
 
@@ -286,4 +286,9 @@ public class MinGWGenerator implements IApplication {
 	public static final String zlibLicURL = "http://www.zlib.net/zlib_license.html";
 	
 	public static final String zlibLicText = "http://www.zlib.net/zlib_license.html";
+	
+	public static final String wxLicURL = "http://www.wxwidgets.org/about/newlicen.htm";
+	
+	public static final String wxLicText = "wxWindows license\n" + wxLicURL;
+	
 }

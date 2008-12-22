@@ -12,9 +12,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -93,8 +95,13 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 			buf.append(Keywords.cOPERATOR);
 			buf.append(' ');
 			if (typeId != null) {
-				buf.append(typeId.getRawSignature());
-				WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
+				IType t= CPPVisitor.createType(typeId);
+				if (t != null) {
+					buf.append(ASTTypeUtil.getType(t, true));
+				} else {
+					buf.append(typeId.getRawSignature());
+					WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
+				}
 			}
 	    	final int len= buf.length();
 	    	fName= new char[len];
@@ -105,5 +112,9 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 
 	public char[] getSimpleID() {
 		return toCharArray();
+	}
+	
+	public char[] getLookupKey() {
+		return Keywords.cOPERATOR;
 	}
 }

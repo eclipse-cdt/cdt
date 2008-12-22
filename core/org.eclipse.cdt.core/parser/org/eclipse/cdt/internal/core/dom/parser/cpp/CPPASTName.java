@@ -140,6 +140,10 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
 		return name;
 	}
 
+	public char[] getLookupKey() {
+		return name;
+	}
+	
 	public void setName(char[] name) {
         assertNotFrozen();
         this.name = name;

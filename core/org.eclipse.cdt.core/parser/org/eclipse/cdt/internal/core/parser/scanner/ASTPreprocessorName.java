@@ -40,7 +40,13 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public IBinding resolveBinding() {
 		return fBinding;
 	}
+	public IBinding resolvePreBinding() {
+		return fBinding;
+	}
 	public IBinding getBinding() {
+		return fBinding;
+	}
+	public IBinding getPreBinding() {
 		return fBinding;
 	}
 	public ILinkage getLinkage() {
@@ -63,6 +69,9 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 		return fName;
 	}    	
 	public char[] getSimpleID() {
+		return fName;
+	}
+	public char[] getLookupKey() {
 		return fName;
 	}
 

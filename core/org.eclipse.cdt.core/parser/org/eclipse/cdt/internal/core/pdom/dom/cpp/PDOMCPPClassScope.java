@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
@@ -47,8 +47,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- * 
+ * Represents the class scope for a class stored in the index.
  */
 class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	private IPDOMCPPClassType fBinding;

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Doug Schaefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
@@ -109,9 +109,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
- * Test the new AST.
- * 
- * @author Doug Schaefer
+ * Testcases on the AST.
  */
 public class AST2Tests extends AST2BaseTest {
 	
@@ -5735,12 +5733,15 @@ public class AST2Tests extends AST2BaseTest {
 		}
 		buf.append(input[2].toString());
 		final String code= buf.toString();
-		long mem= memoryUsed();
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			tu= null;
+			long mem= memoryUsed();
+			tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
-			final int expected = 1024*10 + code.length()*2; // a copy of the buffer + some
+			final int expected = 1024*20 + code.length()*2; // a copy of the buffer + some
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+			assertTrue(tu.isFrozen());
 		}
 	}
 

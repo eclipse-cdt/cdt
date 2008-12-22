@@ -68,25 +68,20 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName)
 				return PROCESS_CONTINUE;
-			char[] c = name.toCharArray();
+			char[] c = name.getLookupKey();
 			if (name.getParent() instanceof ICPPASTTemplateId)
 				name = (IASTName) name.getParent();
 			if (name.getParent() instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
+				IASTName[] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
 				if (ns[ns.length - 1] != name)
 					return PROCESS_CONTINUE;
 				name = (IASTName) name.getParent();
 			}
 
-			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
-					CharArrayUtils.equals(c, nameArray)) {
+			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier && CharArrayUtils.equals(c, nameArray)) {
 				IBinding binding = name.resolveBinding();
 				if (binding == CPPClassTemplate.this) {
-					if (name instanceof ICPPASTQualifiedName) {
-						IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-						name = ns[ns.length - 1];
-					}
-					result = name;
+					result = name.getLastName();
 					return PROCESS_ABORT;
 				}
 			}

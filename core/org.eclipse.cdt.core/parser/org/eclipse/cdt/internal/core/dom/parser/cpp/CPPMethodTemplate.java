@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    Andrew Niefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -32,14 +32,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * A template for a method.
  */
-public class CPPMethodTemplate extends CPPFunctionTemplate implements
-		ICPPMethod {
+public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod {
 
-	/**
-	 * @param name
-	 */
 	public CPPMethodTemplate(IASTName name) {
 		super(name);
 	}
@@ -58,37 +54,31 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 			}
 		}
 		
-		char [] myName = getNameCharArray();
-		
+		final char[] myName = getTemplateName().getLookupKey();
 		IScope scope = getScope();
-		if( scope instanceof ICPPTemplateScope )
-		    scope = scope.getParent();
+		if (scope instanceof ICPPTemplateScope)
+			scope = scope.getParent();
 		ICPPClassScope clsScope = (ICPPClassScope) scope;
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(clsScope);
-		IASTDeclaration [] members = compSpec.getMembers();
+		IASTDeclaration[] members = compSpec.getMembers();
 		for (IASTDeclaration member : members) {
-		    if( member instanceof ICPPASTTemplateDeclaration ){
-		        IASTDeclaration decl = ((ICPPASTTemplateDeclaration)member).getDeclaration();
-		        if( decl instanceof IASTSimpleDeclaration ){
-					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+			if (member instanceof ICPPASTTemplateDeclaration) {
+				IASTDeclaration decl = ((ICPPASTTemplateDeclaration) member).getDeclaration();
+				if (decl instanceof IASTSimpleDeclaration) {
+					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
 						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
-						if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
-							name.resolveBinding() == this )
-						{
+						if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 							return member;
 						}
 					}
-				} else if( decl instanceof IASTFunctionDefinition ){
+				} else if (decl instanceof IASTFunctionDefinition) {
 					IASTName name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
-					if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
-						name.resolveBinding() == this )
-					{
+					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 						return member;
 					}
 				}
-		    }
-			
+			}
 		}
 		return null;
 	}

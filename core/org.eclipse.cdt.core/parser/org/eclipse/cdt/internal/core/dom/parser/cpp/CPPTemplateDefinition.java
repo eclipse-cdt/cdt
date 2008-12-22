@@ -265,7 +265,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(tdecl).getTemplateParameters();
     		if (pos < params.length) {
     			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);
-    			return CPPASTNameBase.resolvePreBinding(oName);
+    			return oName.resolvePreBinding();
     		}
     	}
     	return templateParameter;
@@ -295,7 +295,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     		int end= Math.min(params.length, updateParams.length);
     		for (; k < end; k++) {
     			final IASTName oName = CPPTemplates.getTemplateParameterName(params[k]);
-    			IBinding b= CPPASTNameBase.resolvePreBinding(oName);
+    			IBinding b= oName.resolvePreBinding();
     			IASTName n = CPPTemplates.getTemplateParameterName(updateParams[k]);
     			n.setBinding(b);
     			if (b instanceof ICPPInternalBinding) {

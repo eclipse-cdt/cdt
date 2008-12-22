@@ -80,7 +80,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 					name = ns[ns.length - 1]; 
 			}
 			
-			IBinding binding = CPPASTNameBase.resolvePreBinding(name);
+			IBinding binding = name.resolvePreBinding();
 			if (binding instanceof IType) {
 				classType = (IType) binding;
 			} else {

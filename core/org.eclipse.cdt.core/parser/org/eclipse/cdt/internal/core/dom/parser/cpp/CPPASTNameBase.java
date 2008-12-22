@@ -19,9 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
@@ -49,42 +46,6 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 		}
 	}
 	
-	/**
-	 * Helper method to resolve intermediate bindings without casting the name.
-	 */
-	public static IBinding resolvePreBinding(IASTName name) {
-		if (name == null)
-			return null;
-		if (name instanceof CPPASTNameBase)
-			return ((CPPASTNameBase) name).resolvePreBinding();
-		
-		return name.resolveBinding();
-	}
-
-	/**
-	 * Helper method to get intermediate bindings without casting the name.
-	 */
-	public static IBinding getPreBinding(IASTName name) {
-		if (name == null)
-			return null;
-		if (name instanceof CPPASTNameBase)
-			return ((CPPASTNameBase) name).getPreBinding();
-		
-		return name.getBinding();
-	}
-
-	/**
-	 * Helper method, returns "operator" for conversion names, and {@code IASTName#getSimpleName()}, otherwise. 
-	 */
-	public static char[] getLookupKey(IASTName name) {
-		name= name.getLastName();
-		if (name instanceof ICPPASTTemplateId)
-			name= ((ICPPASTTemplateId) name).getTemplateName();
-		if (name instanceof ICPPASTConversionName)
-			return Keywords.cOPERATOR;
-		return name.toCharArray();
-	}
-
 	private IBinding fBinding = null;
 	private byte fResolutionDepth = 0;
 	private boolean fIsFinal= false;

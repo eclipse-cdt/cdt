@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
@@ -148,7 +148,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
@@ -184,7 +183,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
- * @author aniefer
+ * Collection of methods to extract information from a c++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
 	public static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
@@ -267,7 +266,7 @@ public class CPPVisitor extends ASTQueries {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 		
-		if (name.getSimpleID().length > 0)
+		if (name.getLookupKey().length > 0)
 			return binding;
 		return null;
 	}
@@ -444,7 +443,7 @@ public class CPPVisitor extends ASTQueries {
     		if (name instanceof ICPPASTTemplateId) {
     			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
     		} 
-        	if (name.getSimpleID().length > 0 && scope != null) //can't lookup anonymous things
+        	if (name.getLookupKey().length > 0 && scope != null) //can't lookup anonymous things
         		binding = scope.getBinding(name, false);
             if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)) {
             	if (template) {
@@ -732,7 +731,7 @@ public class CPPVisitor extends ASTQueries {
 	        return false;
         
 	    IASTName name = findInnermostDeclarator(declarator).getName();
-	    if (!CharArrayUtils.equals(CPPASTNameBase.getLookupKey(name), CPPASTNameBase.getLookupKey(parentName)))
+	    if (!CharArrayUtils.equals(name.getLookupKey(), parentName.getLookupKey()))
 	        return false;
 	    
 	    IASTDeclSpecifier declSpec = null;
@@ -1070,7 +1069,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		if (name != null) {
 			name= name.getLastName();
-			IBinding binding = CPPASTNameBase.getPreBinding(name);
+			IBinding binding = name.getPreBinding();
 			if (binding == null) {
 				binding = CPPSemantics.resolveBinding(name);
 				name.setBinding(binding);
@@ -1690,7 +1689,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		if (name != null) {
-			IBinding binding = CPPASTNameBase.resolvePreBinding(name);
+			IBinding binding = name.resolvePreBinding();
 			if (binding instanceof ICPPConstructor) {
 				try {
 					type= ((ICPPConstructor) binding).getClassOwner();

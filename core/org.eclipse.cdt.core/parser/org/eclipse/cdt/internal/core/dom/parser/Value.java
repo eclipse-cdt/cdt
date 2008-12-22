@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
@@ -334,7 +333,7 @@ public class Value implements IValue {
 			return CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString();
 		}
 		if (e instanceof IASTIdExpression) {
-			IBinding b= CPPASTNameBase.resolvePreBinding(((IASTIdExpression) e).getName());
+			IBinding b= ((IASTIdExpression) e).getName().resolvePreBinding();
 			return evaluateBinding(b, unknownSigs, unknowns, maxdepth);
 		}
 		if (e instanceof IASTLiteralExpression) {

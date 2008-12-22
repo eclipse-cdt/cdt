@@ -66,7 +66,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	@Override
 	public final IBinding resolvePreBinding() {
 		// The full qualified name resolves to the same thing as the last name
-		return resolvePreBinding(getLastName());
+		return getLastName().resolvePreBinding();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
     @Override
 	public final IBinding getPreBinding() {
 		// The full qualified name resolves to the same thing as the last name
-		return getPreBinding(getLastName());
+		return getLastName().getPreBinding();
     }
     
 	@Override
@@ -121,6 +121,10 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 	public char[] getSimpleID() {
 		return names[namesPos].getSimpleID();
+	}
+	
+	public char[] getLookupKey() {
+		return names[namesPos].getLookupKey();
 	}
 	
 	public char[] toCharArray() {
@@ -172,7 +176,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			final IASTName name = names[i];
 			if (i == namesPos) {
 				// pointer-to-member qualified names have a dummy name as the last part of the name, don't visit it
-				if (getLookupKey(name).length > 0 && !name.accept(action))
+				if (name.getLookupKey().length > 0 && !name.accept(action))
 					return false;
 			} else if (!name.accept(action))
 				return false;
@@ -246,7 +250,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 			
 				if (isDeclaration && nameMatches(classType.getNameCharArray(),
-						n.getSimpleID(), isPrefix)) {
+						n.getLookupKey(), isPrefix)) {
 					try {
 						ICPPConstructor[] constructors = classType.getConstructors();
 						for (int i = 0; i < constructors.length; i++) {

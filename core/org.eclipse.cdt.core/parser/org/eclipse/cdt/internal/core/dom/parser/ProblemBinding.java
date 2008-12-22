@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *******************************************************************************/
@@ -26,13 +26,14 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Implementation of problem bindings
  */
 public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope, IASTInternalScope {
     protected final int id;
@@ -108,7 +109,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return CPPSemantics.EMPTY_NAME_ARRAY;
+        return CharArrayUtils.EMPTY;
     }
 
     /* (non-Javadoc)

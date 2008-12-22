@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -49,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -85,7 +83,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -1083,7 +1080,7 @@ public class CPPTemplates {
 			for (ICPPASTTemplateParameter par : pars) {
 				IASTName name= CPPTemplates.getTemplateParameterName(par);
 				if (name != null)
-					set.put(name.getSimpleID());
+					set.put(name.getLookupKey());
 			}
 			final IASTNode next= tdecl.getDeclaration();
 			if (next instanceof ICPPASTTemplateDeclaration) {
@@ -1110,7 +1107,7 @@ public class CPPTemplates {
 					return PROCESS_CONTINUE;
 				}
 				
-				if (names.containsKey(name.getSimpleID())) {
+				if (names.containsKey(name.getLookupKey())) {
 					IASTNode parent= name.getParent();
 					if (parent instanceof ICPPASTQualifiedName) {
 						if (((ICPPASTQualifiedName) parent).getNames()[0] != name) {
@@ -1243,57 +1240,6 @@ public class CPPTemplates {
 		}
 
 		return  null;
-	}
-
-	public static boolean isSameTemplate(ICPPTemplateDefinition definition, IASTName name) {
-		ICPPTemplateParameter[] defParams = null;
-		try {
-			defParams = definition.getTemplateParameters();
-		} catch (DOMException e1) {
-			return false;
-		}
-		ICPPASTTemplateDeclaration templateDecl = getTemplateDeclaration(name);
-		if (templateDecl == null)
-			return false;
-
-		ICPPASTTemplateParameter[] templateParams = templateDecl.getTemplateParameters();
-		if (defParams.length != templateParams.length)
-			return false;
-
-		IASTNode parent = name.getParent();
-		try {
-			if (parent instanceof ICPPASTFunctionDeclarator) {
-				IASTParameterDeclaration[] params = ((ICPPASTFunctionDeclarator) parent).getParameters();
-				IParameter[] ps = ((ICPPFunction) definition).getParameters();
-				if (ps.length == params.length) {
-					int i = 0;
-					for (; i < ps.length; i++) {
-						IType t1 = CPPVisitor.createType(params[i].getDeclarator());
-						IType t2 = ps[i].getType();
-						if (!t1.isSameType(t2)) 
-							return false;
-					}
-					return true;
-				}
-				return false;
-			} 
-			if (parent instanceof IASTDeclSpecifier) {
-				if (name instanceof ICPPASTTemplateId) {
-					if (definition instanceof ICPPClassTemplatePartialSpecialization) {
-						ICPPClassTemplatePartialSpecialization spec = (ICPPClassTemplatePartialSpecialization) definition;
-						ICPPTemplateArgument[] args= createTemplateArgumentArray((ICPPASTTemplateId)name);
-						ICPPTemplateArgument[] specArgs = spec.getTemplateArguments();
-						if (!areSameArguments(args, specArgs))
-							return false;
-					}
-					return true;
-				} 
-				
-				return CharArrayUtils.equals(definition.getNameCharArray(), name.getSimpleID());
-			}
-		} catch (DOMException e) {
-		}
-		return false;
 	}
 
 	public static boolean areSameArguments(ICPPTemplateArgument[] args, ICPPTemplateArgument[] specArgs) {

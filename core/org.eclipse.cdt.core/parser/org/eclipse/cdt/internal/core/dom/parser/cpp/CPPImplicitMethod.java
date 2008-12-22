@@ -112,7 +112,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				while( dtor != null ){
 					IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
 					if( CPPVisitor.findTypeRelevantDeclarator(dtor) instanceof ICPPASTFunctionDeclarator &&
-							CharArrayUtils.equals( name.getSimpleID(), getNameCharArray() ) )
+							CharArrayUtils.equals( name.getLookupKey(), getNameCharArray() ) )
 					{
 						IType t0= CPPVisitor.createType( dtor );
 						boolean ok= false;

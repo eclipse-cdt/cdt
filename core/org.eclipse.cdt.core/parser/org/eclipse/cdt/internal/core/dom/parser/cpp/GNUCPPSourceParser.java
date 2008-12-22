@@ -2282,7 +2282,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 identifier= qualifiedName();
-                if (identifier.getSimpleID().length == 0 && LT(1) != IToken.tEOC)
+                if (identifier.getLookupKey().length == 0 && LT(1) != IToken.tEOC)
                 	throwBacktrack(LA(1));
                 
                 endOffset= calculateEndOffset(identifier);
@@ -2395,7 +2395,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					final int len = names.length;
 					final IASTName lastName = names[len-1];
 					
-					if (len > 1 && CharArrayUtils.equals(CPPASTNameBase.getLookupKey(names[len-2]), CPPASTNameBase.getLookupKey(lastName))) 
+					if (len > 1 && CharArrayUtils.equals(names[len-2].getLookupKey(), lastName.getLookupKey())) 
 						return true; // constructor
 					
 					name= lastName;
@@ -2406,7 +2406,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (name instanceof ICPPASTConversionName)
 					return true;
 				
-				final char[] nchars= name.getSimpleID();
+				final char[] nchars= name.getLookupKey();
 				if (nchars.length > 0 && nchars[0] == '~') 
 					return true; // destructor
 				if (declOption == DeclarationOptions.CPP_MEMBER && CharArrayUtils.equals(nchars, currentClassName))
@@ -2942,7 +2942,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (coloncolon != 0) {
                 try {
                 	name= qualifiedName();
-                	if (CPPASTNameBase.getLookupKey(name).length != 0) {
+                	if (name.getLookupKey().length != 0) {
                 		backup(mark);
                 		return;
                 	}
@@ -3286,7 +3286,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         int endOffset= consume().getEndOffset();
         final char[] outerName= currentClassName;
-        currentClassName= name.getSimpleID();
+        currentClassName= name.getLookupKey();
 
         try {
         	int declOffset= -1;

@@ -147,12 +147,12 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         if (map == null)
             map = new CharArrayObjectMap(2);
 
-        char[] c = name.getSimpleID();
-        IBinding[] o= (IBinding[]) map.get(c);
-        if (o == null) {
-        	o= new IBinding[3];
-        	map.put(c, o);
-        }
+        final char[] c = name.getLookupKey();
+		IBinding[] o = (IBinding[]) map.get(c);
+		if (o == null) {
+			o = new IBinding[3];
+			map.put(c, o);
+		}
         
         int idx= type ? 0 : function ? 1 : 2;
         IBinding result= o[idx];

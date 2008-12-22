@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -115,10 +116,10 @@ class LookupData {
 		astName = null;
 	}
 	
-	public final char[] name() {
+	public final char[] getNameCharArray() {
 		if (astName != null)
-			return astName.getSimpleID();
-		return CPPSemantics.EMPTY_NAME_ARRAY;
+			return astName.toCharArray();
+		return CharArrayUtils.EMPTY;
 	}
 	
 	public boolean includeBlockItem(IASTNode item) {

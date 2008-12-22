@@ -205,7 +205,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
                 return r_reference;
         }
         if (getParent instanceof IASTParameterDeclaration)
-            return (n.getSimpleID().length > 0) ? r_definition : r_declaration;
+            return (n.getLookupKey().length > 0) ? r_definition : r_declaration;
         
         return r_unclear;
 	}

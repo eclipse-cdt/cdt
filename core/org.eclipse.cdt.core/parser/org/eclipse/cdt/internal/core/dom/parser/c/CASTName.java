@@ -63,8 +63,16 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 
         return binding;
     }
+    
+    public IBinding resolvePreBinding() {
+    	return resolveBinding();
+    }
 
     public IBinding getBinding() {
+        return binding;
+    }
+    
+    public IBinding getPreBinding() {
         return binding;
     }
 
@@ -99,6 +107,10 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     }
 
 	public char[] getSimpleID() {
+		return name;
+	}
+	
+	public char[] getLookupKey() {
 		return name;
 	}
 

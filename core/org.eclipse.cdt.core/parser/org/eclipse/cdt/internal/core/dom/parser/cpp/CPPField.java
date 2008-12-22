@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
 /**
- * @author aniefer
+ * Binding for a field.
  */
 public class CPPField extends CPPVariable implements ICPPField {
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
@@ -85,13 +85,11 @@ public class CPPField extends CPPVariable implements ICPPField {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
 		IASTDeclaration [] members = compSpec.getMembers();
 		for (IASTDeclaration member : members) {
-			if( member instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)member).getDeclarators();
+			if (member instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration) member).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
 					IASTName name = dtor.getName();
-					if( CharArrayUtils.equals( name.getSimpleID(), myName ) &&
-						name.resolveBinding() == this )
-					{
+					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 						return member;
 					}
 				}

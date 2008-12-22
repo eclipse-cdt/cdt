@@ -109,7 +109,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 	    	ICPPASTNamespaceDefinition orig = namespaceDef, candidate = namespace;
 	    	while(candidate != null) {
-	    		if (!CharArrayUtils.equals(orig.getName().getSimpleID(), candidate.getName().getSimpleID()))
+	    		if (!CharArrayUtils.equals(orig.getName().getLookupKey(), candidate.getName().getLookupKey()))
 	    			return PROCESS_CONTINUE;
 	    		if (orig.getParent() instanceof ICPPASTNamespaceDefinition) {
 	    			if (!(candidate.getParent() instanceof ICPPASTNamespaceDefinition))

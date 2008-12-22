@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Represents a namespace scope for a namespace stored in the index.
  */
 class PDOMCPPNamespace extends PDOMCPPBinding
 		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
@@ -129,7 +129,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
-			IBinding[] bindings= getBindingsViaCache(name.getSimpleID());
+			IBinding[] bindings= getBindingsViaCache(name.getLookupKey());
 			if (fileSet != null) {
 				bindings= fileSet.filterFileLocalBindings(bindings);
 			}
@@ -146,9 +146,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
-				return getBindingsViaCache(name.getSimpleID());
+				return getBindingsViaCache(name.getLookupKey());
 			}
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.getSimpleID(),
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.getLookupKey(),
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			IBinding[] bindings = visitor.getBindings();

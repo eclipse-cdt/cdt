@@ -86,7 +86,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		    if (!canDenoteScopeMember((ICPPASTQualifiedName) name))
 		    	return;
 		} 
-		final char[] c= name.getSimpleID();
+		final char[] c= name.getLookupKey();
 		Object o = bindings.get(c);
 		if (o != null) {
 		    if (o instanceof ObjectSet) {
@@ -132,7 +132,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			final IASTTranslationUnit tu = name.getTranslationUnit();
 			IIndex index = tu == null ? null : tu.getIndex();
 			if (index != null) {
-				final char[] nchars = name.getSimpleID();
+				final char[] nchars = name.getLookupKey();
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
@@ -174,7 +174,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
-	    char[] c = name.getSimpleID();
+	    char[] c = name.getLookupKey();
 	    //can't look up bindings that don't have a name
 	    if (c.length == 0)
 	        return null;
@@ -234,7 +234,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
 						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE;
-						final char[] nchars = name.getSimpleID();
+						final char[] nchars = name.getLookupKey();
 						IBinding[] bindings = prefixLookup ?
 								index.findBindingsForPrefix(nchars, true, filter, null) :
 								index.findBindings(nchars, filter, null);
@@ -269,7 +269,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 
 	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup)
 			throws DOMException {
-	    char[] c = name.getSimpleID();
+	    char[] c = name.getLookupKey();
 	    IBinding[] result = null;
 	    
 	    Object[] obj = null;

@@ -1614,8 +1614,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	        				}
 	        			}
 	        		}
-	        		
-	        		assert dtor.getNestedDeclarator() != null || dtor.getName().getSimpleID().length > 0;
 	        	}
 	        }
 		}

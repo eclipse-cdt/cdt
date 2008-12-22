@@ -107,5 +107,23 @@ public interface IASTName extends IASTNode, IName {
 	 * Set the semantic object for this name to be the given binding
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public void setBinding( IBinding binding );
+	public void setBinding(IBinding binding);
+	
+	/** 
+	 * Get the key for looking up this name in a scope.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public char[] getLookupKey();
+
+	/**
+	 * Gets the intermediate representation of the biniding, if already available.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public IBinding getPreBinding();
+
+	/**
+	 * Resolves to an intermediate representation of the binding.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public IBinding resolvePreBinding();
 }

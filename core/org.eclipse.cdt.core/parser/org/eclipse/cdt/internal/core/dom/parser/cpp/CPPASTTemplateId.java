@@ -58,6 +58,10 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		return templateName.getSimpleID();
 	}
 
+	public char[] getLookupKey() {
+		return templateName.getLookupKey();
+	}
+	
 	public IASTName getTemplateName() {
         return templateName;
     }

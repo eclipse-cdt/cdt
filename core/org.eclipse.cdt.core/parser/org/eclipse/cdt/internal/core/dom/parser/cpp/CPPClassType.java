@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
@@ -57,8 +57,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * 
- * @author aniefer
+ * Binding for a class type.
  */
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
 	
@@ -136,25 +135,19 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 				return PROCESS_SKIP;
 			if( name instanceof ICPPASTQualifiedName )
 				return PROCESS_CONTINUE;
-			char [] c = name.toCharArray();
+			char[] c = name.getLookupKey();
 
-			if( name.getParent() instanceof ICPPASTQualifiedName ){
-				IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
-				if( ns[ ns.length - 1 ] != name )
+			if (name.getParent() instanceof ICPPASTQualifiedName) {
+				IASTName[] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
+				if (ns[ns.length - 1] != name)
 					return PROCESS_CONTINUE;
 				name = (IASTName) name.getParent();
 			}
 
-			if( name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
-					CharArrayUtils.equals( c, nameArray ) ) 
-			{
+			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier && CharArrayUtils.equals(c, nameArray)) {
 				IBinding binding = name.resolveBinding();
-				if( binding == CPPClassType.this ){
-					if( name instanceof ICPPASTQualifiedName ){
-						IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-						name = ns[ ns.length - 1 ];
-					}
-					result = name;
+				if (binding == CPPClassType.this) {
+					result= name.getLastName();
 					return PROCESS_ABORT;
 				}
 			}

@@ -17,12 +17,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
  * 
  * @author Doug Schaefer
  */
-public interface ICPPMember extends ICPPBinding{
+public interface ICPPMember extends ICPPBinding {
 
 	/**
 	 * The visibility.
-	 * 
-	 */
+	 */ 
 	public int getVisibility() throws DOMException;
 
 	public static final int v_private = ICPPASTVisibilityLabel.v_private;
@@ -32,5 +31,4 @@ public interface ICPPMember extends ICPPBinding{
 	public static final int v_public = ICPPASTVisibilityLabel.v_public;
 
 	public ICPPClassType getClassOwner() throws DOMException;
-	
 }

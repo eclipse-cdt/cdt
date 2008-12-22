@@ -6284,7 +6284,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  }
 	//	  struct B {};
 	//	};
-    public void _testClassMemberScope_259460() throws Exception {
+    public void _testScopeOfClassMember_259460() throws Exception {
     	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 }

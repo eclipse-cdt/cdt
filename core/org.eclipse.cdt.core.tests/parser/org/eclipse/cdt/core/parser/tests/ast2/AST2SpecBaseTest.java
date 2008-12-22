@@ -58,26 +58,25 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 	 * @param expectedProblemBindings the number of problem bindings you expect to encounter
 	 * @throws ParserException
 	 */
-	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-		parse( code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings, null);
-		parse( code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings, null );
+	protected void parseCandCPP(String code, boolean checkBindings, int expectedProblemBindings) throws ParserException {
+		parse(code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings, null);
+		parse(code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings, null);
 	}
 
-	protected IASTTranslationUnit parseWithErrors( String code, ParserLanguage lang) throws ParserException {
-    	return parse(code, lang, false, false, false, 0, null );
+	protected IASTTranslationUnit parseWithErrors(String code, ParserLanguage lang) throws ParserException {
+    	return parse(code, lang, false, false, false, 0, null);
     }
 
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
-    	return parse(code, lang, false, true, checkBindings, expectedProblemBindings, null );
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings) throws ParserException {
+    	return parse(code, lang, false, true, checkBindings, expectedProblemBindings, null);
     }
 	
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, String[] problems) throws ParserException {
-    	return parse(code, lang, false, true, true, problems.length, problems );
+    	return parse(code, lang, false, true, true, problems.length, problems);
 	}
-
     
-    private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, 
-    		boolean checkBindings, int expectedProblemBindings, String[] problems ) throws ParserException {
+    private IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, 
+    		boolean checkBindings, int expectedProblemBindings, String[] problems) throws ParserException {
 		// TODO beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
 		// TODO another example might be to replace all characters with corresponding trigraph/digraph tests...
 		
@@ -85,7 +84,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkBindings, expectedProblemBindings, problems);
     }
 	
-//	private IASTTranslationUnit parse( IFile filename, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
+//	private IASTTranslationUnit parse(IFile filename, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems) throws ParserException {
 //		CodeReader codeReader=null;
 //		try {
 //			codeReader = new CodeReader(filename.getName(), filename.getContents());
@@ -98,25 +97,21 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 //		return parse(codeReader, lang, useGNUExtensions, expectNoProblems);
 //    }
 	
-	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, 
-			boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings, String[] problems) throws ParserException {
+	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang,
+			boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings,
+			int expectedProblemBindings, String[] problems) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
-        if( lang == ParserLanguage.CPP )
-        {
+        if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (useGNUExtensions)
             	config = new GPPParserExtensionConfiguration();
             else
             	config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
-                NULL_LOG,
-                config );
-        }
-        else
-        {
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+        } else {
             ICParserExtensionConfiguration config = null;
 
             if (useGNUExtensions)
@@ -124,8 +119,8 @@ public class AST2SpecBaseTest extends AST2BaseTest {
             else
             	config = new ANSICParserExtensionConfiguration();
             
-            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, 
-                NULL_LOG, config );
+            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, 
+            		NULL_LOG, config);
         }
         
         if (expectedProblemBindings > 0)
@@ -136,9 +131,10 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		// resolve all bindings
 		if (checkBindings) {
 			NameResolver res = new NameResolver();
-	        tu.accept( res );
-			if (res.problemBindings.size() != expectedProblemBindings )
-				throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.problemBindings.size() ); 
+	        tu.accept(res);
+			if (res.problemBindings.size() != expectedProblemBindings)
+				throw new ParserException("Expected " + expectedProblemBindings +
+						" problems, encountered " + res.problemBindings.size()); 
 			if (problems != null) {
 				for (int i = 0; i < problems.length; i++) {
 					assertEquals(problems[i], res.problemBindings.get(i));
@@ -146,32 +142,27 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 			}
 		}
 
-        if( parser2.encounteredError() && expectNoProblems )
-            throw new ParserException( "FAILURE"); 
+        if (parser2.encounteredError() && expectNoProblems)
+            throw new ParserException("FAILURE"); 
          
-        if( lang == ParserLanguage.C && expectNoProblems )
-        {
+        if (lang == ParserLanguage.C && expectNoProblems) {
 			if (CVisitor.getProblems(tu).length != 0) {
-				throw new ParserException (" CVisitor has AST Problems " ); 
+				throw new ParserException("CVisitor has AST Problems"); 
 			}
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new ParserException (" C TranslationUnit has Preprocessor Problems " ); 
+				throw new ParserException("C TranslationUnit has Preprocessor Problems"); 
 			}
-        }
-        else if ( lang == ParserLanguage.CPP && expectNoProblems )
-        {
+        } else if (lang == ParserLanguage.CPP && expectNoProblems) {
 			if (CPPVisitor.getProblems(tu).length != 0) {
-				throw new ParserException (" CPPVisitor has AST Problems " ); 
+				throw new ParserException("CPPVisitor has AST Problems"); 
 			}
 			if (tu.getPreprocessorProblems().length != 0) {
-				throw new ParserException (" CPP TranslationUnit has Preprocessor Problems " ); 
+				throw new ParserException("CPP TranslationUnit has Preprocessor Problems"); 
 			}
         }
         
         return tu;
 	}
-	
-	
 	
 	static protected class NameResolver extends ASTVisitor {
 		{
@@ -181,7 +172,6 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		public List<IASTName> nameList = new ArrayList<IASTName>();
 		public List<String> problemBindings = new ArrayList<String>();
 		public int numNullBindings = 0;
-		
 		
 		@Override
 		public int visit(IASTName name) {
@@ -195,7 +185,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		}
 		
 		public IASTName getName(int idx) {
-			if(idx < 0 || idx >= nameList.size())
+			if (idx < 0 || idx >= nameList.size())
 				return null;
 			return nameList.get(idx);
 		}
@@ -204,5 +194,4 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 			return nameList.size(); 
 		}
 	}
-	
 }

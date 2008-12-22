@@ -222,6 +222,10 @@ public abstract class ASTNode implements IASTNode {
     	return false;
     }
 
+	public IToken getSyntax() throws ExpansionOverlapsBoundaryException {
+		return getSyntax(offset, offset+length, 0);
+	}
+
 	public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException {
 		int left= getBoundary(-1);
 		return getSyntax(left, offset, -1);

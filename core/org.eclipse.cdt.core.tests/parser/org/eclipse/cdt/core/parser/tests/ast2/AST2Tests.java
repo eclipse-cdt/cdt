@@ -5650,6 +5650,58 @@ public class AST2Tests extends AST2BaseTest {
 		} catch (ExpansionOverlapsBoundaryException e) {}
 	}
 
+	
+	//	#define IF      if
+	//	#define IF_P    if (
+	//	#define IF_P_T  if (1
+	//	#define SEMI_IF ; if 
+	//	#define IF_COND if (1)
+	//  void test() {
+	public void testSyntax_Bug250251() throws Exception {
+		String code= getAboveComment();
+
+		IASTTranslationUnit tu= parseAndCheckBindings(code + "if (1) {};}");
+		IASTFunctionDefinition f= getDeclaration(tu, 0);
+		IASTIfStatement x = getStatement(f, 0);
+		IToken syntax= x.getSyntax();
+		checkToken(syntax, "if", 0); syntax= syntax.getNext();
+		checkToken(syntax, "(",  3);  syntax= syntax.getNext();
+		checkToken(syntax, "1",  4);  syntax= syntax.getNext();
+		checkToken(syntax, ")",  5);  syntax= syntax.getNext();
+		checkToken(syntax, "{",  7);  syntax= syntax.getNext();
+		checkToken(syntax, "}",  8);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "if(  1) {}}");
+		f= getDeclaration(tu, 0); x= getStatement(f, 0); 
+		syntax= x.getSyntax();
+		checkToken(syntax, "if", 0); syntax= syntax.getNext();
+		checkToken(syntax, "(", 2);  syntax= syntax.getNext();
+		checkToken(syntax, "1",  5);  syntax= syntax.getNext();
+		checkToken(syntax, ")",  6);  syntax= syntax.getNext();
+		checkToken(syntax, "{",  8);  syntax= syntax.getNext();
+		checkToken(syntax, "}",  9);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "IF(1) {}}");
+		f= getDeclaration(tu, 0); x= getStatement(f, 0);
+		syntax= x.getSyntax();
+		checkToken(syntax, "IF", 0); syntax= syntax.getNext();
+		checkToken(syntax, "(",  2);  syntax= syntax.getNext();
+		checkToken(syntax, "1",  3);  syntax= syntax.getNext();
+		checkToken(syntax, ")",  4);  syntax= syntax.getNext();
+		checkToken(syntax, "{",  6);  syntax= syntax.getNext();
+		checkToken(syntax, "}",  7);  syntax= syntax.getNext();
+		assertNull(syntax);
+
+		tu= parseAndCheckBindings(code + "SEMI_IF (1) {}}");
+		f= getDeclaration(tu, 0); x= getStatement(f, 1);
+		try {
+			syntax= x.getSyntax();
+			fail();
+		} catch (ExpansionOverlapsBoundaryException e) {}
+	}
+
 	private void checkToken(IToken token, String image, int offset) {
 		assertEquals(image, token.getImage());
 		assertEquals(offset, token.getOffset());

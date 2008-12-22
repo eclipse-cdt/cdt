@@ -185,6 +185,19 @@ public interface IASTNode {
 	 */
 	public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException, UnsupportedOperationException;
 	
+	/**
+	 * Returns the tokens that make up this node. The tokens are obtained from the lexer,
+	 * no preprocessing is performed.
+	 * The offsets of the tokens are relative to the file-offset of the beginning of this node.
+	 * <p> For examples see {@link #getLeadingSyntax()}.
+	 * @return a chain of tokens or <code>null</code>, if there are none.
+	 * @throws ExpansionOverlapsBoundaryException if one of the boundaries of the node is
+	 * overlapped by a macro-expansion.
+	 * @throws UnsupportedOperationException if invoked on preprocessor nodes, or nodes that are not
+	 * part of a translation unit.
+	 * @since 5.1
+	 */
+	public IToken getSyntax() throws ExpansionOverlapsBoundaryException;
 	
 	/**
 	 * Returns true if this node is frozen, false otherwise.

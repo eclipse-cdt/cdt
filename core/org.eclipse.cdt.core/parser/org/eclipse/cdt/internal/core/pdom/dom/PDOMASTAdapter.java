@@ -195,6 +195,11 @@ public class PDOMASTAdapter {
 			return this;
 		}
 
+		public IToken getSyntax() throws ExpansionOverlapsBoundaryException,
+				UnsupportedOperationException {
+			return fDelegate.getSyntax();
+		}
+
 		public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException,
 				UnsupportedOperationException {
 			return fDelegate.getLeadingSyntax();

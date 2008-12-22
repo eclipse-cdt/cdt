@@ -84,6 +84,10 @@ public class ASTLiteralNode implements IASTNode {
 	public void setPropertyInParent(ASTNodeProperty property) {
 	}
 
+	public IToken getSyntax() {
+		throw new UnsupportedOperationException();
+	}
+
 	public IToken getLeadingSyntax() {
 		throw new UnsupportedOperationException();
 	}

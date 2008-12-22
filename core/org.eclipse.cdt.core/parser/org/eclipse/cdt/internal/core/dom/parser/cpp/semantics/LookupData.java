@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -292,6 +294,11 @@ class LookupData {
 
         IASTNode parent = astName.getParent();
         while (parent != null && !(parent instanceof IASTFunctionDefinition)) {
+        	ASTNodeProperty prop = parent.getPropertyInParent();
+        	if (prop == IASTParameterDeclaration.DECL_SPECIFIER ||
+        			prop == IASTFunctionDefinition.DECL_SPECIFIER) {
+        		return false;
+        	}
             parent = parent.getParent();
         }
         if (parent instanceof IASTFunctionDefinition) {

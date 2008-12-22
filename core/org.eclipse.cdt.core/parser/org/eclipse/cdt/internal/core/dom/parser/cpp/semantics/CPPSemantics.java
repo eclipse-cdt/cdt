@@ -166,7 +166,8 @@ public class CPPSemantics {
 	 */
 	public static final int MAX_INHERITANCE_DEPTH= 10;
 	
-    public static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
+    public static final ASTNodeProperty STRING_LOOKUP_PROPERTY =
+    		new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
@@ -269,7 +270,7 @@ public class CPPSemantics {
          * followed by <, it is equivalent to the name followed by the template parameters enclosed in <>.
          */
 		if (binding instanceof ICPPClassTemplate && !(binding instanceof ICPPClassSpecialization) &&
-				!(data.astName instanceof ICPPASTTemplateId)) {
+				!(binding instanceof ICPPTemplateParameter) && !(data.astName instanceof ICPPASTTemplateId)) {
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
 			if (prop != ICPPASTTemplateId.TEMPLATE_NAME && prop != ICPPASTQualifiedName.SEGMENT_NAME) {
 				// You cannot use a class template name outside of the class template scope, 
@@ -472,7 +473,8 @@ public class CPPSemantics {
         return namespaces;
     }
 
-    static private void getAssociatedScopes(IType t, ObjectSet<IScope> namespaces, ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException{
+    static private void getAssociatedScopes(IType t, ObjectSet<IScope> namespaces,
+    		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException{
         //3.4.2-2 
 		if (t instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) t;
@@ -511,7 +513,8 @@ public class CPPSemantics {
 		return;
     }
     
-    static private ICPPNamespaceScope getContainingNamespaceScope(IBinding binding, CPPASTTranslationUnit tu) throws DOMException{
+    static private ICPPNamespaceScope getContainingNamespaceScope(IBinding binding,
+    		CPPASTTranslationUnit tu) throws DOMException{
         if (binding == null) return null;
         IScope scope = binding.getScope();
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {
@@ -539,10 +542,12 @@ public class CPPSemantics {
 	    } else {
 	    	scope = CPPVisitor.getContainingScope(name);
 	    }
-    	if (scope instanceof ICPPScope)
+    	if (scope instanceof ICPPScope) {
     		return (ICPPScope)scope;
-    	else if (scope instanceof IProblemBinding)
-    		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
+    	} else if (scope instanceof IProblemBinding) {
+    		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(),
+    				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
+    	}
     	return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray());
 	}
 
@@ -829,7 +834,6 @@ public class CPPSemantics {
 		Object inherited = null;
 		Object result = null;
 		
-				
 		//use data to detect circular inheritance
 		if (data.inheritanceChain == null)
 			data.inheritanceChain = new ObjectSet<IScope>(2);
@@ -871,8 +875,8 @@ public class CPPSemantics {
 						data.visited.put(classScope);
 					}
 
-					//if the inheritanceChain already contains the parent, then that 
-					//is circular inheritance
+					// if the inheritanceChain already contains the parent, then that 
+					// is circular inheritance
 					if (!data.inheritanceChain.containsKey(classScope)) {
 						//is this name define in this scope?
 						if (ASTInternal.isFullyCached(classScope)) {
@@ -1743,7 +1747,7 @@ public class CPPSemantics {
 	        	items = (Object[]) data.foundItems;
 	        	continue;
 	        } else if (temp instanceof CPPCompositeBinding) {
-	        	IBinding[] bindings = ((CPPCompositeBinding)temp).getBindings();
+	        	IBinding[] bindings = ((CPPCompositeBinding) temp).getBindings();
 	        	mergeResults(data, bindings, false);
 	        	items = (Object[]) data.foundItems;
 	        	continue;
@@ -2096,7 +2100,7 @@ public class CPPSemantics {
 			    }
 				
 				if (isImpliedObject && ASTInternal.isStatic(currFn, false)) {
-				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
+				    // 13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost(source, target);
 					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else if (source == null) {
@@ -2232,15 +2236,16 @@ public class CPPSemantics {
                 IFunction fn = (IFunction) fn2;
                 IType ft = null;
                 try {
-                     ft = fn.getType();
+                    ft = fn.getType();
                 } catch (DOMException e) {
                     ft = e.getProblem();
                 }
                 if (type.isSameType(ft)) {
-                    if (result == null)
-                        result = fn;
-                    else
-                        return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name());
+                    if (result != null) {
+                        return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+                        		data.name());
+                    }
+                    result = fn;
                 }
             }
 
@@ -2251,7 +2256,9 @@ public class CPPSemantics {
             }
         }
                 
-        return (result != null) ? result : new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name()); 
+        return result != null ?
+        		result :
+        		new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name()); 
     }
 
     private static Object getTargetType(LookupData data) {

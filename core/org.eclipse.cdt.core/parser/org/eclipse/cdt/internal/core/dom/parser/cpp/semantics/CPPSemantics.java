@@ -227,7 +227,7 @@ public class CPPSemantics {
 	
     private static IBinding postResolution(IBinding binding, LookupData data) {
         if (data.checkAssociatedScopes()) {
-            //3.4.2 argument dependent name lookup, aka Koenig lookup
+            // 3.4.2 argument dependent name lookup, aka Koenig lookup
             try {
             	boolean doKoenig= true;
             	if (binding != null) {
@@ -249,8 +249,8 @@ public class CPPSemantics {
             }
         }
         if (binding == null && data.checkClassContainingFriend()) {
-        	//3.4.1-10 if we don't find a name used in a friend declaration in the member declaration's class
-        	//we should look in the class granting friendship
+        	// 3.4.1-10 if we don't find a name used in a friend declaration in the member declaration's class
+        	// we should look in the class granting friendship
         	IASTNode parent = data.astName.getParent();
         	while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier))
         		parent = parent.getParent();
@@ -475,7 +475,7 @@ public class CPPSemantics {
 
     static private void getAssociatedScopes(IType t, ObjectSet<IScope> namespaces,
     		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException{
-        //3.4.2-2 
+        // 3.4.2-2 
 		if (t instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) t;
 		    if (!classes.containsKey(ct)) {
@@ -1009,8 +1009,8 @@ public class CPPSemantics {
 		            return true;
 				
 				boolean ok = false;
-				//3.4.5-4 if the id-expression  in a class member access is a qualified id... the result 
-				//is not required to be a unique base class...
+				// 3.4.5-4 if the id-expression in a class member access is a qualified id... the result 
+				// is not required to be a unique base class...
 				if (binding instanceof ICPPClassType) {
 					IASTNode parent = data.astName.getParent();
 					if (parent instanceof ICPPASTQualifiedName && 
@@ -1018,7 +1018,7 @@ public class CPPSemantics {
 						ok = true;
 					}
 				}
-			    //it is not ambiguous if they are the same thing and it is static or an enumerator
+			    // it is not ambiguous if they are the same thing and it is static or an enumerator
 		        if (binding instanceof IEnumerator ||
 		        		(binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false)) ||
 		        		(binding instanceof IVariable && ((IVariable)binding).isStatic())) {
@@ -1116,7 +1116,7 @@ public class CPPSemantics {
 		int namespaceIdx = -1;
 		
 		if (data.associated.containsKey(scope)) {
-			//we are looking in scope, remove it from the associated scopes list
+			// we are looking in scope, remove it from the associated scopes list
 			data.associated.remove(scope);
 		}
 		
@@ -1141,7 +1141,7 @@ public class CPPSemantics {
 			ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent;
 			nodes = comp.getMembers();
 			
-			//9-2 a class name is also inserted into the scope of the class itself
+			// 9-2 a class name is also inserted into the scope of the class itself
 			IASTName n = comp.getName().getLastName();
 			if (n instanceof ICPPASTTemplateId) {
 				n= ((ICPPASTTemplateId) n).getTemplateName();
@@ -1200,7 +1200,7 @@ public class CPPSemantics {
 					nsscope.addUsingDirective(new CPPUsingDirective(nsdef));
 				}
 			} else {
-			    //possible is IASTName or IASTName[]
+			    // possible is IASTName or IASTName[]
 				possible = collectResult(data, scope, item, (item == parent));
 				if (possible != null) {
 				    int jdx = -1;
@@ -1233,7 +1233,7 @@ public class CPPSemantics {
 			    item = null;
 			    while (true) {
 				    if (namespaceDefs != null) {
-				        //check all definitions of this namespace
+				        // check all definitions of this namespace
 					    while (++namespaceIdx < namespaceDefs.length) {
 					        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 						    if (nodes.length > 0) {
@@ -1243,7 +1243,7 @@ public class CPPSemantics {
 						    }     
 					    }
 				    } else if (parent instanceof IASTCompoundStatement && nodes instanceof IASTParameterDeclaration[]) {
-				    	//function body, we were looking at parameters, now check the body itself
+				    	// function body, we were looking at parameters, now check the body itself
 				        IASTCompoundStatement compound = (IASTCompoundStatement) parent;
 						nodes = compound.getStatements(); 
 						if (nodes.length > 0) {
@@ -1416,7 +1416,7 @@ public class CPPSemantics {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				specName = compSpec.getName();
 				
-				//anonymous union?             //GCC supports anonymous structs too
+				// anonymous union?             //GCC supports anonymous structs too
 				if (declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
 				    specName.getSimpleID().length == 0)
 				{
@@ -1450,7 +1450,7 @@ public class CPPSemantics {
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
 			    specName = enumeration.getName();
 
-			    //check enumerators too
+			    // check enumerators too
 			    IASTEnumerator[] list = enumeration.getEnumerators();
 			    IASTName tempName;
 			    for (IASTEnumerator enumerator : list) {
@@ -1506,7 +1506,7 @@ public class CPPSemantics {
 			if (!((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
 				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 				
-				//check the function itself
+				// check the function itself
 				IASTName declName = CPPVisitor.findInnermostDeclarator(declarator).getName();
 				ASTInternal.addName(scope,  declName);
 	
@@ -1527,8 +1527,8 @@ public class CPPSemantics {
 			if (phn instanceof ICPPASTCompositeTypeSpecifier == false && phn instanceof ICPPASTNamespaceDefinition == false)
 				return false;
 
-	        //A qualified name implies the name actually belongs to a different scope, and should
-	        //not be considered here, except the qualifier names the scope itself
+	        // A qualified name implies the name actually belongs to a different scope, and should
+	        // not be considered here, except the qualifier names the scope itself
 			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) potential;
 		    if (scope instanceof CPPScope == false || ((CPPScope) scope).canDenoteScopeMember(qname))
 		    	return false;
@@ -2030,7 +2030,6 @@ public class CPPSemantics {
 			return null;
 		if (data.forFunctionDeclaration()) 
 			return firstViable;
-		
 			
 		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); // the parameters the function is being called with
 		if (CPPTemplates.containsDependentType(sourceParameters)) {
@@ -2149,7 +2148,7 @@ public class CPPSemantics {
 			// then this is an ambiguity (unless we find something better than both later).
 			ambiguous |= (hasWorse && hasBetter) || (!hasWorse && !hasBetter);
 			
-			// mstodo if ambigous ??
+			// mstodo if ambiguous ??
 			if (!hasWorse) {
 				// If they are both template functions, we can order them that way
 				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
@@ -2296,7 +2295,7 @@ public class CPPSemantics {
             		(prop == IASTExpressionList.NESTED_EXPRESSION &&
                     node.getParent().getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)) {
                 // target is a parameter of a function
-                // if this function call refers to an overloaded function, there is more than one possiblity
+                // if this function call refers to an overloaded function, there is more than one possibility
                 // for the target type
                 IASTFunctionCallExpression fnCall = null;
                 int idx = -1;

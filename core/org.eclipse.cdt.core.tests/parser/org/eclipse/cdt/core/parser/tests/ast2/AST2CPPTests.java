@@ -10,6 +10,7 @@
  *     Ed Swartz (Nokia)
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -6274,6 +6275,16 @@ public class AST2CPPTests extends AST2BaseTest {
     //      donothing(); 
     //    }
     public void testVoidViaTypedef_Bug258694() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+    }
+
+	//	struct A {
+	//	  void method() {
+	//	    B b;
+	//	  }
+	//	  struct B {};
+	//	};
+    public void _testClassMemberScope_259460() throws Exception {
     	parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 }

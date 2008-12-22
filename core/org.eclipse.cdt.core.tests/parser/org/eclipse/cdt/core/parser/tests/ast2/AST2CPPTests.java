@@ -6124,4 +6124,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDECLARATION, nc.getName(6).resolveBinding());
 		assertProblemBinding(IProblemBinding.SEMANTIC_INVALID_REDEFINITION, nc.getName(8).resolveBinding());
     }
+
+	//	struct A {
+	//	  B method(B p, int& a = y) { // B is not defined 
+	//	    B b;
+    //      int x = y + 1;
+    //      return b;
+	//	  }
+	//	  struct B {};
+    //    int& x = y; // y is not defined
+    //    int y;
+	//	};
+    public void testScopeOfClassMember_259460() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("B b", 1, ICPPClassType.class);
+		ba.assertProblem("B p", 1);
+		ba.assertProblem("B method", 1);
+		ba.assertNonProblem("y + 1;", 1, ICPPField.class);
+		ba.assertNonProblem("y) {", 1, ICPPField.class);
+		ba.assertProblem("y; // y is not defined", 1);
+    }
 }

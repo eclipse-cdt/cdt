@@ -1679,7 +1679,7 @@ public class CPPSemantics {
 	        // select among those bindings that have been created without problems.
 	        if (temp instanceof IProblemBinding)
 	        	continue;
-	        if (!(temp instanceof ICPPMember) && !declaredBefore)
+	        if (!(temp instanceof ICPPMember) && !(temp instanceof IType) && !declaredBefore)
                 continue;
 	        if (temp instanceof ICPPUsingDeclaration) {
 	        	IBinding[] bindings = ((ICPPUsingDeclaration) temp).getDelegates();

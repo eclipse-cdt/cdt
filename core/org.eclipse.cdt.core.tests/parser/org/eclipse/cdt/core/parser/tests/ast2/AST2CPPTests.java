@@ -6297,4 +6297,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("y) {", 1, ICPPField.class);
 		ba.assertProblem("y; // y is not defined", 1);
     }
+
+	//  class A {
+	//    int method(int a = GREEN) {
+	//      return RED;
+	//    }
+    //    int x = GREEN; // GREEN is not defined
+	//    enum Color {
+	//      RED, GREEN
+	//    };
+	//  };
+    public void testScopeOfClassMember_259648() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("GREEN)", 5, IEnumerator.class);
+		ba.assertNonProblem("RED;", 3, IEnumerator.class);
+		ba.assertProblem("GREEN;", 5);
+    }
 }

@@ -1742,8 +1742,10 @@ public class CPPSemantics {
         	if (temp instanceof IProblemBinding)
 	        	continue;
 
-	        if (!(temp instanceof ICPPMember) && !(temp instanceof IType) && !declaredBefore)
+	        if (!declaredBefore && !(temp instanceof ICPPMember) && !(temp instanceof IType) &&
+	        		!(temp instanceof IEnumerator)) {
                 continue;
+	        }
 	        if (temp instanceof ICPPUsingDeclaration) {
 	        	IBinding[] bindings = ((ICPPUsingDeclaration) temp).getDelegates();
 	        	mergeResults(data, bindings, false);

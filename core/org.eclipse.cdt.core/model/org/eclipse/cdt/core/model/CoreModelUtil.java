@@ -533,9 +533,10 @@ public class CoreModelUtil {
 	 *             if start is lower than 0
 	 */
 	public static final int indexOf(char toBeFound, char[] array, int start) {
-		for (int i = start; i < array.length; i++)
+		for (int i = start; i < array.length; i++) {
 			if (toBeFound == array[i])
 				return i;
+		}
 		return -1;
 	}
 
@@ -553,8 +554,7 @@ public class CoreModelUtil {
 					return tu;
 				}
 			}
-		}
-		else {
+		} else {
 			CoreModel coreModel = CoreModel.getDefault();
 			ITranslationUnit tu= null;
 			if (preferredProject != null) {
@@ -573,8 +573,7 @@ public class CoreModelUtil {
 		}
 		return null;
 	}	
-	
-	
+
 	/**
 	 * Searches for a translation unit within the cprojects. For external files the ones
 	 * from the given project are preferred.
@@ -589,8 +588,7 @@ public class CoreModelUtil {
 					return tu;
 				}
 			}
-		}
-		else {
+		} else {
 			CoreModel coreModel = CoreModel.getDefault();
 			ITranslationUnit tu= null;
 			if (preferredProject != null) {
@@ -668,7 +666,6 @@ public class CoreModelUtil {
         return null;
     }
 
-    
     /**
 	 * Returns the configuration descriptions referenced directly by the specified
 	 * configuration description. The result will not contain duplicates. Returns 
@@ -681,32 +678,32 @@ public class CoreModelUtil {
 	 * @see CoreModelUtil#getReferencingConfigurationDescriptions(ICConfigurationDescription, boolean)
 	 */
     
-    public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable){
+    public static ICConfigurationDescription[] getReferencedConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
     	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
 
-    	if(cfgDes != null) {
+    	if (cfgDes != null) {
     		Map<String, String> map = cfgDes.getReferenceInfo();
-    		if(map.size() != 0){
+    		if (map.size() != 0) {
     			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     			CoreModel model = CoreModel.getDefault();
     			for (Map.Entry<String,String> entry : map.entrySet()) {
     				String projName = entry.getKey();
     				String cfgId = entry.getValue();
     				IProject project = root.getProject(projName);
-    				if(!project.exists())
+    				if (!project.exists())
     					continue;
 
     				ICProjectDescription des = model.getProjectDescription(project, writable);
-    				if(des == null)
+    				if (des == null)
     					continue;
 
     				ICConfigurationDescription refCfgDes;
-    				if(cfgId!=null && cfgId.length()>0) {
+    				if (cfgId != null && cfgId.length() > 0) {
     					refCfgDes= des.getConfigurationById(cfgId);
     				} else {
     					refCfgDes= des.getActiveConfiguration();
     				}
-    				if(refCfgDes != null)
+    				if (refCfgDes != null)
     					result.add(refCfgDes);
     			}
     		}
@@ -729,20 +726,19 @@ public class CoreModelUtil {
     public static ICConfigurationDescription[] getReferencingConfigurationDescriptions(ICConfigurationDescription cfgDes, boolean writable) {
     	List<ICConfigurationDescription> result = new ArrayList<ICConfigurationDescription>();
     	
-    	if(cfgDes!=null) {
+    	if (cfgDes != null) {
     		CoreModel core= CoreModel.getDefault();
     		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
     		for (IProject cproject : projects) {
     			ICProjectDescription prjDes= core.getProjectDescription(cproject, writable);
-    			//in case this is not a CDT project the description will be null, so check for null
-    			if(prjDes != null){
+    			// In case this is not a CDT project the description will be null, so check for null
+    			if (prjDes != null) {
 	    			ICConfigurationDescription[] cfgDscs= prjDes.getConfigurations();
 	    			for (ICConfigurationDescription cfgDsc : cfgDscs) {
 	    				ICConfigurationDescription[] references = getReferencedConfigurationDescriptions(cfgDsc, false);
 	    				for (ICConfigurationDescription reference : references) {
-	    					if(reference!=null
-	    							&& reference.getId().equals(cfgDes.getId())) {
+	    					if (reference != null && reference.getId().equals(cfgDes.getId())) {
 	    						result.add(cfgDsc);
 	    						break;
 	    					}				
@@ -761,7 +757,7 @@ public class CoreModelUtil {
      * @return - array of binary parser ids (Strings)
      */
 	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
-		if (cfgs ==  null || cfgs.length == 0) 
+		if (cfgs == null || cfgs.length == 0) 
 			return null;
 		ArrayList<String> pids = new ArrayList<String>();
 		for (ICConfigurationDescription cfg : cfgs) {
@@ -781,7 +777,7 @@ public class CoreModelUtil {
 	 * @param pids - array of binary parser ids (Strings)
 	 */
 	public static void setBinaryParserIds(ICConfigurationDescription[] cfgs, String[] pids) {
-		if (cfgs ==  null || cfgs.length == 0)
+		if (cfgs == null || cfgs.length == 0)
 			return;
 		for (ICConfigurationDescription cfg : cfgs) {
 			cfg.getTargetPlatformSetting().setBinaryParserIds(pids);

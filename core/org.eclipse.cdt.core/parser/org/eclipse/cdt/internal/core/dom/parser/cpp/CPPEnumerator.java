@@ -34,14 +34,14 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a c++ enumerator.
  */
 public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPInternalBinding {
-    
     private IASTName enumName;
+
     /**
      * @param enumerator
      */
-    public CPPEnumerator( IASTName enumerator ) {
+    public CPPEnumerator(IASTName enumerator) {
         this.enumName = enumerator;
-        enumerator.setBinding( this );
+        enumerator.setBinding(this);
     }
 
     /* (non-Javadoc)
@@ -57,8 +57,10 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
     public IASTNode getDefinition() {
         return enumName;
     }
+
 	public void removeDeclaration(IASTNode node) {
 	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
@@ -77,7 +79,7 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CPPVisitor.getContainingScope( enumName );
+        return CPPVisitor.getContainingScope(enumName);
     }
 
     /* (non-Javadoc)
@@ -96,19 +98,19 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 		IEnumeration enumeration = (IEnumeration) enumSpec.getName().resolveBinding();
 		return enumeration;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
     public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     /* (non-Javadoc)
@@ -116,8 +118,8 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
      */
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while (scope != null) {
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -133,7 +135,7 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-	
+
 	public IBinding getOwner() throws DOMException {
 		return CPPVisitor.findDeclarationOwner(enumName, true);
 	}

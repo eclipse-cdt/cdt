@@ -21,22 +21,24 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class CPPReferenceTypeClone implements ICPPReferenceType, ITypeContainer, IIndexType {
 	private final ICPPReferenceType delegate;
-	private IType type = null;
+	private IType type;
 
 	public CPPReferenceTypeClone(ICPPReferenceType reference) {
 		this.delegate = reference;
 	}
+
 	public IType getType() throws DOMException {
 		if (type == null) {
 			return delegate.getType();
 		}
 		return type;
 	}
+
 	public boolean isSameType(IType type) {
-		if( type instanceof ITypedef )
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
 
-		if( !( type instanceof ICPPReferenceType )) 
+		if (!(type instanceof ICPPReferenceType)) 
 			return false;
 
 		ICPPReferenceType rhs = (ICPPReferenceType) type;
@@ -49,11 +51,18 @@ public class CPPReferenceTypeClone implements ICPPReferenceType, ITypeContainer,
 		}
 		return false;
 	}
+
 	public void setType(IType type) {
 		this.type = type;
 	}
+
 	@Override
 	public Object clone() {
 		return new CPPReferenceTypeClone(this);
+	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
 	}
 }

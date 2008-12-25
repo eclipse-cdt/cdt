@@ -22,43 +22,53 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class ArrayTypeClone implements IIndexType, IArrayType, ITypeContainer {
 	private final IArrayType delegate;
-	private IType type = null;
+	private IType type;
 
 	public ArrayTypeClone(IArrayType array) {
 		this.delegate = array;
 	}
-	public boolean isSameType(IType type) {
-		if( type instanceof ITypedef )
-			return ((ITypedef)type).isSameType( this );
 
-		if( !( type instanceof IArrayType )) 
+	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef)
+			return ((ITypedef) type).isSameType(this);
+
+		if (!(type instanceof IArrayType)) 
 			return false;
 
 		try {
 			IType type1= this.getType();
-			if( type1 == null )
+			if (type1 == null)
 				return false;
 
 			IArrayType rhs = (IArrayType) type;
-			return type1.isSameType( rhs.getType() );
+			return type1.isSameType(rhs.getType());
 		} catch (DOMException e) {
 		}
 		return false;
 	}
+
 	public IASTExpression getArraySizeExpression() throws DOMException {
 		return delegate.getArraySizeExpression();
 	}
+
 	public IType getType() throws DOMException {
 		if (type == null) {
 			return delegate.getType();
 		}
 		return type;
 	}
+
 	public void setType(IType type) {
 		this.type = type;
 	}
+
 	@Override
 	public Object clone() {
 		return new ArrayTypeClone(this);
+	}
+	
+	@Override
+	public String toString() {
+		return delegate.toString();
 	}
 }

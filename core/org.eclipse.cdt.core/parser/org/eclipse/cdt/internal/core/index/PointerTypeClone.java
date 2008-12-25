@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexType {
 	protected final IPointerType delegate;
-	private IType type = null;
+	private IType type;
 	
 	public PointerTypeClone(IPointerType pointer) {
 		this.delegate = pointer;

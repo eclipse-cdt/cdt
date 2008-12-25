@@ -25,36 +25,44 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, ICPPBinding {
 	protected final ITypedef delegate;
-	private IType type = null;
+	private IType type;
 
 	public CPPTypedefClone(ITypedef typedef) {
 		this.delegate = typedef;
 	}
+
 	public IType getType() throws DOMException {
 		if (type == null) {
 			return delegate.getType();
 		}
 		return type;
 	}
+
 	public ILinkage getLinkage() throws CoreException {
 		return delegate.getLinkage();
 	}
+
 	public String getName() {
 		return delegate.getName();
 	}
+
 	public char[] getNameCharArray() {
 		return delegate.getNameCharArray();
 	}
+
 	public IScope getScope() throws DOMException {
 		return delegate.getScope();
 	}
+
 	public IBinding getOwner() throws DOMException {
 		return delegate.getOwner();
 	}
+
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return delegate.getAdapter(adapter);
 	}
+
 	public boolean isSameType(IType type) {
 		try {
 			IType myrtype = getType();
@@ -62,27 +70,37 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 				return false;
 
 			if (type instanceof ITypedef) {
-				type= ((ITypedef)type).getType();
+				type= ((ITypedef) type).getType();
 			}
 			return myrtype.isSameType(type);
 		} catch (DOMException e) {
 		}
 		return false;
 	}
+
 	public void setType(IType type) {
 		this.type = type;
 	}
+
 	public String[] getQualifiedName() throws DOMException {
-		return ((ICPPBinding)delegate).getQualifiedName();
+		return ((ICPPBinding) delegate).getQualifiedName();
 	}
+
 	public char[][] getQualifiedNameCharArray() throws DOMException {
-		return ((ICPPBinding)delegate).getQualifiedNameCharArray();
+		return ((ICPPBinding) delegate).getQualifiedNameCharArray();
 	}
+
 	public boolean isGloballyQualified() throws DOMException {
-		return ((ICPPBinding)delegate).isGloballyQualified();
+		return ((ICPPBinding) delegate).isGloballyQualified();
 	}
+
 	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);
+	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
 	}
 }

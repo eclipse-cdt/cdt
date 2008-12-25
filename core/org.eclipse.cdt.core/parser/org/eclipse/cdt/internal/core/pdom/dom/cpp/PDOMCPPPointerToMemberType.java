@@ -26,10 +26,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMPointerType;
 import org.eclipse.core.runtime.CoreException;
 
 class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerToMemberType {
-
 	private static final int TYPE = PDOMPointerType.RECORD_SIZE;
 	@SuppressWarnings("hiding")
-	private static final int RECORD_SIZE= TYPE+4;
+	private static final int RECORD_SIZE= TYPE + 4;
 
 	public PDOMCPPPointerToMemberType(PDOM pdom, int record) {
 		super(pdom, record);
@@ -79,9 +78,11 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		public PDOMCPPPointerToMemberTypeClone(ICPPPointerToMemberType pointer) {
 			super(pointer);
 		}
+
 		public IType getMemberOfClass() {
 			return ((ICPPPointerToMemberType) delegate).getMemberOfClass();
 		}
+
 		@Override
 		public Object clone() {
 			return new PDOMCPPPointerToMemberTypeClone((ICPPPointerToMemberType) delegate);

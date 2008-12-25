@@ -26,18 +26,22 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 	public QualifierTypeClone(IQualifierType qualifier) {
 		this.delegate = qualifier;
 	}
+
 	public IType getType() throws DOMException {
 		if (type == null) {
 			return delegate.getType();
 		}
 		return type;
 	}
+
 	public boolean isConst() {
 		return delegate.isConst();
 	}
+
 	public boolean isVolatile() {
 		return delegate.isVolatile();
 	}
+
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef)
 			return type.isSameType(this);
@@ -54,12 +58,19 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 		}
 		return false;
 	}
+
 	public void setType(IType type) {
 		this.type = type;
 	}
+
 	@Override
 	public Object clone() {
 		return new QualifierTypeClone(this);
+	}
+	
+	@Override
+	public String toString() {
+		return delegate.toString();
 	}
 }
 

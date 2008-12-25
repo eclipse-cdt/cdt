@@ -46,7 +46,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		super(pdom, parent, classType, orig);
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) classType;
 		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		pdom.getDB().putInt(record+ARGUMENTS, argListRec);
+		pdom.getDB().putInt(record + ARGUMENTS, argListRec);
 	}
 	
 	public PDOMCPPClassInstance(PDOM pdom, int bindingRecord) {
@@ -69,7 +69,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			final int rec= getPDOM().getDB().getInt(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -91,8 +91,8 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		}
 		
 		// require a class instance
-		if (type instanceof ICPPClassSpecialization == false ||
-				type instanceof ICPPTemplateInstance == false || type instanceof IProblemBinding) {
+		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance) ||
+				type instanceof IProblemBinding) {
 			return false;
 		}
 

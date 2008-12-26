@@ -1990,19 +1990,21 @@ public class CPPVisitor extends ASTQueries {
 					break;
 				}
 			}
-			if (op == IASTUnaryExpression.op_star && type instanceof ICPPClassType) {
-				try {
-					ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type);
-					if (operator != null) {
-						return operator.getType().getReturnType();
-					}
-				} catch (DOMException de) {
-					return de.getProblem();
-				}
-			}
-			if (op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType)) {
+			if (op == IASTUnaryExpression.op_star) {
 			    try {
-					return ((ITypeContainer) type).getType();
+					if (type instanceof ICPPReferenceType) {
+						type = ((ICPPReferenceType) type).getType();
+					}
+					if (type instanceof ICPPClassType) {
+						ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type);
+						if (operator != null) {
+							return operator.getType().getReturnType();
+						}
+					} else if (type instanceof IPointerType || type instanceof IArrayType) {
+						return ((ITypeContainer) type).getType();
+					}
+					return new ProblemBinding(expression, IProblemBinding.SEMANTIC_INVALID_TYPE,
+							("*" + type.toString()).toCharArray()); //$NON-NLS-1$
 				} catch (DOMException e) {
 					return e.getProblem();
 				}

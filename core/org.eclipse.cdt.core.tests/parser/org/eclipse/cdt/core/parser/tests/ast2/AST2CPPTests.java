@@ -6160,4 +6160,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("RED;", 3, IEnumerator.class);
 		ba.assertProblem("GREEN;", 5);
     }
+
+	//  struct A {
+	//    int operator*() { return 0; }
+	//  };
+	//  void func(int p) {}
+	//
+	// 	void test(A& a) {
+	// 	  func(*a);
+	// 	}
+	public void testSmartPointerReference_259680() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
+	}
 }

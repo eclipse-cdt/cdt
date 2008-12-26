@@ -6135,12 +6135,12 @@ public class AST2CPPTests extends AST2BaseTest {
             ba.assertProblem("a; // should not resolve", 1);
         }
     }
-    
+
     //	namespace ns {
     //	  template<typename T> class CT {};
     //  }
     //  using ns::CT<int>;
-    public void testTemplateIDInUsingDecl_251199() throws Exception {
+    public void testTemplateIdInUsingDecl_251199() throws Exception {
         parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
     }
 
@@ -6157,7 +6157,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertNonProblem("operator ns::A", 14);
         parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
-	
+
 	//	void f();
 	//	
 	//	void test(int p) {
@@ -6315,15 +6315,20 @@ public class AST2CPPTests extends AST2BaseTest {
     }
 
 	//  struct A {
-	//    int operator*() { return 0; }
+	//    int& operator*();
+	//    const int& operator*() const;
 	//  };
-	//  void func(int p) {}
+	//  void func(int& p) {}
+	//  void func(const int& p) {}
 	//
-	// 	void test(A& a) {
+	// 	void test(A& a, const A& b) {
 	// 	  func(*a);
+	// 	  func(*b);
 	// 	}
 	public void testSmartPointerReference_259680() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
-		ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
+		ICPPFunction f1= ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
+		ICPPFunction f2= ba.assertNonProblem("func(*b)", 4, ICPPFunction.class);
+		assertNotSame(f1, f2);
 	}
 }

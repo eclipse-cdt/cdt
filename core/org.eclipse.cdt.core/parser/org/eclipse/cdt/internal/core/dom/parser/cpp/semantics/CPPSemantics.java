@@ -2553,7 +2553,7 @@ public class CPPSemantics {
 		    astName.setName(OverloadableOperator.BRACKET.toCharArray());
 		    data = new LookupData(astName);
 		    data.forceQualified = true;
-		    data.functionParameters = new IASTExpression[] { ((IASTArraySubscriptExpression)exp).getSubscriptExpression() };
+		    data.functionParameters = new IASTExpression[] { ((IASTArraySubscriptExpression) exp).getSubscriptExpression() };
 		} else if (exp instanceof IASTFieldReference) {
 			astName.setName(OverloadableOperator.ARROW.toCharArray());
 			data = new LookupData(astName);
@@ -2563,11 +2563,10 @@ public class CPPSemantics {
 			astName.setName(OverloadableOperator.PAREN.toCharArray());
 			data = new LookupData(astName);
 			data.forceQualified = true;
-			final IASTExpression paramExpression = ((IASTFunctionCallExpression)exp).getParameterExpression();
+			final IASTExpression paramExpression = ((IASTFunctionCallExpression) exp).getParameterExpression();
 			if (paramExpression == null) {
 				data.functionParameters= IASTExpression.EMPTY_EXPRESSION_ARRAY;
-			}
-			else if (paramExpression instanceof IASTExpressionList) {
+			} else if (paramExpression instanceof IASTExpressionList) {
 				data.functionParameters= ((IASTExpressionList) paramExpression).getExpressions();
 			} else {
 				data.functionParameters = new IASTExpression[] {paramExpression};

@@ -6162,15 +6162,20 @@ public class AST2CPPTests extends AST2BaseTest {
     }
 
 	//  struct A {
-	//    int operator*() { return 0; }
+	//    int& operator*();
+	//    const int& operator*() const;
 	//  };
-	//  void func(int p) {}
+	//  void func(int& p) {}
+	//  void func(const int& p) {}
 	//
-	// 	void test(A& a) {
+	// 	void test(A& a, const A& b) {
 	// 	  func(*a);
+	// 	  func(*b);
 	// 	}
 	public void testSmartPointerReference_259680() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
-		ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
+		ICPPFunction f1= ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
+		ICPPFunction f2= ba.assertNonProblem("func(*b)", 4, ICPPFunction.class);
+		assertNotSame(f1, f2);
 	}
 }

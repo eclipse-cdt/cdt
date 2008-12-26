@@ -1995,6 +1995,9 @@ public class CPPVisitor extends ASTQueries {
 					if (type instanceof ICPPReferenceType) {
 						type = ((ICPPReferenceType) type).getType();
 					}
+					if (type instanceof IQualifierType) {
+						type = ((IQualifierType) type).getType();
+					}
 					if (type instanceof ICPPClassType) {
 						ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type);
 						if (operator != null) {

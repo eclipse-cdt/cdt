@@ -86,8 +86,7 @@ public class ASTTypeUtil {
 		if (parameters.length == 0) {
 			return false;
 		} else if (parameters.length == 1) {
-			IType ultimateType = SemanticUtil
-					.getUltimateTypeViaTypedefs(parameters[0].getType());
+			IType ultimateType = SemanticUtil.getUltimateTypeViaTypedefs(parameters[0].getType());
 
 			if (ultimateType instanceof IBasicType) {
 				if (((IBasicType) ultimateType).getType() == IBasicType.t_void) {
@@ -514,7 +513,7 @@ public class ASTTypeUtil {
 	 */
 	public static String getType(IASTDeclarator decltor) {
 		// get the most nested declarator
-		while(decltor.getNestedDeclarator() != null)
+		while (decltor.getNestedDeclarator() != null)
 			decltor = decltor.getNestedDeclarator();
 		
 		IBinding binding = decltor.getName().resolveBinding();
@@ -559,7 +558,9 @@ public class ASTTypeUtil {
 				return getType((IType)((IASTName) node).resolveBinding());
 			if (node instanceof IASTTypeId)
 				return getType((IASTTypeId) node);
-		} catch (DOMException e) { return EMPTY_STRING; }
+		} catch (DOMException e) {
+			return EMPTY_STRING;
+		}
 		
 		return EMPTY_STRING;
 	}
@@ -681,8 +682,7 @@ public class ASTTypeUtil {
 		IASTNode node= null;
 		if (binding instanceof ICInternalBinding) {
 			node= ((ICInternalBinding) binding).getPhysicalNode();
-		}
-		else if (binding instanceof ICPPInternalBinding) {
+		} else if (binding instanceof ICPPInternalBinding) {
 			node= ((ICPPInternalBinding) binding).getDefinition();
 		}
 		if (node != null) {

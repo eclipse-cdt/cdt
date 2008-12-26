@@ -22,20 +22,19 @@ public class CompositeFunctionType extends CompositeType implements IFunctionTyp
 	}
 
 	public IType[] getParameterTypes() throws DOMException {
-		IType[] result = ((IFunctionType)type).getParameterTypes();
-		for(int i=0; i<result.length; i++) {
+		IType[] result = ((IFunctionType) type).getParameterTypes();
+		for (int i = 0; i < result.length; i++) {
 			result[i] = cf.getCompositeType((IIndexType)result[i]);
 		}
 		return result;
 	}
 
 	public IType getReturnType() throws DOMException {
-		return cf.getCompositeType((IIndexType)((IFunctionType)type).getReturnType());
+		return cf.getCompositeType((IIndexType) ((IFunctionType) type).getReturnType());
 	}
 
 	@Override
 	public boolean isSameType(IType other) {
 		return type.isSameType(other);
 	}
-
 }

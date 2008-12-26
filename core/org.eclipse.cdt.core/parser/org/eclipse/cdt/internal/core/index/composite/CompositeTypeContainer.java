@@ -24,7 +24,7 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 	}
 
 	public final IType getType() throws DOMException {
-		return cf.getCompositeType((IIndexType)((ITypeContainer)type).getType());
+		return cf.getCompositeType((IIndexType) ((ITypeContainer) type).getType());
 	}
 
 	@Override

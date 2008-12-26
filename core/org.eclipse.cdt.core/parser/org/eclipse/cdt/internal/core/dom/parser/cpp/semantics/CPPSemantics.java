@@ -2039,8 +2039,9 @@ public class CPPSemantics {
 			return null;
 		if (data.forFunctionDeclaration()) 
 			return firstViable;
-			
-		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters); // the parameters the function is being called with
+
+		// The parameters the function is being called with
+		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters);
 		if (CPPTemplates.containsDependentType(sourceParameters)) {
 			if (viableCount == 1)
 				return firstViable;

@@ -6322,7 +6322,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// 	void test(A& a) {
 	// 	  func(*a);
 	// 	}
-	public void _testSmartPointerReference_259680() throws Exception {
+	public void testSmartPointerReference_259680() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
 	}

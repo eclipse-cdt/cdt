@@ -119,7 +119,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	private class FindDefinitionAction extends CPPASTVisitor {
-		private char [] nameArray = CPPClassType.this.getNameCharArray();
+		private char[] nameArray = CPPClassType.this.getNameCharArray();
 		public IASTName result = null;
 
 		{
@@ -130,10 +130,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 
 		@Override
-		public int visit( IASTName name ){
-			if( name instanceof ICPPASTTemplateId )
+		public int visit(IASTName name) {
+			if (name instanceof ICPPASTTemplateId)
 				return PROCESS_SKIP;
-			if( name instanceof ICPPASTQualifiedName )
+			if (name instanceof ICPPASTQualifiedName)
 				return PROCESS_CONTINUE;
 			char[] c = name.getLookupKey();
 
@@ -155,38 +155,40 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 
 		@Override
-		public int visit( IASTDeclaration declaration ){ 
-			if(declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
+		public int visit(IASTDeclaration declaration) { 
+			if (declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
 				return PROCESS_CONTINUE;
 			return PROCESS_SKIP; 
 		}
 		@Override
-		public int visit( IASTDeclSpecifier declSpec ){
-			return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+		public int visit(IASTDeclSpecifier declSpec) {
+			return (declSpec instanceof ICPPASTCompositeTypeSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
 		@Override
-		public int visit( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
+		public int visit(IASTDeclarator declarator) {
+			return PROCESS_SKIP;
+		}
 	}
 
 	private IASTName definition;
-	private IASTName [] declarations;
+	private IASTName[] declarations;
 	private boolean checked = false;
 	private ICPPClassType typeInIndex;
 
-	public CPPClassType( IASTName name, IBinding indexBinding ){
-		if( name instanceof ICPPASTQualifiedName ){
-			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-			name = ns[ ns.length - 1 ];
+	public CPPClassType(IASTName name, IBinding indexBinding) {
+		if (name instanceof ICPPASTQualifiedName) {
+			IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ns.length - 1];
 		}
 		IASTNode parent = name.getParent();
-		while( parent instanceof IASTName )
+		while(parent instanceof IASTName)
 			parent = parent.getParent();
 
-		if( parent instanceof IASTCompositeTypeSpecifier )
+		if (parent instanceof IASTCompositeTypeSpecifier)
 			definition = name;
 		else 
 			declarations = new IASTName[] { name };
-		name.setBinding( this );
+		name.setBinding(this);
 		if (indexBinding instanceof ICPPClassType && indexBinding instanceof IIndexBinding) {
 			typeInIndex= (ICPPClassType) indexBinding;
 		}
@@ -200,21 +202,21 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return definition;
 	}
 
-	public void checkForDefinition(){
-		if( !checked ) {
+	public void checkForDefinition() {
+		if (!checked) {
 			FindDefinitionAction action = new FindDefinitionAction();
-			IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
+			IASTNode node = CPPVisitor.getContainingBlockItem(getPhysicalNode()).getParent();
 
-			if( node instanceof ICPPASTCompositeTypeSpecifier )
-				node = CPPVisitor.getContainingBlockItem( node.getParent() );
-			while( node instanceof ICPPASTTemplateDeclaration )
+			if (node instanceof ICPPASTCompositeTypeSpecifier)
+				node = CPPVisitor.getContainingBlockItem(node.getParent());
+			while(node instanceof ICPPASTTemplateDeclaration)
 				node = node.getParent();
-			node.accept( action );
+			node.accept(action);
 			definition = action.result;
 
-			if( definition == null ){
+			if (definition == null) {
 				final IASTTranslationUnit translationUnit = node.getTranslationUnit();
-				translationUnit.accept( action );
+				translationUnit.accept(action);
 				definition = action.result;
 				if (definition == null && typeInIndex == null) {
 					IIndex index= translationUnit.getIndex();
@@ -228,23 +230,23 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return;
 	}
 
-	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
-		if( definition != null ){
+	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
+		if (definition != null) {
 			IASTNode node = definition;
-			while( node instanceof IASTName )
+			while(node instanceof IASTName)
 				node = node.getParent();
-			if( node instanceof ICPPASTCompositeTypeSpecifier )
+			if (node instanceof ICPPASTCompositeTypeSpecifier)
 				return (ICPPASTCompositeTypeSpecifier)node;
 		}
 		return null;
 	}
 	
 	private ICPPASTElaboratedTypeSpecifier getElaboratedTypeSpecifier() {
-		if( declarations != null ){
+		if (declarations != null) {
 			IASTNode node = declarations[0];
-			while( node instanceof IASTName )
+			while(node instanceof IASTName)
 				node = node.getParent();
-			if( node instanceof ICPPASTElaboratedTypeSpecifier )
+			if (node instanceof ICPPASTElaboratedTypeSpecifier)
 				return (ICPPASTElaboratedTypeSpecifier)node;
 		}
 		return null;
@@ -255,20 +257,20 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public char[] getNameCharArray() {
-		return ( definition != null ) ? definition.getSimpleID() : declarations[0].getSimpleID();
+		return (definition != null) ? definition.getSimpleID() : declarations[0].getSimpleID();
 	}
 
 	public IScope getScope() {
 		IASTName name = definition != null ? definition : declarations[0];
 
-		IScope scope = CPPVisitor.getContainingScope( name );
-		if( definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
+		IScope scope = CPPVisitor.getContainingScope(name);
+		if (definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
 			IASTNode node = declarations[0].getParent().getParent();
-			if( node instanceof IASTFunctionDefinition || node instanceof IASTParameterDeclaration ||
-					( node instanceof IASTSimpleDeclaration && 
-							( ((IASTSimpleDeclaration) node).getDeclarators().length > 0 || getElaboratedTypeSpecifier().isFriend() ) ) )
+			if (node instanceof IASTFunctionDefinition || node instanceof IASTParameterDeclaration ||
+					(node instanceof IASTSimpleDeclaration && 
+							(((IASTSimpleDeclaration) node).getDeclarators().length > 0 || getElaboratedTypeSpecifier().isFriend())))
 			{
-				while( scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope ){
+				while(scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
 					try {
 						scope = scope.getParent();
 					} catch (DOMException e1) {
@@ -298,42 +300,42 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public IASTNode getPhysicalNode() {
-		return (definition != null ) ? (IASTNode) definition : declarations[0];
+		return (definition != null) ? (IASTNode) definition : declarations[0];
 	}
 
 	public int getKey() {
-		if( definition != null )
+		if (definition != null)
 			return getCompositeTypeSpecifier().getKey();
 
 		return getElaboratedTypeSpecifier().getKind();
 	}
 
-	public void addDefinition( IASTNode node ){
-		if( node instanceof ICPPASTCompositeTypeSpecifier )
+	public void addDefinition(IASTNode node) {
+		if (node instanceof ICPPASTCompositeTypeSpecifier)
 			definition = ((ICPPASTCompositeTypeSpecifier)node).getName();
 	}
 	
-	public void addDeclaration( IASTNode node ) {
-		if( !(node instanceof ICPPASTElaboratedTypeSpecifier) )
+	public void addDeclaration(IASTNode node) {
+		if (!(node instanceof ICPPASTElaboratedTypeSpecifier))
 			return;
 
 		IASTName name = ((ICPPASTElaboratedTypeSpecifier) node).getName();
 
-		if( declarations == null ){
+		if (declarations == null) {
 			declarations = new IASTName[] { name };
 			return;
 		}
 
 		//keep the lowest offset declaration in [0]
-		if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-			declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+		if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+			declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 		} else {
-			declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+			declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
 		}
 	}
 
 	public void removeDeclaration(IASTNode node) {
-		if( definition == node ){
+		if (definition == node) {
 			definition = null;
 			return;
 		}
@@ -341,17 +343,17 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public String[] getQualifiedName() {
-		return CPPVisitor.getQualifiedName( this );
+		return CPPVisitor.getQualifiedName(this);
 	}
 
 	public char[][] getQualifiedNameCharArray() {
-		return CPPVisitor.getQualifiedNameCharArray( this );
+		return CPPVisitor.getQualifiedNameCharArray(this);
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
 		IScope scope = getScope();
-		while( scope != null ){
-			if( scope instanceof ICPPBlockScope )
+		while(scope != null) {
+			if (scope instanceof ICPPBlockScope)
 				return false;
 			scope = scope.getParent();
 		}
@@ -362,9 +364,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return Linkage.CPP_LINKAGE;
 	}
 	
-	/*   */
-	
-	public boolean isSameType( IType type ) {
+	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
 		if (type instanceof ITypedef || type instanceof IIndexType)
@@ -372,7 +372,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return false;
 	}
 	
-	public ICPPBase [] getBases() {
+	public ICPPBase[] getBases() {
 		return ClassTypeHelper.getBases(this);
 	}
 

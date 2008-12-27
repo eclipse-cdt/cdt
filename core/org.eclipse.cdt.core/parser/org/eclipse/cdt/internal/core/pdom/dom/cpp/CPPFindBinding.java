@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 /**
  * Look up bindings in BTree objects and IPDOMNode objects. This additionally
  * takes into account function/method parameters as well as template
- * specialization arguments for overloading, .
+ * specialization arguments for overloading.
  */
 public class CPPFindBinding extends FindBinding {
 	
@@ -38,12 +38,12 @@ public class CPPFindBinding extends FindBinding {
 		@Override
 		public int compare(int record1, int record2) throws CoreException {
 			int cmp = super.compare(record1, record2);
-			if(cmp==0) {
+			if (cmp == 0) {
 				PDOMBinding binding1 = pdom.getBinding(record1);
 				PDOMBinding binding2 = pdom.getBinding(record2);
-				if(binding1 instanceof IPDOMOverloader && binding2 instanceof IPDOMOverloader) {
-					int ty1 = ((IPDOMOverloader)binding1).getSignatureHash();
-					int ty2 = ((IPDOMOverloader)binding2).getSignatureHash();
+				if (binding1 instanceof IPDOMOverloader && binding2 instanceof IPDOMOverloader) {
+					int ty1 = ((IPDOMOverloader) binding1).getSignatureHash();
+					int ty2 = ((IPDOMOverloader) binding2).getSignatureHash();
 					cmp = ty1 < ty2 ? -1 : (ty1 > ty2 ? 1 : 0);
 				}
 			}
@@ -88,7 +88,7 @@ public class CPPFindBinding extends FindBinding {
 		protected boolean matches(PDOMBinding binding) throws CoreException {
 			if (super.matches(binding)) {
 				if (binding instanceof IPDOMOverloader) {
-					int ty1 = ((IPDOMOverloader)binding).getSignatureHash();
+					int ty1 = ((IPDOMOverloader) binding).getSignatureHash();
 					return fSigHash == ty1;
 				}
 			}
@@ -96,45 +96,51 @@ public class CPPFindBinding extends FindBinding {
 		}
 	}
 
-	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int c2, final int ty2, int localToFileRec) throws CoreException {
+	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[] name,
+			final int c2, final int ty2, int localToFileRec) throws CoreException {
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, c2, ty2, localToFileRec);
 		btree.accept(visitor);
 		return visitor.getResult();
 	}
 
-
-	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int sigHash, int localToFileRec) 
-			throws CoreException {
-		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, sigHash, localToFileRec);
+	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[] name, int constant,
+			int sigHash, int localToFileRec) throws CoreException {
+		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, sigHash,
+				localToFileRec);
 		try {
 			node.accept(visitor);
-		} catch(OperationCanceledException ce) {
+		} catch (OperationCanceledException e) {
 		}
 		return visitor.getResult();
 	}
 
-
-	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {	
+	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding,
+			int localToFileRec) throws CoreException {	
 		Integer hash= 0;
 		try {
 			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
 		} catch (DOMException e) {
 		}
-		if(hash != null) {
-			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
+		if (hash != null) {
+			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(),
+					linkage.getBindingType(binding), hash.intValue(), localToFileRec);
 		}
-		return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), new int [] {linkage.getBindingType(binding)}, localToFileRec);
+		return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(),
+				new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}
 
-	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {
+	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding,
+			int localToFileRec) throws CoreException {
 		Integer hash = null;
 		try {
 			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
 		} catch (DOMException e) {
 		}
-		if(hash != null) {
-			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), hash.intValue(), localToFileRec);
+		if (hash != null) {
+			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(),
+					linkage.getBindingType(binding), hash.intValue(), localToFileRec);
 		}
-		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)}, localToFileRec);
+		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(),
+				new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}
 }

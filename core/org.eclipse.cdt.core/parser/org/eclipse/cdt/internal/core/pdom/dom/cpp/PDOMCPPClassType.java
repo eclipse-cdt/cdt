@@ -121,7 +121,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_MEMBERS);
+		pdom.removeCachedResult(record + PDOMCPPLinkage.CACHE_MEMBERS);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
@@ -346,7 +346,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		try {
 			final List<IBinding> list = new ArrayList<IBinding>();
 			for (PDOMCPPFriend friend = getFirstFriend();
-				friend != null; friend = friend.getNextFriend()) list.add(0,friend.getFriendSpecifier());
+					friend != null; friend = friend.getNextFriend()) {
+				list.add(0, friend.getFriendSpecifier());
+			}
 			return list.toArray(new IBinding[list.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

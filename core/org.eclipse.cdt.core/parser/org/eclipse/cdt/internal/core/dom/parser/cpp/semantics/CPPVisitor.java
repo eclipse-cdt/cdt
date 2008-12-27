@@ -2007,7 +2007,7 @@ public class CPPVisitor extends ASTQueries {
 						return ((ITypeContainer) type).getType();
 					}
 					return new ProblemBinding(expression, IProblemBinding.SEMANTIC_INVALID_TYPE,
-							("*" + type.toString()).toCharArray()); //$NON-NLS-1$
+							expression.getRawSignature().toCharArray());
 				} catch (DOMException e) {
 					return e.getProblem();
 				}

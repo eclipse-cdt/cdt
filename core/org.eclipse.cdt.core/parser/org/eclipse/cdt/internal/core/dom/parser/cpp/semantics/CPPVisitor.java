@@ -1966,7 +1966,7 @@ public class CPPVisitor extends ASTQueries {
 						return ((ITypeContainer) type).getType();
 					}
 					return new ProblemBinding(expression, IProblemBinding.SEMANTIC_INVALID_TYPE,
-							("*" + type.toString()).toCharArray()); //$NON-NLS-1$
+							expression.getRawSignature().toCharArray());
 				} catch (DOMException e) {
 					return e.getProblem();
 				}
@@ -2401,7 +2401,7 @@ public class CPPVisitor extends ASTQueries {
 				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();
 				if (qn.length < 2) 
 					return null;
-				return qn[qn.length-2].resolveBinding();
+				return qn[qn.length - 2].resolveBinding();
 			}
 			node= node.getParent();
 		}
@@ -2410,18 +2410,18 @@ public class CPPVisitor extends ASTQueries {
 	
 	/**
 	 * Searches for the first function, class or namespace enclosing the declaration the provided
-	 * node belongs to and returns the binding for it. Returns <code>null</code>, if the declaration is not
-	 * enclosed by any of the above constructs.
+	 * node belongs to and returns the binding for it. Returns <code>null</code>, if the declaration
+	 * is not enclosed by any of the above constructs.
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
-		// search for declaration
+		// Search for declaration
 		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
 				return null;
 			node= node.getParent();
 		}
-				
-		// search for enclosing binding
+
+		// Search for enclosing binding
 		IASTName name= null;
 		node= node.getParent();
 		for (; node != null; node= node.getParent()) {

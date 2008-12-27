@@ -49,10 +49,10 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		super(pdom, parent, spec.getNameCharArray());
 		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
 
-		// specializations that are no instances have the same map as their owner.
+		// specializations that are not instances have the same map as their owner.
 		if (this instanceof ICPPTemplateInstance) {
 			int rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
-			pdom.getDB().putInt(record+ARGMAP, rec);
+			pdom.getDB().putInt(record + ARGMAP, rec);
 		}
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(spec);

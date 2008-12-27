@@ -177,7 +177,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	public CPPClassType(IASTName name, IBinding indexBinding) {
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
+			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
 			name = ns[ns.length - 1];
 		}
 		IASTNode parent = name.getParent();
@@ -430,7 +430,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public IBinding getOwner() throws DOMException {
-		return CPPVisitor.findDeclarationOwner(definition != null ? definition : declarations[0], true);
+		if (definition != null) {
+			return CPPVisitor.findNameOwner(definition, true);
+		}
+		return CPPVisitor.findDeclarationOwner(declarations[0], true);
 	}
 	
 	public boolean isAnonymous() throws DOMException {

@@ -1048,6 +1048,18 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	getBindingFromASTName("func(q", 4, ICPPFunction.class);
 	}
 
+	//	class A {
+	//	  class B;
+	//	};
+	//	class A::B {
+	//	  void m();
+	//	};
+
+	//	void A::B::m() {}
+	public void testNestedClasses_Bug259683() throws Exception {
+    	getBindingFromASTName("A::B::m", 7, ICPPMethod.class);
+	}
+
 	private void assertBindings(String[] expected, ICPPBase[] bases) throws DOMException {
 		IBinding[] bindings= new IBinding[bases.length];
 		for (int i = 0; i < bindings.length; i++) {

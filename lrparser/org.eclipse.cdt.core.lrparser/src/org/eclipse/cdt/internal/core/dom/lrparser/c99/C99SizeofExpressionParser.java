@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
 public class C99SizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -589,13 +589,13 @@ public C99SizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 101:  labeled_statement ::= case constant_expression :
+            // Rule 101:  labeled_statement ::= case constant_expression : statement
             //
             case 101: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 102:  labeled_statement ::= default :
+            // Rule 102:  labeled_statement ::= default : statement
             //
             case 102: { action.   consumeStatementDefault();             break;
             }  

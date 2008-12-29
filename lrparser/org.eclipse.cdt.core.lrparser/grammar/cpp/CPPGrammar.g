@@ -122,7 +122,7 @@ $Globals
 	
 	import org.eclipse.cdt.core.dom.ast.*;
 	import org.eclipse.cdt.core.dom.ast.cpp.*;
-	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPASTNodeFactory;
+	import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 	import org.eclipse.cdt.core.dom.lrparser.IParser;
 	import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
@@ -139,7 +139,7 @@ $Define
 	
 	$build_action_class /. CPPBuildASTParserAction ./
 	$resolve_action_class /. C99TypedefTrackerParserAction ./
-	$node_factory_create_expression /. CPPASTNodeFactory.DEFAULT_INSTANCE ./
+	$node_factory_create_expression /. CPPNodeFactory.getDefault() ./
 	
 	$action_class /. CPPParserAction ./
 	$data_class /. Object ./ -- allow anything to be passed between actions
@@ -811,9 +811,9 @@ statement
 labeled_statement
     ::= identifier ':' statement
           /. $Build  consumeStatementLabeled();  $EndBuild ./
-      | case constant_expression ':' 
+      | 'case' constant_expression ':' statement
           /. $Build  consumeStatementCase();  $EndBuild ./
-      | default ':'
+      | 'default' ':' statement
           /. $Build  consumeStatementDefault();  $EndBuild ./
       
       

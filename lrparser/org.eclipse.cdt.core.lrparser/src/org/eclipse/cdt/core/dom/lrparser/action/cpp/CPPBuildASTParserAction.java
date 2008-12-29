@@ -621,7 +621,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeStatementSwitch() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTStatement body  = (IASTStatement)  astStack.pop();
+		IASTStatement body = (IASTStatement) astStack.pop();
 		
 		Object condition = astStack.pop();
 		
@@ -630,7 +630,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			stat = nodeFactory.newSwitchStatement((IASTExpression)condition, body);
 		else
 			stat = nodeFactory.newSwitchStatement((IASTDeclaration)condition, body);
-		
 		
 		setOffsetAndLength(stat);
 		astStack.push(stat);

@@ -104,7 +104,7 @@ $End
 
 $Globals
 /.	
-	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
+	import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 ./
 $End
@@ -113,7 +113,7 @@ $End
 
 $Define
 	$build_action_class /. C99BuildASTParserAction ./
-	$node_factory_create_expression /. C99ASTNodeFactory.DEFAULT_INSTANCE ./
+	$node_factory_create_expression /. CNodeFactory.getDefault() ./
 $End
 
 
@@ -397,9 +397,9 @@ statement
 labeled_statement
     ::= identifier_or_typedefname ':' statement
     	  /. $Build  consumeStatementLabeled();  $EndBuild ./
-      | 'case' constant_expression ':'
+      | 'case' constant_expression ':' statement
           /. $Build  consumeStatementCase();  $EndBuild ./
-      | 'default' ':'
+      | 'default' ':' statement
           /. $Build  consumeStatementDefault();  $EndBuild ./
          
          

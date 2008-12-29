@@ -711,7 +711,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	public void consumeStatementSwitch() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTStatement body  = (IASTStatement)  astStack.pop();
+		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTExpression expr = (IASTExpression) astStack.pop();
 		IASTSwitchStatement stat = nodeFactory.newSwitchStatement(expr, body);
 		setOffsetAndLength(stat);

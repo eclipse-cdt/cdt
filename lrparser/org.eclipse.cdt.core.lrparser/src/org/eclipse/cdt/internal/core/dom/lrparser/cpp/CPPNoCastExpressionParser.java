@@ -19,6 +19,7 @@ import java.util.*;
 
 import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.ast.cpp.*;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 public class CPPNoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
@@ -1058,14 +1058,14 @@ public CPPNoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
-            // Rule 184:  labeled_statement ::= case constant_expression :
+            // Rule 184:  labeled_statement ::= case constant_expression : statement
             //
             case 184: {       action.builder.
    consumeStatementCase();                 break;
             }  
    
             //
-            // Rule 185:  labeled_statement ::= default :
+            // Rule 185:  labeled_statement ::= default : statement
             //
             case 185: {       action.builder.
    consumeStatementDefault();                 break;

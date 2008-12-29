@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
-import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
 public class C99ExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -595,13 +595,13 @@ public C99ExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 102:  labeled_statement ::= case constant_expression :
+            // Rule 102:  labeled_statement ::= case constant_expression : statement
             //
             case 102: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 103:  labeled_statement ::= default :
+            // Rule 103:  labeled_statement ::= default : statement
             //
             case 103: { action.   consumeStatementDefault();             break;
             }  

@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -63,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
@@ -806,12 +806,12 @@ public abstract class BuildASTParserAction {
 	 * labeled_statement ::= label_identifier ':' statement
 	 * label_identifier ::= identifier 
 	 */
-	public void consumeStatementLabeled(/*IBinding binding*/) {
+	public void consumeStatementLabeled() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTName label = createName(parser.getLeftIToken());
-		//label.setBinding(binding);
+
 		IASTLabelStatement stat = nodeFactory.newLabelStatement(label, body);
 		setOffsetAndLength(stat);
 		astStack.push(stat);
@@ -821,29 +821,48 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
-	 * labeled_statement ::= case constant_expression ':'
+	 * labeled_statement ::= 'case' constant_expression ':' statement
 	 */
 	public void consumeStatementCase() { 
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
+		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTExpression expr = (IASTExpression) astStack.pop();
-		IASTCaseStatement caseStatement = nodeFactory.newCaseStatement(expr);
-		setOffsetAndLength(caseStatement);
-		astStack.push(caseStatement);
 		
+		IASTCaseStatement caseStatement = nodeFactory.newCaseStatement(expr);		
+		setOffsetAndLength(caseStatement); // TODO this is wrong, need to adjust length to end of colon
+		
+		IASTCompoundStatement compound = nodeFactory.newCompoundStatement();
+		setOffsetAndLength(compound);
+		compound.addStatement(caseStatement);
+		compound.addStatement(body);
+		
+		astStack.push(compound);
+
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
 	/**
-	 * labeled_statement ::= default ':'
+	 * labeled_statement ::= 'default' ':' <openscope-ast> statement
 	 */
 	public void consumeStatementDefault() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
+		IASTStatement body = (IASTStatement) astStack.pop();
+		
 		IASTDefaultStatement stat = nodeFactory.newDefaultStatement();
-		setOffsetAndLength(stat);
-		astStack.push(stat);
+		List<IToken> tokens = parser.getRuleTokens();
+		IToken defaultToken = tokens.get(0);
+		IToken colonToken = tokens.get(1);
+		setOffsetAndLength(stat, offset(defaultToken), offset(colonToken) - offset(defaultToken) + 1);
+		
+		IASTCompoundStatement compound = nodeFactory.newCompoundStatement();
+		setOffsetAndLength(compound);
+		compound.addStatement(stat);
+		compound.addStatement(body);
+		
+		astStack.push(compound);
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}

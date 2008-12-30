@@ -33,20 +33,12 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li><b>Performance</b> of the RSE Save Job was drastically improved for certain situations involving property sets - before the fix, the context menu could be frozen for up to 30 seconds in user actions
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=254842">254842</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=252708">252708</a>]</li>
-  <li><b>A Race Condition</b> was fixed when saving files in the editor. The bug would lead to
-    a rogue conflict being reported when normally saving a remote file in the editor
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=249544">249544</a>]</li>
-  <li><b>Drag &amp; Drop</b> was fixed for files and folders with some non-english
-    characters that were problematic due to their special Unicode encoding
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248339">248339</a>]</li>
-  <li><b>DStore Remote Search</b> was fixed for some cases with symbolic links
-    and binary files in the search scope
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=250168">250168</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=251650">251650</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=251729">251729</a>]</li> 
+  <li><b>The RSE ITerminalService</b> is now public API
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=258631">258631</a>]</li>
+  <li><b>A Generic RSE Shell Service</b> can now run based on adapting any ITerminalService
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227569">227569</a>]</li>
+  <li><b>The Prompt Handling</b> for dstore shells has been fixed
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=249715">249715</a>]</li>
 </ul></li>
 <li>At least 24 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-11-12&chfieldto=2008-12-29&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23567%5D"> -->
@@ -76,13 +68,13 @@
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>The RSE User Documentation now has a
+<p>The RSE User Documentation has a
 <a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
 Tutorial</a> that guides you through installation, first steps,
 connection setup and important tasks.</p>
 <p>
 If you want to know more about future directions of the Target Management
-Project, developer documents, architecture or how to get involved,<br/>
+Project, developer documents, architecture or how to get involved,
 the online
 <a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">Getting Started page</a>
 as well as the
@@ -153,9 +145,8 @@ The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
 
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=255390">bug 255390</a> - maj -  	[dstore] Remote search with a large number of results causes an OutOfMemoryError on the server side and crashes the server. </li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248754">bug 248754</a> - maj - [dstore] I get RSEG1242 when attempting to connect using RSE via SSL.</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=247059">bug 247059</a> - maj - [dstore] RSE AIX:SSL Connections work with EXPIRED certificate</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">bug 245260</a> - maj - Different user's connections on a single ftp host are mapped to the same temp files cache</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244070">bug 244070</a> - maj - [dstore] DStoreHostShell#exit() does not terminate child processes</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>

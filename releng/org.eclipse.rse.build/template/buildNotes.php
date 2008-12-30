@@ -33,7 +33,8 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li><b>The RSE ITerminalService</b> is now public API
+  <li><b>The RSE ITerminalService</b> is now public API. Consequently, the <b>RSE Terminals</b>
+    integration is moving to version 1.0 and thus leaving incubation status
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=258631">258631</a>]</li>
   <li><b>A Generic RSE Shell Service</b> can now run based on adapting any ITerminalService
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227569">227569</a>]</li>

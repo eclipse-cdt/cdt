@@ -108,8 +108,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			System.out.println();
 		}
 
-		// TODO temporary
-		IScannerExtensionConfiguration config = new ScannerExtensionConfiguration();
+		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		
 		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
@@ -161,7 +160,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			printCompletionNode(cn);
 		}
 		
-		// TODO temporary
 		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		
 		ParserLanguage pl = getParserLanguage();

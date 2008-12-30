@@ -43,7 +43,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	
 	private static final IDOMTokenMap TOKEN_MAP = DOMToISOCPPTokenMap.DEFAULT_MAP;
 	
-	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = ScannerExtensionConfiguration.createCPP();
 	
 	
 	private static ISOCPPLanguage DEFAULT = new ISOCPPLanguage();

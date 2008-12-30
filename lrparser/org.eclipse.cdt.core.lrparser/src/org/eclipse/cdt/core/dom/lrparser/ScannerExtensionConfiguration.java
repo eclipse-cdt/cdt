@@ -9,8 +9,6 @@
 package org.eclipse.cdt.core.dom.lrparser;
 
 import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 
 /**
@@ -19,41 +17,28 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  * @author Mike Kucera
  *
  */
+@SuppressWarnings("nls")
 public class ScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
-	@Override
-	public CharArrayIntMap getAdditionalKeywords() {
-		return null;
+	
+	private ScannerExtensionConfiguration() {
 	}
-
-	@Override
-	public IMacro[] getAdditionalMacros() {
-		return null;
+	
+	public static ScannerExtensionConfiguration createC() {
+		ScannerExtensionConfiguration sec = new ScannerExtensionConfiguration();
+		sec.addMacro("__null", "(void *)0"); 
+		return sec;
 	}
-
-	@Override
-	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
-		return null;
-	}
-
-	@Override
-	public boolean initializeMacroValuesTo1() {
-		return false;
+	
+	public static ScannerExtensionConfiguration createCPP() {
+		ScannerExtensionConfiguration sec = new ScannerExtensionConfiguration();
+		sec.addMacro("__null", "0");
+		return sec;
 	}
 
 	@Override
 	public boolean support$InIdentifiers() {
 		return true;
-	}
-
-	@Override
-	public char[] supportAdditionalNumericLiteralSuffixes() {
-		return null;
-	}
-
-	@Override
-	public boolean supportMinAndMaxOperators() {
-		return false;
 	}
 
 }

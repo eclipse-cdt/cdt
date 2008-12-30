@@ -47,7 +47,7 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
 
-	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = ScannerExtensionConfiguration.createC();
 	
 	
 	public static UPCLanguage getDefault() {

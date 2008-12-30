@@ -42,7 +42,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	public static final String ID = PLUGIN_ID + ".c99"; //$NON-NLS-1$ 
 	
 	private static final IDOMTokenMap TOKEN_MAP = DOMToC99TokenMap.DEFAULT_MAP;
-	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = new ScannerExtensionConfiguration();
+	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = ScannerExtensionConfiguration.createC();
 	
 	private static C99Language DEFAULT = new C99Language();
 	

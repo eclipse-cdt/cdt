@@ -2269,6 +2269,13 @@ public CPPParser(String[] mapFrom) {  // constructor
             case 528: {       action.builder.
    consumeDeclarationSimple(false);                 break;
             }  
+   
+            //
+            // Rule 530:  exception_specification ::= throw ( )
+            //
+            case 530: {       action.builder.
+   consumePlaceHolder();                 break;
+            }  
 
     
             default:

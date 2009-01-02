@@ -2257,6 +2257,13 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 528:  exception_specification ::= throw ( )
+            //
+            case 528: {       action.builder.
+   consumePlaceHolder();                 break;
+            }  
+   
+            //
             // Rule 534:  no_sizeof_type_name_start ::= ERROR_TOKEN
             //
             case 534: {       action.builder.

@@ -2271,6 +2271,13 @@ public CPPTemplateTypeParameterParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 530:  exception_specification ::= throw ( )
+            //
+            case 530: {       action.builder.
+   consumePlaceHolder();                 break;
+            }  
+   
+            //
             // Rule 536:  type_parameter_start ::= ERROR_TOKEN
             //
             case 536: {       action.builder.

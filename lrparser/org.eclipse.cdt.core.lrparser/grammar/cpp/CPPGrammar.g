@@ -1798,6 +1798,7 @@ exception_declaration
 exception_specification
     ::= 'throw' '(' type_id_list ')'
       | 'throw' '('  ')'
+          /. $Build  consumePlaceHolder();  $EndBuild ./
 
 
 exception_specification_opt

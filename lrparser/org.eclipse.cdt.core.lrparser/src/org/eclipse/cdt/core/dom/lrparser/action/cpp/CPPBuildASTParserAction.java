@@ -1675,8 +1675,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		IASTName name = nodeFactory.newName();
  		ICPPASTFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
  		
- 		for(Object typeId : astStack.closeScope()) {
- 			declarator.addExceptionSpecificationTypeId((IASTTypeId) typeId);
+ 		List<Object> typeIds = astStack.closeScope();
+ 		if(typeIds.size() == 1 && typeIds.get(0) == PLACE_HOLDER) { // fix for bug 86943
+ 			declarator.setEmptyExceptionSpecification(); 
+ 		}
+ 		else {
+	 		for(Object typeId : typeIds) {
+	 			declarator.addExceptionSpecificationTypeId((IASTTypeId) typeId);
+	 		}
  		}
  		
  		for(Object token : astStack.closeScope()) {

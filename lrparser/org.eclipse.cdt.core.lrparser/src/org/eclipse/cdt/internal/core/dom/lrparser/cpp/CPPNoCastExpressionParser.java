@@ -2264,6 +2264,13 @@ public CPPNoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 529:  exception_specification ::= throw ( )
+            //
+            case 529: {       action.builder.
+   consumePlaceHolder();                 break;
+            }  
+   
+            //
             // Rule 535:  no_cast_start ::= ERROR_TOKEN
             //
             case 535: {       action.builder.

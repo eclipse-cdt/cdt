@@ -2271,6 +2271,13 @@ public CPPExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 530:  exception_specification ::= throw ( )
+            //
+            case 530: {       action.builder.
+   consumePlaceHolder();                 break;
+            }  
+   
+            //
             // Rule 536:  expression_parser_start ::= ERROR_TOKEN
             //
             case 536: {       action.builder.

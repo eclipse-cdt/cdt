@@ -510,6 +510,8 @@ public class Conversions {
 
 		if (source instanceof ICPPReferenceType) {
 			source= ((ICPPReferenceType) source).getType();
+			while (source instanceof ITypedef)
+				source = ((ITypedef) source).getType();
 		}
 		if (target instanceof ICPPReferenceType) {
 			target= ((ICPPReferenceType) target).getType();

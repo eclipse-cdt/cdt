@@ -2328,7 +2328,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 			}
 		}
 	}
-	
+
 	// template<typename _TpAllocator>
 	// class Allocator {
 	// public:
@@ -3205,5 +3205,25 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertFalse(t.isAlive());
     	if (th[0] != null)
     		throw th[0];
+    }
+
+	//  template <typename Val>
+	//  struct A {
+	//    typedef const Val value;
+	//  };
+	//
+	//  template<typename T>
+	//  struct B {
+	//    typedef typename T::value& reference;
+	//  };
+	//
+	//  void func(int a);
+	//
+	//  void test(B<A<int> >::reference p) {
+	//    func(p);
+	//  }
+    public void testTypedefReference_259871() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("func(p)", 4, ICPPFunction.class);
     }
 }

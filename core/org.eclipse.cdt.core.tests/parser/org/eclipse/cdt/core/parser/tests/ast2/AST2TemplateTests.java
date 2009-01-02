@@ -3532,4 +3532,24 @@ public class AST2TemplateTests extends AST2BaseTest {
         b= bh.assertNonProblem("F();", 1);
         assertTrue(b instanceof IType);
     }
+
+	//  template <typename Val>
+	//  struct A {
+	//    typedef const Val value;
+	//  };
+	//
+	//  template<typename T>
+	//  struct B {
+	//    typedef typename T::value& reference;
+	//  };
+	//
+	//  void func(int a);
+	//
+	//  void test(B<A<int> >::reference p) {
+	//    func(p);
+	//  }
+    public void testTypedefReference_259871() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("func(p)", 4, ICPPFunction.class);
+    }
 }

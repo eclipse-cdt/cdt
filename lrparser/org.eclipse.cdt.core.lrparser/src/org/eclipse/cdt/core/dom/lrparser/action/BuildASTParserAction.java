@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import lpg.lpgjavaruntime.IToken;
 
@@ -71,6 +73,7 @@ import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
@@ -117,6 +120,9 @@ public abstract class BuildASTParserAction {
 
 	/** Abstract factory for creating AST node objects */
 	private final INodeFactory nodeFactory;
+	
+	/** Options that change the behavior of the parser actions */
+	protected Set<IParser.Options> options = EnumSet.noneOf(IParser.Options.class);
 	
 	
 	/**
@@ -170,6 +176,10 @@ public abstract class BuildASTParserAction {
 		this.tu = tu;
 	}
 
+	
+	public void setParserOptions(Set<IParser.Options> options) {
+		this.options = options == null ? EnumSet.noneOf(IParser.Options.class) : options;
+	}
 	
 	/**
 	 * Creates a completion node if one does not yet exist and adds the 
@@ -296,7 +306,7 @@ public abstract class BuildASTParserAction {
 		secondaryParser.setTokens(tokens);
 		
 		// need to pass tu because any new completion nodes need to be linked directly to the root
-		IASTCompletionNode compNode = secondaryParser.parse(tu);
+		IASTCompletionNode compNode = secondaryParser.parse(tu, options);
 		addNameToCompletionNode(compNode);
 		IASTNode result = secondaryParser.getSecondaryParseResult();
 		
@@ -1389,6 +1399,16 @@ public abstract class BuildASTParserAction {
 	}
 	
 	
+	private int initializerListNestingLevel = 0;
+	
+	public void initializerListStart() {
+		initializerListNestingLevel++;
+	}
+	
+	public void initializerListEnd() {
+		initializerListNestingLevel--;
+	}
+	
 	/**
 	 * initializer ::= assignment_expression
 	 */
@@ -1396,13 +1416,26 @@ public abstract class BuildASTParserAction {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTExpression expr = (IASTExpression) astStack.pop();
+		if(discardInitializer(expr)) { 
+			astStack.push(null);
+			return;
+		}
+		
 		IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
-        setOffsetAndLength(initializer);
-        astStack.push(initializer);
+		setOffsetAndLength(initializer);
+		astStack.push(initializer);
         
         if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
+	
+	private boolean discardInitializer(IASTExpression expression) {
+		return initializerListNestingLevel > 0
+		    && options.contains(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS)
+		    && !ASTQueries.canContainName(expression);
+	}
+	
+	
 	
 	/**
 	 * initializer ::= '{' <openscope> initializer_list '}'
@@ -1421,6 +1454,8 @@ public abstract class BuildASTParserAction {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
 	
 	
 	

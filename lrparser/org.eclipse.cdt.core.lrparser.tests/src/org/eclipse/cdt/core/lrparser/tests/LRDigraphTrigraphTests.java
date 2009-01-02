@@ -52,7 +52,10 @@ public class LRDigraphTrigraphTests extends TestCase {
 
 
 	protected IASTTranslationUnit parse(String code) {	
-		return ParseHelper.parse(code, getCLanguage(), true);
+		ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckSyntaxProblems(true);
+    	options.setCheckPreprocessorProblems(true);
+		return ParseHelper.parse(code, getCLanguage(), options);
 	}
 	
 	

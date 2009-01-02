@@ -169,8 +169,9 @@ private  C99BuildASTParserAction  action;
 public C99NoCastExpressionParser() {  // constructor
 }
 
-private void initActions(IASTTranslationUnit tu) {
+private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
 	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu);
+	action.setParserOptions(options);
 }
 
 
@@ -180,10 +181,10 @@ public void addToken(IToken token) {
 }
 
 
-public IASTCompletionNode parse(IASTTranslationUnit tu) {
+public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(tu);
+	initActions(tu, options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
@@ -1153,99 +1154,117 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 278:  initializer ::= { <openscope-ast> initializer_list comma_opt }
+            // Rule 278:  initializer ::= start_initializer_list { <openscope-ast> initializer_list comma_opt } end_initializer_list
             //
             case 278: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 283:  designated_initializer ::= <openscope-ast> designation = initializer
+            // Rule 279:  initializer ::= { <openscope-ast> }
             //
-            case 283: { action.   consumeInitializerDesignated();             break;
+            case 279: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 287:  designator_base ::= [ constant_expression ]
+            // Rule 280:  start_initializer_list ::= $Empty
             //
-            case 287: { action.   consumeDesignatorArray();             break;
+            case 280: { action.   initializerListStart();            break;
             }  
   
             //
-            // Rule 288:  designator_base ::= . identifier_or_typedefname
+            // Rule 281:  end_initializer_list ::= $Empty
             //
-            case 288: { action.   consumeDesignatorField();             break;
+            case 281: { action.   initializerListEnd();            break;
             }  
   
             //
-            // Rule 289:  designator ::= [ constant_expression ]
+            // Rule 286:  designated_initializer ::= <openscope-ast> designation = initializer
             //
-            case 289: { action.   consumeDesignatorArray();             break;
+            case 286: { action.   consumeInitializerDesignated();             break;
             }  
   
             //
-            // Rule 290:  designator ::= . identifier_or_typedefname
+            // Rule 290:  designator_base ::= [ constant_expression ]
             //
-            case 290: { action.   consumeDesignatorField();             break;
+            case 290: { action.   consumeDesignatorArray();             break;
             }  
   
             //
-            // Rule 291:  translation_unit ::= external_declaration_list
+            // Rule 291:  designator_base ::= . identifier_or_typedefname
             //
-            case 291: { action.   consumeTranslationUnit();             break;
+            case 291: { action.   consumeDesignatorField();             break;
+            }  
+  
+            //
+            // Rule 292:  designator ::= [ constant_expression ]
+            //
+            case 292: { action.   consumeDesignatorArray();             break;
+            }  
+  
+            //
+            // Rule 293:  designator ::= . identifier_or_typedefname
+            //
+            case 293: { action.   consumeDesignatorField();             break;
+            }  
+  
+            //
+            // Rule 294:  translation_unit ::= external_declaration_list
+            //
+            case 294: { action.   consumeTranslationUnit();             break;
             }   
   
             //
-            // Rule 292:  translation_unit ::= $Empty
+            // Rule 295:  translation_unit ::= $Empty
             //
-            case 292: { action.   consumeTranslationUnit();             break;
+            case 295: { action.   consumeTranslationUnit();             break;
             }  
   
             //
-            // Rule 297:  external_declaration ::= ;
+            // Rule 300:  external_declaration ::= ;
             //
-            case 297: { action.   consumeDeclarationEmpty();             break;
+            case 300: { action.   consumeDeclarationEmpty();             break;
             }  
   
             //
-            // Rule 298:  external_declaration ::= ERROR_TOKEN
+            // Rule 301:  external_declaration ::= ERROR_TOKEN
             //
-            case 298: { action.   consumeDeclarationProblem();             break;
+            case 301: { action.   consumeDeclarationProblem();             break;
             }  
   
             //
-            // Rule 301:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
+            // Rule 304:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
             //
-            case 301: { action.   consumeFunctionDefinition(true);             break;
+            case 304: { action.   consumeFunctionDefinition(true);             break;
             }  
   
             //
-            // Rule 302:  function_definition ::= <openscope-ast> function_declarator function_body
+            // Rule 305:  function_definition ::= <openscope-ast> function_declarator function_body
             //
-            case 302: { action.   consumeFunctionDefinition(false);             break;
+            case 305: { action.   consumeFunctionDefinition(false);             break;
             }  
   
             //
-            // Rule 303:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
+            // Rule 306:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
             //
-            case 303: { action.   consumeFunctionDefinitionKnR();             break;
+            case 306: { action.   consumeFunctionDefinitionKnR();             break;
             }  
   
             //
-            // Rule 304:  function_body ::= { }
+            // Rule 307:  function_body ::= { }
             //
-            case 304: { action.   consumeStatementCompoundStatement(false);             break;
+            case 307: { action.   consumeStatementCompoundStatement(false);             break;
             }  
   
             //
-            // Rule 305:  function_body ::= { <openscope-ast> block_item_list }
+            // Rule 308:  function_body ::= { <openscope-ast> block_item_list }
             //
-            case 305: { action.   consumeStatementCompoundStatement(true);             break;
+            case 308: { action.   consumeStatementCompoundStatement(true);             break;
             }  
   
             //
-            // Rule 307:  no_cast_start ::= ERROR_TOKEN
+            // Rule 310:  no_cast_start ::= ERROR_TOKEN
             //
-            case 307: { action.   consumeExpressionProblem();             break;
+            case 310: { action.   consumeExpressionProblem();             break;
             }  
 
     

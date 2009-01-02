@@ -13,11 +13,8 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
 import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.ast2.QuickParser2Tests;
-import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 
 public class LRQuickParser2Tests extends QuickParser2Tests {
 
@@ -29,9 +26,11 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	protected void parse(String code, boolean expectedToPass,
 			ParserLanguage lang, @SuppressWarnings("unused") boolean gcc) throws Exception {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
-		CodeReader reader = new CodeReader(code.toCharArray());
 		// don't check preprocessor problems for this test suite (causes tons of failures)
-    	ParseHelper.parse(reader, language, new ScannerInfo(), FileCodeReaderFactory.getInstance(), expectedToPass, false, 0, null, false);
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(expectedToPass);
+		options.setCheckPreprocessorProblems(false);
+    	ParseHelper.parse(code, language, options);
 	}
 	
 	

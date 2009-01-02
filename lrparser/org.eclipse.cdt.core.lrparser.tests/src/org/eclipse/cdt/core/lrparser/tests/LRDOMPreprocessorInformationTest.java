@@ -31,7 +31,8 @@ public class LRDOMPreprocessorInformationTest extends DOMPreprocessorInformation
     @SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
-    	return ParseHelper.parse(code, language, expectNoProblems);
+    	ParseHelper.Options options = new ParseHelper.Options().setCheckSyntaxProblems(expectNoProblems).setCheckPreprocessorProblems(expectNoProblems);
+    	return ParseHelper.parse(code, language, options);
     }
     
     

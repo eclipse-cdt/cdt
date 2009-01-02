@@ -42,14 +42,18 @@ public class LRTests extends AST2Tests {
 	
 	 
     @Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
-    	return ParseHelper.parse(code, language, expectNoProblems);
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
+    	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
     }
     
     @Override
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, @SuppressWarnings("unused") boolean parseComments) throws ParserException {
-		return parse(code,lang, useGNUExtensions, expectNoProblems );
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
+    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+    	ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckSyntaxProblems(expectNoProblems);
+    	options.setCheckPreprocessorProblems(expectNoProblems);
+    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	return ParseHelper.parse(code, language, options);
 	}
     
     protected ILanguage getC99Language() {

@@ -66,8 +66,9 @@ $Headers
 	public $action_type() {  // constructor
 	}
 	
-	private void initActions(IASTTranslationUnit tu) {
+	private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
 		action = new $build_action_class($node_factory_create_expression, this, tu);
+		action.setParserOptions(options);
 	}
 	
 	
@@ -77,10 +78,10 @@ $Headers
 	}
 	
 	
-	public IASTCompletionNode parse(IASTTranslationUnit tu) {
+	public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
-		initActions(tu);
+		initActions(tu, options);
 		
 		final int errorRepairCount = -1;  // -1 means full error handling
 		parser(null, errorRepairCount); // do the actual parse

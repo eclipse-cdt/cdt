@@ -890,9 +890,20 @@ function_direct_abstract_declarator
 initializer
     ::= assignment_expression
           /. $Build  consumeInitializer();  $EndBuild ./
-      | '{' <openscope-ast> initializer_list comma_opt '}'
+      | start_initializer_list '{' <openscope-ast> initializer_list comma_opt '}' end_initializer_list
+          /. $Build  consumeInitializerList();  $EndBuild ./
+      | '{' <openscope-ast> '}'
           /. $Build  consumeInitializerList();  $EndBuild ./
 
+
+start_initializer_list
+    ::= $empty
+          /. $Build  initializerListStart(); $EndBuild ./
+          
+end_initializer_list
+    ::= $empty
+          /. $Build  initializerListEnd(); $EndBuild ./
+          
 
 initializer_list
     ::= initializer

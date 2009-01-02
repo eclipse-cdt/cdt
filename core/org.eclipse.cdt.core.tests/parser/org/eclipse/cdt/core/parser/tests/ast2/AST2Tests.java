@@ -5775,7 +5775,7 @@ public class AST2Tests extends AST2BaseTest {
 	// 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	
 	// };
-	public void testScalabilityOfLargeTrivialInitializer_Bug252970() throws Exception {
+	public void testScalabilityOfLargeTrivialInitializer_Bug253690() throws Exception {
 		final StringBuffer[] input = getContents(3);
 		StringBuilder buf= new StringBuilder();
 		buf.append(input[0].toString());

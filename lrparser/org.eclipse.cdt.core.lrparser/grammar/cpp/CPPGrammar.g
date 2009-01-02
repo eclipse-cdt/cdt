@@ -178,12 +178,14 @@ $Headers
 	public $action_type() {  // constructor
 	}
 	
-	private void initActions(IASTTranslationUnit tu) {
+	private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
 	    // binding resolution actions need access to IASTName nodes, temporary
 	    action = new $action_class();
 		//action.resolver = new $resolve_action_class(this);
 		action.builder  = new $build_action_class($node_factory_create_expression, this, tu);
 		//action.builder.setTokenMap(CPPParsersym.orderedTerminalSymbols);
+		
+		action.builder.setParserOptions(options);
 		
 		// comment this line to use with backtracking parser
 		//setParserAction(action);
@@ -196,10 +198,10 @@ $Headers
 	}
 	
 	
-	public IASTCompletionNode parse(IASTTranslationUnit tu) {
+	public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
-		initActions(tu);
+		initActions(tu, options);
 		
 		final int errorRepairCount = -1;  // _1 means full error handling
 		parser(null, errorRepairCount); // do the actual parse
@@ -1451,13 +1453,21 @@ initializer
 initializer_clause
     ::= assignment_expression
          /. $Build  consumeInitializer();  $EndBuild ./
-      | '{' <openscope-ast> initializer_list ',' '}'
+      | start_initializer_list '{' <openscope-ast> initializer_list ',' '}' end_initializer_list
          /. $Build  consumeInitializerList();  $EndBuild ./
-      | '{' <openscope-ast> initializer_list '}'
+      | start_initializer_list '{' <openscope-ast> initializer_list '}' end_initializer_list
          /. $Build  consumeInitializerList();  $EndBuild ./
       | '{' <openscope-ast> '}'
          /. $Build  consumeInitializerList();  $EndBuild ./
 
+
+start_initializer_list
+    ::= $empty
+          /. $Build  initializerListStart(); $EndBuild ./
+          
+end_initializer_list
+    ::= $empty
+          /. $Build  initializerListEnd(); $EndBuild ./
 
 initializer_list
     ::= initializer_clause

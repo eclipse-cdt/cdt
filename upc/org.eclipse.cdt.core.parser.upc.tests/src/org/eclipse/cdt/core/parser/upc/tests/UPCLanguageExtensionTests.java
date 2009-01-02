@@ -64,12 +64,20 @@ public class UPCLanguageExtensionTests extends TestCase {
 	// test that binding resolution works
 	
 	private IASTTranslationUnit parseAndCheckBindings(String code) {
-		return ParseHelper.parse(code, getLanguage(), true, true, 0 );
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(true);
+		options.setCheckPreprocessorProblems(true);
+		options.setCheckBindings(true);
+		return ParseHelper.parse(code, getLanguage(), options );
 	}
 	
 	
 	private IASTTranslationUnit parse(String code) {
-		return ParseHelper.parse(code, getLanguage(), true, false, 0 );
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckSyntaxProblems(true);
+		options.setCheckPreprocessorProblems(true);
+		options.setCheckBindings(false);
+		return ParseHelper.parse(code, getLanguage(), options);
 	}
 	
 	

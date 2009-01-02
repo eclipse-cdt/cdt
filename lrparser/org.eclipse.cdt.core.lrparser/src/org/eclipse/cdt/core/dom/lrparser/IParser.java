@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ILanguage;
 
 
 /**
@@ -21,6 +25,30 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  * @author Mike Kucera
  */
 public interface IParser extends ITokenCollector {
+	
+	/**
+	 * Options used by implementations of IParser. Some of the options
+	 * may be duplicates of the options in ILanguage.
+	 * @see ILanguage
+	 */
+	public enum Options {
+		
+		/**
+		 * The LR parsers do not actually skip the parsing of function bodies, 
+		 * but this option does have the effect of not generating AST nodes
+		 * for function bodies.
+		 */
+		//OPTION_SKIP_FUNCTION_BODIES,
+		
+		/**
+		 * Instructs the parser not to create AST nodes for expressions 
+		 * within aggregate initializers when they do not contain names.
+		 * 
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=253690
+		 */
+		OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS,
+	}
+	
 	
 	/**
 	 * Performs the actual parse.
@@ -34,10 +62,13 @@ public interface IParser extends ITokenCollector {
 	 * If the parser encounters a completion token then a completion node
 	 * is returned, null is returned otherwise.
 	 * 
-	 * @param tu An IASTTranslationUnit instance that will have its declarators filled in.
+	 * @param tu An IASTTranslationUnit instance that will have its declarations filled in.
+	 * @param options a Set of parser options, use an EnumSet
 	 * @return a completion node if a completion token is encountered during the parser, null otherwise.
+	 * @throws NullPointerException if either parameter is null
+	 * @see EnumSet
 	 */
-	public IASTCompletionNode parse(IASTTranslationUnit tu);
+	public IASTCompletionNode parse(IASTTranslationUnit tu, Set<Options> options);
 	
 	
 	/**

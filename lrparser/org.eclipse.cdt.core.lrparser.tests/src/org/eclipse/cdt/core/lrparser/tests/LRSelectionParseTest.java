@@ -56,8 +56,10 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 	@Override
 	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int offset, int length) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
-    	
-		IASTTranslationUnit tu = ParseHelper.parse(code, language, useGNUExtensions, expectNoProblems, 0);
+    	ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckPreprocessorProblems(expectNoProblems);
+    	options.setCheckSyntaxProblems(expectNoProblems);
+		IASTTranslationUnit tu = ParseHelper.parse(code, language, options);
 		return tu.selectNodeForLocation(tu.getFilePath(), offset, length);
 	}	
 	
@@ -68,7 +70,13 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 		String fileName = file.getLocation().toOSString();
 		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(fileName);
-		return ParseHelper.parse(reader, language, scanInfo, fileCreator, expectNoProblems, true, 0, null, true);
+		
+		ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckPreprocessorProblems(expectNoProblems);
+    	options.setCheckSyntaxProblems(expectNoProblems);
+    	options.setCheckBindings(true);
+		
+		return ParseHelper.parse(reader, language, scanInfo, fileCreator, options);
 	}
 
 	@Override

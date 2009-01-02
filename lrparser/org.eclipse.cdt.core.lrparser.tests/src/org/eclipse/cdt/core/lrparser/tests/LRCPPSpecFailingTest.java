@@ -41,13 +41,18 @@ public class LRCPPSpecFailingTest extends AST2CPPSpecFailingTest {
 	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-		return ParseHelper.parse(code, language, true, checkBindings, expectedProblemBindings );
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckBindings(checkBindings);
+		options.setExpectedProblemBindings(expectedProblemBindings);
+		return ParseHelper.parse(code, language, options);
     }
 	
 	@Override
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, String[] problems) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
-		return ParseHelper.parse(code, language, problems);
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setProblems(problems);
+		return ParseHelper.parse(code, language, options);
 	}
 
 	

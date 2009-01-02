@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
@@ -41,8 +46,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 	
-	private static final boolean DEBUG_PRINT_GCC_AST = false;
-	private static final boolean DEBUG_PRINT_AST     = false;
+	private static final boolean DEBUG_PRINT_GCC_AST = true;
+	private static final boolean DEBUG_PRINT_AST     = true;
 	
 	
 	/**
@@ -96,8 +101,8 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
-			ILanguage gppLanguage = GCCLanguage.getDefault();
-			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
+			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
+			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
 			
 			System.out.println();
 			System.out.println("********************************************************");
@@ -121,7 +126,16 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IParser parser = getParser();
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
-		parser.parse(tu); // The parser will fill in the rest of the AST
+		Set<IParser.Options> parserOptions = new HashSet<IParser.Options>();
+		//if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
+		//	parserOptions.add(IParser.Options.OPTION_SKIP_FUNCTION_BODIES);
+		if((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0)
+			parserOptions.add(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
+		
+		if(!parserOptions.isEmpty())
+			parserOptions = EnumSet.copyOf(parserOptions);
+		
+		parser.parse(tu, parserOptions); // The parser will fill in the rest of the AST
 		
 		// the TU is marked as either a source file or a header file
 		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
@@ -172,17 +186,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
 		// the parser will fill in the rest of the AST
-		IASTCompletionNode completionNode = parser.parse(tu);
+		Set<IParser.Options> parserOptions = EnumSet.of(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
+		IASTCompletionNode completionNode = parser.parse(tu, parserOptions);
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
 			printCompletionNode(completionNode);
 		}
-		
-//		List<String> messages = ASTComparer.compare(completionNode.getTranslationUnit(), cn.getTranslationUnit());
-//		for(String m : messages) {
-//			System.out.println(m);
-//		}
 		
 		return completionNode;
 	}

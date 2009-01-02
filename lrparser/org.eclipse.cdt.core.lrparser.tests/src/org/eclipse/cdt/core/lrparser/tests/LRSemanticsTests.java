@@ -32,9 +32,13 @@ public class LRSemanticsTests extends SemanticsTests {
 	@SuppressWarnings("unused") 
 	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, 
-			boolean expectNoProblems, boolean parseComments) throws ParserException {
+			boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
     	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
-    	return ParseHelper.parse(code, language, expectNoProblems);
+    	ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckSyntaxProblems(expectNoProblems);
+    	options.setCheckPreprocessorProblems(expectNoProblems);
+    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	return ParseHelper.parse(code, language, options);
     }
     
     protected ILanguage getC99Language() {

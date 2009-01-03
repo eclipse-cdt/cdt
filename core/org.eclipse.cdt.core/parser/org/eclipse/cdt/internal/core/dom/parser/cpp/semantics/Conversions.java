@@ -481,7 +481,7 @@ public class Conversions {
 
 					tbase= getUltimateTypeViaTypedefs(tbase);
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth-1, tbase, ancestorToFind);
+						int n= calculateInheritanceDepth(maxdepth - 1, tbase, ancestorToFind);
 						if (n > 0)
 							return n + 1;
 					}
@@ -531,9 +531,9 @@ public class Conversions {
 
 		//4.1 if T is a non-class type, the type of the rvalue is the cv-unqualified version of T
 		if (source instanceof IQualifierType) {
-			IType t = ((IQualifierType)source).getType();
+			IType t = ((IQualifierType) source).getType();
 			while (t instanceof ITypedef)
-				t = ((ITypedef)t).getType();
+				t = ((ITypedef) t).getType();
 			if (!(t instanceof ICPPClassType)) {
 				source = t;
 			}
@@ -562,7 +562,8 @@ public class Conversions {
 		boolean canConvert = true;
 		int requiredConversion = Cost.IDENTITY_RANK;  
 
-		IType s = cost.source, t = cost.target;
+		IType s = cost.source;
+		IType t = cost.target;
 		boolean constInEveryCV2k = true;
 		boolean firstPointer= true;
 		while (true) {
@@ -575,7 +576,7 @@ public class Conversions {
 				if (!sourceIsPointer) 
 					break;
 				if (t instanceof ICPPBasicType) {
-					if (((ICPPBasicType)t).getType() == ICPPBasicType.t_bool) {
+					if (((ICPPBasicType) t).getType() == ICPPBasicType.t_bool) {
 						canConvert= true;
 						requiredConversion = Cost.CONVERSION_RANK;
 						break;
@@ -702,8 +703,8 @@ public class Conversions {
 			return;
 
 		if (src instanceof IBasicType && trg instanceof IBasicType) {
-			int sType = ((IBasicType)src).getType();
-			int tType = ((IBasicType)trg).getType();
+			int sType = ((IBasicType) src).getType();
+			int tType = ((IBasicType) trg).getType();
 			if ((tType == IBasicType.t_int && (sType == IBasicType.t_int ||   //short, long , unsigned etc
 					sType == IBasicType.t_char    || 
 					sType == ICPPBasicType.t_bool || 
@@ -713,8 +714,8 @@ public class Conversions {
 				cost.promotion = 1; 
 			}
 		} else if (src instanceof IEnumeration && trg instanceof IBasicType &&
-				(((IBasicType)trg).getType() == IBasicType.t_int || 
-				((IBasicType)trg).getType() == IBasicType.t_unspecified)) {
+				(((IBasicType) trg).getType() == IBasicType.t_int || 
+				((IBasicType) trg).getType() == IBasicType.t_unspecified)) {
 			cost.promotion = 1; 
 		}
 
@@ -743,8 +744,9 @@ public class Conversions {
 		IType sPrev= sHolder[0], tPrev= tHolder[0];
 
 		if (src instanceof CPPBasicType && trg instanceof IPointerType) {
-			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
-			IASTExpression exp = ((CPPBasicType)src).getCreatedFromExpression();
+			// 4.10-1 an integral constant expression of integer type that evaluates to 0 can
+			// be converted to a pointer type
+			IASTExpression exp = ((CPPBasicType) src).getCreatedFromExpression();
 			if (exp != null) {
 				Long val= Value.create(exp, Value.MAX_RECURSION_DEPTH).numericalValue();
 				if (val != null && val == 0) {
@@ -755,7 +757,8 @@ public class Conversions {
 		} else if (sPrev instanceof IPointerType) {
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
-			if (tPrev instanceof IPointerType && t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
+			if (tPrev instanceof IPointerType && t instanceof IBasicType &&
+					((IBasicType)t).getType() == IBasicType.t_void) {
 				cost.rank = Cost.CONVERSION_RANK;
 				cost.conversion = 1;
 				cost.detail = 2;
@@ -781,7 +784,8 @@ public class Conversions {
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;	
-		} else if (trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool && s instanceof IPointerType) {
+		} else if (trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool &&
+				s instanceof IPointerType) {
 			//4.12 pointer or pointer to member type can be converted to an rvalue of type bool
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;
@@ -794,7 +798,8 @@ public class Conversions {
 			IType st = spm.getType();
 			IType tt = tpm.getType();
 			if (st != null && tt != null && st.isSameType(tt)) {
-				int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, tpm.getMemberOfClass(), spm.getMemberOfClass());
+				int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH,
+						tpm.getMemberOfClass(), spm.getMemberOfClass());
 				cost.rank= (depth > -1) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion= (depth > -1) ? depth : 0;
 				cost.detail= 1;
@@ -828,11 +833,11 @@ public class Conversions {
 		type= getUltimateType(type, false);
 		if (type instanceof ICPPClassType) {
 			if (type instanceof ICPPInternalBinding) {
-				return (((ICPPInternalBinding)type).getDefinition() != null);
+				return (((ICPPInternalBinding) type).getDefinition() != null);
 			}
 			if (type instanceof IIndexFragmentBinding) {
 				try {
-					return ((IIndexFragmentBinding)type).hasDefinition();
+					return ((IIndexFragmentBinding) type).hasDefinition();
 				} catch(CoreException ce) {
 					CCorePlugin.log(ce);
 				}

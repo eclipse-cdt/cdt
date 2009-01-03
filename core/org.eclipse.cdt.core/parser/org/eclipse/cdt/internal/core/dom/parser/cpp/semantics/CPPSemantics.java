@@ -314,15 +314,16 @@ public class CPPSemantics {
 		    			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
 		    			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
 		    			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
-		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredClassInstance) ? (ICPPClassType)inst : cls; 
+		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredClassInstance) ?
+		    					(ICPPClassType) inst : cls; 
 		    		}
 		    	}
 		    	if (cls != null) {
-		    		//force resolution of constructor bindings
+		    		// Force resolution of constructor bindings
 		    		IBinding[] ctors = cls.getConstructors();
 		    		if (ctors.length > 0 && !(ctors[0] instanceof IProblemBinding)) {
-		    			//then use the class scope to resolve which one.
-		    			binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding(data.astName, true);
+		    			// then use the class scope to resolve which one.
+		    			binding = ((ICPPClassScope) cls.getCompositeScope()).getBinding(data.astName, true);
 		    		}
 		    	}
             } catch (DOMException e) {
@@ -2109,7 +2110,8 @@ public class CPPSemantics {
 			    }
 				
 				if (isImpliedObject && ASTInternal.isStatic(currFn, false)) {
-				    // 13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
+				    // 13.3.1-4 for static member functions, the implicit object parameter is
+					// considered to match any object
 				    cost = new Cost(source, target);
 					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else if (source == null) {
@@ -2121,7 +2123,8 @@ public class CPPSemantics {
 					cost = new Cost(source, target);
 					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else {
-					cost= Conversions.checkImplicitConversionSequence(!data.forUserDefinedConversion, sourceExp, source, target, isImpliedObject);
+					cost= Conversions.checkImplicitConversionSequence(!data.forUserDefinedConversion,
+							sourceExp, source, target, isImpliedObject);
 				}
 				
 				currFnCost[j] = cost;

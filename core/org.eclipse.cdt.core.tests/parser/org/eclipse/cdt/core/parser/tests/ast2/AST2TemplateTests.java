@@ -3552,4 +3552,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("func(p)", 4, ICPPFunction.class);
     }
+
+	//  template <typename CL, typename T>
+	//  struct A {
+	//    template<typename U> struct C {
+	//      typedef T (U::*method1)() const;
+	//    };
+	//    typedef typename C<CL>::method1 method2;
+	//
+	//    A(method2 p);
+	//  };
+	//
+	//  struct B {
+	//    int m() const;
+	//
+	//    void test() {
+	//      new A<B, int>(&B::m);
+	//    }
+	//  };
+    public void _testNestedTemplates_259872() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
+    }
 }

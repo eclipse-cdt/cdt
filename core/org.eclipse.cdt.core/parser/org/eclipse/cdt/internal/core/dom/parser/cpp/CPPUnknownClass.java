@@ -90,15 +90,15 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 			return type.isSameType(this);
 		
 		if (type instanceof ICPPUnknownClassType 
-				&& type instanceof ICPPUnknownClassInstance == false
-				&& type instanceof ICPPDeferredClassInstance == false) {
+				&& !(type instanceof ICPPUnknownClassInstance)
+				&& !(type instanceof ICPPDeferredClassInstance)) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
 				try {
 					final IBinding lhsContainer = getOwner();
 					final IBinding rhsContainer = rhs.getOwner();
 					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-						return ((IType)lhsContainer).isSameType((IType) rhsContainer);
+						return ((IType) lhsContainer).isSameType((IType) rhsContainer);
 					}
 				} catch (DOMException e) {
 				}

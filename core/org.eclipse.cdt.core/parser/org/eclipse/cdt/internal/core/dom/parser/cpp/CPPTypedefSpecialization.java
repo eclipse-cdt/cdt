@@ -68,7 +68,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		            	if (CharArrayUtils.equals(td.getNameCharArray(), getNameCharArray())) {
 			            	IBinding owner= ((ICPPSpecialization) type).getOwner();
 			            	if (owner instanceof IType) {
-			            		if (((IType)owner).isSameType((ICPPClassType) getOwner())) {
+			            		if (((IType) owner).isSameType((ICPPClassType) getOwner())) {
 					        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
 			            		}
 			            	}

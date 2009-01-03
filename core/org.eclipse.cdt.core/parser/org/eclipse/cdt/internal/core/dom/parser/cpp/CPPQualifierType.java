@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -22,11 +23,11 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPQualifierType implements IQualifierType, ITypeContainer {
-    private boolean isConst = false;
-    private boolean isVolatile = false;
-    private IType type = null;
+    private final boolean isConst;
+    private final boolean isVolatile;
+    private IType type;
     
-    public CPPQualifierType( IType type, boolean isConst, boolean isVolatile ){
+    public CPPQualifierType(IType type, boolean isConst, boolean isVolatile) {
         this.type = type;
         this.isConst = isConst;
         this.isVolatile = isVolatile;
@@ -68,18 +69,23 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer {
         return type;
     }
     
-    public void setType( IType t ){
+    public void setType(IType t) {
         type = t;
     }
     
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
     }
+
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
+	}
 }

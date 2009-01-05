@@ -530,14 +530,16 @@ public class BreakpointManager extends Manager {
 	}
 
 	/**
-	 * Use by the EventManager when checking for deferred breapoints.
+	 * Use by the EventManager when checking for deferred breakpoints.
 	 * @param bkpt
 	 */
-	public void addToBreakpointList(Breakpoint bkpt) {
-		List bList = (List)breakMap.get(bkpt.getTarget());
-		if (bList != null) {
-			bList.add(bkpt);
+	public synchronized void addToBreakpointList(Breakpoint bkpt) {
+		List bList = (List) breakMap.get(bkpt.getTarget());
+		if (bList == null) {
+			bList = Collections.synchronizedList(new ArrayList());
+			breakMap.put(bkpt.getTarget(), bList);
 		}
+		bList.add(bkpt);
 	}
 
 	public void deleteAllBreakpoints(Target target) throws CDIException {

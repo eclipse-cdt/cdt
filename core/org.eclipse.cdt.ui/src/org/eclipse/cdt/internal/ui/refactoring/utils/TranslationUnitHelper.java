@@ -12,11 +12,14 @@
 
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
@@ -52,9 +55,13 @@ public class TranslationUnitHelper {
 	public static IASTTranslationUnit loadTranslationUnit(String filename, boolean useIndex) throws CoreException{
 
 		if (filename != null) {
-			IPath path = new Path(filename);
-			IFile tmpFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			return loadTranslationUnit(tmpFile, useIndex);
+			IFile[] tmpFile = null;
+			try {
+				tmpFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new URI("file://" + filename)); //$NON-NLS-1$
+			} catch (URISyntaxException e) {
+				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, e.getMessage(), e));
+			}
+			return loadTranslationUnit(tmpFile[0], useIndex);
 		}
 
 		return null;

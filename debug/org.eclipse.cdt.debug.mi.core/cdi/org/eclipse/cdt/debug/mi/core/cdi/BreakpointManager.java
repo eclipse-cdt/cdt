@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -89,7 +90,7 @@ public class BreakpointManager extends Manager {
 		allowInterrupt = true;
 	}
 
-	synchronized List getBreakpointsList(Target target) {
+	synchronized List getBreakpointsList(ICDITarget target) {
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
 			bList = Collections.synchronizedList(new ArrayList());
@@ -534,10 +535,8 @@ public class BreakpointManager extends Manager {
 	 * @param bkpt
 	 */
 	public void addToBreakpointList(Breakpoint bkpt) {
-		List bList = (List)breakMap.get(bkpt.getTarget());
-		if (bList != null) {
-			bList.add(bkpt);
-		}
+		List bList = getBreakpointsList(bkpt.getTarget());
+		bList.add(bkpt);
 	}
 
 	public void deleteAllBreakpoints(Target target) throws CDIException {

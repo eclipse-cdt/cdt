@@ -125,7 +125,7 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 				// is this an unexpected exit?
 				if (_dataStore.isConnected()){
 					// server exited without client exit
-					Exception e = new Exception("Server terminated unexpectedly");
+					Exception e = new Exception("Server terminated unexpectedly"); //$NON-NLS-1$
 					handleError(e);
 				}
 			}

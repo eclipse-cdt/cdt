@@ -247,13 +247,8 @@ public class RemoteClassLoader extends ClassLoader
 		}
 		else if (!request.isLoaded())
 		{
-			System.out.println("request is not loaded");
 			// the class has been requested before, but it has not yet been received
-		//	System.out.println(className + " already requested but not loaded. Waiting for request to load.");
-
-			System.out.println("waiting for response...");
 			request.waitForResponse(); // just wait until the class is received
-			System.out.println("...finished waiting for response");
 			
 			// after the class is received, get it from the repository and return it
 			// or if the class failed to be received, throw an exception

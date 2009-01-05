@@ -207,7 +207,7 @@ public class MinerLoader implements ISchemaRegistry
 						_minerList.add(name);
 					}
 					else {
-						System.out.println("miner is null");
+						System.out.println("miner is null"); //$NON-NLS-1$
 					}
 				}
 			}

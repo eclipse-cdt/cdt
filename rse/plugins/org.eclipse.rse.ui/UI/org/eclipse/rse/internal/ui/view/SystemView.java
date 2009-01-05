@@ -66,6 +66,7 @@
  * David McKnight   (IBM)        - [241744] Refresh collapse low level nodes which is expended before.
  * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  * David McKnight   (IBM)        - [251625] Widget disposed exception when renaming/pasting a folder
+ * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -391,6 +392,8 @@ public class SystemView extends SafeTreeViewer
 	protected ViewerFilter[] initViewerFilters = null;
 
 	protected List _setList;
+	
+	protected boolean _allowAdapterToHandleDoubleClick = true;
 
 	/**
 	 * Constructor
@@ -643,7 +646,14 @@ public class SystemView extends SafeTreeViewer
 		TreePath[] paths = s.getPathsFor(element);
 		if (paths == null || paths.length == 0 || paths[0] == null) return;
 		TreePath elementPath = paths[0];
-		if (isExpandable(elementPath)) {
+		
+		// bringing back handling at the adapter level here due to bug 257721
+		ISystemViewElementAdapter adapter = getViewAdapter(element);
+		boolean alreadyHandled = false;
+		if (adapter != null && _allowAdapterToHandleDoubleClick) 
+			alreadyHandled = adapter.handleDoubleClick(element);	
+		
+		if (!alreadyHandled && isExpandable(element)) {
 			boolean expandedState = getExpandedState(elementPath);
 			setExpandedState(elementPath, !expandedState);
 			// DWD:  fire collapse / expand event
@@ -6642,5 +6652,8 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
-
+	public void allowAdapterToHandleDoubleClick(boolean flag)
+	{
+		_allowAdapterToHandleDoubleClick = flag;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -155,6 +158,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			return initStatus;
 
 		container.findAllNames();
+		markWriteAccess();
 		sm.worked(1);
 
 		if (isProgressMonitorCanceld(sm, initStatus))
@@ -176,7 +180,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		} else if (container.getAllDeclaredInScope().size() == 1) {
 			info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
 		}
-
+		
 		extractedFunctionConstructionHelper = ExtractedFunctionConstructionHelper
 				.createFor(container.getNodesToWrite());
 
@@ -188,6 +192,19 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		info.setMethodContext(context);
 		sm.done();
 		return status;
+	}
+
+	private void markWriteAccess() throws CoreException {
+		ArrayList<NameInformation> paras = container.getNames();
+
+		for (NameInformation name : paras) {
+			int flag = CPPVariableReadWriteFlags.getReadWriteFlags(name
+					.getName());
+			if ((flag & PDOMName.WRITE_ACCESS) != 0) {
+				name.setWriteAccess(true);
+			}
+		}
+
 	}
 
 	private void checkForNonExtractableStatements(NodeContainer cont,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -49,11 +49,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 
 public class NodeContainer {
+	
+	public final NameInformation NULL_NAME_INFORMATION = new NameInformation(
+			new CPPASTName());
 
 	private final ArrayList<IASTNode> vec;
 	private final ArrayList<NameInformation> names;
 
 	public class NameInformation {
+
 		private IASTName name;
 		private IASTName declaration;
 		private final ArrayList<IASTName> references;
@@ -61,6 +65,8 @@ public class NodeContainer {
 		private int lastCachedReferencesHash;
 		private boolean isReference;
 		private boolean isReturnValue;
+		private boolean isConst;
+		private boolean isWriteAccess;
 
 		private boolean userSetIsReference;
 		private boolean userSetIsReturnValue;
@@ -103,7 +109,7 @@ public class NodeContainer {
 
 		public ArrayList<IASTName> getReferencesAfterSelection() {
 			if (referencesAfterCached == null
-					|| lastCachedReferencesHash == references.hashCode()) {
+					|| lastCachedReferencesHash != references.hashCode()) {
 
 				lastCachedReferencesHash = references.hashCode();
 				referencesAfterCached = new ArrayList<IASTName>();
@@ -139,14 +145,16 @@ public class NodeContainer {
 
 			IASTDeclarator declarator;
 			if (sourceDeclarator instanceof IASTArrayDeclarator) {
-				IASTArrayDeclarator arrDeclarator = (IASTArrayDeclarator)sourceDeclarator;
+				IASTArrayDeclarator arrDeclarator = (IASTArrayDeclarator) sourceDeclarator;
 				declarator = new CPPASTArrayDeclarator();
-				IASTArrayModifier[] arrayModifiers = arrDeclarator.getArrayModifiers();
+				IASTArrayModifier[] arrayModifiers = arrDeclarator
+						.getArrayModifiers();
 				for (IASTArrayModifier arrayModifier : arrayModifiers) {
-					((IASTArrayDeclarator)declarator).addArrayModifier(arrayModifier);
+					((IASTArrayDeclarator) declarator)
+							.addArrayModifier(arrayModifier);
 				}
-				
-			}else {
+
+			} else {
 				declarator = new CPPASTDeclarator();
 			}
 			declarator.setName(new CPPASTName(getDeclaration().toCharArray()));
@@ -167,7 +175,7 @@ public class NodeContainer {
 		}
 
 		public boolean hasReferenceOperartor(IASTDeclarator declarator) {
-			for(IASTPointerOperator pOp :declarator.getPointerOperators()) {
+			for (IASTPointerOperator pOp : declarator.getPointerOperators()) {
 				if (pOp instanceof ICPPASTReferenceOperator) {
 					return true;
 				}
@@ -206,7 +214,8 @@ public class NodeContainer {
 
 		@Override
 		public String toString() {
-			return Messages.NodeContainer_Name + name + ' ' + isDeclarationInScope(); 
+			return Messages.NodeContainer_Name + name + ' '
+					+ isDeclarationInScope();
 		}
 
 		public boolean isReference() {
@@ -248,6 +257,23 @@ public class NodeContainer {
 		public void setUserSetName(String userSetName) {
 			this.userSetName = userSetName;
 		}
+
+		public boolean isConst() {
+			return isConst;
+		}
+
+		public void setConst(boolean isConst) {
+			this.isConst = isConst;
+		}
+
+		public boolean isWriteAccess() {
+			return isWriteAccess;
+		}
+
+		public void setWriteAccess(boolean isWriteAceess) {
+			this.isWriteAccess = isWriteAceess;
+		}
+
 	}
 
 	public NodeContainer() {
@@ -371,6 +397,14 @@ public class NodeContainer {
 
 				declarations.add(nameInf.getDeclaration());
 				usedAfter.add(nameInf);
+			} else {
+				for (NameInformation nameInformation : usedAfter) {
+					if (nameInf.isWriteAccess()
+							&& nameInf.getDeclaration() == nameInformation
+									.getDeclaration()) {
+						nameInformation.setWriteAccess(true);
+					}
+				}
 			}
 		}
 
@@ -493,4 +527,5 @@ public class NodeContainer {
 	public ArrayList<NameInformation> getNames() {
 		return names;
 	}
+	
 }

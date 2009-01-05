@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+
 
 public class ChooserComposite extends Composite {
 
@@ -71,6 +72,7 @@ public class ChooserComposite extends Composite {
 		addColumnToTable(table, COLUMN_TYPE);
 		addColumnToTable(table, COLUMN_NAME);
 		addColumnToTable(table, COLUMN_REFERENCE);
+		addColumnToTable(table, Messages.ChooserComposite_const);
 		if(!info.isExtractExpression()) {
 			addColumnToTable(table, COLUMN_RETURN);
 		}
@@ -118,6 +120,34 @@ public class ChooserComposite extends Composite {
 				editor.horizontalAlignment = SWT.CENTER;
 				referenceButtons.add(referenceButton);
 				editor.setEditor(referenceButton, item, columnIndex++);
+				
+				// Cosnt Button
+				editor = new TableEditor(table);
+				final Button constButton = new Button(table, SWT.CHECK);
+				
+				constButton.setSelection(name.isConst());
+				constButton.setEnabled(!name.isWriteAccess());
+
+				constButton.setBackground(table.getBackground());
+				constButton.addSelectionListener(new SelectionListener() {
+
+					public void widgetDefaultSelected(SelectionEvent e) {
+						name.setConst(constButton
+								.getSelection());
+						onVisibilityOrReturnChange(info.getAllUsedNames());
+					}
+
+					public void widgetSelected(SelectionEvent e) {
+						widgetDefaultSelected(e);
+					}
+
+				});
+				constButton.pack();
+				editor.minimumWidth = constButton.getSize().x;
+				editor.horizontalAlignment = SWT.CENTER;
+//				referenceButtons.add(referenceButton);
+				editor.setEditor(constButton, item, columnIndex++);
+				
 
 				if(info.isExtractExpression())
 					continue; // Skip the return radiobutton

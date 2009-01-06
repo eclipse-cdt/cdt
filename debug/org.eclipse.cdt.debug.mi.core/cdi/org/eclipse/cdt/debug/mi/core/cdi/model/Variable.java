@@ -348,7 +348,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			} else if (t instanceof ICDIPointerType) {
 				value = new PointerValue(this);
 			} else if (t instanceof ICDIReferenceType) {
-				value = new ReferenceValue(this, getHexAddress());
+				value = new ReferenceValue(this);
 			} else if (t instanceof ICDIArrayType) {
 				value = new ArrayValue(this, getHexAddress());
 			} else if (t instanceof ICDIStructType) {

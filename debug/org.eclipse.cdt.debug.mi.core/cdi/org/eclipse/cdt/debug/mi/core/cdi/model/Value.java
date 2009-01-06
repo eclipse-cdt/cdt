@@ -27,6 +27,14 @@ public class Value extends CObject implements ICDIValue {
 
 	protected Variable fVariable;
 
+	/**
+	 * Indicates whether this Value object is for a C++ reference variable. If
+	 * it is, then some decoding is needed on the value string we get from gdb,
+	 * since it will contain two things: the address of the variable being
+	 * referenced and the value.
+	 */
+	protected boolean fIsReference;
+
 	public Value(Variable v) {
 		super((Target)v.getTarget());
 		fVariable = v;
@@ -64,6 +72,19 @@ public class Value extends CObject implements ICDIValue {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			result = info.getValue();
+			
+			// Reference variables get back a string with two things: the address of the 
+			// variable being referenced and the value of the variable. The expected
+			// format is, by example (for a float&):	"@0x22cc98: 3.19616001e-39"
+			// We need to dig out the latter.
+			if (fIsReference) {
+				if (result.startsWith("@0x")) {
+					int index = result.indexOf(':');
+					if (index > 0 && ((index + 1) < result.length())) {
+						result = result.substring(index+1).trim();
+					}
+				}
+			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
@@ -114,6 +135,19 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public ICDIType getType() throws CDIException {
 		return getVariable().getType();
+	}
+
+	/**
+	 * Call this after construction with 'true' if the Value is for a reference
+	 * variable. See {@link #fIsReference}.
+	 * 
+	 * Ideally, this property would be passed to the constructor. However
+	 * introducing it that way at this point in time would cause a lot of churn
+	 * in the codebase, since this class is not directly instantiated, and it
+	 * has many subclasses.
+	 */
+	public void setIsReference(boolean isReference) {
+		fIsReference = isReference;
 	}
 
 }

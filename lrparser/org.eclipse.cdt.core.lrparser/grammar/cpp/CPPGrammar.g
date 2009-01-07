@@ -321,21 +321,8 @@ $Rules
 -- caught at the top level.
 
 translation_unit
-    ::= external_declaration_list
+    ::= declaration_seq_opt
           /. $Build  consumeTranslationUnit(); $EndBuild ./
-      | $empty
-          /. $Build  consumeTranslationUnit(); $EndBuild ./
-
-
-external_declaration_list
-    ::= external_declaration
-      | external_declaration_list external_declaration
-      
-      
-external_declaration
-    ::= declaration
-      | ERROR_TOKEN
-          /. $Build  consumeDeclarationProblem();  $EndBuild ./
       
 
 ------------------------------------------------------------------------------------------
@@ -914,6 +901,8 @@ declaration
       | explicit_specialization
       | linkage_specification
       | namespace_definition
+      | ERROR_TOKEN
+          /. $Build  consumeDeclarationProblem();  $EndBuild ./
 
 
 block_declaration
@@ -1179,8 +1168,8 @@ named_namespace_definition
 unnamed_namespace_definition
     ::= 'namespace' '{' <openscope-ast> declaration_seq_opt '}'
            /. $Build  consumeNamespaceDefinition(false);  $EndBuild ./
-
-
+          
+          
 namespace_alias_definition
     ::= 'namespace' identifier_token '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
            /. $Build  consumeNamespaceAliasDefinition(); $EndBuild ./

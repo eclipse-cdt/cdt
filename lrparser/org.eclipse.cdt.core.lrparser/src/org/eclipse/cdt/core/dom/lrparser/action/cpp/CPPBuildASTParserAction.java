@@ -1448,8 +1448,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		if(declarator instanceof IASTFunctionDeclarator && declarator.getName() instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qualifiedName = (ICPPASTQualifiedName) declarator.getName();
-			IASTName lastName = qualifiedName.getLastName();
-			if(qualifiedName.isFullyQualified() && (lastName.getLookupKey()[0] == '~' || isSameName(name, lastName))) {
+			//IASTName lastName = qualifiedName.getLastName();
+			
+			if(qualifiedName.isFullyQualified()) {
 				
 				ICPPASTQualifiedName newQualifiedName = nodeFactory.newQualifiedName();
 				newQualifiedName.addName(name);

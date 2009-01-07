@@ -38,6 +38,15 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
 		parse(code, ParserLanguage.CPP, checkBindings, expectedProblemBindings);
 	}
 		
+	@Override
+	protected IASTTranslationUnit parseWithErrors(String code, ParserLanguage lang) throws ParserException {
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+		ParseHelper.Options options = new ParseHelper.Options();
+		options.setCheckBindings(false);
+		options.setCheckPreprocessorProblems(false);
+		options.setCheckSyntaxProblems(false);
+		return ParseHelper.parse(code, language, options);
+    }
 	
 	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
@@ -49,12 +58,24 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
     }
 	
 	@Override
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
+    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
+    	ParseHelper.Options options = new ParseHelper.Options();
+    	options.setCheckSyntaxProblems(expectNoProblems);
+    	options.setCheckPreprocessorProblems(expectNoProblems);
+    	options.setSkipTrivialInitializers(skipTrivialInitializers);
+    	return ParseHelper.parse(code, language, options);
+    }
+	
+	@Override
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, String[] problems) throws ParserException {
 		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
 		ParseHelper.Options options = new ParseHelper.Options();
 		options.setProblems(problems);
 		return ParseHelper.parse(code, language, options);
 	}
+	
+	
 	
 	protected BaseExtensibleLanguage getCLanguage() {
 		return C99Language.getDefault();

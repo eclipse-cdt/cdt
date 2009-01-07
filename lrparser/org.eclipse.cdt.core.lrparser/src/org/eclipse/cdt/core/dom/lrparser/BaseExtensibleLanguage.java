@@ -46,8 +46,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 	
-	private static final boolean DEBUG_PRINT_GCC_AST = true;
-	private static final boolean DEBUG_PRINT_AST     = true;
+	private static final boolean DEBUG_PRINT_GCC_AST = false;
+	private static final boolean DEBUG_PRINT_AST     = false;
 	
 	
 	/**
@@ -101,13 +101,14 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
-			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
-			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
-			
 			System.out.println();
 			System.out.println("********************************************************");
 			System.out.println("Parsing");
 			System.out.println("Options: " + options);
+			
+			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
+			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
+			
 			System.out.println("GPP AST:");
 			ASTPrinter.print(gtu);
 			System.out.println();

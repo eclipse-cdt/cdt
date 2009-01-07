@@ -422,12 +422,15 @@ dcolon_opt
 qualified_id_name
     ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name
           /. $Build  consumeQualifiedId(true);  $EndBuild ./
-      | '::' identifier_name
+      | '::' unqualified_id_name
           /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
-      | '::' operator_function_id_name
-          /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
-      | '::' template_id_name
-          /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
+      
+      --| '::' identifier_name
+      --    /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
+      --| '::' operator_function_id_name
+      --    /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
+      --| '::' template_id_name
+      --    /. $Build  consumeGlobalQualifiedId();  $EndBuild ./
 
 
 
@@ -959,9 +962,9 @@ declaration_specifiers
 
 
 declaration_specifiers_opt
-    ::=? $empty  -- this option must come first for constructors to parse correctly
+    ::= declaration_specifiers
+      | $empty 
           /. $Build  consumeEmpty();  $EndBuild ./
-      | declaration_specifiers
 
           
 
@@ -1189,6 +1192,7 @@ namespace_alias_definition
 --       | 'using' '::' unqualified_id_name ';'
       
       
+-- TODO why not just check if the second token is 'typename'?
 using_declaration
     ::= 'using' typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ';'
           /. $Build  consumeUsingDeclaration();  $EndBuild ./
@@ -1317,15 +1321,15 @@ cv_qualifier
           /. $Build  consumeDeclSpecToken(); $EndBuild ./
 
 
---declarator_id_name
---   ::= qualified_or_unqualified_name
---     | dcolon_opt nested_name_specifier_opt type_name
---          /. $Build  consumeQualifiedId(false);  $EndBuild ./
-      
 declarator_id_name
-   ::= unqualified_id_name
-     | <empty> nested_name_specifier template_opt unqualified_id_name
-         /. $Build  consumeQualifiedId(true);  $EndBuild ./
+   ::= qualified_or_unqualified_name
+     | dcolon_opt nested_name_specifier_opt type_name
+          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      
+--declarator_id_name
+--   ::= unqualified_id_name
+--     | <empty> nested_name_specifier template_opt unqualified_id_name
+--         /. $Build  consumeQualifiedId(true);  $EndBuild ./
   
 
 type_id
@@ -1749,10 +1753,10 @@ template_argument_list_opt
 
 template_argument
     ::= assignment_expression
+          /. $Build  consumeTemplateArgumentExpression();  $EndBuild ./
       | type_id
           /. $Build  consumeTemplateArgumentTypeId();  $EndBuild ./
       --| qualified_or_unqualified_name -- accessible through assignment_expression
-
 
 explicit_instantiation
     ::= 'template' declaration

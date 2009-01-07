@@ -12,46 +12,26 @@ package org.eclipse.cdt.core.parser.util;
 
 import java.io.PrintStream;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
-import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
- * A utility that prints an AST to the console, useful for debugging purposes.
+ * A utility that prints an AST to the console or any print stream, useful for debugging purposes.
  * 
  * @author Mike Kucera
  */
@@ -67,30 +47,30 @@ public class ASTPrinter {
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */
-	public static boolean print(IASTNode root, PrintStream out) {
-		if (root == null) {
+	public static boolean print(IASTNode node, PrintStream out) {
+		if (node == null) {
 			out.println("null"); 
 			return false;
 		}
 		
-		if (root instanceof IASTTranslationUnit) {
-			IASTPreprocessorStatement[] preStats = ((IASTTranslationUnit)root).getAllPreprocessorStatements();
+		if (node instanceof IASTTranslationUnit) {
+			IASTPreprocessorStatement[] preStats = ((IASTTranslationUnit)node).getAllPreprocessorStatements();
 			if (preStats != null) {
 				for (IASTPreprocessorStatement stat : preStats)
 					print(out, 0, stat);
 			}
 		}
 
-		root.accept(new PrintVisitor(out));
+		printAST(out, 0, node);
 		
-		if (root instanceof IASTTranslationUnit) {
-			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
+		if (node instanceof IASTTranslationUnit) {
+			IASTProblem[] problems = ((IASTTranslationUnit)node).getPreprocessorProblems();
 			if (problems != null) {
 				for (IASTProblem problem : problems)
 					print(out, 0, problem);
 			}
 			
-			IASTComment[] comments = ((IASTTranslationUnit)root).getComments();
+			IASTComment[] comments = ((IASTTranslationUnit)node).getComments();
 			if (comments != null) {
 				for (IASTComment comment : comments)
 					print(out, 0, comment);
@@ -109,22 +89,23 @@ public class ASTPrinter {
 		return print(root, System.out);
 	}
 	
+	
 	/**
 	 * Prints problem nodes in the AST to the given printstream.
 	 * 
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */
-	public static boolean printProblems(IASTNode root, PrintStream out) {
-		if (root == null) {
+	public static boolean printProblems(IASTNode node, PrintStream out) {
+		if (node == null) {
 			out.println("null");
 			return false;
 		}
 		
-		root.accept(new ProblemVisitor(out));
+		printASTProblems(out, 0, node);
 		
-		if (root instanceof IASTTranslationUnit) {
-			IASTProblem[] problems = ((IASTTranslationUnit)root).getPreprocessorProblems();
+		if (node instanceof IASTTranslationUnit) {
+			IASTProblem[] problems = ((IASTTranslationUnit)node).getPreprocessorProblems();
 			if (problems != null) {
 				for (IASTProblem problem : problems) {
 					print(out, 0, problem);
@@ -144,6 +125,31 @@ public class ASTPrinter {
 	public static boolean printProblems(IASTNode root) {
 		return printProblems(root, System.out);
 	}
+	
+	
+	
+	private static void printAST(PrintStream out, int indent, IASTNode node) {
+		print(out, indent, node);
+		indent++;
+		for(IASTNode child : node.getChildren()) {
+			printAST(out, indent, child);
+		}
+	}
+	
+	
+	private static void printASTProblems(PrintStream out, int indent, IASTNode node) {
+		if(node instanceof IASTProblem)
+			print(out, indent, node);
+		
+		indent++;
+		for(IASTNode child : node.getChildren()) {
+			printASTProblems(out, indent, child);
+		}
+	}
+	
+	
+	
+	
 	
 	private static void print(PrintStream out, int indentLevel, Object n) {
 		for (int i = 0; i < indentLevel; i++)
@@ -179,7 +185,16 @@ public class ASTPrinter {
 		}
 		
 		if (n instanceof IASTName) {
+			IASTName name = (IASTName)n;
 			out.print(" " + ((IASTName)n).toString()); 
+			if (RESOLVE_BINDINGS) {
+				try {
+					IBinding binding = name.resolveBinding();
+					print(out, indentLevel, binding);
+				} catch(Exception e) {
+					System.out.println("Exception while resolving binding: " + name);
+				}
+			}
 		} else if (n instanceof ICASTPointer) {
 			ICASTPointer pointer = (ICASTPointer) n;
 			if (pointer.isConst())
@@ -243,308 +258,4 @@ public class ASTPrinter {
 		out.println();
 	}
 	
-	private static class ProblemVisitor extends ASTVisitor {
-		private PrintStream out;
-		
-		ProblemVisitor(PrintStream out) {
-			this.out = out;
-			shouldVisitProblems = 
-			shouldVisitDeclarations = 
-			shouldVisitStatements = 
-			shouldVisitExpressions = true;
-		}
-
-		@Override
-		public int visit(IASTProblem problem) {
-			print(out, 1, problem);
-			return PROCESS_CONTINUE;
-		}
-		
-		@Override
-		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTProblemDeclaration)
-				print(out, 0, declaration);
-			return PROCESS_CONTINUE;
-		}
-		
-		@Override
-		public int visit(IASTExpression expression) {
-			if (expression instanceof IASTProblemExpression)
-				print(out, 0, expression);
-			return PROCESS_CONTINUE;
-		}
-		
-		@Override
-		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTProblemStatement)
-				print(out, 0, statement);
-			return PROCESS_CONTINUE;
-		}
-	}
-	
-	/**
-	 * This visitor extends from CPPASTVisitor but you can still
-	 * apply it to a plain C AST and it will print everything
-	 * except designators.
-	 */
-	private static class PrintVisitor extends CPPASTVisitor {
-
-		private PrintStream out;
-		private int indentLevel = 0;
-		
-		PrintVisitor(PrintStream out) {
-			this.out = out;
-			shouldVisitNames = 
-			shouldVisitDeclarations = 
-			shouldVisitInitializers = 
-			shouldVisitParameterDeclarations = 
-			shouldVisitDeclarators = 
-			shouldVisitDeclSpecifiers = 
-			shouldVisitExpressions = 
-			shouldVisitStatements = 
-			shouldVisitTypeIds = 
-			shouldVisitEnumerators = 
-			shouldVisitTranslationUnit = 
-			shouldVisitProblems = 
-			shouldVisitDesignators =
-			shouldVisitBaseSpecifiers = 
-			shouldVisitNamespaces =
-			shouldVisitTemplateParameters = true;
-		}
-		
-		private void print(IASTNode node) {
-			ASTPrinter.print(out, indentLevel,  node);
-		}
-		
-		private void print(IBinding binding) {
-			ASTPrinter.print(out, indentLevel, binding);
-		}
-
-//		@Override
-//		public int visit(ICASTDesignator designator) {
-//			print(designator);
-//			indentLevel++;
-//			return super.visit(designator);
-//		}
-		
-		@Override
-		public int visit(IASTDeclaration declaration) {
-			print(declaration);
-			indentLevel++;
-			return super.visit(declaration);
-		}
-
-		@Override
-		public int visit(IASTDeclarator declarator) {
-			print(declarator);
-			indentLevel++;
-			IASTPointerOperator[] pointers = declarator.getPointerOperators();
-			for (IASTPointerOperator pointer : pointers) {
-				print(pointer);
-			}
-			if (declarator instanceof IASTArrayDeclarator) {
-				IASTArrayDeclarator decl = (IASTArrayDeclarator)declarator;
-				org.eclipse.cdt.core.dom.ast.IASTArrayModifier[] modifiers = decl.getArrayModifiers();
-				for (IASTArrayModifier modifier : modifiers) {
-					print(modifier);
-				}
-			}
-			return super.visit(declarator);
-		}
-
-		@Override
-		public int visit(IASTDeclSpecifier declSpec) {
-			print(declSpec);
-			indentLevel++;
-			return super.visit(declSpec);
-		}
-
-		@Override
-		public int visit(IASTEnumerator enumerator) {
-			print(enumerator);
-			indentLevel++;
-			return super.visit(enumerator);
-		}
-
-		@Override
-		public int visit(IASTExpression expression) {
-			print(expression);
-			indentLevel++;
-			return super.visit(expression);
-		}
-
-		@Override
-		public int visit(IASTInitializer initializer) {
-			print(initializer);
-			indentLevel++;
-			return super.visit(initializer);
-		}
-
-		@Override
-		public int visit(IASTName name) {
-			print(name);
-			if (RESOLVE_BINDINGS) {
-				try {
-					IBinding binding = name.resolveBinding();
-					print(binding);
-				} catch(Exception e) {
-					System.out.println("Exception while resolving binding: " + name);
-				}
-			}
-			indentLevel++;
-			return super.visit(name);
-		}
-
-		@Override
-		public int visit(IASTParameterDeclaration parameterDeclaration) {
-			print(parameterDeclaration);
-			indentLevel++;
-			return super.visit(parameterDeclaration);
-		}
-
-		@Override
-		public int visit(IASTProblem problem) {
-			print(problem);
-			indentLevel++;
-			return super.visit(problem);
-		}
-
-		@Override
-		public int visit(IASTStatement statement) {
-			print(statement);
-			indentLevel++;
-			return super.visit(statement);
-		}
-
-		@Override
-		public int visit(IASTTranslationUnit tu) {
-			print(tu);
-			indentLevel++;
-			return super.visit(tu);
-		}
-
-		@Override
-		public int visit(IASTTypeId typeId) {
-			print(typeId);
-			indentLevel++;
-			return super.visit(typeId);
-		}
-
-		@Override
-		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
-			print(baseSpecifier);
-			indentLevel++;
-			return super.visit(baseSpecifier);
-		}
-
-		@Override
-		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-			print(namespaceDefinition);
-			indentLevel++;
-			return super.visit(namespaceDefinition);
-		}
-
-		@Override
-		public int visit(ICPPASTTemplateParameter templateParameter) {
-			print(templateParameter);
-			indentLevel++;
-			return super.visit(templateParameter);
-		}
-		
-//		@Override
-//		public int leave(ICASTDesignator designator) {
-//			indentLevel--;
-//			return super.leave(designator);
-//		}
-
-		@Override
-		public int leave(IASTDeclaration declaration) {
-			indentLevel--;
-			return super.leave(declaration);
-		}
-
-		@Override
-		public int leave(IASTDeclarator declarator) {
-			indentLevel--;
-			return super.leave(declarator);
-		}
-
-		@Override
-		public int leave(IASTDeclSpecifier declSpec) {
-			indentLevel--;
-			return super.leave(declSpec);
-		}
-
-		@Override
-		public int leave(IASTEnumerator enumerator) {
-			indentLevel--;
-			return super.leave(enumerator);
-		}
-
-		@Override
-		public int leave(IASTExpression expression) {
-			indentLevel--;
-			return super.leave(expression);
-		}
-
-		@Override
-		public int leave(IASTInitializer initializer) {
-			indentLevel--;
-			return super.leave(initializer);
-		}
-
-		@Override
-		public int leave(IASTName name) {
-			indentLevel--;
-			return super.leave(name);
-		}
-
-		@Override
-		public int leave(IASTParameterDeclaration parameterDeclaration) {
-			indentLevel--;
-			return super.leave(parameterDeclaration);
-		}
-
-		@Override
-		public int leave(IASTProblem problem) {
-			indentLevel--;
-			return super.leave(problem);
-		}
-
-		@Override
-		public int leave(IASTStatement statement) {
-			indentLevel--;
-			return super.leave(statement);
-		}
-
-		@Override
-		public int leave(IASTTranslationUnit tu) {
-			indentLevel--;
-			return super.leave(tu);
-		}
-
-		@Override
-		public int leave(IASTTypeId typeId) {
-			indentLevel--;
-			return super.leave(typeId);
-		}
-		
-		@Override
-		public int leave(ICPPASTBaseSpecifier baseSpecifier) {
-			indentLevel--;
-			return super.leave(baseSpecifier);
-		}
-
-		@Override
-		public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
-			indentLevel--;
-			return super.leave(namespaceDefinition);
-		}
-
-		@Override
-		public int leave(ICPPASTTemplateParameter templateParameter) {
-			indentLevel--;
-			return super.leave(templateParameter);
-		}
-	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -266,7 +267,15 @@ public abstract class BuildASTParserAction {
 	protected static void setOffsetAndLength(IASTNode node, int offset, int length) {
 		((ASTNode)node).setOffsetAndLength(offset, length);
 	}
+	
+	protected static void setOffsetAndLength(IASTNode node, IASTNode from) {
+		setOffsetAndLength(node, offset(from), length(from));
+	}
 
+	
+	protected static boolean isSameName(IASTName name1, IASTName name2) {
+		return Arrays.equals(name1.getLookupKey(), name2.getLookupKey());
+	}
 	
 	/**
 	 * Creates a IASTName node from an identifier token.
@@ -519,8 +528,10 @@ public abstract class BuildASTParserAction {
 		List<IToken> tokens = parser.getRuleTokens();
 		
 		IASTNode result;
-		if(expressionStatement == null)
+		if(expressionStatement == null) 
 			result = declarationStatement;
+		else if(expressionStatement.getExpression() instanceof IASTFunctionCallExpression)
+			result = expressionStatement;
 		else if(tokens.size() == 2 && (isCompletionToken(tokens.get(0)) || isIdentifierToken(tokens.get(0)))) // identifier followed by semicolon
 			result = expressionStatement;
 		else if(isImplicitInt(decl))
@@ -534,6 +545,7 @@ public abstract class BuildASTParserAction {
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
 	
 	protected abstract IASTAmbiguousStatement createAmbiguousStatement(IASTStatement ... statements);
 	
@@ -657,9 +669,12 @@ public abstract class BuildASTParserAction {
 		}
 		else {
 			IASTExpressionList exprList = nodeFactory.newExpressionList();
+			
 			for(Object o : expressions) {
 				exprList.addExpression((IASTExpression)o);
 			}
+			
+			setOffsetAndLength(exprList);
 			astStack.push(exprList);
 		}
 		

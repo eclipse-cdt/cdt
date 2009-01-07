@@ -3,7 +3,7 @@
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Google - initial API and implementation
  *******************************************************************************/
@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -49,7 +52,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -63,7 +66,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * The main class for the Extract Local Variable refactoring. This refactoring
  * differs from the Extract Constant refactoring in that any valid expression
  * which can be used to initialize a local variable can be extracted.
- * 
+ *
  * @author Tom Ball
  */
 public class ExtractLocalVariableRefactoring extends CRefactoring {
@@ -119,7 +122,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		NodeHelper.findMethodContext(container.getNodesToWrite().get(0),
 				getIndex());
 		sm.worked(1);
-		
+
 		info.setName(guessTempName());
 		sm.done();
 		return initStatus;
@@ -129,7 +132,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		ArrayList<String> names = new ArrayList<String>();
 		IASTFunctionDefinition funcDef = NodeHelper
 				.findFunctionDefinitionInAncestors(target);
-		ICPPASTCompositeTypeSpecifier comTypeSpec = 
+		ICPPASTCompositeTypeSpecifier comTypeSpec =
 			getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
 			for (IASTDeclaration dec : comTypeSpec.getMembers()) {
@@ -149,16 +152,17 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		if (funcDef != null) {
 			IBinding binding = funcDef.getDeclarator().getName()
 					.resolveBinding();
-			if (binding instanceof CPPMethod) {
+			if (binding instanceof CPPFunction) {
 
-				CPPMethod method = (CPPMethod) binding;
-				IASTNode decl = method.getDeclarations()[0];
-
-				IASTNode spec = decl.getParent().getParent();
-				if (spec instanceof ICPPASTCompositeTypeSpecifier) {
-					ICPPASTCompositeTypeSpecifier compTypeSpec = 
-						(ICPPASTCompositeTypeSpecifier) spec;
-					return compTypeSpec;
+				CPPFunction function = (CPPFunction) binding;
+				IASTNode[] decls = function.getDeclarations();
+				if (decls != null && decls.length > 0) {
+					IASTNode spec = decls[0].getParent().getParent();
+					if (spec instanceof ICPPASTCompositeTypeSpecifier) {
+						ICPPASTCompositeTypeSpecifier compTypeSpec =
+							(ICPPASTCompositeTypeSpecifier) spec;
+						return compTypeSpec;
+					}
 				}
 			}
 		}
@@ -281,10 +285,10 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 		return new CPPASTDeclarationStatement(simple);
 	}
-	
+
 	/**
 	 * Removes surrounding parentheses from an expression.  If the expression
-	 * does not have surrounding parentheses, the original expression is returned. 
+	 * does not have surrounding parentheses, the original expression is returned.
 	 */
 	private static IASTExpression deblock(IASTExpression expression) {
 		if (expression instanceof IASTUnaryExpression) {
@@ -305,24 +309,36 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	/**
-	 * @return proposed variable names (may be empty, but not null). The first 
+	 * @return proposed variable names (may be empty, but not null). The first
 	 *         proposal should be used as "best guess" (if it exists).
 	 */
 	public String[] guessTempNames() {
 		final List<String> guessedTempNames = new ArrayList<String>();
+		final List<String> usedNames = new ArrayList<String>();
+		IASTFunctionDefinition funcDef = NodeHelper
+			.findFunctionDefinitionInAncestors(target);
+		final IScope scope;
+		if (funcDef != null &&
+				funcDef.getBody() instanceof IASTCompoundStatement) {
+			IASTCompoundStatement body = (IASTCompoundStatement)funcDef.getBody();
+			scope = body.getScope();
+		} else {
+			scope = null;
+		}
+
 		if (target != null) {
 			target.accept(new CPPASTVisitor() {
 				{
 					shouldVisitNames = true;
 					shouldVisitExpressions = true;
 				}
-				
+
 				@Override
 				public int visit(IASTName name) {
 					addTempName(name.getLastName().toString());
 					return super.visit(name);
 				}
-				
+
 				@Override
 				public int visit(IASTExpression expression) {
 					if (expression instanceof CPPASTLiteralExpression) {
@@ -342,7 +358,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				          case IASTLiteralExpression.lk_string_literal:
 				              name = literal.toString();
 				              break;
-				          case IASTLiteralExpression.lk_false: 
+				          case IASTLiteralExpression.lk_false:
 				          case IASTLiteralExpression.lk_true:
 				              name = "b"; //$NON-NLS-1$
 				              break;
@@ -353,7 +369,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 					}
 					return super.visit(expression);
 				}
-				
+
 				private void addTempName(String name) {
 					char[] tmpName = new char[name.length()];
 					int len = 0;
@@ -366,13 +382,51 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 						}
 					}
 					name = new String(tmpName, 0, len);
-					if (name.length() > 0 && !guessedTempNames.contains(name) && 
-							!info.getUsedNames().contains(name)) {
+					if (name.length() > 0) {
+						if (nameAvailable(name, guessedTempNames, scope)) {
 							guessedTempNames.add(name);
+						} else {
+							usedNames.add(name);
+						}
 					}
 				}
 			});
 		}
+		if (guessedTempNames.isEmpty()) {
+			String name = makeTempName(usedNames, scope);
+			if (name != null) {
+				guessedTempNames.add(name);
+			}
+		}
 		return guessedTempNames.toArray(new String[0]);
+	}
+
+	private boolean nameAvailable(String name, List<String> guessedNames, IScope scope) {
+		if (guessedNames.contains(name) ||
+				info.getUsedNames().contains(name)) {
+			return false;
+		}
+		try {
+			if (scope != null) {
+				IBinding[] bindings = scope.find(name);
+				return bindings == null || bindings.length == 0;
+			}
+		} catch (DOMException e) {
+			// fall-through
+		}
+		return true; // no name references found
+	}
+
+	private String makeTempName(List<String> usedNames, IScope scope) {
+		List<String> noNames = new ArrayList<String>();
+		for (int i = 0; i < 10; i++) {
+			for (String used : usedNames) {
+				String name = used + i;   // such as "i2"
+				if (nameAvailable(name, noNames, scope)) {
+					return name;
+				}
+			}
+		}
+		return null;
 	}
 }

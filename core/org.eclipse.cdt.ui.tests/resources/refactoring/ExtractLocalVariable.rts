@@ -250,3 +250,68 @@ int A::foo()
     return i;
 }
 
+//!ExtractLocalVariableRefactoringTest proposed name in scope
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+  A();
+  virtual ~A();
+  int foo();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+  A();
+  virtual ~A();
+  int foo();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+  int x = 3;
+  return /*$*/(x + 2)/*$$*/ * 15;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+  int x = 3;
+    int i = x + 2;
+    return i * 15;
+}
+

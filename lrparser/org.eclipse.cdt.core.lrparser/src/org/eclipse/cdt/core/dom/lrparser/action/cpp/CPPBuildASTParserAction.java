@@ -1880,15 +1880,23 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
  		
  		IASTName qualifiedId = subRuleQualifiedName(true);
- 		IASTDeclarator declarator = nodeFactory.newDeclarator(qualifiedId);
- 		setOffsetAndLength(declarator);
- 		// there has to be an empty specifier or... kaboom!
- 		IASTDeclSpecifier emptySpecifier = nodeFactory.newSimpleDeclSpecifier();
-		setOffsetAndLength(emptySpecifier, parser.getLeftIToken().getStartOffset(), 0);
- 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(emptySpecifier);
+ 		
+ 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=92793
+ 		ICPPASTUsingDeclaration declaration = nodeFactory.newUsingDeclaration(qualifiedId);
  		setOffsetAndLength(declaration);
- 		declaration.addDeclarator(declarator);
+ 		
  		astStack.push(declaration);
+ 		
+ 		
+// 		IASTDeclarator declarator = nodeFactory.newDeclarator(qualifiedId);
+// 		setOffsetAndLength(declarator);
+// 		IASTDeclSpecifier emptySpecifier = nodeFactory.newSimpleDeclSpecifier();
+//		setOffsetAndLength(emptySpecifier, parser.getLeftIToken().getStartOffset(), 0);
+// 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(emptySpecifier);
+// 		setOffsetAndLength(declaration);
+// 		declaration.addDeclarator(declarator);
+// 		
+// 		astStack.push(declaration);
  		
  		if(TRACE_AST_STACK) System.out.println(astStack);
  	}

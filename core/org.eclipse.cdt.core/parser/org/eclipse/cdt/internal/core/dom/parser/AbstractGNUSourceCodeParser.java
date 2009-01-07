@@ -488,7 +488,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     public IASTTranslationUnit parse() {
-    	if(1==1) throw new RuntimeException("KABOOM");
         long startTime = System.currentTimeMillis();
         translationUnit();
         log.traceLog("Parse " //$NON-NLS-1$

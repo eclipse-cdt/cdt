@@ -45,6 +45,7 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 		fContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		fTogglePresentation = new MakefileEditorTogglePresentationAction();
 		fOpenDeclarationAction = new OpenDeclarationAction();
+		fOpenDeclarationAction.setActionDefinitionId(IMakefileEditorActionDefinitionIds.OPEN_DECLARATION);
 		
 	}
 

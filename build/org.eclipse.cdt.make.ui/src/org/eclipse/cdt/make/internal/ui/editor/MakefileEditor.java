@@ -452,4 +452,14 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		// see http://bugs.eclipse.org/186106
 		return false;
 	}
+	
+	/*
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
+	 * @see http://bugs.eclipse.org/172331
+	 */
+	@Override
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String [] { "org.eclipse.cdt.make.ui.makefileEditorScope" } ); //$NON-NLS-1$
+	}
+
 }

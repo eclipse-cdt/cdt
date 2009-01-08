@@ -36,6 +36,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		createMacro("__builtin_va_arg(ap,type)", "*(type *)ap"),  
 		createMacro("__builtin_constant_p(exp)", "0"), 
 		createMacro("__builtin_types_compatible_p(x,y)", "__builtin_types_compatible_p(sizeof(x),sizeof(y))"),
+		createMacro("__thread", ""),
 	};
 
 	public static IMacro[] getAdditionalGNUMacros() {

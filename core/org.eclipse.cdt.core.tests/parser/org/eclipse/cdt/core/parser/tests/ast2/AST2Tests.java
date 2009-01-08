@@ -5351,4 +5351,12 @@ public class AST2Tests extends AST2BaseTest {
 		return runtime.totalMemory()-runtime.freeMemory();
 	}
 
+	// __thread int i;
+	// static __thread int j;
+	// extern __thread int k;
+	public void testThreadLocalVariables_Bug260387() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 }

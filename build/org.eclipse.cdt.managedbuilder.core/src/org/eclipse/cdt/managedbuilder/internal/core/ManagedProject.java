@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,15 +40,12 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 	
-	private static final String EMPTY_STRING = new String();
-	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
-	
 	//  Parent and children
 	private IProjectType projectType;
 	private String projectTypeId;
 	private IResource owner;
 //	private List configList;	//  Configurations of this project type
-	private Map configMap;
+	private Map<String, Configuration> configMap = Collections.synchronizedMap(new LinkedHashMap<String, Configuration>());
 	//  Miscellaneous
 	private boolean isDirty = false;
 	private boolean isValid = true;
@@ -151,8 +149,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 				}
 				
 				if(vars != null){
-					for(Iterator iter = getConfigurationMap().values().iterator(); iter.hasNext(); ){
-						Configuration cfg = (Configuration)iter.next();
+					for (Configuration cfg : getConfigurationCollection()) {
 						((ToolChain)cfg.getToolChain()).addProjectVariables(vars);
 					}
 				}
@@ -235,14 +232,10 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		serializeProjectInfo(element);
 		
 		if(saveChildren){
-			Collection configElements = getConfigurationCollection();
-			Iterator iter = configElements.iterator();
-			while (iter.hasNext()) {
-				Configuration config = (Configuration) iter.next();
+			for (Configuration cfg : getConfigurationCollection()) {
 				ICStorageElement configElement = element.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-				config.serialize(configElement);
+				cfg.serialize(configElement);
 			}
-			
 		}
 		// Serialize my children
 		
@@ -312,21 +305,16 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#getConfiguration()
 	 */
 	public IConfiguration getConfiguration(String id) {
-		return (IConfiguration)getConfigurationMap().get(id);
+		return configMap.get(id);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#getConfigurations()
 	 */
 	public IConfiguration[] getConfigurations() {
-		IConfiguration[] configs = new IConfiguration[getConfigurationCollection().size()];
-		Iterator iter = getConfigurationCollection().iterator();
-		int i = 0;
-		while (iter.hasNext()) {
-			Configuration config = (Configuration)iter.next();
-			configs[i++] = (IConfiguration)config; 
+		synchronized (configMap) {
+			return configMap.values().toArray(new IConfiguration[configMap.size()]);
 		}
-		return configs;
 	}
 	
 	/* (non-Javadoc)
@@ -336,10 +324,10 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		final String removeId = id;
 		
 		//handle the case of temporary configuration
-		if(getConfigurationMap().get(id) == null)
+		if(!configMap.containsKey(id))
 			return;
 
-		getConfigurationMap().remove(removeId);
+		configMap.remove(removeId);
 //
 //		IWorkspaceRunnable remover = new IWorkspaceRunnable() {
 //			public void run(IProgressMonitor monitor) throws CoreException {
@@ -402,37 +390,21 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @param Tool
 	 */
 	public void addConfiguration(Configuration configuration) {
-		if(!configuration.isTemporary()){
-//			getConfigurationList().add(configuration);
-			getConfigurationMap().put(configuration.getId(), configuration);
-		}
+		if(!configuration.isTemporary())
+			configMap.put(configuration.getId(), configuration);
 	}
 	
-	/* (non-Javadoc)
+	/** (non-Javadoc)
 	 * Safe accessor for the list of configurations.
 	 * 
 	 * @return List containing the configurations
 	 */
-	private Collection getConfigurationCollection() {
-		return getConfigurationMap().values();
-//		if (configList == null) {
-//			configList = new ArrayList();
-//		}
-//		return configList;
+	private Collection<Configuration> getConfigurationCollection() {
+		synchronized (configMap) {
+			return new ArrayList<Configuration>(configMap.values());			
+		}
 	}
 	
-	/* (non-Javadoc)
-	 * Safe accessor for the map of configuration ids to configurations
-	 * 
-	 * @return
-	 */
-	public Map getConfigurationMap() {
-		if (configMap == null) {
-			configMap = new LinkedHashMap();
-		}
-		return configMap;
-	}
-
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
@@ -469,11 +441,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			}
 			
 			// call resolve references on any children
-			Iterator configIter = getConfigurationCollection().iterator();
-			while (configIter.hasNext()) {
-				Configuration current = (Configuration)configIter.next();
-				current.resolveReferences();
-			}
+			for (Configuration cfg : getConfigurationCollection())
+				cfg.resolveReferences();
 		}
 		return true;
 	}
@@ -495,11 +464,9 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		
 		
 		// Otherwise see if any configurations need saving
-		Iterator iter = getConfigurationCollection().iterator();
-		while (iter.hasNext()) {
-			Configuration current = (Configuration) iter.next();
-			if (current.isDirty()) return true;
-		}
+		for (IConfiguration cfg : getConfigurationCollection())
+			if (cfg.isDirty()) 
+				return true;
 		
 		return isDirty;
 	}
@@ -510,13 +477,9 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 		// Propagate "false" to the children
-		if (!isDirty) {
-			Iterator iter = getConfigurationCollection().iterator();
-			while (iter.hasNext()) {
-				Configuration current = (Configuration) iter.next();
-				current.setDirty(false);
-			}		    
-		}
+		if (!isDirty)
+			for (IConfiguration cfg : getConfigurationCollection())
+				cfg.setDirty(false);
 	}
 
 	/* (non-Javadoc)
@@ -651,30 +614,30 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	}
 	
 	public String[] getRequiredTypeIds() {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getRequiredTypeIds()));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public String[] getSupportedTypeIds() {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedTypeIds()));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedValueIds(typeId)));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public boolean requiresType(String typeId) {

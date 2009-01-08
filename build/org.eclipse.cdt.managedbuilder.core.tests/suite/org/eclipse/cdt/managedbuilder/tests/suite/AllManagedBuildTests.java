@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
 import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
+import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
 import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTests;
 import org.eclipse.cdt.projectmodel.tests.ProjectModelTests;
 
@@ -73,6 +74,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ProjectModelTests.suite());
 		suite.addTest(OptionStringListValueTests.suite());
 		suite.addTest(BackwardCompatiblityTests.suite());
+		suite.addTest(CProjectDescriptionSerializationTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

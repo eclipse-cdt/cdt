@@ -251,7 +251,8 @@ public class IndexUI {
 								best= candidate;
 							}
 						}
-						return best;
+						if (best != null)
+							return best;
 					}
 				}
 			}

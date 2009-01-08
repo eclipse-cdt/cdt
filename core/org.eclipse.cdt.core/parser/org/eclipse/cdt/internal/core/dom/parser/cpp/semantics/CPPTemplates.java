@@ -83,6 +83,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -224,6 +225,8 @@ public class CPPTemplates {
 
 			IScope scope= CPPVisitor.getContainingScope(start);
 			while (scope instanceof IASTInternalScope) {
+				if (scope instanceof IProblemBinding)
+					return null;
 				final IASTInternalScope internalScope = (IASTInternalScope) scope;
 				if (scope instanceof ICPPClassScope) {
 					final IName scopeName = internalScope.getScopeName();
@@ -246,6 +249,8 @@ public class CPPTemplates {
 					}
 				}
 				scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
+				if (scope == internalScope)
+					return null;
 			}
 		} catch (DOMException e) {
 		}
@@ -930,8 +935,7 @@ public class CPPTemplates {
 		// last name can be associated even if it is not a template-id
 		final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
 		final IASTName lastName = qname.getLastName();
-		final boolean lastIsTemplate= lastName instanceof ICPPASTTemplateId || 
-				tdecl.isAssociatedWithLastName();
+		final boolean lastIsTemplate= tdecl.isAssociatedWithLastName();
 		if (name == lastName) { 
 			if (lastIsTemplate) {
 				return tdecl;
@@ -988,7 +992,8 @@ public class CPPTemplates {
 		int additionalLevels= 0;
 		if (name instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qname= (ICPPASTQualifiedName) name;
-			final boolean lastIsID = qname.getLastName() instanceof ICPPASTTemplateId;
+			final IASTName lastName = qname.getLastName();
+			final boolean lastIsID = lastName instanceof ICPPASTTemplateId;
 
 			// count template-ids
 			int idcount= 0;
@@ -1000,7 +1005,20 @@ public class CPPTemplates {
 				}
 			}
 			
-			if (lastIsID) {
+			boolean isCtorWithTemplateID= false;
+			if (lastIsID && ns.length > 1) {
+				IASTName secondLastName= ns[ns.length-2];
+				if (secondLastName instanceof ICPPASTTemplateId) {
+					final char[] lastNamesLookupKey = lastName.getLookupKey();
+					if (CharArrayUtils.equals(lastNamesLookupKey, ((ICPPASTTemplateId) secondLastName).getLookupKey()) ||
+							(lastNamesLookupKey.length > 0 && lastNamesLookupKey[0] == '~')) {
+						isCtorWithTemplateID= true;
+						idcount--;
+					} 
+				}
+			}
+			
+			if (lastIsID && !isCtorWithTemplateID) {
 				additionalLevels= idcount-tdeclcount;
 			} else {
 				additionalLevels= idcount+1-tdeclcount;

@@ -3574,4 +3574,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
     }
+    
+    //    template <class T>
+    //    class DumbPtr {
+    //    public:
+    //    	DumbPtr<T> (const DumbPtr<T>& aObj);
+    //    	~DumbPtr<T> ();
+    //    };
+    //    template <class T>
+    //    DumbPtr<T>::DumbPtr<T>/**/ (const DumbPtr<T>& aObj) {
+    //    }
+    //    template <class T>
+    //    DumbPtr<T>::~DumbPtr<T>/**/ () {
+    //    }
+    public void testCtorWithTemplateID_259600() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+        ICPPConstructor ctor= bh.assertNonProblem("DumbPtr<T>/**/", 10);
+        ICPPMethod dtor= bh.assertNonProblem("~DumbPtr<T>/**/", 11);
+    }
 }

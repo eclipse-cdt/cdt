@@ -6178,4 +6178,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPFunction f2= ba.assertNonProblem("func(*b)", 4, ICPPFunction.class);
 		assertNotSame(f1, f2);
 	}
+	
+	//	struct C {int a;};
+	//	void myfunc(C c) {
+	//		return c < c.a ||
+	//	        (c == c.a && (c<c.a || (c == c.a && (c<c.a || (c == c.a && (c<c.a ||
+	//	        (c == c.a && (c<c.a || (c == c.a && (c<c.a || (c == c.a && (c<c.a ||
+	//	        (c == c.a && (c<c.a || (c == c.a && (c<c.a || (c == c.a && (c<c.a ||
+	//	        (c == c.a && (c<c.a || (c == c.a && (c<c.a || (c == c.a && (c<c.a ||
+	//	        (c == c.a && (c<c.a || (c == c.a && (c<c.a || (c == c.a && (c<c.a
+	//	        ))))))))))))))))))))))))))))));
+	//	}
+	public void testNestedTemplateIDAmbiguity_259501() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

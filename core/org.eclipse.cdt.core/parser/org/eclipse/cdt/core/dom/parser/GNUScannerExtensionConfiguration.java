@@ -35,6 +35,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addMacro("__imag__", "(int)"); 
 		addMacro("__real__", "(int)");
 		addMacro("__stdcall", "");
+		addMacro("__thread", "");
 
 		addMacro("__builtin_va_arg(ap,type)", "*(type *)ap");
 		addMacro("__builtin_constant_p(exp)", "0");

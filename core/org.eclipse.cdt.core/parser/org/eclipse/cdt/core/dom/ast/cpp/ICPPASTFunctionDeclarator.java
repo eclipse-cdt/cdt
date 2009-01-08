@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * C++ adds a few things to function declarators.
  *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
 

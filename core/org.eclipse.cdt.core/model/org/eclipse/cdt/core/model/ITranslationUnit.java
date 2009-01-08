@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * the case.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
 	

@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * </ul>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProblem
 {

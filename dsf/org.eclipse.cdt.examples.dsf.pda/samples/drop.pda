@@ -1,0 +1,12 @@
+call one
+:one
+call two
+:two
+call three
+:three
+call four
+:four
+push DONE
+output
+
+

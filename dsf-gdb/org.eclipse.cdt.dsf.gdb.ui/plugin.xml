@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+    <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbLocalRunLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.dsf.gdb.launch.localRunLaunchTabGroup"
+            type="org.eclipse.cdt.dsf.gdb.launch.localCLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteRunLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteRunLaunchTabGroup"
+            type="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbAttachLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.dsf.gdb.launch.localAttachLaunchTabGroup"
+            type="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.cdt.dsf.gdb.launch.localRunLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteRunLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"
+            icon="icons/full/obj16/c_app.gif"
+            id="org.eclipse.cdt.dsf.gdb.launch.attachRunLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   
+
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory 
+        	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 
+	        adaptableType="org.eclipse.cdt.dsf.gdb.launching.GdbLaunch">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+	  </factory>         
+   </extension>	
+   
+   <extension point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingBindings
+            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
+            primaryId="org.eclipse.debug.ui.rendering.raw_memory"
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock"/>
+         </enablement>
+      </renderingBindings>
+   </extension>
+
+   <extension point="org.eclipse.ui.propertyPages">
+         <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.CBreakpointGdbThreadFilterPage"
+            id="org.eclipse.cdt.dsf.gdb.breakpoint.filtering"
+            name="Filter">
+         <filter name="debugModelId" value="org.eclipse.cdt.dsf.gdb"/>
+         <enabledWhen>
+            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter"
+            code="100"
+            id="org.eclipse.cdt.dsf.gdb.ui.processPrompter"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
+      <debuggerPage
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage"
+            debuggerID="org.eclipse.cdt.dsf.gdb.GdbDebugger"
+            id="org.eclipse.cdt.dsf.gdb.ui.GdbDebuggerPage">
+      </debuggerPage>
+      <debuggerPage
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbServerDebuggerPage"
+            debuggerID="org.eclipse.cdt.dsf.gdb.GdbServerDebugger"
+            id="org.eclipse.cdt.dsf.gdb.ui.GdbServerDebuggerPage">
+      </debuggerPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.cdt.dsf.gdb.ui.debugview.context"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.ConnectActionDelegate"
+               icon="icons/full/obj16/connect.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.connect"
+               label="%action.connect.label"
+               menubarPath="threadGroup"
+               tooltip="%action.connect.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.dsf.gdb.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+         <visibility>
+            <pluginState
+                  id="org.eclipse.cdt.dsf.gdb.ui"
+                  value="activated">
+            </pluginState>
+         </visibility>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.cdt.dsf.gdb.ui.debugview.toolbar"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.ConnectActionDelegate"
+               icon="icons/full/obj16/connect.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.connect"
+               label="%action.connect.label"
+               toolbarPath="threadGroup"
+               tooltip="%action.connect.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.dsf.gdb.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewContribution>
+   </extension>
+   
+</plugin>

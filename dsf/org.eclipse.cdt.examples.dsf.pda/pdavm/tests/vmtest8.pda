@@ -1,0 +1,14 @@
+var a
+call inner
+push 1
+output
+halt
+:inner
+var b
+call inner2
+push 2
+return
+:inner2
+var c
+push 3
+return

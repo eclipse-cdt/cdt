@@ -1,0 +1,23 @@
+push one two three
+push 1 2 3
+push I II III
+var x
+var x.a
+var x.b
+var y
+var y.c
+var y.d
+var y.d.1
+var y.d.2
+var y.d.3
+pop $x
+pop $x.a
+pop $x.b
+pop $y
+pop $y.c
+pop $y.d
+pop $y.d.1
+pop $y.d.2
+pop $y.d.3
+push Done
+output

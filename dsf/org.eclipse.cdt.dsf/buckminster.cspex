@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cs:cspecExtension xmlns:cs="http://www.eclipse.org/buckminster/CSpec-1.0" name="org.eclipse.cdt.dsf">
+    <cs:artifacts>
+    	<cs:public name="source" path="src/"/>
+    </cs:artifacts>
+    <cs:actions>
+        <cs:public name="java.binary.archives" actor="ant">
+            <cs:actorProperties>
+                <cs:property key="buildFile" value="make/build.xml"/>
+            </cs:actorProperties>
+            <cs:prerequisites alias="input">
+                <cs:local attribute="eclipse.build"/>
+            </cs:prerequisites>
+            <cs:products alias="output" base="bin/jars/">
+                <cs:path path="dsf.jar"/>
+            </cs:products>
+        </cs:public>
+        <cs:private name="eclipse.build">
+            <cs:prerequisites>
+                <cs:local attribute="source"/>
+            </cs:prerequisites>
+            <cs:products base="bin/classes/">
+                <cs:path path="."/>
+            </cs:products>
+        </cs:private>
+    </cs:actions>
+    <cs:groups>
+    	<cs:public name="java.binaries">
+    		<cs:local attribute="eclipse.build"/>
+    	</cs:public>
+    </cs:groups>
+</cs:cspecExtension>

@@ -1,0 +1,32 @@
+push 6
+call fibonacci
+output
+halt
+#
+# f(n) = f(n-1) + f(n-2)
+# f(0) = 1
+# f(1) = 1
+#
+:fibonacci
+var n
+pop $n
+push $n
+branch_not_zero gt0
+push 1
+return
+:gt0
+push $n
+dec
+branch_not_zero gt1
+push 1
+return
+:gt1
+push $n
+dec
+call fibonacci
+push $n
+dec
+dec
+call fibonacci
+add
+return

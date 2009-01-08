@@ -1,0 +1,23 @@
+push 5
+:thread_create
+exec foo
+dec 
+dup
+branch_not_zero thread_create
+push finished
+output 
+halt
+:foo
+push thread_created
+output
+call inner
+halt
+:inner
+var b
+call inner2
+push 2
+return
+:inner2
+var c
+push 3
+return

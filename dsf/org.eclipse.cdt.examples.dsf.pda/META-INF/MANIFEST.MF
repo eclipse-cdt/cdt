@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDA Example Device Debugging Core Plug-in
+Bundle-SymbolicName: org.eclipse.cdt.examples.dsf.pda;singleton:=true
+Bundle-Version: 2.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.examples.dsf.pda.PDAPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.core.variables,
+ org.eclipse.debug.core,
+ org.eclipse.cdt.dsf,
+ org.junit4;bundle-version="4.3.1",
+ org.eclipse.cdt.core;bundle-version="5.0.0"
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.cdt.examples.dsf.pda,
+ org.eclipse.cdt.examples.dsf.pda.breakpoints,
+ org.eclipse.cdt.examples.dsf.pda.launch,
+ org.eclipse.cdt.examples.dsf.pda.service,
+ org.eclipse.cdt.examples.dsf.pda.service.commands,
+ org.eclipse.cdt.examples.dsf.pda.sourcelookup
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

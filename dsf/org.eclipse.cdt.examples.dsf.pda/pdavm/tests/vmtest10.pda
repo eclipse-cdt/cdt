@@ -1,0 +1,38 @@
+def register $reg1 group1 true
+def register $reg2 group1 false
+def register $reg3 group2 true
+def bitfield $reg1.field1 0 2
+def bitfield $reg1.field2 2 2
+def mnemonic $reg1.field2 zero 0
+def mnemonic $reg1.field2 one 1
+def mnemonic $reg1.field2 two 2
+def mnemonic $reg1.field2 three 3
+push 1
+pop $$reg1
+push $$reg1
+output
+push 2
+pop $$reg1.field1
+push $$reg1.field1
+output
+push 4
+pop $$reg1.field1
+push $$reg1.field1
+output
+push 1
+pop $$reg1.field2
+push $$reg1
+output
+push zero 
+pop $$reg1.field2
+push $$reg1.field2
+output
+push $$reg1
+output
+push 2 
+pop $$reg1.field2
+push $$reg1.field2
+output
+push $$reg1
+output
+halt

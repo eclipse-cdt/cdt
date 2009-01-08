@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<project name="org.eclipse.cdt.dsf">
+    <target name="java.binary.archives">
+    	<dirname property="output.dir" file="${output}"/>
+    	<mkdir dir="${output.dir}"/>
+    	<jar destfile="${output}">
+    		<fileset refid="input.fileset"/>
+    	</jar>
+    </target>
+</project>

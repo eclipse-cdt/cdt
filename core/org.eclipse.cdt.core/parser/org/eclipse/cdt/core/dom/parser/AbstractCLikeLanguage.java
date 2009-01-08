@@ -113,7 +113,6 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			ICodeReaderFactory codeReaderFactory, IIndex index, int options, IParserLogService log) throws CoreException {
 
 		final IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
-		scanner.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);

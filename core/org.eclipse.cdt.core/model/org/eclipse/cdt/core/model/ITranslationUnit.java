@@ -72,10 +72,10 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public static final int AST_SKIP_IF_NO_BUILD_INFO = 0x8;
 
 	/**
-	 * Style constant for {@link #getAST(IIndex, int)}. 
-	 * Meaning: Add nodes for comments to the ast.
+	 * @deprecated The option has no effect.
 	 * @since 4.0
 	 */
+	@Deprecated
 	public static final int AST_CREATE_COMMENT_NODES = 0x10;
 	
 	/**
@@ -491,7 +491,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * translation unit does not support ASTs.
 	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
 	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
-	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}, {@link #AST_CREATE_COMMENT_NODES}
+	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}
 	 * and {@link #AST_CONFIGURE_USING_SOURCE_CONTEXT}.
 	 * @return the AST requested or <code>null</code>
 	 * @throws CoreException

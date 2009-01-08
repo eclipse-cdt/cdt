@@ -3975,8 +3975,8 @@ public class AST2Tests extends AST2BaseTest {
 	// INVALID(1, 2)
 	//
 	public void test192639() throws Exception {
-		parse( getAboveComment(), ParserLanguage.CPP, false, false, true ); 
-		parse( getAboveComment(), ParserLanguage.C, false, false, true ); 
+		parse( getAboveComment(), ParserLanguage.CPP, false, false ); 
+		parse( getAboveComment(), ParserLanguage.C, false, false ); 
 	}
 	
 	public void test195943() throws Exception {
@@ -5786,10 +5786,8 @@ public class AST2Tests extends AST2BaseTest {
 		buf.append(input[2].toString());
 		final String code= buf.toString();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu= parse(code, lang, false, true, true);
-			tu= null;
 			long mem= memoryUsed();
-			tu= parse(code, lang, false, true, true);
+			IASTTranslationUnit tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
 			final int expected = 1024*20 + code.length()*2; // a copy of the buffer + some
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);

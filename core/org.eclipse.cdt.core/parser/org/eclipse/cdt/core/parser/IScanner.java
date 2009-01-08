@@ -26,26 +26,10 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
  * work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
  * </p>
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScanner {
-	
-	/**
-	 * Puts the scanner into content assist mode.
-	 */
-	public void setContentAssistMode( int offset );
-
-	/**
-	 * Turns on/off comment parsing.
-	 * @since 4.0
-	 */
-	public void setScanComments(boolean val);
-	
-	/**
-	 * Turns on/off creation of image locations. 
-	 * @see IASTName#getImageLocation()
-	 * @since 5.0
-	 */
-	public void setComputeImageLocations(boolean val);
 	
 	/**
 	 * Returns a map from {@link String} to {@link IMacroBinding} containing
@@ -73,6 +57,29 @@ public interface IScanner {
 	
 	/**
 	 * Returns the location resolver associated with this scanner.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ILocationResolver getLocationResolver();
+	
+	/**
+	 * Puts the scanner into content assist mode.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setContentAssistMode(int offset);
+
+	/**
+	 * Method has no effect.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 4.0
+	 */
+	@Deprecated
+	public void setScanComments(boolean val);
+	
+	/**
+	 * Turns on/off creation of image locations. 
+	 * @see IASTName#getImageLocation()
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.0
+	 */
+	public void setComputeImageLocations(boolean val);
 }

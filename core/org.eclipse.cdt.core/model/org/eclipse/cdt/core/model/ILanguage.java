@@ -40,9 +40,9 @@ public interface ILanguage extends IAdaptable {
 	public final static int OPTION_SKIP_FUNCTION_BODIES= 0x1;
 
 	/**
-	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
-	 * Instructs the parser to add comment nodes to the ast.
+	 * @deprecated, has no effect.
 	 */
+	@Deprecated
 	public final static int OPTION_ADD_COMMENTS= 0x2;
 
 	/**
@@ -140,7 +140,7 @@ public interface ILanguage extends IAdaptable {
 	 * @param index (optional) index to use to provide support for ambiguity
 	 *              resolution.
 	 * @param options A combination of 
-	 * {@link #OPTION_SKIP_FUNCTION_BODIES}, {@link #OPTION_ADD_COMMENTS},
+	 * {@link #OPTION_SKIP_FUNCTION_BODIES},
 	 * {@link #OPTION_NO_IMAGE_LOCATIONS}, {@link #OPTION_IS_SOURCE_UNIT},
 	 *  or <code>0</code>.
 	 * @param log logger

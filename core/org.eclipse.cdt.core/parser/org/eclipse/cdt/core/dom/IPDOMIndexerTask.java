@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Doug Schaefer (QNX Software Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
@@ -15,10 +15,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-
 /**
- * @author dschaefer
- *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPDOMIndexerTask {
 	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/debug/indexer/activity";  //$NON-NLS-1$
@@ -40,6 +39,7 @@ public interface IPDOMIndexerTask {
 
 	/**
 	 * Returns progress information for the task.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IndexerProgress getProgressInformation();
 }

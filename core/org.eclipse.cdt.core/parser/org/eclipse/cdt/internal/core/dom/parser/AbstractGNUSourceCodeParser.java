@@ -947,6 +947,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression logicalOrExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = logicalAndExpression();
         while (LT(1) == IToken.tOR) {
+        	if (shallRejectLogicalOperator()) {
+        		throwBacktrack(LA(1));
+        	}
+
             consume();
             IASTExpression secondExpression = logicalAndExpression();
             firstExpression = buildBinaryExpression(
@@ -956,9 +960,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return firstExpression;
     }
 
+	protected boolean shallRejectLogicalOperator() {
+		return false;
+	}
+
     protected IASTExpression logicalAndExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = inclusiveOrExpression();
         while (LT(1) == IToken.tAND) {
+        	if (shallRejectLogicalOperator()) {
+        		throwBacktrack(LA(1));
+        	}
+
             consume();
             IASTExpression secondExpression = inclusiveOrExpression();
             firstExpression = buildBinaryExpression(
@@ -1124,6 +1136,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
         IASTExpression firstExpression = logicalOrExpression();
         if (LT(1) == IToken.tQUESTION) {
+        	if (shallRejectLogicalOperator()) {
+        		throwBacktrack(LA(1));
+        	}
+        		
             consume();
             IASTExpression secondExpression= null;
             if (LT(1) != IToken.tCOLON) {

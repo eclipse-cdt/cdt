@@ -201,14 +201,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
     protected IASTName idExpression() throws EndOfFileException, BacktrackException {
     	try {
-			if (true) {
-				rejectLogicalOperatorInTemplateID++;
-			}
+    		rejectLogicalOperatorInTemplateID++;
 			return qualifiedName();
 		} finally {
-			if (true) {
-				rejectLogicalOperatorInTemplateID--;
-			}
+			rejectLogicalOperatorInTemplateID--;
 		}
     }
 
@@ -592,27 +588,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression conditionalExpression() throws BacktrackException, EndOfFileException {
-    	final IASTExpression expr= super.conditionalExpression();
-    	if (onTopInTemplateArgs && rejectLogicalOperatorInTemplateID > 0) {
-    		// bug 104706, don't allow usage of logical operators in template argument lists.
-    		if (expr instanceof IASTConditionalExpression) {
-				final ASTNode node = (ASTNode) expr;
-				throwBacktrack(node.getOffset(), node.getLength());
-    		}    			
-    		else if (expr instanceof IASTBinaryExpression) {
-    			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
-    			switch (bexpr.getOperator()) {
-    			case IASTBinaryExpression.op_logicalAnd:
-    			case IASTBinaryExpression.op_logicalOr:
-    				final ASTNode node = (ASTNode) expr;
-					throwBacktrack(node.getOffset(), node.getLength());
-    			}
-    		}
-    	}
-    	return expr;
+	protected boolean shallRejectLogicalOperator() {
+    	return onTopInTemplateArgs && rejectLogicalOperatorInTemplateID > 0;
     }
-
 
     @Override
 	protected IASTExpression constantExpression() throws EndOfFileException, BacktrackException {
@@ -2763,6 +2741,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int startingOffset = mark.getOffset();
         IASTDeclSpecifier declSpecifier = null;
         IASTDeclarator declarator = null;
+        rejectLogicalOperatorInTemplateID++;
         try {
         	declSpecifier = declSpecifierSeq(option);
             if (LT(1) != IToken.tEOC) {
@@ -2777,6 +2756,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	return null;
         } catch (BacktrackException bt) {
         	return null;
+        } finally {
+        	rejectLogicalOperatorInTemplateID--;
         }
         IASTTypeId result = nodeFactory.newTypeId(declSpecifier, declarator); 
         ((ASTNode) result).setOffsetAndLength(startingOffset, figureEndOffset(declSpecifier, declarator) - startingOffset);

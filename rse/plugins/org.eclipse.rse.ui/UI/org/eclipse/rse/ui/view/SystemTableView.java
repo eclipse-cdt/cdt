@@ -22,14 +22,17 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Martin Oberhuber (Wind River) - [227516] [regression] Fix ArrayIndexOutOfBoundsException in TableView
  * David McKnight   (IBM)        - [187058] Incorrect Right Click Menu in Remote System Details View with no selection
+ * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.resources.WorkspaceJob;
@@ -297,13 +300,18 @@ public class SystemTableView
 
 	private boolean _showColumns = true;
 
-	 private  Image _upI;
-	 private  Image _downI;
+	private  Image _upI;
+	private  Image _downI;
 
 	protected boolean     menuListenerAdded = false;
 
     private static final int LEFT_BUTTON = 1;
     private int mouseButtonPressed = LEFT_BUTTON;
+    
+    // for bug 260346 - to maintain list of cached column widths
+    private HashMap _cachedColumnWidths;
+    
+    
 	/**
 	 * Constructor for the table view
 	 *
@@ -364,6 +372,8 @@ public class SystemTableView
 
         _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_UP_ID);
         _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
+        
+        _cachedColumnWidths = new HashMap();
 	}
 
 	/**
@@ -428,6 +438,16 @@ public class SystemTableView
 		if (newObject instanceof IAdaptable)
 		{
 			getTable().setVisible(true);
+			
+			// columns may change so we want to keep track of the current ones
+			int[] lastWidths = getCurrentColumnWidths();
+			if (lastWidths.length > 0){
+				ISystemViewElementAdapter contentsAdapter = getAdapterForContents();
+			
+				// associate the last contents adapter with the last widths
+				_cachedColumnWidths.put(contentsAdapter, lastWidths);
+			}
+				
 			_objectInput = newObject;
 			computeLayout();
 
@@ -759,8 +779,14 @@ public class SystemTableView
 		int[] lastWidths = getLastColumnWidths();
 		if (numColumns > 1)
 		{
+			int[] cachedWidths = (int[])_cachedColumnWidths.get(getAdapterForContents());
+			
+			// if there are already cached widths, use them
+			if (cachedWidths != null){
+				setCurrentColumnWidths(cachedWidths);
+			}
 			// check if previous widths can be used
-			if (lastWidths != null && lastWidths.length == numColumns)
+			else if (lastWidths != null && lastWidths.length == numColumns)
 			{
 
 				// use previously established widths
@@ -1304,7 +1330,7 @@ public class SystemTableView
 			}
 
 			table.dispose();
-		}
+		}	
 	}
 
 	/*

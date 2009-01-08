@@ -717,6 +717,13 @@ public CPPSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 100:  new_initializer ::= ( expression_list_opt )
+            //
+            case 100: {       action.builder.
+   consumeNewInitializer();                 break;
+            }  
+   
+            //
             // Rule 102:  new_initializer_opt ::= $Empty
             //
             case 102: {       action.builder.

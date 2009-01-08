@@ -598,6 +598,7 @@ new_array_expressions_opt
 
 new_initializer
     ::= '(' expression_list_opt ')'  -- even if the parens are there we get null in the AST
+          /. $Build  consumeNewInitializer();  $EndBuild ./
     
     
 new_initializer_opt

@@ -731,6 +731,13 @@ public CPPTemplateTypeParameterParser(String[] mapFrom) {  // constructor
             }  
    
             //
+            // Rule 102:  new_initializer ::= ( expression_list_opt )
+            //
+            case 102: {       action.builder.
+   consumeNewInitializer();                 break;
+            }  
+   
+            //
             // Rule 104:  new_initializer_opt ::= $Empty
             //
             case 104: {       action.builder.

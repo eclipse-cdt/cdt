@@ -184,8 +184,22 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	}
 
 	
+	public void consumeNewInitializer() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		if(astStack.peek() == null) { // if there is an empty set of parens
+			astStack.pop();
+			IASTExpression initializer = nodeFactory.newExpressionList();
+			setOffsetAndLength(initializer);
+			astStack.push(initializer);
+		}
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
 	
 	
+	
+	// TODO can the new_array_expressions be removed? it looks like they parse as part of the type id
 	/**
 	 * new_expression
      *     ::= dcolon_opt 'new' new_placement_opt new_type_id <openscope-ast> new_array_expressions_op new_initializer_opt
@@ -203,12 +217,41 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		ICPPASTNewExpression newExpression = nodeFactory.newNewExpression(placement, initializer, typeId);
 		newExpression.setIsGlobal(hasDoubleColon);
 		newExpression.setIsNewTypeId(isNewTypeId);
+		setOffsetAndLength(newExpression);
 		
 		for(Object expr : arrayExpressions)
 			newExpression.addNewTypeIdArrayExpression((IASTExpression)expr);
 		
-		setOffsetAndLength(newExpression);
-		astStack.push(newExpression);
+		// handle ambiguities of the form:  (A)(B)
+		if(!isNewTypeId && initializer == null &&
+				placement instanceof IASTIdExpression && 
+				typeId != null && typeId.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
+			
+			IASTName firstName = ((IASTIdExpression)placement).getName();
+			IASTName secondName = ((IASTNamedTypeSpecifier)typeId.getDeclSpecifier()).getName();
+			
+			IASTNamedTypeSpecifier newTypeSpecifier = nodeFactory.newTypedefNameSpecifier(firstName.copy());
+			setOffsetAndLength(newTypeSpecifier, firstName);
+			IASTDeclarator newDeclarator = nodeFactory.newDeclarator(nodeFactory.newName());
+			setOffsetAndLength(newDeclarator, endOffset(firstName), 0);
+			IASTTypeId newTypeId = nodeFactory.newTypeId(newTypeSpecifier, newDeclarator);
+			setOffsetAndLength(newTypeId, firstName);
+			
+			IASTIdExpression newInitializer = nodeFactory.newIdExpression(secondName.copy());
+			setOffsetAndLength(newInitializer, secondName);
+			
+			ICPPASTNewExpression alternate = nodeFactory.newNewExpression(null, newInitializer, newTypeId);
+			setOffsetAndLength(alternate, newExpression);
+			newExpression.setIsGlobal(hasDoubleColon);
+			newExpression.setIsNewTypeId(isNewTypeId);
+			
+			IASTAmbiguousExpression ambiguity = createAmbiguousExpression(newExpression, alternate);
+			astStack.push(ambiguity);
+		}
+		else {
+			astStack.push(newExpression);
+		}
+		
 		
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}

@@ -212,8 +212,9 @@ public String[] getOrderedTerminalSymbols() {
 	return C99Parsersym.orderedTerminalSymbols;
 }
 
+@SuppressWarnings("nls")
 public String getName() {
-	return "C99Parser"; //$NON-NLS-1$
+	return "C99Parser";
 }
 
 

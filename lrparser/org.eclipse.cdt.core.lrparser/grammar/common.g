@@ -30,23 +30,18 @@ $End
 
 $Define
 	-- These macros allow the template and header code to be customized by an extending parser.
-	$ast_class /.Object./
-	$data_class /. Object ./ -- allow anything to be passed between actions
 	
-	$extra_interfaces /. ./
+	$ast_class /.Object./
+	
+	$extra_interfaces /. ./  -- can override this macro to provide additional interfaces
 	$additional_interfaces /. , IParserActionTokenProvider, IParser $extra_interfaces ./
 	
-	$build_action_class /.  ./
-	$resolve_action_class /.  ./
-	$node_factory_create_expression /.  ./
+	$build_action_class /.  ./  -- name of the class that has the AST building callbacks
+	$node_factory_create_expression /.  ./  -- expression that will create the node factory
 	
-	$lexer_class /.  ./
-	$action_class /.  ./
-	
-	$Build /. $BeginAction action. ./
+	$Build /. $BeginAction action. ./  -- special action just for calling methods on the builder
 	$EndBuild /. $EndAction ./
 $End
-
 
 
 $Globals
@@ -109,8 +104,9 @@ $Headers
 		return $sym_type.orderedTerminalSymbols;
 	}
 	
+	@SuppressWarnings("nls")
 	public String getName() {
-		return "$action_type"; //$NON-NLS-1$
+		return "$action_type";
 	}
 	
 ./

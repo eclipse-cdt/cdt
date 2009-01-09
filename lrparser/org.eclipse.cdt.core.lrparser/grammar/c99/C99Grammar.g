@@ -9,13 +9,9 @@
 --     IBM Corporation - initial API and implementation
 -----------------------------------------------------------------------------------
 
--- TODO "complete" rules can be removed
-
--- TODO when the architecture has solidified try to move common
--- stuff between C99 and C++ into one file.
 
 $Include
-common.g
+../common.g
 $End
 
 

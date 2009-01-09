@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
-import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
@@ -143,16 +142,12 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * postfix_expression ::= postfix_expression '->' ident
 	 */
 	public void consumeExpressionFieldReference(boolean isPointerDereference) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = createName(parser.getRightIToken());
 		IASTExpression owner = (IASTExpression) astStack.pop();
 		IASTFieldReference expr = nodeFactory.newFieldReference(name, owner);
 		expr.setIsPointerDereference(isPointerDereference);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -161,18 +156,15 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * postfix_expression ::= '(' type_name ')' '{' <openscope> initializer_list ',' '}'            
 	 */
 	public void consumeExpressionTypeIdInitializer() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		consumeInitializerList(); // closes the scope
 		IASTInitializerList list = (IASTInitializerList) astStack.pop();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		ICASTTypeIdInitializerExpression expr = nodeFactory.newTypeIdInitializerExpression(typeId, list);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+	// TODO why is this here?
 //	/**
 //	 * Lots of rules, no need to list them.
 //	 * @param operator From IASTUnaryExpression
@@ -276,8 +268,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 */
 	public void consumeDirectDeclaratorModifiedArrayModifier(boolean isStatic, 
 			 boolean isVarSized, boolean hasTypeQualifierList, boolean hasAssignmentExpr) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		assert isStatic || isVarSized || hasTypeQualifierList;
 		
 		ICASTArrayModifier arrayModifier = nodeFactory.newModifiedArrayModifier(null);
@@ -294,8 +284,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 
 		setOffsetAndLength(arrayModifier);
 		astStack.push(arrayModifier);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 
@@ -304,8 +292,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * direct_declarator ::= direct_declarator '(' <openscope> identifier_list ')'
 	 */
 	public void consumeDirectDeclaratorFunctionDeclaratorKnR() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		ICASTKnRFunctionDeclarator declarator = nodeFactory.newKnRFunctionDeclarator(null, null);
 		IASTName[] names = astStack.topScope().toArray(new IASTName[0]);
 		declarator.setParameterNames(names);
@@ -321,8 +307,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *       | identifier_list ',' 'identifier'
 	 */
 	public void consumeIdentifierKnR() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = createName(parser.getRightIToken());
 		astStack.push(name);
 	}
@@ -335,14 +319,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *           | pointer '*' 
      */ 
 	public void consumePointer() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTPointer pointer = nodeFactory.newPointer();
 		IToken star = parser.getRightIToken();
 		setOffsetAndLength(pointer, star);
 		astStack.push(pointer);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -351,8 +331,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *           | pointer '*' <openscope> type_qualifier_list
 	 */
 	public void consumePointerTypeQualifierList() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		ICASTPointer pointer = nodeFactory.newPointer();
 
 		for(Object o : astStack.closeScope()) {
@@ -367,8 +345,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 
 		setOffsetAndLength(pointer);
 		astStack.push(pointer);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -381,8 +357,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *       | direct_abstract_declarator '(' <openscope> parameter_type_list ')'
 	 */
 	public void consumeDirectDeclaratorFunctionDeclarator(boolean hasDeclarator, boolean hasParameters) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = nodeFactory.newName();
 		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
 		
@@ -401,8 +375,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			setOffsetAndLength(declarator);
 			astStack.push(declarator);
 		}
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 	
@@ -411,8 +383,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * designated_initializer ::= <openscope> designation initializer
 	 */
 	public void consumeInitializerDesignated() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTInitializer initializer = (IASTInitializer)astStack.pop();
 		ICASTDesignatedInitializer result = nodeFactory.newDesignatedInitializer(initializer);
 		
@@ -421,8 +391,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		setOffsetAndLength(result);
 		astStack.push(result);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -430,14 +398,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * designator ::= '[' constant_expression ']'
 	 */
 	public void consumeDesignatorArray() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr = (IASTExpression) astStack.pop();
 		ICASTArrayDesignator designator = nodeFactory.newArrayDesignator(expr);
 		setOffsetAndLength(designator);
 		astStack.push(designator);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -445,14 +409,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 *  designator ::= '.' 'identifier'
 	 */
 	public void consumeDesignatorField() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = createName(parser.getRightIToken());
 		ICASTFieldDesignator designator = nodeFactory.newFieldDesignator(name);
 		setOffsetAndLength(designator);
 		astStack.push(designator);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -460,8 +420,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * declaration_specifiers ::= <openscope> simple_declaration_specifiers
 	 */
 	public void consumeDeclarationSpecifiersSimple() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-
 		ICASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
 		
 		for(Object specifier : astStack.closeScope())
@@ -469,8 +427,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -479,8 +435,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * declaration_specifiers ::= <openscope> enum_declaration_specifiers
 	 */
 	public void consumeDeclarationSpecifiersStructUnionEnum() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		List<Object> topScope = astStack.closeScope();
 		ICASTDeclSpecifier declSpec = CollectionUtils.findFirstAndRemove(topScope, ICASTDeclSpecifier.class);
 		
@@ -490,8 +444,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -499,8 +451,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * declaration_specifiers ::=  <openscope> typdef_name_declaration_specifiers
 	 */
 	public void consumeDeclarationSpecifiersTypedefName() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		ICASTTypedefNameSpecifier declSpec = nodeFactory.newTypedefNameSpecifier(null);
 		
 		for(Object o : astStack.topScope()) {
@@ -522,8 +472,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		astStack.closeScope();
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -533,8 +481,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * declaration ::= declaration_specifiers  ';'
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		
@@ -549,8 +495,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 
 		setOffsetAndLength(declaration);
 		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -561,10 +505,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * TODO: doesn't the declaration need a name?
 	 */
 	public void consumeDeclarationEmpty() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		// Don't generate declaration nodes for extra EOC tokens
-		// TODO: the token type must be converted
 		if(baseKind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
 			return;
 		
@@ -573,8 +514,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		setOffsetAndLength(declSpecifier);
 		setOffsetAndLength(declaration);
 		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -588,8 +527,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * a struct declarator is a regular declarator plus bit fields
 	 */
 	public void consumeStructDeclaration(boolean hasDeclaration) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		consumeDeclarationSimple(hasDeclaration); // TODO this is ok as long as bit fields implement IASTDeclarator (see consumeDeclaration())
 	} 
 	
@@ -604,8 +541,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * @param key either k_struct or k_union from IASTCompositeTypeSpecifier
 	 */
 	public void consumeTypeSpecifierComposite(boolean hasName, int key) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = (hasName) ? createName(parser.getRuleTokens().get(1)) : nodeFactory.newName();
 		
 		ICASTCompositeTypeSpecifier typeSpec = nodeFactory.newCompositeTypeSpecifier(key, name);
@@ -615,8 +550,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		setOffsetAndLength(typeSpec);
 		astStack.push(typeSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -628,14 +561,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      * enum_specifier ::= 'enum' enum_identifier     
 	 */
 	public void consumeTypeSpecifierElaborated(int kind) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = createName(parser.getRuleTokens().get(1));
 		IASTElaboratedTypeSpecifier typeSpec = nodeFactory.newElaboratedTypeSpecifier(kind, name);
 		setOffsetAndLength(typeSpec);
 		astStack.push(typeSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -645,15 +574,11 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * iteration_statement ::= 'while' '(' expression ')' statement
 	 */
 	public void consumeStatementWhileLoop() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTStatement  body      = (IASTStatement)  astStack.pop();
 		IASTExpression condition = (IASTExpression) astStack.pop();
 		IASTWhileStatement whileStatement = nodeFactory.newWhileStatement(condition, body);
 		setOffsetAndLength(whileStatement);
 		astStack.push(whileStatement);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -663,8 +588,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 *     ::= 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
 	 */
 	public void consumeStatementForLoop() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTStatement body = (IASTStatement) astStack.pop();
 		// these two expressions may be null, see consumeExpressionOptional()
 		IASTExpression expr3 = (IASTExpression) astStack.pop();
@@ -699,8 +622,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
 		setOffsetAndLength(forStat);
 		astStack.push(forStat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -709,21 +630,15 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * selection_statement ::=  switch '(' expression ')' statement
 	 */
 	public void consumeStatementSwitch() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTExpression expr = (IASTExpression) astStack.pop();
 		IASTSwitchStatement stat = nodeFactory.newSwitchStatement(expr, body);
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 
 	public void consumeStatementIf(boolean hasElse) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTStatement elseClause = null;
 		if(hasElse)
 			elseClause = (IASTStatement) astStack.pop();
@@ -734,8 +649,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTIfStatement ifStatement = nodeFactory.newIfStatement(condition, thenClause, elseClause);
 		setOffsetAndLength(ifStatement);
 		astStack.push(ifStatement);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -748,8 +661,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      * prevent a shift/reduce conflict in the grammar.
      */
 	public void consumeFunctionDefinition(boolean hasDeclSpecifiers) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace(String.valueOf(hasDeclSpecifiers));
-		
 		IASTCompoundStatement  body = (IASTCompoundStatement)  astStack.pop();
 		IASTFunctionDeclarator decl = (IASTFunctionDeclarator) astStack.pop();
 		astStack.closeScope();
@@ -765,8 +676,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTFunctionDefinition def = nodeFactory.newFunctionDefinition(declSpecifier, decl, body);
 		setOffsetAndLength(def);
 		astStack.push(def);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -777,8 +686,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *         <openscope> declaration_list compound_statement
      */
 	public void consumeFunctionDefinitionKnR() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
     	IASTCompoundStatement  body = (IASTCompoundStatement) astStack.pop();
     	
     	IASTDeclaration[] declarations = astStack.topScope().toArray(new IASTDeclaration[0]);
@@ -798,8 +705,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTFunctionDefinition def = nodeFactory.newFunctionDefinition(declSpecifier, decl, body);
 		setOffsetAndLength(def);
     	astStack.push(def);
-    	
-    	if(TRACE_AST_STACK) System.out.println(astStack);
     }
 
 

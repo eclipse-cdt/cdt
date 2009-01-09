@@ -18,6 +18,8 @@ Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to
 Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
+David McKnight   (IBM)        - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View        
+
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -512,4 +514,55 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
               name="%View.Category.RemoteSystems">
         </category>
       </extension>  
+      
+   <extension point="org.eclipse.ui.popupMenus">
+     <!-- from details view -->
+      <viewerContribution
+        id="org.eclipse.rse.ui.showInRemoteSystemsView"
+        targetID="org.eclipse.rse.ui.view.systemTableView">
+	    <action id="org.eclipse.rse.ui.showInRemoteSystemsViewAction"
+	       label="%ShowInRSEView.label"
+	       tooltip="%ShowInRSEView.tooltip"
+	       icon="icons/full/cview16/system_view.gif"
+	       menubarPath="group.goto"
+	       class="org.eclipse.rse.internal.ui.actions.ShowInSystemsViewDelegate">	
+	    </action>
+       </viewerContribution>
+       <!-- from search view -->
+       <viewerContribution
+        id="org.eclipse.rse.ui.showInRemoteSystemsView"
+        targetID="org.eclipse.rse.ui.view.SystemSearchView">
+	    <action id="org.eclipse.rse.ui.showInRemoteSystemsViewAction"
+	       label="%ShowInRSEView.label"
+	       tooltip="%ShowInRSEView.tooltip"
+	       icon="icons/full/cview16/system_view.gif"
+	       menubarPath="group.goto"
+	       class="org.eclipse.rse.internal.ui.actions.ShowInSystemsViewDelegate">	
+	    </action>
+       </viewerContribution>
+       <!-- from scratchpad view -->
+       <viewerContribution
+        id="org.eclipse.rse.ui.showInRemoteSystemsView"
+        targetID="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart">
+	    <action id="org.eclipse.rse.ui.showInRemoteSystemsViewAction"
+	       label="%ShowInRSEView.label"
+	       tooltip="%ShowInRSEView.tooltip"
+	       icon="icons/full/cview16/system_view.gif"
+	       menubarPath="group.goto"
+	       class="org.eclipse.rse.internal.ui.actions.ShowInSystemsViewDelegate">	
+	    </action>
+       </viewerContribution>
+       <!-- from monitor view -->
+       <viewerContribution       
+        id="org.eclipse.rse.ui.showInRemoteSystemsView"
+        targetID="org.eclipse.rse.ui.view.monitorView">
+	    <action id="org.eclipse.rse.ui.view.monitorView"
+	       label="%ShowInRSEView.label"
+	       tooltip="%ShowInRSEView.tooltip"
+	       icon="icons/full/cview16/system_view.gif"
+	       menubarPath="group.goto"
+	       class="org.eclipse.rse.internal.ui.actions.ShowInSystemsViewDelegate">	
+	    </action>
+       </viewerContribution>
+   </extension>
 </plugin>

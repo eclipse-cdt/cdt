@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.gdbjtag"
       label="%featureName"
-      version="5.0.0.qualifier"
+      version="5.1.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -23,7 +23,6 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.cdt.gnu.debug" version="5.0.0"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.cdt.launch"/>
@@ -35,6 +34,8 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
+      <import feature="org.eclipse.cdt.gnu.debug" version="5.0.0"/>
+      <import plugin="org.eclipse.ui.ide"/>
    </requires>
 
    <plugin

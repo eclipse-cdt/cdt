@@ -24,7 +24,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 
 /**
- * An action delegate that toggles the state of its viewer to show/hide full paths.
+ * An action delegate that toggles the state of its viewer to show/hide full
+ * paths. Note that we are not a filtering action (thus we unconditionally
+ * return true in {@link #select(Viewer, Object, Object)}), but we extend
+ * ViewFilterAction to get some basic, useful action behavior.
  */
 public class ShowFullPathsAction extends ViewFilterAction {
 

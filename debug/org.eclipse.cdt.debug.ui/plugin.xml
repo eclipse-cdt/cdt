@@ -910,6 +910,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
       </viewContribution>
       <viewContribution
@@ -928,6 +934,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"

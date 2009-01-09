@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,7 +30,8 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * A base class for the view filtering actions.
+ * A base class for the CDT filtering actions added to views. We disable the action if
+ * the view has no CDT content.
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
 	
@@ -87,10 +94,51 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		CDebugUIPlugin.getDefault().savePluginPreferences();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	/**
+	 * Disable the action if there is no CDT content in the view. There is no
+	 * practical generic way to test that so we have to use view specific tests.
+	 * Currently, we support the Debug and Breakpoints view. Support for other
+	 * views should be added as needed.
+	 * 
+	 * Note that because we do this test on a view selection change, there can
+	 * be some edge cases where we'll be enabled even though there is no CDT
+	 * content. Closing those gaps would not be easy, and thus not worth the
+	 * effort as no harm is done by an unintentional enablement.
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		boolean enable = false;
+		Object input = getStructuredViewer().getInput();
+		
+		// Debug view
+		if (input instanceof ILaunchManager) {
+			ILaunchManager launchmgr = (ILaunchManager)input;
+			IDebugTarget[] debugTargets = launchmgr.getDebugTargets();
+			for (IDebugTarget debugTarget : debugTargets) {
+				if (debugTarget instanceof ICDebugElement) {
+					enable = true;
+					break;
+				}
+			}
+		}
+		// Breakpoints view
+		else if (input instanceof IBreakpointManager) {
+			IBreakpointManager bkptmgr = (IBreakpointManager)input;
+			IBreakpoint[] bkpts = bkptmgr.getBreakpoints();
+			for (IBreakpoint bkpt : bkpts) {
+				if (bkpt instanceof ICBreakpoint) {
+					enable = true;
+					break;
+				}
+			}
+		}
+		// unsupported view; action will always be enabled.
+		else {
+			enable = true;
+		}
+		fAction.setEnabled(enable);
 	}
 
 	protected IPreferenceStore getPreferenceStore() {

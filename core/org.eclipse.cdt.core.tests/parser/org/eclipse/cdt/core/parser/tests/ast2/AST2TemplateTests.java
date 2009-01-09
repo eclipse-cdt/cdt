@@ -3594,4 +3594,19 @@ public class AST2TemplateTests extends AST2BaseTest {
         ICPPConstructor ctor= bh.assertNonProblem("DumbPtr<T>/**/", 10);
         ICPPMethod dtor= bh.assertNonProblem("~DumbPtr<T>/**/", 11);
     }
+    
+    //    template <class T> class XT {
+    //    public:
+    //       template<typename X> XT(X*);
+    //       template<typename X> XT(X&);
+    //    };
+    //    template <class T> template <class X> XT<T>::XT/**/(X* a) {}
+    //    template <class T> template <class X> XT<T>::XT<T>/**/(X& a) {}
+    public void testCtorTemplateWithTemplateID_259600() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+        ICPPConstructor ctor= bh.assertNonProblem("XT/**/", 2);
+        ctor= bh.assertNonProblem("XT<T>/**/", 5);
+    }
 }

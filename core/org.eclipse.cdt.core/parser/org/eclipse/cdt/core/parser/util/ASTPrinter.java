@@ -13,9 +13,13 @@ package org.eclipse.cdt.core.parser.util;
 import java.io.PrintStream;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -193,6 +197,22 @@ public class ASTPrinter {
 					print(out, indentLevel, binding);
 				} catch(Exception e) {
 					System.out.println("Exception while resolving binding: " + name);
+				}
+			}
+		} else if(n instanceof IASTDeclarator) {
+			IASTDeclarator declarator = (IASTDeclarator) n;
+		
+			IASTPointerOperator[] pointers = declarator.getPointerOperators();
+			if(pointers != null && pointers.length > 0)
+				out.println();
+			for (IASTPointerOperator pointer : pointers) {
+				print(out, indentLevel+1, pointer);
+			}
+			if (declarator instanceof IASTArrayDeclarator) {
+				IASTArrayDeclarator decl = (IASTArrayDeclarator)declarator;
+				org.eclipse.cdt.core.dom.ast.IASTArrayModifier[] modifiers = decl.getArrayModifiers();
+				for (IASTArrayModifier modifier : modifiers) {
+					print(out, indentLevel+1, modifier);
 				}
 			}
 		} else if (n instanceof ICASTPointer) {

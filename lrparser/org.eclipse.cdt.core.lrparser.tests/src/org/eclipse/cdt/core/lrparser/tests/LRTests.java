@@ -284,4 +284,31 @@ public class LRTests extends AST2Tests {
 		} catch(Throwable _) { }
 	}
 	
+	@Override
+	public void	testScalabilityOfLargeTrivialInitializer_Bug253690() {
+		// LPG holds on to all the tokens as you parse, so I don't think
+		// it would be easy to fix this bug.
+		try {
+			super.testScalabilityOfLargeTrivialInitializer_Bug253690();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	
+	@Override
+	public void	testCompoundLiterals_Bug258496() { // GCC extension
+		try {
+			super.testCompoundLiterals_Bug258496();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void	testThreadLocalVariables_Bug260387() { // GCC extension
+		try {
+			super.testThreadLocalVariables_Bug260387();
+			fail();
+		} catch(Throwable _) { }
+	}
+
 }

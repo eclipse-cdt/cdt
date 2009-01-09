@@ -645,9 +645,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
   		ICPPASTQualifiedName qualifiedName = nodeFactory.newQualifiedName();
   		qualifiedName.addName(name);
   		qualifiedName.setFullyQualified(true);
-  		if(qualifiedName instanceof CPPASTQualifiedName)
-  			((CPPASTQualifiedName)qualifiedName).setSignature("::" + name.toString()); //$NON-NLS-1$
-  		
   		setOffsetAndLength(qualifiedName);
   		astStack.push(qualifiedName);
   		

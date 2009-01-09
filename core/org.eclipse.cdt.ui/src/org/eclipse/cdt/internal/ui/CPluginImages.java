@@ -358,6 +358,10 @@ public class CPluginImages {
 	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE= NAME_PREFIX + "never_translate.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_NLS_NEVER_TRANSLATE = createManaged(T_OBJ, IMG_OBJS_NLS_NEVER_TRANSLATE);
 
+	public static final ImageDescriptor DESC_ELCL_NAVIGATE_BACKWARD = createUnManaged(T_ELCL, "backward_nav.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_NAVIGATE_FORWARD = createUnManaged(T_ELCL, "forward_nav.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_OPEN_DECLARATION = createUnManaged(T_ELCL, "goto_input.gif"); //$NON-NLS-1$
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}

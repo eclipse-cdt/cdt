@@ -971,6 +971,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public IInformationPresenter getMacroExplorationPresenter(ISourceViewer sourceViewer) {
         final IInformationControlCreator controlCreator= getMacroExplorationControlCreator();
         final InformationPresenter presenter = new InformationPresenter(controlCreator);
+        presenter.setRestoreInformationControlBounds(getDialogSettings(CMacroExpansionExplorationControl.KEY_CONTROL_BOUNDS), true, true);
+        presenter.setSizeConstraints(320, 120, true, false);
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		final IInformationProvider provider = new CMacroExpansionInformationProvider(getEditor());
@@ -979,6 +981,17 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 			presenter.setInformationProvider(provider, contentTypes[i]);
         presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
+	}
+
+	protected IDialogSettings getDialogSettings(String sectionName) {
+		if (sectionName == null) {
+			return null;
+		}
+		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		if (settings == null) {
+			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+		}
+		return settings;
 	}
 	
 	/**

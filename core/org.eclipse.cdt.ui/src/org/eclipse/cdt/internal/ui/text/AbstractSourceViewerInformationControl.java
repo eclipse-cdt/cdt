@@ -10,32 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.text.IInformationControlExtension4;
-import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
@@ -43,10 +29,11 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -60,49 +47,51 @@ import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
  *
  * @since 5.0
  */
-public abstract class AbstractSourceViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, DisposeListener {
+public abstract class AbstractSourceViewerInformationControl extends org.eclipse.jface.text.AbstractInformationControl implements IInformationControlExtension2, DisposeListener {
 
-	private int fTextStyle;
-	
 	private ISourceViewer fSourceViewer;
 
 	private Color fBackgroundColor;
 
 	private boolean fIsSystemBackgroundColor;
 
-	private int fMaxWidth;
-
-	private int fMaxHeight;
-
-	private List<Control> fColorExclusionControls= new ArrayList<Control>();
-
 	private Font fTextFont;
 
 	private StyledText fText;
-	
+
+	private Label fTitleLabel;
+
 	/**
 	 * Creates a source viewer information control with the given shell as parent. The given
 	 * styles are applied to the shell and the source viewer.
 	 *
 	 * @param parent  the parent shell
-	 * @param shellStyle  the additional styles for the shell
-	 * @param textStyle  the additional styles for the source viewer
-	 * @param takeFocus  flag indicating whether to take the focus
-	 * @param showViewMenu  flag indicating whether to show the "view" menu
-	 * @param persistBounds  flag indicating whether control size and location should be persisted
 	 * @param statusFieldText
 	 */
-	public AbstractSourceViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds, String statusFieldText) {
-		super(parent, shellStyle, takeFocus, persistBounds, persistBounds, showViewMenu, false, null, null);
-		fTextStyle= textStyle;
-		// Title and status text must be set to get the title label created, so force empty values here.
-		if (hasHeader())
-			setTitleText(""); //$NON-NLS-1$
-		if (statusFieldText != null)
-			setInfoText(statusFieldText);
-
+	public AbstractSourceViewerInformationControl(Shell parent, String statusFieldText) {
+		super(parent, statusFieldText);
 		// Create all controls
 		create();
+	}
+
+	/**
+	 * Creates a source viewer information control with the given shell as parent. The given
+	 * styles are applied to the shell and the source viewer.
+	 *
+	 * @param parent  the parent shell
+	 * @param isResizable  whether the control should be resizable
+	 */
+	public AbstractSourceViewerInformationControl(Shell parent, boolean isResizable) {
+		super(parent, isResizable);
+		// Create all controls
+		create();
+	}
+
+	/**
+	 * @return <code>true</code> if the control should have a title label
+	 */
+	protected boolean hasHeader() {
+		return false;
 	}
 
 	private void initializeColors() {
@@ -123,28 +112,19 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 			: PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
-	protected Control createContents(Composite parent) {
-		Control contents= super.createContents(parent);
-		for (Control ctrl : fColorExclusionControls) {
-			ctrl.setBackground(fBackgroundColor);
+	public void createContent(Composite parent) {
+		Composite content= new Composite(parent, SWT.NONE);
+		final GridLayout gridLayout= new GridLayout();
+		gridLayout.marginWidth= 0;
+		gridLayout.marginHeight= 0;
+		gridLayout.verticalSpacing= 0;
+		content.setLayout(gridLayout);
+
+		if (hasHeader()) {
+			createTitleLabel(content);
 		}
-		return contents;
-	}
-	
-	/**
-	 * Create the main content for this information control.
-	 * 
-	 * @param parent The parent composite
-	 * @return The control representing the main content.
-	 * 
-	 */
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		fSourceViewer= createSourceViewer(parent, fTextStyle);
+		fSourceViewer= createSourceViewer(content, SWT.NONE);
 
 		final StyledText text= fSourceViewer.getTextWidget();
 		text.addKeyListener(new KeyListener() {
@@ -158,7 +138,6 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		});
 
 		addDisposeListener(this);
-		return ((Viewer)fSourceViewer).getControl();
 	}
 	
 	protected final ISourceViewer createSourceViewer(Composite parent, int style) {
@@ -174,7 +153,6 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		initializeColors();
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(fBackgroundColor);
-		fColorExclusionControls.add(fText);
 		
 		fTextFont= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		fText.setFont(fTextFont);
@@ -182,58 +160,25 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		return sourceViewer;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createInfoTextArea(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createInfoTextArea(Composite parent) {
-		Control infoText= super.createInfoTextArea(parent);
-		fColorExclusionControls.add(infoText);
-		return infoText;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createTitleControl(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createTitleControl(Composite parent) {
-		Control titleText= super.createTitleControl(parent);
-		fColorExclusionControls.add(titleText);
-		return titleText;
+	private void createTitleLabel(Composite parent) {
+		fTitleLabel= new Label(parent, SWT.LEFT);
+		fTitleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Label separator= new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fTitleLabel.setFont(JFaceResources.getDialogFont());
+
+		Display display= parent.getDisplay();
+		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		fTitleLabel.setForeground(foreground);
+		fTitleLabel.setBackground(background);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
-	 */
-	@Override
-	protected List<Control> getBackgroundColorExclusions() {
-		@SuppressWarnings("unchecked")
-		List<Control> exclusions= super.getBackgroundColorExclusions();
-		exclusions.addAll(fColorExclusionControls);
-		return exclusions;
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getForegroundColorExclusions()
-	 */
-	@Override
-	protected List<Control> getForegroundColorExclusions() {
-		@SuppressWarnings("unchecked")
-		List<Control> exclusions= super.getForegroundColorExclusions();
-		exclusions.addAll(fColorExclusionControls);
-		return exclusions;
-	}
-	
-	/**
-	 * Returns the name of the dialog settings section.
-	 * <p>
-	 * The default is to return <code>null</code>.
-	 * </p>
-	 * @return the name of the dialog settings section or <code>null</code> if
-	 *         nothing should be persisted
-	 */
-	protected String getId() {
-		return null;
+	public void setTitleText(String titleText) {
+		if (fTitleLabel != null) {
+			fTitleLabel.setText(titleText);
+		}
 	}
 
 	/**
@@ -245,22 +190,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		return fSourceViewer;
 	}
 
-	/**
-	 * Returns <code>true</code> if the control has a header, <code>false</code> otherwise.
-	 * <p>
-	 * The default is to return <code>false</code>.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if the control has a header
-	 */
-	protected boolean hasHeader() {
-		// default is to have no header
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInformation(String content) {
 		if (content == null) {
 			fSourceViewer.setDocument(null);
@@ -272,9 +202,6 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		fSourceViewer.setDocument(doc);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setInput(Object input) {
 		if (input instanceof String)
 			setInformation((String)input);
@@ -282,56 +209,12 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 			setInformation(null);
 	}
 
-	/**
-	 * Fills the view menu.
-	 * Clients can extend or override.
-	 *
-	 * @param viewMenu the menu manager that manages the menu
-	 */
-	protected void fillViewMenu(IMenuManager viewMenu) {
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
-	 */
 	@Override
-	protected void fillDialogMenu(IMenuManager dialogMenu) {
-		super.fillDialogMenu(dialogMenu);
-		fillViewMenu(dialogMenu);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setVisible(boolean visible) {
-		if (visible) {
-			open();
-		} else {
-			saveDialogBounds(getShell());
-			getShell().setVisible(false);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public final void dispose() {
 		if (!fIsSystemBackgroundColor) {
 			fBackgroundColor.dispose();
 		}
-		close();
-	}
-
-	@Override
-	protected Point getInitialLocation(Point initialSize) {
-		if (!restoresLocation()) {
-			Point size = new Point(400, 400);
-			Rectangle parentBounds = getParentShell().getBounds();
-			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
-			int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
-			return new Point(x, y);
-		}
-		return super.getInitialLocation(initialSize);
+		super.dispose();
 	}
 
 	/**
@@ -345,179 +228,17 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		fSourceViewer= null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public boolean hasContents() {
 		return fSourceViewer != null && fSourceViewer.getDocument() != null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		fMaxWidth= maxWidth;
-		fMaxHeight= maxHeight;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Point computeSizeHint() {
-		// compute the preferred size
-		int x= SWT.DEFAULT;
-		int y= SWT.DEFAULT;
-		Point size= getShell().computeSize(x, y);
-		if (size.x > fMaxWidth)
-			x= fMaxWidth;
-		if (size.y > fMaxHeight)
-			y= fMaxHeight;
-
-		// recompute using the constraints if the preferred size is larger than the constraints
-		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
-			size= getShell().computeSize(x, y, false);
-
-		return size;
-//		return getShell().getSize();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setLocation(Point location) {
-		if (!restoresLocation() || getDialogSettings() == null)
-			getShell().setLocation(location);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setSize(int width, int height) {
-		if (!restoresSize() || getDialogSettings() == null) {
-			getShell().setSize(width, height);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addDisposeListener(DisposeListener listener) {
-		getShell().addDisposeListener(listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void removeDisposeListener(DisposeListener listener) {
-		getShell().removeDisposeListener(listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setForegroundColor(Color foreground) {
-		applyForegroundColor(foreground, getContents());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setBackgroundColor(Color background) {
-		applyBackgroundColor(background, getContents());
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getFocusControl()
-	 */
 	@Override
-	protected Control getFocusControl() {
-		return fSourceViewer.getTextWidget();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isFocusControl() {
-		final Shell shell = getShell();
-		return shell.getDisplay().getActiveShell() == shell;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setFocus() {
-		getShell().forceFocus();
+		super.setFocus();
 		fSourceViewer.getTextWidget().setFocus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addFocusListener(FocusListener listener) {
-		getShell().addFocusListener(listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void removeFocusListener(FocusListener listener) {
-		getShell().removeFocusListener(listener);
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
-	 */
 	@Override
-	protected IDialogSettings getDialogSettings() {
-		String sectionName= getId();
-		if (sectionName == null) {
-			return null;
-		}
-		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
-		if (settings == null)
-			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
-
-		return settings;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
-	 */
-	public Rectangle computeTrim() {
-		return getShell().computeTrim(0, 0, 0, 0);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return getShell().getBounds();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
-	 */
-	public boolean restoresLocation() {
-		return getPersistLocation();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
-	 */
-	public boolean restoresSize() {
-		return getPersistSize();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
-	 */
-	public void setStatusText(String statusFieldText) {
-		setInfoText(statusFieldText);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
-	 */
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		GC gc= new GC(fText);
 		gc.setFont(fTextFont);
@@ -528,33 +249,23 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		return new Point(widthInChars * width, heightInChars * height);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
-	 */
-	public boolean containsControl(Control control) {
-		do {
-			if (control == getShell())
-				return true;
-			if (control instanceof Shell)
-				return false;
-			control= control.getParent();
-		} while (control != null);
-		return false;
-	}
+	@Override
+	public Point computeSizeHint() {
+		// compute the preferred size
+		int x= SWT.DEFAULT;
+		int y= SWT.DEFAULT;
+		Point size= getShell().computeSize(x, y);
+		Point constraints= getSizeConstraints();
+		if (constraints != null) {
+			if (size.x > constraints.x)
+				x= constraints.x;
+			if (size.y > constraints.y)
+				y= constraints.y;
+		}
+		// recompute using the constraints if the preferred size is larger than the constraints
+		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
+			size= getShell().computeSize(x, y, false);
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
-	 */
-	public boolean isVisible() {
-		Shell shell= getShell();
-		return shell != null && !shell.isDisposed() && shell.isVisible();
+		return size;
 	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
-	 */
-	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return null;
-	}
-
 }

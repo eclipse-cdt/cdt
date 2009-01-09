@@ -27,9 +27,11 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -37,7 +39,10 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -68,6 +73,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
@@ -86,6 +92,14 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	private static final String COMMAND_ID_EXPANSION_BACK= "org.eclipse.cdt.ui.hover.backwardMacroExpansion"; //$NON-NLS-1$
 	private static final String COMMAND_ID_EXPANSION_FORWARD= "org.eclipse.cdt.ui.hover.forwardMacroExpansion"; //$NON-NLS-1$
 	private static final String CONTEXT_ID_MACRO_EXPANSION_HOVER= "org.eclipse.cdt.ui.macroExpansionHoverScope"; //$NON-NLS-1$
+
+	/** Dialog settings key to persist control bounds. */
+	public static final String KEY_CONTROL_BOUNDS = "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
+
+	private static final String KEY_CONTROL_BOUNDS_INTERNAL = KEY_CONTROL_BOUNDS + ".internal"; //$NON-NLS-1$
+
+	private static final int MIN_WIDTH = 320;
+	private static final int MIN_HEIGHT = 180;
 
 	private static class CDiffNode extends DocumentRangeNode implements ITypedElement {
 		public CDiffNode(DocumentRangeNode parent, int type, String id, IDocument doc, int start, int length) {
@@ -114,6 +128,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	private CMacroCompareViewer fMacroCompareViewer;
 	private ISourceViewer fMacroViewer;
 	private StyledText fMacroText;
+	private boolean fRestoreSize;
+	private Point fDefaultSize;
+	private ScrolledComposite fTextScroller;
 
 	/**
 	 * Creates a new control for use as a "quick view" where the control immediately takes the focus.
@@ -122,8 +139,22 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @param input  the input object, may be <code>null</code>
 	 */
 	public CMacroExpansionExplorationControl(Shell parent, CMacroExpansionInput input) {
-		super(parent, SWT.RESIZE, SWT.NONE, true, true, true);
+		super(parent, new ToolBarManager(SWT.FLAT));
 		setMacroExpansionInput(input);
+		addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				registerCommandHandlers();
+			}
+			public void focusLost(FocusEvent e) {
+				unregisterCommandHandlers();
+			}
+		});
+		getShell().addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+				widgetClosed();
+			}});
+		fillToolBar();
+		setDefaultSize(MIN_WIDTH, MIN_HEIGHT);
 	}
 
 	/**
@@ -135,30 +166,77 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		this(parent, null);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#hasHeader()
+	/**
+	 * Creates a new control for use as a "quick view" where the control immediately takes the focus.
+	 * 
+	 * @param parent  parent shell
+	 * @param restoreSize  whether control size should be restored
 	 */
+	public CMacroExpansionExplorationControl(Shell parent, boolean restoreSize) {
+		this(parent, null);
+		fRestoreSize= restoreSize;
+		if (restoreSize) {
+			restoreSize();
+		}
+	}
+
+	private void restoreSize() {
+		String sectionName= KEY_CONTROL_BOUNDS_INTERNAL;
+		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		if (settings == null) {
+			return;
+		}
+		try {
+			int width= settings.getInt(AbstractInformationControlManager.STORE_SIZE_WIDTH);
+			int height= settings.getInt(AbstractInformationControlManager.STORE_SIZE_HEIGHT);
+			setDefaultSize(width, height);
+		} catch (NumberFormatException exc) {
+			// Ignore
+		}
+	}
+	
+	private void setDefaultSize(int width, int height) {
+		fDefaultSize= new Point(width, height);
+	}
+
+	private void storeSize() {
+		final Shell shell = getShell();
+		if (shell == null) {
+			return;
+		}
+		String sectionName= KEY_CONTROL_BOUNDS_INTERNAL;
+		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		if (settings == null) {
+			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+		}
+		Point size= shell.getSize();
+		settings.put(AbstractInformationControlManager.STORE_SIZE_WIDTH, size.x);
+		settings.put(AbstractInformationControlManager.STORE_SIZE_HEIGHT, size.y);
+	}
+
 	@Override
 	protected boolean hasHeader() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#createCompareViewerControl(org.eclipse.swt.widgets.Composite, int, org.eclipse.compare.CompareConfiguration)
-	 */
 	@Override
 	protected CompareViewerControl createCompareViewerControl(Composite parent, int style, CompareConfiguration compareConfig) {
 		Splitter splitter= new Splitter(parent, SWT.VERTICAL);
 		splitter.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fMacroViewer= createSourceViewer(splitter, style | SWT.V_SCROLL | SWT.H_SCROLL);
+		// text viewer to show the macro definition
+		fTextScroller= new ScrolledComposite(splitter, SWT.H_SCROLL | SWT.V_SCROLL);
+		fMacroViewer= createSourceViewer(fTextScroller, style);
+		final StyledText textWidget= fMacroViewer.getTextWidget();
+		fTextScroller.setBackground(textWidget.getBackground());
+		fTextScroller.setContent(textWidget);
+		final Point size= textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		textWidget.setSize(size);
+		// compare viewer
 		CompareViewerControl control= super.createCompareViewerControl(splitter, style, compareConfig);
 		splitter.setWeights(new int[] { 20, 80 });
 		return control;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#createContentViewer(org.eclipse.swt.widgets.Composite, org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration)
-	 */
 	@Override
 	protected Viewer createContentViewer(Composite parent, ICompareInput input, CompareConfiguration cc) {
 		fMacroCompareViewer= new CMacroCompareViewer(parent, SWT.NULL, cc);
@@ -192,21 +270,6 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		return sourceViewer;
 	}
 
-
-	@Override
-	public int open() {
-		getShell().addListener(SWT.Activate, new Listener() {
-			public void handleEvent(Event arg0) {
-				registerCommandHandlers();
-			}});
-		getShell().addListener(SWT.Deactivate, new Listener() {
-			public void handleEvent(Event arg0) {
-				unregisterCommandHandlers();
-			}});
-
-		return super.open();
-	}
-
 	protected void unregisterCommandHandlers() {
 		if (fHandlerService != null) {
 			fHandlerService.deactivateHandlers(fHandlerActivations);
@@ -220,6 +283,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	protected void registerCommandHandlers() {
+		if (fContextActivation != null) {
+			return;
+		}
         IHandler backwardHandler= new AbstractHandler() {
             public Object execute(ExecutionEvent event) throws ExecutionException {
                 backward();
@@ -250,7 +316,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
         String infoText= getInfoText();
         if (infoText != null) {
-            setInfoText(infoText);
+            setStatusText(infoText);
             //bug 234952 - truncation in the info label
             PixelConverter converter = new PixelConverter(getShell());
             Point pt = getShell().getSize();
@@ -261,15 +327,22 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
         }
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#fillViewMenu(org.eclipse.jface.action.IMenuManager)
-	 */
-	@Override
-	protected void fillViewMenu(IMenuManager viewMenu) {
-		super.fillViewMenu(viewMenu);
-		final CommandContributionItemParameter params= new CommandContributionItemParameter(
-				PlatformUI.getWorkbench(), null, ICEditorActionDefinitionIds.OPEN_DECL, CommandContributionItem.STYLE_PUSH);
-		viewMenu.add(new CommandContributionItem(params));
+	private void fillToolBar() {
+		ToolBarManager mgr = getToolBarManager();
+		if (mgr == null) {
+			return;
+		}
+        IWorkbench workbench= PlatformUI.getWorkbench();
+        CommandContributionItemParameter param= new CommandContributionItemParameter(workbench, null, COMMAND_ID_EXPANSION_BACK, CommandContributionItem.STYLE_PUSH);
+        param.icon= CPluginImages.DESC_ELCL_NAVIGATE_BACKWARD;
+		mgr.add(new CommandContributionItem(param));
+		param = new CommandContributionItemParameter(workbench, null, COMMAND_ID_EXPANSION_FORWARD, CommandContributionItem.STYLE_PUSH);
+        param.icon= CPluginImages.DESC_ELCL_NAVIGATE_FORWARD;
+        mgr.add(new CommandContributionItem(param));
+        param = new CommandContributionItemParameter(workbench, null, ICEditorActionDefinitionIds.OPEN_DECL, CommandContributionItem.STYLE_PUSH);
+        param.icon = CPluginImages.DESC_ELCL_OPEN_DECLARATION;
+        mgr.add(new CommandContributionItem(param));
+        mgr.update(true);
 	}
 
 	protected final void gotoMacroDefinition() {
@@ -329,26 +402,42 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		return infoText;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#close()
-	 */
 	@Override
-	public boolean close() {
+	public void dispose() {
 		unregisterCommandHandlers();
-		return super.close();
+		super.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#getId()
-	 */
 	@Override
-	protected String getId() {
-		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
+	public boolean restoresLocation() {
+		return true;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#setInput(java.lang.Object)
-	 */
+	@Override
+	public boolean restoresSize() {
+		return true;
+	}
+
+	@Override
+	public void setSizeConstraints(int maxWidth, int maxHeight) {
+		Point constraints= getSizeConstraints();
+		if (constraints != null) {
+			super.setSizeConstraints(Math.max(constraints.x, maxWidth), Math.max(constraints.y, maxHeight));
+		} else {
+			super.setSizeConstraints(maxWidth, maxHeight);
+		}
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		if (fDefaultSize != null) {
+			width= Math.max(fDefaultSize.x, width);
+			height= Math.max(fDefaultSize.y, height);
+			fDefaultSize= null;
+		}
+		super.setSize(width, height);
+	}
+
 	@Override
 	public void setInput(Object input) {
 		if (input instanceof CMacroExpansionInput) {
@@ -361,9 +450,28 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#computeTrim()
-	 */
+	private void widgetClosed() {
+		if (fRestoreSize) {
+			storeSize();
+			fRestoreSize= false;
+		}
+		unregisterCommandHandlers();
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		if (!visible) {
+			if (fRestoreSize) {
+				storeSize();
+				fRestoreSize= false;
+			}
+		}
+		super.setVisible(visible);
+		if (visible) {
+			setFocus();
+		}
+	}
+
 	@Override
 	public Rectangle computeTrim() {
 		Rectangle trim= super.computeTrim();
@@ -421,6 +529,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		
 		setTitleText(CHoverMessages.bind(CHoverMessages.CMacroExpansionControl_title_macroExpansionExploration, getStepCount()));
 		fMacroViewer.getDocument().set(getMacroText(fIndex));
+		final StyledText textWidget= fMacroViewer.getTextWidget();
+		final Point size= textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		textWidget.setSize(size);
 		setInput(createCompareInput(null, left, right));
 	}
 
@@ -458,41 +569,35 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	private String getMacroText(int index) {
-		final String text;
-		final int count= getStepCount();
-		if (index < count) {
-			final IMacroExpansionStep expansionStep= fInput.fExplorer.getExpansionStep(index);
-			IMacroBinding binding= expansionStep.getExpandedMacro();
-			StringBuffer buffer= new StringBuffer();
-			buffer.append("#define ").append(binding.getName()); //$NON-NLS-1$
-			char[][] params= binding.getParameterList();
-			if (params != null) {
-				buffer.append('(');
-				for (int i= 0; i < params.length; i++) {
-					if (i > 0) {
-						buffer.append(',');
-						buffer.append(' ');
-					}
-					char[] param= params[i];
-					buffer.append(new String(param));
+		index= index < getStepCount() ? index : 0;
+		final IMacroExpansionStep expansionStep= fInput.fExplorer.getExpansionStep(index);
+		IMacroBinding binding= expansionStep.getExpandedMacro();
+		StringBuffer buffer= new StringBuffer();
+		buffer.append("#define ").append(binding.getName()); //$NON-NLS-1$
+		char[][] params= binding.getParameterList();
+		if (params != null) {
+			buffer.append('(');
+			for (int i= 0; i < params.length; i++) {
+				if (i > 0) {
+					buffer.append(',');
+					buffer.append(' ');
 				}
-				buffer.append(')');
+				char[] param= params[i];
+				buffer.append(new String(param));
 			}
-			buffer.append(' ');
-			if (!binding.isDynamic()) {
-				buffer.append(binding.getExpansionImage());
-			}
-			else {
-				ReplaceEdit[] replacements= expansionStep.getReplacements();
-				if (replacements.length == 1) {
-					buffer.append(replacements[0].getText());
-				}
-			}
-			text= buffer.toString();
-		} else {
-			text= ""; //$NON-NLS-1$
+			buffer.append(')');
 		}
-		return text;
+		buffer.append(' ');
+		if (!binding.isDynamic()) {
+			buffer.append(binding.getExpansionImage());
+		}
+		else {
+			ReplaceEdit[] replacements= expansionStep.getReplacements();
+			if (replacements.length == 1) {
+				buffer.append(replacements[0].getText());
+			}
+		}
+		return buffer.toString();
 	}
 
 }

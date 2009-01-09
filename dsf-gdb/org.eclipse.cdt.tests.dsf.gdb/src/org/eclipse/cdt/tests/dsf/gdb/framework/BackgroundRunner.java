@@ -17,15 +17,15 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.InitializationError;
 
 /**
  * This runner starts an eclipse job ro run the tests, so as
  * to release the UI thread.
  */
-@SuppressWarnings("restriction")
-public class BackgroundRunner extends TestClassRunner {
+public class BackgroundRunner extends BlockJUnit4ClassRunner {
 
 	public BackgroundRunner(Class<?> klass) throws InitializationError {
 		super(klass);
@@ -126,7 +126,7 @@ public class BackgroundRunner extends TestClassRunner {
 		
 		// Signal the interrupt condition that we are done here
 		// and it can cleanup whatever necessary.
-		condition.dispose();
+		if (condition != null) condition.dispose();
 		
 		return isTimedOut;
 	}

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -334,6 +335,9 @@ class LookupData {
              	} 
         		if (tempNameParent instanceof IASTFunctionCallExpression) {
         			return CPPVisitor.getExpressionType(((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression());
+        		}
+        		if (tempNameParent instanceof IASTBinaryExpression) {
+        			return CPPVisitor.getExpressionType(((IASTBinaryExpression) tempNameParent).getOperand1());
         		}
         		return null;
         	} 

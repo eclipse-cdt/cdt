@@ -6178,7 +6178,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPFunction f2= ba.assertNonProblem("func(*b)", 4, ICPPFunction.class);
 		assertNotSame(f1, f2);
 	}
-	
+
 	//	struct C {int a;};
 	//	void myfunc(C c) {
 	//		return c < c.a ||
@@ -6193,4 +6193,32 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
+
+    //  struct A {
+    //    int a;
+    //  };
+    //
+    //  struct B {
+    //    A operator-(B b2);
+    //    A operator+(B& b2);
+    //    A operator*(const B& b2);
+    //    A operator/(B b2) const;
+    //    A operator%(const B& b2) const;
+    //  };
+    //
+    //  void test(B p1, B p2) {
+    //    (p1 - p2).a; //1
+    //    (p1 + p2).a; //2
+    //    (p1 * p2).a; //3
+    //    (p1 / p2).a; //4
+    //    (p1 % p2).a; //5
+    //  }
+    public void testOverloadedBinaryOperator_259927() throws Exception {
+        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        ba.assertNonProblem("a; //1", 1, ICPPField.class);
+        ba.assertNonProblem("a; //2", 1, ICPPField.class);
+        ba.assertNonProblem("a; //3", 1, ICPPField.class);
+        ba.assertNonProblem("a; //4", 1, ICPPField.class);
+        ba.assertNonProblem("a; //5", 1, ICPPField.class);
+    }
 }

@@ -1876,6 +1876,33 @@ public class CPPVisitor extends ASTQueries {
 	        }
 	    } else if (expression instanceof IASTBinaryExpression) {
 	    	final IASTBinaryExpression binary = (IASTBinaryExpression) expression;
+
+	        // Check for overloaded operator.
+			IType type1 = getExpressionType(binary.getOperand1());
+			while (type1 instanceof ITypedef) {
+				try {
+					type1 = ((ITypedef) type1).getType();
+				} catch (DOMException e) {
+					break;
+				}
+			}
+		    try {
+				if (type1 instanceof ICPPReferenceType) {
+					type1 = ((ICPPReferenceType) type1).getType();
+				}
+				if (type1 instanceof IQualifierType) {
+					type1 = ((IQualifierType) type1).getType();
+				}
+				if (type1 instanceof ICPPClassType) {
+					ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type1);
+					if (operator != null) {
+						return operator.getType().getReturnType();
+					}
+				}
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
+	        
 	        final int op = binary.getOperator();
 	        switch (op) {
 	        case IASTBinaryExpression.op_lessEqual:

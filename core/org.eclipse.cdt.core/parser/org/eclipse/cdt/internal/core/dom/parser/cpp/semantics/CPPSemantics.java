@@ -2574,6 +2574,16 @@ public class CPPSemantics {
 			} else {
 				data.functionParameters = new IASTExpression[] {paramExpression};
 			}
+		} else if (exp instanceof IASTBinaryExpression) {
+	    	final IASTBinaryExpression binary = (IASTBinaryExpression) exp;
+	        OverloadableOperator operator = OverloadableOperator.fromBinaryExpression(binary);
+	        if (operator == null) {
+	        	return null;
+	        }
+		    astName.setName(operator.toCharArray());
+		    data = new LookupData(astName);
+		    data.forceQualified = true;
+		    data.functionParameters = new IASTExpression[] { binary.getOperand2() };
 		} else {
 			return null;
 		}

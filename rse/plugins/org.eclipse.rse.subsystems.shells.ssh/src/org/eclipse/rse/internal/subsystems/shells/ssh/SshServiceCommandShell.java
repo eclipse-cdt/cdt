@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalServiceCommandShell
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
+ * Anna Dushistova  (MontaVista) - [259414][api] refactor the "SSH Shell" to use the generic Terminal->IHostShell converter
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.ssh;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.services.shells.TerminalServiceHostShell;
 import org.eclipse.rse.internal.services.ssh.shell.SshHostShell;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -181,6 +183,9 @@ public class SshServiceCommandShell extends ServiceCommandShell
 	 */
 	protected String getPromptCommand() {
 		IHostShell shell = getHostShell();
+		if (shell instanceof TerminalServiceHostShell) {
+			return ((TerminalServiceHostShell)shell).getPromptCommand();
+		}
 		//Assert shell instanceof SshHostShell;
 		if (shell instanceof SshHostShell) {
 			return ((SshHostShell)shell).getPromptCommand();

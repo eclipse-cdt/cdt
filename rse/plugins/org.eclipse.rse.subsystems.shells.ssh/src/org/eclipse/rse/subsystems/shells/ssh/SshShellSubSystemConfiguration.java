@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted template for ssh service.
+ * Anna Dushistova  (MontaVista) - [259414][api] refactor the "SSH Shell" to use the generic Terminal->IHostShell converter
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.ssh;
@@ -23,7 +24,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.internal.services.ssh.ISshService;
-import org.eclipse.rse.internal.services.ssh.shell.SshShellService;
+import org.eclipse.rse.internal.services.ssh.terminal.SshTerminalService;
 import org.eclipse.rse.internal.subsystems.shells.ssh.SshServiceCommandShell;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
@@ -61,7 +62,7 @@ public class SshShellSubSystemConfiguration extends
 
 	public IShellService createShellService(IHost host) {
 		SshConnectorService cserv = (SshConnectorService)getConnectorService(host);
-		return new SshShellService(cserv);
+		return (IShellService) (new SshTerminalService(cserv)).getAdapter(IShellService.class);
 	}
 
 	public IConnectorService getConnectorService(IHost host) {

@@ -295,6 +295,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
+		PDOMNode inheritFileLocal = parent;
 
 		// template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter) 
@@ -357,6 +358,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
 				if (pdomEnumeration instanceof PDOMCPPEnumeration) {
 					pdomBinding = new PDOMCPPEnumerator(pdom, parent, etor,	(PDOMCPPEnumeration)pdomEnumeration);
+					inheritFileLocal= pdomEnumeration;
 				}
 			}
 		} else if (binding instanceof ITypedef) {
@@ -364,7 +366,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if (pdomBinding != null) {
-			pdomBinding.setLocalToFileRec(getLocalToFileRec(parent, binding));
+			pdomBinding.setLocalToFileRec(getLocalToFileRec(inheritFileLocal, binding));
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -579,12 +581,24 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent == null) {
 			parent= adaptOrAddParent(false, binding);
 		}
+		PDOMNode inheritFileLocal= parent;
+		if (binding instanceof IEnumerator) {
+			try {
+				IType enumeration= ((IEnumerator)binding).getType();
+				if (enumeration instanceof IEnumeration) {
+					inheritFileLocal= adaptBinding((IEnumeration) enumeration);
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+
 		if (parent == this) {
-			int localToFileRec= getLocalToFileRec(null, binding);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
 			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
 		}
 		if (parent instanceof PDOMCPPNamespace) {
-			int localToFileRec= getLocalToFileRec(parent, binding);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
 			return CPPFindBinding.findBinding(((PDOMCPPNamespace) parent).getIndex(), this, binding,
 					localToFileRec);
 		}
@@ -593,7 +607,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					(ICPPTemplateParameter) binding);
 		}
 		if (parent instanceof IPDOMMemberOwner) {
-			int localToFileRec= getLocalToFileRec(parent, binding);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
 			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
 		}
 		return null;

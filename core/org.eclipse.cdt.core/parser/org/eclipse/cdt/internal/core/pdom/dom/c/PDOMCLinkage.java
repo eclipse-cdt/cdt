@@ -11,7 +11,6 @@
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -106,7 +105,8 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	
 	private PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding= null;
-		
+		PDOMNode inheritFileLocal= parent;
+
 		if (binding instanceof IField) { // must be before IVariable
 			if (parent instanceof IPDOMMemberOwner)
 				pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
@@ -125,6 +125,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				IType enumeration= ((IEnumerator)binding).getType();
 				if (enumeration instanceof IEnumeration) {
 					PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
+					inheritFileLocal= pdomEnumeration;
 					if (pdomEnumeration instanceof PDOMCEnumeration)
 						pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
 				}
@@ -136,7 +137,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 
 		if (pdomBinding != null) {
-			pdomBinding.setLocalToFileRec(getLocalToFileRec(parent, binding));
+			pdomBinding.setLocalToFileRec(getLocalToFileRec(inheritFileLocal, binding));
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -260,12 +261,24 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (parent == null) {
 			parent= getAdaptedParent(binding);
 		}
+		PDOMNode inheritFileLocal= parent;
+		if (binding instanceof IEnumerator) {
+			try {
+				IType enumeration= ((IEnumerator)binding).getType();
+				if (enumeration instanceof IEnumeration) {
+					inheritFileLocal= adaptBinding((IEnumeration) enumeration);
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+
 		if (parent == this) {
-			int localToFileRec= getLocalToFileRec(null, binding);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
 			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
 		} 
 		if (parent instanceof IPDOMMemberOwner) {
-			int localToFileRec= getLocalToFileRec(parent, binding);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
 			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
 		}
 		return null;

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -80,11 +81,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		            return CPPSemantics.resolveAmbiguities(name, fBinding.getConstructors());
 		        }
 	            //9.2 ... The class-name is also inserted into the scope of the class itself
-		        if (fBinding instanceof ICPPClassTemplatePartialSpecialization)
-		        	return ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
-		        if (fBinding instanceof ICPPSpecialization)
-		        	return ((ICPPSpecialization) fBinding).getSpecializedBinding();
-	            return fBinding;
+		        return getClassNameBinding();
 		    }
 			
 			final IBinding[] candidates = getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
@@ -94,25 +91,34 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 		return null;
 	}
+
+	private IBinding getClassNameBinding() throws DOMException {
+		if (fBinding instanceof ICPPClassTemplatePartialSpecialization)
+			return ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
+		if (fBinding instanceof ICPPSpecialization)
+			return ((ICPPSpecialization) fBinding).getSpecializedBinding();
+		return fBinding;
+	}
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
 			final char[] nameChars = name.getSimpleID();
 			if (!prefixLookup) {
-				return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
+				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
+			        if (CPPClassScope.isConstructorReference(name)){
+			            return fBinding.getConstructors();
+			        }
+			        return new IBinding[] {getClassNameBinding()};
+				}
+			    return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			}
+			
+			// prefix lookup
 			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), 0, nameChars.length, nameChars, true)) {
-				// 9.2 ... The class-name is also inserted into the scope of
-				// the class itself
-				IPDOMNode node= fBinding;
-		        if (node instanceof ICPPClassTemplatePartialSpecialization)
-		        	node= (IPDOMNode) ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
-		        else if (fBinding instanceof ICPPSpecialization)
-		        	node= (IPDOMNode) ((ICPPSpecialization) fBinding).getSpecializedBinding();
-		        	
-		        visitor.visit(node);
+				// add the class itself, constructors will be found during the visit
+		        visitor.visit((IPDOMNode) getClassNameBinding());
 			}
 			acceptViaCache(fBinding, visitor, true);
 			result= visitor.getBindings();
@@ -221,6 +227,9 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 	}
 
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		return fBinding.getConstructors();
+	}
 
 	public IIndexScope getParent() {
 		return fBinding.getScope();

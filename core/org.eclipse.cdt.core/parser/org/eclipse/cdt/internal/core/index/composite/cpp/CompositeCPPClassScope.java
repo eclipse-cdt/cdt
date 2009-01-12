@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -49,6 +51,20 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 			CCorePlugin.log(de);
 		}
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
+
+	public ICPPConstructor[] getConstructors() {
+		try {
+			ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
+			ICPPConstructor[] result = rscope.getConstructors();
+			for(int i=0; i<result.length; i++) {
+				result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+			}
+			return result;
+		} catch (DOMException de) {
+			CCorePlugin.log(de);
+		}
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
@@ -22,6 +24,11 @@ interface ICPPInternalClassTypeMixinHost extends ICPPClassType, ICPPInternalBind
 	 */
 	 ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier();
 	 
+	 /**
+	  * {@inheritDoc}
+	  */
+	 ICPPClassScope getCompositeScope() throws DOMException;
+
 	 /**
 	  * Ensures the ICPPInternalBinding definition is set, if this is possible.
 	  * @see ICPPInternalBinding#getDefinition()

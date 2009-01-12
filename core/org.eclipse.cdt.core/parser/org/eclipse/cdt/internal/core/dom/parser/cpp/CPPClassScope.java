@@ -220,7 +220,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		}
 	    if (CharArrayUtils.equals(c, compName.getLookupKey())) {
 	        if (isConstructorReference(name)) {
-	            return CPPSemantics.resolveAmbiguities(name, getConstructors(bindings, resolve, name));
+	            return CPPSemantics.resolveAmbiguities(name, getConstructors(name, resolve));
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             return compName.resolveBinding();
@@ -229,7 +229,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet, 
+			boolean checkPointOfDecl) throws DOMException {
 	    char[] c = name.getLookupKey();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -241,7 +242,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 	    	|| (prefixLookup && CharArrayUtils.equals(compName.getLookupKey(), 0, c.length, c, true))) {
 	        if (isConstructorReference(name)) {
-	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(bindings, resolve, name));
+	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             result = (IBinding[]) ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
@@ -249,7 +250,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             	return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	    }
 	    result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result,
-	    		super.getBindings(name, resolve, prefixLookup, fileSet));
+	    		super.getBindings(name, resolve, prefixLookup, fileSet, checkPointOfDecl));
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
@@ -263,23 +264,22 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return true;
 	}
 
-	protected ICPPConstructor[] getConstructors(boolean forceResolve) {
-		return getConstructors(bindings, forceResolve, null);
-	}
-	static protected ICPPConstructor[] getConstructors(CharArrayObjectMap bindings, boolean forceResolve) {
-		return getConstructors(bindings, forceResolve, null);
+	public ICPPConstructor[] getConstructors() {
+		return getConstructors(null, true);
 	}
 
-	@SuppressWarnings("unchecked")
-	static protected ICPPConstructor[] getConstructors(CharArrayObjectMap bindings, boolean forceResolve, IASTName forName) {
-		if (bindings == null)
+	private ICPPConstructor[] getConstructors(IASTName forName, boolean forceResolve) {
+		populateCache();
+
+		final CharArrayObjectMap nameMap = bindings;
+		if (nameMap == null)
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 
-		Object o = bindings.get(CONSTRUCTOR_KEY);
+		Object o = nameMap.get(CONSTRUCTOR_KEY);
 		if (o != null) {
 			IBinding binding = null;
-	        if (o instanceof ObjectSet) {
-	        	ObjectSet set = (ObjectSet) o;
+	        if (o instanceof ObjectSet<?>) {
+	        	ObjectSet<?> set = (ObjectSet<?>) o;
 	        	IBinding[] bs = null;
         		for (int i = 0; i < set.size(); i++) {
         			Object obj = set.keyAt(i);
@@ -297,7 +297,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        } else if (o instanceof IASTName) {
 	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName)o).getBinding() != null) {
 	        		// always store the name, rather than the binding, such that we can properly flush the scope.
-	        		bindings.put(CONSTRUCTOR_KEY, o);
+	        		nameMap.put(CONSTRUCTOR_KEY, o);
 	        		binding = ((IASTName)o).resolveBinding();
 	        	}
 	        } else if (o instanceof IBinding) {
@@ -333,7 +333,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
 	    IASTNode node = name.getParent();
 	    if (node instanceof ICPPASTTemplateId)
-	    	node = node.getParent();
+	    	return false;
 	    if (node instanceof ICPPASTQualifiedName) {
 	    	if (((ICPPASTQualifiedName) node).getLastName() == name)
 	    		node = node.getParent();

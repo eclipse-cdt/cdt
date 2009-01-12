@@ -146,6 +146,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
@@ -240,7 +241,9 @@ public class CPPSemantics {
                     data.ignoreUsingDirectives = true;
                     data.forceQualified = true;
                     for (int i = 0; i < data.associated.size(); i++) {
-                    	lookup(data, data.associated.keyAt(i));
+                    	final IScope scope = data.associated.keyAt(i);
+                    	if (!data.visited.containsKey(scope))
+                    		lookup(data, scope);
                     }
                     binding = resolveAmbiguities(data, data.astName);
                 }
@@ -314,19 +317,21 @@ public class CPPSemantics {
 		    			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
 		    			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
 		    			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
-		    			cls = inst instanceof ICPPClassType && !(inst instanceof ICPPDeferredClassInstance) ?
-		    					(ICPPClassType) inst : cls; 
+		    			if (inst instanceof ICPPClassType) {
+		    				cls= (ICPPClassType) inst;
+		    			}
 		    		}
 		    	}
-		    	if (cls != null) {
+		    	if (cls instanceof ICPPDeferredClassInstance) {
+		    		binding= new CPPUnknownConstructor(cls, data.astName);
+		    	} else {
 		    		// Force resolution of constructor bindings
-		    		IBinding[] ctors = cls.getConstructors();
-		    		if (ctors.length > 0 && !(ctors[0] instanceof IProblemBinding)) {
-		    			// then use the class scope to resolve which one.
-		    			binding = ((ICPPClassScope) cls.getCompositeScope()).getBinding(data.astName, true);
+		    		final ICPPConstructor[] constructors = cls.getConstructors();
+		    		if (constructors.length > 0) {
+		    			binding= CPPSemantics.resolveAmbiguities(data.astName, constructors);
 		    		}
 		    	}
-            } catch (DOMException e) {
+		    } catch (DOMException e) {
                 binding = e.getProblem();
             }
 		}
@@ -355,7 +360,11 @@ public class CPPSemantics {
 			if (data.functionParameters != null) {
 				binding= new CPPUnknownFunction(data.skippedScope, name.getLastName());
 			} else {
-				binding= new CPPUnknownBinding(data.skippedScope, name.getLastName());
+				if (name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME) {
+					binding= new CPPUnknownClass(data.skippedScope, name.getLastName());
+				} else {
+					binding= new CPPUnknownBinding(data.skippedScope, name.getLastName());
+				}
 			}
 		}
 		
@@ -570,7 +579,7 @@ public class CPPSemantics {
 	 * @param scoped
 	 * @return
 	 */
-	private static Object mergePrefixResults(CharArrayObjectMap dest, Object source, boolean scoped) {
+	private static CharArrayObjectMap mergePrefixResults(CharArrayObjectMap dest, Object source, boolean scoped) {
 		if (source == null) return dest; 
         CharArrayObjectMap resultMap = (dest != null) ? dest : new CharArrayObjectMap(2);
         
@@ -643,8 +652,6 @@ public class CPPSemantics {
 	 */
 	static protected void lookup(LookupData data, Object start) throws DOMException{
 		final IIndexFileSet fileSet= getIndexFileSet(data);
-		final boolean isIndexBased= fileSet != IIndexFileSet.EMPTY;
-
 		IASTNode blockItem= data.astName;
 		if (blockItem == null) 
 			return;
@@ -695,33 +702,11 @@ public class CPPSemantics {
 			blockItem = CPPVisitor.getContainingBlockItem(blockItem);
 			
 			if (!data.usingDirectivesOnly) {
-				if (data.contentAssist) {
-					if (!ASTInternal.isFullyCached(scope)) {
-						lookupInScope(data, scope, blockItem);
-					}
-					// now scope is fully cached.
-					final IBinding[] bindings = scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
-					mergeResults(data, bindings, true);
-				} else {
-					boolean done= false;
-					if (!ASTInternal.isFullyCached(scope)) {
-						final IASTName[] names= lookupInScope(data, scope, blockItem);
-						if (names != null) {
-							mergeResults(data, names, true);
-							done= true;
-						} 
-					}
-				
-					if (!done) {
-						// now scope is fully cached.
-						final IBinding binding = scope.getBinding(data.astName, true, fileSet);
-						if (binding != null && 
-								(CPPSemantics.declaredBefore(binding, data.astName, isIndexBased) || 
-										(scope instanceof ICPPClassScope && data.checkWholeClassScope))) {
-							mergeResults(data, binding, true);	
-						}
-					}
+				IBinding[] bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
+				if (data.typesOnly) {
+					removeObjects(bindings);
 				}
+				mergeResults(data, bindings, true);
 				
 				// store using-directives found in this block or namespace for later use.
 				if ((!data.hasResults() || !data.qualified() || data.contentAssist) && scope instanceof ICPPNamespaceScope) {
@@ -736,7 +721,7 @@ public class CPPSemantics {
 					if (uds != null && uds.length > 0) {
 						HashSet<ICPPNamespaceScope> handled= new HashSet<ICPPNamespaceScope>();
 						for (final ICPPUsingDirective ud : uds) {
-							if (CPPSemantics.declaredBefore(ud, data.astName, false)) {
+							if (declaredBefore(ud, data.astName, false)) {
 								storeUsingDirective(data, blockScope, ud, handled);
 							}
 						}
@@ -776,6 +761,26 @@ public class CPPSemantics {
 			} else {
 				nextScope= getParentScope(scope, data.tu);
 			}
+		}
+	}
+
+	private static void removeObjects(final IBinding[] bindings) {
+		final int length = bindings.length;
+		int pos= 0;
+		for (int i = 0; i < length; i++) {
+			final IBinding binding= bindings[i];
+			IBinding check= binding;
+			if (binding instanceof ICPPUsingDeclaration) {
+				IBinding[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
+				if (delegates.length > 0)
+					check= delegates[0];
+			}
+			if (check instanceof IType || check instanceof ICPPNamespace) {
+				bindings[pos++]= binding;
+			} 
+		}
+		while (pos < length) {
+			bindings[pos++]= null;
 		}
 	}
 
@@ -880,26 +885,24 @@ public class CPPSemantics {
 					// is circular inheritance
 					if (!data.inheritanceChain.containsKey(classScope)) {
 						//is this name define in this scope?
-						if (ASTInternal.isFullyCached(classScope)) {
-							if (data.astName != null && !data.contentAssist) {
-								inherited = classScope.getBinding(data.astName, true);
-							} else if (data.astName != null) {
-								inherited = classScope.getBindings(data.astName, true, data.prefixLookup);
-							}
-						} else {
-							inherited = lookupInScope(data, classScope, null);
+						IBinding[] inCurrentScope= classScope.getBindings(data.astName, true, data.prefixLookup);
+						if (data.typesOnly) {
+							removeObjects(inCurrentScope);
 						}
-						
-						if (inherited == null || data.contentAssist) {
+						final boolean isEmpty= inCurrentScope.length == 0 || inCurrentScope[0] == null;
+						if (data.contentAssist) {
 							Object temp = lookupInParents(data, classScope, overallScope);
-							if (inherited != null) {
-								inherited = mergePrefixResults(null, inherited, true);
+							if (!isEmpty) {
+								inherited = mergePrefixResults(null, inCurrentScope, true);
 								inherited = mergePrefixResults((CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true);
 							} else {
-								inherited = temp;
+								inherited= temp;
 							}
+						} else if (isEmpty) {
+							inherited= lookupInParents(data, classScope, overallScope);
 						} else {
-						    visitVirtualBaseClasses(data, cls);
+							inherited= inCurrentScope;
+							visitVirtualBaseClasses(data, cls);
 						}
 					} else {
 					    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray());
@@ -1116,13 +1119,7 @@ public class CPPSemantics {
 		IASTName[] namespaceDefs = null;
 		int namespaceIdx = -1;
 		
-		if (data.associated.containsKey(scope)) {
-			// we are looking in scope, remove it from the associated scopes list
-			data.associated.remove(scope);
-		}
-		
-		IASTName[] found = null;
-		
+		IASTName[] found = null;		
 		if (parent instanceof IASTCompoundStatement) {
 			IASTNode p = parent.getParent();
 		    if (p instanceof IASTFunctionDefinition) {
@@ -1276,10 +1273,7 @@ public class CPPSemantics {
 			    }
 			}
 		}
-		
 
-		ASTInternal.setFullyCached(scope, true);
-		
 		return found;
 	}
 
@@ -1298,16 +1292,13 @@ public class CPPSemantics {
 				data.visited.put(nominated);
 
 				boolean found = false;
-				if (ASTInternal.isFullyCached(nominated)) {
-					IBinding[] bindings= nominated.getBindings(data.astName, true, data.prefixLookup);
-					if (bindings != null && bindings.length > 0) {
-						mergeResults(data, bindings, true);
-						found = true;
+				IBinding[] bindings= nominated.getBindings(data.astName, true, data.prefixLookup);
+				if (bindings != null && bindings.length > 0) {
+					if (data.typesOnly) {
+						removeObjects(bindings);
 					}
-				} else {
-					IASTName[] f = lookupInScope(data, nominated, null);
-					if (f != null) {
-						mergeResults(data, f, true);
+					if (bindings[0] != null) {
+						mergeResults(data, bindings, true);
 						found = true;
 					}
 				}
@@ -1611,10 +1602,14 @@ public class CPPSemantics {
 	}
 	
 	static public boolean declaredBefore(Object obj, IASTNode node, boolean indexBased) {
-	    if (node == null) return true;
-	    if (node.getPropertyInParent() == STRING_LOOKUP_PROPERTY) return true;
-	    final int pointOfRef= ((ASTNode) node).getOffset();
+	    if (node == null) 
+	    	return true;
 	    
+	    final int pointOfRef= ((ASTNode) node).getOffset();
+	    if (node.getPropertyInParent() == STRING_LOOKUP_PROPERTY && pointOfRef <= 0) {
+	    	return true;
+	    }
+
 	    ASTNode nd = null;
 	    if (obj instanceof ICPPSpecialization) {
 	        obj = ((ICPPSpecialization)obj).getSpecializedBinding();
@@ -1627,24 +1622,8 @@ public class CPPSemantics {
 	        // previous declaration in one of the skipped header files. For bindings that
 	        // are likely to be redeclared we need to assume that there is a declaration
 	        // in one of the headers.
-	    	if (indexBased) {
-    			try {
-    				if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
-	    				IScope scope= cpp.getScope();
-	    				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
-	    					return true;
-	    				}
-    				} else if (cpp instanceof ICompositeType || cpp instanceof IEnumeration) {
-	    				IScope scope= cpp.getScope();
-	    				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
-	    					// if this is not the definition, it may be found in a header. (bug 229571)
-	    					if (cpp.getDefinition() == null) {
-	    						return true;
-	    					}
-	    				}
-    				}
-    			} catch (DOMException e) {
-    			}
+	    	if (indexBased && acceptDeclaredAfter(cpp)) {
+	    		return true;
 	    	}
 	        IASTNode[] n = cpp.getDeclarations();
 	        if (n != null && n.length > 0) {
@@ -1657,10 +1636,19 @@ public class CPPSemantics {
 	        }
 	        if (nd == null) 
 	            return true;
-	    } else if (obj instanceof ASTNode) {
-	        nd = (ASTNode) obj;
-	    } else if (obj instanceof ICPPUsingDirective) {
-	    	pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration();
+	    } else {
+	        if (indexBased && obj instanceof IASTName) {
+	        	IBinding b= ((IASTName) obj).getPreBinding();
+	        	if (b instanceof ICPPInternalBinding) {
+	        		if (acceptDeclaredAfter((ICPPInternalBinding) b))
+	        			return true;
+	        	}
+	        }
+	    	if (obj instanceof ASTNode) {
+	    		nd = (ASTNode) obj;
+	    	} else if (obj instanceof ICPPUsingDirective) {
+	    		pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration();
+	    	}
 	    }
 	    
 	    if (pointOfDecl < 0 && nd != null) {
@@ -1696,6 +1684,27 @@ public class CPPSemantics {
 	    }
 	    return (pointOfDecl < pointOfRef);
 	}
+
+	private static boolean acceptDeclaredAfter(ICPPInternalBinding cpp) {
+		try {
+			if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
+				IScope scope= cpp.getScope();
+				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
+					return true;
+				}
+			} else if (cpp instanceof ICompositeType || cpp instanceof IEnumeration) {
+				IScope scope= cpp.getScope();
+				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
+					// if this is not the definition, it may be found in a header. (bug 229571)
+					if (cpp.getDefinition() == null) {
+						return true;
+					}
+				}
+			}
+		} catch (DOMException e) {
+		}
+		return false;
+	}
 	
 	static private IBinding resolveAmbiguities(LookupData data, IASTName name) throws DOMException {
 	    if (!data.hasResults() || data.contentAssist)
@@ -1710,6 +1719,7 @@ public class CPPSemantics {
 	    IBinding obj  = null;
 	    IBinding temp = null;
 	    boolean fnsFromAST= false;
+	    boolean fnTmplsFromAST= false;
 	    
 	    Object[] items = (Object[]) data.foundItems;
 	    for (int i = 0; i < items.length && items[i] != null; i++) {
@@ -1768,7 +1778,18 @@ public class CPPSemantics {
 	        	if (function instanceof ICPPFunctionTemplate) {
 	        		if (templateFns == ObjectSet.EMPTY_SET)
 	        			templateFns = new ObjectSet<IFunction>(2);
-	        		templateFns.put(function);
+	        		if (isFromIndex(function)) {
+	        			// accept bindings from index only, in case we have none in the AST
+	        			if (!fnTmplsFromAST) {
+	        				templateFns.put(function);
+	        			}
+	        		} else {
+	        			if (!fnTmplsFromAST) {
+	        				templateFns.clear();
+	        				fnTmplsFromAST= true;
+	        			}
+	        			templateFns.put(function);
+	        		}
 	        	} else { 
 	        		if (fns == ObjectSet.EMPTY_SET)
 	        			fns = new ObjectSet<IFunction>(2);
@@ -1798,7 +1819,14 @@ public class CPPSemantics {
 	        	if (type == null) {
 	                type = temp;
 	        	} else if (type != temp && !((IType)type).isSameType((IType) temp)) {
-	                return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	        		boolean i1= isFromIndex(type);
+	        		boolean i2= isFromIndex(temp);
+	        		if (i1 != i2) { 
+	        			if (i1)  
+	        				type= temp;
+	        		} else {
+	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	        		}
 	            }
 	        } else {
 	        	if (obj == null) {
@@ -2611,10 +2639,13 @@ public class CPPSemantics {
 	    astName.setName(name);
 	    astName.setParent(ASTInternal.getPhysicalNodeOfScope(scope));
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
+	    if (beforeNode instanceof ASTNode) {
+	    	astName.setOffsetAndLength((ASTNode) beforeNode);
+	    }
 	    
 		LookupData data = new LookupData(astName);
 		data.forceQualified = qualified;
-		return standardLookup(data, scope, beforeNode);
+		return standardLookup(data, scope);
 	}
 	
 	public static IBinding[] findBindingsForContentAssist(IASTName name, boolean prefixLookup) {
@@ -2665,7 +2696,7 @@ public class CPPSemantics {
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
     }
 
-    private static IBinding[] standardLookup(LookupData data, Object start, IASTNode beforeNode) {
+    private static IBinding[] standardLookup(LookupData data, Object start) {
     	try {
 			lookup(data, start);
 		} catch (DOMException e) {
@@ -2676,34 +2707,26 @@ public class CPPSemantics {
 		if (items == null)
 		    return new IBinding[0];
 		
-		boolean indexBased= false;
-		if (beforeNode != null) {
-			IASTTranslationUnit tu= beforeNode.getTranslationUnit();
-			if (tu != null && tu.getIndex() != null)
-				indexBased= true;
-		}
 		ObjectSet<IBinding> set = new ObjectSet<IBinding>(items.length);
 		IBinding binding = null;
 		for (Object item : items) {
-	    	if (beforeNode == null || declaredBefore(item, beforeNode, indexBased)) { 
-	    		if (item instanceof IASTName) {
-	    			binding = ((IASTName) item).resolveBinding();
-	    		} else if (item instanceof IBinding) {
-	    			binding = (IBinding) item;
-	    		} else {
-	    			binding = null;
-	    		}
+			if (item instanceof IASTName) {
+				binding = ((IASTName) item).resolveBinding();
+			} else if (item instanceof IBinding) {
+				binding = (IBinding) item;
+			} else {
+				binding = null;
+			}
 
-	    		if (binding != null) {
-	    			if (binding instanceof ICPPUsingDeclaration) {
-	    				set.addAll(((ICPPUsingDeclaration) binding).getDelegates());
-	    			} else if (binding instanceof CPPCompositeBinding) {
-	    				set.addAll(((CPPCompositeBinding) binding).getBindings());
-	    			} else {
-	    				set.put(binding);
-	    			}
-	    		}
-	    	}
+			if (binding != null) {
+				if (binding instanceof ICPPUsingDeclaration) {
+					set.addAll(((ICPPUsingDeclaration) binding).getDelegates());
+				} else if (binding instanceof CPPCompositeBinding) {
+					set.addAll(((CPPCompositeBinding) binding).getBindings());
+				} else {
+					set.put(binding);
+				}
+			}
 		}
 		
 	    return set.keyArray(IBinding.class);

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -24,11 +24,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
- * @author aniefer
+ * Implementation of namespace scopes, including global scope.
  */
 public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	ICPPUsingDirective[] usings = null;
@@ -48,9 +47,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
 	 */
 	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
-		if (!isFullyCached()) {
-			CPPSemantics.lookupInScope(null, this, null);
-		}
+		populateCache();
 		return (ICPPUsingDirective[]) ArrayUtil.trim( ICPPUsingDirective.class, usings, true );
 	}
 	/* (non-Javadoc)

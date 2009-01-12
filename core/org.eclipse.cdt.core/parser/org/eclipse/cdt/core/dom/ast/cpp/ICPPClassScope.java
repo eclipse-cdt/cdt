@@ -6,15 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+
 /**
- * @author aniefer
+ * Interface for class scopes.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICPPClassScope extends ICPPScope {
 	/**
@@ -31,4 +34,10 @@ public interface ICPPClassScope extends ICPPScope {
 	 * 
 	 */
 	public ICPPMethod[] getImplicitMethods();
+	
+	/**
+	 * Returns the array of constructors, including implicit ones.
+	 * @since 5.1
+	 */
+	public ICPPConstructor[] getConstructors() throws DOMException;
 }

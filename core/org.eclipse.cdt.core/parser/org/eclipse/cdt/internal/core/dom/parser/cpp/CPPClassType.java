@@ -281,7 +281,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return scope;
 	}
 
-	public IScope getCompositeScope() {
+	public ICPPClassScope getCompositeScope() {
 		if (definition == null) {
 			checkForDefinition();
 		}
@@ -291,7 +291,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		// fwd-declarations must be backed up from the index
 		if (typeInIndex != null) {
 			try {
-				return typeInIndex.getCompositeScope();
+				IScope scope = typeInIndex.getCompositeScope();
+				if (scope instanceof ICPPClassScope)
+					return (ICPPClassScope) scope;
 			} catch (DOMException e) {
 				// index bindings don't throw DOMExeptions.
 			}

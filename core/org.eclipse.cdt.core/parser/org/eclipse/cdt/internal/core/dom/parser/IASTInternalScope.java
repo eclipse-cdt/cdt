@@ -25,16 +25,6 @@ public interface IASTInternalScope extends IScope {
      * Return the physical IASTNode that this scope was created for
      */
     public IASTNode getPhysicalNode() throws DOMException;
-
-	/**
-	 * Set whether or not all the names in this scope have been cached
-	 */
-	public void setFullyCached(boolean b) throws DOMException;
-
-	/**
-	 * whether or not this scope's cache contains all the names
-	 */
-	public boolean isFullyCached() throws DOMException;
 	
 	/** 
 	 * clear the name cache in this scope

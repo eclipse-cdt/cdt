@@ -177,19 +177,6 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#setFullyCached(boolean)
-     */
-    public void setFullyCached(boolean b) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#isFullyCached()
-     */
-    public boolean isFullyCached() {
-        return true;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#flushCache()
      */
     public void flushCache() {

@@ -194,19 +194,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#setFullyCached(boolean)
-     */
-    public void setFullyCached(boolean b) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#isFullyCached()
-     */
-    public boolean isFullyCached() throws DOMException {
-        throw new DOMException(this);
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
     public boolean isSameType(IType type) {

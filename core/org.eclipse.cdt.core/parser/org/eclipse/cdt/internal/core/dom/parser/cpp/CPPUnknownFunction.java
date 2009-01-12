@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 
@@ -27,6 +28,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunction {
 
 	public static IFunction createForSample(IFunction sample, IASTName name) throws DOMException {
+		if (sample instanceof ICPPConstructor)
+			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner(), name);
+		
 		return new CPPUnknownFunction(sample.getOwner(), name.getLastName());
 	}
 

@@ -81,27 +81,45 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
     	return CPPSemantics.resolveAmbiguities(name, specs);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
+	final public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
 			IIndexFileSet fileSet) throws DOMException {
+		return getBindings(name, forceResolve, prefixLookup, fileSet, true);
+	}
+
+	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
+			IIndexFileSet fileSet, boolean checkPointOfDecl) throws DOMException {
 		char[] c = name.getLookupKey();
-		IBinding[] result = null;
 		
 	    if ((!prefixLookup && CharArrayUtils.equals(c, specialClass.getNameCharArray())) ||
 	    		(prefixLookup && CharArrayUtils.equals(specialClass.getNameCharArray(), 0, c.length, c, true))) {
-	    	result = new IBinding[] { specialClass };
+	    	IBinding[] result= new IBinding[] {specialClass};
+	        if (CPPClassScope.isConstructorReference(name)) {
+	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, specialClass.getConstructors());
+	        }
+			result= (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+			// specialize all but first
+			for (int i = 1; i < result.length; i++) {
+				result[i]= specialClass.specializeMember(result[i]);
+			}
+			return result;
 	    }
 
 		ICPPClassType specialized = specialClass.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ?
-				classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
+		if (classScope == null)
+			return IBinding.EMPTY_BINDING_ARRAY;
 		
-		if (bindings != null) {
-			for (IBinding binding : bindings) {
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, specialClass.specializeMember(binding));
-			}
+		IBinding[] bindings;
+		if (classScope instanceof ICPPASTInternalScope) {
+			bindings= ((ICPPASTInternalScope) classScope).getBindings(name, forceResolve, prefixLookup, fileSet, checkPointOfDecl);
+		} else {
+			bindings= classScope.getBindings(name, forceResolve, prefixLookup, fileSet);
 		}
-
+		IBinding[] result= null;
+		for (IBinding binding : bindings) {
+			binding= specialClass.specializeMember(binding);
+			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+		}
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	

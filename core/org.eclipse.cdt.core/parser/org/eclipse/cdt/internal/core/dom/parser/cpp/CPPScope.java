@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -37,21 +38,21 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * @author aniefer
+ * Base class for c++-scopes of the ast.
  */
-abstract public class CPPScope implements ICPPScope, IASTInternalScope {
+abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
     private IASTNode physicalNode;
-	private boolean isfull = false;
+	private boolean isCached = false;
 	protected CharArrayObjectMap bindings = null;
 
 	public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
@@ -106,7 +107,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		IScope scope= this;
 		IASTName[] na= name.getNames();
 		try {
-			for (int i= na.length - 2; i >= 0; i++) {
+			for (int i= na.length - 2; i >= 0; i--) {
 				if (scope == null) 
 					return false;
 				IName scopeName = scope.getScopeName();
@@ -156,15 +157,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 					if (nsbinding instanceof ICPPNamespace) {
 						ICPPNamespace nsbindingAdapted = (ICPPNamespace) index.adaptBinding(nsbinding);
 						if (nsbindingAdapted!=null) {
-							IBinding[] bindings = nsbindingAdapted.getNamespaceScope().find(new String(nchars));
-							if (fileSet != null) {
-								bindings= fileSet.filterFileLocalBindings(bindings);
-							}
-							binding= CPPSemantics.resolveAmbiguities(name, bindings);
-				        	if (binding instanceof ICPPUsingDeclaration) {
-				        		binding= CPPSemantics.resolveAmbiguities(name,
-				        				((ICPPUsingDeclaration)binding).getDelegates());
-				        	}
+							return nsbindingAdapted.getNamespaceScope().getBinding(name, forceResolve, fileSet);
 						}
 					}
 				}
@@ -174,59 +167,17 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
-	    char[] c = name.getLookupKey();
-	    //can't look up bindings that don't have a name
-	    if (c.length == 0)
-	        return null;
-	    
-	    Object obj = bindings != null ? bindings.get(c) : null;
-	    if (obj != null) {
-	        if (obj instanceof ObjectSet) {
-	        	@SuppressWarnings("unchecked")
-	        	ObjectSet<Object> os = (ObjectSet<Object>) obj;
-	        	if (forceResolve)
-	        		return CPPSemantics.resolveAmbiguities(name,  os.keyArray());
-	        	IBinding[] bs = null;
-        		for (int i = 0; i < os.size(); i++) {
-        			Object o = os.keyAt(i);
-        			if (o instanceof IASTName) {
-        				IASTName n = (IASTName) o;
-        				if (n instanceof ICPPASTQualifiedName) {
-        					IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
-        					n = ns[ns.length - 1];
-        				}
-        				bs = (IBinding[]) ArrayUtil.append(IBinding.class, bs, n.getBinding());
-        			} else {
-						bs = (IBinding[]) ArrayUtil.append(IBinding.class, bs, o);
-        			}
-        		}
-        		return CPPSemantics.resolveAmbiguities(name,  bs);
-	        } else if (obj instanceof IASTName) {
-	        	IBinding binding = null;
-	        	if (forceResolve && obj != name && obj != name.getParent()) {
-	        		binding = CPPSemantics.resolveAmbiguities(name, new Object[] { obj });
-	        	} else {
-	        		IASTName n = (IASTName) obj;
-    				if (n instanceof ICPPASTQualifiedName) {
-    					IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
-    					n = ns[ns.length - 1];
-    				}
-	        		binding = n.getBinding();
-	        	}
-	        	if (binding instanceof ICPPUsingDeclaration) {
-	        		return CPPSemantics.resolveAmbiguities(name, ((ICPPUsingDeclaration)binding).getDelegates());
-	        	}
-	        	return binding;
-	        }
-	        return (IBinding) obj;
-	    } 
-	    return null;
+		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, false);
+		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-			throws DOMException {
-		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup);
-
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+		return getBindings(name, resolve, prefixLookup, fileSet, true);
+	}
+	
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet,
+			boolean checkPointOfDecl) throws DOMException {
+		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup, checkPointOfDecl, true);
 		final IASTTranslationUnit tu = name.getTranslationUnit();
 		if (tu != null) {
 			IIndex index = tu.getIndex();
@@ -267,16 +218,17 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
-	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup)
-			throws DOMException {
-	    char[] c = name.getLookupKey();
+	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup, 
+			boolean checkPointOfDecl, boolean expandUsingDirectives) throws DOMException {
+		populateCache();
+	    final char[] c = name.getLookupKey();
 	    IBinding[] result = null;
 	    
 	    Object[] obj = null;
 	    if (prefixLookup) {
 	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
-	    	for (Object key2 : keys) {
-	    		char[] key = (char[]) key2;
+	    	for (int i = 0; i < keys.length; i++) {
+	    		final char[] key = (char[]) keys[i];
 	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
 	    			obj = ArrayUtil.append(obj, bindings.get(key));
 	    		}
@@ -287,45 +239,58 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    
 	    obj = ArrayUtil.trim(Object.class, obj);
 	    for (Object element : obj) {
-	        if (element instanceof ObjectSet) {
-	        	@SuppressWarnings("unchecked")
-	        	ObjectSet<Object> os= (ObjectSet<Object>) element;
+	        if (element instanceof ObjectSet<?>) {
+	        	ObjectSet<?> os= (ObjectSet<?>) element;
         		for (int j = 0; j < os.size(); j++) {
-        			Object o = os.keyAt(j);
-        			if (o instanceof IASTName) {
-        				IASTName n = ((IASTName) o).getLastName();
-        				IBinding binding = forceResolve ? n.resolveBinding() : n.getBinding();
-        				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
-        			} else {
-        				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, o);
-        			}
+        			result= addCandidate(os.keyAt(j), name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
         		}
-	        } else if (element instanceof IASTName) {
-	        	IBinding binding = null;
-	        	if (forceResolve && element != name && element != name.getParent()) {
-	        		binding = ((IASTName) element).resolveBinding();
-	        	} else {
-	        		IASTName n = ((IASTName) element).getLastName();
-	        		binding = n.getBinding();
-	        	}
-	        	if (binding instanceof ICPPUsingDeclaration) {
-	        		result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result,
-	        				((ICPPUsingDeclaration)binding).getDelegates());
-	        	}
-	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
 	        } else {
-	        	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
+	        	result = addCandidate(element, name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
 	        }
 	    }
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
-	public void setFullyCached(boolean full) {
-		isfull = full;
-	}
+	private IBinding[] addCandidate(Object candidate, IASTName name, boolean forceResolve, 
+			boolean checkPointOfDecl, boolean expandUsingDirectives, IBinding[] result) {
+		if (checkPointOfDecl) {
+			IASTTranslationUnit tu= name.getTranslationUnit();
+			if (!CPPSemantics.declaredBefore(candidate, name, tu != null && tu.getIndex() != null)) {
+				if (!(this instanceof ICPPClassScope) || ! LookupData.checkWholeClassScope(name))
+					return result;
+			}
+		}
 
-	public boolean isFullyCached() {
-		return isfull;
+		IBinding binding;
+		if (candidate instanceof IASTName) {
+			final IASTName candName= (IASTName) candidate;
+			if (forceResolve && candName != name && candName != name.getParent()) {
+				binding = candName.resolvePreBinding();
+			} else {
+				binding = candName.getLastName().getBinding();
+			}
+		} else {
+			binding= (IBinding) candidate;
+		}
+
+		if (expandUsingDirectives && binding instanceof ICPPUsingDeclaration) {
+			IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
+			result= (IBinding[]) ArrayUtil.addAll(IBinding.class, result, delegates);
+		} else {
+			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+		}
+		return result;
+	}
+	
+	protected void populateCache() {
+		if (!isCached) {
+			try {
+				CPPSemantics.lookupInScope(null, this, null);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+			isCached= true;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -341,7 +306,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	        return;
 	    
 	    Object obj = bindings.get(key);
-	    if (obj instanceof ObjectSet) {
+	    if (obj instanceof ObjectSet<?>) {
 	    	@SuppressWarnings("unchecked")
 	        ObjectSet<Object> set = (ObjectSet<Object>) obj;
 	        for (int i = set.size() - 1; i >= 0; i--) {
@@ -358,7 +323,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
                    (obj instanceof IASTName && ((IASTName)obj).getBinding() == binding)) {
 	        bindings.remove(key, 0, key.length);
 	    }
-		isfull = false;
+		isCached = false;
 	}
 
 	/* (non-Javadoc)
@@ -381,7 +346,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 						allBuiltins= new CharArrayObjectMap(1);
 					}
 					allBuiltins.put(map.keyAt(i), o);
-				} else if (o instanceof ObjectSet) {
+				} else if (o instanceof ObjectSet<?>) {
 					@SuppressWarnings("unchecked")
 					final ObjectSet<Object> set= (ObjectSet<Object>) map.getAt(i);
 					if (set != null) {
@@ -408,7 +373,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			}
 			bindings= allBuiltins;
 		}
-		isfull = false;
+		isCached = false;
 	}
     
 	@SuppressWarnings("unchecked")
@@ -436,7 +401,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY, true);
 	}
 
 	public IName getScopeName() throws DOMException {

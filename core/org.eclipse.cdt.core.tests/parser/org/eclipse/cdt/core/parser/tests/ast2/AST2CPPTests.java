@@ -2311,7 +2311,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(result.contains("a3"));
 		assertTrue(result.contains("a4"));
 		assertTrue(result.contains("A"));
-		assertEquals(5, bs.length);
+		assertEquals(7, bs.length); // the bindings above + 2 constructors
 	}
 	
 	// static void f();    

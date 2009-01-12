@@ -86,7 +86,6 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -124,6 +123,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -2043,20 +2043,16 @@ public class CPPTemplates {
             	} 
             } else if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
-	            if (s != null && ASTInternal.isFullyCached(s)) {
-	            	// If name did not come from an AST but was created just to encapsulate
-	            	// a simple identifier, we should not use getBinding method since it may
-	            	// lead to a NullPointerException.
+	            if (s != null) {
 	            	IASTName name= unknown.getUnknownName();
 	            	if (name != null) {
-	            		if (name.getParent() != null) {
-	            			result = s.getBinding(name, true);
+	            		IBinding[] candidates;
+	            		if (s instanceof ICPPASTInternalScope) {
+	            			candidates= ((ICPPASTInternalScope) s).getBindings(name, true, false, null, false);
 	            		} else {
-	            			IBinding[] bindings = s.find(name.toString());
-	            			if (bindings != null && bindings.length > 0) {
-	            				result = bindings[0];
-	            			} 
+	            			candidates= s.getBindings(name, true, false, null);
 	            		}
+	            		result= CPPSemantics.resolveAmbiguities(name, candidates);
 	    	            if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
 	    	            	ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
 	    	            	if (result instanceof ICPPClassTemplate) {

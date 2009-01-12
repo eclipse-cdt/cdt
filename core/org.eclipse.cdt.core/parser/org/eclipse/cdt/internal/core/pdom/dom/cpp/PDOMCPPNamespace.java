@@ -176,10 +176,6 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return result;
 	}
 
-	public boolean isFullyCached() throws DOMException {
-		return true;
-	}
-
 	@Override
 	public boolean mayHaveChildren() {
 		return true;

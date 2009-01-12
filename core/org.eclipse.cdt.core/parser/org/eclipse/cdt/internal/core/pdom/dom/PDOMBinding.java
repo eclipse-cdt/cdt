@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -36,7 +35,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Base class for bindings in the pdom.
  */
 public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
@@ -289,7 +288,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		try {
 			PDOMNode node = this;
 			while (node != null) {
-				if (node instanceof PDOMBinding && !(node instanceof ICPPTemplateInstance)) {							
+				if (node instanceof PDOMBinding) {							
 					result.add(0, ((PDOMBinding)node).getName());
 				}
 				node = node.getParentNode();

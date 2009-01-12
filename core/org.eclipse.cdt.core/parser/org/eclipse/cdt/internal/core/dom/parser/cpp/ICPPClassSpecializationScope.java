@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
@@ -41,11 +40,6 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	 * Computes the bases via the original class.
 	 */
 	ICPPBase[] getBases() throws DOMException;
-
-	/**
-	 * Computes the constructors via the original class.
-	 */
-	ICPPConstructor[] getConstructors() throws DOMException;
 
 	/**
 	 * Computes the methods via the original class.

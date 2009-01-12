@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -18,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.c.CScope;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -51,15 +51,15 @@ public class ASTInternal {
 	}
 
 	public static boolean isFullyCached(IScope scope) throws DOMException {
-		if (scope instanceof IASTInternalScope) {
-			return ((IASTInternalScope) scope).isFullyCached();
+		if (scope instanceof CScope) {
+			return ((CScope) scope).isFullyCached();
 		}
 		return true;
 	}
 
 	public static void setFullyCached(IScope scope, boolean val) throws DOMException {
-		if (scope instanceof IASTInternalScope) {
-			((IASTInternalScope) scope).setFullyCached(val);
+		if (scope instanceof CScope) {
+			((CScope) scope).setFullyCached(val);
 		}
 	}
 

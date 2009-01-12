@@ -77,6 +77,11 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
+				try {
+					ICPPClassType backup= getBackupDefinition(host);
+					if (backup != null)
+						return backup.getFriends();
+				} catch (DOMException e) {}
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
@@ -115,10 +120,30 @@ public class ClassTypeHelper {
 		return resultSet.keyArray(IBinding.class);
 	}
 
+	/**
+	 * A host maybe backed up with a definition from the index.
+	 * @throws DOMException 
+	 */
+	private static ICPPClassType getBackupDefinition(ICPPInternalClassTypeMixinHost host) throws DOMException {
+		ICPPClassScope scope = host.getCompositeScope();
+		if (scope != null) {
+			ICPPClassType b = scope.getClassType();
+			if (!(b instanceof ICPPInternalClassTypeMixinHost))
+				return b;
+		}
+		return null;
+	}
+
 	public static ICPPBase[] getBases(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
+				try {
+					ICPPClassType backup= getBackupDefinition(host);
+					if (backup != null)
+						return backup.getBases();
+				} catch (DOMException e) {}
+				
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new ICPPBase[] { new CPPBaseClause.CPPBaseProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
@@ -140,6 +165,12 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
+				try {
+					ICPPClassType backup= getBackupDefinition(host);
+					if (backup != null)
+						return backup.getDeclaredFields();
+				} catch (DOMException e) {}
+				
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new ICPPField[] { new CPPField.CPPFieldProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
@@ -272,44 +303,25 @@ public class ClassTypeHelper {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) throws DOMException {
-		if (host.getDefinition() == null) {
-			host.checkForDefinition();
-			if (host.getDefinition() == null) {
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPConstructor[] { new CPPConstructor.CPPConstructorProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
-			}
+		ICPPClassScope scope = host.getCompositeScope();
+		if (scope == null) {
+			IASTNode[] declarations= host.getDeclarations();
+			IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+			return new ICPPConstructor[] { new CPPConstructor.CPPConstructorProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 		}
-
-		ICPPClassScope scope = (ICPPClassScope) host.getCompositeScope();
-		if (ASTInternal.isFullyCached(scope))
-			return ((CPPClassScope)scope).getConstructors(true);
-
-		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
-		for (IASTDeclaration decl : members) {
-			if (decl instanceof ICPPASTTemplateDeclaration)
-				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
-			if (decl instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-				for (IASTDeclarator dtor : dtors) {
-					if (dtor == null) break;
-					dtor= CPPVisitor.findInnermostDeclarator(dtor);
-					ASTInternal.addName(scope,  dtor.getName());
-				}
-			} else if (decl instanceof IASTFunctionDefinition) {
-				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-				dtor= CPPVisitor.findInnermostDeclarator(dtor);
-				ASTInternal.addName(scope,  dtor.getName());
-			}
-		}
-
-		return ((CPPClassScope)scope).getConstructors(true);
+		return scope.getConstructors();
 	}
 
 	public static ICPPClassType[] getNestedClasses(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
+				try {
+					ICPPClassType backup= getBackupDefinition(host);
+					if (backup != null)
+						return backup.getNestedClasses();
+				} catch (DOMException e) {}
+				
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new ICPPClassType[] { new CPPClassTypeProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };

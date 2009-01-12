@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 /**
  * Context data for IASTName lookup
  */
-class LookupData {
+public class LookupData {
 	protected IASTName astName;
 	protected CPPASTTranslationUnit tu;
 	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap();
@@ -90,7 +90,7 @@ class LookupData {
 		tu= (CPPASTTranslationUnit) astName.getTranslationUnit();
 		typesOnly = typesOnly(astName);
 		considerConstructors = considerConstructors();
-		checkWholeClassScope = checkWholeClassScope();
+		checkWholeClassScope = checkWholeClassScope(n);
 	}
 	
 	public LookupData() {
@@ -233,6 +233,8 @@ class LookupData {
 		if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {
 			return p2.getParent() instanceof ICPPASTNewExpression;
 		} else if (p1 instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) p1).getLastName() != astName)
+				return false;
 			if (p2 instanceof ICPPASTFunctionDeclarator) {
 				IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
 				if (names.length >= 2 && names[names.length - 1] == astName)
@@ -270,11 +272,11 @@ class LookupData {
 	    return (p1 instanceof IASTIdExpression && p1.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME);
 	}
 	
-    private boolean checkWholeClassScope() {
-        if (astName == null) return false;
-        if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return true;
+    public static boolean checkWholeClassScope(IASTName name) {
+        if (name == null) return false;
+        if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return true;
 
-        IASTNode parent = astName.getParent();
+        IASTNode parent = name.getParent();
         while (parent != null && !(parent instanceof IASTFunctionDefinition)) {
         	ASTNodeProperty prop = parent.getPropertyInParent();
         	if (prop == IASTParameterDeclaration.DECL_SPECIFIER ||
@@ -289,9 +291,9 @@ class LookupData {
             if (parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION)
                 return false;
 
-            ASTNodeProperty prop = astName.getPropertyInParent();
+            ASTNodeProperty prop = name.getPropertyInParent();
             if (prop == ICPPASTQualifiedName.SEGMENT_NAME)
-                prop = astName.getParent().getPropertyInParent();
+                prop = name.getParent().getPropertyInParent();
             if (prop == IASTIdExpression.ID_NAME ||
 					prop == IASTFieldReference.FIELD_NAME ||
 					prop == ICASTFieldDesignator.FIELD_NAME ||

@@ -180,6 +180,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -1991,6 +1992,8 @@ public class CPPVisitor extends ASTQueries {
 						}
 					} else if (type instanceof IPointerType || type instanceof IArrayType) {
 						return ((ITypeContainer) type).getType();
+					} else if (type instanceof ICPPUnknownType) {
+						return CPPUnknownClass.createUnnamedInstance();
 					}
 					return new ProblemBinding(expression, IProblemBinding.SEMANTIC_INVALID_TYPE,
 							expression.getRawSignature().toCharArray());

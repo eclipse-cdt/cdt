@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariable;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
 import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +35,10 @@ import org.eclipse.core.variables.VariablesPlugin;
  * @since 3.0
  */
 public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
-//	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
+
+	private static final Pattern RESOURCE_VARIABLE_PATTERN= Pattern.compile("(project|resource|container)_(loc|path|name)"); //$NON-NLS-1$
+
+	//	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
 //	private static final char VAR_SUFFIX = '}';  
 	private static final char COLON = ':';  
 	
@@ -73,13 +78,23 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		@Override
 		public String getStringValue() throws CdtVariableException {
 			if(!fInitialized){
-				loadValue(fVariable);
-				fInitialized = true;
+				try {
+					if (!canExpandVariable(fVariable.getName(), fArgument)) {
+						final String expression= "${"+fName+"}";  //$NON-NLS-1$//$NON-NLS-2$
+						throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT,
+								"Illegal usage of Eclipse variable: " + expression,
+								null,
+								fVariable.getName(), expression, null);
+					}
+					loadValue(fVariable);
+				} finally {
+					fInitialized = true;
+				}
 			}
 			return fStringValue;
 		}
 		
-		private void loadValue(IStringVariable var){
+		private void loadValue(IStringVariable var) throws CdtVariableException {
 			if(var instanceof IDynamicVariable){
 				IDynamicVariable dynamicVar = (IDynamicVariable)var;
 				if(fArgument == null || dynamicVar.supportsArgument()){
@@ -156,9 +171,13 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 		IDynamicVariable vars[] = mngr.getDynamicVariables();
 		Map<String, IStringVariable> map = new HashMap<String, IStringVariable>();
-		for (IDynamicVariable var : vars)
-			map.put(var.getName(),var);
-
+		for (IDynamicVariable var : vars) {
+			final String name= var.getName();
+			if (!isDeadlockProneVariable(name)) {
+				map.put(name,var);
+			}
+		}
+		
 		IValueVariable valVars[] = mngr.getValueVariables();
 		for (IValueVariable valVar : valVars)
 			map.put(valVar.getName(),valVar);
@@ -171,7 +190,27 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		
 		return macros;
 	}
+
+	/**
+	 * Test for Eclipse variables with known deadlock issues.
+	 * @param name  variable name
+	 * @return whether the variable is prone to deadlocks
+	 */
+	private static boolean isDeadlockProneVariable(String name) {
+		return RESOURCE_VARIABLE_PATTERN.matcher(name).matches()
+		|| name.endsWith("_prompt") //$NON-NLS-1$
+		|| name.equals("selected_text"); //$NON-NLS-1$
+	}
 	
+	private static boolean canExpandVariable(String name, String argument) {
+		if (argument == null && RESOURCE_VARIABLE_PATTERN.matcher(name).matches()) {
+			return false;
+		}
+		if (name.endsWith("_prompt") || name.equals("selected_text")) {  //$NON-NLS-1$//$NON-NLS-2$
+			return false;
+		}
+		return true;
+	}
 //	private String getMacroValue(String name){
 //		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 //		try{

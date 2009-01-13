@@ -5776,11 +5776,12 @@ public class AST2Tests extends AST2BaseTest {
 	
 	// };
 	public void testScalabilityOfLargeTrivialInitializer_Bug253690() throws Exception {
+		final int AMOUNT= 250000;
 		final StringBuffer[] input = getContents(3);
 		StringBuilder buf= new StringBuilder();
 		buf.append(input[0].toString());
 		final String line= input[1].toString();
-		for (int i = 0; i < 25000; i++) { // 250K values
+		for (int i = 0; i < AMOUNT/10; i++) {
 			buf.append(line);
 		}
 		buf.append(input[2].toString());
@@ -5789,7 +5790,8 @@ public class AST2Tests extends AST2BaseTest {
 			long mem= memoryUsed();
 			IASTTranslationUnit tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
-			final int expected = 1024*20 + code.length()*2; // a copy of the buffer + some
+			// allow a copy of the buffer + not even 1 byte per initializer
+			final int expected = code.length()*2 + AMOUNT/2;  
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 			assertTrue(tu.isFrozen());
 		}

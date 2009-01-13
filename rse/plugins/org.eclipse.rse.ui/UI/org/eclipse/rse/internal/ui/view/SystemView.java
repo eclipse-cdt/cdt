@@ -6652,6 +6652,18 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
+	/**
+	 * This method is used to set whether or not the tree viewer allows the view adapter
+	 * for a selected object to handle a double-click.  If so, the adapter implements it's
+	 * own handleDoubleClickMethod() and returns whether or not the operation is complete 
+	 * such that the view does or does not need to do additional processing (such as expansion).
+	 * Typically the method is called with <code>false</code> when the SystemView is used in a 
+	 * dialog since, in that context, it makes no sense to respond to double-clicks by opening
+	 * in an editor.  In contrast to this approach, SystemView.setEnabled(false) prevents any
+	 * handling of double-click (such as the tree expand) and disables the context menu.
+	 * 
+	 * @param flag whether to allow the adapter to handle the double click
+	 */
 	public void allowAdapterToHandleDoubleClick(boolean flag)
 	{
 		_allowAdapterToHandleDoubleClick = flag;

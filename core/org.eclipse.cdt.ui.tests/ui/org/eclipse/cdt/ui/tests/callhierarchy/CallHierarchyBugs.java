@@ -354,4 +354,64 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		chTree= checkTreeNode(ch, 0, "call(int)").getParent();
 		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *)");
 	}
+
+	//	void shared_func();
+
+	//  #include "260262.h"
+
+	//	void call() {
+	//     shared_func();
+	//	}
+	public void testMultiLanguageWithPrototype_260262() throws Exception {
+		final StringBuffer[] contents = getContentsForTest(3);
+		final String hcontent = contents[0].toString();
+		final String content_inc = contents[1].toString();
+		final String content_full = content_inc + contents[2].toString();
+		IFile header= createFile(getProject(), "260262.h", hcontent);
+		IFile f1= createFile(getProject(), "260262.c", content_full);
+		IFile f2= createFile(getProject(), "260262.cpp", content_inc);
+		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+
+		// open editor, check outline
+		CEditor editor= openEditor(header);
+		int idx = hcontent.indexOf("shared_func()");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, true);
+
+		Tree chTree= checkTreeNode(ch, 0, "shared_func()").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call()");
+		checkTreeNode(chTree, 0, 1, null);
+	}
+
+	//	inline void shared_func() {}
+
+	//  #include "260262.h"
+
+	//	void call() {
+	//     shared_func();
+	//	}
+	public void testMultiLanguageWithInlinedfunc_260262() throws Exception {
+		final StringBuffer[] contents = getContentsForTest(3);
+		final String hcontent = contents[0].toString();
+		final String content_inc = contents[1].toString();
+		final String content_full = content_inc + contents[2].toString();
+		IFile header= createFile(getProject(), "260262.h", hcontent);
+		IFile f1= createFile(getProject(), "260262.c", content_full);
+		IFile f2= createFile(getProject(), "260262.cpp", content_inc);
+		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+
+		// open editor, check outline
+		CEditor editor= openEditor(header);
+		int idx = hcontent.indexOf("shared_func()");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, true);
+
+		Tree chTree= checkTreeNode(ch, 0, "shared_func()").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call()");
+		checkTreeNode(chTree, 0, 1, null);
+	}
 }

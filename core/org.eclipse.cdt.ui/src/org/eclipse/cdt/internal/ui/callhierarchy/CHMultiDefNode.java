@@ -19,8 +19,8 @@ public class CHMultiDefNode extends CHNode {
 
 	private CHNode[] fChildren;
 
-	public CHMultiDefNode(CHNode parent, ITranslationUnit tu, long timestamp, ICElement[] elements) {
-		super(parent, tu, timestamp, null);
+	public CHMultiDefNode(CHNode parent, ITranslationUnit tu, long timestamp, ICElement[] elements, int linkageID) {
+		super(parent, tu, timestamp, null, linkageID);
 		if (elements.length == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -28,7 +28,7 @@ public class CHMultiDefNode extends CHNode {
 		fChildren= new CHNode[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			ICElement element = elements[i];
-			fChildren[i]= new CHMultiDefChildNode(this, tu, timestamp, element);
+			fChildren[i]= new CHMultiDefChildNode(this, tu, timestamp, element, linkageID);
 		}
 	}
 	

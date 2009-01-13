@@ -24,7 +24,7 @@ public class UPCDOMLocationTests extends LRDOMLocationTests {
 	}
 
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 	    return UPCLanguage.getDefault();
 	}
 }

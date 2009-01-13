@@ -13,8 +13,8 @@ package org.eclipse.cdt.core.lrparser.tests;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -45,7 +45,7 @@ public class LRDOMLocationInclusionTests extends DOMLocationInclusionTests {
 	@Override
 	protected IASTTranslationUnit parse(IFile code, IScannerInfo s)throws Exception {
 		// TODO: total freakin hack! the test suite needs to be refactored
-		ILanguage lang = code.getName().endsWith("cc") ? getCPPLanguage() : getC99Language(); //$NON-NLS-1$
+		ILanguage lang = code.getName().endsWith("cc") ? getCPPLanguage() : getCLanguage(); //$NON-NLS-1$
 		
 		CodeReader codeReader = new CodeReader(code.getLocation().toOSString());
 		IASTTranslationUnit tu = lang.getASTTranslationUnit(codeReader, s, SavedCodeReaderFactory.getInstance(), null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
@@ -60,12 +60,12 @@ public class LRDOMLocationInclusionTests extends DOMLocationInclusionTests {
 	}
 
 	
-	protected ILanguage getC99Language() {
-    	return C99Language.getDefault();
+	protected ILanguage getCLanguage() {
+    	return GCCLanguage.getDefault();
     }
 	
 	protected ILanguage getCPPLanguage() {
-		return ISOCPPLanguage.getDefault();
+		return GPPLanguage.getDefault();
 	}
 
 

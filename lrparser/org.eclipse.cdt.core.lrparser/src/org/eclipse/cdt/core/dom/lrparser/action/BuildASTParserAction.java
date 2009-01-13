@@ -400,6 +400,15 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
+	 * Just pops the stack, useful if you have a rule that generates
+	 * a node but you don't need the node.
+	 */
+	public void consumeIgnore() {
+		astStack.pop();
+	}
+	
+	
+	/**
 	 * Gets the current token and places it on the stack for later consumption.
 	 */
 	public void consumeDeclSpecToken() {

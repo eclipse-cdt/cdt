@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class UPCUtilTests extends LRUtilTests {
 
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();
 	}
 

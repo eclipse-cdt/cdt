@@ -20,9 +20,11 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -32,7 +34,14 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -76,7 +85,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
      * 
 	 * @return an IASTTranslationUnit object thats empty and will be filled in by the parser
 	 */
-	protected abstract IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor);
+	protected abstract IASTTranslationUnit createASTTranslationUnit();
 	
 	
 	/**
@@ -123,7 +132,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		// The translation unit has to be created here so that the preprocessor
 		// can fill in the preprocessor AST nodes.
-		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
+		IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
 		IParser parser = getParser();
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
@@ -182,7 +191,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		preprocessor.setContentAssistMode(offset);
 		
 		IParser parser = getParser();
-		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
+		IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
 		
 		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
 		
@@ -198,6 +207,15 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return completionNode;
 	}
 	
+	
+	private IASTTranslationUnit getASTTranslationUnit(IIndex index, IScanner preprocessor) {
+		IASTTranslationUnit tu = createASTTranslationUnit();
+		tu.setIndex(index);
+		if(tu instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
+		}
+		return tu;
+	}
 	
 	/*
 	 * For debugging.
@@ -226,6 +244,21 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 	
+	private ICLanguageKeywords cLanguageKeywords = new CLanguageKeywords(getParserLanguage(), getScannerExtensionConfiguration());
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(ICLanguageKeywords.class.equals(adapter))
+			return cLanguageKeywords;
+		if(IPDOMLinkageFactory.class.equals(adapter)) {
+			if(getParserLanguage().isCPP())
+				return new PDOMCPPLinkageFactory();
+			return new PDOMCLinkageFactory();
+		}
+		
+		return super.getAdapter(adapter);
+	}
 	
 }

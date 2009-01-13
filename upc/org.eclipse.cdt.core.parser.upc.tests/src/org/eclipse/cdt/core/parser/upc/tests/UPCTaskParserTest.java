@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class UPCTaskParserTest extends LRTaskParserTest {
 
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();
 	}
 

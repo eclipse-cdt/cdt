@@ -19,17 +19,12 @@ import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCLanguageKeywords;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 
 /**
@@ -40,23 +35,17 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 @SuppressWarnings("restriction")
 public class UPCLanguage extends BaseExtensibleLanguage {
 	
-	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.upc"; //$NON-NLS-1$ 
-	public static final String ID = PLUGIN_ID + ".upc"; //$NON-NLS-1$ 
-	
-	private static final IDOMTokenMap TOKEN_MAP = new DOMToUPCTokenMap();
+	public static final String ID = "org.eclipse.cdt.core.parser.upc.upc"; //$NON-NLS-1$ 
 	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
 
-	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = ScannerExtensionConfiguration.createC();
-	
-	
 	public static UPCLanguage getDefault() {
 		return myDefault;
 	}
 	
 	@Override
 	protected IDOMTokenMap getTokenMap() {
-		return TOKEN_MAP;
+		return new DOMToUPCTokenMap();
 	}
 	
 	@Override
@@ -80,13 +69,11 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	}
 
 
-	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(SCANNER_CONFIGURATION);
+	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(ScannerExtensionConfiguration.createC());
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Class adapter) {
-		if(IPDOMLinkageFactory.class.equals(adapter))
-			return new PDOMCLinkageFactory();
 		if(ICLanguageKeywords.class.equals(adapter))
 			return upcKeywords;
 		
@@ -102,18 +89,13 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	 * Gets the translation unit object and sets the index and the location resolver. 
 	 */
 	@Override
-	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = CNodeFactory.getDefault().newTranslationUnit();
-		tu.setIndex(index);
-		if(tu instanceof CASTTranslationUnit) {
-			((CASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
-		}
-		return tu;
+	protected IASTTranslationUnit createASTTranslationUnit() {
+		return CNodeFactory.getDefault().newTranslationUnit();
 	}
 
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
-		return SCANNER_CONFIGURATION;
+		return ScannerExtensionConfiguration.createC();
 	}
 
 }

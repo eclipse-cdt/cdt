@@ -50,8 +50,6 @@ class CPreprocessorAdapter {
 		// LPG requires that the token stream start with a dummy token
 		tokenCollector.addToken(createDummyToken());
 		
-		preprocessor.getLocationResolver().setRootNode(tu);
-		
 		org.eclipse.cdt.core.parser.IToken lastToken = null;
 		try {
 			while(true) {

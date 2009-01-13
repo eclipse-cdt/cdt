@@ -10,8 +10,8 @@ package org.eclipse.cdt.core.lrparser.tests;
 
 import junit.framework.AssertionFailedError;
 
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.QuickParser2Tests;
@@ -25,7 +25,7 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	@Override
 	protected void parse(String code, boolean expectedToPass,
 			ParserLanguage lang, @SuppressWarnings("unused") boolean gcc) throws Exception {
-		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
 		// don't check preprocessor problems for this test suite (causes tons of failures)
 		ParseHelper.Options options = new ParseHelper.Options();
 		options.setCheckSyntaxProblems(expectedToPass);
@@ -34,12 +34,12 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 	}
 	
 	
-	 protected ILanguage getC99Language() {
-	    return C99Language.getDefault();
+	 protected ILanguage getCLanguage() {
+	    return GCCLanguage.getDefault();
 	 }
 	    
 	 protected ILanguage getCPPLanguage() {
-	  	return ISOCPPLanguage.getDefault();
+	  	return GPPLanguage.getDefault();
 	 }
 
 	 

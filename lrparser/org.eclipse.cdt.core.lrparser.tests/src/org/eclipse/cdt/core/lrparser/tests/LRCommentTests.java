@@ -15,8 +15,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.CommentTests;
@@ -33,7 +33,7 @@ public class LRCommentTests extends CommentTests {
     @Override
     @SuppressWarnings("unused")
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems )  throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	return ParseHelper.parse(code, language, expectNoProblems);
     }
     
@@ -44,7 +44,7 @@ public class LRCommentTests extends CommentTests {
 			boolean useGNUExtensions, boolean expectNoProblems,
 			boolean skipTrivialInitializers) throws ParserException {
 		
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckSyntaxProblems(expectNoProblems);
     	options.setCheckPreprocessorProblems(expectNoProblems);
@@ -52,12 +52,12 @@ public class LRCommentTests extends CommentTests {
     	return ParseHelper.commentParse(code, language);
     }
 
-	protected ILanguage getC99Language() {
-    	return C99Language.getDefault();
+	protected ILanguage getCLanguage() {
+    	return GCCLanguage.getDefault();
     }
 	
 	protected ILanguage getCPPLanguage() {
-		return ISOCPPLanguage.getDefault();
+		return GPPLanguage.getDefault();
 	}
 	
 	

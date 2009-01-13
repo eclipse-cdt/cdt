@@ -9,9 +9,20 @@
             name="%language.name.c99">
       </language>
       <language
+            class="org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage"
+            id="gcc"
+            name="LR GCC">
+      </language>
+      
+      <language
             class="org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage"
             id="isocpp"
             name="%language.name.isocpp">
+      </language>
+      <language
+            class="org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage"
+            id="gpp"
+            name="LR GPP">
       </language>
 
       <pdomLinkageFactory
@@ -19,10 +30,17 @@
             id="c99"/>
             
       <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
+            id="gcc"/>
+            
+      <pdomLinkageFactory
             class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
             id="isocpp"/>
+            
+      <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
+            id="gpp"/>
+            
    </extension>
-   
-   
    
 </plugin>

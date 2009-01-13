@@ -14,8 +14,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CSpecTest;
@@ -60,11 +60,11 @@ public class LRCSpecTests extends AST2CSpecTest {
 	}
 	
 	protected ILanguage getCLanguage() {
-		return C99Language.getDefault();
+		return GCCLanguage.getDefault();
 	}
 	
 	protected ILanguage getCPPLanguage() {
-		return ISOCPPLanguage.getDefault();
+		return GPPLanguage.getDefault();
 	}
 
 	

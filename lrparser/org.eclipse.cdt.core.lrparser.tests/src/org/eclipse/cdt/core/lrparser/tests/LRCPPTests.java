@@ -14,8 +14,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
@@ -40,7 +40,7 @@ public class LRCPPTests extends AST2CPPTests {
 	 
 	@Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, @SuppressWarnings("unused") boolean useGNUExtensions, boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
-    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+    	ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckSyntaxProblems(expectNoProblems);
     	options.setCheckPreprocessorProblems(expectNoProblems);
@@ -48,12 +48,12 @@ public class LRCPPTests extends AST2CPPTests {
     	return ParseHelper.parse(code, language, options);
     }
     
-    protected ILanguage getC99Language() {
-    	return C99Language.getDefault();
+    protected ILanguage getCLanguage() {
+    	return GCCLanguage.getDefault();
     }
     
     protected ILanguage getCPPLanguage() {
-    	return ISOCPPLanguage.getDefault();
+    	return GPPLanguage.getDefault();
     }
     
     

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class UPCCompleteParser2Tests extends LRCompleteParser2Tests {
 
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();
 	}
 

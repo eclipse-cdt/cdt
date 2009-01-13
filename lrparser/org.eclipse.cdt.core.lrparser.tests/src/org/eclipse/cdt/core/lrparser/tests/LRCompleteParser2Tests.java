@@ -14,8 +14,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
@@ -26,20 +26,27 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
         return suite(LRCompleteParser2Tests.class);
     }
 	
+	public LRCompleteParser2Tests() {
+	}
+
+	public LRCompleteParser2Tests(String name) {
+		super(name);
+	}
+
 	@Override
 	@SuppressWarnings("unused") 
 	protected IASTTranslationUnit parse(String code, boolean expectedToPass,
 			ParserLanguage lang, boolean gcc) throws Exception {
-		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
 		return ParseHelper.parse(code, language, expectedToPass);
 	}
 
-	protected ILanguage getC99Language() {
-    	return C99Language.getDefault();
+	protected ILanguage getCLanguage() {
+    	return GCCLanguage.getDefault();
     }
 	
 	protected ILanguage getCPPLanguage() {
-		return ISOCPPLanguage.getDefault();
+		return GPPLanguage.getDefault();
 	}
 	
 	
@@ -72,13 +79,13 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //	}
 
 	
-	@Override
-	public void testBug102376() throws Exception { // gcc extension
-		try {
-			super.testBug102376();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
+//	@Override
+//	public void testBug102376() throws Exception { // gcc extension
+//		try {
+//			super.testBug102376();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
 
 	@Override
 	public void test158192_declspec_in_declarator() throws Exception {

@@ -16,19 +16,12 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 /**
  * ILanguage implementation for the C99 parser.
@@ -38,11 +31,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 @SuppressWarnings("restriction")
 public class C99Language extends BaseExtensibleLanguage {
 
-	public static final String PLUGIN_ID = "org.eclipse.cdt.core.lrparser"; //$NON-NLS-1$ 
-	public static final String ID = PLUGIN_ID + ".c99"; //$NON-NLS-1$ 
-	
-	private static final IDOMTokenMap TOKEN_MAP = DOMToC99TokenMap.DEFAULT_MAP;
-	private static final IScannerExtensionConfiguration SCANNER_CONFIGURATION = ScannerExtensionConfiguration.createC();
+	public static final String ID = "org.eclipse.cdt.core.lrparser.c99"; //$NON-NLS-1$ 
 	
 	private static C99Language DEFAULT = new C99Language();
 	
@@ -58,12 +47,12 @@ public class C99Language extends BaseExtensibleLanguage {
 
 	@Override
 	protected IDOMTokenMap getTokenMap() {
-		return TOKEN_MAP;
+		return DOMToC99TokenMap.DEFAULT_MAP;
 	}
 
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
-		return SCANNER_CONFIGURATION;
+		return ScannerExtensionConfiguration.createC();
 	}
 	
 	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
@@ -83,34 +72,9 @@ public class C99Language extends BaseExtensibleLanguage {
 		return ParserLanguage.C;
 	}
 
-	private ICLanguageKeywords cLanguageKeywords = new CLanguageKeywords(ParserLanguage.C, SCANNER_CONFIGURATION);
-	
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
-		if(IPDOMLinkageFactory.class.equals(adapter))
-			return new PDOMCLinkageFactory();
-		if(ICLanguageKeywords.class.equals(adapter))
-			return cLanguageKeywords;
-		
-		return super.getAdapter(adapter);
+	protected IASTTranslationUnit createASTTranslationUnit() {
+		return CNodeFactory.getDefault().newTranslationUnit();
 	}
-
-	/**
-	 * Gets the translation unit object and sets the index and the location resolver. 
-	 */
-	@Override
-	protected IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = CNodeFactory.getDefault().newTranslationUnit();
-		tu.setIndex(index);
-		if(tu instanceof CASTTranslationUnit) {
-			((CASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
-		}
-		return tu;
-	}
-
-	
-	
 
 }

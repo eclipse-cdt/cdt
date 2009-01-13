@@ -15,8 +15,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
-import org.eclipse.cdt.core.dom.lrparser.cpp.ISOCPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -55,7 +55,7 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 	
 	@Override
 	protected IASTNode parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, int offset, int length) throws ParserException {
-		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	ParseHelper.Options options = new ParseHelper.Options();
     	options.setCheckPreprocessorProblems(expectNoProblems);
     	options.setCheckSyntaxProblems(expectNoProblems);
@@ -65,7 +65,7 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 	
 	protected IASTTranslationUnit parse( IFile file, ParserLanguage lang, IScannerInfo scanInfo, boolean useGNUExtensions, boolean expectNoProblems ) {
 
-		ILanguage language = lang.isCPP() ? getCPPLanguage() : getC99Language();
+		ILanguage language = lang.isCPP() ? getCPPLanguage() : getCLanguage();
     	
 		String fileName = file.getLocation().toOSString();
 		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
@@ -85,12 +85,12 @@ public class LRSelectionParseTest extends AST2SelectionParseTest {
 		return parse(file, lang, new ScannerInfo(), useGNUExtensions, expectNoProblems);
 	}
 	
-	protected ILanguage getC99Language() {
-    	return C99Language.getDefault();
+	protected ILanguage getCLanguage() {
+    	return GCCLanguage.getDefault();
     }
 	
 	protected ILanguage getCPPLanguage() {
-		return ISOCPPLanguage.getDefault();
+		return GPPLanguage.getDefault();
 	}
 	
 }

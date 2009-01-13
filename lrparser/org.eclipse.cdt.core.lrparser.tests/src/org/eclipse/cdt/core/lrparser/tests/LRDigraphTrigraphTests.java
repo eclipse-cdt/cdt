@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.lrparser.c99.C99Language;
+import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 
 
@@ -60,7 +60,7 @@ public class LRDigraphTrigraphTests extends TestCase {
 	
 	
 	protected ILanguage getCLanguage() {
-		return C99Language.getDefault();
+		return GCCLanguage.getDefault();
 	}
 	
 	

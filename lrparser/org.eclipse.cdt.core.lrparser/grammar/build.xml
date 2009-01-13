@@ -9,7 +9,7 @@
      IBM Corporation - initial API and implementation
 -->
 
-<project name="CDT Extensible LR Parser Framework" default="both" basedir=".">
+<project name="CDT Extensible LR Parser Framework" basedir=".">
     <description>Generates LPG parsers from grammar files</description>
 	
 	
@@ -24,20 +24,19 @@
 	</fail>
 	
 	<property name="c99_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
+	<property name="gcc_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gcc"/>
 	<property name="cpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
-
+	<property name="gpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gpp"/>
+		
+	<target name="all" depends="c99, gcc, cpp, gpp"/>
 	
 	<target name="clean_l_files">
 		<delete>
 			<fileset dir="${c99_location}" includes="**/*.l"/>
+			<fileset dir="${gcc_location}" includes="**/*.l"/>
 			<fileset dir="${cpp_location}" includes="**/*.l"/>
+			<fileset dir="${gpp_location}" includes="**/*.l"/>
 		</delete>
-	</target>
-	
-	
-	<target name="both" depends="cpp, c99">
-		<description>Generates the C99 and C++ parsers</description>	
-		<echo message="Done"/>
 	</target>
 	
 	
@@ -61,7 +60,33 @@
 		</antcall>
 	</target>
 	
+	<target name="generate_c99">
+		<antcall target="generate">
+			<param name="grammar_dir" value="c99"/>
+			<param name="output_dir" value="${c99_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+
 	
+	<target name="gcc">
+		<description>Generate the GCC parser</description>
+		<!-- Generate main parser -->
+		<antcall target="generate_gcc">
+            <param name="grammar_name" value="GCCParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate_gcc">
+		<antcall target="generate">
+			<param name="grammar_dir" value="gcc"/>
+			<param name="output_dir" value="${gcc_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+	
+
 	<target name="cpp">
 		<description>Generate the C++ parser</description>
 		<antcall target="generate_cpp">
@@ -89,16 +114,6 @@
 		</antcall>
 	</target>
 	
-	
-	<target name="generate_c99">
-		<antcall target="generate">
-			<param name="grammar_dir" value="c99"/>
-			<param name="output_dir" value="${c99_location}"/>
-			<param name="grammar_name" value="${grammar_name}"/>
-		</antcall>
-	</target>
-	
-	
 	<target name="generate_cpp">
 		<antcall target="generate">
 			<param name="grammar_dir" value="cpp"/>
@@ -107,6 +122,25 @@
 		</antcall>
 	</target>
 	
+	
+	<target name="gpp">
+		<description>Generate the GCC parser</description>
+		<!-- Generate main parser -->
+		<antcall target="generate_gpp">
+            <param name="grammar_name" value="GPPParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate_gpp">
+		<antcall target="generate">
+			<param name="grammar_dir" value="gpp"/>
+			<param name="output_dir" value="${gpp_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+	
+
 	
 	<target name="generate">
 		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
@@ -118,6 +152,7 @@
 		<exec executable="${lpg_exe}">
 			<arg value="${grammar_file}"/>
 			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
+			
 		</exec>
 		
 		<move overwrite="true" toDir="${output_dir}">

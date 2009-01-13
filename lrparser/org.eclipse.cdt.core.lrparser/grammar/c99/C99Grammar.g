@@ -391,7 +391,7 @@ statement
 
 
 labeled_statement
-    ::= identifier_or_typedefname ':' statement
+    ::= identifier_token ':' statement
     	  /. $Build  consumeStatementLabeled();  $EndBuild ./
       | 'case' constant_expression ':' statement
           /. $Build  consumeStatementCase();  $EndBuild ./
@@ -451,7 +451,7 @@ iteration_statement
           
 
 jump_statement
-    ::= 'goto' identifier_or_typedefname ';'
+    ::= 'goto' identifier_token ';'
           /. $Build  consumeStatementGoto();  $EndBuild ./
       | 'continue' ';'
           /. $Build  consumeStatementContinue();  $EndBuild ./
@@ -588,32 +588,40 @@ typedef_name_in_declspec
        
           
 
-identifier_or_typedefname
+identifier_token
     ::= 'identifier'
       | 'Completion'
-      -- | 'TypedefName'
       
       
 struct_or_union_specifier
-    ::= 'struct' '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_struct); $EndBuild ./           
-      | 'union' '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_union); $EndBuild ./  
-      | 'struct' identifier_or_typedefname '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_struct); $EndBuild ./ 
-      | 'union'  identifier_or_typedefname '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_union); $EndBuild ./
+    ::= struct_or_union struct_or_union_specifier_hook '{' <openscope-ast> struct_declaration_list_opt '}'
+          /. $Build  consumeTypeSpecifierComposite(false); $EndBuild ./           
+      | struct_or_union struct_or_union_specifier_hook identifier_token struct_or_union_specifier_suffix_hook '{' <openscope-ast> struct_declaration_list_opt '}'
+          /. $Build  consumeTypeSpecifierComposite(true); $EndBuild ./ 
           
-          
+struct_or_union_specifier_hook
+    ::= $empty
+
+struct_or_union_specifier_suffix_hook
+    ::= $empty
+
+struct_or_union
+    ::= 'struct'
+      | 'union'
+      
+      
 elaborated_specifier          
-    ::= 'struct' identifier_or_typedefname
+    ::= 'struct' elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTCompositeTypeSpecifier.k_struct); $EndBuild ./
-      | 'union'  identifier_or_typedefname
+      | 'union'  elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTCompositeTypeSpecifier.k_union); $EndBuild ./
-      | 'enum' identifier_or_typedefname
+      | 'enum' elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_enum); $EndBuild ./
           
-          
+elaborated_specifier_hook
+    ::= $empty
+    
+    
 struct_declaration_list_opt
     ::= struct_declaration_list
       | $empty
@@ -655,12 +663,15 @@ struct_declarator
 		      
             
 enum_specifier
-    ::= 'enum' '{' <openscope-ast> enumerator_list_opt comma_opt '}'
+    ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
-      | 'enum' identifier_or_typedefname '{' <openscope-ast> enumerator_list_opt comma_opt '}'
+      | 'enum' enum_specifier_hook identifier_token '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(true); $EndBuild ./
       
-      
+enum_specifier_hook
+    ::= $empty
+
+
 enumerator_list_opt
     ::= enumerator_list
       | $empty
@@ -672,9 +683,9 @@ enumerator_list
       
       
 enumerator
-    ::= identifier_or_typedefname
+    ::= identifier_token
           /. $Build  consumeEnumerator(false); $EndBuild ./
-      | identifier_or_typedefname '=' constant_expression
+      | identifier_token '=' constant_expression
           /. $Build  consumeEnumerator(true); $EndBuild ./
       
       
@@ -794,14 +805,17 @@ array_modifier_type_qualifiers
 
 
 pointer_seq
-    ::= '*'
+    ::= pointer_hook '*'
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer_seq '*' 
+      | pointer_seq pointer_hook '*' 
           /. $Build  consumePointer();  $EndBuild ./
-      | '*' <openscope-ast> type_qualifier_list
+      | pointer_hook '*' <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
-      | pointer_seq '*' <openscope-ast> type_qualifier_list
+      | pointer_seq pointer_hook '*' <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
+
+pointer_hook
+    ::= $empty
 
 
 type_qualifier_list
@@ -925,13 +939,13 @@ designator_list
 designator_base
     ::= '[' constant_expression ']'
           /. $Build  consumeDesignatorArray();  $EndBuild ./
-      | '.' identifier_or_typedefname		
+      | '.' identifier_token		
           /. $Build  consumeDesignatorField();  $EndBuild ./
 
 designator
     ::= '[' constant_expression ']'
          /. $Build  consumeDesignatorArray();  $EndBuild ./
-      | '.' identifier_or_typedefname		
+      | '.' identifier_token		
          /. $Build  consumeDesignatorField();  $EndBuild ./
 		
 		

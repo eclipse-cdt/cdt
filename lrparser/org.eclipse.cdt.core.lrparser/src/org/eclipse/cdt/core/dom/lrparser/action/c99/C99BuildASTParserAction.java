@@ -18,6 +18,7 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -540,7 +541,14 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * 
 	 * @param key either k_struct or k_union from IASTCompositeTypeSpecifier
 	 */
-	public void consumeTypeSpecifierComposite(boolean hasName, int key) {
+	public void consumeTypeSpecifierComposite(boolean hasName) {
+		
+		int key = 0;
+		switch(baseKind(parser.getLeftIToken())) {
+			case TK_struct: key = IASTCompositeTypeSpecifier.k_struct;
+			case TK_union:  key = IASTCompositeTypeSpecifier.k_union;
+		}
+		
 		IASTName name = (hasName) ? createName(parser.getRuleTokens().get(1)) : nodeFactory.newName();
 		
 		ICASTCompositeTypeSpecifier typeSpec = nodeFactory.newCompositeTypeSpecifier(key, name);

@@ -19,7 +19,7 @@ public class UPCCompletionBasicTest extends LRCompletionBasicTest {
 	public UPCCompletionBasicTest() { }
 
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 		return C99Language.getDefault();
 	}
 

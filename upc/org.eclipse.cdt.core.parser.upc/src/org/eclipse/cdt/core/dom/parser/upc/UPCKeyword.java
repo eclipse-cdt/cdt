@@ -63,6 +63,7 @@ public enum UPCKeyword {
 			tokenMap.put(name.toCharArray(), keyword.tokenKind);
 		}
 		
+		// TODO change to GCC language when gcc support is added
 		ICLanguageKeywords c99Keywords = (ICLanguageKeywords) C99Language.getDefault().getAdapter(ICLanguageKeywords.class);
 		String[] c99ks = c99Keywords.getKeywords();
 		allKeywords = new String[upcKeywords.length + c99ks.length];

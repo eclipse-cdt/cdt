@@ -20,7 +20,7 @@ public class UPCCompletionParseTest extends LRCompletionParseTest {
 	public UPCCompletionParseTest(String name) { super(name); }
 	
 	@Override
-	protected ILanguage getC99Language() {
+	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();
 	}
 }

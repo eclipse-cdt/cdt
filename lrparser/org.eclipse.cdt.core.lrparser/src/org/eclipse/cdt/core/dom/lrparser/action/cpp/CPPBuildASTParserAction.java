@@ -1136,6 +1136,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 //	 * declaration_specifiers ::=  <openscope> type_name_declaration_specifiers
 //	 */
 	public void consumeDeclarationSpecifiersTypeName() {
+		System.out.println("consumeDeclarationSpecifiersTypeName");
 		List<Object> topScope = astStack.closeScope();
 		// There's a name somewhere on the stack, find it		
 		IASTName typeName = findFirstAndRemove(topScope, IASTName.class);
@@ -1150,7 +1151,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		// the only way there could be a typename token
 		for(IToken token : parser.getRuleTokens()) {
-			if(token.getKind() == TK_typename) {
+			if(baseKind(token) == TK_typename) {
 				declSpec.setIsTypename(true);
 				break;
 			}
@@ -1485,9 +1486,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     
     private void addCVQualifiersToPointer(IASTPointer pointer, List<Object> tokens) {
     	for(Object t : tokens) {
-    		IToken token = (IToken) t;
-			int kind = baseKind(token);
-			switch(kind) {
+    		switch(baseKind((IToken) t)) {
 				default : assert false;
 				case TK_const:    pointer.setConst(true);    break;
 				case TK_volatile: pointer.setVolatile(true); break;

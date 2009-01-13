@@ -959,13 +959,17 @@ type_name_specifier  -- all identifiers of some kind
 
 -- used for forward declaration and incomplete types
 elaborated_type_specifier
-    ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name
+    ::= class_keyword elaborated_specifier_hook dcolon_opt nested_name_specifier_opt identifier_name
           /. $Build  consumeTypeSpecifierElaborated(false);  $EndBuild ./
-      | class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name
+      | class_keyword elaborated_specifier_hook dcolon_opt nested_name_specifier_opt template_opt template_id_name
           /. $Build  consumeTypeSpecifierElaborated(true);   $EndBuild ./
-      | 'enum' dcolon_opt nested_name_specifier_opt identifier_name      
+      | 'enum' elaborated_specifier_hook dcolon_opt nested_name_specifier_opt identifier_name      
           /. $Build  consumeTypeSpecifierElaborated(false);  $EndBuild ./
 
+
+elaborated_specifier_hook
+    ::= $empty
+    
 
 -- there is currently no way to disambiguate identifier tokens
 --enum_name
@@ -973,12 +977,14 @@ elaborated_type_specifier
 
 
 enum_specifier
-    ::= 'enum' '{' <openscope-ast> enumerator_list_opt '}'
+    ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
-      | 'enum' identifier_token '{' <openscope-ast> enumerator_list_opt '}'
+      | 'enum' enum_specifier_hook identifier_token '{' <openscope-ast> enumerator_list_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(true); $EndBuild ./
 
-
+enum_specifier_hook
+    ::= $empty
+    
 enumerator_list
     ::= enumerator_definition
       | enumerator_list ',' enumerator_definition
@@ -1074,10 +1080,12 @@ init_declarator_complete
       
       
 init_declarator
-    ::= declarator 
-      | declarator initializer
+    ::= complete_declarator 
+      | complete_declarator initializer
           /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
 
+complete_declarator
+    ::= declarator
 
 declarator
     ::= direct_declarator 
@@ -1123,14 +1131,16 @@ array_modifier
       
 
 ptr_operator
-    ::= '*' <openscope-ast> cv_qualifier_seq_opt
+    ::= pointer_hook '*' <openscope-ast> cv_qualifier_seq_opt
           /. $Build  consumePointer();  $EndBuild ./
-      | '&'
+      | pointer_hook '&'
           /. $Build  consumeReferenceOperator();  $EndBuild ./
-      | dcolon_opt nested_name_specifier '*' <openscope-ast> cv_qualifier_seq_opt
+      | dcolon_opt nested_name_specifier pointer_hook '*' <openscope-ast> cv_qualifier_seq_opt
           /. $Build  consumePointerToMember();  $EndBuild ./
 
-
+pointer_hook
+    ::= $empty
+    
 ptr_operator_seq
     ::= ptr_operator
       | ptr_operator_seq ptr_operator
@@ -1331,15 +1341,20 @@ class_specifier
        
        
 class_head
-    ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt
+    ::= class_keyword composite_specifier_hook identifier_name_opt class_name_suffix_hook <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(false);  $EndBuild ./
-      | class_keyword template_id_name <openscope-ast> base_clause_opt
+      | class_keyword composite_specifier_hook template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(false);  $EndBuild ./
-      | class_keyword nested_name_specifier identifier_name <openscope-ast> base_clause_opt
+      | class_keyword composite_specifier_hook nested_name_specifier identifier_name class_name_suffix_hook <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(true);  $EndBuild ./
-      | class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt
+      | class_keyword composite_specifier_hook nested_name_specifier template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
           /. $Build  consumeClassHead(true);  $EndBuild ./
 
+composite_specifier_hook
+    ::= $empty
+    
+class_name_suffix_hook
+    ::= $empty
 
 identifier_name_opt
     ::= identifier_name
@@ -1388,9 +1403,12 @@ member_declaration_list_opt
 
 
 member_declarator_list
-    ::= member_declarator
-      | member_declarator_list ',' member_declarator
+    ::= member_declarator_complete
+      | member_declarator_list ',' member_declarator_complete
 
+
+member_declarator_complete
+    ::= member_declarator
 
 member_declarator
     ::= declarator

@@ -92,11 +92,15 @@ public class IndexUI {
 	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
 
 	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException {
+		return elementToBinding(index, element, -1);
+	}
+
+	public static IIndexBinding elementToBinding(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference)element);
 			ISourceRange range= sf.getSourceRange();
 			if (range.getIdLength() != 0) {
-				IIndexName name= elementToName(index, element);
+				IIndexName name= elementToName(index, element, linkageID);
 				if (name != null) {
 					return index.findBinding(name);
 				}
@@ -173,6 +177,10 @@ public class IndexUI {
 	}
 
 	public static IIndexName elementToName(IIndex index, ICElement element) throws CoreException {
+		return elementToName(index, element, -1);
+	}
+	
+	public static IIndexName elementToName(IIndex index, ICElement element, int linkageID) throws CoreException {
 		if (element instanceof ISourceReference) {
 			ISourceReference sf = ((ISourceReference)element);
 			ITranslationUnit tu= sf.getTranslationUnit();
@@ -182,15 +190,17 @@ public class IndexUI {
 					IIndexFile[] files= index.getFiles(location);
 					for (int i = 0; i < files.length; i++) {
 						IIndexFile file = files[i];
-						String elementName= element.getElementName();
-						int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
-						ISourceRange pos= sf.getSourceRange();
-						IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
-						IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
-						for (int j = 0; j < names.length; j++) {
-							IIndexName name = names[j];
-							if (!name.isReference() && elementName.endsWith(new String(name.toCharArray()))) {
-								return name;
+						if (linkageID == -1 || file.getLinkageID() == linkageID) {
+							String elementName= element.getElementName();
+							int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
+							ISourceRange pos= sf.getSourceRange();
+							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
+							IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
+							for (int j = 0; j < names.length; j++) {
+								IIndexName name = names[j];
+								if (!name.isReference() && elementName.endsWith(new String(name.toCharArray()))) {
+									return name;
+								}
 							}
 						}
 					}
@@ -252,7 +262,8 @@ public class IndexUI {
 								best= candidate;
 							}
 						}
-						return best;
+						if (best != null)
+							return best;
 					}
 				}
 			}

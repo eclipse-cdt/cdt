@@ -39,11 +39,12 @@ public class CHNode implements IAdaptable {
 	private boolean fIsInitializer;
 	private boolean fIsReadAccess;
 	private boolean fIsWriteAccess;
+	private final int fLinkageID;
 
     /**
      * Creates a new node for the include browser
      */
-    public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl) {
+    public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl, int linkageID) {
         fParent= parent;
         fFileOfReferences= fileOfReferences;
         fReferences= Collections.emptyList();
@@ -51,6 +52,7 @@ public class CHNode implements IAdaptable {
         fIsRecursive= computeIsRecursive(fParent, decl);
         fHashCode= computeHashCode();
         fTimestamp= timestamp;
+        fLinkageID= linkageID;
     }
     
 	private int computeHashCode() {
@@ -100,6 +102,9 @@ public class CHNode implements IAdaptable {
         return fParent;
     }
 
+    public int getLinkageID() {
+    	return fLinkageID;
+    }
 
 	public boolean isRecursive() {
         return fIsRecursive;

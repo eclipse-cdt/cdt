@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,18 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * Represents a node in the include browser
+ * Represents a child of a node with multiple definitions.
  */
 public class CHMultiDefChildNode extends CHNode {
 
-    /**
-     * Creates a new node for the include browser
-     */
-    public CHMultiDefChildNode(CHMultiDefNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl) {
-    	super(parent, fileOfReferences, timestamp, decl);
+    public CHMultiDefChildNode(CHMultiDefNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl, int linkageID) {
+    	super(parent, fileOfReferences, timestamp, decl, linkageID);
     }
     
 	@Override

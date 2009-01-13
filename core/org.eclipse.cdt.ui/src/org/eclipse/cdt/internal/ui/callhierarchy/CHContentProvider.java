@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -129,7 +130,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				});
 			}
 			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
-			return new Object[] { new CHNode(null, tu, 0, element) };
+			return new Object[] { new CHNode(null, tu, 0, element, -1) };
 		}
 		finally {
 			index.releaseReadLock();
@@ -193,7 +194,8 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	
 	private CHNode createRefbyNode(CHNode parent, ICElement element, IIndexName[] refs) throws CoreException {
 		ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
-		CHNode node= new CHNode(parent, tu, refs[0].getFile().getTimestamp(), element);
+		final IIndexFile file = refs[0].getFile();
+		CHNode node= new CHNode(parent, tu, file.getTimestamp(), element, file.getLinkageID());
 		if (element instanceof IVariable || element instanceof IEnumerator) {
 			node.setInitializer(true);
 		}
@@ -231,14 +233,15 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, IIndexName[] references) throws CoreException {
 		assert elements.length > 0;
 
-		CHNode node;
-		long timestamp= references[0].getFile().getTimestamp();
+		final IIndexFile file = references[0].getFile();
+		final long timestamp= file.getTimestamp();
+		final int linkageID= file.getLinkageID();
 		
+		CHNode node;
 		if (elements.length == 1) {
-			node= new CHNode(parent, tu, timestamp, elements[0]);
-		}
-		else {
-			node= new CHMultiDefNode(parent, tu, timestamp, elements);
+			node= new CHNode(parent, tu, timestamp, elements[0], linkageID);
+		} else {
+			node= new CHMultiDefNode(parent, tu, timestamp, elements, linkageID);
 		}
 		
 		boolean readAccess= false;

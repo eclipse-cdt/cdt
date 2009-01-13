@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -59,8 +61,27 @@ public class CHQueries {
 		if (! (callee instanceof ISourceReference)) {
 			return EMPTY_NODES;
 		}
+		boolean done= false;
+		int linkageID= node.getLinkageID();
+		if (linkageID == -1) {
+			final String ct = ((ISourceReference) callee).getTranslationUnit().getContentTypeId();
+			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
+				// bug 260262: in a header file we need to consider c and c++
+				findCalledBy(callee, ILinkage.C_LINKAGE_ID, index, result);
+				findCalledBy(callee, ILinkage.CPP_LINKAGE_ID, index, result);
+				done= true;
+			}
+		}
+		if (!done) {
+			findCalledBy(callee, linkageID, index, result);
+		}
+		return cp.createNodes(node, result);
+	}
+
+	private static void findCalledBy(ICElement callee, int linkageID, IIndex index, CalledByResult result) 
+			throws CoreException {
 		final ICProject project = callee.getCProject();
-		IIndexBinding calleeBinding= IndexUI.elementToBinding(index, callee);
+		IIndexBinding calleeBinding= IndexUI.elementToBinding(index, callee, linkageID);
 		if (calleeBinding != null) {
 			findCalledBy(index, calleeBinding, true, project, result);
 			IBinding[] overriddenBindings= getOverriddenBindings(index, calleeBinding);
@@ -68,7 +89,6 @@ public class CHQueries {
 				findCalledBy(index, overriddenBinding, false, project, result);
 			}
 		}
-		return cp.createNodes(node, result);
 	}
 
 	private static IBinding[] getOverriddenBindings(IIndex index, IIndexBinding binding) {

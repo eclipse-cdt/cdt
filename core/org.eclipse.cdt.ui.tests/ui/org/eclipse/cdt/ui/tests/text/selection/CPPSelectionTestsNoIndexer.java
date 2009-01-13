@@ -917,7 +917,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("rator short(); // F3"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "operator short"); //$NON-NLS-1$
+        assertEquals(((IASTName)decl).toString(), "operator short int"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 11);
         assertEquals(((ASTNode)decl).getLength(), 14);
     }

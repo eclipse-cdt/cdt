@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -115,6 +116,8 @@ public class BaseUITestCase extends BaseTestCase {
 				Thread.sleep(50);
 			firstTime= false;
 			
+			if (CCorePlugin.getIndexManager().isIndexerSetupPostponed(CoreModel.getDefault().create(file.getProject())))
+				continue;
 			index.acquireReadLock();
 			try {
 				IIndexFile pfile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));

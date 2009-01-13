@@ -53,13 +53,13 @@ public class LRDOMLocationMacroTests extends DOMLocationMacroTests {
      * Tests GCC specific stuff, not applicable at this point
      */
     
-	@Override
-	public void testStdioBug() throws ParserException {
-    	try {
-    		super.testStdioBug();
-    		fail();
-    	}
-    	catch(Throwable e) { }
-    }
+//	@Override
+//	public void testStdioBug() throws ParserException {
+//    	try {
+//    		super.testStdioBug();
+//    		fail();
+//    	}
+//    	catch(Throwable e) { }
+//    }
     
 }

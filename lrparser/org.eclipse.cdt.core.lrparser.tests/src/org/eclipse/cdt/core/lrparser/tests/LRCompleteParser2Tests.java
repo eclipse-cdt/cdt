@@ -52,17 +52,17 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 	
 	// Tests that are failing at this point
     
-	@Override
-	public void testBug39676_tough() { // is this C99?
-		try {
-			super.testBug39676_tough();
-		} catch(AssertionFailedError _) {
-			return;
-		} catch(Exception _) {
-			return;
-		}
-		fail();
-	} 
+//	@Override
+//	public void testBug39676_tough() { // is this C99?
+//		try {
+//			super.testBug39676_tough();
+//		} catch(AssertionFailedError _) {
+//			return;
+//		} catch(Exception _) {
+//			return;
+//		}
+//		fail();
+//	} 
 	
 //	public void testPredefinedSymbol_bug70928_infinite_loop_test1() throws Exception { // gcc extension
 //		try {
@@ -87,37 +87,37 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 //		} catch(AssertionFailedError _) { }
 //	}
 
-	@Override
-	public void test158192_declspec_in_declarator() throws Exception {
-		try {
-			super.test158192_declspec_in_declarator();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-
-	@Override
-	public void test158192_declspec_on_class() throws Exception {
-		try {
-			super.test158192_declspec_on_class();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-
-	@Override
-	public void test158192_declspec_on_variable() throws Exception {
-		try {
-			super.test158192_declspec_on_variable();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testPredefinedSymbol_bug70928() throws Exception {
-		try {
-			super.testPredefinedSymbol_bug70928();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
+//	@Override
+//	public void test158192_declspec_in_declarator() throws Exception {
+//		try {
+//			super.test158192_declspec_in_declarator();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//
+//	@Override
+//	public void test158192_declspec_on_class() throws Exception {
+//		try {
+//			super.test158192_declspec_on_class();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//
+//	@Override
+//	public void test158192_declspec_on_variable() throws Exception {
+//		try {
+//			super.test158192_declspec_on_variable();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testPredefinedSymbol_bug70928() throws Exception {
+//		try {
+//			super.testPredefinedSymbol_bug70928();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
 	
 	@Override
 	public void testBug64010() throws Exception { // 10000 else-ifs, busts LPG's stack
@@ -127,26 +127,26 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 		} catch(AssertionFailedError _) { }
 	}
 	
-	
-	@Override
-	public void testGNUASMExtension() throws Exception {
-		try {
-			super.testGNUASMExtension();
-			fail();
-		} catch(AssertionFailedError _) { 
-		} catch(AssertionError _) {
-		}		
-	}
-
-	@Override
-	public void testBug39551B() throws Exception {
-		try {
-			super.testBug39551B();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	
-	
+//	
+//	@Override
+//	public void testGNUASMExtension() throws Exception {
+//		try {
+//			super.testGNUASMExtension();
+//			fail();
+//		} catch(AssertionFailedError _) { 
+//		} catch(AssertionError _) {
+//		}		
+//	}
+//
+//	@Override
+//	public void testBug39551B() throws Exception {
+//		try {
+//			super.testBug39551B();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	
+//	
 	
 }

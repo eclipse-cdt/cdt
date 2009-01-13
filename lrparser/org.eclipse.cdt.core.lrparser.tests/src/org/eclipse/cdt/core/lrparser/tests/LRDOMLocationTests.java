@@ -59,33 +59,33 @@ public class LRDOMLocationTests extends DOMLocationTests {
     	catch(AssertionFailedError e) {}
     	
     }
-    
-    @Override
-	public void test162180_3() throws Exception {
-    	try {
-    		super.test162180_3();
-    		fail();
-    	}
-    	catch(AssertionFailedError e) {}
-    }
-    
-    @Override
-	public void testBug86698_2() throws Exception { // I don't think C++ supports nested functions
-    	try {
-    		super.testBug86698_2();
-    		fail();
-    	}
-    	catch(AssertionFailedError e) {}
-    }
-    
-    
-    @Override
-	public void testBug120607() throws Exception { // #assert and #unassert are gcc extensions
-    	try {
-    		super.testBug120607();
-    		fail();
-    	}
-    	catch(AssertionFailedError e) {}
-    }
+//    
+//    @Override
+//	public void test162180_3() throws Exception {
+//    	try {
+//    		super.test162180_3();
+//    		fail();
+//    	}
+//    	catch(AssertionFailedError e) {}
+//    }
+//    
+//    @Override
+//	public void testBug86698_2() throws Exception { // I don't think C++ supports nested functions
+//    	try {
+//    		super.testBug86698_2();
+//    		fail();
+//    	}
+//    	catch(AssertionFailedError e) {}
+//    }
+//    
+//    
+//    @Override
+//	public void testBug120607() throws Exception { // #assert and #unassert are gcc extensions
+//    	try {
+//    		super.testBug120607();
+//    		fail();
+//    	}
+//    	catch(AssertionFailedError e) {}
+//    }
 
 }

@@ -8,8 +8,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -49,133 +47,133 @@ public class LRQuickParser2Tests extends QuickParser2Tests {
 		 // just ignore this test
 	 }
 	 
-	 @Override
-	 public void testBug39695() throws Exception {  // no support for __alignof__
-		 try {
-			super.testBug39695();
-			fail();
-		} catch(AssertionFailedError _) { }
-	 }
-	 
-	 @Override
-	 public void testBug39684() throws Exception {  // typeof is gcc extension
-		 try {
-			super.testBug39684();
-			fail();
-		} catch(AssertionFailedError _) { }
-	 }
-	 
-	 @Override
-	 public void testBug39698A() throws Exception { // gcc extension
-		 try {
-			super.testBug39698A();
-			fail();
-		} catch(AssertionFailedError _) { }
-    }
-
-	@Override
-	public void testBug39698B() throws Exception { // gcc extension
-		 try {
-			super.testBug39698B();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testBug39704B() throws Exception { // gcc extension
-		 try {
-			super.testBug39704B();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testBug39704C() throws Exception { // gcc extension
-		 try {
-			super.testBug39704C();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testBug39677() throws Exception { // gcc extension
-		 try {
-			super.testBug39677();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	 
-	
-	@Override
-	public void testBug57652() throws Exception { // gcc extension
-		 try {
-			super.testBug57652();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-
-	
-	@Override
-	public void testBug39701A() throws Exception { // gcc extension
-		 try {
-			super.testBug39701A();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testBug39701B() throws Exception { // gcc extension
-		 try {
-			super.testBug39701B();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	@Override
-	public void testBug39701C() throws Exception { // gcc extension
-		 try {
-			super.testBug39701C();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	
-	@Override
-	public void testBug40007() throws Exception { // gcc extension
-		 try {
-			super.testBug40007();
-			fail();
-		} catch(AssertionFailedError _) { 
-		} catch(AssertionError _) {
-		}
-		
-	}
-	
-	@Override
-	public void testBug39703() throws Exception { // gcc extension
-		 try {
-			super.testBug39703();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	
-	@Override
-	public void testBug39554() throws Exception { // gcc extension
-		 try {
-			super.testBug39554();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
-	
-	
-	@Override
-	public void testBug39686() throws Exception { // gcc extension
-		 try {
-			super.testBug39686();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
+//	 @Override
+//	 public void testBug39695() throws Exception {  // no support for __alignof__
+//		 try {
+//			super.testBug39695();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	 }
+//	 
+//	 @Override
+//	 public void testBug39684() throws Exception {  // typeof is gcc extension
+//		 try {
+//			super.testBug39684();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	 }
+//	 
+//	 @Override
+//	 public void testBug39698A() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39698A();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//    }
+//
+//	@Override
+//	public void testBug39698B() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39698B();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testBug39704B() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39704B();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testBug39704C() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39704C();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testBug39677() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39677();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	 
+//	
+//	@Override
+//	public void testBug57652() throws Exception { // gcc extension
+//		 try {
+//			super.testBug57652();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//
+//	
+//	@Override
+//	public void testBug39701A() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39701A();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testBug39701B() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39701B();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	@Override
+//	public void testBug39701C() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39701C();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug40007() throws Exception { // gcc extension
+//		 try {
+//			super.testBug40007();
+//			fail();
+//		} catch(AssertionFailedError _) { 
+//		} catch(AssertionError _) {
+//		}
+//		
+//	}
+//	
+//	@Override
+//	public void testBug39703() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39703();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug39554() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39554();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug39686() throws Exception { // gcc extension
+//		 try {
+//			super.testBug39686();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
 
 	
 }

@@ -111,204 +111,204 @@ public class LRTests extends AST2Tests {
     
     
 	
-    @Override
-	public void testBug93980() { // some wierd gcc extension I think
-		try {
-			super.testBug93980();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	@Override
-	public void testBug95866() { // gcc extension
-		try {
-			super.testBug95866();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	@Override
-	public void testBug80171() throws Exception {  // implicit int not supported
-		try {
-			super.testBug80171();
-			fail();
-		} catch(Throwable _) { }
-    }
-	
-	
-	@Override
-	public void testBug196468_emptyArrayInitializer() {  // empty array initializer is a gcc extension
-		try {
-			super.testBug196468_emptyArrayInitializer();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	@Override
-	public void testBug75340() { // not legal c99
-		try {
-			super.testBug75340();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	@Override
-	public void test92791() { // I think the test is wrong, the second code snippet contains a redeclaration
-		try {
-			super.test92791();
-			fail();
-		} catch(Throwable _) { }
-	}
-
-	
-	
-	@Override
-	public void testBug192165() { // gcc extension: typeof
-		try {
-			super.testBug192165();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	
-	@Override
-	public void testBug191450_attributesInBetweenPointers() { // gcc extension: attributes
-		try {
-			super.testBug191450_attributesInBetweenPointers();
-			fail();
-		} catch(Throwable _) { }
-	}
-
-	@Override
-	public void testOmittedPositiveExpression_Bug212905() throws Exception {
-		try {
-			super.testOmittedPositiveExpression_Bug212905();
-			fail();
-		} catch(Throwable _) { }
-	}
-
-	@Override
-	public void testRedefinedGCCKeywords_Bug226112() throws Exception {
-		try {
-			super.testRedefinedGCCKeywords_Bug226112();
-			fail();
-		} catch(Throwable _) { }
-	}
- 
-	@Override
-	public void testASMLabels_Bug226121() throws Exception {
-		try {
-			super.testASMLabels_Bug226121();
-			fail();
-		} catch(Throwable _) { }
-	}
-
-	@Override
-	public void testCompoundStatementExpression_Bug226274() throws Exception {
-		try {
-			super.testCompoundStatementExpression_Bug226274();
-			fail();
-		} catch(Throwable _) { }
-	}	
-	
-	
-	
-	// GCC extensions
-	@Override
-	public void testTypeofUnaryExpression_Bug226492() throws Exception {
-		try {
-			super.testTypeofUnaryExpression_Bug226492();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void testTypeofExpression_Bug226492() throws Exception {
-		try {
-			super.testTypeofExpression_Bug226492();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void testTypeofExpressionWithAttribute_Bug226492() throws Exception {
-		try {
-			super.testTypeofExpressionWithAttribute_Bug226492();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void testCaseRange_Bug211882() throws Exception {
-		try {
-			super.testCaseRange_Bug211882();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void testAttributeInElaboratedTypeSpecifier_Bug227085() throws Exception {
-		try {
-			super.testAttributeInElaboratedTypeSpecifier_Bug227085();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void testRestrictReference_Bug227110() throws Exception {
-		try {
-			super.testRestrictReference_Bug227110();
-			fail();
-		} catch(Throwable _) { }
-	}	
-	
-	@Override
-	public void testRedefinePtrdiff_Bug230895() throws Exception {
-		try {
-			super.testRedefinePtrdiff_Bug230895();
-			fail();
-		} catch(Throwable _) { }
-	}	
-	
-	
-	@Override
-	public void testReturnTypeOfBuiltin_Bug234309() throws Exception {
-		try {
-			super.testReturnTypeOfBuiltin_Bug234309();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void	testScalabilityOfLargeTrivialInitializer_Bug253690() {
-		// LPG holds on to all the tokens as you parse, so I don't think
-		// it would be easy to fix this bug.
-		try {
-			super.testScalabilityOfLargeTrivialInitializer_Bug253690();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	
-	@Override
-	public void	testCompoundLiterals_Bug258496() { // GCC extension
-		try {
-			super.testCompoundLiterals_Bug258496();
-			fail();
-		} catch(Throwable _) { }
-	}
-	
-	@Override
-	public void	testThreadLocalVariables_Bug260387() { // GCC extension
-		try {
-			super.testThreadLocalVariables_Bug260387();
-			fail();
-		} catch(Throwable _) { }
-	}
+//    @Override
+//	public void testBug93980() { // some wierd gcc extension I think
+//		try {
+//			super.testBug93980();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug95866() { // gcc extension
+//		try {
+//			super.testBug95866();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug80171() throws Exception {  // implicit int not supported
+//		try {
+//			super.testBug80171();
+//			fail();
+//		} catch(Throwable _) { }
+//    }
+//	
+//	
+//	@Override
+//	public void testBug196468_emptyArrayInitializer() {  // empty array initializer is a gcc extension
+//		try {
+//			super.testBug196468_emptyArrayInitializer();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void testBug75340() { // not legal c99
+//		try {
+//			super.testBug75340();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void test92791() { // I think the test is wrong, the second code snippet contains a redeclaration
+//		try {
+//			super.test92791();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//
+//	
+//	
+//	@Override
+//	public void testBug192165() { // gcc extension: typeof
+//		try {
+//			super.testBug192165();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	
+//	@Override
+//	public void testBug191450_attributesInBetweenPointers() { // gcc extension: attributes
+//		try {
+//			super.testBug191450_attributesInBetweenPointers();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//
+//	@Override
+//	public void testOmittedPositiveExpression_Bug212905() throws Exception {
+//		try {
+//			super.testOmittedPositiveExpression_Bug212905();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//
+//	@Override
+//	public void testRedefinedGCCKeywords_Bug226112() throws Exception {
+//		try {
+//			super.testRedefinedGCCKeywords_Bug226112();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+// 
+//	@Override
+//	public void testASMLabels_Bug226121() throws Exception {
+//		try {
+//			super.testASMLabels_Bug226121();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//
+//	@Override
+//	public void testCompoundStatementExpression_Bug226274() throws Exception {
+//		try {
+//			super.testCompoundStatementExpression_Bug226274();
+//			fail();
+//		} catch(Throwable _) { }
+//	}	
+//	
+//	
+//	
+//	// GCC extensions
+//	@Override
+//	public void testTypeofUnaryExpression_Bug226492() throws Exception {
+//		try {
+//			super.testTypeofUnaryExpression_Bug226492();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void testTypeofExpression_Bug226492() throws Exception {
+//		try {
+//			super.testTypeofExpression_Bug226492();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void testTypeofExpressionWithAttribute_Bug226492() throws Exception {
+//		try {
+//			super.testTypeofExpressionWithAttribute_Bug226492();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void testCaseRange_Bug211882() throws Exception {
+//		try {
+//			super.testCaseRange_Bug211882();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void testAttributeInElaboratedTypeSpecifier_Bug227085() throws Exception {
+//		try {
+//			super.testAttributeInElaboratedTypeSpecifier_Bug227085();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void testRestrictReference_Bug227110() throws Exception {
+//		try {
+//			super.testRestrictReference_Bug227110();
+//			fail();
+//		} catch(Throwable _) { }
+//	}	
+//	
+//	@Override
+//	public void testRedefinePtrdiff_Bug230895() throws Exception {
+//		try {
+//			super.testRedefinePtrdiff_Bug230895();
+//			fail();
+//		} catch(Throwable _) { }
+//	}	
+//	
+//	
+//	@Override
+//	public void testReturnTypeOfBuiltin_Bug234309() throws Exception {
+//		try {
+//			super.testReturnTypeOfBuiltin_Bug234309();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void	testScalabilityOfLargeTrivialInitializer_Bug253690() {
+//		// LPG holds on to all the tokens as you parse, so I don't think
+//		// it would be easy to fix this bug.
+//		try {
+//			super.testScalabilityOfLargeTrivialInitializer_Bug253690();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	
+//	@Override
+//	public void	testCompoundLiterals_Bug258496() { // GCC extension
+//		try {
+//			super.testCompoundLiterals_Bug258496();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
+//	
+//	@Override
+//	public void	testThreadLocalVariables_Bug260387() { // GCC extension
+//		try {
+//			super.testThreadLocalVariables_Bug260387();
+//			fail();
+//		} catch(Throwable _) { }
+//	}
 
 }

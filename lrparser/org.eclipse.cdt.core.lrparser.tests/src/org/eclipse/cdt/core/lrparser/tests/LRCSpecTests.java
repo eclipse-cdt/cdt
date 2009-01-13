@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -84,13 +83,13 @@ public class LRCSpecTests extends AST2CSpecTest {
 
 
 	
-	@Override
-	public void test6_7_2_1s17() throws Exception { // what the heck is offsetof
-		try {
-			super.test6_7_2_1s17();
-			fail();
-		} catch(AssertionFailedError _) { }
-	}
+//	@Override
+//	public void test6_7_2_1s17() throws Exception { // what the heck is offsetof
+//		try {
+//			super.test6_7_2_1s17();
+//			fail();
+//		} catch(AssertionFailedError _) { }
+//	}
 	
 	
 }

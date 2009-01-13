@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -63,70 +62,70 @@ public class LRCPPTests extends AST2CPPTests {
     	
     }
 	
-    @Override
-	public void testBug87424() throws Exception { // gcc extension
-    	try {
-    		super.testBug87424();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-
-    
-    @Override
-	public void testBug95757() throws Exception { // gcc extension
-    	try {
-    		super.testBug95757();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-    
-    @Override
-	public void testBug108202() throws Exception { // gcc attributes not supported
-    	try {
-    		super.testBug108202();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-    
-    
-    @Override
-	public void testBug195701() throws Exception { // gcc attributes not supported
-    	try {
-    		super.testBug195701();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-    
-    @Override
-	public void testBug179712() throws Exception { // gcc attributes not supported
-    	try {
-    		super.testBug179712();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-    
-    @Override
-    public void testBug240567() throws Exception { // gcc
-    	try {
-    		super.testBug240567();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
-    
-    @Override
-    public void testLiteralsViaOverloads_225534() throws Exception { // gcc, I think
-    	try {
-    		super.testLiteralsViaOverloads_225534();
-    		fail();
-    	} catch(AssertionFailedError _) {
-    	} 
-    }
+//    @Override
+//	public void testBug87424() throws Exception { // gcc extension
+//    	try {
+//    		super.testBug87424();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//
+//    
+//    @Override
+//	public void testBug95757() throws Exception { // gcc extension
+//    	try {
+//    		super.testBug95757();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//    
+//    @Override
+//	public void testBug108202() throws Exception { // gcc attributes not supported
+//    	try {
+//    		super.testBug108202();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//    
+//    
+//    @Override
+//	public void testBug195701() throws Exception { // gcc attributes not supported
+//    	try {
+//    		super.testBug195701();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//    
+//    @Override
+//	public void testBug179712() throws Exception { // gcc attributes not supported
+//    	try {
+//    		super.testBug179712();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//    
+//    @Override
+//    public void testBug240567() throws Exception { // gcc
+//    	try {
+//    		super.testBug240567();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
+//    
+//    @Override
+//    public void testLiteralsViaOverloads_225534() throws Exception { // gcc, I think
+//    	try {
+//    		super.testLiteralsViaOverloads_225534();
+//    		fail();
+//    	} catch(AssertionFailedError _) {
+//    	} 
+//    }
     
     
     @Override

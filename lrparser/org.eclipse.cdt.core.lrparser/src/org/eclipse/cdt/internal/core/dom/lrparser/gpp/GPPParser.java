@@ -1972,9 +1972,9 @@ public GPPParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 551:  attribute_parameter ::= assignment_expression
+            // Rule 552:  attribute_parameter ::= assignment_expression
             //
-            case 551: { action.   consumeIgnore();            break;
+            case 552: { action.   consumeIgnore();            break;
             }  
 
     

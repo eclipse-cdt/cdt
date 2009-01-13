@@ -25,6 +25,13 @@ $Import
 $End
 
 
+-- Tokens used by GCC but not part of the C99 spec
+$Terminals
+
+    asm
+    
+$End
+
 
 -- Hook the extensions into the main grammar.
 $Rules

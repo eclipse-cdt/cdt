@@ -15,8 +15,15 @@
 
 
 $Terminals
+	-- additional GCC only tokens as defined in IGCCToken
+
+	typeof
+	__alignof__
+	MAX
+	MIN
 	__attribute__
 	__declspec
+	
 $End
 
 
@@ -29,6 +36,7 @@ $Rules
 attribute_or_decl_specifier
     ::= attribute_specifier
       | decl_specifier
+      | asm_label
 
 attribute_or_decl_specifier_seq
     ::= attribute_or_decl_specifier
@@ -80,4 +88,17 @@ extended_decl_modifier
       | 'identifier' '(' ')'
       | 'identifier' '(' 'identifier' ')'
 
+
+------------------------------------------------------------------------------------
+-- Other stuff
+------------------------------------------------------------------------------------
+
+asm_label
+    ::= 'asm' '(' 'stringlit' ')'
+
+asm_label_opt
+    ::= asm_label
+      | $empty
+
 $End
+

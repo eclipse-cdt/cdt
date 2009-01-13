@@ -169,8 +169,13 @@ public class DOMToGPPTokenMap implements IDOMTokenMap {
 			case tEOC          : return TK_EndOfCompletion;
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
 			
+			case IGCCToken.t_typeof       : return TK_typeof;
+			case IGCCToken.t___alignof__  : return TK___alignof__;
+			case IGCCToken.tMAX           : return TK_MAX;
+			case IGCCToken.tMIN           : return TK_MIN;
 			case IGCCToken.t__attribute__ : return TK___attribute__;
-
+			case IGCCToken.t__declspec    : return TK___declspec;
+			
 			default:
 				assert false : "token not recognized by the GPP parser: " + token.getType(); //$NON-NLS-1$
 				return TK_Invalid;

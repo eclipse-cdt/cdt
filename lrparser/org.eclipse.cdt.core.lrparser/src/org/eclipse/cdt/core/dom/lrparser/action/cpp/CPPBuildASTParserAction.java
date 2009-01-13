@@ -1136,7 +1136,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 //	 * declaration_specifiers ::=  <openscope> type_name_declaration_specifiers
 //	 */
 	public void consumeDeclarationSpecifiersTypeName() {
-		System.out.println("consumeDeclarationSpecifiersTypeName");
 		List<Object> topScope = astStack.closeScope();
 		// There's a name somewhere on the stack, find it		
 		IASTName typeName = findFirstAndRemove(topScope, IASTName.class);

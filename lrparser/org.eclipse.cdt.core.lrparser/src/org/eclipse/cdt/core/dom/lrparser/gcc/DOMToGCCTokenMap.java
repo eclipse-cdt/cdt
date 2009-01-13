@@ -138,7 +138,16 @@ public final class DOMToGCCTokenMap implements IDOMTokenMap {
 			case tEOC          : return TK_EndOfCompletion; 
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
 
+			
+			case IGCCToken.t_typeof       : return TK_typeof;
+			case IGCCToken.t___alignof__  : return TK___alignof__;
+			case IGCCToken.tMAX           : return TK_MAX;
+			case IGCCToken.tMIN           : return TK_MIN;
 			case IGCCToken.t__attribute__ : return TK___attribute__;
+			case IGCCToken.t__declspec    : return TK___declspec;
+			
+			case t_asm: return TK_asm;
+			
 			
 			default:
 				assert false : "token not recognized by the GCC parser: " + token.getType(); //$NON-NLS-1$

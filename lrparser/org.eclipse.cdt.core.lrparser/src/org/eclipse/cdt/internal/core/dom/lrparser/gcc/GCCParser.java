@@ -1257,9 +1257,9 @@ public GCCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 330:  attribute_parameter ::= assignment_expression
+            // Rule 331:  attribute_parameter ::= assignment_expression
             //
-            case 330: { action.   consumeIgnore();            break;
+            case 331: { action.   consumeIgnore();            break;
             }  
 
     

@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.text.spelling;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
@@ -24,15 +25,19 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
 
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
 import org.eclipse.cdt.internal.ui.text.FastCPartitioner;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentSpellDictionary;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
@@ -43,6 +48,26 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
  * C/C++ spelling engine
  */
 public class CSpellingEngine extends SpellingEngine {
+
+	/**
+	 * A dummy token store for use with a token scanner.
+	 */
+	private static class SimpleTokenStore implements ITokenStore {
+		public void ensureTokensInitialised() {
+		}
+		public IPreferenceStore getPreferenceStore() {
+			return null;
+		}
+		public IToken getToken(String property) {
+			return new Token(property);
+		}
+		public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		}
+		public boolean affectsBehavior(PropertyChangeEvent event) {
+			return false;
+		}
+	}
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.SpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -95,8 +120,10 @@ public class CSpellingEngine extends SpellingEngine {
 						}
 						
 						if (type.equals(ICPartitions.C_PREPROCESSOR)) {
-							CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-							RuleBasedScanner scanner = textTools.getCppPreprocessorScanner();
+							RuleBasedScanner scanner = new CPreprocessorScanner(new ITokenStoreFactory() {
+								public ITokenStore createTokenStore(String[] propertyColorNames) {
+									return new SimpleTokenStore();
+								}}, GPPLanguage.getDefault());
 							scanner.setRange(document, partition.getOffset(), partition.getLength());
 							int firstTokenOffset = -1;
 							int firstTokenLength = -1;

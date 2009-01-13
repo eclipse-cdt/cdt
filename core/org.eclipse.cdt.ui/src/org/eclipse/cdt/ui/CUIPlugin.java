@@ -141,6 +141,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.CHierarchyPerspective"</code>).
 	 * 
 	 * @deprecated This perspective no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */	
 	@Deprecated
 	public static final String ID_CHIERARCHY_PERSPECTIVE = PLUGIN_ID + ".CHierarchyPerspective"; //$NON-NLS-1$
@@ -151,6 +152,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This perspective no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final String ID_CBROWSING_PERSPECTIVE = PLUGIN_ID + ".CBrowsingPerspective"; //$NON-NLS-1$
@@ -161,6 +163,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static String ID_PROJECTS_VIEW = PLUGIN_ID + ".ProjectsView"; //$NON-NLS-1$
@@ -171,6 +174,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static String ID_NAMESPACES_VIEW = PLUGIN_ID + ".NamespacesView"; //$NON-NLS-1$
@@ -181,6 +185,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static String ID_TYPES_VIEW = PLUGIN_ID + ".TypesView"; //$NON-NLS-1$
@@ -191,6 +196,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
@@ -317,7 +323,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	* Utility method with conventions
-	 * @param logError TODO
+	* @param logError TODO
 	*/
 	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
 		if (logError)
@@ -333,7 +339,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	* Utility method with conventions
-	 * @param logError TODO
+	* @param logError TODO
 	*/
 	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
 		if (logError)
@@ -443,20 +449,24 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the shared text tools
+	 * Returns the shared C/C++ text tools.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public CTextTools getTextTools() {
 		if (fTextTools == null)
-			fTextTools = new CTextTools(getPreferenceStore(), CCorePlugin.getDefault().getPluginPreferences());
+			fTextTools = new CTextTools();
 		return fTextTools;
 	}
 
 	/**
-	 * Returns the shared assembly text tools
+	 * Returns the shared assembly text tools.
+	 * @deprecated Use methods provided by {@link CDTUITools} instead.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Deprecated
 	public AsmTextTools getAsmTextTools() {
 		if (fAsmTextTools == null)
-			fAsmTextTools = new AsmTextTools(getPreferenceStore(), CCorePlugin.getDefault().getPluginPreferences());
+			fAsmTextTools = new AsmTextTools();
 		return fAsmTextTools;
 	}
 
@@ -547,6 +557,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fTextTools.dispose();
 			fTextTools= null;
 		}
+		if (fAsmTextTools != null) {
+			fAsmTextTools.dispose();
+			fAsmTextTools= null;
+		}
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
 			fImageDescriptorRegistry= null;
@@ -624,7 +638,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 		manager.unregisterAdapters(fCElementAdapterFactory);
 	}
 
-	/** @deprecated Use {@link EditorsUI#getSharedTextColors()} instead. */
+	/** 
+	 * @deprecated Use {@link EditorsUI#getSharedTextColors()} instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	@Deprecated
 	public ISharedTextColors getSharedTextColors() {
 		return EditorsUI.getSharedTextColors();

@@ -20,6 +20,8 @@ import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;

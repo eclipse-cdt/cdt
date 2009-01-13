@@ -15,13 +15,13 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * ICEditorTextHover
- * Provides a hover popup which appears on top of an editor with relevant
- * display information. If the text hover does not provide information no
- * hover popup is shown.
+ * Interface to be implemented by contributors to extension point
+ * "org.eclipse.cdt.ui.textHovers". Provides a hover popup which appears on top
+ * of an editor with relevant display information. If the text hover does not
+ * provide information no hover popup is shown.
  * <p>
- * Clients may implement this interface.</p>
- *
+ * Clients may implement this interface.
+ * </p>
  */
 public interface ICEditorTextHover extends ITextHover {
 

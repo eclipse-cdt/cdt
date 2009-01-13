@@ -15,11 +15,11 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IRule;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.cdt.ui.text.TaskTagRule;
 
@@ -29,26 +29,20 @@ import org.eclipse.cdt.ui.text.TaskTagRule;
  */
 public class CCommentScanner extends AbstractCScanner {
 	private static String TASK_TAG_KEY= PreferenceConstants.EDITOR_TASK_TAG_COLOR;
-	private Preferences fCorePreferenceStore;
 		
 	public CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty) {
-		this(tokenStoreFactory, null, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
+		this(tokenStoreFactory, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
 	}
 
-	public CCommentScanner(ITokenStoreFactory tokenStoreFactory, Preferences coreStore, String defaultTokenProperty) {
-		this(tokenStoreFactory, coreStore, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG_KEY });
-	}
-
-	private CCommentScanner(ITokenStoreFactory tokenStoreFactory, Preferences coreStore, String defaultTokenProperty, String[] tokenProperties) {
+	private CCommentScanner(ITokenStoreFactory tokenStoreFactory, String defaultTokenProperty, String[] tokenProperties) {
 		super(tokenStoreFactory.createTokenStore(tokenProperties));
-		fCorePreferenceStore= coreStore;
 		setRules(createRules(defaultTokenProperty));
 	}
 
 	 protected List<IRule> createRules(String defaultTokenProperty) {
 		 setDefaultReturnToken(getToken(defaultTokenProperty));
 		 IPreferenceStore store= fTokenStore.getPreferenceStore();
-		 String taskWords= TaskTagRule.getTaskWords(store, fCorePreferenceStore);
+		 String taskWords= TaskTagRule.getTaskWords(store, null);
 		 TaskTagRule taskTagRule= new TaskTagRule(getToken(TASK_TAG_KEY), taskWords);
 		 addPropertyChangeParticipant(taskTagRule);
 		 return Collections.singletonList((IRule)taskTagRule);

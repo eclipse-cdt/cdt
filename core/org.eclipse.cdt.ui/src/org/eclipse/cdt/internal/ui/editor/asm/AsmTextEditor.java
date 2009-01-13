@@ -52,9 +52,12 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
@@ -99,8 +102,8 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		// For now we are sharing with the CEditor and any changes in the
 		// setting of the CEditor will be reflected in this editor.
 		setPreferenceStore(store);
-		AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
-		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(tools.getColorManager(), store, this, ICPartitions.C_PARTITIONING));
+		final IColorManager colorManager = CDTUITools.getColorManager();
+		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(colorManager, store, this, ICPartitions.C_PARTITIONING));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setEditorContextMenuId("#ASMEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#ASMEditorRulerContext"); //$NON-NLS-1$

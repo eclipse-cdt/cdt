@@ -20,13 +20,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
+import org.eclipse.cdt.ui.text.IColorManager;
+
 
 /**
  * CDT color manager.
  */
-public class CColorManager implements IColorManager, IColorManagerExtension {
+public class CColorManager implements IColorManager {
 	
 	protected Map<String, RGB> fKeyTable= new HashMap<String, RGB>(10);
 	protected Map<Display, Map<RGB, Color>> fDisplayTable= new HashMap<Display, Map<RGB, Color>>(2);
@@ -120,7 +120,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 	}
 	
 	/*
-	 * @see IColorManagerExtension#bindColor(String, RGB)
+	 * @see IColorManager#bindColor(String, RGB)
 	 */
 	public void bindColor(String key, RGB rgb) {
 		Object value= fKeyTable.get(key);
@@ -131,7 +131,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 	}
 
 	/*
-	 * @see IColorManagerExtension#unbindColor(String)
+	 * @see IColorManager#unbindColor(String)
 	 */
 	public void unbindColor(String key) {
 		fKeyTable.remove(key);

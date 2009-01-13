@@ -12,9 +12,11 @@ package org.eclipse.cdt.ui;
 
 
 /**
+ * A function summary provided by an {@link ICHelpProvider}.
  * <p>
  * Clients may implement this interface.
  * </p>
+ * @see ICHelpProvider
  */
 public interface IFunctionSummary {
 	

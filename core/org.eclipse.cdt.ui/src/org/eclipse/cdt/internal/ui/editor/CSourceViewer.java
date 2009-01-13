@@ -48,8 +48,8 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 /**
  * Source viewer for C/C++ et al.

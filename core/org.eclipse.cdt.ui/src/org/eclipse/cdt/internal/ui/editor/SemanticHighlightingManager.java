@@ -28,13 +28,11 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
-
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 
 /**
  * Semantic highlighting manager.
@@ -584,10 +582,9 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			String property= event.getProperty();
 			Color color= fColorManager.getColor(property);
 
-			if ((color == null || !rgb.equals(color.getRGB())) && fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-				ext.unbindColor(property);
-				ext.bindColor(property, rgb);
+			if ((color == null || !rgb.equals(color.getRGB()))) {
+				fColorManager.unbindColor(property);
+				fColorManager.bindColor(property, rgb);
 				color= fColorManager.getColor(property);
 			}
 
@@ -614,17 +611,13 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	private void addColor(String colorKey) {
 		if (fColorManager != null && colorKey != null && fColorManager.getColor(colorKey) == null) {
 			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
-			if (fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-				ext.unbindColor(colorKey);
-				ext.bindColor(colorKey, rgb);
-			}
+			fColorManager.unbindColor(colorKey);
+			fColorManager.bindColor(colorKey, rgb);
 		}
 	}
 
 	private void removeColor(String colorKey) {
-		if (fColorManager instanceof IColorManagerExtension)
-			((IColorManagerExtension) fColorManager).unbindColor(colorKey);
+		fColorManager.unbindColor(colorKey);
 	}
 
 	/**

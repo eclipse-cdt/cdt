@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
@@ -18,10 +17,11 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.ui.text.IColorManager;
 
 /**
  * A merge viewer for assembly code.
@@ -46,9 +46,9 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	@Override
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
-			AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
 			IPreferenceStore store= getPreferenceStore();
-			fSourceViewerConfiguration= new AsmSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
+			final IColorManager colorManager = CDTUITools.getColorManager();
+			fSourceViewerConfiguration= new AsmSourceViewerConfiguration(colorManager, store, null, ICPartitions.C_PARTITIONING);
 		}
 		return fSourceViewerConfiguration;
 	}
@@ -60,7 +60,7 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 
 	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
-		return CUIPlugin.getDefault().getAsmTextTools().createDocumentPartitioner();
+		return CDTUITools.createAsmDocumentPartitioner();
 	}
 
 	@Override

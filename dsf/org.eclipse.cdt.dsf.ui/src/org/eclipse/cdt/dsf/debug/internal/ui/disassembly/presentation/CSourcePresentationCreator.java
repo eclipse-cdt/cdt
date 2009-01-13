@@ -13,43 +13,42 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IAsmLanguage;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.formatter.IContentFormatter;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A presentation creator based on CDT syntax highlighting.
@@ -60,11 +59,12 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	/**
 	 *
 	 */
-	private final static class CustomCSourceViewerConfiguration extends SimpleCSourceViewerConfiguration {
+	private final static class CustomCSourceViewerConfiguration extends CSourceViewerConfiguration {
 		/**
 		 * Comment for <code>fLanguage</code>
 		 */
 		private final ILanguage fLanguage;
+		private AsmSourceViewerConfiguration fAsmConfig;
 
 		/**
 		 * @param colorManager
@@ -74,8 +74,11 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		private CustomCSourceViewerConfiguration(
 				IColorManager colorManager, IPreferenceStore preferenceStore,
 				ILanguage language) {
-			super(colorManager, preferenceStore, null, ICPartitions.C_PARTITIONING, false);
+			super(colorManager, preferenceStore, null, ICPartitions.C_PARTITIONING);
 			fLanguage = language;
+			if (language instanceof IAsmLanguage) {
+				fAsmConfig= new AsmSourceViewerConfiguration(colorManager, preferenceStore, null, ICPartitions.C_PARTITIONING);
+			}
 		}
 
 		public void dispose() {
@@ -114,63 +117,13 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 			return null;
 		}
 
-		private ITokenScanner getMultilineCommentScanner() {
-			return new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_SINGLE_LINE_COMMENT);
-		}
-
-		private ITokenScanner getSinglelineCommentScanner() {
-			return new CCommentScanner(getTokenStoreFactory(),  ICColorConstants.C_MULTI_LINE_COMMENT);
-		}
-
-		/**
-		 * Returns the ICProject associated with this CSourceViewerConfiguration, or null if
-		 * no ICProject could be determined
-		 * @return
-		 */
-		private ICProject internalGetCProject() {
-			ITextEditor editor= getEditor();
-			if (editor == null)
-				return null;
-
-			ICElement element= null;
-			IEditorInput input= editor.getEditorInput();
-			IDocumentProvider provider= editor.getDocumentProvider();
-			if (provider instanceof CDocumentProvider) {
-				CDocumentProvider cudp= (CDocumentProvider) provider;
-				element= cudp.getWorkingCopy(input);
-			}
-
-			if (element == null)
-				return null;
-
-			return element.getCProject();
-		}
-
-		
-	    /**
-		 * @return the IProject associated with this CSourceViewerConfiguration, or null if
-		 * no IProject could be determined
-		 */
-		private IProject getProject() {
-			ICProject cproject= internalGetCProject();
-			return cproject!=null ? cproject.getProject() :null;
-		}
-
-		private ITokenStoreFactory getTokenStoreFactory() {
-			return new ITokenStoreFactory() {
-				public ITokenStore createTokenStore(String[] propertyColorNames) {
-					return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);
-				}
-			};
-		}
-
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration#getCodeScanner(org.eclipse.cdt.core.model.ILanguage)
 		 */
 		@Override
 		protected RuleBasedScanner getCodeScanner(ILanguage language) {
 			if (language instanceof IAsmLanguage) {
-				return CUIPlugin.getDefault().getAsmTextTools().getCodeScanner();
+				return fAsmConfig.getCodeScanner(language);
 			}
 			return super.getCodeScanner(language);
 		}
@@ -181,11 +134,99 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		@Override
 		protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
 			if (language instanceof IAsmLanguage) {
-				return CUIPlugin.getDefault().getAsmTextTools().getPreprocessorScanner();
+				return fAsmConfig.getPreprocessorScanner(language);
 			}
 			return super.getPreprocessorScanner(language);
 		}
-	}
+
+		/*
+		 * @see SourceViewerConfiguration#getAutoEditStrategies(ISourceViewer, String)
+		 */
+		@Override
+		public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
+		 */
+		@Override
+		public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getOverviewRulerAnnotationHover(ISourceViewer)
+		 */
+		@Override
+		public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
+		 */
+		@Override
+		public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
+		 */
+		@Override
+		public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
+		 */
+		@Override
+		public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getContentFormatter(ISourceViewer)
+		 */
+		@Override
+		public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getInformationControlCreator(ISourceViewer)
+		 */
+		@Override
+		public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
+		 */
+		@Override
+		public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
+			return null;
+		}
+
+		/*
+		 * @see SourceViewerConfiguration#getHyperlinkDetectors(ISourceViewer)
+		 */
+		@Override
+		public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+			return null;
+		}
+		
+		/*
+		 * @see CSourceViewerConfiguration#getOutlinePresenter(ISourceViewer)
+		 */
+		@Override
+		public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
+			return null;
+		}
+}
 
 	private ITextViewer fViewer;
 	private ISourceTagProvider fSourceTagProvider;

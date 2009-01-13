@@ -31,10 +31,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 
 import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileManager;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,14 +9,25 @@
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.text;
 
 
-
-/*
- * Color constants that we use for the preferences
- */
  
+/**
+ * Color keys used for syntax highlighting C/C++ and Assembly code
+ * A <code>IColorManager</code> is responsible for mapping
+ * concrete colors to these keys.
+ * <p>
+ * This interface declares static final fields only; it is not intended to be
+ * implemented.
+ * </p>
+ * @see org.eclipse.cdt.ui.text.IColorManager
+ * 
+ * @since 5.1
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
 public interface ICColorConstants {
 	/** The color key for multi-line comments in C code. */
 	String C_MULTI_LINE_COMMENT= "c_multi_line_comment"; //$NON-NLS-1$

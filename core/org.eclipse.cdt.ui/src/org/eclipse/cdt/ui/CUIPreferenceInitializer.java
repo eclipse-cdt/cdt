@@ -26,6 +26,8 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * This class implements the setting of the CUI initial preference store settings.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 

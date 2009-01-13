@@ -23,9 +23,12 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.IColorManager;
+
 
 /**
- * A simple {@linkplain org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration C source viewer configuration}.
+ * A simple {@linkplain org.eclipse.cdt.ui.text.CSourceViewerConfiguration C source viewer configuration}.
  * <p>
  * This simple source viewer configuration basically provides syntax coloring
  * and disables all other features like code assist, quick outlines, hyperlinking, etc.

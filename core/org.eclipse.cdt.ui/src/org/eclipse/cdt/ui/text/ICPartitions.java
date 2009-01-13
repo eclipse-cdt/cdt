@@ -63,7 +63,7 @@ public interface ICPartitions {
 	String C_MULTI_LINE_DOC_COMMENT= "__c_multiline_doc_comment"; //$NON-NLS-1$
 	
 	/**
-	 * All defined CDT editor partitions
+	 * All defined CDT editor partitions.
 	 * @since 5.0
 	 */
 	String[] ALL_CPARTITIONS= {
@@ -75,4 +75,17 @@ public interface ICPartitions {
 			ICPartitions.C_SINGLE_LINE_DOC_COMMENT,
 			ICPartitions.C_MULTI_LINE_DOC_COMMENT
 	};
+	
+	/**
+	 * Array of all assembly partitions.
+	 * @since 5.1
+	 */
+	String[] ALL_ASM_PARTITIONS= new String[] {
+			ICPartitions.C_MULTI_LINE_COMMENT,
+			ICPartitions.C_SINGLE_LINE_COMMENT,
+			ICPartitions.C_STRING,
+			ICPartitions.C_CHARACTER,
+			ICPartitions.C_PREPROCESSOR
+	};
+
 }

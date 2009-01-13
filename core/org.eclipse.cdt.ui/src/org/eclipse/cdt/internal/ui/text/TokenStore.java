@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.ui.text.ITokenStore;
 
 
@@ -94,11 +95,8 @@ public class TokenStore implements ITokenStore {
 	private void addToken(String colorKey) {
 		if (fColorManager != null && colorKey != null && fColorManager.getColor(colorKey) == null) {
 			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
-			if (fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-				ext.unbindColor(colorKey);
-				ext.bindColor(colorKey, rgb);
-			}
+			fColorManager.unbindColor(colorKey);
+			fColorManager.bindColor(colorKey, rgb);
 		}
 
 		if (!fNeedsLazyColorLoading)
@@ -228,11 +226,9 @@ public class TokenStore implements ITokenStore {
 			String property= event.getProperty();
 			Color color= fColorManager.getColor(property);
 
-			if ((color == null || !rgb.equals(color.getRGB())) && fColorManager instanceof IColorManagerExtension) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-
-			 	ext.unbindColor(property);
-			 	ext.bindColor(property, rgb);
+			if ((color == null || !rgb.equals(color.getRGB()))) {
+				fColorManager.unbindColor(property);
+				fColorManager.bindColor(property, rgb);
 
 				color= fColorManager.getColor(property);
 			}

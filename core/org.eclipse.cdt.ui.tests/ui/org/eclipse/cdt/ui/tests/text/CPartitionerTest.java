@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -28,6 +27,7 @@ import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+
 
 
 /**
@@ -45,9 +45,10 @@ public class CPartitionerTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() {
 
-		fTextTools= new CTextTools(new PreferenceStore());
+		fTextTools= new CTextTools();
 
 		fDocument= new Document();
 		IDocumentPartitioner partitioner= fTextTools.createDocumentPartitioner(null);
@@ -67,6 +68,7 @@ public class CPartitionerTest extends TestCase {
 		return new TestSuite(CPartitionerTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fTextTools.dispose();
 		fTextTools= null;

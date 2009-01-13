@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,22 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.text;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
 
+
 /**
- * Manages SWT color objects for given color keys and
- * given <code>RGB</code> objects. Until the <code>dispose</code> 
+ * Manages SWT color objects for the given color keys and
+ * given <code>RGB</code> objects. Until the <code>dispose</code>
  * method is called, the same color object is returned for
  * equal keys and equal <code>RGB</code> values.
+ *
  * <p>
  * This interface may be implemented by clients.
  * </p>
  *
- * @see ICColorConstants
+ * @see org.eclipse.cdt.ui.text.ICColorConstants
+ * 
+ * @since 5.1
  */
 public interface IColorManager {
 	
@@ -51,4 +55,21 @@ public interface IColorManager {
 	 * Disposes all color objects remembered by this color manager.
 	 */
 	void dispose();
+
+	/**
+	 * Remembers the given color specification under the given key.
+	 *
+	 * @param key the color key
+	 * @param rgb the color specification
+	 * @throws UnsupportedOperationException if there is already a
+	 * 	color specification remembered under the given key
+	 */
+	void bindColor(String key, RGB rgb);
+	
+	
+	/**
+	 * Forgets the color specification remembered under the given key.
+	 * @param key the color key
+	 */
+	void unbindColor(String key);
 }

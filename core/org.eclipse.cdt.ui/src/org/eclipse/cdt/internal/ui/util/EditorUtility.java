@@ -307,7 +307,7 @@ public class EditorUtility {
 	/**
 	 * Utility method to get an editor input for the given file system location.
 	 * If the location denotes a workspace file, a <code>FileEditorInput</code>
-	 * is returned, otherwise, the input is an <code>IStorageEditorInput</code>
+	 * is returned, otherwise, the input is an <code>IURIEditorInput</code>
 	 * assuming the location points to an existing file in the file system.
 	 * The <code>ICElement</code> is used to determine the associated project
 	 * in case the location can not be resolved to a workspace <code>IFile</code>.
@@ -465,7 +465,7 @@ public class EditorUtility {
 	 * If a context element is given and there are multiple matches in the workspace,
 	 * a resource with the same project of the context element are preferred.
 	 *
-	 * @param locationURI  a valid file system location
+	 * @param locationURI  a valid Eclipse file system URI
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */

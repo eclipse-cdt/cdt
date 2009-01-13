@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
@@ -34,7 +35,7 @@ public class AsmDocumentSetupParticipant implements IDocumentSetupParticipant, I
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
 	public void setup(IDocument document) {
-		IDocumentPartitioner partitioner= CUIPlugin.getDefault().getAsmTextTools().createDocumentPartitioner();
+		IDocumentPartitioner partitioner= CDTUITools.createAsmDocumentPartitioner();
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			extension3.setDocumentPartitioner(ICPartitions.C_PARTITIONING, partitioner);

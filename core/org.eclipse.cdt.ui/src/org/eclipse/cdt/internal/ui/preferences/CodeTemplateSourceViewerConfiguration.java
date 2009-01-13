@@ -33,11 +33,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
 
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;

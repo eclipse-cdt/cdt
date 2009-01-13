@@ -13,7 +13,8 @@ package org.eclipse.cdt.ui;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 /**
- * Represents the C/C++ help provider
+ * Represents a C/C++ help provider. This interface need to be implemented by
+ * contributors to extension point "org.eclipse.cdt.ui.CHelpProvider".
  * <p>
  * Clients may implement this interface.
  * </p>

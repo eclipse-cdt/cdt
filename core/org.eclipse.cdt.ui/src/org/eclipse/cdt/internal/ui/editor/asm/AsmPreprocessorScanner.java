@@ -19,12 +19,12 @@ import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.ui.text.AbstractCScanner;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
-import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.CHeaderRule;
 import org.eclipse.cdt.internal.ui.text.CWhitespaceRule;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.PreprocessorRule;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 

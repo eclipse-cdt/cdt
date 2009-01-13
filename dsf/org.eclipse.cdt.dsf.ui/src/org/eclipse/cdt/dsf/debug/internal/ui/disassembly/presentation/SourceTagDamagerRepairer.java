@@ -18,10 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -99,9 +98,8 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 	private void removeTextAttribute(String key, String colorKey) {
 		if (fColorManager != null && colorKey != null) {
 			Color color= fColorManager.getColor(colorKey);
-			if (fColorManager instanceof IColorManagerExtension && color != null) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-				ext.unbindColor(colorKey);
+			if (color != null) {
+				fColorManager.unbindColor(colorKey);
 			}
 		}
 
@@ -109,13 +107,12 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 	}
 
 	private void addTextAttribute(String key, String colorKey, String boldKey, String italicKey, String strikethroughKey, String underlineKey) {
-		if (fColorManager != null && colorKey != null && fColorManager instanceof IColorManagerExtension) {
+		if (fColorManager != null && colorKey != null) {
 			RGB rgb= PreferenceConverter.getColor(fPreferenceStore, colorKey);
 			Color color= fColorManager.getColor(colorKey);
 			if (color == null || !rgb.equals(color.getRGB())) {
-				IColorManagerExtension ext= (IColorManagerExtension) fColorManager;
-				ext.unbindColor(colorKey);
-				ext.bindColor(colorKey, rgb);
+				fColorManager.unbindColor(colorKey);
+				fColorManager.bindColor(colorKey, rgb);
 			}
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text;
 
 import java.io.File;
@@ -47,12 +46,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -363,7 +362,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	public void testSyntaxHighlighting_Bug180433() throws Exception {
-		CColorManager colorMgr= CUIPlugin.getDefault().getTextTools().getColorManager();
+		IColorManager colorMgr= CUIPlugin.getDefault().getTextTools().getColorManager();
 		colorMgr.unbindColor(ICColorConstants.PP_DIRECTIVE);
 		colorMgr.bindColor(ICColorConstants.PP_DIRECTIVE, new RGB(7,7,7));
 		final Color ppDirectiveColor= colorMgr.getColor(ICColorConstants.PP_DIRECTIVE);

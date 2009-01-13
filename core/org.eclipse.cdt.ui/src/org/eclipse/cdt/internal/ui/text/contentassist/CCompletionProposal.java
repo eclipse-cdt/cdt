@@ -54,6 +54,7 @@ import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
+
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 	
 	private String fDisplayString;

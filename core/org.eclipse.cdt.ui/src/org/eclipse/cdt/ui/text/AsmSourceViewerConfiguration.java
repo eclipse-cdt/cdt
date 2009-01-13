@@ -9,7 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.editor.asm;
+package org.eclipse.cdt.ui.text;
 
 
 import org.eclipse.core.resources.IFile;
@@ -43,20 +43,25 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 
-import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmCodeScanner;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmPreprocessorScanner;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmReconcilingStrategy;
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
 
-
+/**
+ * Configuration for a source viewer which shows Assembly code.
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * 
+ * @since 5.1
+ */
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	private ITextEditor fTextEditor;
@@ -107,24 +112,6 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	}
 
 	/**
-	 * Constructor for AsmSourceViewerConfiguration.
-	 * @deprecated
-	 */
-	@Deprecated
-	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
-		this(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
-	}
-
-	/**
-	 * Constructor for AsmSourceViewerConfiguration.
-	 * @deprecated
-	 */
-	@Deprecated
-	public AsmSourceViewerConfiguration(ITextEditor editor, IPreferenceStore store) {
-		this(CUIPlugin.getDefault().getAsmTextTools().getColorManager(), store, editor, ICPartitions.C_PARTITIONING);
-	}
-
-	/**
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
@@ -138,7 +125,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 *
 	 * @return the ASM multiline comment scanner
 	 */
-	protected RuleBasedScanner getMultilineCommentScanner() {
+	public RuleBasedScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 	
@@ -147,7 +134,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 *
 	 * @return the ASM singleline comment scanner
 	 */
-	protected RuleBasedScanner getSinglelineCommentScanner() {
+	public RuleBasedScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 	
@@ -156,7 +143,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 *
 	 * @return the ASM string scanner
 	 */
-	protected RuleBasedScanner getStringScanner() {
+	public RuleBasedScanner getStringScanner() {
 		return fStringScanner;
 	}
 
@@ -166,7 +153,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 *
 	 * @return the assembly preprocessor scanner
 	 */
-	protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
+	public RuleBasedScanner getPreprocessorScanner(ILanguage language) {
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
 		}
@@ -185,7 +172,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @param language
 	 * @return the assembly code scanner for the given language
 	 */
-	protected RuleBasedScanner getCodeScanner(ILanguage language) {
+	public RuleBasedScanner getCodeScanner(ILanguage language) {
 		if (fCodeScanner != null) {
 			return fCodeScanner;
 		}
@@ -334,11 +321,11 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 *
 	 * @return the color manager
 	 */
-	protected IColorManager getColorManager() {
+	public IColorManager getColorManager() {
 		return fColorManager;
 	}
 
-	protected ILanguage getLanguage() {
+	public ILanguage getLanguage() {
 		if (fTextEditor == null) {
 			return AssemblyLanguage.getDefault();
 		}

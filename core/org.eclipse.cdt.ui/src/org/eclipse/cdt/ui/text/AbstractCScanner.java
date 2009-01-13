@@ -10,7 +10,7 @@
  *     QNX Software System
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,28 +23,43 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.ui.IPropertyChangeParticipant;
-import org.eclipse.cdt.ui.text.ICTokenScanner;
-import org.eclipse.cdt.ui.text.ITokenStore;
 
 /**
- * Convenience implementation.
+ * Convenience implementation for {@link ICTokenScanner}.
+ * Subclasses need to initialize scanner rules by calling {@link #setRules(IRule[])} or {@link #setRules(List)}.
+ * <p>
+ * Clients may instantiate and extend this class.
+ * </p>
+ * 
+ * @since 5.1
  */
 public abstract class AbstractCScanner extends BufferedRuleBasedScanner implements ICTokenScanner {
-	private List<IPropertyChangeParticipant> pcps;
+	private List<IPropertyChangeParticipant> fParticipants;
 	final protected ITokenStore fTokenStore;
 	
+	/**
+	 * Create a new scanner for the given token store with default buffer size.
+	 * 
+	 * @param tokenStore
+	 */
+	public AbstractCScanner(ITokenStore tokenStore) {
+		fTokenStore= tokenStore;
+		fParticipants= new ArrayList<IPropertyChangeParticipant>();
+	}
+	
+	/**
+	 * Create a new scanner for the given token store and buffer size.
+	 * 
+	 * @param tokenStore
+	 * @param size
+	 */
 	public AbstractCScanner(ITokenStore tokenStore, int size) {
 		this(tokenStore);
 		setBufferSize(size);
 	}
 	
-	public AbstractCScanner(ITokenStore tokenStore) {
-		fTokenStore= tokenStore;
-		pcps= new ArrayList<IPropertyChangeParticipant>();
-	}
-	
 	protected void addPropertyChangeParticipant(IPropertyChangeParticipant participant) {
-		pcps.add(participant);
+		fParticipants.add(participant);
 	}
 	
 	/**
@@ -86,7 +101,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 		if(fTokenStore.affectsBehavior(event)) {
 			fTokenStore.adaptToPreferenceChange(event);
 		}
-		for (IPropertyChangeParticipant propertyChangeParticipant : pcps) {
+		for (IPropertyChangeParticipant propertyChangeParticipant : fParticipants) {
 			propertyChangeParticipant.adaptToPreferenceChange(event);
 		}
 	}
@@ -96,7 +111,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		boolean result= fTokenStore.affectsBehavior(event);
-		for(Iterator<IPropertyChangeParticipant> i= pcps.iterator(); !result && i.hasNext(); ) {
+		for(Iterator<IPropertyChangeParticipant> i= fParticipants.iterator(); !result && i.hasNext(); ) {
 			result |= (i.next()).affectsBehavior(event);
 		}
 		return result;

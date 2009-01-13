@@ -12,7 +12,7 @@
  *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.text;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -78,10 +78,6 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ICTokenScanner;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
@@ -90,6 +86,22 @@ import org.eclipse.cdt.internal.core.model.ProgressMonitorAndCanceler;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CCodeScanner;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy;
+import org.eclipse.cdt.internal.ui.text.CDoubleClickSelector;
+import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
+import org.eclipse.cdt.internal.ui.text.COutlineInformationControl;
+import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.internal.ui.text.CReconciler;
+import org.eclipse.cdt.internal.ui.text.CStringAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CStringDoubleClickSelector;
+import org.eclipse.cdt.internal.ui.text.HTMLAnnotationHover;
+import org.eclipse.cdt.internal.ui.text.PartitionDamager;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.c.hover.CInformationProvider;
@@ -104,7 +116,12 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
 
 
 /**
- * Configuration for an <code>SourceViewer</code> which shows C/C++ code.
+ * Configuration for a <code>SourceViewer</code> which shows C/C++ code.
+ * <p>
+ * This class may be instantiated and subclassed by clients.
+ * </p>
+ * 
+ * @since 5.1
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
@@ -313,7 +330,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 *
 	 * @return the C multi-line comment scanner
 	 */
-	private ICTokenScanner getMultilineCommentScanner() {
+	protected ICTokenScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 
@@ -322,7 +339,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 *
 	 * @return the C single-line comment scanner
 	 */
-	private ICTokenScanner getSinglelineCommentScanner() {
+	protected ICTokenScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 
@@ -1011,12 +1028,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the IProject associated with this CSourceViewerConfiguration, or null if
 	 * no IProject could be determined
 	 */
-	private IProject getProject() {
+	protected IProject getProject() {
 		ICProject cproject= getCProject();
 		return cproject!=null ? cproject.getProject() :null;
 	}
 
-	private ITokenStoreFactory getTokenStoreFactory() {
+	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
 			public ITokenStore createTokenStore(String[] propertyColorNames) {
 				return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);

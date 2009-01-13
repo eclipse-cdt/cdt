@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 
 import org.eclipse.cdt.internal.ui.compare.CMergeViewer;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**

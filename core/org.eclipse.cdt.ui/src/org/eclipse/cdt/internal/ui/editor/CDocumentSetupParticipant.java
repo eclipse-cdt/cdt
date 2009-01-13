@@ -22,6 +22,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
+
 /**
  * CDocumentSetupParticipant
  */

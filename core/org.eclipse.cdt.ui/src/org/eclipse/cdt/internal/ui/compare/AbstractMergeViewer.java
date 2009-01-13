@@ -28,9 +28,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 
 /**
  * Abstract implementation of a merge viewer.

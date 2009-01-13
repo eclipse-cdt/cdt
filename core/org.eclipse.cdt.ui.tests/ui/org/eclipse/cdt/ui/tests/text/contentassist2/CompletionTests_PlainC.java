@@ -16,6 +16,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -179,9 +180,9 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());
 		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
 		IFile sourceFile= createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
-		// for some unknown reason re-indexing is necessary, 
-		// otherwise tests fail at random
+		// re-indexing is necessary to parse the header in context of the source. 
 		CCorePlugin.getIndexManager().reindex(fCProject);
+		CCorePlugin.getIndexManager().joinIndexer(4000, new NullProgressMonitor());
 		return sourceFile;
 	}
 

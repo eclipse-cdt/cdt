@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [233578] Promptable Filter Displayed 3 times when clicking cancel
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
+ * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -47,7 +48,9 @@ package org.eclipse.rse.internal.ui.view;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -125,7 +128,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
@@ -682,7 +684,7 @@ public class SystemTableViewPart extends ViewPart
 		{
 			try {
 				IStatus wstatus = RSECorePlugin.waitForInitCompletion();
-				if (!wstatus.isOK()){
+				if (!wstatus.isOK() && wstatus.getSeverity() == IStatus.ERROR){
 					return wstatus;
 				}
 			}
@@ -692,6 +694,41 @@ public class SystemTableViewPart extends ViewPart
 			
 			
 			final IMemento memento = _rmemento;
+			
+			// set the cached column widths (for later use)
+			String columnWidths = memento.getString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID);			
+			if (columnWidths != null)
+			{			
+				if (columnWidths.contains(";")){	//$NON-NLS-1$
+					// matches new format for column width memento
+					// new code - as of RSE 3.1
+					HashMap cachedColumnWidths = new HashMap();
+	
+					// parse out set of columns
+					String[] columnSets = columnWidths.split(";"); //$NON-NLS-1$
+					for (int i = 0; i < columnSets.length; i++){
+						String columnSet = columnSets[i];
+						
+						// parse out columns for set
+						String[] pair = columnSet.split("="); //$NON-NLS-1$
+						String key = pair[0];
+	
+						// parse out widths
+						String widthArray = pair[1];
+						String[] widthStrs = widthArray.split(","); //$NON-NLS-1$
+						
+						int[] widths = new int[widthStrs.length];
+						for (int w = 0; w < widths.length; w++){
+							widths[w] = Integer.parseInt(widthStrs[w]);
+						}
+						
+						cachedColumnWidths.put(key, widths);
+						_viewer.setCachedColumnWidths(cachedColumnWidths);
+					}													
+				}
+			}
+			
+			
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);
 			String connectionId = memento.getString(TAG_TABLE_VIEW_CONNECTION_ID);
 			String subsystemId = memento.getString(TAG_TABLE_VIEW_SUBSYSTEM_ID);
@@ -802,22 +839,6 @@ public class SystemTableViewPart extends ViewPart
 				_mementoInput = (IAdaptable) input;
 				if (_mementoInput != null && _viewer != null)
 				{
-					String columnWidths = memento.getString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID);
-					if (columnWidths != null)
-					{
-						StringTokenizer tok = new StringTokenizer(columnWidths, ","); //$NON-NLS-1$
-						int[] colWidths = new int[tok.countTokens()];
-						int t = 0;
-						while (tok.hasMoreTokens())
-						{
-							String columnStr = tok.nextToken();
-							colWidths[t] = Integer.parseInt(columnStr);
-							t++;
-						}
-
-						_viewer.setLastColumnWidths(colWidths);
-					}
-
 					// set input needs to be run on the main thread
 					Display.getDefault().asyncExec(new Runnable()
 					{
@@ -1873,26 +1894,31 @@ public class SystemTableViewPart extends ViewPart
 					}
 				}
 
-				Table table = _viewer.getTable();
-				if (table != null && !table.isDisposed())
-				{
-					String columnWidths = new String();
-					TableColumn[] columns = table.getColumns();
-					for (int i = 0; i < columns.length; i++)
-					{
-						TableColumn column = columns[i];
-						int width = column.getWidth();
-						if (i == columns.length - 1)
-						{
-							columnWidths += width;
-						}
-						else
-						{
-							columnWidths += width + ","; //$NON-NLS-1$
+
+				
+				// new code - as of RSE 3.1
+				_viewer.inputChanged(input, input); // make sure the latest widths are stored
+				Map cachedColumnWidths = _viewer.getCachedColumnWidths();
+				StringBuffer columnWidths = new StringBuffer();
+				Iterator keyIter = cachedColumnWidths.keySet().iterator();
+				while (keyIter.hasNext()){
+					String key = (String)keyIter.next();
+					int[] widths = (int[])cachedColumnWidths.get(key);
+					
+					columnWidths.append(key);
+					columnWidths.append('=');
+					
+					for (int w = 0; w < widths.length; w++){						
+						columnWidths.append(widths[w]);
+						if (w != widths.length - 1){
+							columnWidths.append(',');
 						}
 					}
-					memento.putString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID, columnWidths);
+					
+					// always append this, even with last item
+					columnWidths.append(';');
 				}
+				memento.putString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID, columnWidths.toString());
 			}
 		}
 	}

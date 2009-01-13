@@ -309,7 +309,7 @@ public class SystemTableView
     private int mouseButtonPressed = LEFT_BUTTON;
     
     // for bug 260346 - to maintain list of cached column widths
-    private HashMap _cachedColumnWidths;
+    private Map _cachedColumnWidths;
     
     
 	/**
@@ -444,8 +444,10 @@ public class SystemTableView
 			if (lastWidths.length > 0){
 				ISystemViewElementAdapter contentsAdapter = getAdapterForContents();
 			
+				String adapterName = contentsAdapter.getClass().getName();
+				
 				// associate the last contents adapter with the last widths
-				_cachedColumnWidths.put(contentsAdapter, lastWidths);
+				_cachedColumnWidths.put(adapterName, lastWidths);
 			}
 				
 			_objectInput = newObject;
@@ -522,7 +524,7 @@ public class SystemTableView
 	/**
 	 * @since 3.0 replaced SystemTableViewColumnManager by
 	 *        ISystemTableViewColumnManager
-	 * @return
+	 * @return the column manager
 	 */
 	public ISystemTableViewColumnManager getColumnManager()
 	{
@@ -779,7 +781,9 @@ public class SystemTableView
 		int[] lastWidths = getLastColumnWidths();
 		if (numColumns > 1)
 		{
-			int[] cachedWidths = (int[])_cachedColumnWidths.get(getAdapterForContents());
+			ISystemViewElementAdapter adapter = getAdapterForContents();
+			String adapterName = adapter.getClass().getName();
+			int[] cachedWidths = (int[])_cachedColumnWidths.get(adapterName);
 			
 			// if there are already cached widths, use them
 			if (cachedWidths != null){
@@ -2111,5 +2115,28 @@ public class SystemTableView
 		  _messageLine.clearMessage();
 	}
 
+	/**
+	 * Returns the column widths associated with this view.
+	 * 
+	 * @return the map of column widths associated with this view
+	 * 
+	 * @since 3.1
+	 */
+	public Map getCachedColumnWidths()
+	{
+		return _cachedColumnWidths;
+	}
 
+	/**
+	 * Sets the map of column widths associated with this view
+	 * 
+	 * @param cachedColumnWidths the column widths map
+	 * 
+	 * @since 3.1
+	 */
+	public void setCachedColumnWidths(Map cachedColumnWidths)
+	{
+		_cachedColumnWidths = cachedColumnWidths;
+	}
+	
 }

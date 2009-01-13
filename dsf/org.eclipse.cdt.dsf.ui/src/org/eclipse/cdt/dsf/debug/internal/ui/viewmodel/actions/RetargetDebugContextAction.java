@@ -143,7 +143,7 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
         if (adapter == null) {
             IAdapterManager adapterManager = Platform.getAdapterManager();
             if (adapterManager.hasAdapter(adaptable, getAdapterClass().getName())) { 
-                fTargetAdapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); 
+                adapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); 
             }
         }
         return adapter;

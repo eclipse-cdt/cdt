@@ -372,7 +372,7 @@
 <!-- =================================================================================== -->
 <!-- Define C/C++ files ContentTypes                                                     -->
 <!-- =================================================================================== -->
-   <extension point="org.eclipse.core.runtime.contentTypes">
+   <extension point="org.eclipse.core.contenttype.contentTypes">
 	  <!-- declares a content type for C source files -->
 	  <content-type id="cSource" name="%cSourceName"
          base-type="org.eclipse.core.runtime.text"
@@ -406,22 +406,22 @@
    </extension>
 
    <!-- the reserved filenames by the C++ standard -->
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="algorithm,bitset,cassert,cctype,cerrno,cfloat,ciso646,climits,clocale,cmath,complex,csetjmp,csignal"/>
    </extension> 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="cstdarg,cstddef,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,fstream,functional"/>
    </extension> 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="hash_map,hash_set,iomanip,ios,iosfwd,iostream,istream,iterator,limits,list,locale,map,memory"/>
    </extension> 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="new,numeric,ostream,queue,set,sstream,stack,stdexcept,streambuf,string,strstream,typeinfo,utility,valarray,vector"/>

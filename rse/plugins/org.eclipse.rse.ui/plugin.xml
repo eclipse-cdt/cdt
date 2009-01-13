@@ -19,7 +19,7 @@ Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActi
 Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should not depend on files.core
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 David McKnight   (IBM)        - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View        
-
+David McKnight   (IBM)        - [260792] Default prompt text color/background color for Remote Shell view is difficult to see
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -411,7 +411,7 @@ David McKnight   (IBM)        - [160105] [usability] Universal action needed to 
       <colorDefinition
             label="%RemoteCommandsPrompt.label"
             categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
-            value="COLOR_GREEN"
+            value="COLOR_DARK_GREEN"
             id="REMOTE_COMMANDS_VIEW_PROMPT_COLOR">
          <description>
             %RemoteCommandsPrompt.description

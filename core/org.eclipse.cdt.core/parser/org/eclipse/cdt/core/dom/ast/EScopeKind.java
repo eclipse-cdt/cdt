@@ -13,8 +13,6 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Enumerates various kinds of scopes
  * @since 5.1
- * 
- * @noextend This class is not intended to be subclassed by clients.
  */
 public enum EScopeKind {
 	/**

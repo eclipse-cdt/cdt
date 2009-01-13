@@ -27,7 +27,7 @@ public class WeakHashSet<T> {
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof HashableWeakReference)) return false;
+			if (!(obj instanceof HashableWeakReference<?>)) return false;
 			Object referent = get();
 			Object other = ((HashableWeakReference<?>) obj).get();
 			if (referent == null) return other == null;

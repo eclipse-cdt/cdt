@@ -159,7 +159,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	 */
 	@Override
 	public void applyData(Object data) {
-		if (data instanceof Map) {
+		if (data instanceof Map<?, ?>) {
 			Object id= ((Map<?, ?>) data).get(DATA_SELECT_TEMPLATE);
 			if (id instanceof String) {
 				final TemplatePersistenceData[] templates= fCodeTemplateConfigurationBlock.fTemplateStore.getTemplateData();

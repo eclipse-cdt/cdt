@@ -539,7 +539,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 			public Object[] getElements(Object inputElement) {
 				String[] els = null;
-				if (inputElement instanceof Map) {
+				if (inputElement instanceof Map<?, ?>) {
 					@SuppressWarnings("unchecked")
 					Map<String,?> m = (Map)inputElement;
 					els = new String[m.size()];  

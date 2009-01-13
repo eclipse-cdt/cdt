@@ -332,7 +332,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	 */
 	@Override
 	public void applyData(Object data) {
-		if (data instanceof Map) {
+		if (data instanceof Map<?, ?>) {
 			fData= (Map<?,?>) data;
 		}
 		if (fChangeWorkspaceSettings != null) {

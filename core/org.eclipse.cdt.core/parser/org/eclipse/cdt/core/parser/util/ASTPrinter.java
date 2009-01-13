@@ -203,10 +203,11 @@ public class ASTPrinter {
 			IASTDeclarator declarator = (IASTDeclarator) n;
 		
 			IASTPointerOperator[] pointers = declarator.getPointerOperators();
-			if(pointers != null && pointers.length > 0)
+			if(pointers != null && pointers.length > 0) {
 				out.println();
-			for (IASTPointerOperator pointer : pointers) {
-				print(out, indentLevel+1, pointer);
+				for (IASTPointerOperator pointer : pointers) {
+					print(out, indentLevel+1, pointer);
+				}
 			}
 			if (declarator instanceof IASTArrayDeclarator) {
 				IASTArrayDeclarator decl = (IASTArrayDeclarator)declarator;

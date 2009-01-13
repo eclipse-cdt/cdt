@@ -580,7 +580,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		
 		private void overlayMarkers(Position position, ProblemAnnotation problemAnnotation) {
 			Object value= getAnnotations(position);
-			if (value instanceof List) {
+			if (value instanceof List<?>) {
 				List<?> list= (List<?>) value;
 				for (Object element : list)
 					setOverlay(element, problemAnnotation);
@@ -681,7 +681,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			Position position= getPosition(annotation);
 			synchronized (getLockObject()) {
 				Object cached= fReverseMap.get(position);
-				if (cached instanceof List) {
+				if (cached instanceof List<?>) {
 					List<?> list= (List<?>) cached;
 					list.remove(annotation);
 					if (list.size() == 1) {

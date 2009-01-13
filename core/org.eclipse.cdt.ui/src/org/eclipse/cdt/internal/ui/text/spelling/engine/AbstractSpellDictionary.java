@@ -374,7 +374,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 
 		if (bucket == null) {
 			fHashBuckets.put(hash, word);
-		} else if (bucket instanceof ArrayList) {
+		} else if (bucket instanceof ArrayList<?>) {
 			@SuppressWarnings("unchecked")
 			final ArrayList<Object> bucket2 = (ArrayList)bucket;
 			bucket2.add(word);
@@ -553,7 +553,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		Iterator<Serializable> iter= fHashBuckets.values().iterator();
 		while (iter.hasNext()) {
 			Object element= iter.next();
-			if (element instanceof ArrayList)
+			if (element instanceof ArrayList<?>)
 				((ArrayList<?>)element).trimToSize();
 		}
 	}

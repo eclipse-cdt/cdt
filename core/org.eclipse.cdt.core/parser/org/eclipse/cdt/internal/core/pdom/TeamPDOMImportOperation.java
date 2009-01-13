@@ -178,7 +178,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				ObjectInputStream input= new ObjectInputStream(zip.getInputStream(indexEntry));
 				try {
 					Object obj= input.readObject();
-					if (obj instanceof Map) {
+					if (obj instanceof Map<?, ?>) {
 						return (Map<?,?>) obj;
 					}
 				}

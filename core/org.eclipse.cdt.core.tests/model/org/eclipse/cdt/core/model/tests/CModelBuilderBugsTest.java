@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 /**
  * Tests for C model builder bugs.
@@ -38,6 +39,7 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
@@ -47,12 +49,14 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		assertNotNull(fTU);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		  CProjectHelper.delete(fCProject);
 		  super.tearDown();
 	}	
 	
 	public void testModelBuilderBug222398() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
 		IStructure clazz= (IStructure) fTU.getElement("Test");
 		assertNotNull(clazz);
 		ICElement[] methods= clazz.getChildren();

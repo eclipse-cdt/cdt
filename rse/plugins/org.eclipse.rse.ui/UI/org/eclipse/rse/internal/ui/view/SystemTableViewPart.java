@@ -699,7 +699,7 @@ public class SystemTableViewPart extends ViewPart
 			String columnWidths = memento.getString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID);			
 			if (columnWidths != null)
 			{			
-				if (columnWidths.contains(";")){	//$NON-NLS-1$
+				if (columnWidths.indexOf(";") > 0){	//$NON-NLS-1$
 					// matches new format for column width memento
 					// new code - as of RSE 3.1
 					HashMap cachedColumnWidths = new HashMap();

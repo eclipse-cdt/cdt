@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
@@ -355,10 +357,20 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public void cleanupAfterAmbiguityResolution() {
 		// clear bindings (see bug 232811)
 		accept(new ASTVisitor(){
-			{shouldVisitNames= true;}
+			{
+				shouldVisitNames= true;
+				shouldVisitDeclSpecifiers= true;
+			}
 			@Override
 			public int visit(IASTName name) {
 				name.setBinding(null);
+				return PROCESS_CONTINUE;
+			}
+		
+			@Override
+			public int visit(IASTDeclSpecifier declSpec) {
+				if (declSpec instanceof CPPASTCompositeTypeSpecifier)
+					((CPPASTCompositeTypeSpecifier) declSpec).setScope(null);
 				return PROCESS_CONTINUE;
 			}
 		});

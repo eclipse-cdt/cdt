@@ -793,15 +793,14 @@ public class CPPTemplates {
 
 			if (within != null && type instanceof IBinding && 
 					(type instanceof ITypedef || type instanceof ICPPClassType)) {
+				ICPPClassType originalClass= within.getSpecializedBinding();
+				if (originalClass.isSameType(type))
+					return within;
+				
 				IBinding typeAsBinding= (IBinding) type;
 				IBinding typeOwner= typeAsBinding.getOwner();
-				ICPPClassType originalClass= within.getSpecializedBinding();
 				if (typeOwner instanceof IType) {
-					final IType parentType = (IType) typeOwner;
-					if (parentType.isSameType(originalClass)) {
-						return (IType) within.specializeMember(typeAsBinding);
-					}
-					IType newOwner= instantiateType(parentType, tpMap, within);
+					IType newOwner= instantiateType((IType) typeOwner, tpMap, within);
 					if (newOwner != typeOwner && newOwner instanceof ICPPClassSpecialization) {
 						return (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding);
 					}
@@ -2012,16 +2011,11 @@ public class CPPTemplates {
         }
 
         final IBinding owner= unknown.getOwner();
+        if (!(owner instanceof ICPPTemplateTypeParameter || owner instanceof ICPPUnknownClassType))
+        	return unknown;
+        
         IBinding result = unknown;
-        IType t = null;
-		if (owner instanceof ICPPTemplateTypeParameter) {
-			t = CPPTemplates.instantiateType((ICPPTemplateTypeParameter) owner, tpMap, null);
-		} else if (owner instanceof ICPPUnknownClassType) {
-        	IBinding binding= resolveUnknown((ICPPUnknownBinding) owner, tpMap, within);
-        	if (binding instanceof IType) {
-                t = (IType) binding;
-            }
-        } 
+        IType t = CPPTemplates.instantiateType((IType) owner, tpMap, within);
         if (t != null) {
             t = SemanticUtil.getUltimateType(t, false);
             if (t instanceof ICPPUnknownBinding) {
@@ -2073,16 +2067,10 @@ public class CPPTemplates {
 
 		boolean changed= arguments != newArgs;
 		ICPPClassTemplate classTemplate = dci.getClassTemplate();
-		if (classTemplate instanceof ICPPTemplateParameter) {
-			// template template parameter
-			ICPPTemplateArgument arg= tpMap.getArgument((ICPPTemplateParameter) classTemplate);
-			if (arg != null) {
-				IType t= arg.getTypeValue();
-				if (t instanceof ICPPClassTemplate) {
-					classTemplate= (ICPPClassTemplate) t;
-					changed= true;
-				}
-			}
+		IType specializedClassTemplate= instantiateType(classTemplate, tpMap, within);
+		if (specializedClassTemplate != classTemplate && specializedClassTemplate instanceof ICPPClassTemplate) {
+			classTemplate= (ICPPClassTemplate) specializedClassTemplate;
+			changed= true;
 		}
 
 		if (changed) {

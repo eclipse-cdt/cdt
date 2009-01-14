@@ -3570,7 +3570,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//      new A<B, int>(&B::m);
 	//    }
 	//  };
-    public void _testNestedTemplates_259872() throws Exception {
+    public void testNestedTemplates_259872() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
     }

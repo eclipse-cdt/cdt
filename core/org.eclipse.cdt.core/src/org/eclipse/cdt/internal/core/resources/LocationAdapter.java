@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
@@ -36,7 +38,8 @@ abstract class LocationAdapter<T> {
 
 		@Override
 		public IFile[] platformsFindFilesForLocation(IPath location) {
-			return ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			return root.findFilesForLocationURI(URIUtil.toURI(location.makeAbsolute()));
 		}
 
 		@Override

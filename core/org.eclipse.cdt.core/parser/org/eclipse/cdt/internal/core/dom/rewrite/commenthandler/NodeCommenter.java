@@ -35,8 +35,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -150,8 +150,7 @@ public class NodeCommenter {
 				return true;
 			}
 			IPath path = new Path(node.getContainingFilename());
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-			IFile file = files.length > 0 ? files[0] : null; // NPE thrown below, like original behavior
+			IFile file = ResourceLookup.selectFileForLocation(path, null); // NPE thrown below, like original behavior
 			
 			//XXX HSR Guido: Possible Performance Issue (File access)
 			try {

@@ -18,6 +18,7 @@ import java.io.InputStream;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -36,8 +37,7 @@ public class FileHelper {
 
 	public static IFile getIFilefromIASTNode(IASTNode node) {
 		IPath implPath = new Path(node.getContainingFilename());
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(implPath);
-		return files.length > 0 ? files[0] : null;
+		return ResourceLookup.selectFileForLocation(implPath, null);
 	}
 	
 	public static boolean isFirstWithinSecondLocation(IASTFileLocation loc1, IASTFileLocation loc2){

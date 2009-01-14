@@ -653,20 +653,16 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		synchronized (fLock) {
 			initializeProjects(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 			Object obj= fNodeMap.get(hashCode(name.toCharArray()));
-			if (obj == null) {
-				if (fDefaultExtensions.isRelevant(name))
-					return NO_FILES;
-			} else {
+			if (obj != null) {
 				candidates= convert(obj);
+				IFile[] result= extractMatchesForLocation(candidates, location, adapter);
+				if (result.length > 0)
+					return result;
 			}
 		}	
 		
 		// fall back to platform functionality
-		if (candidates == null) {
-			return adapter.platformsFindFilesForLocation(location);
-		}
-		
-		return extractMatchesForLocation(candidates, location, adapter);
+		return adapter.platformsFindFilesForLocation(location);
 	}
 
 	private Node[] convert(Object obj) {

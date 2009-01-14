@@ -79,11 +79,11 @@ public class ResourceLookup {
 
 	/**
 	 * Uses {@link #findFilesForLocation(IPath)} and selects the most relevant file
-	 * from the result. Files form the first project, from cdt-projects and those on source
+	 * from the result. Files form the preferred project, from cdt-projects and those on source
 	 * roots are preferred, see {@link FileRelevance}. 
 	 * @param location a path for the location of the files to search for.
 	 * @param preferredProject a project to be preferred over others, or <code>null</code>.
-	 * @return a file for the location in one of the given projects, or <code>null</code>.
+	 * @return a file for the location or <code>null</code>.
 	 */
 	public static IFile selectFileForLocation(IPath location, IProject preferredProject) {
 		return selectFile(findFilesForLocation(location), preferredProject);

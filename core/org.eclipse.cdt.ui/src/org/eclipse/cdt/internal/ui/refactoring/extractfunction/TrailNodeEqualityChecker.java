@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -99,7 +101,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			} else if(node instanceof IASTName){
 				return isNameEquals(trailNode, node);
 			} else {
-				assert true : "Unexpected Node, this code shoud nod reached"; //$NON-NLS-1$
+				Assert.isLegal(false, "Unexpected Node, this code shoud nod reached"); //$NON-NLS-1$
 				return true;
 			}
 		}

@@ -226,6 +226,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		} catch (DOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			name= new CPPASTName(classType.getNameCharArray());
 		}
 		
 		return new CPPASTNamedTypeSpecifier(name.copy());
@@ -255,6 +256,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		} catch (DOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			name= new CPPASTName(typedef.getNameCharArray());
 		}
 		return new CPPASTNamedTypeSpecifier(name.copy());
 	}

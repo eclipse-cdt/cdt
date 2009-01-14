@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * Richie Yu (IBM) - [241716] Handle change expired password
  * Don Yantzi (IBM) - [233970] Handle messages provided by ICredentialsValidator
+ * David Dykstal (IBM) - [261047] StandardCredentialsProvider does not cause a reacquire of a password when validation fails in a background thread 
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -216,8 +217,8 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 				if (shell != null) {
 					SystemMessageDialog dialog = new SystemMessageDialog(shell, m);
 					dialog.open();
-					reacquire = true;
 				}
+				reacquire = true;
 			}
 		}
 		if (supportsPassword() || supportsUserId()) {

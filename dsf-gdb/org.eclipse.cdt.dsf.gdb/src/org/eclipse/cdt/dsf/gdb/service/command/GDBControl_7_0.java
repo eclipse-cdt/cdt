@@ -97,7 +97,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 
     private IGDBBackend fMIBackend;
 
-    private boolean fConnected = true;
+    private int fConnected = 0;
     
     private MIRunControlEventProcessor_7_0 fMIEventProcessor;
     private CLIEventProcessor_7_0 fCLICommandProcessor;
@@ -347,12 +347,16 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     }
 
     public boolean isConnected() {
-        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && fConnected;
+        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && fConnected > 0;
     }
     
     public void setConnected(boolean connected) {
-        fConnected = connected;
-    }
+    	if (connected) {
+    		fConnected++;
+    	} else {
+    		if (fConnected > 0) fConnected--;
+    	}
+   }
 
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 

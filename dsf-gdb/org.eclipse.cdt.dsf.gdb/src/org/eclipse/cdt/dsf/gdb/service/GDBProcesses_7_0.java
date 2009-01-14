@@ -556,8 +556,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							fCommandControl.setConnected(true);
-
 							IMIContainerDMContext containerDmc = createContainerContext(procCtx,
 									                                                    ((IMIProcessDMContext)procCtx).getProcId());
 			                rm.setData(containerDmc);
@@ -584,14 +582,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	if (controlDmc != null && procDmc != null) {
     		fCommandControl.queueCommand(
     				new MITargetDetach(controlDmc, procDmc.getProcId()),
-    				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-    					@Override
-    					protected void handleSuccess() {
-    						// only if it is the last detach
-    						fCommandControl.setConnected(false);
-    						rm.done();
-    					}
-    				});
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
@@ -785,6 +776,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
     	if (e instanceof ContainerStartedDMEvent) {
+			// This will increment the connect count
+			fCommandControl.setConnected(true);
+
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();
@@ -795,6 +789,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
     	if (e instanceof ContainerExitedDMEvent) {
+			// This will decrement the connect count
+			fCommandControl.setConnected(false);
+
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();

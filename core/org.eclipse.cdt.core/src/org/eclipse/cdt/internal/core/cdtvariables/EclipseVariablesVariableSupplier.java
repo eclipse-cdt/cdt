@@ -28,6 +28,7 @@ import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * This supplier suplies the macros that represent the Eclipse variables
@@ -82,7 +83,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 					if (!canExpandVariable(fVariable.getName(), fArgument)) {
 						final String expression= "${"+fName+"}";  //$NON-NLS-1$//$NON-NLS-2$
 						throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT,
-								"Illegal usage of Eclipse variable: " + expression,
+								NLS.bind(Messages.EclipseVariablesVariableSupplier_illegal_variable, expression),
 								null,
 								fVariable.getName(), expression, null);
 					}

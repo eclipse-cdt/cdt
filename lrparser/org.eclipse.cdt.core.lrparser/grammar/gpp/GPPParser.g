@@ -18,7 +18,16 @@
 -- to point at the directory where the CPPParser.g file is located.
 $Import
 	../cpp/CPPParser.g
+	
+$DropRules
+
+-- will be replaced by extended asm syntax
+asm_definition
+    ::= 'asm' '(' 'stringlit' ')' ';'
+
+
 $End
+
 
 $Import
     ../gnu/GNUExtensions.g
@@ -26,6 +35,10 @@ $End
 
 
 $Rules
+
+
+asm_definition
+    ::= extended_asm_declaration
 
 
 no_type_declaration_specifier

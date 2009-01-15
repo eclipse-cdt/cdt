@@ -9,12 +9,6 @@
 --     IBM Corporation - initial API and implementation
 -----------------------------------------------------------------------------------
 
-
-$Include
-../common.g
-$End
-
-
 $Terminals
 	
 	-- Keywords
@@ -549,7 +543,7 @@ complete_declarator
 
 storage_class_specifier
     ::= storage_class_specifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 
 
 storage_class_specifier_token 
@@ -562,7 +556,7 @@ storage_class_specifier_token
 
 simple_type_specifier
     ::= simple_type_specifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 				
 simple_type_specifier_token
     ::= 'void'        
@@ -581,9 +575,9 @@ simple_type_specifier_token
 		
 typedef_name_in_declspec
     ::= 'Completion'
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
       | 'identifier'
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
         -- | 'TypedefName' -- remove identifier if this is uncommented
        
           
@@ -691,7 +685,7 @@ enumerator
       
 type_qualifier
     ::= type_qualifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
      
      
 type_qualifier_token
@@ -702,7 +696,7 @@ type_qualifier_token
 
 function_specifier
     ::= 'inline'    
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 
 
 declarator

@@ -10,11 +10,6 @@
 ----------------------------------------------------------------------------------
 
 
-$Include
-../common.g
-$End
-
-
 $Terminals
 	
 	-- Keywords
@@ -810,9 +805,9 @@ no_type_declaration_specifier
       | function_specifier
       | cv_qualifier
       | 'friend'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'typedef'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       
       
 no_type_declaration_specifiers
@@ -869,24 +864,24 @@ type_name_declaration_specifiers
 
 storage_class_specifier
     ::= 'auto'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'register'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'static'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'extern'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'mutable'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
 
 
 function_specifier
     ::= 'inline'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'virtual'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'explicit'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
 
 
 -- We have no way to disambiguate token types
@@ -913,27 +908,27 @@ function_specifier
 
 simple_type_specifier
     ::= 'char'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'wchar_t'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'bool'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'short'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'int'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'long'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'signed'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'unsigned'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'float'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'double'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'void'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
 
 
 -- last two rules moved here from simple_type_specifier
@@ -1162,9 +1157,9 @@ cv_qualifier_seq_opt
 
 cv_qualifier
     ::= 'const'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
       | 'volatile'
-          /. $Build  consumeDeclSpecToken(); $EndBuild ./
+          /. $Build  consumeToken(); $EndBuild ./
 
 
 declarator_id_name

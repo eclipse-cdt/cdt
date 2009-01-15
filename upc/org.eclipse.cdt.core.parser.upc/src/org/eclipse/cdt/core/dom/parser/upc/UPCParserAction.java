@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
@@ -48,8 +49,8 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * @param parser
 	 * @param tu
 	 */
-	public UPCParserAction(UPCASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
-		super(nodeFactory, parser, tu);
+	public UPCParserAction(UPCASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+		super(nodeFactory, parser, tu, astStack);
 		this.nodeFactory = nodeFactory;
 		nodeFactory.setUseC99SizeofExpressions();
 	}

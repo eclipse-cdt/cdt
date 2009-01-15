@@ -33,10 +33,17 @@ $Terminals
 $End
 
 
--- Hook the extensions into the main grammar.
+
+
+
 $Rules
 
 
+declaration
+    ::= extended_asm_declaration
+ 
+ 
+ 
 no_type_declaration_specifier
     ::= attribute_or_decl_specifier
 

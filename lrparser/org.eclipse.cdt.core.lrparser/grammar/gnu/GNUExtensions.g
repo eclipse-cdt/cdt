@@ -26,6 +26,28 @@ $Terminals
 	
 $End
 
+$Globals
+/.
+	import org.eclipse.cdt.core.dom.lrparser.action.gcc.GCCBuildASTParserAction;
+./
+$End
+
+$Headers
+/.
+	private GCCBuildASTParserAction gccAction;
+./
+$End
+
+$Define
+
+	$action_initializations /.
+	
+		gccAction = new GCCBuildASTParserAction($node_factory_create_expression, this, tu, astStack);
+		gccAction.setParserOptions(options);
+		
+	./
+	
+$End
 
 $Rules
 
@@ -73,11 +95,8 @@ attribute_parameter
 
 
 decl_specifier
-    ::= '__declspec' '(' extended_decl_modifier_seq_opt ')'  
-    
-extended_decl_modifier_seq_opt
-    ::= extended_decl_modifier_seq
-      | $empty
+    ::= '__declspec' '(' extended_decl_modifier_seq ')'
+      | '__declspec' '(' ')'    
       
 extended_decl_modifier_seq
     ::= extended_decl_modifier
@@ -96,9 +115,27 @@ extended_decl_modifier
 asm_label
     ::= 'asm' '(' 'stringlit' ')'
 
-asm_label_opt
-    ::= asm_label
+
+extended_asm_declaration
+    ::= 'asm' volatile_opt '(' extended_asm_param_seq ')' ';'
+           /. $BeginAction  gccAction.consumeDeclarationASM(); $EndAction ./
+
+volatile_opt ::= 'volatile' | $empty
+
+extended_asm_param_seq
+    ::= extended_asm_param_with_operand
+      | extended_asm_param_seq ':' extended_asm_param_with_operand
+
+extended_asm_param_with_operand
+    ::= extended_asm_param
+      | extended_asm_param ',' extended_asm_param
       | $empty
+      
+extended_asm_param
+    ::= 'stringlit'
+      | 'stringlit' '(' 'identifier' ')'
+      | 'stringlit' '(' '*' 'identifier' ')'
+
 
 $End
 

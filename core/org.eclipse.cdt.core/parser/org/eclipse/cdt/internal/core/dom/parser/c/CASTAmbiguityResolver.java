@@ -17,8 +17,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
  * Visitor to resolve ast ambiguities in the right order, which is simply a depth
  * first traversal.
  */
-final class CASTAmbiguityResolver extends ASTVisitor {
-	CASTAmbiguityResolver() {
+public final class CASTAmbiguityResolver extends ASTVisitor {
+	public CASTAmbiguityResolver() {
 		super(false);
 		shouldVisitAmbiguousNodes= true;
 	}

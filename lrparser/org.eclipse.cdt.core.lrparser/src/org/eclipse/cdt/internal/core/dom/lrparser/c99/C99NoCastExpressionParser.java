@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -165,13 +166,16 @@ public class C99NoCastExpressionParser extends PrsStream implements RuleAction ,
 
 
 private  C99BuildASTParserAction  action;
+private ScopedStack<Object> astStack = new ScopedStack<Object>();
 
 public C99NoCastExpressionParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu);
+	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu, astStack);
 	action.setParserOptions(options);
+	
+	 
 }
 
 
@@ -199,13 +203,12 @@ public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> opt
 }
 
 // uncomment this method to use with backtracking parser
-public List getRuleTokens() {
-    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
+public List<IToken> getRuleTokens() {
+    return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
-
 public IASTNode getSecondaryParseResult() {
-	return  action.getSecondaryParseResult();
+	return  (IASTNode) astStack.pop();
 }
 
 public String[] getOrderedTerminalSymbols() {
@@ -761,25 +764,25 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             //
             // Rule 158:  storage_class_specifier ::= storage_class_specifier_token
             //
-            case 158: { action.   consumeDeclSpecToken();             break;
+            case 158: { action.   consumeToken();             break;
             }  
   
             //
             // Rule 164:  simple_type_specifier ::= simple_type_specifier_token
             //
-            case 164: { action.   consumeDeclSpecToken();             break;
+            case 164: { action.   consumeToken();             break;
             }  
   
             //
             // Rule 177:  typedef_name_in_declspec ::= Completion
             //
-            case 177: { action.   consumeDeclSpecToken();             break;
+            case 177: { action.   consumeToken();             break;
             }  
   
             //
             // Rule 178:  typedef_name_in_declspec ::= identifier
             //
-            case 178: { action.   consumeDeclSpecToken();             break;
+            case 178: { action.   consumeToken();             break;
             }  
   
             //
@@ -869,13 +872,13 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             //
             // Rule 214:  type_qualifier ::= type_qualifier_token
             //
-            case 214: { action.   consumeDeclSpecToken();             break;
+            case 214: { action.   consumeToken();             break;
             }  
   
             //
             // Rule 218:  function_specifier ::= inline
             //
-            case 218: { action.   consumeDeclSpecToken();             break;
+            case 218: { action.   consumeToken();             break;
             }  
   
             //

@@ -12,12 +12,17 @@
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
 import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
 
 import java.util.Collections;
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -62,15 +67,19 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
+import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
+import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguityResolver;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousStatement;
 
@@ -92,8 +101,9 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public C99BuildASTParserAction(ICNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
-		super(nodeFactory, parser, tu);
+	public C99BuildASTParserAction(ICNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+		super(nodeFactory, parser, tu, astStack);
+		
 		this.nodeFactory = nodeFactory;
 		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
@@ -129,13 +139,16 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		return new C99SizeofExpressionParser(parser.getOrderedTerminalSymbols());
 	}
 	
+	@Override
+	protected IASTName createName(char[] image) {
+		return nodeFactory.newName(image);
+	}
+	
 	
 	/********************************************************************
 	 * Start of semantic actions.
 	 ********************************************************************/
 
-	
-	
 
 
 	/**
@@ -322,7 +335,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	public void consumePointer() {
 		IASTPointer pointer = nodeFactory.newPointer();
 		IToken star = parser.getRightIToken();
-		setOffsetAndLength(pointer, star);
+		ParserUtil.setOffsetAndLength(pointer, star);
 		astStack.push(pointer);
 	}
 	
@@ -618,14 +631,14 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 				TK_for, TK_LeftParen, TK_Completion, TK_EOC, TK_EOC, TK_EOC, TK_EOC)) {
 			IASTName name = createName(tokens.get(2));
 			IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
-			setOffsetAndLength(idExpression, offset(name), length(name));
+			ParserUtil.setOffsetAndLength(idExpression, offset(name), length(name));
 			initializer = nodeFactory.newExpressionStatement(idExpression);
-			setOffsetAndLength(initializer, offset(name), length(name));
+			ParserUtil.setOffsetAndLength(initializer, offset(name), length(name));
 		}
 		
 		
 		if(node != null)
-			setOffsetAndLength(initializer, offset(node), length(node));
+			ParserUtil.setOffsetAndLength(initializer, offset(node), length(node));
 		
 		IASTForStatement forStat = nodeFactory.newForStatement(initializer, expr2, expr3, body);
 		setOffsetAndLength(forStat);
@@ -727,4 +740,11 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	protected IASTAmbiguousStatement createAmbiguousStatement(IASTStatement... statements) {
 		return new CASTAmbiguousStatement(statements);
 	}
+
+	@Override
+	protected ASTVisitor createAmbiguityNodeVisitor() {
+		return new CASTAmbiguityResolver();
+	}
+	
+	
 }

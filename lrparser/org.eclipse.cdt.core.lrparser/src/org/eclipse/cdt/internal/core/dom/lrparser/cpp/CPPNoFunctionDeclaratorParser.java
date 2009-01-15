@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -166,13 +167,16 @@ public class CPPNoFunctionDeclaratorParser extends PrsStream implements RuleActi
 
 
 private  CPPBuildASTParserAction  action;
+private ScopedStack<Object> astStack = new ScopedStack<Object>();
 
 public CPPNoFunctionDeclaratorParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  CPPBuildASTParserAction ( CPPNodeFactory.getDefault() , this, tu);
+	action = new  CPPBuildASTParserAction ( CPPNodeFactory.getDefault() , this, tu, astStack);
 	action.setParserOptions(options);
+	
+	 
 }
 
 
@@ -200,13 +204,12 @@ public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> opt
 }
 
 // uncomment this method to use with backtracking parser
-public List getRuleTokens() {
-    return Collections.unmodifiableList(getTokens().subList(getLeftSpan(), getRightSpan() + 1));
+public List<IToken> getRuleTokens() {
+    return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
-
 public IASTNode getSecondaryParseResult() {
-	return  action.getSecondaryParseResult();
+	return  (IASTNode) astStack.pop();
 }
 
 public String[] getOrderedTerminalSymbols() {
@@ -1110,127 +1113,127 @@ public CPPNoFunctionDeclaratorParser(String[] mapFrom) {  // constructor
             //
             // Rule 234:  no_type_declaration_specifier ::= friend
             //
-            case 234: { action.   consumeDeclSpecToken();            break;
+            case 234: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 235:  no_type_declaration_specifier ::= typedef
             //
-            case 235: { action.   consumeDeclSpecToken();            break;
+            case 235: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 255:  storage_class_specifier ::= auto
             //
-            case 255: { action.   consumeDeclSpecToken();            break;
+            case 255: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 256:  storage_class_specifier ::= register
             //
-            case 256: { action.   consumeDeclSpecToken();            break;
+            case 256: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 257:  storage_class_specifier ::= static
             //
-            case 257: { action.   consumeDeclSpecToken();            break;
+            case 257: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 258:  storage_class_specifier ::= extern
             //
-            case 258: { action.   consumeDeclSpecToken();            break;
+            case 258: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 259:  storage_class_specifier ::= mutable
             //
-            case 259: { action.   consumeDeclSpecToken();            break;
+            case 259: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 260:  function_specifier ::= inline
             //
-            case 260: { action.   consumeDeclSpecToken();            break;
+            case 260: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 261:  function_specifier ::= virtual
             //
-            case 261: { action.   consumeDeclSpecToken();            break;
+            case 261: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 262:  function_specifier ::= explicit
             //
-            case 262: { action.   consumeDeclSpecToken();            break;
+            case 262: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 263:  simple_type_specifier ::= char
             //
-            case 263: { action.   consumeDeclSpecToken();            break;
+            case 263: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 264:  simple_type_specifier ::= wchar_t
             //
-            case 264: { action.   consumeDeclSpecToken();            break;
+            case 264: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 265:  simple_type_specifier ::= bool
             //
-            case 265: { action.   consumeDeclSpecToken();            break;
+            case 265: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 266:  simple_type_specifier ::= short
             //
-            case 266: { action.   consumeDeclSpecToken();            break;
+            case 266: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 267:  simple_type_specifier ::= int
             //
-            case 267: { action.   consumeDeclSpecToken();            break;
+            case 267: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 268:  simple_type_specifier ::= long
             //
-            case 268: { action.   consumeDeclSpecToken();            break;
+            case 268: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 269:  simple_type_specifier ::= signed
             //
-            case 269: { action.   consumeDeclSpecToken();            break;
+            case 269: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 270:  simple_type_specifier ::= unsigned
             //
-            case 270: { action.   consumeDeclSpecToken();            break;
+            case 270: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 271:  simple_type_specifier ::= float
             //
-            case 271: { action.   consumeDeclSpecToken();            break;
+            case 271: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 272:  simple_type_specifier ::= double
             //
-            case 272: { action.   consumeDeclSpecToken();            break;
+            case 272: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 273:  simple_type_specifier ::= void
             //
-            case 273: { action.   consumeDeclSpecToken();            break;
+            case 273: { action.   consumeToken();            break;
             }  
   
             //
@@ -1440,13 +1443,13 @@ public CPPNoFunctionDeclaratorParser(String[] mapFrom) {  // constructor
             //
             // Rule 336:  cv_qualifier ::= const
             //
-            case 336: { action.   consumeDeclSpecToken();            break;
+            case 336: { action.   consumeToken();            break;
             }  
   
             //
             // Rule 337:  cv_qualifier ::= volatile
             //
-            case 337: { action.   consumeDeclSpecToken();            break;
+            case 337: { action.   consumeToken();            break;
             }  
   
             //

@@ -1455,13 +1455,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * 
 	 * @param pos
 	 * @param ctx
-	 * @return a key to recognise an annotation position
+	 * @return a key to recognize an annotation position
 	 */
 	private Object computeKey(Position pos, FoldingStructureComputationContext ctx) {
 		try {
 			final IDocument document= ctx.getDocument();
 			IRegion line= document.getLineInformationOfOffset(pos.offset);
-			return document.get(pos.offset, Math.min(16, line.getOffset() + line.getLength() - pos.offset));
+			return document.get(pos.offset, Math.min(32, line.getOffset() + line.getLength() - pos.offset));
 		} catch (BadLocationException exc) {
 			return exc;
 		}

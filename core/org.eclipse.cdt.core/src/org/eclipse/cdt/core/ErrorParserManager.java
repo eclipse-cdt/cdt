@@ -216,16 +216,22 @@ public class ErrorParserManager extends OutputStream {
 					if (lineTrimmed.length() > 1000)
 						continue;
 				}
+				// standard behavior (pre 5.1) is to trim the line
+				String lineToParse = lineTrimmed;
 				if ((types & IErrorParser2.KEEP_UNTRIMMED) !=0 ) {
 					// untrimmed lines
-					if (curr.processLine(line, this)) {
+					lineToParse = line;
+				}
+				// Protect against rough parsers who may accidentally
+				// throw an exception on a line they can't handle.
+				// It should not stop parsing of the rest of output.
+				try {
+					if (curr.processLine(lineToParse, this)) {
 						return;
 					}
-					continue;
-				}
-				// standard behavior (pre 5.1)
-				if (curr.processLine(lineTrimmed, this)) {
-					return;
+				} catch (Exception e){
+					String message = "Error parsing line [" + lineToParse + "]"; //$NON-NLS-2$
+					CCorePlugin.log(message, e);
 				}
 			}
 		}

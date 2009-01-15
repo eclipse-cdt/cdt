@@ -51,7 +51,8 @@ fi
 cd $IHOME/deploy/mtj
 rm *.zip
 echo "Downloading dsdp-mtj-SDK-incubation-latest.zip..."
-wget -q "http://build.eclipse.org/dsdp/mtj/downloads/drops/N.latest/dsdp-mtj-SDK-incubation-latest.zip"
+#wget -q "http://build.eclipse.org/dsdp/mtj/downloads/drops/N.latest/dsdp-mtj-SDK-incubation-latest.zip"
+wget -q "http://download.eclipse.org/dsdp/mtj/downloads/drops/N.latest/dsdp-mtj-SDK-incubation-latest.zip"
 if [ -e dsdp-mtj-SDK-incubation-latest.zip ]; then
   echo "Unzipping..."
   unzip -q dsdp-mtj-SDK-incubation-latest.zip

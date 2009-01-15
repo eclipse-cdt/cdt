@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,39 +291,6 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 			}
 			isCached= true;
 		}
-	}
-
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-	public void removeBinding(IBinding binding) {
-	    char[] key = binding.getNameCharArray();
-	    removeBinding(key, binding);
-	}
-
-	protected void removeBinding(char[] key, IBinding binding) {
-	    if (bindings == null || ! bindings.containsKey(key))
-	        return;
-	    
-	    Object obj = bindings.get(key);
-	    if (obj instanceof ObjectSet<?>) {
-	    	@SuppressWarnings("unchecked")
-	        ObjectSet<Object> set = (ObjectSet<Object>) obj;
-	        for (int i = set.size() - 1; i >= 0; i--) {
-                Object o = set.keyAt(i);
-                if ((o instanceof IBinding && o == binding) ||
-                    (o instanceof IASTName && ((IASTName)o).getBinding() == binding)) {
-                    set.remove(o);
-                }
-            }
-	        if (set.isEmpty()) {
-	            bindings.remove(key, 0, key.length);
-	        }
-	    } else if ((obj instanceof IBinding && obj == binding) ||
-                   (obj instanceof IASTName && ((IASTName)obj).getBinding() == binding)) {
-	        bindings.remove(key, 0, key.length);
-	    }
-		isCached = false;
 	}
 
 	/* (non-Javadoc)

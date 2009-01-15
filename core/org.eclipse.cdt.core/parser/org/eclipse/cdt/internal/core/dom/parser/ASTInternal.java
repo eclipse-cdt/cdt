@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 
 /**
  * Access to methods on scopes and bindings internal to the parser.
- * @since 4.0
  */
 public class ASTInternal {
 
@@ -70,8 +69,8 @@ public class ASTInternal {
 	}
 
 	public static void removeBinding(IScope scope, IBinding binding) throws DOMException {
-		if (scope instanceof IASTInternalScope) {
-			((IASTInternalScope) scope).removeBinding(binding);
+		if (scope instanceof CScope) {
+			((CScope) scope).removeBinding(binding);
 		}		
 	}
 	

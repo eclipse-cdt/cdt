@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -382,18 +382,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         }
         return null;
     }
-
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-	@Override
-	public void removeBinding(IBinding binding) {
-	    if (binding instanceof ICPPConstructor) {
-	        removeBinding(CONSTRUCTOR_KEY, binding);
-	    } else {
-	        removeBinding(binding.getNameCharArray(), binding);
-	    }
-	}
 }
 
 /**

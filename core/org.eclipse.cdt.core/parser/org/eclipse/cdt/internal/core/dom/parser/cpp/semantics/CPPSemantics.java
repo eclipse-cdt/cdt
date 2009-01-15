@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,7 +293,7 @@ public class CPPSemantics {
 						node= node.getParent();
 					}
 					if (!ok) {
-						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.getNameCharArray());
+						binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 					}
 				}
 			}
@@ -309,31 +309,43 @@ public class CPPSemantics {
 			}
 		}
 		
-        if (binding instanceof ICPPClassType && data.considerConstructors) {
-		    try {
-		    	ICPPClassType cls = (ICPPClassType) binding;
-		    	if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
-		    		if (data.tu != null) {
-		    			ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
-		    			ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
-		    			IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
-		    			if (inst instanceof ICPPClassType) {
-		    				cls= (ICPPClassType) inst;
-		    			}
-		    		}
-		    	}
-		    	if (cls instanceof ICPPDeferredClassInstance) {
-		    		binding= new CPPUnknownConstructor(cls, data.astName);
-		    	} else {
-		    		// Force resolution of constructor bindings
-		    		final ICPPConstructor[] constructors = cls.getConstructors();
-		    		if (constructors.length > 0) {
-		    			binding= CPPSemantics.resolveAmbiguities(data.astName, constructors);
-		    		}
-		    	}
-		    } catch (DOMException e) {
-                binding = e.getProblem();
-            }
+		if (data.considerConstructors) {
+			ICPPClassType cls= null;
+//			if (binding instanceof ITypedef) {
+//				// mstodo constructor off typedef
+//				IType t= SemanticUtil.getUltimateTypeViaTypedefs((IType) binding);
+//				if (t instanceof ICPPClassType) {
+//					cls= (ICPPClassType) t;
+//				}
+//			} else 
+			if (binding instanceof ICPPClassType) {
+				cls= (ICPPClassType) binding;
+			}
+			if (cls != null) {
+				try {
+					if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
+						if (data.tu != null) {
+							ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
+							ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
+							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
+							if (inst instanceof ICPPClassType) {
+								cls= (ICPPClassType) inst;
+							}
+						}
+					}
+					if (cls instanceof ICPPDeferredClassInstance) {
+						binding= new CPPUnknownConstructor(cls, data.astName);
+					} else {
+						// Force resolution of constructor bindings
+						final ICPPConstructor[] constructors = cls.getConstructors();
+						if (constructors.length > 0) {
+							binding= CPPSemantics.resolveAmbiguities(data.astName, constructors);
+						}
+					}
+				} catch (DOMException e) {
+					binding = e.getProblem();
+				}
+			}
 		}
         
         IASTName name= data.astName;
@@ -356,11 +368,12 @@ public class CPPSemantics {
 		}
 		
 		// if the lookup in base-classes ran into a deferred instance, use the computed unknown binding.
+		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
 			if (data.functionParameters != null) {
 				binding= new CPPUnknownFunction(data.skippedScope, name.getLastName());
 			} else {
-				if (name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME) {
+				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
 					binding= new CPPUnknownClass(data.skippedScope, name.getLastName());
 				} else {
 					binding= new CPPUnknownBinding(data.skippedScope, name.getLastName());
@@ -368,18 +381,30 @@ public class CPPSemantics {
 			}
 		}
 		
-        if (binding != null) {
-	        if (name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !(binding instanceof IType || binding instanceof ICPPConstructor)) {
-	        	IASTNode parent = name.getParent().getParent();
-	        	if (parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
-	        		if (!(binding instanceof IType)) {
-	        		    // a type id needs to hold a type
-	        			binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.getNameCharArray());
+        if (binding != null && !(binding instanceof IProblemBinding)) {
+	        if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
+	        	if (!(binding instanceof IType || binding instanceof ICPPConstructor)) {
+	        		IASTNode parent = name.getParent().getParent();
+	        		if (parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
+	        			if (!(binding instanceof IType)) {
+	        				// a type id needs to hold a type
+	        				binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
+	        			}
+	        			// don't create a problem here
+	        		} else {
+	        			binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 	        		}
-	        		// don't create a problem here
-	        	} else {
-	        		binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.getNameCharArray());
-	        	}
+	        	} 
+	        	// mstodo misused types, important for ambiguity resolution.
+//	        } else if (namePropertyInParent == IASTIdExpression.ID_NAME) {
+//	        	if (binding instanceof IType) {
+//		        	IASTNode parent= name.getParent().getParent();
+//		        	if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
+//			        	// default for template template parameter is an id-expression, which is a type.
+//		        	} else {		        		
+//		        		binding= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
+//		        	}
+//	        	}
 	        }
         }
         
@@ -391,9 +416,9 @@ public class CPPSemantics {
 		// If we're still null...
 		if (binding == null) {
 			if (name instanceof ICPPASTQualifiedName && data.forFunctionDeclaration())
-				binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.getNameCharArray());
+				binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND);
 			else
-				binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.getNameCharArray());
+				binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 		}
         return binding;
     }
@@ -919,14 +944,14 @@ public class CPPSemantics {
 							for (int j = 0; j < r.length && r[j] != null; j++) {
 								if (checkForAmbiguity(data, r[j], inherited)) {
 								    data.problem = new ProblemBinding(data.astName,
-								    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray()); 
+								    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP); 
 								    return null;
 								}
 							}
 						} else {
 							if (checkForAmbiguity(data, result, inherited)) {
 							    data.problem = new ProblemBinding(data.astName,
-							    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray()); 
+							    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP); 
 							    return null;
 							}
 						}
@@ -1825,7 +1850,7 @@ public class CPPSemantics {
 	        			if (i1)  
 	        				type= temp;
 	        		} else {
-	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	        		}
 	            }
 	        } else {
@@ -1842,7 +1867,7 @@ public class CPPSemantics {
 	        			if (ibobj) 
 	        				obj= temp;
 	        		} else { 
-	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	        		}
 	        	}
 	        }
@@ -1850,7 +1875,7 @@ public class CPPSemantics {
 	    if (data.forUsingDeclaration()) {
 	        IBinding[] bindings = null;
 	        if (obj != null) {
-	            if (fns.size() > 0) return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	            if (fns.size() > 0) return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	//            if (type == null) return obj;
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, obj);
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
@@ -1890,7 +1915,7 @@ public class CPPSemantics {
 	   
 	    if (numFns > 0) {
 	    	if (obj != null)
-	    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+	    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	    	return resolveFunction(data, fns.keyArray(IFunction.class));
 	    }
 	    
@@ -2225,7 +2250,7 @@ public class CPPSemantics {
 		}
 
 		if (ambiguous || bestHasAmbiguousParam) {
-			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 		}
 						
 		return bestFn;
@@ -2234,7 +2259,7 @@ public class CPPSemantics {
 	private static IBinding resolveUserDefinedConversion(ICPPASTConversionName astName, IFunction[] fns) {
 		IType t= CPPVisitor.createType(astName.getTypeId());
 		if (t == null) {
-			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE, astName.toCharArray());
+			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 		}
 		for (IFunction function : fns) {
 			if (function != null) {
@@ -2247,7 +2272,7 @@ public class CPPSemantics {
 				}
 			}
 		}
-		return new ProblemBinding(astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, astName.toCharArray());
+		return new ProblemBinding(astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 	}
 
 	private static ICPPFunctionTemplate asTemplate(IFunction function) {
@@ -2289,7 +2314,7 @@ public class CPPSemantics {
         while (type != null) {
             type = getUltimateType(type, false);
             if (type == null || !(type instanceof IFunctionType))
-                return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray());
+                return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 
             for (IBinding fn2 : fns) {
                 IFunction fn = (IFunction) fn2;
@@ -2301,8 +2326,7 @@ public class CPPSemantics {
                 }
                 if (type.isSameType(ft)) {
                     if (result != null) {
-                        return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-                        		data.getNameCharArray());
+                        return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
                     }
                     result = fn;
                 }
@@ -2315,9 +2339,7 @@ public class CPPSemantics {
             }
         }
                 
-        return result != null ?
-        		result :
-        		new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getNameCharArray()); 
+        return result != null ? result : new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
     }
 
     private static Object getTargetType(LookupData data) {

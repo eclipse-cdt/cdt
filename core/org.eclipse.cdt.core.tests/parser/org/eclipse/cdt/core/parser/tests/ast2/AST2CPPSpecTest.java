@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4390,7 +4390,9 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
-	// template<typename T> class complex {};
+	// template<typename T> class complex {
+	//   	complex(T,T) {}
+	// };
 	// template<class T> class Array {
 	// T* v;
 	// int sz;

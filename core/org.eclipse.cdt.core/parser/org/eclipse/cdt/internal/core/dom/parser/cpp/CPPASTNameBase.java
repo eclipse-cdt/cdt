@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 
 	protected final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding(IASTName node) {
-			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
+			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP);
 			Assert.isTrue(sAllowRecursionBindings, getMessage());
 		}
 	}
@@ -88,7 +88,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
     				ProblemBinding pb= (ProblemBinding) b;
     				final IASTNode node= pb.getASTNode();
     				if (node == null || node.getParent() == null) {
-    					pb.setASTNode(this, toCharArray());
+    					pb.setASTNode(this);
     				}
     			}
     			fBinding= b;

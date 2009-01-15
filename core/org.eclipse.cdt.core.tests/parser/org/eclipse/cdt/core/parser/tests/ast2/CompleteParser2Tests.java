@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1110,16 +1110,17 @@ public class CompleteParser2Tests extends BaseTestCase {
  		assertInstances( col, counter, 3 );
 	}
 	
-	public void testThrowStatement() throws Exception
-	{
-	    IASTTranslationUnit tu = parse( "class A { }; void foo() throw ( A ) { throw A; throw; } "); //$NON-NLS-1$
-	    CPPNameCollector col = new CPPNameCollector();
- 		tu.accept( col );
- 		
- 		assertEquals( col.size(), 4 );
- 		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
+	public void testThrowStatement() throws Exception {
+		IASTTranslationUnit tu = parse("class A { }; void foo() throw ( A ) { A a; throw a; throw; } "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
 
- 		assertInstances( col, A, 3 );
+		assertEquals(6, col.size());
+		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
+		assertInstances(col, A, 3);
+
+		IVariable a = (IVariable) col.getName(4).resolveBinding();
+		assertInstances(col, a, 2);
 	}
 	
 	public void testScoping() throws Exception

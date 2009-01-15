@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 /**
  * Tests for C model builder bugs.
@@ -56,7 +55,6 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 	}	
 	
 	public void testModelBuilderBug222398() throws Exception {
-		CPPASTNameBase.sAllowNameComputation= true;
 		IStructure clazz= (IStructure) fTU.getElement("Test");
 		assertNotNull(clazz);
 		ICElement[] methods= clazz.getChildren();

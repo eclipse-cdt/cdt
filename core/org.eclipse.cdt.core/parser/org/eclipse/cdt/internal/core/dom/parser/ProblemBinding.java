@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     protected IASTNode node;
     private String message = null;
     
+    public ProblemBinding(IASTName name, int id) {
+    	this(name, id, null);
+    }
+ 
     public ProblemBinding(IASTNode node, int id, char[] arg) {
         this.id = id;
         this.arg = arg;
@@ -91,6 +95,9 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
         String msg = (id > 0 && id <= errorMessages.length) ? errorMessages[id - 1] : ""; //$NON-NLS-1$
 
+        if (arg == null && node instanceof IASTName)
+        	arg= ((IASTName) node).toCharArray();
+        
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
@@ -157,13 +164,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
      */
     public void addName(IASTName name) throws DOMException {
-        throw new DOMException(this);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-    public void removeBinding(IBinding binding) throws DOMException {
         throw new DOMException(this);
     }
 
@@ -236,10 +236,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return null;
 	}
 
-	public void setASTNode(IASTNode node, char[] arg) {
-		if (node != null)
-			this.node= node;
-		if (arg != null)
-			this.arg= arg;
+	public void setASTNode(IASTName name) {
+		if (name != null) {
+			this.node= name;
+			this.arg= null;
+		}
 	}
 }

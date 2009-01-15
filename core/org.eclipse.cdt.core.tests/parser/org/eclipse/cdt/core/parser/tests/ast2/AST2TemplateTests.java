@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -464,8 +464,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// A <int, char*, 1> a4;		//uses #5, T is int, T2 is char, I is1       
 	// A <int*, int*, 2> a5;		//ambiguous, matches #3 & #5.                
 	public void test_14_5_4_1s2_MatchingTemplateSpecializations() throws Exception{
-		CPPASTNameBase.sAllowNameComputation= true;
-
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -2756,7 +2754,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	C c1;   
 	//	C<> c2; // ok - default args
 	public void testMissingTemplateArgumentLists() throws Exception {
-		CPPASTNameBase.sAllowNameComputation=true;
 		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("B b1", 1);
 		ba.assertNonProblem("B<> b2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
@@ -2929,7 +2926,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	A<int> aint; // should be an error
 	public void testTypeArgumentToNonTypeParameter() throws Exception {
-		CPPASTNameBase.sAllowNameComputation=true;
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("A<int>", 6);
 	}
@@ -3458,7 +3454,8 @@ public class AST2TemplateTests extends AST2BaseTest {
     //	        T::b.f();
     //    		T::b.f().d;
     //          T::f1();
-    //			T.x; T.y();
+    //          T v;
+    //			v.x; v.y();
     //    	}
     //    };
     public void testTypeOfUnknownReferences_Bug257194a() throws Exception {
@@ -3482,7 +3479,8 @@ public class AST2TemplateTests extends AST2BaseTest {
     //	        T::b->f();
     //    		T::b->f()->d;
     //          T::f1();
-    //          T->x; T->y();
+    //          T v;
+    //          v->x; v->y();
     //    	}
     //    };
     public void testTypeOfUnknownReferences_Bug257194b() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -273,19 +293,29 @@ public class LookupData {
 	}
 	
     public static boolean checkWholeClassScope(IASTName name) {
-        if (name == null) return false;
-        if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return true;
+        if (name == null) 
+        	return false;
+        
+        ASTNodeProperty lastProp= name.getPropertyInParent();
+        if (lastProp == CPPSemantics.STRING_LOOKUP_PROPERTY) 
+        	return true;
 
+        boolean inInitializer= false;
         IASTNode parent = name.getParent();
         while (parent != null && !(parent instanceof IASTFunctionDefinition)) {
-        	ASTNodeProperty prop = parent.getPropertyInParent();
-        	if (prop == IASTParameterDeclaration.DECL_SPECIFIER ||
-        			prop == IASTFunctionDefinition.DECL_SPECIFIER) {
-        		return false;
-        	}
+         	if (parent instanceof IASTInitializer) {
+        		inInitializer= true;
+        	}    		
+        	lastProp= parent.getPropertyInParent();
             parent = parent.getParent();
         }
         if (parent instanceof IASTFunctionDefinition) {
+        	if (lastProp == IASTFunctionDefinition.DECL_SPECIFIER ||
+        			lastProp == IASTFunctionDefinition.DECLARATOR) {
+        		if (!inInitializer)
+        			return false;
+        	} 
+
         	while (parent.getParent() instanceof ICPPASTTemplateDeclaration)
         		parent = parent.getParent();
             if (parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION)

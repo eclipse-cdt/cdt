@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1284,7 +1284,7 @@ public class CPPTemplates {
 				IASTNode param= params[i];
 				IType type= CPPVisitor.createType(param);
 				if (type == null)
-					throw new DOMException(new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE, id.toCharArray()));
+					throw new DOMException(new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE));
 
 				if (param instanceof IASTExpression) {
 					IValue value= Value.create((IASTExpression) param, Value.MAX_RECURSION_DEPTH);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -6373,5 +6373,34 @@ public class AST2CPPTests extends AST2BaseTest {
         ba.assertNonProblem("a; //3", 1, ICPPField.class);
         ba.assertNonProblem("a; //4", 1, ICPPField.class);
         ba.assertNonProblem("a; //5", 1, ICPPField.class);
+    }
+    
+    // int a,b,c,d ;
+    // class X {
+    //	 void m() {
+    //      T* a;
+    //		I* b;
+    //		S1* c;
+    //		S2* d;
+    //	 }
+    //	 typedef int T;
+    //	 int I;
+    //	 typedef int S1 (int(T));  // resolve this ambiguity first
+    //	 typedef int S2 (int(t));  // resolve this ambiguity first
+    // };
+    public void testOrderOfAmbiguityResolution_259373() throws Exception {
+        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        ICPPVariable a= ba.assertNonProblem("a;", 1);
+        assertInstance(a.getType(), IPointerType.class);
+        ICPPVariable b= ba.assertNonProblem("b;", 1);
+        assertInstance(b.getType(), IBasicType.class);
+        ICPPVariable c= ba.assertNonProblem("c;", 1);
+        assertInstance(c.getType(), IPointerType.class);
+        ITypedef s1= (ITypedef) ((IPointerType) c.getType()).getType();
+        assertInstance(((IFunctionType) s1.getType()).getParameterTypes()[0], IPointerType.class);
+        ICPPVariable d= ba.assertNonProblem("d;", 1);
+        assertInstance(d.getType(), IPointerType.class);
+        ITypedef s2= (ITypedef) ((IPointerType) d.getType()).getType();
+        assertInstance(((IFunctionType) s2.getType()).getParameterTypes()[0], IBasicType.class);
     }
 }

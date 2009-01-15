@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,18 +87,8 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     public void addName(IASTName name) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-    public void removeBinding(IBinding binding) {
-    }
-
 	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
-	}
-
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
     /* (non-Javadoc)
@@ -169,14 +159,22 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         return result;
     }
 
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet fileSet) {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+	}
+
+    public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+    	return getBindings(name, resolve, prefixLookup, fileSet, true);
+    }
+
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) {
     	if (prefixLookup)
     		return IBinding.EMPTY_BINDING_ARRAY;
     	
-    	return new IBinding[] {getBinding(name, resolve, fileSet)};
-    }
+    	return new IBinding[] {getBinding(name, resolve, acceptLocalBindings)};
+	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#flushCache()
      */
     public void flushCache() {

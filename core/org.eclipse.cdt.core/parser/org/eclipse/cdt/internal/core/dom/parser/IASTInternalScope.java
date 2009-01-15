@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 
 /** 
  * Interface for methods on scopes that are internal to the AST.
- * @since 4.0
  */
 public interface IASTInternalScope extends IScope {
     /**
@@ -40,14 +39,6 @@ public interface IASTInternalScope extends IScope {
 	 * @throws DOMException
 	 */
 	public void addBinding(IBinding binding) throws DOMException;
-
-	/**
-	 * remove the given binding from this scope
-	 * 
-	 * @param binding
-	 * @throws DOMException
-	 */
-	void removeBinding(IBinding binding) throws DOMException;
 
 	/**
 	 * Add an IASTName to be cached in this scope

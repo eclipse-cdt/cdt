@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 
 /**
  * Abstract base class for all visitors to traverse ast nodes.  <br>
@@ -23,6 +24,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
  * 
  * To visit c- or c++-specific nodes you need to implement {@link ICASTVisitor} 
  * and/or {@link ICPPASTVisitor} in addition to deriving from this class. 
+ * 
+ * <p> Clients may subclass. </p>
  */
 public abstract class ASTVisitor {
 	/**
@@ -115,6 +118,12 @@ public abstract class ASTVisitor {
 	 * Your visitor needs to implement {@link ICPPASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitTemplateParameters = false;
+	
+	/**
+	 * For internal use, only.
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+	public boolean shouldVisitAmbiguousNodes = false;
 	
 	/**
 	 * Creates a visitor that does not visit any kind of node per default.
@@ -272,6 +281,17 @@ public abstract class ASTVisitor {
 	 */
 	@Deprecated
 	public int leave( IASTComment comment){
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * For internal use, only. When {@link ASTVisitor#shouldVisitAmbiguousNodes} is set to true, the
+	 * visitor will be called for ambiguous nodes. However, the children of an ambiguous will not be
+	 * traversed. 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		return PROCESS_CONTINUE;
 	}
 }

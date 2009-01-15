@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE= 4;
-    private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {};
     private static enum DtorStrategy {PREFER_FUNCTION, PREFER_NESTED}
 
     private final boolean allowCPPRestrict;
@@ -153,7 +152,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private final IIndex index;
     protected ICPPASTTranslationUnit translationUnit;
 
-    private int templateCount = 0;
     private int functionBodyCount= 0;
 	private int rejectLogicalOperatorInTemplateID= 0;
 	private char[] currentClassName;
@@ -1418,97 +1416,91 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request for a backtrack
      */
     protected IASTDeclaration templateDeclaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
-    	++templateCount;
-    	try {
-    		IToken mark = mark();
-    		IToken firstToken = null;
-    		boolean exported = false;
-    		boolean encounteredExtraMod = false;
-    		if (LT(1) == IToken.t_export) {
-    			exported = true;
-    			firstToken = consume();
-    			consume(IToken.t_template);
-    		} else {
-    			if (supportExtendedTemplateSyntax) {
-    				switch (LT(1)) {
-    				case IToken.t_static:
-    				case IToken.t_extern:
-    				case IToken.t_inline:
-    					firstToken = consume();
-    					consume(IToken.t_template);
-    					encounteredExtraMod = true;
-    					break;
-    				default:
-    					firstToken = consume(IToken.t_template);
+    	IToken mark = mark();
+    	IToken firstToken = null;
+    	boolean exported = false;
+    	boolean encounteredExtraMod = false;
+    	if (LT(1) == IToken.t_export) {
+    		exported = true;
+    		firstToken = consume();
+    		consume(IToken.t_template);
+    	} else {
+    		if (supportExtendedTemplateSyntax) {
+    			switch (LT(1)) {
+    			case IToken.t_static:
+    			case IToken.t_extern:
+    			case IToken.t_inline:
+    				firstToken = consume();
+    				consume(IToken.t_template);
+    				encounteredExtraMod = true;
     				break;
-    				}
-    			} else
+    			default:
     				firstToken = consume(IToken.t_template);
-    		}
-    		if (LT(1) != IToken.tLT) {
-    			// explicit-instantiation
-    			ICPPASTExplicitTemplateInstantiation templateInstantiation = null;
-    			if (encounteredExtraMod && supportExtendedTemplateSyntax) {
-    				IGPPASTExplicitTemplateInstantiation temp = nodeFactory.newExplicitTemplateInstantiationGPP(null);
-    				switch (firstToken.getType()) {
-    				case IToken.t_static:
-    					temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_static);
-    					break;
-    				case IToken.t_extern:
-    					temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_extern);
-    					break;
-    				case IToken.t_inline:
-    					temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_inline);
-    					break;
-    				}
-    				templateInstantiation = temp;
-    			} else {
-    				templateInstantiation = nodeFactory.newExplicitTemplateInstantiation(null);
+    				break;
     			}
-    			IASTDeclaration d = declaration(option);
-    			((ASTNode) templateInstantiation).setOffsetAndLength(firstToken
-    					.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
-    			templateInstantiation.setDeclaration(d);
-    			return templateInstantiation;
+    		} else
+    			firstToken = consume(IToken.t_template);
+    	}
+    	if (LT(1) != IToken.tLT) {
+    		// explicit-instantiation
+    		ICPPASTExplicitTemplateInstantiation templateInstantiation = null;
+    		if (encounteredExtraMod && supportExtendedTemplateSyntax) {
+    			IGPPASTExplicitTemplateInstantiation temp = nodeFactory.newExplicitTemplateInstantiationGPP(null);
+    			switch (firstToken.getType()) {
+    			case IToken.t_static:
+    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_static);
+    				break;
+    			case IToken.t_extern:
+    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_extern);
+    				break;
+    			case IToken.t_inline:
+    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_inline);
+    				break;
+    			}
+    			templateInstantiation = temp;
+    		} else {
+    			templateInstantiation = nodeFactory.newExplicitTemplateInstantiation(null);
     		}
-    		consume(); // check for LT made before
-    		if (LT(1) == IToken.tGT) {
-    			// explicit-specialization
-    			consume();
-    			IASTDeclaration d = declaration(option);
-    			ICPPASTTemplateSpecialization templateSpecialization = nodeFactory.newTemplateSpecialization(d);
-    			((ASTNode) templateSpecialization).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
-    			return templateSpecialization;
-    		}
+    		IASTDeclaration d = declaration(option);
+    		((ASTNode) templateInstantiation).setOffsetAndLength(firstToken
+    				.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+    		templateInstantiation.setDeclaration(d);
+    		return templateInstantiation;
+    	}
+    	consume(); // check for LT made before
+    	if (LT(1) == IToken.tGT) {
+    		// explicit-specialization
+    		consume();
+    		IASTDeclaration d = declaration(option);
+    		ICPPASTTemplateSpecialization templateSpecialization = nodeFactory.newTemplateSpecialization(d);
+    		((ASTNode) templateSpecialization).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+    		return templateSpecialization;
+    	}
 
+    	try {
+    		final boolean wasOnTop= onTopInTemplateArgs;
+    		onTopInTemplateArgs= true;
+    		List<ICPPASTTemplateParameter> parms;
     		try {
-            	final boolean wasOnTop= onTopInTemplateArgs;
-            	onTopInTemplateArgs= true;
-            	List<ICPPASTTemplateParameter> parms;
-            	try {
-                	parms = templateParameterList();
-                	consume(IToken.tGT);
-                } finally {
-                	onTopInTemplateArgs= wasOnTop;
-                }
-    			IASTDeclaration d = declaration(option);
-    			ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
-    			((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
-    			templateDecl.setExported(exported);
-    			for (int i = 0; i < parms.size(); ++i) {
-    				ICPPASTTemplateParameter parm = parms.get(i);
-    				templateDecl.addTemplateParamter(parm);
-    			}
-    			return templateDecl;
-    		} catch (BacktrackException bt) {
-    			backup(mark);
-    			throw bt;
+    			parms = templateParameterList();
+    			consume(IToken.tGT);
+    		} finally {
+    			onTopInTemplateArgs= wasOnTop;
     		}
-    	} finally {
-    		templateCount--;
+    		IASTDeclaration d = declaration(option);
+    		ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
+    		((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+    		templateDecl.setExported(exported);
+    		for (int i = 0; i < parms.size(); ++i) {
+    			ICPPASTTemplateParameter parm = parms.get(i);
+    			templateDecl.addTemplateParamter(parm);
+    		}
+    		return templateDecl;
+    	} catch (BacktrackException bt) {
+    		backup(mark);
+    		throw bt;
     	}
     }
-
 
     /**
      * template-parameter-list: template-parameter template-parameter-list ,
@@ -2538,7 +2530,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     			return dtor1;
     		
     		// optimization outside of function bodies and inside of templates
-    		if (functionBodyCount == 0 || templateCount != 0) 
+    		if (functionBodyCount == 0) 
     			return dtor1;
     		
     		// avoid second option for function definitions
@@ -3692,7 +3684,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected ASTVisitor createAmbiguityNodeVisitor() {
-        return EMPTY_VISITOR;
+        return new CPPASTAmbiguityResolver();
     }
 
     @Override

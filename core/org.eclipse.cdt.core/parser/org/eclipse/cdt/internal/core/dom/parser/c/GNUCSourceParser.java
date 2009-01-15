@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
     private static final int DEFAULT_PARAMETERS_LIST_SIZE = 4;
-    private static final ASTVisitor EMPTY_VISITOR = new ASTVisitor() {};
 
     private final boolean supportGCCStyleDesignators;
 	private IIndex index;
@@ -1956,7 +1955,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     @Override
 	protected ASTVisitor createAmbiguityNodeVisitor() {
-        return EMPTY_VISITOR;
+        return new CASTAmbiguityResolver();
     }
 
     @Override

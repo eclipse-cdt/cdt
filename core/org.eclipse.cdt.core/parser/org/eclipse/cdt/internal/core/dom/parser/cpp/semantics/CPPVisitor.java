@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -415,8 +415,7 @@ public class CPPVisitor extends ASTQueries {
 				if ((binding instanceof ICPPClassTemplate) == template) {
 					((ICPPInternalBinding) binding).addDeclaration(elabType);
 				} else {
-    				binding = new ProblemBinding(name,
-    						IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
+    				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
     			}
     		}
         } catch (DOMException e) {
@@ -461,8 +460,7 @@ public class CPPVisitor extends ASTQueries {
     					(binding instanceof ICPPClassTemplate) == template) {
     				internal.addDefinition(compType);
     		    } else {
-    				binding = new ProblemBinding(name,
-    						IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray());
+    				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
     			}
     		}
         } catch (DOMException e) {
@@ -505,8 +503,7 @@ public class CPPVisitor extends ASTQueries {
 		                binding = new CPPNamespaceAlias(alias.getAlias(), (ICPPNamespace) namespace);
 		                ASTInternal.addName(scope,  alias.getAlias());
 		            } else {
-		                binding = new ProblemBinding(alias.getAlias(),
-		                		IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray());
+		                binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 		            }
 		        }
 		    } catch (DOMException e) {
@@ -628,7 +625,7 @@ public class CPPVisitor extends ASTQueries {
                 } catch (DOMException e1) {
                 	return e1.getProblem();
                 }
-                return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
+                return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    }
 		    // if we don't resolve the target type first, we get a problem binding in case the typedef
 		    // redeclares the target type:
@@ -651,8 +648,7 @@ public class CPPVisitor extends ASTQueries {
 		                if (def instanceof IASTDeclarator)
 		                    def = ((IASTDeclarator)def).getName();
 		                if (def != name) {
-		                    return new ProblemBinding(name,
-		                    		IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray());
+		                    return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
 		                }
 		            }
 			        
@@ -686,7 +682,7 @@ public class CPPVisitor extends ASTQueries {
 		    		if (binding instanceof ICPPInternalBinding)
 		    			((ICPPInternalBinding) binding).addDeclaration(name);
 		    	} else {
-		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray());
+		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    	}
 		    } else if (simpleDecl != null && simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
 				binding = new CPPField(name); 

@@ -70,7 +70,7 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new MultiLineRule("define", "endef", tDef)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MultiLineRule("override define", "endef", tDef)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// Add rules for multi-line comments and javadoc.
+		// Add rules for conditionals
 		rules.add(new MultiLineRule("ifdef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MultiLineRule("ifndef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MultiLineRule("ifeq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$

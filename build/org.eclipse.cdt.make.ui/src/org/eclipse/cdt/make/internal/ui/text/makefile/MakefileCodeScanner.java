@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.make.internal.ui.text.ColorManager;
-import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.MultiLineRule;
@@ -25,7 +24,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 
 	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		"-include", "sinclude", "override", "endef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		"-include", "sinclude", "override", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		"export", "unexport", "vpath" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 
@@ -38,7 +37,6 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 	};
 
 	public static final String[] fTokenProperties = new String[] {
-			ColorManager.MAKE_COMMENT_COLOR,
 			ColorManager.MAKE_KEYWORD_COLOR,
 			ColorManager.MAKE_FUNCTION_COLOR,
 			ColorManager.MAKE_MACRO_REF_COLOR,
@@ -57,22 +55,18 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 	protected List createRules() {
 		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
 		IToken function = getToken(ColorManager.MAKE_FUNCTION_COLOR);
-		IToken comment = getToken(ColorManager.MAKE_COMMENT_COLOR);
 		IToken macroRef = getToken(ColorManager.MAKE_MACRO_REF_COLOR);
 		IToken macroDef = getToken(ColorManager.MAKE_MACRO_DEF_COLOR);
 		IToken other = getToken(ColorManager.MAKE_DEFAULT_COLOR);
 
 		List rules = new ArrayList();
 
-		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("#", comment, '\\', true)); //$NON-NLS-1$
-
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {
 			public boolean isWhitespace(char character) {
 				return Character.isWhitespace(character);
 			}
-		}));
+		}, other));
 
 		// Put before the the word rules
 		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$

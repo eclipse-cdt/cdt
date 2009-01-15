@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import java.util.List;
+
 import org.eclipse.cdt.make.internal.ui.text.ColorManager;
+import org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileAnnotationHover;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCodeScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCompletionProcessor;
@@ -22,16 +25,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -41,16 +42,35 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
-	private ColorManager colorManager;
-	MakefileCodeScanner codeScanner;
+	private ColorManager fColorManager;
+	MakefileCodeScanner fCodeScanner;
 	private MakefileEditor fEditor;
+	private SingleTokenScanner fCommentScanner;
 
 	/**
 	 * Single token scanner.
 	 */
-	static class SingleTokenScanner extends BufferedRuleBasedScanner {
-		public SingleTokenScanner(TextAttribute attribute) {
-			setDefaultReturnToken(new Token(attribute));
+	static class SingleTokenScanner extends AbstractMakefileCodeScanner {
+		private final String[] fProperties;
+
+		public SingleTokenScanner(String property) {
+			fProperties= new String[] { property };
+			initialize();
+		}
+
+		/*
+		 * @see org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner#createRules()
+		 */
+		protected List createRules() {
+			setDefaultReturnToken(getToken(fProperties[0]));
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner#getTokenProperties()
+		 */
+		protected String[] getTokenProperties() {
+			return fProperties;
 		}
 	}
 
@@ -60,7 +80,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	public MakefileSourceConfiguration(IPreferenceStore preferenceStore, MakefileEditor editor) {
 		super(preferenceStore);
 		fEditor = editor;
-		colorManager = ColorManager.getDefault();
+		fColorManager = ColorManager.getDefault();
 	}
 
 	/**
@@ -84,6 +104,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
 			ContentAssistant assistant = new ContentAssistant();
+			assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
 			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
@@ -97,7 +118,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 			assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 			//Set to Carolina blue
-			assistant.setContextInformationPopupBackground(colorManager.getColor(new RGB(0, 191, 255)));
+			assistant.setContextInformationPopupBackground(fColorManager.getColor(new RGB(0, 191, 255)));
 
 			return assistant;
 		}
@@ -105,22 +126,27 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	protected MakefileCodeScanner getCodeScanner() {
-		if (null == codeScanner)
-			codeScanner = new MakefileCodeScanner();
-		return codeScanner;
+		if (null == fCodeScanner)
+			fCodeScanner = new MakefileCodeScanner();
+		return fCodeScanner;
+	}
 
+	protected ITokenScanner getCommentScanner() {
+		if (null == fCommentScanner)
+			fCommentScanner = new SingleTokenScanner(ColorManager.MAKE_COMMENT_COLOR);
+		return fCommentScanner;
 	}
 
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer v) {
 
 		PresentationReconciler reconciler = new PresentationReconciler();
-
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(v));
+		
 		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		dr = new DefaultDamagerRepairer(getCodeScanner());
+		dr = new DefaultDamagerRepairer(getCommentScanner());
 		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 
@@ -144,6 +170,13 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
 		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
 		return reconciler;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return MakefileDocumentSetupParticipant.MAKEFILE_PARTITIONING;
 	}
 
 	/**
@@ -190,16 +223,25 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	 * @return
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
-		MakefileCodeScanner scanner = getCodeScanner();
-		return scanner.affectsBehavior(event);
+		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event)) {
+			return true;
+		}
+		if (fCommentScanner != null && fCommentScanner.affectsBehavior(event)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	 * @param event
 	 */
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		MakefileCodeScanner scanner = getCodeScanner();
-		scanner.adaptToPreferenceChange(event);
+		if (fCodeScanner != null) {
+			fCodeScanner.adaptToPreferenceChange(event);
+		}
+		if (fCommentScanner != null) {
+			fCommentScanner.adaptToPreferenceChange(event);
+		}
 	}
 
 }

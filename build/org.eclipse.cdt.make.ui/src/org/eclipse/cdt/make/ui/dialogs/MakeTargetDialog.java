@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -79,6 +81,7 @@ public class MakeTargetDialog extends Dialog {
 	private String targetBuildID;
 	protected IMakeTarget fTarget;
 	private boolean initializing = true;
+	private Button sameAsNameCheck;
 
 	/**
 	 * A Listener class to verify correctness of input and display an error message
@@ -282,6 +285,22 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
+		
+		sameAsNameCheck = new Button(group, SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		sameAsNameCheck.setLayoutData(gd);
+		sameAsNameCheck.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.sameAsTarget")); //$NON-NLS-1$
+
+		/* Add a listener to the target name text to update the targetText */ 
+		targetNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (sameAsNameCheck.getSelection()) {
+					targetText.setText(targetNameText.getText());
+				}
+			}
+		});
+		
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(BUILD_ARGUMENT_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
@@ -290,11 +309,26 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (targetText.getLayoutData())).grabExcessHorizontalSpace = true;
 		targetText.setText(targetString);
 		targetText.addListener(SWT.Modify, new Listener() {
-
 			public void handleEvent(Event e) {
 				updateButtons();
 			}
 		});
+		
+		sameAsNameCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				sameAsNameSelected();
+			}
+		});
+		/* set sameAsNameCheck if targetName and targetString are equal */
+		sameAsNameCheck.setSelection(targetString.equals(targetName) || (targetString.length()==0 && targetName==null));
+		sameAsNameSelected();
+	}
+
+	protected void sameAsNameSelected() {
+		targetText.setEnabled(!sameAsNameCheck.getSelection());
+		if (sameAsNameCheck.getSelection()) {
+			targetText.setText(targetNameText.getText());
+		}
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

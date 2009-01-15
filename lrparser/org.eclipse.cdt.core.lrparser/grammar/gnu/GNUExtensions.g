@@ -26,24 +26,22 @@ $Terminals
 	
 $End
 
-$Globals
-/.
-	import org.eclipse.cdt.core.dom.lrparser.action.gcc.GCCBuildASTParserAction;
-./
-$End
+
 
 $Headers
 /.
-	private GCCBuildASTParserAction gccAction;
+	private $gnu_action_class gnuAction;
 ./
 $End
 
 $Define
 
+	$gnu_action_class /.  ./
+
 	$action_initializations /.
 	
-		gccAction = new GCCBuildASTParserAction($node_factory_create_expression, this, tu, astStack);
-		gccAction.setParserOptions(options);
+		gnuAction = new $gnu_action_class ($node_factory_create_expression, this, tu, astStack);
+		gnuAction.setParserOptions(options);
 		
 	./
 	
@@ -118,7 +116,7 @@ asm_label
 
 extended_asm_declaration
     ::= 'asm' volatile_opt '(' extended_asm_param_seq ')' ';'
-           /. $BeginAction  gccAction.consumeDeclarationASM(); $EndAction ./
+           /. $BeginAction  gnuAction.consumeDeclarationASM(); $EndAction ./
 
 volatile_opt ::= 'volatile' | $empty
 

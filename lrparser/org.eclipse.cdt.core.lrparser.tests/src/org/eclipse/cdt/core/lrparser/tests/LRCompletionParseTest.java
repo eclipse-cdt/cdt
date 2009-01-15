@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 
 

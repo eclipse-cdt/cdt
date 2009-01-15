@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser.gpp;
+package org.eclipse.cdt.core.dom.lrparser.gnu;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;

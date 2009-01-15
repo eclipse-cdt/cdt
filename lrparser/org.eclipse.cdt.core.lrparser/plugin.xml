@@ -9,7 +9,7 @@
             name="%language.name.c99">
       </language>
       <language
-            class="org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage"
+            class="org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage"
             id="gcc"
             name="LR GCC">
       </language>
@@ -20,7 +20,7 @@
             name="%language.name.isocpp">
       </language>
       <language
-            class="org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage"
+            class="org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage"
             id="gpp"
             name="LR GPP">
       </language>

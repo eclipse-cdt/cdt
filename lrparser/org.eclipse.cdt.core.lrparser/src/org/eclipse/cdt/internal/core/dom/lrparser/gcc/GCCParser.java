@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
-import org.eclipse.cdt.core.dom.lrparser.action.gcc.GCCBuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 
 public class GCCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -179,8 +179,8 @@ private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
 	
 	
 
-	gccAction = new GCCBuildASTParserAction( CNodeFactory.getDefault() , this, tu, astStack);
-	gccAction.setParserOptions(options);
+	gnuAction = new  GCCBuildASTParserAction  ( CNodeFactory.getDefault() , this, tu, astStack);
+	gnuAction.setParserOptions(options);
 	
 
 }
@@ -247,7 +247,7 @@ public GCCParser(String[] mapFrom) {  // constructor
 
 
 
-private GCCBuildASTParserAction gccAction;
+private  GCCBuildASTParserAction  gnuAction;
 
     public void ruleAction(int ruleNumber)
     {
@@ -1277,7 +1277,19 @@ private GCCBuildASTParserAction gccAction;
             //
             // Rule 341:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
             //
-            case 341: {  gccAction.consumeDeclarationASM();           break;
+            case 341: {  gnuAction.consumeDeclarationASM();           break;
+            } 
+ 
+            //
+            // Rule 365:  designator_base ::= identifier_token :
+            //
+            case 365: {  gnuAction.consumeDesignatorField();            break;
+            } 
+ 
+            //
+            // Rule 366:  designator_base ::= [ constant_expression ... constant_expression ]
+            //
+            case 366: {  gnuAction.consumeDesignatorArray();            break;
             } 
 
     

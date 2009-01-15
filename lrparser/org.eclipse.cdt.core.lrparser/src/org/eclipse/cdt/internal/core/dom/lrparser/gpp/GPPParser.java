@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.*;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 
-import org.eclipse.cdt.core.dom.lrparser.action.gcc.GCCBuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
 public class GPPParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -180,8 +180,8 @@ private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
 	
 	
 
-	gccAction = new GCCBuildASTParserAction( CPPNodeFactory.getDefault() , this, tu, astStack);
-	gccAction.setParserOptions(options);
+	gnuAction = new  GNUBuildASTParserAction  ( CPPNodeFactory.getDefault() , this, tu, astStack);
+	gnuAction.setParserOptions(options);
 	
 
 }
@@ -248,7 +248,7 @@ public GPPParser(String[] mapFrom) {  // constructor
 
 
 
-private GCCBuildASTParserAction gccAction;
+private  GNUBuildASTParserAction  gnuAction;
 
     public void ruleAction(int ruleNumber)
     {
@@ -1986,8 +1986,14 @@ private GCCBuildASTParserAction gccAction;
             //
             // Rule 561:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
             //
-            case 561: {  gccAction.consumeDeclarationASM();           break;
+            case 561: {  gnuAction.consumeDeclarationASM();           break;
             } 
+  
+            //
+            // Rule 584:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            //
+            case 584: { action.   consumeDeclaratorWithPointer(true);             break;
+            }  
 
     
             default:

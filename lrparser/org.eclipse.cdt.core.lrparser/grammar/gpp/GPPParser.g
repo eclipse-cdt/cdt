@@ -33,6 +33,17 @@ $Import
     ../gnu/GNUExtensions.g
 $End
 
+$Globals
+/.
+	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
+./
+$End
+
+$Define
+
+    $gnu_action_class /. GNUBuildASTParserAction ./
+
+$End
 
 $Rules
 
@@ -65,6 +76,10 @@ class_name_suffix_hook
 
 pointer_hook
     ::= attribute_or_decl_specifier_seq 
+    
+declarator
+    ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 elaborated_specifier_hook
     ::= attribute_or_decl_specifier_seq

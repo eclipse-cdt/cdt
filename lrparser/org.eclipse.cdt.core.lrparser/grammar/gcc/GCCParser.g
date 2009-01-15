@@ -33,7 +33,17 @@ $Terminals
 $End
 
 
+$Globals
+/.
+	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
+./
+$End
 
+$Define
+
+    $gnu_action_class  /. GCCBuildASTParserAction ./
+
+$End
 
 
 $Rules
@@ -41,7 +51,6 @@ $Rules
 
 declaration
     ::= extended_asm_declaration
- 
  
  
 no_type_declaration_specifier
@@ -71,6 +80,23 @@ pointer_hook
 
 elaborated_specifier_hook
     ::= attribute_or_decl_specifier_seq
+
+
+
+
+
+
+
+designator_base
+    ::= identifier_token ':'		
+          /. $BeginAction  gnuAction.consumeDesignatorField();  $EndAction ./
+      | '[' constant_expression '...' constant_expression ']'
+          /. $BeginAction  gnuAction.consumeDesignatorArray();  $EndAction ./
+
+
+
+
+
 
 
 $End

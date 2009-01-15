@@ -13,8 +13,8 @@ package org.eclipse.cdt.core.lrparser.tests;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.gcc.GCCLanguage;
-import org.eclipse.cdt.core.dom.lrparser.gpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
+import org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2KnRTests;

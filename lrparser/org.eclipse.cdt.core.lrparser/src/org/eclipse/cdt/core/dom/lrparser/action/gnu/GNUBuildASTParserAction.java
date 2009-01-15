@@ -1,4 +1,4 @@
-package org.eclipse.cdt.core.dom.lrparser.action.gcc;
+package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.internal.core.dom.lrparser.gcc.GCCParsersym;
 
-public class GCCBuildASTParserAction extends AbstractParserAction {
+public class GNUBuildASTParserAction extends AbstractParserAction {
 
 	private final INodeFactory nodeFactory;
 	
 	private final TokenMap tokenMap;
 	
-	public GCCBuildASTParserAction(INodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+	public GNUBuildASTParserAction(INodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
 		super(parser, tu, astStack);
 		
 		this.nodeFactory = nodeFactory;

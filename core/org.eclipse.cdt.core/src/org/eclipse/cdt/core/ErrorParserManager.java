@@ -261,7 +261,13 @@ public class ErrorParserManager extends OutputStream {
 		}
 		
 		if(matchingFile == null) {
-			return (IFile) fFilesInProject.get(path.lastSegment()); // last ditch attempt... look for a file with that name in the project
+			// one more attempt... look for a file with that name in the project
+			Object candidateFile = fFilesInProject.get(path.lastSegment());
+			if (candidateFile instanceof IFile) {
+				return (IFile) candidateFile;
+			}
+			// not found or getting list of files which is ambiguous 
+			return null;
 		}
 		
 		return matchingFile;

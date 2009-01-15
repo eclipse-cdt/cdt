@@ -290,6 +290,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setStopOnError(isStopOnError());
 		info.setIncrementalBuildEnable(true);
 		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
+		info.setCleanBuildEnable(false);
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
 		if (container != null && container != project) {

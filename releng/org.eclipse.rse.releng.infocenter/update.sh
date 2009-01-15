@@ -96,7 +96,7 @@ if [ "$NEED_RESTART" != "0" ]; then
   cp -Rp $IHOME/deploy/ercp/*.jar $IHOME/plugins/ercp/eclipse/plugins/
   ####################### Deploy ercp ##############################
   rm -rf $IHOME/plugins/mtj/eclipse/plugins/*
-  cp -Rp $IHOME/deploy/mtj/*.jar $IHOME/plugins/mtj/eclipse/plugins/
+  cp -Rp $IHOME/deploy/mtj/plugins/*.jar $IHOME/plugins/mtj/eclipse/plugins/
   
   #TODO: not sure if we need to delete the old index to force re-indexing
   echo "Deleting old index..."

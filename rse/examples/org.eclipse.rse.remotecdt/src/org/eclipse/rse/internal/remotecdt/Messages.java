@@ -10,6 +10,7 @@
  * Ewa Matejska          (PalmSource) - [158783] browse button for cdt remote path
  * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
  * Anna Dushistova       (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
+ * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -25,6 +26,8 @@ public class Messages extends NLS {
 	public static String Port_number_textfield_label;
 
 	public static String Remote_GDB_Debugger_Options;
+
+	public static String RemoteCMainTab_Prerun;
 
 	public static String RemoteCMainTab_Program;
 

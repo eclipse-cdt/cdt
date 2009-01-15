@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 PalmSource, Inc.
+ * Copyright (c) 2006 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Ewa Matejska (PalmSource) - Adapted from IGDBServerMILaunchConfigurationConstants
+ * Ewa Matejska    (PalmSource) - Adapted from IGDBServerMILaunchConfigurationConstants
+ * Anna Dushistova (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  *******************************************************************************/
 
 
@@ -39,5 +40,8 @@ public interface IRemoteConnectionConfigurationConstants extends
 				DebugPlugin.getUniqueIdentifier() + ".ATTR_TARGET_PATH"; //$NON-NLS-1$
 	public static final String ATTR_SKIP_DOWNLOAD_TO_TARGET = 
 				DebugPlugin.getUniqueIdentifier() + ".ATTR_SKIP_DOWNLOAD_TO_TARGET"; //$NON-NLS-1$
+
+
+	public static final String ATTR_PRERUN_COMMANDS = DebugPlugin.getUniqueIdentifier() + ".ATTR_PRERUN_CMDS"; //$NON-NLS-1$
 
 }

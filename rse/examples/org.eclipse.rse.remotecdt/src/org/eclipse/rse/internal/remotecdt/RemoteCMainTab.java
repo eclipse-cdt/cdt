@@ -6,13 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Ewa Matejska (PalmSource) - initial API and implementation
- * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
- * Martin Oberhuber (Wind River) - [196934] hide disabled system types in remotecdt combo
- * Yu-Fen Kuo (MontaVista) - [190613] Fix NPE in Remotecdt when RSEUIPlugin has not been loaded
- * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * Ewa Matejska          (PalmSource) - initial API and implementation
+ * Martin Oberhuber      (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber      (Wind River) - [196934] hide disabled system types in remotecdt combo
+ * Yu-Fen Kuo            (MontaVista) - [190613] Fix NPE in Remotecdt when RSEUIPlugin has not been loaded
+ * Martin Oberhuber      (Wind River) - [cleanup] Avoid using SystemStartHere in production code
  * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
  * Johann Draschwandtner (Wind River) - [233057][remotecdt]Fix button enablement
+ * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -63,6 +64,7 @@ public class RemoteCMainTab extends CMainTab {
 	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = Messages.RemoteCMainTab_SkipDownload;
 	private static final String REMOTE_PROG_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoProgram;
 	private static final String CONNECTION_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoConnection;
+	private static final String PRE_RUN_LABEL_TEXT = Messages.RemoteCMainTab_Prerun;
 
 	/* Defaults */
 	private static final String REMOTE_PATH_DEFAULT = EMPTY_STRING;
@@ -81,6 +83,8 @@ public class RemoteCMainTab extends CMainTab {
 	private static int initializedRSE = 0;  //0=not initialized; -1=initializing; 1=initialized
 
 	SystemNewConnectionAction action = null;
+	private Text preRunText;
+	private Label preRunLabel;
 
 	public RemoteCMainTab(boolean terminalOption) {
 		super(terminalOption);
@@ -241,6 +245,25 @@ public class RemoteCMainTab extends CMainTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		
+		//Commands to run before execution
+		preRunLabel = new Label(mainComp, SWT.NONE);
+		preRunLabel.setText(PRE_RUN_LABEL_TEXT);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		preRunLabel.setLayoutData(gd);
+
+		preRunText = new Text(mainComp, SWT.MULTI | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		preRunText.setLayoutData(gd);
+		preRunText.addModifyListener(new ModifyListener() {
+
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
 	}
 
 	/*
@@ -279,6 +302,7 @@ public class RemoteCMainTab extends CMainTab {
 				remoteProgText.getText());
 		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
 				skipDownloadButton.getSelection());
+		config.setAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS, preRunText.getText());
 		super.performApply(config);
 	}
 
@@ -514,6 +538,15 @@ public class RemoteCMainTab extends CMainTab {
 			// Ignore
 		}
 		remoteProgText.setText(targetPath);
+		
+		String prelaunchCmd = null;
+		try {
+			prelaunchCmd = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
+						 ""); //$NON-NLS-1$
+		} catch (CoreException e) {
+			// Ignore
+		}
+		preRunText.setText(prelaunchCmd);
 	}
 
 	protected void updateSkipDownloadFromConfig(ILaunchConfiguration config) {

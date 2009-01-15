@@ -30,12 +30,12 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ECL_DIR=$HOME/eclipse3.4
-ep_rel=R
-ep_ver=3.4
-ep_date=200806172000
+ECL_DIR=$HOME/eclipse3.5
+ep_rel=S
+ep_ver=3.5M4
+ep_date=200812111908
 P2_no_dropins=false
-if [ ! -f ${ECL_DIR}/eclipse/plugins/org.eclipse.swt_3.4.0.v3448f.jar ]; then
+if [ ! -f ${ECL_DIR}/eclipse/plugins/org.eclipse.swt_3.5.0.v3525.jar ]; then
   if [ ! -d ${ECL_DIR} ]; then
     mkdir -p ${ECL_DIR}
   else

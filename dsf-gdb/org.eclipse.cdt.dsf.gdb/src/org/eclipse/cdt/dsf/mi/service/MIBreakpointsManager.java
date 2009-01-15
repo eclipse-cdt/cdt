@@ -1176,21 +1176,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
     @DsfServiceEventHandler
     public void eventDispatched(MIBreakpointHitEvent e) {
-        performBreakpointAction(e.getNumber());
+        performBreakpointAction(e.getDMContext(), e.getNumber());
     }
 
     @DsfServiceEventHandler
     public void eventDispatched(MIWatchpointTriggerEvent e) {
-        performBreakpointAction(e.getNumber());
+        performBreakpointAction(e.getDMContext(), e.getNumber());
     }
 
-    private void performBreakpointAction(int number) {
+    private void performBreakpointAction(final IDMContext context, int number) {
         // Identify the platform breakpoint
         final ICBreakpoint breakpoint = findPlatformBreakpoint(number);
-
-        // FIXME: (Bug228703) Temporary hack to have a context
-        Object[] contexts = fTargetBPs.keySet().toArray();
-        final IBreakpointsTargetDMContext context = (IBreakpointsTargetDMContext) contexts[0];
 
         // Perform the actions asynchronously (otherwise we can have a deadlock...)
         new Job("Breakpoint action") { //$NON-NLS-1$

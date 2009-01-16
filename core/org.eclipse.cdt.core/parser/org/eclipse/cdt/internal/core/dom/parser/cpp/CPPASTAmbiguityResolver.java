@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Visitor to resolve ast ambiguities in the right order
  */
-public final class CPPASTAmbiguityResolver extends ASTVisitor {
+final class CPPASTAmbiguityResolver extends ASTVisitor {
 	private static class ClassContext {
 		ArrayList<IASTNode> fDeferredNodes;
 		final IASTNode fNode;

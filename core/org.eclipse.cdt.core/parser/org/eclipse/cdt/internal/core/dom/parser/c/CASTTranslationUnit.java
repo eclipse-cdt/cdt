@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -86,5 +87,10 @@ public class CASTTranslationUnit extends ASTTranslationUnit {
 
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
+	}
+
+	@Override
+	protected ASTVisitor createAmbiguityNodeVisitor() {
+		return new CASTAmbiguityResolver();
 	}
 }

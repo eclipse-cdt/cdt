@@ -16,7 +16,51 @@ import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
 import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_ColonColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_GT;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LT;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Tilde;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_class;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_delete;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_enum;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_explicit;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_friend;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_mutable;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_new;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_private;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_protected;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_public;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typename;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_virtual;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_volatile;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_wchar_t;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +69,6 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -111,7 +154,6 @@ import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterPa
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguityResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousStatement;
@@ -1791,10 +1833,5 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	@Override
 	protected IASTAmbiguousStatement createAmbiguousStatement(IASTStatement... statements) {
 		return new CPPASTAmbiguousStatement(statements);
-	}
-    
-	@Override
-	protected ASTVisitor createAmbiguityNodeVisitor() {
-		return new CPPASTAmbiguityResolver();
 	}
 }

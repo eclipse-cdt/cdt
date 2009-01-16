@@ -78,7 +78,6 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
@@ -507,10 +506,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected void resolveAmbiguities() {
         final IASTTranslationUnit translationUnit = getTranslationUnit();
-		translationUnit.accept(createAmbiguityNodeVisitor()); 
-		if (translationUnit instanceof ASTTranslationUnit) {
-			((ASTTranslationUnit)translationUnit).cleanupAfterAmbiguityResolution();
-		}
+        if (translationUnit instanceof ASTTranslationUnit) {
+        	((ASTTranslationUnit) translationUnit).resolveAmbiguities();
+        }
     }
 
     protected abstract ASTVisitor createAmbiguityNodeVisitor();
@@ -1475,7 +1473,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	if (LT(1) != IToken.tLBRACE)
     		throwBacktrack(LA(1));
 
-    	final IASTDeclarator fdtor= CVisitor.findTypeRelevantDeclarator(dtor);
+    	final IASTDeclarator fdtor= ASTQueries.findTypeRelevantDeclarator(dtor);
     	if (dtor instanceof IASTFunctionDeclarator == false)
     		throwBacktrack(offset, LA(1).getEndOffset() - offset);
 

@@ -352,9 +352,16 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 
 	/**
-	 * @since 5.0
+	 * Must be called by the parser, before the ast is passed to the clients.
 	 */
-	public void cleanupAfterAmbiguityResolution() {
+	public void resolveAmbiguities() {
+		accept(createAmbiguityNodeVisitor()); 
+		cleanupAfterAmbiguityResolution();
+	}
+
+	protected abstract ASTVisitor createAmbiguityNodeVisitor();
+
+	protected void cleanupAfterAmbiguityResolution() {
 		// clear bindings (see bug 232811)
 		accept(new ASTVisitor(){
 			{

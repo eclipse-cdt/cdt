@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -189,5 +190,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	 */
 	public void handleAdditionalDirectives(ICPPNamespaceScope scope) {
 		fScopeMapper.handleAdditionalDirectives(scope);
+	}
+
+	@Override
+	protected ASTVisitor createAmbiguityNodeVisitor() {
+		return new CPPASTAmbiguityResolver();
 	}
 }

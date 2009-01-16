@@ -11,18 +11,17 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
 import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 
 import java.util.Collections;
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -50,7 +49,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -62,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
@@ -75,11 +74,9 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguityResolver;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousStatement;
 
@@ -740,11 +737,4 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	protected IASTAmbiguousStatement createAmbiguousStatement(IASTStatement... statements) {
 		return new CASTAmbiguousStatement(statements);
 	}
-
-	@Override
-	protected ASTVisitor createAmbiguityNodeVisitor() {
-		return new CASTAmbiguityResolver();
-	}
-	
-	
 }

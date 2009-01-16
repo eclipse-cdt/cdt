@@ -18,7 +18,6 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -160,15 +159,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * @see AbstractGNUSourceCodeParser#resolveAmbiguities()
 	 */
 	private void resolveAmbiguityNodes() {
-		tu.accept(createAmbiguityNodeVisitor());
 		if (tu instanceof ASTTranslationUnit) {
-			((ASTTranslationUnit)tu).cleanupAfterAmbiguityResolution();
+			((ASTTranslationUnit)tu).resolveAmbiguities();
 		}
 	}
-	
-	
-	protected abstract ASTVisitor createAmbiguityNodeVisitor();
-	
 	
   	/**
   	 * Consumes a single identifier token.

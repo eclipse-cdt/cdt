@@ -119,9 +119,9 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	 * @throws CoreException can be thrown if adding the edits is failing.
 	 */
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
-		if (false) {
-			throw new CoreException(CUIStatus.createError(IStatus.ERROR, "Implementors can throw an exception", null)); //$NON-NLS-1$
-		}
+//		if (false) {
+//			throw new CoreException(CUIStatus.createError(IStatus.ERROR, "Implementors can throw an exception", null)); //$NON-NLS-1$
+//		}
 	}
 
 	protected LinkedProposalModel getLinkedProposalModel() {

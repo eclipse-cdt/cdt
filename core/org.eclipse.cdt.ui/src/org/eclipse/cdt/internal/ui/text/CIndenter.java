@@ -260,17 +260,15 @@ public final class CIndenter {
 		}
 
 		private boolean prefParenthesisDeepIndent() {
-			if (true) // don't do parenthesis deep indentation
-				return false;
+			// don't do parenthesis deep indentation
+//			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
+//			try {
+//				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+//			} catch (IllegalArgumentException e) {
+//				// ignore and return default
+//			}
 
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
-			try {
-				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
-			} catch (IllegalArgumentException e) {
-				// ignore and return default
-			}
-
-			return false; // sensible default
+			return false;
 		}
 
 		private int prefParenthesisIndent() {

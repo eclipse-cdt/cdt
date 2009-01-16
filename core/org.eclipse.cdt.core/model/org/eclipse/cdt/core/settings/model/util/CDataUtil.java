@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -330,7 +330,7 @@ public class CDataUtil {
 		} else {
 			exts = data.getSourceExtensions();
 			if(exts != null && exts.length != 0)
-				exts = (String[])exts.clone();
+				exts = exts.clone();
 			else
 				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 		}
@@ -516,7 +516,7 @@ public class CDataUtil {
 		}
 		CLanguageData lDatas[] = data.getLanguageDatas();
 		for(int i = 0; i < lDatas.length; i++){
-			CLanguageData lData = (CLanguageData)lDatas[i];
+			CLanguageData lData = lDatas[i];
 			String langId = lData.getLanguageId();
 			if(langId != null){
 				ILanguageDescriptor des = (ILanguageDescriptor)langMap.remove(langId);
@@ -732,9 +732,10 @@ public class CDataUtil {
 		for(int i = 0; i < entries.size(); i++){
 			ICSourceEntry entry = (ICSourceEntry)entries.get(i);
 			entry = include(path, entry);
-			if(entry != null)
+			if(entry != null) {
 				entries.set(i, entry);
-			return i;
+				return i;
+			}
 		}
 		return -1;
 	}

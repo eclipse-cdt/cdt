@@ -1590,11 +1590,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
 		final int braceIndent= scribe.numberOfIndentations;
 
-        if (true /* preferences.insert_new_line_after_opening_brace_in_enumerator_list */) {
-        	scribe.startNewLine();
-        } else if (true /* preferences.insert_space_after_opening_brace_in_enumerator_list */) {
-        	scribe.space();
-        }
+		scribe.startNewLine();
+
         if (braceIndent == headerIndent) {
         	scribe.indent();
         }
@@ -1618,11 +1615,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
         if (enumIndent > braceIndent) {
             scribe.unIndent();
         }
-		if (true /* preferences.insert_new_line_before_closing_brace_in_enumerator_list */) {
-			scribe.startNewLine();
-		} else if (true /* preferences.insert_space_before_closing_brace_in_enumerator_list */) {
-			scribe.space();
-		}
+        scribe.startNewLine();
+
 		formatClosingBrace(preferences.brace_position_for_type_declaration);
 		return PROCESS_SKIP;
 	}
@@ -1758,9 +1752,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 		} else if (node.isCatchAll()) {
 			scribe.printNextToken(Token.tELIPSE, false /* preferences.insert_space_before_ellipsis */);
-			if (false /* preferences.insert_space_after_ellipsis */) {
-				scribe.space();
-			}
+//			if (false /* preferences.insert_space_after_ellipsis */) {
+//				scribe.space();
+//			}
 		}
 		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_catch);
 		final IASTStatement catchBody= node.getCatchBody();

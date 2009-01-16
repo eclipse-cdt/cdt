@@ -108,24 +108,23 @@ public class CPPASTIfStatement extends CPPASTNode implements ICPPASTIfStatement,
     }
     
     public void replace(IASTNode child, IASTNode other) {
-        if( thenClause == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
-            thenClause = (IASTStatement) other;
-        }
-        else if( elseClause == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
-            elseClause = (IASTStatement) other;            
-        }
-        if( condDecl == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
-            condDecl = (IASTDeclaration) other;
-        }
+    	if (thenClause == child) {
+    		other.setParent(child.getParent());
+    		other.setPropertyInParent(child.getPropertyInParent());
+    		thenClause = (IASTStatement) other;
+    	} else if (elseClause == child) {
+    		other.setParent(child.getParent());
+    		other.setPropertyInParent(child.getPropertyInParent());
+    		elseClause = (IASTStatement) other;
+    	} else if (condDecl == child) {
+    		other.setParent(child.getParent());
+    		other.setPropertyInParent(child.getPropertyInParent());
+    		condDecl = (IASTDeclaration) other;
+    	} else if (condition == child) {
+    		other.setParent(child.getParent());
+    		other.setPropertyInParent(child.getPropertyInParent());
+    		condition = (IASTExpression) other;
+    	}
     }
 
     public IASTDeclaration getConditionDeclaration() {

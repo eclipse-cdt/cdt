@@ -5359,4 +5359,19 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	// void test() {
+	//    int a,b;
+	//    if ((a)+b);
+	// }
+	public void testAmbiguityResolutionInIfCondition_Bug261043() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+			IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+			IASTIfStatement ifstmt= getStatement(fdef, 1);
+			IASTExpression expr= ifstmt.getConditionExpression();
+			assertInstance(expr, IASTBinaryExpression.class);
+		}
+	}
 }

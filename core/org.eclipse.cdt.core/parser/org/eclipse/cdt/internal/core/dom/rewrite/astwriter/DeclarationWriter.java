@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -37,8 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 
@@ -74,9 +73,7 @@ public class DeclarationWriter extends NodeWriter{
 	protected void writeDeclaration(IASTDeclaration declaration, boolean writeSemicolon) {
 		boolean addNewLine = true;
 		printSemicolon = writeSemicolon;
-		if (declaration instanceof IASTAmbiguousDeclaration) {
-			//Not implemented
-		} else if (declaration instanceof IASTASMDeclaration) {
+		if (declaration instanceof IASTASMDeclaration) {
 			writeASMDeclatation((IASTASMDeclaration) declaration);
 		} else if (declaration instanceof IASTFunctionDefinition) {
 			writeFunctionDefinition((IASTFunctionDefinition) declaration);
@@ -282,7 +279,7 @@ public class DeclarationWriter extends NodeWriter{
 		}else {
 			scribe.printSpace();
 		}
-		IASTDeclarator declarator = CPPVisitor.findOutermostDeclarator(funcDef.getDeclarator());
+		IASTDeclarator declarator = ASTQueries.findOutermostDeclarator(funcDef.getDeclarator());
 		declarator.accept(visitor);
 		
 		if (funcDef instanceof ICPPASTFunctionWithTryBlock) {

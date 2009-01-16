@@ -86,6 +86,7 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -1112,7 +1113,7 @@ public class CPPTemplates {
 	private static boolean usesTemplateParameter(final ICPPASTTemplateId id, final CharArraySet names) {
 		final boolean[] result= {false};
 		ASTVisitor v= new ASTVisitor(false) {
-			{ shouldVisitNames= true;}
+			{ shouldVisitNames= true; shouldVisitAmbiguousNodes=true;}
 			@Override
 			public int visit(IASTName name) {
 				if (name instanceof ICPPASTTemplateId)
@@ -1137,6 +1138,15 @@ public class CPPTemplates {
 						result[0]= true;
 						return PROCESS_ABORT;
 					}
+				}
+				return PROCESS_CONTINUE;
+			}
+			@Override
+			public int visit(ASTAmbiguousNode node) {
+				IASTNode[] alternatives= node.getNodes();
+				for (IASTNode alt : alternatives) {
+					if (!alt.accept(this))
+						return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
 			}

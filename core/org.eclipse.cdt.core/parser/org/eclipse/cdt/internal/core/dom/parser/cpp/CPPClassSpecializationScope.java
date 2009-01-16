@@ -28,8 +28,8 @@ public class CPPClassSpecializationScope extends AbstractCPPClassSpecializationS
 	}
 		
 	// This scope does not cache its own names
-	public void flushCache() {}
 	public void addName(IASTName name) {}
 	public IASTNode getPhysicalNode() { return null; }
 	public void addBinding(IBinding binding) {}
+	public void populateCache() {}
 }

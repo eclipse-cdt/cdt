@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode.NameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.Assert;
 
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  * Handles the ambiguity between a binary- and a cast-expression. (type)+var versus (var)+var.
  * It also handles the impact on the grouping of the sub-expressions.
  */
-public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTNode implements IASTAmbiguousExpression {
+public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
 
 	private final IASTBinaryExpression fBinaryExpression;
     private final IASTCastExpression fCastExpression;
@@ -43,6 +43,10 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTNode impleme
     	fBinaryExpression= binaryExpression;
     	fCastExpression= castExpression;
     }
+        
+    public final IASTExpression copy() {
+    	throw new UnsupportedOperationException();
+    }
     
     public void addExpression(IASTExpression e) {
 		Assert.isLegal(false);
@@ -52,12 +56,22 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTNode impleme
     	return CVisitor.getExpressionType(getExpressions()[0]);
     }
 
+	@Override
+	protected final IScope getAffectedScope() {
+		return null;
+	}
+
+	@Override
+	public final IASTNode[] getNodes() {
+		return getExpressions();
+	}
+
 	public IASTExpression[] getExpressions() {
 		return new IASTExpression[] {fBinaryExpression, fCastExpression};
 	}
 
 	@Override
-	public boolean accept(ASTVisitor visitor) {
+	public final IASTNode resolveAmbiguity(ASTVisitor visitor) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
@@ -91,7 +105,7 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTNode impleme
 			}
 		}
 		if (hasIssue) {
-			return true;
+			return nodeToReplace;
 		}
 		
 		final IASTExpression left = fBinaryExpression.getOperand1();
@@ -109,12 +123,11 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTNode impleme
 			setRange(fCastExpression, primaryInParenthesis, leadingCastExpression);
 			IASTExpression root= joinExpressions(lp, fCastExpression, rp);
 			if (root != null) {
-
 				owner.replace(nodeToReplace, root);
-				return true;
+				return root;
 			}
 		}
-		return true;
+		return nodeToReplace;
 	}
 
 	private void setEnd(IASTNode node, IASTNode end) {

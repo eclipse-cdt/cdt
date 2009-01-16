@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,14 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * Interface for internal c++ scopes
  */
-public interface ICPPASTInternalScope extends IASTInternalScope {
+public interface ICPPASTInternalScope extends IASTInternalScope, ICPPScope {
 	/**
 	 * Same as {@link IScope#getBindings(IASTName, boolean, boolean, IIndexFileSet)} with the
 	 * possibility to disable checking the point of declaration. The method is used to resolve
@@ -28,5 +29,11 @@ public interface ICPPASTInternalScope extends IASTInternalScope {
 	 */
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, 
 			IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) throws DOMException;
-
+	
+	/**
+	 * Can be called during ambiguity resolution to populate a scope without considering
+	 * the ambiguous branches. The rest of the names has to be cached one by one after
+	 * the ambiguities have been resolved.
+	 */
+	public void populateCache();
 }

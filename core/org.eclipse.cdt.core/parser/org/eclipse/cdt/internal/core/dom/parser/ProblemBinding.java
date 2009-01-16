@@ -200,9 +200,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return type == this;
     }
 
-	public void flushCache() {
-	}
-
 	public String getFileName() {
 		if (node != null)
 			return node.getContainingFilename();

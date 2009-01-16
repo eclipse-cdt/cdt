@@ -24,13 +24,7 @@ public interface IASTInternalScope extends IScope {
      * Return the physical IASTNode that this scope was created for
      */
     public IASTNode getPhysicalNode() throws DOMException;
-	
-	/** 
-	 * clear the name cache in this scope
-	 * @throws DOMException
-	 */
-	public void flushCache() throws DOMException;
-	
+		
 	/**
 	 * This adds an IBinding to the scope.  It is primarily used by the parser to add
 	 * implicit IBindings to the scope (such as GCC built-in functions).

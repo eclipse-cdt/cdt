@@ -43,9 +43,9 @@ public class ASTInternal {
 		return null;
 	}
 
-	public static void flushCache(IScope scope) throws DOMException {
-		if (scope instanceof IASTInternalScope) {
-			((IASTInternalScope) scope).flushCache();
+	public static void flushCache(IScope scope) {
+		if (scope instanceof CScope) {
+			((CScope) scope).flushCache();
 		}
 	}
 
@@ -74,9 +74,13 @@ public class ASTInternal {
 		}		
 	}
 	
-	public static void addName(IScope scope, IASTName name) throws DOMException {
+	public static void addName(IScope scope, IASTName name) {
 		if (scope instanceof IASTInternalScope) {
-			((IASTInternalScope) scope).addName(name);
+			try {
+				((IASTInternalScope) scope).addName(name);
+			} catch (DOMException e) {
+				// name is not cached in scope
+			}
 		}		
 	}		
 	

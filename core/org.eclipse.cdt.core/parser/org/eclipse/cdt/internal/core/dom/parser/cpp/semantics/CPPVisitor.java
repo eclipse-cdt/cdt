@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -315,7 +314,6 @@ public class CPPVisitor extends ASTQueries {
             enumtor = scope.getBinding(enumerator.getName(), false);
             if (enumtor == null || !(enumtor instanceof IEnumerator)) {
                 enumtor = new CPPEnumerator(enumerator.getName());
-                ASTInternal.addName(scope,  enumerator.getName());
             }
         } catch (DOMException e) {
             enumtor = e.getProblem();
@@ -333,7 +331,6 @@ public class CPPVisitor extends ASTQueries {
 			enumeration = scope.getBinding(name, false);
             if (enumeration == null || !(enumeration instanceof IEnumeration)) {
                 enumeration = new CPPEnumeration(name);
-                ASTInternal.addName(scope, name);
             }
         } catch (DOMException e) {
             enumeration = e.getProblem();
@@ -409,6 +406,7 @@ public class CPPVisitor extends ASTQueries {
 	            		binding = new CPPClassTemplate(name);
 	            	else
 						binding = new CPPClassType(name, binding);
+					// name may live in a different scope, so make sure to add it to the owner scope, as well.
     				ASTInternal.addName(scope,  elabType.getName());
     			}
     		} else {
@@ -451,9 +449,6 @@ public class CPPVisitor extends ASTQueries {
             	} else {
             		binding = new CPPClassType(name, binding);
             	}
-				if (scope != null) {
-					ASTInternal.addName(scope, compType.getName());
-				}
     		} else {
     			ICPPInternalBinding internal = (ICPPInternalBinding) binding;
     			if (internal.getDefinition() == null &&
@@ -478,7 +473,6 @@ public class CPPVisitor extends ASTQueries {
                 if (!(binding instanceof ICPPInternalBinding) || binding instanceof IProblemBinding 
                 		|| !(binding instanceof ICPPNamespace)) {
     				binding = new CPPNamespace(namespaceDef);
-    				ASTInternal.addName(scope,  namespaceDef.getName());
     			}
             } catch (DOMException e) {
                 binding = e.getProblem();
@@ -501,7 +495,6 @@ public class CPPVisitor extends ASTQueries {
 		            }
 		            if (namespace instanceof ICPPNamespace) { 
 		                binding = new CPPNamespaceAlias(alias.getAlias(), (ICPPNamespace) namespace);
-		                ASTInternal.addName(scope,  alias.getAlias());
 		            } else {
 		                binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 		            }
@@ -630,6 +623,7 @@ public class CPPVisitor extends ASTQueries {
 		    // if we don't resolve the target type first, we get a problem binding in case the typedef
 		    // redeclares the target type:
 		    // typedef struct S S;
+		    // mstodo this is a hack, remove it!
 		    IType targetType= createType(declarator);
 		    CPPTypedef td= new CPPTypedef(name);
 		    td.setType(targetType);
@@ -667,6 +661,10 @@ public class CPPVisitor extends ASTQueries {
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate(name)
 								   : new CPPFunction((ICPPASTFunctionDeclarator) funcDeclarator);
+				// friend functions may be declared in a different scope than the owner scope
+				if (simpleDecl != null && ((ICPPASTDeclSpecifier) simpleDecl.getDeclSpecifier()).isFriend()) {
+					ASTInternal.addName(scope, name);
+				}
 			}
 		} else if (parent instanceof IASTSimpleDeclaration) {
     	    IType t1 = null, t2 = null;
@@ -691,13 +689,6 @@ public class CPPVisitor extends ASTQueries {
 		    }
 		} 
 
-		if (scope != null && binding != null) {
-            try {
-                ASTInternal.addName(scope,  name);
-            } catch (DOMException e1) {
-            }
-		}
-		
 		return binding;
 	}
 
@@ -799,7 +790,7 @@ public class CPPVisitor extends ASTQueries {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-					if (CPPVisitor.findTypeRelevantDeclarator(dtor) == dtor) {
+					if (ASTQueries.findTypeRelevantDeclarator(dtor) == dtor) {
 						while (parent.getParent() instanceof IASTDeclarator)
 						    parent = parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
@@ -894,8 +885,7 @@ public class CPPVisitor extends ASTQueries {
 	public static IScope getContainingScope(IASTName name) {
 		IScope scope= getContainingScopeOrNull(name);
 		if (scope == null) {
-			return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE,
-					name == null ? CharArrayUtils.EMPTY : name.toCharArray());
+			return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE);
 		}
 
 		return scope;
@@ -948,8 +938,7 @@ public class CPPVisitor extends ASTQueries {
 					}
 					if (done) {
 						if (scope == null) {
-							return new CPPScope.CPPScopeProblem(names[i - 1],
-									IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray());
+							return new CPPScope.CPPScopeProblem(names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE);
 						}
 						return scope;
 					}
@@ -2353,53 +2342,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return false;
 	}
-	
-	/** 
-	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
-	 * <code>declarator</code> itself.
-	 */
-	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator outermost= null;
-		IASTNode candidate= declarator;
-		while (candidate instanceof IASTDeclarator) {
-			outermost= (IASTDeclarator) candidate;
-			candidate= outermost.getParent();
-		}
-		return outermost;
-	}
-
-	/** 
-	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
-	 * <code>declarator</code> itself.
-	 */
-	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator innermost= null;
-		while (declarator != null) {
-			innermost= declarator;
-			declarator= declarator.getNestedDeclarator();
-		}
-		return innermost;
-	}
-
-	/**
-	 * Searches for the innermost declarator that contributes the the type declared.
-	 */
-	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator result= findInnermostDeclarator(declarator);
-		while (result.getPointerOperators().length == 0 
-				&& !(result instanceof IASTFieldDeclarator)
-				&& !(result instanceof IASTFunctionDeclarator)
-				&& !(result instanceof IASTArrayModifier)) {
-			final IASTNode parent= result.getParent();
-			if (parent instanceof IASTDeclarator) {
-				result= (IASTDeclarator) parent;
-			} else {
-				return result;
-			}
-		}
-		return result;
-	}
-	
+		
 	/**
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */

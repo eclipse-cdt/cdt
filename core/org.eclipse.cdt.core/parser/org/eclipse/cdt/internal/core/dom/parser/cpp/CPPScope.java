@@ -59,6 +59,9 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
         public CPPScopeProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
+        public CPPScopeProblem(IASTName name, int id) {
+            super(name, id);
+        }
     }
 
 	public CPPScope(IASTNode physicalNode) {
@@ -282,13 +285,9 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 		return result;
 	}
 	
-	protected void populateCache() {
+	public final void populateCache() {
 		if (!isCached) {
-			try {
-				CPPSemantics.lookupInScope(null, this, null);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
+			CPPSemantics.populateCache(this);
 			isCached= true;
 		}
 	}
@@ -300,49 +299,6 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 	    return CPPSemantics.findBindings(this, name, false);
 	}
 
-	public void flushCache() {
-		final CharArrayObjectMap map= bindings;
-		if (map != null) {
-			CharArrayObjectMap allBuiltins= null;
-			for (int i = 0; i < map.size(); i++) {
-				Object o= map.getAt(i);
-				if (o instanceof IASTName) {
-					((IASTName) o).setBinding(null);
-				} else if (o instanceof IBinding) {
-					if (allBuiltins == null) {
-						allBuiltins= new CharArrayObjectMap(1);
-					}
-					allBuiltins.put(map.keyAt(i), o);
-				} else if (o instanceof ObjectSet<?>) {
-					@SuppressWarnings("unchecked")
-					final ObjectSet<Object> set= (ObjectSet<Object>) map.getAt(i);
-					if (set != null) {
-						ObjectSet<Object> builtins= null;
-						for (int j= set.size()-1; j >= 0; j--) {
-							Object p= set.keyAt(j);
-							if (p instanceof IASTName) {
-								((IASTName) p).setBinding(null);
-							} else if (p instanceof IBinding) {
-								if (builtins == null) {
-									builtins= new ObjectSet<Object>(1);
-								}
-								builtins.put(p);
-							}
-						}
-						if (builtins != null) {
-							if (allBuiltins == null) {
-								allBuiltins= new CharArrayObjectMap(1);
-							}
-							allBuiltins.put(map.keyAt(i), builtins);
-						}
-					}
-				}
-			}
-			bindings= allBuiltins;
-		}
-		isCached = false;
-	}
-    
 	@SuppressWarnings("unchecked")
     public void addBinding(IBinding binding) {
         if (bindings == null)

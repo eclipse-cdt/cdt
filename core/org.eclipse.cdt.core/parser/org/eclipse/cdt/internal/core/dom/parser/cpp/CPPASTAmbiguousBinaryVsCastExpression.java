@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousBinaryVsCastExpression;
 
 public class CPPASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousBinaryVsCastExpression {
 
     public CPPASTAmbiguousBinaryVsCastExpression(IASTBinaryExpression bexp, IASTCastExpression castExpr) {
     	super(bexp, castExpr);
-	}
-
-	public IASTExpression copy() {
-		throw new UnsupportedOperationException();
 	}
 }

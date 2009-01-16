@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode.NameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
 
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Assert;
  * Handles the ambiguity between cast and function-call expressions: (type)(expr) versus (function)(expr);
  * It also handles the impact on the grouping of the sub-expressions.
  */
-public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode implements IASTAmbiguousExpression {
+public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbiguousNode implements IASTAmbiguousExpression {
 
     private final IASTCastExpression fCastExpression;
     private final IASTFunctionCallExpression fFunctionCallExpression;
@@ -46,7 +46,17 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
     	fFunctionCallExpression= functionCall;
     }
     
-    public IASTExpression copy() {
+	@Override
+	protected final IScope getAffectedScope() {
+		return null;
+	}
+
+	@Override
+	public final IASTNode[] getNodes() {
+		return getExpressions();
+	}
+
+    public final IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
     
@@ -63,7 +73,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
 	}
 
 	@Override
-	public boolean accept(ASTVisitor visitor) {
+	public final IASTNode resolveAmbiguity(ASTVisitor visitor) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
@@ -76,7 +86,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
 		// if the operand of the cast-expr is not suitable for a function call, we are done.
 		final IASTUnaryExpression primaryWithParenthesis= findPrimaryExpressionInParenthesis(fCastExpression.getOperand());
 		if (primaryWithParenthesis == null)
-			return true;
+			return nodeToReplace;
 
 		
 		// find nested names
@@ -99,7 +109,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
 			}
 		}
 		if (!hasIssue) 
-			return true;
+			return nodeToReplace;
 
 		fFunctionCallExpression.setParameterExpression(primaryWithParenthesis.getOperand());
 		setRange(fFunctionCallExpression, fCastExpression, primaryWithParenthesis);
@@ -145,7 +155,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTNode i
 		owner.replace(nodeToReplace, result);
 		// resolve ambiguities in the function-call expression
 		fFunctionCallExpression.getFunctionNameExpression().accept(visitor);
-		return true;
+		return result;
 	}
 
 	private IASTUnaryExpression findPrimaryExpressionInParenthesis(IASTExpression operand) {

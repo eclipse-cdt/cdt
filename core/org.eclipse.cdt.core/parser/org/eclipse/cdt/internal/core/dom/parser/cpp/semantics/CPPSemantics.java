@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -126,11 +127,12 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
@@ -151,6 +153,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -583,7 +586,7 @@ public class CPPSemantics {
     		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(),
     				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
     	}
-    	return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray());
+    	return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE);
 	}
 
 	private static void mergeResults(LookupData data, Object results, boolean scoped) {
@@ -1124,27 +1127,18 @@ public class CPPSemantics {
 		return (ICPPScope) parent;
 	}
 
-	/**
-	 * 
-	 * @param data may be null to use a fresh LookupData
-	 * @param scope
-	 * @param blockItem
-	 * @return List of encountered using directives
-	 * @throws DOMException
-	 */
-	public static IASTName[] lookupInScope(LookupData data, ICPPScope scope, IASTNode blockItem) throws DOMException {
-		if (data == null) {
-			data = new LookupData();
-		}
-		final boolean isIndexBased= data.tu != null && data.tu.getIndex() != null;
-		Object possible = null;
+	public static void populateCache(ICPPASTInternalScope scope) {
 		IASTNode[] nodes = null;
-		IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
+		IASTNode parent;
+		try {
+			parent = ASTInternal.getPhysicalNodeOfScope(scope);
+		} catch (DOMException e) {
+			return;
+		}
 		
 		IASTName[] namespaceDefs = null;
 		int namespaceIdx = -1;
 		
-		IASTName[] found = null;		
 		if (parent instanceof IASTCompoundStatement) {
 			IASTNode p = parent.getParent();
 		    if (p instanceof IASTFunctionDefinition) {
@@ -1163,15 +1157,6 @@ public class CPPSemantics {
 		} else if (parent instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent;
 			nodes = comp.getMembers();
-			
-			// 9-2 a class name is also inserted into the scope of the class itself
-			IASTName n = comp.getName().getLastName();
-			if (n instanceof ICPPASTTemplateId) {
-				n= ((ICPPASTTemplateId) n).getTemplateName();
-			}
-			if (nameMatches(data, n, scope)) {
-				found = (IASTName[]) ArrayUtil.append(IASTName.class, found, n);
-		    }
 		} else if (parent instanceof ICPPASTNamespaceDefinition) {
 		    //need binding because namespaces can be split
 		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
@@ -1182,14 +1167,13 @@ public class CPPSemantics {
 			}
 		} else if (parent instanceof ICPPASTFunctionDeclarator) {
 		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-	        nodes = dtor.getParameters();
+		    nodes = dtor.getParameters();
 		} else if (parent instanceof ICPPASTTemplateDeclaration) {
 			ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) parent;
 			nodes = template.getTemplateParameters();
 		}
 		
 		int idx = -1;
-		boolean checkWholeClassScope = (scope instanceof ICPPClassScope) && data.checkWholeClassScope;
 		IASTNode item = (nodes != null ? (nodes.length > 0 ? nodes[++idx] : null) : parent);
 		IASTNode[][] nodeStack = null;
 		int[] nodeIdxStack = null;
@@ -1206,48 +1190,33 @@ public class CPPSemantics {
 				    continue;
 		        }
 			}
-
+		    if (item instanceof IASTLabelStatement) 
+		    	item= ((IASTLabelStatement) item).getNestedStatement();
 		    if (item instanceof IASTDeclarationStatement)
 		        item = ((IASTDeclarationStatement)item).getDeclaration();
 			if (item instanceof ICPPASTUsingDirective) {
 				if (scope instanceof ICPPNamespaceScope) {
 				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
 					final ICPPASTUsingDirective usingDirective = (ICPPASTUsingDirective) item;
-					nsscope.addUsingDirective(new CPPUsingDirective(usingDirective));
+					try {
+						nsscope.addUsingDirective(new CPPUsingDirective(usingDirective));
+					} catch (DOMException e) {
+						// directive is not cached.
+					}
 				}
 			} else if (item instanceof ICPPASTNamespaceDefinition &&
 					   ((ICPPASTNamespaceDefinition)item).getName().getLookupKey().length == 0) {
 				if (scope instanceof ICPPNamespaceScope) {
 				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
 				    final ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) item;
-					nsscope.addUsingDirective(new CPPUsingDirective(nsdef));
+					try {
+						nsscope.addUsingDirective(new CPPUsingDirective(nsdef));
+					} catch (DOMException e) {
+						// directive is not cached.
+					}
 				}
 			} else {
-			    // possible is IASTName or IASTName[]
-				possible = collectResult(data, scope, item, (item == parent));
-				if (possible != null) {
-				    int jdx = -1;
-				    IASTName temp;
-				    if (possible instanceof IASTName)
-				        temp = (IASTName) possible;
-				    else
-				        temp = ((IASTName[])possible)[++jdx];
-
-				    while (temp != null) {
-						if ((checkWholeClassScope || declaredBefore(temp, data.astName, isIndexBased)) &&
-								(item != blockItem || data.includeBlockItem(item)))	{
-							if (data.considerConstructors || 
-									!(temp.getParent() instanceof IASTDeclarator &&
-								    CPPVisitor.isConstructor(scope, (IASTDeclarator) temp.getParent()))) {
-								found = (IASTName[]) ArrayUtil.append(IASTName.class, found, temp);
-							}
-						}
-						if (++jdx > 0 && jdx < ((IASTName[])possible).length)
-						    temp = ((IASTName[])possible)[jdx];
-						else 
-						    temp = null;
-				    }
-				}
+				populateCache(scope, item, (item == parent));
 			}
 		    
 			if (nodes != null && ++idx < nodes.length) {
@@ -1298,8 +1267,139 @@ public class CPPSemantics {
 			    }
 			}
 		}
+	}
 
-		return found;
+	public static void populateCache(ICPPASTInternalScope scope, IASTNode node, boolean checkAux) {
+	    IASTDeclaration declaration = null;
+	    if (node instanceof ICPPASTTemplateDeclaration) {
+			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
+	    } else if (node instanceof IASTDeclaration) { 
+	        declaration = (IASTDeclaration) node;
+	    } else if (node instanceof IASTDeclarationStatement) {
+			declaration = ((IASTDeclarationStatement)node).getDeclaration();
+	    } else if (node instanceof ICPPASTCatchHandler) {
+			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
+	    } else if (node instanceof ICPPASTForStatement && checkAux) {
+			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;
+			if (forStatement.getConditionDeclaration() == null) {
+				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement)
+					declaration = ((IASTDeclarationStatement)forStatement.getInitializerStatement()).getDeclaration();
+			} else {
+				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement) {
+					populateCache(scope, forStatement.getInitializerStatement(), checkAux);
+				}
+				declaration = forStatement.getConditionDeclaration();
+			}
+        } else if (node instanceof ICPPASTSwitchStatement) {
+        	declaration = ((ICPPASTSwitchStatement)node).getControllerDeclaration();
+        } else if (node instanceof ICPPASTIfStatement) {
+        	declaration = ((ICPPASTIfStatement)node).getConditionDeclaration();
+	    } else if (node instanceof ICPPASTWhileStatement) {
+	    	declaration = ((ICPPASTWhileStatement)node).getConditionDeclaration();
+	    } else if (node instanceof IASTParameterDeclaration) {
+		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
+		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
+			IASTDeclarator innermost= dtor;
+			while (dtor != null) {
+				if (dtor instanceof IASTAmbiguousDeclarator)
+					return;
+				innermost= dtor;
+				dtor= dtor.getNestedDeclarator();
+			}
+            if (innermost != null) { // could be null when content assist in the declSpec
+    			IASTName declName = innermost.getName();
+    			ASTInternal.addName(scope, declName);
+    			return;
+            }
+		} else if (node instanceof ICPPASTTemplateParameter) {
+			IASTName name = CPPTemplates.getTemplateParameterName((ICPPASTTemplateParameter) node);
+			ASTInternal.addName(scope,  name);
+			return;
+		}
+		if (declaration == null)
+			return;
+		
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
+			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
+			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
+			if (!declSpec.isFriend()) {
+				for (IASTDeclarator declarator : declarators) {
+					IASTDeclarator innermost= null;
+					while (declarator != null) {
+						if (declarator instanceof IASTAmbiguousDeclarator) {
+							innermost= null;
+							break;
+						}
+						innermost= declarator;
+						declarator= declarator.getNestedDeclarator();
+					}
+					if (innermost != null) {
+						IASTName declaratorName = innermost.getName();
+						ASTInternal.addName(scope,  declaratorName);
+					}
+				}
+			}
+	
+			// declSpec 
+			
+			IASTName specName = null;
+			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
+				specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
+			} else if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
+				specName = compSpec.getName();
+				
+				// anonymous union?             //GCC supports anonymous structs too
+				if (declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
+				    specName.getLookupKey().length == 0) {
+				    IASTDeclaration[] decls = compSpec.getMembers();
+				    for (IASTDeclaration decl : decls) {
+                        populateCache(scope, decl, checkAux);
+                    }
+				}
+			} else if (declSpec instanceof IASTEnumerationSpecifier) {
+			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
+			    specName = enumeration.getName();
+
+			    // check enumerators too
+			    IASTEnumerator[] list = enumeration.getEnumerators();
+			    IASTName tempName;
+			    for (IASTEnumerator enumerator : list) {
+			        if (enumerator == null) 
+			        	break;
+			        tempName = enumerator.getName();
+			        ASTInternal.addName(scope,  tempName);
+			    }
+			}
+			if (specName != null) {
+				if (!(specName instanceof ICPPASTQualifiedName)) {
+					ASTInternal.addName(scope, specName);
+				}
+			}
+		} else if (declaration instanceof ICPPASTUsingDeclaration) {
+			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
+			IASTName name = using.getName();
+			if (name instanceof ICPPASTQualifiedName) {
+				name = ((ICPPASTQualifiedName) name).getLastName();
+			}
+			ASTInternal.addName(scope,  name);
+		} else if (declaration instanceof ICPPASTNamespaceDefinition) {
+			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
+			ASTInternal.addName(scope,  namespaceName);
+		} else if (declaration instanceof ICPPASTNamespaceAlias) {
+			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
+			ASTInternal.addName(scope,  alias);
+		} else if (declaration instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
+			if (!((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
+				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
+				
+				// check the function itself
+				IASTName declName = ASTQueries.findInnermostDeclarator(declarator).getName();
+				ASTInternal.addName(scope,  declName);
+			}
+		}
 	}
 
 	/**
@@ -1346,221 +1446,6 @@ public class CPPSemantics {
 		}
 	}
 
-	static private Object collectResult(LookupData data, ICPPScope scope, IASTNode node, boolean checkAux) throws DOMException{
-	    IASTName resultName = null;
-	    IASTName[] resultArray = null;
-	    
-	    IASTDeclaration declaration = null;
-	    if (node instanceof ICPPASTTemplateDeclaration) {
-			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
-	    } else if (node instanceof IASTDeclaration) { 
-	        declaration = (IASTDeclaration) node;
-	    } else if (node instanceof IASTDeclarationStatement) {
-			declaration = ((IASTDeclarationStatement)node).getDeclaration();
-	    } else if (node instanceof ICPPASTCatchHandler) {
-			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
-	    } else if (node instanceof ICPPASTForStatement && checkAux) {
-			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;
-			if (forStatement.getConditionDeclaration() == null) {
-				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement)
-					declaration = ((IASTDeclarationStatement)forStatement.getInitializerStatement()).getDeclaration();
-			} else {
-				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement) {
-					Object o = collectResult(data, scope, forStatement.getInitializerStatement(), checkAux);
-					if (o instanceof IASTName)
-						resultName = (IASTName) o;
-					else if (o instanceof IASTName[])
-						resultArray = (IASTName[]) o;
-				}
-				declaration = forStatement.getConditionDeclaration();
-			}
-        } else if (node instanceof ICPPASTSwitchStatement) {
-        	declaration = ((ICPPASTSwitchStatement)node).getControllerDeclaration();
-        } else if (node instanceof ICPPASTIfStatement) {
-        	declaration = ((ICPPASTIfStatement)node).getConditionDeclaration();
-	    } else if (node instanceof ICPPASTWhileStatement) {
-	    	declaration = ((ICPPASTWhileStatement)node).getConditionDeclaration();
-	    } else if (node instanceof IASTParameterDeclaration) {
-		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
-		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
-            if (dtor != null) { // could be null when content assist in the declSpec
-    		    while (dtor.getNestedDeclarator() != null)
-    		    	dtor = dtor.getNestedDeclarator();
-    			IASTName declName = dtor.getName();
-    			ASTInternal.addName(scope,  declName);
-    			if (!data.typesOnly && nameMatches(data, declName, scope)) {
-    			    return declName;
-    		    }
-            }
-		} else if (node instanceof ICPPASTTemplateParameter) {
-			IASTName name = CPPTemplates.getTemplateParameterName((ICPPASTTemplateParameter) node);
-			ASTInternal.addName(scope,  name);
-			if (nameMatches(data, name, scope)) {
-		        return name;
-		    }
-		}
-		if (declaration == null)
-			return null;
-		
-		if (declaration instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
-			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
-			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
-			if (!declSpec.isFriend()) {
-				for (IASTDeclarator declarator : declarators) {
-					declarator= CPPVisitor.findInnermostDeclarator(declarator);
-					IASTName declaratorName = declarator.getName();
-					ASTInternal.addName(scope,  declaratorName);
-					if (!data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-						if (nameMatches(data, declaratorName, scope)) {
-							if (resultName == null)
-							    resultName = declaratorName;
-							else if (resultArray == null)
-							    resultArray = new IASTName[] { resultName, declaratorName };
-							else
-							    resultArray = (IASTName[]) ArrayUtil.append(IASTName.class, resultArray, declaratorName);
-						}
-					}
-				}
-			}
-	
-			//decl spec 
-			
-			IASTName specName = null;
-			if (declarators.length == 0 && declSpec instanceof IASTElaboratedTypeSpecifier) {
-				specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
-			} else if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
-				specName = compSpec.getName();
-				
-				// anonymous union?             //GCC supports anonymous structs too
-				if (declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
-				    specName.getLookupKey().length == 0)
-				{
-				    Object o = null;
-				    IASTDeclaration[] decls = compSpec.getMembers();
-				    for (IASTDeclaration decl : decls) {
-                        o = collectResult(data, scope, decl, checkAux);
-                        if (o instanceof IASTName) {
-                            if (resultName == null)
-    						    resultName = (IASTName) o;
-    						else if (resultArray == null)
-    						    resultArray = new IASTName[] { resultName, (IASTName) o };
-    						else
-    						    resultArray = (IASTName[]) ArrayUtil.append(IASTName.class, resultArray, o);
-                        } else if (o instanceof IASTName[]) {
-                            IASTName[] oa = (IASTName[]) o;
-                            if (resultName == null) {
-    						    resultName = oa[0];
-    						    resultArray = oa;
-                            } else if (resultArray == null) {
-    						    resultArray = new IASTName[1 + oa.length];
-    						    resultArray[0] = resultName;
-    						    resultArray = (IASTName[]) ArrayUtil.addAll(IASTName.class, resultArray, oa);
-                            } else {
-                                resultArray = (IASTName[]) ArrayUtil.addAll(IASTName.class, resultArray, oa);
-                            }
-                        }
-                    }
-				}
-			} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
-			    specName = enumeration.getName();
-
-			    // check enumerators too
-			    IASTEnumerator[] list = enumeration.getEnumerators();
-			    IASTName tempName;
-			    for (IASTEnumerator enumerator : list) {
-			        if (enumerator == null) break;
-			        tempName = enumerator.getName();
-			        ASTInternal.addName(scope,  tempName);
-			        if (!data.typesOnly && nameMatches(data, tempName, scope)) {
-			            if (resultName == null)
-						    resultName = tempName;
-						else if (resultArray == null)
-						    resultArray = new IASTName[] { resultName, tempName };
-						else
-						    resultArray = (IASTName[]) ArrayUtil.append(IASTName.class, resultArray, tempName);
-					}
-			    }
-			}
-			if (specName != null) {
-				if (!(specName instanceof ICPPASTQualifiedName) ||
-						data.astName == ((ICPPASTQualifiedName) specName).getLastName()) {
-					ASTInternal.addName(scope, specName);
-				}
-			    if (nameMatches(data, specName, scope)) {
-				    if (resultName == null)
-					    resultName = specName;
-					else if (resultArray == null)
-					    resultArray = new IASTName[] { resultName, specName };
-					else
-					    resultArray = (IASTName[]) ArrayUtil.append(IASTName.class, resultArray, specName);
-			    }
-			}
-		} else if (declaration instanceof ICPPASTUsingDeclaration) {
-			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
-			IASTName name = using.getName();
-			if (name instanceof ICPPASTQualifiedName) {
-				name = ((ICPPASTQualifiedName) name).getLastName();
-			}
-			ASTInternal.addName(scope,  name);
-			if (nameMatches(data, name, scope)) {
-				return name;
-			}
-		} else if (declaration instanceof ICPPASTNamespaceDefinition) {
-			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
-			ASTInternal.addName(scope,  namespaceName);
-			if (nameMatches(data, namespaceName, scope))
-				return namespaceName;
-		} else if (declaration instanceof ICPPASTNamespaceAlias) {
-			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
-			ASTInternal.addName(scope,  alias);
-			if (nameMatches(data, alias, scope))
-				return alias;
-		} else if (declaration instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
-			if (!((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
-				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
-				
-				// check the function itself
-				IASTName declName = CPPVisitor.findInnermostDeclarator(declarator).getName();
-				ASTInternal.addName(scope,  declName);
-	
-			    if (!data.typesOnly && nameMatches(data, declName, scope)) {
-					return declName;
-				}
-			}
-		}
-		
-		if (resultArray != null)
-		    return resultArray;
-		return resultName;
-	}
-
-	private static final boolean nameMatches(LookupData data, IASTName potential, IScope scope) throws DOMException{
-	    final IASTName name = data.astName;
-	    if (name == null)
-	    	return false;
-	    if (potential instanceof ICPPASTQualifiedName) {
-	    	IASTNode phn= ASTInternal.getPhysicalNodeOfScope(scope);
-			if (phn instanceof ICPPASTCompositeTypeSpecifier == false && phn instanceof ICPPASTNamespaceDefinition == false)
-				return false;
-
-	        // A qualified name implies the name actually belongs to a different scope, and should
-	        // not be considered here, except the qualifier names the scope itself
-			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) potential;
-		    if (scope instanceof CPPScope == false || ((CPPScope) scope).canDenoteScopeMember(qname))
-		    	return false;
-				
-			potential= qname.getLastName();
-	    }
-	    char[] c = potential.getLookupKey();
-		char[] n = name.getLookupKey();
-	    return (data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, true))
-			|| (!data.prefixLookup && CharArrayUtils.equals(c, n));
-	}
-	
 	private static void addDefinition(IBinding binding, IASTName name) {
 		if (binding instanceof IFunction) {
 			IASTNode node =  name.getParent();
@@ -2440,7 +2325,7 @@ public class CPPSemantics {
             		node = node.getParent();
             	}
             	IASTDeclarator dtor = ((IASTFunctionDefinition)node).getDeclarator();
-            	dtor= CPPVisitor.findInnermostDeclarator(dtor);
+            	dtor= ASTQueries.findInnermostDeclarator(dtor);
             	IBinding binding = dtor.getName().resolveBinding();
             	if (binding instanceof IFunction) {
             		try {
@@ -2755,7 +2640,7 @@ public class CPPSemantics {
     }
     
 	public static boolean isSameFunction(IFunction function, IASTDeclarator declarator) {
-		IASTName name = CPPVisitor.findInnermostDeclarator(declarator).getName();
+		IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
 		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 		if (templateDecl != null) {
 			if (templateDecl instanceof ICPPASTTemplateSpecialization) {
@@ -2767,7 +2652,7 @@ public class CPPSemantics {
 			}
 		} 
 
-		declarator= CPPVisitor.findTypeRelevantDeclarator(declarator);
+		declarator= ASTQueries.findTypeRelevantDeclarator(declarator);
 		try {
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				IType type = function.getType();

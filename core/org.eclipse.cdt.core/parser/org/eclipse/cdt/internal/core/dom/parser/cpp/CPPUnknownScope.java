@@ -174,12 +174,6 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     	return new IBinding[] {getBinding(name, resolve, acceptLocalBindings)};
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#flushCache()
-     */
-    public void flushCache() {
-    }
-
 	public void addBinding(IBinding binding) {
 		// do nothing, this is part of template magic and not a normal scope
 	}
@@ -198,4 +192,6 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
 	public String toString() {
 		return scopeName.toString();
 	}
+
+	public void populateCache() {}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,18 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -62,5 +67,51 @@ public class ASTQueries {
 			}
 		}
 		return true;
+	}
+	
+	/** 
+	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
+	 * <code>declarator</code> itself.
+	 */
+	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
+		IASTDeclarator outermost= null;
+		IASTNode candidate= declarator;
+		while (candidate instanceof IASTDeclarator) {
+			outermost= (IASTDeclarator) candidate;
+			candidate= outermost.getParent();
+		}
+		return outermost;
+	}
+
+	/** 
+	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
+	 * <code>declarator</code> itself.
+	 */
+	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
+		IASTDeclarator innermost= null;
+		while (declarator != null) {
+			innermost= declarator;
+			declarator= declarator.getNestedDeclarator();
+		}
+		return innermost;
+	}
+
+	/**
+	 * Searches for the innermost declarator that contributes the the type declared.
+	 */
+	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
+		IASTDeclarator result= findInnermostDeclarator(declarator);
+		while (result.getPointerOperators().length == 0 
+				&& !(result instanceof IASTFieldDeclarator)
+				&& !(result instanceof IASTFunctionDeclarator)
+				&& !(result instanceof IASTArrayModifier)) {
+			final IASTNode parent= result.getParent();
+			if (parent instanceof IASTDeclarator) {
+				result= (IASTDeclarator) parent;
+			} else {
+				return result;
+			}
+		}
+		return result;
 	}
 }

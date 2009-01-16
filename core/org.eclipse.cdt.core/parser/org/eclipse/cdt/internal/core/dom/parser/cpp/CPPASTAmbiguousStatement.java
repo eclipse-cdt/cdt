@@ -1,19 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
         IASTAmbiguousStatement {
@@ -24,6 +27,15 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     public CPPASTAmbiguousStatement(IASTStatement... statements) {
 		for(IASTStatement s : statements)
 			addStatement(s);
+	}
+
+	@Override
+	protected void beforeResolution() {
+		// populate containing scope, so that it will not be affected by the alternative branches.
+		IScope scope= CPPVisitor.getContainingScope(this);
+		if (scope instanceof ICPPASTInternalScope) {
+			((ICPPASTInternalScope) scope).populateCache();
+		}
 	}
 
     public IASTStatement copy() {
@@ -45,7 +57,7 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     }
     
     @Override
-	protected IASTNode[] getNodes() {
+	public IASTNode[] getNodes() {
         return getStatements();
     }
 }

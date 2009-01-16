@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,16 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
 
 /**
  * Handles ambiguities when parsing declarators.
  * <br>
  * Example: void f(int (D));  // is D a type?
- * @since 5.0.1
  */
 public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAmbiguousDeclarator {
 
@@ -36,6 +37,15 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAm
 			if (d != null) {
 				addDeclarator(d);
 			}
+		}
+	}
+
+	@Override
+	protected void beforeResolution() {
+		// populate containing scope, so that it will not be affected by the alternative branches.
+		IScope scope= CPPVisitor.getContainingScope(this);
+		if (scope instanceof ICPPASTInternalScope) {
+			((ICPPASTInternalScope) scope).populateCache();
 		}
 	}
 
@@ -58,7 +68,7 @@ public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAm
     }
 
     @Override
-	protected IASTNode[] getNodes() {
+	public IASTNode[] getNodes() {
         return getDeclarators();
     }
 

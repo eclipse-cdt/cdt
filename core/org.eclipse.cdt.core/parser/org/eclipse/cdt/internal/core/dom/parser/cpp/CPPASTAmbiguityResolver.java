@@ -11,17 +11,24 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -42,7 +49,8 @@ public final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 	private LinkedList<ClassContext> fContextStack;
 	private ClassContext fCurrentContext;
-	private boolean fSkipInitializers;
+	private int fSkipInitializers= 0;
+	private HashSet<IASTDeclaration> fRepopulate= new HashSet<IASTDeclaration>();
 	
 	public CPPASTAmbiguityResolver() {
 		super(false);
@@ -54,7 +62,21 @@ public final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
-		astAmbiguousNode.resolveAmbiguity(this);
+		IASTNode node= astAmbiguousNode.resolveAmbiguity(this);
+		if (node instanceof IASTDeclarator) {
+			while(node != null) {
+				if (node instanceof IASTDeclaration) {
+					fRepopulate.add((IASTDeclaration) node);
+					break;
+				}
+				if (node instanceof IASTExpression) {
+					break;
+				} 
+				node= node.getParent();
+			}
+		} else if (node instanceof IASTDeclarationStatement) {
+			repopulateScope(((IASTDeclarationStatement) node).getDeclaration());
+		} 
 		return PROCESS_SKIP;
 	}
 	
@@ -119,9 +141,9 @@ public final class CPPASTAmbiguityResolver extends ASTVisitor {
 
 			// visit the declarator first, it may contain ambiguous template arguments needed 
 			// for associating the template declarations.
-			fSkipInitializers= true;
-			CPPVisitor.findOutermostDeclarator(fdef.getDeclarator()).accept(this);
-			fSkipInitializers= false;
+			fSkipInitializers++;
+			ASTQueries.findOutermostDeclarator(fdef.getDeclarator()).accept(this);
+			fSkipInitializers--;
 			
 			if (fCurrentContext != null) {
 				// defer visiting the body of the function until the class body has been visited.
@@ -134,8 +156,23 @@ public final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	@Override
+	public int leave(IASTDeclaration declaration) {
+		if (fRepopulate.remove(declaration)) {
+			repopulateScope(declaration);
+		}
+		return PROCESS_CONTINUE;
+	}
+
+	private void repopulateScope(IASTDeclaration declaration) {
+		IScope scope= CPPVisitor.getContainingScope(declaration);
+		if (scope instanceof ICPPASTInternalScope) {
+			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration, false);
+		}
+	}
+
+	@Override
 	public int visit(IASTInitializer initializer) {
-		if (fSkipInitializers)
+		if (fSkipInitializers > 0)
 			return PROCESS_SKIP;
 
 		return PROCESS_CONTINUE;

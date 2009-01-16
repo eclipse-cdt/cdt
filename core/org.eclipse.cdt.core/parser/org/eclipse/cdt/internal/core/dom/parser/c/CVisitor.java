@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -104,6 +103,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -111,7 +111,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Collection of methods to find information in an AST.
  */
-public class CVisitor {
+public class CVisitor extends ASTQueries {
 	public static class ClearBindingAction extends CASTVisitor {
 		{
 			shouldVisitNames = true;
@@ -530,10 +530,7 @@ public class CVisitor {
         	}
 	    } else {
 	        binding = new CEnumeration(name);
-	        try {
-	        	ASTInternal.addName(scope, name);
-            } catch (DOMException e1) {
-            }
+	        ASTInternal.addName(scope, name);
 	    } 
         return binding; 
 	}
@@ -870,11 +867,9 @@ public class CVisitor {
 
 				if (declarator.getParent() instanceof IASTFunctionDefinition) {
 					IScope scope =  ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
-					if (scope != null && binding != null)
-                        try {
-                            ASTInternal.addName(scope, name);
-                        } catch (DOMException e) {
-                        }
+					if (scope != null && binding != null) {
+						ASTInternal.addName(scope, name);
+					}
 				}
 			}
 		} else {
@@ -889,8 +884,8 @@ public class CVisitor {
 			parent = parent.getParent();
 		}
 
-		declarator= CVisitor.findInnermostDeclarator(declarator);
-		IASTDeclarator typeRelevant= CVisitor.findTypeRelevantDeclarator(declarator);
+		declarator= ASTQueries.findInnermostDeclarator(declarator);
+		IASTDeclarator typeRelevant= ASTQueries.findTypeRelevantDeclarator(declarator);
 		IASTFunctionDeclarator funcDeclarator= null;
 		if (typeRelevant instanceof IASTFunctionDeclarator) {
 			funcDeclarator= (IASTFunctionDeclarator) typeRelevant;
@@ -977,11 +972,9 @@ public class CVisitor {
 			}
 		}
 
-		if (scope != null && binding != null)
-            try {
-                ASTInternal.addName(scope,  name);
-            } catch (DOMException e) {
-            }
+		if (scope != null && binding != null) {
+			ASTInternal.addName(scope,  name);
+		}
 		return binding;
 	}
 
@@ -1196,7 +1189,7 @@ public class CVisitor {
 			scope = getContainingScope((IASTStatement)parent);
 		} else if (parent instanceof IASTFunctionDefinition) {
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent).getDeclarator();
-			IBinding function = CVisitor.findInnermostDeclarator(fnDeclarator).getName().resolveBinding();
+			IBinding function = ASTQueries.findInnermostDeclarator(fnDeclarator).getName().resolveBinding();
 			try {
 				if (function instanceof IFunction) {
 					scope = ((IFunction)function).getFunctionScope();
@@ -1596,7 +1589,7 @@ public class CVisitor {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			for (IASTDeclarator declarator : declarators) {
-				declarator= CVisitor.findInnermostDeclarator(declarator);
+				declarator= ASTQueries.findInnermostDeclarator(declarator);
 				tempName = declarator.getName();
 				if (scope != null)
 				    ASTInternal.addName(scope,  tempName);
@@ -1616,7 +1609,7 @@ public class CVisitor {
 		} else if (!typesOnly && declaration instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 
-			IASTDeclarator dtor = CVisitor.findInnermostDeclarator(functionDef.getDeclarator());
+			IASTDeclarator dtor = ASTQueries.findInnermostDeclarator(functionDef.getDeclarator());
 			tempName = dtor.getName();
 			if (scope != null)
 			    ASTInternal.addName(scope,  tempName);
@@ -1675,7 +1668,7 @@ public class CVisitor {
 					
 					if (node instanceof IASTFunctionDefinition && decl instanceof IASTFunctionDeclarator) {
 						IASTFunctionDeclarator dtor = ((IASTFunctionDefinition) node).getDeclarator();
-						IASTName name = CVisitor.findInnermostDeclarator(dtor).getName();
+						IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName();
 						if (name.toString().equals(declName)) {
 							return dtor;
 						}
@@ -2135,57 +2128,6 @@ public class CVisitor {
 	    return true; 
 	}
 
-
-	/** 
-	 * Returns the innermost declarator nested within the given <code>declarator</code>, or
-	 * <code>declarator</code> itself.
-	 * @since 5.0
-	 */
-	public static IASTDeclarator findInnermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator innermost= null;
-		while(declarator != null) {
-			innermost= declarator;
-			declarator= declarator.getNestedDeclarator();
-		}
-		return innermost;
-	}
-	
-	/** 
-	 * Returns the outermost declarator the given <code>declarator</code> nests within, or
-	 * <code>declarator</code> itself.
-	 * @since 5.0
-	 */
-	public static IASTDeclarator findOutermostDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator outermost= null;
-		IASTNode candidate= declarator;
-		while(candidate instanceof IASTDeclarator) {
-			outermost= (IASTDeclarator) candidate;
-			candidate= outermost.getParent();
-		}
-		return outermost;
-	}
-
-	/**
-	 * Searches for the innermost declarator that contributes the the type declared.
-	 * @since 5.0
-	 */
-	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
-		IASTDeclarator result= findInnermostDeclarator(declarator);
-		while (result.getPointerOperators().length == 0 
-				&& result instanceof IASTFieldDeclarator == false
-				&& result instanceof IASTFunctionDeclarator == false
-				&& result instanceof IASTArrayModifier == false) {
-			final IASTNode parent= result.getParent();
-			if (parent instanceof IASTDeclarator) {
-				result= (IASTDeclarator) parent;
-			} else {
-				return result;
-			}
-		}
-		return result;
-	}
-
-	
 	/**
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */

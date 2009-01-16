@@ -12,10 +12,11 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -54,7 +55,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
     /**
      * Return the alternative nodes for this ambiguity.
      */
-    protected abstract IASTNode[] getNodes();
+    public abstract IASTNode[] getNodes();
 
     /**
      * Returns the scope that may get polluted by alternatives of this ambiguity.
@@ -70,7 +71,11 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
     	return true;
     }
     
-    public void resolveAmbiguity(ASTVisitor resolver) {
+	protected void beforeResolution() {
+	}
+
+    public IASTNode resolveAmbiguity(ASTVisitor resolver) {
+    	beforeResolution();
 		final IScope scope= getAffectedScope();
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
@@ -82,12 +87,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		for (IASTNode alternative : alternatives) {
 			// flush scope, even if this is the first alternative. The ambiguous node may have contributed an
 		    // invalid binding to the scope during the resolution of other ambiguous nodes.
-			if (scope instanceof IASTInternalScope) {
-				try {
-					((IASTInternalScope) scope).flushCache();
-				} catch (DOMException e) {
-				}
-			}
+			ASTInternal.flushCache(scope);
 
 			// setup the ast to use the alternative
 			owner.replace(nodeToReplace, alternative);
@@ -105,6 +105,18 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 			int issues= 0;
 			for (IASTName name : names) {
 				try {
+					// avoid resolution of parameters (can always be resolved), 
+					// it can triggers resolution of declaration it belongs to, 
+					// while the declarator is still ambiguous. Could be solved by introducing an
+					// intermediate binding for parameters, similar to template parameters.
+					if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {
+						IASTNode parent= name.getParent();
+						if (parent instanceof IASTDeclarator) {
+							parent= ASTQueries.findOutermostDeclarator((IASTDeclarator) parent);
+							if (parent.getPropertyInParent() == IASTParameterDeclaration.DECLARATOR)
+								continue;
+						}
+					}
 					IBinding b= name.resolvePreBinding();
 					if (b instanceof IProblemBinding) {
 						issues++;
@@ -133,13 +145,9 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		// switch back to the best alternative, if necessary.
 		if (nodeToReplace != bestAlternative) {
-			if (scope instanceof IASTInternalScope) {
-				try {
-					((IASTInternalScope) scope).flushCache();
-				} catch (DOMException e) {
-				}
-			}
+			ASTInternal.flushCache(scope);
 			owner.replace(nodeToReplace, bestAlternative);
 		}
+		return bestAlternative;
 	}
 }

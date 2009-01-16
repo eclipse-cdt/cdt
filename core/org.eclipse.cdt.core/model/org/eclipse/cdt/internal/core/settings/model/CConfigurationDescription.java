@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -78,7 +79,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	}
 
 	/**
-	 * creating a new configuration
+	 * Creating a new configuration as a copy of an existing base CConfigurationDescription
 	 * 
 	 * @param id
 	 * @param name
@@ -91,13 +92,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 
 		setConfiguration(this);
 		internalSetId(id);
-		
+
 		CConfigurationSpecSettings baseSettings = ((CConfigurationDescription)base).getSpecSettings();
 		InternalXmlStorageElement baseRootEl = (InternalXmlStorageElement)baseSettings.getRootStorageElement();
-		InternalXmlStorageElement newRootEl = CProjectDescriptionManager.getInstance().copyConfigurationElement(baseRootEl, id, false);
-		ICStorageElement parentEl = baseRootEl.getParent();
-		newRootEl = (InternalXmlStorageElement)parentEl.importChild(newRootEl);
-		
+		ICStorageElement newRootEl = CProjectDescriptionManager.getInstance().createStorage(projectDes.getStorageBase(), id, baseRootEl);
+
 		fCfgSpecSettings = new CConfigurationSpecSettings(this, baseSettings, newRootEl);
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);

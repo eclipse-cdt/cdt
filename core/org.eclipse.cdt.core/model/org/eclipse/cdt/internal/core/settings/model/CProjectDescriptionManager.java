@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1621,6 +1622,31 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 		
 		return element;
+	}
+
+	/**
+	 * Creates a new configuration storage based on an existing 'base' storage.
+	 * If a configuration with the new ID already exists in the passed in project storage
+	 * a CoreException is thrown.
+	 * @param storage the setting storage of the current project description
+	 * @param cfgId configID of the new configuration - must be unique in
+	 * @param base the base (spec settings) storage element from which settings should be copied.
+	 * @return ICStorageElement representing the new configuration
+	 * @throws CoreException on failure
+	 */
+	ICStorageElement createStorage(ICSettingsStorage storage, String cfgId, ICStorageElement base) throws CoreException{
+		ICStorageElement rootElement = storage.getStorage(MODULE_ID, true);
+		ICStorageElement children[] = rootElement.getChildren();
+		for (ICStorageElement child : children) {
+			if(CONFIGURATION.equals(child.getName())
+					&& cfgId.equals(child.getAttribute(CConfigurationSpecSettings.ID)))
+				throw ExceptionFactory.createCoreException(MessageFormat
+						.format(SettingsModelMessages.getString("CProjectDescriptionManager.cfgIDAlreadyExists"), //$NON-NLS-1$
+								cfgId));
+		}
+		ICStorageElement config = rootElement.importChild(base);
+		config.setAttribute(CConfigurationSpecSettings.ID, cfgId);
+		return config;
 	}
 	
 	void removeStorage(ICSettingsStorage storage, String cfgId) throws CoreException{

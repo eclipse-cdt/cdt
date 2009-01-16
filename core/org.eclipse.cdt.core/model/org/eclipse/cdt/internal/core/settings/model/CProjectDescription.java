@@ -460,7 +460,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return fRootStorageElement;
 	}
 	
-	private ICSettingsStorage getStorageBase() throws CoreException{
+	ICSettingsStorage getStorageBase() throws CoreException{
 		if(fStorage == null)
 			fStorage = new CStorage((InternalXmlStorageElement)getRootStorageElement());
 		return fStorage;

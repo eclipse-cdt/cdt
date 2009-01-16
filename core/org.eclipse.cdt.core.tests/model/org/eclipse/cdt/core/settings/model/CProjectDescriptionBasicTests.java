@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -189,6 +190,89 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		assertTrue(failed);
 	}
 
+	public void testBug242955() throws Exception {
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
+
+		String projectName   = "testBug242955";
+
+		String defaultConfigurationName = "Default";
+		String newConfigurationName = "NEW-NAME";
+
+		// Emulate entering Eclipse first time
+		{
+			// Create model project and accompanied descriptions
+			ICProject cproject = CProjectHelper.createNewStileCProject(projectName, IPDOMManager.ID_NO_INDEXER);
+			IProject project = cproject.getProject();
+
+			// Initial project description after opening a project
+			ICProjectDescription initialProjectDescription = mngr.getProjectDescription(project);
+			assertNotNull("createDescription returned null!", initialProjectDescription);
+			assertEquals(1, initialProjectDescription.getConfigurations().length);
+
+			// Initial configuration description
+			ICConfigurationDescription initialDefaultConfigurationDescription = initialProjectDescription.getConfigurations()[0];
+			initialDefaultConfigurationDescription.setName(defaultConfigurationName);
+			assertEquals(defaultConfigurationName, initialDefaultConfigurationDescription.getName());
+			mngr.setProjectDescription(project, initialProjectDescription);
+
+			// Properties window: get project description: prjd
+			ICProjectDescription propertyProjectDescription = CoreModel.getDefault().getProjectDescription(project);
+
+			// Dialog Manage-configurations-New-"NEW-NAME", from "Default" configuration
+			final String newConfigurationId = newConfigurationName + ".id";
+			ICConfigurationDescription propertyDefaultConfigurationDescription = propertyProjectDescription.getConfigurations()[0];
+			// creating new configuration in "Property" project description
+			ICConfigurationDescription propertyNewConfigurationDescription = propertyProjectDescription
+				.createConfiguration(newConfigurationId, newConfigurationName, propertyDefaultConfigurationDescription);
+			assertNotNull(propertyNewConfigurationDescription);
+			assertEquals(2,propertyProjectDescription.getConfigurations().length);
+			assertEquals(defaultConfigurationName,propertyProjectDescription.getConfigurations()[0].getName());
+			assertEquals(newConfigurationName,propertyProjectDescription.getConfigurations()[1].getName());
+
+			// Apply button, local_prjd: copy "Property" new configuration description to "Applied" project description
+			ICProjectDescription applyButtonProjectDescription = coreModel.getProjectDescription(project);
+			ICConfigurationDescription applyButtonNewConfigurationDescription = applyButtonProjectDescription
+				.createConfiguration(
+					propertyNewConfigurationDescription.getId(),
+					propertyNewConfigurationDescription.getName(),
+					propertyNewConfigurationDescription);
+
+			// OK button, persist the property project description prjd.
+			coreModel.setProjectDescription(project, propertyProjectDescription);
+			assertEquals(2,propertyProjectDescription.getConfigurations().length);
+			assertEquals(defaultConfigurationName,propertyProjectDescription.getConfigurations()[0].getName());
+			assertEquals(newConfigurationName,propertyProjectDescription.getConfigurations()[1].getName());
+
+			// Close project
+			project.close(null);
+		}
+
+		// Emulate re-entering Eclipse
+		{
+			// Re-open project and re-load project description
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+
+			IWorkspaceDescription workspaceDesc = workspace.getDescription();
+			workspaceDesc.setAutoBuilding(false);
+			workspace.setDescription(workspaceDesc);
+
+			IProject project = root.getProject(projectName);
+			project.open(null);
+			assertEquals(true, project.isOpen());
+
+			// project description after reopening the project
+			ICProjectDescription reopenedProjectDescription = coreModel.getProjectDescription(project, false);
+			assertEquals(2,reopenedProjectDescription.getConfigurations().length);
+			assertEquals(defaultConfigurationName,reopenedProjectDescription.getConfigurations()[0].getName());
+			assertEquals(newConfigurationName,reopenedProjectDescription.getConfigurations()[1].getName());
+
+			project.close(null);
+		}
+	}
+
+	@Override
 	protected void tearDown() throws Exception {
 		try {
 			if(p1 != null)

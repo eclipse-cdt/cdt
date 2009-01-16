@@ -51,6 +51,7 @@
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * David McKnight   (IBM)        - [250168] some backward compatibility issues with old IBM dstore server
  * David McKnight   (IBM)        - [251429] Pasting local folder to remote does not work in some case
+ * David McKnight   (IBM)        - [261375] [dstore] problem comparing virtual path when getting cached element
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2008,7 +2009,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				String fparent = element.getValue();
 				StringBuffer pathBuf = new StringBuffer(fparent);
 				String sep = PathUtility.getSeparator(fparent);
-				pathBuf.append(sep);
+				if (!fparent.endsWith(sep)){
+					pathBuf.append(sep);
+				}
 				pathBuf.append(element.getName());
 				if (!normalizedPath.equals(pathBuf.toString())){
 					_fileElementMap.remove(normalizedPath);

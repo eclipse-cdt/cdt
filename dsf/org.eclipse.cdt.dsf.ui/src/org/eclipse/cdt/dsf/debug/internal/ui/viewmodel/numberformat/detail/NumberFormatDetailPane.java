@@ -675,7 +675,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 insert = "\n" + result; //$NON-NLS-1$
                             }
                             try {
-                                int max = DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+                                int max = DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
                                 if (max > 0 && insert.length() > max) {
                                     insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
                                 }

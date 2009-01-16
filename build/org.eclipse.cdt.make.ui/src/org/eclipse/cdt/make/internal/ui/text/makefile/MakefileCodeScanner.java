@@ -66,7 +66,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 			public boolean isWhitespace(char character) {
 				return Character.isWhitespace(character);
 			}
-		}, other));
+		}));
 
 		// Put before the the word rules
 		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class CProjectNature implements IProjectNature {
 
@@ -55,17 +56,23 @@ public class CProjectNature implements IProjectNature {
 	 *  
 	 */
 	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = project.getDescription();
-		String[] prevNatures = description.getNatureIds();
-		for (String prevNature : prevNatures) {
-			if (natureId.equals(prevNature))
-				return;
+		try {
+			if (monitor == null)
+				monitor = new NullProgressMonitor();
+			IProjectDescription description = project.getDescription();
+			String[] prevNatures = description.getNatureIds();
+			for (String prevNature : prevNatures) {
+				if (natureId.equals(prevNature))
+					return;
+			}
+			String[] newNatures = new String[prevNatures.length + 1];
+			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+			newNatures[prevNatures.length] = natureId;
+			description.setNatureIds(newNatures);
+			project.setDescription(description, monitor);
+		} finally {
+			monitor.done();
 		}
-		String[] newNatures = new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length] = natureId;
-		description.setNatureIds(newNatures);
-		project.setDescription(description, monitor);
 	}
 
 	/**

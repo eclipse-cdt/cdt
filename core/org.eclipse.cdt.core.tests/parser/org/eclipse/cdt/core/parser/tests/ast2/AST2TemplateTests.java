@@ -3578,7 +3578,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    template<typename U> struct C {
 	//      typedef T (U::*method1)();
 	//    };
-	//	  template<class U> struct C<const U> {
+	//	  template<typename U> struct C<const U> {
 	//	    typedef T (U::*method1)();
 	//	  };
 	//    typedef typename C<CL>::method1 method2;

@@ -347,7 +347,8 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     }
 
     public boolean isConnected() {
-        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && fConnected > 0;
+        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && 
+        			(!fMIBackend.getIsAttachSession() || fConnected > 0);
     }
     
     public void setConnected(boolean connected) {

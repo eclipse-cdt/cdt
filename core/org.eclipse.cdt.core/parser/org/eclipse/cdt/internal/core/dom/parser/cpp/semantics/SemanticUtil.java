@@ -142,7 +142,7 @@ public class SemanticUtil {
 			final char[] name= method.getNameCharArray();
 			if (name.length > OPERATOR_CHARS.length + 1 &&
 					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
-				if (name[OPERATOR_CHARS.length]==' ') {
+				if (name[OPERATOR_CHARS.length] == ' ') {
 					result= !cas.containsKey(name, OPERATOR_CHARS.length+1, name.length - (OPERATOR_CHARS.length+1));
 				}
 			}
@@ -182,7 +182,7 @@ public class SemanticUtil {
 				} else if (stopAtPointerToMember && type instanceof ICPPPointerToMemberType) {
 	                return type;
 				} else if (type instanceof IPointerType) {
-					if (lastPointerType!=null) {
+					if (lastPointerType != null) {
 						lastPointerType[0]= type;
 					}
 					type= ((IPointerType) type).getType();

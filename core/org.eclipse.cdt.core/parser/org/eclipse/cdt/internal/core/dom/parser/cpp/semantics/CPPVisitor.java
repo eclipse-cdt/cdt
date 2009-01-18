@@ -1920,32 +1920,40 @@ public class CPPVisitor extends ASTQueries {
 
 	        // Check for overloaded operator.
 			IType type1 = getExpressionType(binary.getOperand1());
-			while (type1 instanceof ITypedef) {
-				try {
-					type1 = ((ITypedef) type1).getType();
-				} catch (DOMException e) {
-					break;
-				}
+			IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
+			if (ultimateType1 instanceof IProblemBinding) {
+				return type1;
 			}
-		    try {
-				if (type1 instanceof ICPPReferenceType) {
-					type1 = ((ICPPReferenceType) type1).getType();
-				}
-				if (type1 instanceof IQualifierType) {
-					type1 = ((IQualifierType) type1).getType();
-				}
-				if (type1 instanceof ICPPClassType) {
-					ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) type1);
-					if (operator != null) {
+			if (ultimateType1 instanceof ICPPClassType) {
+				ICPPFunction operator= CPPSemantics.findOperator(expression, (ICPPClassType) ultimateType1);
+				if (operator != null) {
+					try {
 						return operator.getType().getReturnType();
+					} catch (DOMException e) {
+						return e.getProblem();
 					}
 				}
-			} catch (DOMException e) {
-				return e.getProblem();
 			}
-
+			IType type2 = getExpressionType(binary.getOperand2());
+			IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
+			if (ultimateType2 instanceof IProblemBinding) {
+				return type2;
+			}
+			if (ultimateType1 instanceof ICPPClassType || ultimateType1 instanceof IEnumeration ||
+					ultimateType2 instanceof ICPPClassType || ultimateType2 instanceof IEnumeration) {
+				// If at least one of the types is user defined, the operator can be overloaded.
+				ICPPFunction operator = CPPSemantics.findOverloadedOperator(binary);
+				if (operator != null) {
+					try {
+						return operator.getType().getReturnType();
+					} catch (DOMException e) {
+						return e.getProblem();
+					}
+				}
+			}
+	        
 	        final int op = binary.getOperator();
-	        switch(op) {
+	        switch (op) {
 	        case IASTBinaryExpression.op_lessEqual:
 	        case IASTBinaryExpression.op_lessThan:
 	        case IASTBinaryExpression.op_greaterEqual:
@@ -1958,16 +1966,13 @@ public class CPPVisitor extends ASTQueries {
 	        	basicType.setValue(expression);
 	        	return basicType;
 	        case IASTBinaryExpression.op_plus:
-	        	IType t2 = getExpressionType(binary.getOperand2());
-	        	if (SemanticUtil.getUltimateTypeViaTypedefs(t2) instanceof IPointerType) {
-	        		return t2;
+	        	if (ultimateType2 instanceof IPointerType) {
+	        		return ultimateType2;
 	        	}
 	        	break;
 	        case IASTBinaryExpression.op_minus:
-	        	t2= getExpressionType(binary.getOperand2());
-	        	if (SemanticUtil.getUltimateTypeViaTypedefs(t2) instanceof IPointerType) {
-	        		IType t1 = getExpressionType(binary.getOperand1());
-	        		if (SemanticUtil.getUltimateTypeViaTypedefs(t1) instanceof IPointerType) {
+	        	if (ultimateType2 instanceof IPointerType) {
+	        		if (ultimateType1 instanceof IPointerType) {
 	        			IScope scope = getContainingScope(expression);
 	        			try {
 	        				IBinding[] bs = scope.find(PTRDIFF_T);
@@ -1984,22 +1989,22 @@ public class CPPVisitor extends ASTQueries {
 	        			basicType.setValue(expression);
 	        			return basicType;
 	        		}
-	        		return t1;
+	        		return ultimateType1;
 	        	}
 	        	break;
 	        case ICPPASTBinaryExpression.op_pmarrow:
 	        case ICPPASTBinaryExpression.op_pmdot:
-	        	IType type = getExpressionType(((IASTBinaryExpression) expression).getOperand2());
-	        	if (type instanceof ICPPPointerToMemberType) {
+	        	if (type2 instanceof ICPPPointerToMemberType) {
 	        		try {
-	        			return ((ICPPPointerToMemberType)type).getType();
+	        			return ((ICPPPointerToMemberType) type2).getType();
 	        		} catch (DOMException e) {
 	        			return e.getProblem();
 	        		}
 	        	} 
-	        	return new ProblemBinding(binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0]); 
+	        	return new ProblemBinding(binary, IProblemBinding.SEMANTIC_INVALID_TYPE,
+	        			expression.getRawSignature().toCharArray()); 
 	        }
-			return getExpressionType(((IASTBinaryExpression) expression).getOperand1());
+			return type1;
 	    } else if (expression instanceof IASTUnaryExpression) {
 	    	final int op= ((IASTUnaryExpression)expression).getOperator();
 			switch (op) {

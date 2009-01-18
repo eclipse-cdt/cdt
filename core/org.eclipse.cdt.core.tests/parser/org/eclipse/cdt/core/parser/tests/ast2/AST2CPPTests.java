@@ -6199,11 +6199,11 @@ public class AST2CPPTests extends AST2BaseTest {
     //  };
     //
     //  struct B {
-    //    A operator-(B b2);
-    //    A operator+(B& b2);
-    //    A operator*(const B& b2);
-    //    A operator/(B b2) const;
-    //    A operator%(const B& b2) const;
+    //    A operator-(B b);
+    //    A operator+(B& b);
+    //    A operator*(const B& b);
+    //    A operator/(B b) const;
+    //    A operator%(const B& b) const;
     //  };
     //
     //  void test(B p1, B p2) {
@@ -6213,12 +6213,42 @@ public class AST2CPPTests extends AST2BaseTest {
     //    (p1 / p2).a; //4
     //    (p1 % p2).a; //5
     //  }
-    public void testOverloadedBinaryOperator_259927() throws Exception {
+    public void testOverloadedBinaryOperator_259927_1() throws Exception {
         BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
         ba.assertNonProblem("a; //1", 1, ICPPField.class);
         ba.assertNonProblem("a; //2", 1, ICPPField.class);
         ba.assertNonProblem("a; //3", 1, ICPPField.class);
         ba.assertNonProblem("a; //4", 1, ICPPField.class);
         ba.assertNonProblem("a; //5", 1, ICPPField.class);
+    }
+
+    //  struct A {
+    //    int a;
+    //  };
+    //  struct B {};
+    //  enum E { zero };
+    //
+    //  A operator-(B p1, int p2);
+    //  A operator+(int p1, const B& p2);
+    //  A operator*(E p1, int p2);
+    //  A operator/(int p1, const E& p2);
+    //  A operator%(const B& p1, const B& p2);
+    //
+    //  void test(B b, E e, int i) {
+    //    (b - i).a; //1
+    //    (i + b).a; //2
+    //    (e * i).a; //3
+    //    (i / e).a; //4
+    //    (b % b).a; //5
+    //    (b + i).a; //6
+    //  }
+    public void testOverloadedBinaryOperator_259927_2() throws Exception {
+        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        ba.assertNonProblem("a; //1", 1, ICPPField.class);
+        ba.assertNonProblem("a; //2", 1, ICPPField.class);
+        ba.assertNonProblem("a; //3", 1, ICPPField.class);
+        ba.assertNonProblem("a; //4", 1, ICPPField.class);
+        ba.assertNonProblem("a; //5", 1, ICPPField.class);
+        ba.assertProblem("a; //6", 1);
     }
 }

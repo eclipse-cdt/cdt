@@ -2480,7 +2480,7 @@ public class CPPSemantics {
 		CPPASTName astName = new CPPASTName();
 		astName.setParent(exp);
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
-	    LookupData data = null;
+	    LookupData data;
 	    
 	    if (exp instanceof IASTUnaryExpression) {
 	    	astName.setName(OverloadableOperator.STAR.toCharArray());
@@ -2532,8 +2532,41 @@ public class CPPSemantics {
 		}
 		return null;
 	}
-	
-	public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException{
+
+    /**
+     * Returns the overloaded operator corresponding to a binary expression, or {@code null}
+     * if no such operator is found. 
+     * @param exp a binary expression
+     * @return the overloaded operator, or {@code null}.
+     */
+    public static ICPPFunction findOverloadedOperator(IASTBinaryExpression exp) {
+        OverloadableOperator operator = OverloadableOperator.fromBinaryExpression(exp);
+        if (operator == null) {
+        	return null;
+        }
+
+		IScope scope = CPPVisitor.getContainingScope(exp);
+		if (scope == null)
+			return null;
+
+		CPPASTName astName = new CPPASTName();
+		astName.setParent(exp);
+	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
+	    astName.setName(operator.toCharArray());
+	    LookupData data = new LookupData(astName);
+	    data.functionParameters = new IASTExpression[] { exp.getOperand1(), exp.getOperand2() };
+
+		try {
+		    lookup(data, scope);
+		    IBinding binding = resolveAmbiguities(data, astName);
+		    if (binding instanceof ICPPFunction)
+		    	return (ICPPFunction) binding;
+		} catch (DOMException e) {
+		}
+		return null;
+	}
+
+    public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException{
 		return findBindings(scope, name.toCharArray(), qualified, null);
 	}
 

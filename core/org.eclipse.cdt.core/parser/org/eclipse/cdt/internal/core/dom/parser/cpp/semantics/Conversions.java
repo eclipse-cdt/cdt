@@ -66,7 +66,8 @@ public class Conversions {
 	 * @return the cost of converting from source to target
 	 * @throws DOMException
 	 */
-	public static Cost checkImplicitConversionSequence(boolean allowUDC, IASTExpression sourceExp, IType source, IType target, boolean isImpliedObject) throws DOMException {
+	public static Cost checkImplicitConversionSequence(boolean allowUDC, IASTExpression sourceExp,
+			IType source, IType target, boolean isImpliedObject) throws DOMException {
 		Cost cost;
 		
 		allowUDC &= !isImpliedObject;
@@ -80,7 +81,8 @@ public class Conversions {
 			cost.targetHadReference= true;
 			
 			boolean lvalue= sourceExp == null || !CPPVisitor.isRValue(sourceExp);			
-			IType T2= source instanceof IQualifierType ? getUltimateTypeViaTypedefs(((IQualifierType) source).getType()) : source;
+			IType T2= source instanceof IQualifierType ?
+					getUltimateTypeViaTypedefs(((IQualifierType) source).getType()) : source;
 
 			if (lvalue && isReferenceCompatible(cv1T1, source)) {
 				// Direct reference binding
@@ -88,7 +90,8 @@ public class Conversions {
 				if (cost.source.isSameType(cost.target) || 
 						// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
 						// it were a pointer to the derived class
-						(isImpliedObject && cost.source instanceof ICPPClassType && cost.target instanceof ICPPClassType)) {
+						(isImpliedObject && cost.source instanceof ICPPClassType &&
+						cost.target instanceof ICPPClassType)) {
 					cost.rank = Cost.IDENTITY_RANK;
 					return cost;
 				}
@@ -111,7 +114,8 @@ public class Conversions {
 					boolean ambiguousConversionOperator= false;
 					if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
 						for (final ICPPMethod op : fcns) {
-							Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), target, false);
+							Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), target,
+									false);
 							if (cost2.rank != Cost.NO_MATCH_RANK) {
 								if (operatorCost == null) {
 									operatorCost= cost2;
@@ -157,11 +161,13 @@ public class Conversions {
 						cost.rank= Cost.IDENTITY_RANK;
 					} else {
 						// 5 - Otherwise
-						// Otherwise, a temporary of type "cv1 T1" is created and initialized from the initializer expression
-						// using the rules for a non-reference copy initialization (8.5). The reference is then bound to the temporary.
+						// Otherwise, a temporary of type "cv1 T1" is created and initialized from
+						// the initializer expression using the rules for a non-reference copy
+						// initialization (8.5). The reference is then bound to the temporary.
 
-						// If T1 is reference-related to T2, cv1 must be the same cv-qualification as, or greater cvqualification
-						// than, cv2; otherwise, the program is ill-formed. [Example
+						// If T1 is reference-related to T2, cv1 must be the same cv-qualification as,
+						// or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
+						// [Example
 						boolean illformed= false;
 						if (isReferenceRelated(cv1T1, source)) {
 							Integer cmp= compareQualifications(cv1T1, source); 
@@ -250,7 +256,8 @@ public class Conversions {
 	}
 
 	/**
-	 * [8.5.3] "cv1 T1" is reference-related to "cv2 T2" if T1 is the same type as T2, or T1 is a base class of T2.
+	 * [8.5.3] "cv1 T1" is reference-related to "cv2 T2" if T1 is the same type as T2,
+	 * or T1 is a base class of T2.
 	 * Note this is not a symmetric relation.
 	 * @param cv1t1
 	 * @param cv2t2
@@ -305,7 +312,8 @@ public class Conversions {
 	 *    base conversion does not cause any costs.
 	 * @throws DOMException
 	 */
-	protected static final Cost checkStandardConversionSequence(IType source, IType target, boolean isImplicitThis) throws DOMException {
+	protected static final Cost checkStandardConversionSequence(IType source, IType target,
+			boolean isImplicitThis) throws DOMException {
 		Cost cost = lvalue_to_rvalue(source, target);
 
 		if (cost.source == null || cost.target == null) {
@@ -449,7 +457,8 @@ public class Conversions {
 	 * no inheritance relation
 	 * @throws DOMException
 	 */
-	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType ancestorToFind) throws DOMException {
+	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType ancestorToFind)
+			throws DOMException {
 		if (type == ancestorToFind || type.isSameType(ancestorToFind)) {
 			return 0;
 		}

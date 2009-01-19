@@ -104,6 +104,7 @@ import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.FileTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.dnd.FileTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.PluginTransferDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;

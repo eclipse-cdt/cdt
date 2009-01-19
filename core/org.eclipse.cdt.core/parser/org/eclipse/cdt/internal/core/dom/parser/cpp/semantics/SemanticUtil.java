@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -156,10 +157,10 @@ public class SemanticUtil {
 	}
 	
 	/**
-	 * Descends into type containers, stopping at pointer-to-member types if
-	 * specified.
+	 * Descends into type containers, stopping at pointer-to-member types if specified.
 	 * @param type the root type
-	 * @param lastPointerType if non-null, the deepest pointer type encounter is stored in element zero
+	 * @param lastPointerType if non-null, the deepest pointer or array type encountered
+	 *   is stored in element zero.
 	 * @param stopAtPointerToMember if true, do not descend into ICPPPointerToMember types
 	 * @return the deepest type in a type container sequence
 	 */
@@ -180,12 +181,16 @@ public class SemanticUtil {
 						lastPointerType[0]= type;
 					}
 					type= ((IPointerType) type).getType();
+				} else if (type instanceof IArrayType) {
+					if (lastPointerType != null) {
+						lastPointerType[0]= type;
+					}
+					type= ((IArrayType) type).getType();
 				} else if (type instanceof ICPPReferenceType) {
 					type= ((ICPPReferenceType) type).getType();
 				} else { 
 					return type;
 				}
-				
 			}
 	    } catch (DOMException e) {
 	        return e.getProblem();

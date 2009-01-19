@@ -2132,7 +2132,20 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(decls.length, 1);
 		assertEquals(decls[0], name_parm);
 	}
-	
+
+	//	void func(int** p);
+	//
+	//	void test(int a[]) {
+	//	  func(&a);
+	//	}
+	public void testArrayPointer_261417() throws Exception {
+    	String code= getAboveComment();
+   		BindingAssertionHelper baC= new BindingAssertionHelper(code, false);
+   		baC.assertNonProblem("func(&a)", 4, IFunction.class);
+   		BindingAssertionHelper baCpp= new BindingAssertionHelper(code, true);
+   		baCpp.assertNonProblem("func(&a)", 4, ICPPFunction.class);
+	}
+
 	// int f() {}
 	// int *f2() {}
 	// int (* f3())() {}

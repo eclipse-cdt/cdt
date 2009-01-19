@@ -13,7 +13,7 @@
  *
  * Contributors:
  * Uwe Stieber (Wind River) - Added system types provider extension.
- * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  *******************************************************************************/
 package org.eclipse.rse.internal.core;
@@ -36,6 +36,8 @@ import org.eclipse.rse.core.RSECorePlugin;
 
 /**
  * Singleton class representing the RSE core registry.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RSECoreRegistry implements IRSECoreRegistry {
 
@@ -51,7 +53,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	// Cache for accessed system type either by id or by name. Avoids to
 	// re-iterate over all registered ones each call again.
 	private final Map accessedSystemTypeCache = new HashMap();
-	
+
 	// constants
 	private static final String ELEMENT_SYTEM_TYPE = "systemType"; //$NON-NLS-1$
 
@@ -108,7 +110,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemType(java.lang.String)
 	 */
@@ -127,13 +129,13 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 			}
 			return systemType;
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Reads system types from the extension point registry and returns the defined system types.
-	 * 
+	 *
 	 * @return An array of system types that have been defined.
 	 */
 	private IRSESystemType[] readSystemTypes() {
@@ -142,7 +144,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		accessedSystemTypeCache.clear();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
+
 		// First we take the direct system type contributions via extension point
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PI_RSE_CORE, PI_SYSTEM_TYPES);
 		for (int i = 0; i < elements.length; i++) {
@@ -153,11 +155,11 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 				if (!typeIds.contains(type.getId())) {
 					types.add(type);
 					typeIds.add(type.getId());
-					
+
 					// Build up the cache directly for improving access performance.
 					accessedSystemTypeCache.put(type.getId(), type);
 					accessedSystemTypeCache.put(type.getName(), type);
-					
+
 					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
 					message = NLS.bind(message, type.getLabel(), type.getId());
 					RSECorePlugin.getDefault().getLogger().logInfo(message);
@@ -178,13 +180,13 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 				if (provider instanceof IRSESystemTypeProvider) {
 					IRSESystemType[] typesForRegistration = ((IRSESystemTypeProvider)provider).getSystemTypesForRegistration();
 					if (typesForRegistration == null) continue;
-					
+
 					for (int j = 0; j < typesForRegistration.length; j++) {
 						IRSESystemType type = typesForRegistration[j];
 						if (!typeIds.contains(type.getId())) {
 							types.add(type);
 							typeIds.add(type.getId());
-							
+
 							// Build up the cache directly for improving access performance.
 							accessedSystemTypeCache.put(type.getId(), type);
 							accessedSystemTypeCache.put(type.getName(), type);
@@ -205,7 +207,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 				RSECorePlugin.getDefault().getLogger().logError(message, e);
 			}
 		}
-		
+
 		return (IRSESystemType[])types.toArray(new IRSESystemType[types.size()]);
 	}
 }

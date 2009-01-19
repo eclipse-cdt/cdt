@@ -180,7 +180,7 @@ public final class CDTUITools {
 	 * @param location the path of the resource backing the document. May be null.
 	 * @param locationKind the type of path specified above. May be null.
 	 */
-	public void setupCDocument(IDocument document, IPath location, LocationKind locationKind) {
+	public static void setupCDocument(IDocument document, IPath location, LocationKind locationKind) {
 		CUIPlugin.getDefault().getTextTools().setupCDocument(document, location, locationKind);
 	}
 
@@ -196,7 +196,7 @@ public final class CDTUITools {
 	 * 
 	 * @param document the document to be set up
 	 */
-	public void setupAsmDocument(IDocument document) {
+	public static void setupAsmDocument(IDocument document) {
 		IDocumentPartitioner partitioner= createAsmDocumentPartitioner();
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [cleanup] adding noimplement tag
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.persistence;
@@ -23,11 +24,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
- * This interface defines the services provided by a persistence manager for RSE.
- * There is typically only one persistence manager instance defined when RSE is running.
- * The persistence manager controls the persistence of RSE profiles through the use
- * of registered persistence providers.
+ * This interface defines the services provided by a persistence manager for
+ * RSE. There is typically only one persistence manager instance defined when
+ * RSE is running. The persistence manager controls the persistence of RSE
+ * profiles through the use of registered persistence providers.
+ *
  * @noimplement this interface is not intended to be implemented by clients
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRSEPersistenceManager {
 

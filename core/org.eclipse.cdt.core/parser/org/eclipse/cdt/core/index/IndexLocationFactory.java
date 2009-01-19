@@ -50,7 +50,7 @@ public class IndexLocationFactory {
 	 */
 	public static IPath getPath(IIndexFileLocation location) {
 		String fp = location.getFullPath();
-		if(fp!=null) {
+		if (fp != null) {
 			return new Path(fp);
 		}
 		return getAbsolutePath(location);
@@ -63,7 +63,7 @@ public class IndexLocationFactory {
 	 * URI is not a filesystem path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
-		return URIUtil.toPath(location.getURI());
+		 return URIUtil.toPath(location.getURI());
 	}
 	
 	/**
@@ -141,11 +141,11 @@ public class IndexLocationFactory {
 	 */
 	public static IIndexFileLocation getIFL(ITranslationUnit tu) {
 		IResource res = tu.getResource();
-		if(res instanceof IFile) {
+		if (res instanceof IFile) {
 			return getWorkspaceIFL((IFile)res);
 		}
 		IPath location = tu.getLocation();
-		if(location!=null) {
+		if (location != null) {
 			return getExternalIFL(location);
 		}
 		return null;

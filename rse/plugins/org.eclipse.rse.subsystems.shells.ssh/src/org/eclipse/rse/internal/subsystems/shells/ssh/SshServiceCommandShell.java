@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,8 +186,8 @@ public class SshServiceCommandShell extends ServiceCommandShell
 		if (shell instanceof TerminalServiceHostShell) {
 			return ((TerminalServiceHostShell)shell).getPromptCommand();
 		}
-		//Assert shell instanceof SshHostShell;
-		if (shell instanceof SshHostShell) {
+		//Legacy support for TM <= 3.0 without TerminalServiceHostShell
+		else if (shell instanceof SshHostShell) {
 			return ((SshHostShell)shell).getPromptCommand();
 		}
 		//return something impossible such that nothing is ever matched

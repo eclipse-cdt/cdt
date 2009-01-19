@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
@@ -180,7 +181,7 @@ public class LookupData {
 		}			
 		
 		if (p1 instanceof IASTDeclarator) {
-			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			IASTNode p2= ASTQueries.findOutermostDeclarator((IASTDeclarator) p1).getParent();
 			if (p2 instanceof IASTSimpleDeclaration) {
 				if (p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation)
 					return false;
@@ -210,7 +211,7 @@ public class LookupData {
 		}			
 		
 		if (p1 instanceof IASTDeclarator) {
-			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			IASTNode p2= ASTQueries.findOutermostDeclarator((IASTDeclarator) p1).getParent();
 			if (p2 instanceof IASTSimpleDeclaration || p2 instanceof IASTFunctionDefinition) {
 				ICPPASTTemplateDeclaration tmplDecl = CPPTemplates.getTemplateDeclaration(n);
 				return tmplDecl instanceof ICPPASTTemplateSpecialization;
@@ -234,7 +235,7 @@ public class LookupData {
 		}			
 		
 		if (p1 instanceof IASTDeclarator) {
-			IASTNode p2= CPPVisitor.findOutermostDeclarator((IASTDeclarator) p1).getParent();
+			IASTNode p2= ASTQueries.findOutermostDeclarator((IASTDeclarator) p1).getParent();
 			if (p2 instanceof IASTDeclaration) {
 				return p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation;
 			}
@@ -368,11 +369,11 @@ public class LookupData {
         		if (tempNameParent instanceof ICPPASTUnaryExpression) {
         			ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempNameParent;
         			IASTExpression oprd= unaryExp.getOperand();
-        			return CPPVisitor.getExpressionType(oprd);
+        			return oprd.getExpressionType();
         		}
         		if (tempNameParent instanceof ICPPASTFieldReference) {
         			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
-        			IType implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
+        			IType implied = fieldRef.getFieldOwner().getExpressionType();
         			if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
         				return ((IPointerType)implied).getType();
         			}
@@ -380,13 +381,13 @@ public class LookupData {
         		}
         		if (tempNameParent instanceof IASTArraySubscriptExpression) {
              		IASTExpression exp = ((IASTArraySubscriptExpression)tempNameParent).getArrayExpression();
-             		return CPPVisitor.getExpressionType(exp);
+             		return exp.getExpressionType();
              	} 
         		if (tempNameParent instanceof IASTFunctionCallExpression) {
-        			return CPPVisitor.getExpressionType(((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression());
+        			return ((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression().getExpressionType();
         		}
         		if (tempNameParent instanceof IASTBinaryExpression) {
-        			return CPPVisitor.getExpressionType(((IASTBinaryExpression) tempNameParent).getOperand1());
+        			return ((IASTBinaryExpression) tempNameParent).getOperand1().getExpressionType();
         		}
         		return null;
         	} 

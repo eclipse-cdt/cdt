@@ -1756,7 +1756,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTExpressionStatement expStatement = (IASTExpressionStatement) ((IASTCompoundStatement) def
 				.getBody()).getStatements()[0];
 		assertTrue(expStatement.getExpression() instanceof IASTLiteralExpression);
-		IType type = CPPVisitor.getExpressionType(expStatement.getExpression());
+		IType type = expStatement.getExpression().getExpressionType();
 		
 		assertTrue(type instanceof IPointerType);
 		assertSame(((IPointerType) type).getType(), A);
@@ -1765,7 +1765,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		expStatement = (IASTExpressionStatement) ((IASTCompoundStatement) def
 				.getBody()).getStatements()[0];
 		IASTUnaryExpression ue = (IASTUnaryExpression) expStatement.getExpression();
-		type = CPPVisitor.getExpressionType(ue);
+		type = ue.getExpressionType();
 		
 		assertTrue(type instanceof IQualifierType);
 		assertSame(((IQualifierType) type).getType(), A);
@@ -5556,7 +5556,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTDeclarator decltor= ((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclarators()[0];
 		IASTInitializerExpression init= (IASTInitializerExpression) decltor.getInitializer();
 		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getExpression();
-		ICPPBasicType type= (ICPPBasicType) CPPVisitor.getExpressionType(exp);
+		ICPPBasicType type= (ICPPBasicType) exp.getExpressionType();
 		assertTrue(type.isLong());
 	}
 	

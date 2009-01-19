@@ -1601,7 +1601,7 @@ public class CPPVisitor extends ASTQueries {
 	    if (node == null)
 	        return null;
 		if (node instanceof IASTExpression)
-			return getExpressionType((IASTExpression) node);
+			return ((IASTExpression) node).getExpressionType();
 		if (node instanceof IASTTypeId)
 			return createType(((IASTTypeId) node).getAbstractDeclarator());
 		if (node instanceof IASTParameterDeclaration)
@@ -1864,7 +1864,7 @@ public class CPPVisitor extends ASTQueries {
 	    	final IASTBinaryExpression binary = (IASTBinaryExpression) expression;
 
 	        // Check for overloaded operator.
-			IType type1 = getExpressionType(binary.getOperand1());
+			IType type1 = binary.getOperand1().getExpressionType();
 			IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
 			if (ultimateType1 instanceof IProblemBinding) {
 				return type1;
@@ -1879,7 +1879,7 @@ public class CPPVisitor extends ASTQueries {
 					}
 				}
 			}
-			IType type2 = getExpressionType(binary.getOperand2());
+			IType type2 = binary.getOperand2().getExpressionType();
 			IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
 			if (ultimateType2 instanceof IProblemBinding) {
 				return type2;
@@ -1959,7 +1959,7 @@ public class CPPVisitor extends ASTQueries {
 				return get_type_info(expression);
 			}
 			
-			IType type = getExpressionType(((IASTUnaryExpression) expression).getOperand());
+			IType type= ((IASTUnaryExpression) expression).getOperand().getExpressionType();
 			type = SemanticUtil.getUltimateTypeViaTypedefs(type);
 
 			if (op == IASTUnaryExpression.op_star) {
@@ -2029,7 +2029,7 @@ public class CPPVisitor extends ASTQueries {
             }
 		} else if (expression instanceof IASTExpressionList) {
 			IASTExpression[] exps = ((IASTExpressionList) expression).getExpressions();
-			return getExpressionType(exps[exps.length - 1]);
+			return exps[exps.length - 1].getExpressionType();
 		} else if (expression instanceof ICPPASTTypeIdExpression) {
 		    ICPPASTTypeIdExpression typeidExp = (ICPPASTTypeIdExpression) expression;
 		    switch (typeidExp.getOperator()) {
@@ -2040,7 +2040,7 @@ public class CPPVisitor extends ASTQueries {
 		    }
 		    return createType(typeidExp.getTypeId());
 		} else if (expression instanceof IASTArraySubscriptExpression) {
-			IType t = getExpressionType(((IASTArraySubscriptExpression) expression).getArrayExpression());
+			IType t = ((IASTArraySubscriptExpression) expression).getArrayExpression().getExpressionType();
 			try {
 				if (t instanceof ICPPReferenceType) {
 					t = ((ICPPReferenceType) t).getType();
@@ -2069,7 +2069,7 @@ public class CPPVisitor extends ASTQueries {
 			if (statements.length > 0) {
 				IASTStatement st = statements[statements.length - 1];
 				if (st instanceof IASTExpressionStatement)
-					return getExpressionType(((IASTExpressionStatement) st).getExpression());
+					return ((IASTExpressionStatement) st).getExpression().getExpressionType();
 			}
 		} else if (expression instanceof IASTConditionalExpression) {
 			final IASTConditionalExpression conditional = (IASTConditionalExpression) expression;
@@ -2077,8 +2077,8 @@ public class CPPVisitor extends ASTQueries {
 			if (positiveExpression == null) {
 				positiveExpression= conditional.getLogicalConditionExpression();
 			}
-			IType t2 = getExpressionType(positiveExpression);
-			IType t3 = getExpressionType(conditional.getNegativeResultExpression());
+			IType t2 = positiveExpression.getExpressionType();
+			IType t3 = conditional.getNegativeResultExpression().getExpressionType();
 			if (t3 instanceof IPointerType || t2 == null)
 				return t3;
 			return t2;

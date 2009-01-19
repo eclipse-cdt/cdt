@@ -78,7 +78,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author aniefer
@@ -1582,7 +1581,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IASTName f = col.getName(6);
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) f.getParent().getParent();
 		IASTExpressionStatement statement = (IASTExpressionStatement) ((IASTCompoundStatement)fdef.getBody()).getStatements()[0];
-		IType type = CPPVisitor.getExpressionType(statement.getExpression());
+		IType type = statement.getExpression().getExpressionType();
 		
 		assertTrue(type.isSameType(p.getType()));
 	}

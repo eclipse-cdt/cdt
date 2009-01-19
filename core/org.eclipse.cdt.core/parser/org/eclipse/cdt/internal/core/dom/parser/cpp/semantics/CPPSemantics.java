@@ -1908,7 +1908,7 @@ public class CPPSemantics {
 			IASTExpression[] exps = (IASTExpression[]) params;
 			IType[] result = new IType[exps.length];
 			for (int i = 0; i < exps.length; i++) {
-			    result[i] = CPPVisitor.getExpressionType(exps[i]);
+			    result[i] = exps[i].getExpressionType();
             }
 			return result;
 		} else if (params instanceof IASTParameterDeclaration[]) {
@@ -2257,7 +2257,7 @@ public class CPPSemantics {
                 // target is the left side of an assignment
                 IASTBinaryExpression binaryExp = (IASTBinaryExpression) node.getParent();
                 IASTExpression exp = binaryExp.getOperand1();
-                return CPPVisitor.getExpressionType(exp);
+                return exp.getExpressionType();
             } else if (prop == IASTFunctionCallExpression.PARAMETERS ||
             		(prop == IASTExpressionList.NESTED_EXPRESSION &&
                     node.getParent().getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)) {
@@ -2389,7 +2389,7 @@ public class CPPSemantics {
 	            }
 	        }
         } else {
-            IType type = CPPVisitor.getExpressionType(exp);
+            IType type = exp.getExpressionType();
             type = getUltimateType(type, false);
             if (type instanceof IFunctionType) {
                 result = new IFunctionType[] { (IFunctionType) type };

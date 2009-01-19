@@ -304,7 +304,7 @@
          <and>
             <with variable="org.eclipse.core.runtime.Platform">
                <test property="org.eclipse.core.runtime.bundleState"
-            	   args="org.eclipse.cdt.dsf.debug.ui"
+            	   args="org.eclipse.cdt.dsf.ui"
                    value="ACTIVE"/>
             </with>
             <or>
@@ -321,7 +321,7 @@
          <and>
             <with variable="org.eclipse.core.runtime.Platform">
                <test property="org.eclipse.core.runtime.bundleState"
-            	   args="org.eclipse.cdt.dsf.debug.ui"
+            	   args="org.eclipse.cdt.dsf.ui"
                    value="ACTIVE"/>
             </with>
             <or>
@@ -339,7 +339,7 @@
          <and>
             <with variable="org.eclipse.core.runtime.Platform">
                <test property="org.eclipse.core.runtime.bundleState"
-            	   args="org.eclipse.cdt.dsf.debug.ui"
+            	   args="org.eclipse.cdt.dsf.ui"
                    value="ACTIVE"/>
             </with>
             <or>

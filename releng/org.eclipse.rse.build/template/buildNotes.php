@@ -33,21 +33,20 @@
   compatibility fallback to also run on Eclipse 3.3 if that particular fix
   is not required.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li><b>The RSE ITerminalService</b> is now public API. Consequently, the <b>RSE Terminals</b>
-    integration is moving to version 1.0 and thus leaving incubation status
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=258631">258631</a>]</li>
-  <li><b>A Generic RSE Shell Service</b> can now run based on adapting any ITerminalService
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227569">227569</a>]</li>
-  <li><b>The Prompt Handling</b> for dstore shells has been fixed
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=249715">249715</a>]</li>
-</ul></li>
-<li>At least 24 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-11-12&chfieldto=2008-12-29&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23567%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+  <li><b>The Remote CDT Launch</b> now supports running arbitrary commands before actually invoking the debuggee.
+    This allows for fine-tuning the environment on the remote machine, in which the program is supposed to run
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181517">181517</a>]</li>
+  <li><b>Locating an item in the RSE Tree</b> is now possible from the scratchpad, monitor, and remote details
+    table views. This allows for easily finding related items in case one item is already known
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160105">160105</a>]</li>
+  </ul></li>
+<li>At least 8 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-12-24&chfieldto=2009-02-08&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23467%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M3-200811121314/">
-  TM 3.1M3</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M3-200811121314/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M4-200812191115/">
+  TM 3.1M4</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M4-200812191115/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -125,12 +124,12 @@ Use
   <!-- 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2008-06-20&chfieldto=2008-10-03&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1+M2&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1+M2&target_milestone=3.1+M3&target_milestone=3.1+M4&target_milestone=3.1+M5&target_milestone=3.1+M6&target_milestone=3.1+M7&cmdtype=doit">
   this query</a> to show the full list of API related updates since TM 3.0
   <!--
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
-  this query</a> to show the list of additional API changes proposed for TM 3.0
+  this query</a> to show the list of additional API changes proposed for TM 3.1
   -->
   .
 </td></tr></tbody></table>

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -32,11 +33,12 @@ import org.osgi.framework.Bundle;
  * Interface for a system type. Constants are defined for various system types.
  * These constants are kept in sync with definitions in plugin.xml.
  * <p>
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- *              System type implementations must subclass
- *              {@link AbstractRSESystemType} rather than implementing this
- *              interface directly.
- *              </p>
+ * @noextend This interface is not intended to be extended by clients. System
+ *           type implementations must subclass {@link AbstractRSESystemType}
+ *           rather than implementing this interface directly.
+ *           </p>
  */
 public interface IRSESystemType extends IAdaptable {
 

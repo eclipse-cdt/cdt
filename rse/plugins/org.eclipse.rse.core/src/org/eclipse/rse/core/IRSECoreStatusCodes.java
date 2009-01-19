@@ -1,5 +1,5 @@
 /*********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -17,6 +18,7 @@ package org.eclipse.rse.core;
  *
  * @since org.eclipse.rse.core 3.0
  * @noimplement this interface is not intended to be implemented by clients
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRSECoreStatusCodes {
 

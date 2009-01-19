@@ -1,36 +1,42 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [186589] Move User Actions events to the user actions plugin
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
 
 /**
- * The event IDs sent when local resources in the RSE model change.
- * You should monitor for these events in your view if you display any of the resource types listed here.
+ * The event IDs sent when local resources in the RSE model change. You should
+ * monitor for these events in your view if you display any of the resource
+ * types listed here.
  * <p>
- * To monitor, implement interface {@link org.eclipse.rse.core.events.ISystemModelChangeListener} and
- * call {@link org.eclipse.rse.core.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}
- * and in your dispose method, call {@link org.eclipse.rse.core.model.ISystemRegistry#removeSystemModelChangeListener(ISystemModelChangeListener)}.
+ * To monitor, implement interface
+ * {@link org.eclipse.rse.core.events.ISystemModelChangeListener} and call
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}
+ * and in your dispose method, call
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#removeSystemModelChangeListener(ISystemModelChangeListener)}.
  * <p>
  * If you are interesting in firing model change events, see
- * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
- * These events will typically be signaled in an implementation of ISystemRegistry.
- * 
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}
+ * . These events will typically be signaled in an implementation of
+ * ISystemRegistry.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemModelChangeEvents {
 

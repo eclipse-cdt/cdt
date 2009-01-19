@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
@@ -18,32 +19,32 @@ package org.eclipse.tm.terminal.model;
  * {@link ITerminalTextData} might get modified by another thread. Suppose you
  * would want to draw the content of the {@link ITerminalTextData} using the
  * following loop:
- * 
+ *
  * <pre>
  * for (int line = 0; line &lt; term.getHeight(); line++)
  * 	for (int column = 0; column &lt; term.getWidth(); column++)
  * 		drawCharacter(column, line, term.getChar(column, line), term.getStyle(column, line));
  * </pre>
- * 
+ *
  * This might fail because the background thread could change the dimensions of
  * the {@link ITerminalTextData} while you iterate the loop. One solution would
- * be to put a <code>synchronized(term){}</code> statement around the code.
- * This has two problems: 1. you would have to know about the internals of the
+ * be to put a <code>synchronized(term){}</code> statement around the code. This
+ * has two problems: 1. you would have to know about the internals of the
  * synchronisation of {@link ITerminalTextData}. 2. The other thread that
  * changes {@link ITerminalTextData} is blocked while the potentially slow
  * drawing is done.
  * <p>
- * <b>Solution:</b> Take a snapshot of the terminal and use the snapshot to
- * draw the content. There is no danger that the data structure get changed
- * while you draw. There are also methods to find out what has changed to
- * minimize the number of lines that get redrawn.
+ * <b>Solution:</b> Take a snapshot of the terminal and use the snapshot to draw
+ * the content. There is no danger that the data structure get changed while you
+ * draw. There are also methods to find out what has changed to minimize the
+ * number of lines that get redrawn.
  * </p>
- * 
+ *
  * <p>
  * <b>Drawing optimization</b>: To optimize redrawing of changed lines, this
  * class keeps track of lines that have changed since the previous snapshot.
  * </p>
- * 
+ *
  * <pre>
  * // iterate over the potentially changed lines
  * for (int line = snap.getFirstChangedLine(); line &lt;= snap.getLastChangedLine(); line++)
@@ -52,16 +53,16 @@ package org.eclipse.tm.terminal.model;
  * 		for (int column = 0; column &lt; snap.getWidth(); column++)
  * 			drawCharacter(column, line, snap.getChar(column, line), snap.getStyle(column, line));
  * </pre>
- * 
+ *
  * <p>
- * <b>Scroll optimization:</b> Often new lines are appended at the bottom of
- * the terminal and the rest of the lines are scrolled up. In this case all
- * lines would be marked as changed. To optimize for this case,
- * {@link #updateSnapshot(boolean)} can be called with <code>true</code> for
- * the <code>detectScrolling</code> parameter. The object will keep track of
+ * <b>Scroll optimization:</b> Often new lines are appended at the bottom of the
+ * terminal and the rest of the lines are scrolled up. In this case all lines
+ * would be marked as changed. To optimize for this case,
+ * {@link #updateSnapshot(boolean)} can be called with <code>true</code> for the
+ * <code>detectScrolling</code> parameter. The object will keep track of
  * scrolling. The UI must <b>first</b> handle the scrolling and then use the
  * {@link #hasLineChanged(int)} method to determine scrolling:
- * 
+ *
  * <pre>
  * // scroll the visible region of the UI &lt;b&gt;before&lt;/b&gt; drawing the changed lines.
  * doUIScrolling(snap.getScrollChangeY(), snap.getScrollChangeN(), snap.getScrollChangeShift());
@@ -72,14 +73,16 @@ package org.eclipse.tm.terminal.model;
  * 		for (int column = 0; column &lt; snap.getWidth(); column++)
  * 			drawCharacter(column, line, snap.getChar(column, line), snap.getStyle(column, line));
  * </pre>
+ *
  * </p>
  * <p>
  * <b>Threading Note</b>: This class is not thread safe! All methods have to be
  * called by the a same thread, that created the instance by calling
  * {@link ITerminalTextDataReadOnly#makeSnapshot()}.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	/**
@@ -92,7 +95,7 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	 * A typical terminal view would not update the snapshot immediately
 	 * after the {@link #snapshotOutOfDate(ITerminalTextDataSnapshot)} has been called. It would introduce a
 	 * delay to update the UI (and the snapshot} 10 or 20 times per second.
-	 * 
+	 *
 	 * <p>Make sure you don't spend too much time in this method.
 	 */
 	interface SnapshotOutOfDateListener {
@@ -146,10 +149,10 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	/**
 	 * @return The first line changed in this snapshot compared
 	 * to the previous snapshot.
-	 * 
+	 *
 	 * <p><b>Note:</b> If no line has changed, this
 	 * returns {@link Integer#MAX_VALUE}
-	 * 
+	 *
 	 * <p><b>Note:</b> if {@link #updateSnapshot(boolean)} has been called with <code>true</code>,
 	 * then this does not include lines that only have been scrolled. This is the
 	 * first line that has changed <b>after</b> the scroll has been applied.
@@ -161,13 +164,13 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	 * to the previous snapshot. If the height has changed since the
 	 * last update of the snapshot, then the returned value is within
 	 * the new dimensions.
-	 * 
+	 *
 	 * <p><b>Note:</b> If no line has changed, this returns <code>-1</code>
-	 * 
+	 *
 	 * <p><b>Note:</b> if {@link #updateSnapshot(boolean)} has been called with <code>true</code>,
 	 * then this does not include lines that only have been scrolled. This is the
 	 * last line that has changed <b>after</b> the scroll has been applied.
-	 * 
+	 *
 	 * <p>A typical for loop using this method would look like this (note the <code>&lt;=</code> in the for loop):
 	 * <pre>
 	 * for(int line=snap.{@link #getFirstChangedLine()}; line <b>&lt;=</b> snap.getLastChangedLine(); line++)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,19 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 /**
  * Constants for predefined subsystem factory categories. Use these in calls to
- * {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
- * 
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}
+ * . This is a constant interface. The individual items should be referenced
+ * directly.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- *              This is a constant interface. The individual items should be
- *              referenced directly.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISubSystemConfigurationCategories {
 	/**

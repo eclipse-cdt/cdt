@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Added Javadoc.
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -22,18 +23,20 @@ package org.eclipse.rse.core.model;
 import java.util.Map;
 
 /**
- * A Property Set stores key/value pairs, where the keys
- * are Strings and the values are an {@link IProperty},
- * of a type declared by an {@link IPropertyType}.
+ * A Property Set stores key/value pairs, where the keys are Strings and the
+ * values are an {@link IProperty}, of a type declared by an
+ * {@link IPropertyType}.
  *
- * The Property Set is identified by a name.
- * By default, the type of each property is of type String, and
- * in fact each value can be retrieved in String representation.
+ * The Property Set is identified by a name. By default, the type of each
+ * property is of type String, and in fact each value can be retrieved in String
+ * representation.
  *
- * The key <code>"description"</code> is reserved for internal
- * use, to store the description of the Property set.
+ * The key <code>"description"</code> is reserved for internal use, to store the
+ * description of the Property set.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * Use {@link PropertySet} directly.
+ * @noextend This interface is not intended to be extended by clients. Use
+ *           {@link PropertySet} directly.
  */
 public interface IPropertySet extends IPropertySetContainer {
 	/**
@@ -168,7 +171,7 @@ public interface IPropertySet extends IPropertySetContainer {
 	/**
 	 * Sets the container of this property set. Used to notify the container of
 	 * a change in a property.
-	 * 
+	 *
 	 * @param container the property set container
 	 */
 	public void setContainer(IPropertySetContainer container);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Johann Draschwandtner (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -20,6 +21,7 @@ package org.eclipse.rse.internal.remotecdt;
  * </p>
  *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since org.eclipse.rse.remotecdt 2.1
  */
 public interface IRemoteConnectionHostConstants {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [197036] added commitSystemProfile operation to interface
  * David Dykstal (IBM) - [202630] getDefaultPrivateProfile() and ensureDefaultPrivateProfile() are inconsistent
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -27,9 +28,10 @@ import org.eclipse.core.runtime.IStatus;
  * deleted, restored, activated, and deactivated though this interface if event
  * processing is not desired. If events are necessary then the system registry
  * should be used.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients. The
+ *           standard implementations are included in the framework.
  */
 public interface ISystemProfileManager {
 
@@ -121,7 +123,7 @@ public interface ISystemProfileManager {
 
 	/**
 	 * Commit a system profile
-	 * 
+	 *
 	 * @param profile the profile to commit
 	 * @return a status object indicating the result of the commit
 	 * @since org.eclipse.rse.core 3.0

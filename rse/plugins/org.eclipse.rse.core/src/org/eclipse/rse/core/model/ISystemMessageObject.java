@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,24 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 /**
- * This interface represents a message we wish to display as child node in the tree view.
+ * This interface represents a message we wish to display as child node in the
+ * tree view.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients. The
+ *           standard implementations are included in the framework.
  */
 public interface ISystemMessageObject {
 	/**
@@ -68,9 +72,9 @@ public interface ISystemMessageObject {
 	public Object getParent();
 
 	/**
-	 * isTransient determines if the message should be removed from the 
+	 * isTransient determines if the message should be removed from the
 	 * tree when the parent item in the tree is collapsed.
-	 * 
+	 *
 	 * @return true if the item should be removed, false if it should not
 	 */
 	public boolean isTransient();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,60 +7,66 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * {Name} (company) - description of contribution.
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 
 package org.eclipse.rse.ui;
 import org.eclipse.ui.IWorkbenchActionConstants;
+
 /**
- * Constants defining our groups inside our right-click popup menu in the system view.
- * <pre><code>
+ * Constants defining our groups inside our right-click popup menu in the system
+ * view.
+ *
+ * <pre>
+ * &lt;code&gt;
  * 	    // simply sets partitions in the menu, into which actions can be directed.
- *	    // Each partition can be delimited by a separator (new Separator) or not (new GroupMarker).
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_NEW));          // new->
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GOTO));       // goto into, go->
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_EXPANDTO));     // expand to->
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_EXPAND));     // expand, collapse
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_OPEN));       // open xxx
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_OPENWITH));   // open with->
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_BROWSEWITH)); // open with->
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_WORKWITH));     // work with->
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_BUILD));        // build, rebuild, refresh
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_CHANGE));       // update, change
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORGANIZE));   // rename,move,copy,delete,bookmark,refactoring
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORDER));      // move up, move down		
- *		menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GENERATE));   // getters/setters, etc. Typically in editor
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_SEARCH));       // search
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_CONNECTION));   // connection-related actions
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_IMPORTEXPORT)); // get or put actions
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADAPTERS));     // actions queried from adapters
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS));    // user or BP/ISV additions
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_TEAM));         // Team
- *		menu.add(new Separator(ISystemContextMenuConstants.GROUP_PROPERTIES));   // Properties
- * </code></pre>
- * 
+ *     // Each partition can be delimited by a separator (new Separator) or not (new GroupMarker).
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_NEW));          // new-&gt;
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GOTO));       // goto into, go-&gt;
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_EXPANDTO));     // expand to-&gt;
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_EXPAND));     // expand, collapse
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_OPEN));       // open xxx
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_OPENWITH));   // open with-&gt;
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_BROWSEWITH)); // open with-&gt;
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_WORKWITH));     // work with-&gt;
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_BUILD));        // build, rebuild, refresh
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_CHANGE));       // update, change
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORGANIZE));   // rename,move,copy,delete,bookmark,refactoring
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_REORDER));      // move up, move down
+ * 	menu.add(new GroupMarker(ISystemContextMenuConstants.GROUP_GENERATE));   // getters/setters, etc. Typically in editor
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_SEARCH));       // search
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_CONNECTION));   // connection-related actions
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_IMPORTEXPORT)); // get or put actions
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADAPTERS));     // actions queried from adapters
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS));    // user or BP/ISV additions
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_TEAM));         // Team
+ * 	menu.add(new Separator(ISystemContextMenuConstants.GROUP_PROPERTIES));   // Properties
+ * &lt;/code&gt;
+ * </pre>
+ *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemContextMenuConstants
 {
-	
+
 	/**
 	 * Context menu id used by all RSE views, such that menu's can be contributed
 	 * to all views.
 	 *
 	 * RSE Views: Remote Systems, Remote System Details, Remote Monitor, Remote Search, and Remote Scratchpad
-	 * Note: This does does not work with dialog's which have the SystemView 
+	 * Note: This does does not work with dialog's which have the SystemView
 	 * embedded in them.
 	 * @since 3.1
 	 */
 	public static final String RSE_CONTEXT_MENU = "org.eclipse.rse.views.common"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for goto actions (value <code>"group.goto"</code>).
 	 * <p>
@@ -80,7 +86,7 @@ public interface ISystemContextMenuConstants
 	 * ID of the submenu for "Preferences->"
 	 */
 	public static final String MENU_PREFERENCES= "menu.preferences"; //$NON-NLS-1$
-		
+
 	/**
 	 * Pop-up menu: name of group for open-with actions (value <code>"group.openwith"</code>).
 	 * <p>
@@ -101,12 +107,12 @@ public interface ISystemContextMenuConstants
 	 * Group name for the "Browse With" submenu
 	 */
 	public static final String GROUP_BROWSEWITH=	"group.browsewith"; //$NON-NLS-1$
-	
+
 	/**
 	 * Group name for the "Compare With" submenu
 	 */
 	public static final String GROUP_COMPAREWITH=	"group.comparewith"; //$NON-NLS-1$
-	
+
 	/**
 	 * Group name for the "Replace With" submenu
 	 */
@@ -156,7 +162,7 @@ public interface ISystemContextMenuConstants
 	 * ID of the submenu for "Open To->"
 	 */
 	public static final String MENU_OPENTO= "menu.opento"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for work-with actions (value <code>"group.workwith"</code>).
 	 * <p>
@@ -195,7 +201,7 @@ public interface ISystemContextMenuConstants
 	 * </p>
 	 */
 	public static final String GROUP_SHOW=		"group.show"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for new actions (value <code>"group.new"</code>).
 	 * This is a cascading group.
@@ -221,19 +227,19 @@ public interface ISystemContextMenuConstants
 	 * </p>
 	 */
 	public static final String GROUP_NEW_NONCASCADING="group.new.noncascade"; //$NON-NLS-1$
-		
+
 	/**
 	 * Pop-up menu: name of group for build actions (value <code>"group.build"</code>).
 	 */
 	public static final String GROUP_BUILD=		"group.build"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for reorganize actions (value <code>"group.reorganize"</code>).
-	 */	
+	 */
 	public static final String GROUP_REORGANIZE=	"group.reorganize";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for reorder actions like move up/down(value <code>"group.reorder"</code>).
-	 */	
+	 */
 	public static final String GROUP_REORDER=	"group.reorder";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for CHANGE actions. (value <code>"group.change"</code>).
@@ -247,31 +253,31 @@ public interface ISystemContextMenuConstants
 	 * </p>
 	 */
 	public static final String GROUP_CHANGE = "group.change"; //$NON-NLS-1$
-		
+
 	/**
 	 * Pop-up menu: name of group for code generation or refactoring actions (
 	 * value <code>"group.generate"</code>).
-	 */	
+	 */
 	public static final String GROUP_GENERATE=	"group.generate"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for search actions (value <code>"group.search"</code>).
-	 */	
+	 */
 	public static final String GROUP_SEARCH=		"group.search"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: name of group for additional actions (value <code>"group.additions"</code>).
-	 */	
+	 */
 	public static final String GROUP_ADDITIONS=	IWorkbenchActionConstants.MB_ADDITIONS; //"additions";
 
 	/**
 	 * Pop-up menu: name of group for viewer setup actions (value <code>"group.viewerSetup"</code>).
-	 */	
+	 */
 	public static final String GROUP_VIEWER_SETUP=	"group.viewerSetup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for properties actions (value <code>"group.properties"</code>).
-	 */	
+	 */
 	public static final String GROUP_PROPERTIES=	"group.properties";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for actions contributed by the adaptors for the selected object, which

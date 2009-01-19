@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
@@ -20,15 +21,15 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Represents the terminal view as seen by a terminal connection.
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a>
- * team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same. Please do not use this API without consulting with
+ * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
  * </p>
  *
  * @author Michael Scharf
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITerminalControl {
 
@@ -79,7 +80,7 @@ public interface ITerminalControl {
 	 * setEncoding() call failed and the fallback default encoding should be
 	 * queried, such that e.g. a combobox with encodings to choose can be
 	 * properly initialized.
-	 * 
+	 *
 	 * @return the current Encoding of the Terminal.
 	 * @since org.eclipse.tm.terminal 2.0
 	 */

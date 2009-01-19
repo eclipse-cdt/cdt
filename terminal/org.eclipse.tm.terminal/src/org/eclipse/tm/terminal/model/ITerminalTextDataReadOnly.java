@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
-
+/**
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
 public interface ITerminalTextDataReadOnly {
 
 	/**
@@ -50,14 +54,14 @@ public interface ITerminalTextDataReadOnly {
 	 * can be used to track changes. Make sure to call {@link ITerminalTextDataSnapshot#detach()}
 	 * if you don't need the snapshots anymore.
 	 * <p><b>Note: </b>A new snapshot is empty and needs a call to {@link ITerminalTextDataSnapshot#updateSnapshot(boolean)} to
-	 * get its initial values. You might want to setup the snapshot to your needs by calling 
+	 * get its initial values. You might want to setup the snapshot to your needs by calling
 	 * {@link ITerminalTextDataSnapshot#setInterestWindow(int, int)}.
 	 * </p>
 	 * @return a new instance of {@link ITerminalTextDataSnapshot} that "listens" to changes of
 	 * <code>this</code>.
 	 */
 	public ITerminalTextDataSnapshot makeSnapshot();
-	
+
 	char[] getChars(int line);
 	Style[] getStyles(int line);
 

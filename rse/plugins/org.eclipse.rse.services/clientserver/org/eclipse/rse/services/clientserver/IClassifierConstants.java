@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  *
  * Contributors:
  * David McKnight   (IBM)        - [247573][api] IClassifierConstants.TYPE_LINK == "link" is not in sync with actual usage of "symbolic link" in the code
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -20,6 +21,7 @@ package org.eclipse.rse.services.clientserver;
  * This interface defines some constants for classifiers.
  *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IClassifierConstants {
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - updated with comments, removed keys that are not to be used globally
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -16,6 +17,7 @@ package org.eclipse.rse.core;
  * These constants define the set of preference names that the RSE core uses.
  *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 
 /*
@@ -57,7 +59,7 @@ public interface IRSEPreferenceNames {
 	 * The key for the string containing the list of active user profiles in
 	 * alphabetical order. As profiles are activated, deactivated, or renamed
 	 * this string must be modified. This value is not part of the API.
-	 * 
+	 *
 	 * This field is not intended to be referenced by clients.
 	 */
 	public static final String ACTIVEUSERPROFILES = "activeuserprofiles"; //$NON-NLS-1$

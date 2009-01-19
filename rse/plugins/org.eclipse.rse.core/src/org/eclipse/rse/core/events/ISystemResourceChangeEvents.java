@@ -1,18 +1,19 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
  * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -21,8 +22,9 @@ import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 
 /**
  * Interface of event ID constants
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemResourceChangeEvents
 {
@@ -141,40 +143,40 @@ public interface ISystemResourceChangeEvents
 
 	/**
 	 * Refresh the single item passed in the "source" field of the event.
-	 * 
+	 *
 	 * All expanded sub-nodes are re-queried for their children, unexpanded
 	 * nodes lose their children cache. Selection is not maintained by this
 	 * event (use EVENT_REFRESH_REMOTE instead to maintain the selection).
-	 * 
+	 *
 	 * A source RSE object to refresh is the expected parameter
 	 */
 	public static final int EVENT_REFRESH = 82;
 
 	/**
 	 * Refresh the items currently selected in the SystemView.
-	 * 
+	 *
 	 * All expanded sub-nodes are re-queried for their children, unexpanded nodes
 	 * lose their children cache. After refreshing, selection of the currently selected
 	 * elements is restored if possible (in case an absoluteName is available).
-	 * 
+	 *
 	 * In case any of the selected items is a leaf node, the parent of that
 	 * leaf node is refreshed rather than the leaf node itself. In this particular
 	 * case, a multiselect is not considered properly.
-	 * 
+	 *
 	 * The SystemScratchpadView also listens to this event and refreshes those
 	 * elements that are selected in it.
-	 * 
+	 *
 	 * @deprecated obtain the selection yourself and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
 	 */
 	public static final int EVENT_REFRESH_SELECTED = 83;
 
 	/**
 	 * Refresh the parent of the first item currently selected in the SystemView.
-	 * 
+	 *
 	 * This only refreshes the parent TreeItem of the first item in the selection.
 	 * It does not consider multiselect, multiple occurrences of the Item under multiple
 	 * filters, and does not maintain the current selection.
-	 * 
+	 *
 	 * @deprecated obtain the selection yourself and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
 	 */
 	public static final int EVENT_REFRESH_SELECTED_PARENT = 84;
@@ -182,12 +184,12 @@ public interface ISystemResourceChangeEvents
 	/**
 	 * Refresh the filter under which the first item currently selected in the
 	 * SystemView is found.
-	 * 
+	 *
 	 * From the filter level, all expanded sub-nodes are re-queried
 	 * for their children, unexpanded nodes lose their children cache.
 	 * After refreshing, selection of the currently selected elements
 	 * is restored if possible. Multiselect is not considered properly.
-	 * 
+	 *
 	 * @deprecated Refreshing a particular context(filter) only can lead
 	 *     to inconsistencies, so better obtain the selection yourself
 	 *     and do EVENT_REFRESH or EVENT_REFRESH_REMOTE
@@ -198,7 +200,7 @@ public interface ISystemResourceChangeEvents
 	 * Refresh a remote object in the SystemView, given either the remote
 	 * object or a string that will match on getAbsoluteName, and optionally
 	 * (re)select a list of objects after refreshing.
-	 * 
+	 *
 	 * An object is considered remote if it has an adapter that implements
 	 * {@link ISystemViewElementAdapter} where the adapter returns true for
 	 * the isRemote(Object) call.  This method refreshes all occurrences of
@@ -212,7 +214,7 @@ public interface ISystemResourceChangeEvents
 	 * will be selected after the refresh. When passing a string, it must be
 	 * the result of {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}
 	 * on the adapter.
-	 * 
+	 *
 	 * A remote RSE object is the expected source parameter
 	 */
 	public static final int EVENT_REFRESH_REMOTE = 85;
@@ -272,7 +274,7 @@ public interface ISystemResourceChangeEvents
 
 	/**
 	 * Select one or more remote objects.
-	 * 
+	 *
 	 * The "src" parameter holds a remote object, or string, or Vector of
 	 * objects or strings. When passing a string, it must be the result of
 	 * {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}
@@ -318,7 +320,7 @@ public interface ISystemResourceChangeEvents
 	/**
 	 * The event is to update the command history drop-down in the remote shell view
 	 * A source RSE object is the expected parameter
-	 * 
+	 *
 	 * TODO should be moved out of core since this is command-specific
 	 */
 	public static final int EVENT_COMMAND_HISTORY_UPDATE = 130;

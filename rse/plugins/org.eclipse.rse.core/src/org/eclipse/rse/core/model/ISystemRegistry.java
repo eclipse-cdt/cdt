@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -30,6 +30,7 @@
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -65,8 +66,10 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  * there is a user-specified number of profiles "active" and connections from
  * each active profile are worked with.
  * </p>
+ *
  * @noimplement This interface is not intended to be implemented by clients.
- * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients. The
+ *           standard implementations are included in the framework.
  */
 public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemViewInputProvider {
 
@@ -112,14 +115,14 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * equivalent to getSubSystemConfigurationsBySystemType(systemType,
 	 * filterDuplicates, <code>true</code>) which is preferred since we do not
 	 * want to load subsystem configurations unless necessary.
-	 * 
+	 *
 	 * @param systemType system type to filter
 	 * @param filterDuplicates if true and the subsystem configuration uses
 	 *            services then return only one subsystem configuration that
 	 *            supports this service. Which configuration is returned is
 	 *            undefined.
 	 * @return an array of subsystem configurations meeting the criteria
-	 * 
+	 *
 	 * @deprecated Use
 	 *             {@link #getSubSystemConfigurationsBySystemType(IRSESystemType,boolean,boolean)}
 	 *             instead in order to avoid instantiating subsystem

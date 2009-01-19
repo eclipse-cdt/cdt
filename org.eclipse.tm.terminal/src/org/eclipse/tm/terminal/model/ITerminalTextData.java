@@ -1,24 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
-
 /**
- * A writable matrix of characters and {@link Style}. This is intended to be
- * the low level representation of the text of a Terminal. Higher layers are
+ * A writable matrix of characters and {@link Style}. This is intended to be the
+ * low level representation of the text of a Terminal. Higher layers are
  * responsible to fill the text and styles into this representation.
  * <p>
  * <b>Note: </b> Implementations of this interface has to be thread safe.
  * </p>
+ *
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 
@@ -95,7 +97,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * 3 dddd
 	 * 4 eeee
 	 * </pre>
-	 * 
+	 *
 	 * Shift a region of 3 lines <b>up</b> by one line <code>shift(1,3,-1)</code>
 	 * <pre>
 	 * 0 aaaa
@@ -104,8 +106,8 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * 3
 	 * 4 eeee
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * Shift a region of 3 lines <b>down</b> by one line <code>shift(1,3,1)</code>
 	 * <pre>
 	 * 0 aaaa

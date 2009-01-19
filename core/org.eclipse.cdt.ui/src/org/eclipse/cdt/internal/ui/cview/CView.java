@@ -74,6 +74,8 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.PluginDropAdapter;
+import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -380,7 +382,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		Transfer[] transfers= new Transfer[] {
 				LocalSelectionTransfer.getInstance(),
 				ResourceTransfer.getInstance(),
-				FileTransfer.getInstance()
+				FileTransfer.getInstance(),
+				PluginTransfer.getInstance()
 		};
 		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
 				new SelectionTransferDragAdapter(viewer),
@@ -395,11 +398,14 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		Transfer[] transfers= new Transfer[] {
 			LocalSelectionTransfer.getInstance(),
 			ResourceTransfer.getInstance(),
-			FileTransfer.getInstance()};
+			FileTransfer.getInstance(),
+			PluginTransfer.getInstance()};
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
 			new SelectionTransferDropAdapter(viewer),
 			new ResourceTransferDropAdapter(viewer),
-			new FileTransferDropAdapter(viewer)
+			new FileTransferDropAdapter(viewer),
+			new PluginTransferDropAdapter(viewer),
+			
 		};
 		viewer.addDropSupport(ops, transfers, new DelegatingDropAdapter(dropListeners));
 	}

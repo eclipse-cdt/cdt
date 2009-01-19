@@ -1,15 +1,15 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
@@ -23,6 +23,7 @@
  * David Dykstal (IBM) - [197027] Can lose data if closing eclipse before profile is saved
  * Kevin Doyle	 (IBM) - [243821] Save occurring on Main Thread
  * David Dykstal (IBM) - [243128] Problem during migration - NPE if provider does save without using a job.
+ * Martin Oberhuber (Wind River) - [261503][cleanup] Get rid of deprecated getPluginPreferences()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -47,11 +48,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
@@ -70,10 +71,10 @@ import org.eclipse.rse.services.Mutex;
  * The persistence manager controls all aspects of persisting the RSE data model. It will both
  * save and restore this model. There should be only persistence manager in existence. This instance
  * can be retrieved using RSEUIPlugin.getThePersistenceManager.
- * @see RSECorePlugin#getThePersistenceManager() 
+ * @see RSECorePlugin#getThePersistenceManager()
  */
 public class RSEPersistenceManager implements IRSEPersistenceManager {
-	
+
 	private class RSESaveParticipant implements ISaveParticipant {
 
 		public RSESaveParticipant() {
@@ -119,7 +120,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 
 	}
-	
+
 	private class RSESaveJobChangeListener implements IJobChangeListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
@@ -162,7 +163,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			// do nothing
 		}
 	}
-	
+
 	private class ProviderRecord {
 		private String providerId = null;
 		private IConfigurationElement configurationElement = null;
@@ -180,7 +181,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			return isAutostart || isDefault;
 		}
 	}
-	
+
 	private Map knownProviders = new HashMap(10);
 	private Map loadedProviders = new HashMap(10);
 	private Set saveJobs = new HashSet(10);
@@ -190,7 +191,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	private RSESaveJobChangeListener jobChangeListener = new RSESaveJobChangeListener();
 	private Mutex mutex = new Mutex();
 	private volatile boolean canScheduleSave = true;
-	
+
 	public RSEPersistenceManager(ISystemRegistry registry) {
 		_exporter = RSEDOMExporter.getInstance();
 		_importer = RSEDOMImporter.getInstance();
@@ -224,7 +225,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	}
 
 	/**
-	 * Returns the persistence provider denoted by the id. Only one instance of this 
+	 * Returns the persistence provider denoted by the id. Only one instance of this
 	 * persistence provider is created.
 	 * @param id The id of the persistence provider, as denoted by the id attribute on its declaration.
 	 * @return an IRSEPersistenceProvider which may be null if this id is not found.
@@ -282,14 +283,14 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		failed.toArray(result);
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#migrateProfile(org.eclipse.rse.core.model.ISystemProfile, org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
 	public void migrateProfile(ISystemProfile profile, IRSEPersistenceProvider persistenceProvider) {
 		migrateProfile(profile, persistenceProvider, true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#migrateProfile(org.eclipse.rse.core.model.ISystemProfile, org.eclipse.rse.persistence.IRSEPersistenceProvider, boolean)
 	 */
@@ -353,7 +354,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		profiles.toArray(result);
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#restoreProfiles(org.eclipse.rse.persistence.IRSEPersistenceProvider)
 	 */
@@ -366,7 +367,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		profiles.toArray(result);
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isRestoreComplete(java.lang.String)
 	 */
@@ -382,7 +383,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return isComplete;
 	}
-	
+
 	private ProviderRecord getProviderRecord(String providerId) {
 		ProviderRecord providerRecord = (ProviderRecord) knownProviders.get(providerId);
 		if (providerRecord == null) {
@@ -407,10 +408,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return pr;
 	}
-	
+
 	/**
-	 * Loads the map of known providers from the extensions made by all the plugins. 
-	 * This is done once at initialization of the manager. As these ids are resolved to 
+	 * Loads the map of known providers from the extensions made by all the plugins.
+	 * This is done once at initialization of the manager. As these ids are resolved to
 	 * their providers as needed, the configuration elements are replaced in the map
 	 * by the persistence providers they reference.
 	 */
@@ -476,16 +477,19 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		IRSEPersistenceProvider provider = getPersistenceProvider(providerId);
 		return provider;
 	}
-	
+
 	/**
-	 * Retrieves the default persistence provider id from the preferences.
-	 * This persistence provider identifier is specified in the org.eclipse.rse.core/DEFAULT_PERSISTENCE_PROVIDER
-	 * preference and can be specified a product's plugin_customization.ini file.
-	 * @return
+	 * Retrieves the default persistence provider id from the preferences. This
+	 * persistence provider identifier is specified in the
+	 * org.eclipse.rse.core/DEFAULT_PERSISTENCE_PROVIDER preference and can be
+	 * specified a product's plugin_customization.ini file.
+	 *
+	 * @return the specified default persistence provider, or the empty string
+	 *         <code>""</code> if not set.
 	 */
 	private String getDefaultPersistenceProviderId() {
-		Preferences preferences = RSECorePlugin.getDefault().getPluginPreferences();
-		String providerId = preferences.getString(IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER);
+		IPreferencesService ps = Platform.getPreferencesService();
+		String providerId = ps.getString(RSECorePlugin.PLUGIN_ID, IRSEPreferenceNames.DEFAULT_PERSISTENCE_PROVIDER, "", null); //$NON-NLS-1$
 		return providerId;
 	}
 
@@ -508,7 +512,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	}
 
 	/**
-	 * Loads a profile of the given name using the given persistence provider. If the provider cannot 
+	 * Loads a profile of the given name using the given persistence provider. If the provider cannot
 	 * find a profile with that name, return null.
 	 * @param provider the persistence provider that understands the name and can produce a profile.
 	 * @param profileName the name of the profile to produce
@@ -532,7 +536,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return profile;
 	}
-	
+
 	/**
 	 * Writes a profile to a DOM and schedules writing of that DOM to disk.
 	 * May, in fact, update an existing DOM instead of creating a new one.
@@ -566,7 +570,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return result;
 	}
-	
+
 	private void cleanTree(IRSEPersistableContainer node) {
 		node.setWasRestored(true);
 		node.setTainted(false);

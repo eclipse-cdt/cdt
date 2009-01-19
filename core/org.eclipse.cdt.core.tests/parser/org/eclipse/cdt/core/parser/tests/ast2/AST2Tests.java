@@ -2263,13 +2263,12 @@ public class AST2Tests extends AST2BaseTest {
 	//	void test(int a[]) {
 	//	  func(&a);
 	//	}
-	public void _testArrayPointer_261417() throws Exception {
-    	final boolean[] isCpps= {false, true};
+	public void testArrayPointer_261417() throws Exception {
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
-    		ba.assertNonProblem("func(&a)", 4, ICPPFunction.class);
-    	}
+   		BindingAssertionHelper baC= new BindingAssertionHelper(code, false);
+   		baC.assertNonProblem("func(&a)", 4, IFunction.class);
+   		BindingAssertionHelper baCpp= new BindingAssertionHelper(code, true);
+   		baCpp.assertNonProblem("func(&a)", 4, ICPPFunction.class);
 	}
 
 	// int f() {}

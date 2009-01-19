@@ -96,9 +96,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     // Extra breakpoint attributes
-    private static final String ATTR_DEBUGGER_PATH   = GdbPlugin.PLUGIN_ID + ".debuggerPath";   //$NON-NLS-1$
-    private static final String ATTR_THREAD_FILTER   = GdbPlugin.PLUGIN_ID + ".threadFilter";   //$NON-NLS-1$
-    private static final String ATTR_THREAD_ID       = GdbPlugin.PLUGIN_ID + ".threadID";       //$NON-NLS-1$
+    private static final String ATTR_DEBUGGER_PATH = GdbPlugin.PLUGIN_ID + ".debuggerPath";   //$NON-NLS-1$
+    private static final String ATTR_THREAD_FILTER = GdbPlugin.PLUGIN_ID + ".threadFilter";   //$NON-NLS-1$
+    private static final String ATTR_THREAD_ID     = GdbPlugin.PLUGIN_ID + ".threadID";       //$NON-NLS-1$
 
     // Services
     ICommandControl    fConnection;
@@ -415,7 +415,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), countingRm) {
                 @Override
                 protected void handleSuccess() {
-                    installBreakpoint(dmc, breakpoint, attributes, new RequestMonitor(getExecutor(), countingRm));
+                	// Install only if the breakpoint is enabled at startup (Bug261082)
+                	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
+                	if (bpEnabled)
+                		installBreakpoint(dmc, breakpoint, attributes, new RequestMonitor(getExecutor(), countingRm));
+                	else
+                		countingRm.done();
                 }
             });
         }
@@ -570,8 +575,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         thrds.add(thread);
                         threadsIDs.put(breakpoint, thrds);
 
+                        // Reset the thread (is it necessary?)
+                        attributes.put(ATTR_THREAD_ID, NULL_STRING);
+
                         // Finally, update the platform breakpoint
-                        attributes.remove(ATTR_THREAD_ID);
                         try {
 							breakpoint.incrementInstallCount();
 						} catch (CoreException e) {
@@ -753,10 +760,31 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         assert threadsIDs != null;
 
         // Minimal validation
-        if (!platformBPs.containsKey(breakpoint) || !breakpointIDs.containsKey(breakpoint) || !targetBPs.containsValue(breakpoint)) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, BREAKPOINT_NOT_INSTALLED, null));
+        if (!platformBPs.containsKey(breakpoint)) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, UNKNOWN_BREAKPOINT, null));
             rm.done();
             return;
+        }
+
+        // Check if the breakpoint is installed: it might not have been if it wasn't enabled at startup (Bug261082)
+        if (!breakpointIDs.containsKey(breakpoint) && !targetBPs.containsValue(breakpoint)) {
+        	// Install only if the breakpoint is enabled
+        	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
+        	if (bpEnabled) {
+                attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
+                attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));
+                attributes.put(ATTR_THREAD_ID, NULL_STRING);
+                determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), rm) {
+                    @Override
+                    protected void handleSuccess() {
+                      	installBreakpoint(dmc, breakpoint, attributes, new RequestMonitor(getExecutor(), rm));
+                    }
+                });
+        	}
+        	else {
+                rm.done();
+        	}
+       		return;
         }
 
         // Get the original breakpoint attributes
@@ -801,7 +829,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // - Install the updated breakpoint
         // - In the operation succeeded
         //   - Remove the old breakpoint(s)
-        //   - perform any pending update
+        //   - Perform any pending update
 
         // Update completion monitor
         final CountingRequestMonitor updateRM = new CountingRequestMonitor(getExecutor(), rm) {

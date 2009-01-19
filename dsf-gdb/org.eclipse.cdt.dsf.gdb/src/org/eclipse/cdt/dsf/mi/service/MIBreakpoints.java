@@ -64,9 +64,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     
     // General markers
     public static final String BREAKPOINT_TYPE = PREFIX + ".type";      //$NON-NLS-1$
-    public static final String BREAKPOINT      = "breakpoint";                 //$NON-NLS-1$
-    public static final String WATCHPOINT      = "watchpoint";                 //$NON-NLS-1$
-    public static final String CATCHPOINT      = "catchpoint";                 //$NON-NLS-1$
+    public static final String BREAKPOINT      = "breakpoint";          //$NON-NLS-1$
+    public static final String WATCHPOINT      = "watchpoint";          //$NON-NLS-1$
+    public static final String CATCHPOINT      = "catchpoint";          //$NON-NLS-1$
 
     // Basic set of breakpoint attribute markers
     public static final String FILE_NAME     = PREFIX + ".fileName";    //$NON-NLS-1$
@@ -82,7 +82,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     public static final String READ          = PREFIX + ".read";        //$NON-NLS-1$
     public static final String WRITE         = PREFIX + ".write";       //$NON-NLS-1$
 
-    
 	// Services
 	ICommandControl fConnection;
 
@@ -101,6 +100,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	final String WATCHPOINT_INSERTION_FAILURE = "Watchpoint insertion failure"; //$NON-NLS-1$
 	final String INVALID_CONDITION            = "Invalid condition";            //$NON-NLS-1$
 
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Breakpoint Events
 	///////////////////////////////////////////////////////////////////////////
@@ -498,8 +498,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
 		// Extract the relevant parameters (providing default values to avoid potential NPEs)
-		String  location       = formatLocation(attributes);
-
+		String location = formatLocation(attributes);
 		if (location.equals(NULL_STRING)) {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
        		drm.done();
@@ -868,7 +867,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        }
 
 		        // In case of error (new condition could not be installed for whatever reason),
-		        // GDB "offers" different behaviors depending on its version: it can either keep
+		        // GDB "offers" different behaviours depending on its version: it can either keep
 		        // the original condition (the right thing to do) or keep the invalid condition.
 		        // Our sole option is to remove the condition in case of error and rely on the
 		        // upper layer to re-install the right condition.

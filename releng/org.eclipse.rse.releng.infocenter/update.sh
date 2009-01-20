@@ -85,12 +85,11 @@ if [ "$NEED_RESTART" != "0" ]; then
   echo "Deploying new plug-ins..."
   ######################### Deploy all #############################
   for COMP in rse dd.dsf nab ercp mtj ; do
-    if [ ! -d "$ECL_DIR/eclipse/dropins/${COMP}" ]; then
-      mkdir "$ECL_DIR/eclipse/dropins/${COMP}"
-    else
-      rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"/*
+    if [ -d "$ECL_DIR/eclipse/dropins/${COMP}" ]; then
+      rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"
     fi
-    cp -Rp $IHOME/deploy/${COMP}/plugins/* "$ECL_DIR/eclipse/dropins/${COMP}"/
+    mkdir -p "$ECL_DIR/eclipse/dropins/${COMP}/eclipse"
+    cp -Rp $IHOME/deploy/${COMP}/plugins "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/"
   done 
   
   #TODO: not sure if we need to delete the old index to force re-indexing

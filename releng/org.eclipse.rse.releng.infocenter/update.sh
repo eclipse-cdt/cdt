@@ -17,9 +17,11 @@ if [ "$IHOME" = "" ]; then
 fi
 ECL_DIR=$IHOME/eclipse
 curdir=`pwd`
-NEED_RESTART=0
 
 #update RSE into deployment directory
+if [ ! -d $IHOME/deploy/rse ]; then
+  mkdir -p $IHOME/deploy/rse
+fi
 cd $IHOME/deploy/rse
 rm *.zip
 echo "Downloading RSE-SDK-latest.zip..."
@@ -42,13 +44,15 @@ if [ -e RSE-SDK-latest.zip ]; then
       rm -rf plugins
     fi
     mv plugins.tmp plugins
-    NEED_RESTART=1
   fi
 else
   echo "Error downloading RSE-SDK-latest.zip"
 fi
 
 #update MTJ into deployment directory
+if [ ! -d $IHOME/deploy/mtj ]; then
+  mkdir -p $IHOME/deploy/mtj
+fi
 cd $IHOME/deploy/mtj
 rm *.zip
 echo "Downloading dsdp-mtj-SDK-incubation-latest.zip..."
@@ -71,25 +75,44 @@ if [ -e dsdp-mtj-SDK-incubation-latest.zip ]; then
       rm -rf plugins
     fi
     mv plugins.tmp plugins
-    NEED_RESTART=1
   fi
 else
   echo "Error downloading dsdp-mtj-SDK-incubation-latest.zip"
 fi
 
+######################### Deploy all #############################
+echo "Deploying new plug-ins..."
+NEED_RESTART=0
+for COMP in rse dd.dsf nab ercp mtj ; do
+  if [ -d "${IHOME}/deploy/${COMP}/plugins" ]; then
+    if [ -d "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" ]; then
+      diff -r "${IHOME}/deploy/${COMP}/plugins" "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" >/dev/null
+      result=$?
+      echo "${COMP} RESULT: ${result}"
+      if [ "${result}" != "0" ]; then
+        NEED_RESTART=1
+      fi
+    else
+      echo "${COMP} is NEW"
+      NEED_RESTART=1
+    fi
+  fi
+done 
+
+######################### Restart Infocenter #############################
 #update Infocenter with latest deployable plug-ins
 if [ "$NEED_RESTART" != "0" ]; then
   echo "Shutting down infocenter..."
   $IHOME/bin/infocenter.sh shutdown
 
-  echo "Deploying new plug-ins..."
-  ######################### Deploy all #############################
   for COMP in rse dd.dsf nab ercp mtj ; do
-    if [ -d "$ECL_DIR/eclipse/dropins/${COMP}" ]; then
-      rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"
-    fi
-    mkdir -p "$ECL_DIR/eclipse/dropins/${COMP}/eclipse"
-    cp -Rp $IHOME/deploy/${COMP}/plugins "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/"
+    if [ -d "${IHOME}/deploy/${COMP}/plugins" ]; then
+      if [ -d "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" ]; then
+        rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"
+      fi
+      mkdir -p "$ECL_DIR/eclipse/dropins/${COMP}/eclipse"
+      cp -Rp $IHOME/deploy/${COMP}/plugins "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/"
+    fi 
   done 
   
   #TODO: not sure if we need to delete the old index to force re-indexing

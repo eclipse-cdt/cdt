@@ -226,6 +226,12 @@ public class LaunchUtils {
         		Matcher matcher = pattern.matcher(line);
         		if (matcher.find()) {
         			version = matcher.group(2);
+        			// Temporary for cygwin, until GDB 7 is released
+        			// Any cygwin GDB staring with 6.8 should be treated as plain 6.8
+        			if (line.toLowerCase().indexOf("cygwin") != -1 &&
+        					version.startsWith("6.8")) {
+        				version = "6.8";
+        			}
         		}
         	}
         } catch (IOException e) {

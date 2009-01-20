@@ -88,9 +88,11 @@ for COMP in rse dd.dsf nab ercp mtj ; do
     if [ -d "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" ]; then
       diff -r "${IHOME}/deploy/${COMP}/plugins" "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" >/dev/null
       result=$?
-      echo "${COMP} RESULT: ${result}"
       if [ "${result}" != "0" ]; then
+        echo "${COMP} diffs as ${result} --> deploying"
         NEED_RESTART=1
+      else
+        echo "${COMP} is unchanged"
       fi
     else
       echo "${COMP} is NEW"

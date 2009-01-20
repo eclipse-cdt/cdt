@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -81,7 +82,7 @@ public class IndexLocationFactory {
 			} catch (CoreException e) {
 			}
 		}
-		 return path;
+		return path;
 	}
 	
 	/**
@@ -103,9 +104,11 @@ public class IndexLocationFactory {
 	 * <p>
 	 * N.B. As this searches the workspace, following links and potentially reading from alternate
 	 * file systems, this method may be expensive.
-	 * @param cproject the ICProject to prefer when resolving external includes to workspace resources (may be null)
+	 * @param cproject the ICProject to prefer when resolving external includes to workspace
+	 *   resources (may be null)
 	 * @param absolutePath
-	 * @return an IIndexFileLocation for the specified resource, containing a workspace relative path if possible.
+	 * @return an IIndexFileLocation for the specified resource, containing a workspace relative
+	 *   path if possible.
 	 */
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		final IProject preferredProject= cproject == null ? null : cproject.getProject();
@@ -135,8 +138,8 @@ public class IndexLocationFactory {
 	}
 	
 	/**
-	 * Returns an IIndexFileLocation for the specified workspace file, or <code>null</code> if it does not
-	 * have a location.
+	 * Returns an IIndexFileLocation for the specified workspace file, or <code>null</code>
+	 * if it does not have a location.
 	 * @param file
 	 * @return an IIndexFileLocation for the specified workspace file
 	 */

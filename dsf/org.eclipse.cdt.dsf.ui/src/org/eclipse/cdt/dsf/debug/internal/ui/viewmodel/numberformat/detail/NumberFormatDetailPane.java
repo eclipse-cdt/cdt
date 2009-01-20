@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -61,7 +59,6 @@ import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
@@ -73,10 +70,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.IUndoManager;
-import org.eclipse.jface.text.IUndoManagerExtension;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -86,13 +80,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -103,15 +92,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.operations.OperationHistoryActionHandler;
-import org.eclipse.ui.operations.RedoActionHandler;
-import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
-import org.eclipse.ui.texteditor.StatusLineContributionItem;
 
 @SuppressWarnings("restriction")
 public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
@@ -252,8 +235,8 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     /**
      * These are the IDs for the actions in the context menu
      */
-    protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".SourceDetailPane"; //$NON-NLS-1$
-    protected static final String DETAIL_SELECT_ALL_ACTION = IDebugView.SELECT_ALL_ACTION + ".SourceDetailPane"; //$NON-NLS-1$
+    protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".TextDetailPane"; //$NON-NLS-1$
+    protected static final String DETAIL_SELECT_ALL_ACTION = IDebugView.SELECT_ALL_ACTION + ".TextDetailPane"; //$NON-NLS-1$
     protected static final String DETAIL_WORD_WRAP_ACTION = DsfUIPlugin.PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$
     protected static final String DETAIL_MAX_LENGTH_ACTION = "MaxLength"; //$NON-NLS-1$
     
@@ -264,26 +247,37 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     public static final String ID = "NumberFormatPane"; //$NON-NLS-1$
     
     /**
-     * Data structure for the position label value.
+     * Useful shortened names for the internationalized strings.
      */
-    private static class PositionLabelValue {
-        
-        public int fValue;
-        
-        @Override
-        public String toString() {
-            return String.valueOf(fValue);
-        }
-    }
+    public static String HEX     = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Hex_label;
+    public static String NATURAL = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Natural_label;
+    public static String DECIMAL = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Decimal_label;
+    public static String OCTAL   = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Octal_label;
+    public static String BINARY  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Binary_label;
+    public static String STRING  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_String_label;
+    public static String OTHER   = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_String_label;
+    public static String NAME    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Name_label;
+    public static String SPACES  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Spaces_label;   
+    public static String CRLF    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_CarriageReturn_label;
+    public static String DOTS    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_DotDotDot_label;
     
-    /**
-     * Internal interface for a cursor listener. I.e. aggregation 
-     * of mouse and key listener.
-     * @since 3.0
+    /*
+     * Returns a formatted combination of format label and its corresponding value.
      */
-    interface ICursorListener extends MouseListener, KeyListener {
+    private String formatNumericResult(String format, String value) {
+    	
+    	/*
+    	 * Select the proper string format and create the total value to be displayed.
+    	 */
+    	     if ( format == IFormattedValues.HEX_FORMAT)     { return(HEX     + value); }
+        else if ( format == IFormattedValues.OCTAL_FORMAT)   { return(OCTAL   + value); }
+        else if ( format == IFormattedValues.NATURAL_FORMAT) { return(NATURAL + value); }
+        else if ( format == IFormattedValues.BINARY_FORMAT)  { return(BINARY  + value); }
+        else if ( format == IFormattedValues.DECIMAL_FORMAT) { return(DECIMAL + value); }
+        else if ( format == IFormattedValues.STRING_FORMAT)  { return(STRING  + value); }
+        else                                                 { return(OTHER   + value); }
     }
-    
+
     /**
      * Job to compute the details for a selection
      */
@@ -326,7 +320,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
              *  typically be a burden. We should probably consider perhaps doing a
              *  preference where they can select what formats they want to show.
              */
-            
             final DataRequestMonitor<String[]> getAvailableFormatsDone = 
                 new DataRequestMonitor<String[]>(service.getExecutor(), null) {
                     @Override
@@ -358,7 +351,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 /*
                                  *  We sort the array to make the strings appear always in the same order.
                                  */
-
                                 java.util.Collections.sort( completedFormatStrings );
 
                                 int len = completedFormatStrings.size() ;
@@ -374,15 +366,15 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 	 *  order of the  entries is the order of the selections in the view  and
                                 	 *  it is very hard to know what goes with what. This makes it easy.
                                 	 */
-                                	String finalResult = "Name : " + name + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+                                	String finalResult = NAME + name + CRLF;
                                 	int cnt = 0 ;
 
                                 	for (String str : completedFormatStrings) {
 
-                                		finalResult += "   " + str ; //$NON-NLS-1$
+                                		finalResult += SPACES + str ;
 
                                 		if ( ( ++ cnt ) < len ) {
-                                			finalResult += "\n" ; //$NON-NLS-1$ 
+                                			finalResult += CRLF; 
                                 		}
                                 	}
 
@@ -420,27 +412,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                             /*
                                              *  Show the information indicating the format.
                                              */
-                                            if ( str == IFormattedValues.HEX_FORMAT) {
-                                                completedFormatStrings.add("Hex.... : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else if ( str == IFormattedValues.OCTAL_FORMAT) {
-                                                completedFormatStrings.add("Octal.. : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else if ( str == IFormattedValues.NATURAL_FORMAT) {
-                                                completedFormatStrings.add("Natural : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else if ( str == IFormattedValues.BINARY_FORMAT) {
-                                                completedFormatStrings.add("Binary. : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else if ( str == IFormattedValues.DECIMAL_FORMAT) {
-                                                completedFormatStrings.add("Decimal : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else if ( str == IFormattedValues.STRING_FORMAT) {
-                                                completedFormatStrings.add("String : " + getData().getFormattedValue()); //$NON-NLS-1$
-                                            }
-                                            else {
-                                                completedFormatStrings.add("Other.. : (" + str + ") " + getData().getFormattedValue()); //$NON-NLS-1$  //$NON-NLS-2$
-                                            }
+                                        	completedFormatStrings.add( formatNumericResult( str, getData().getFormattedValue() ) );
                                         }
                                         countingRm.done();
                                     }
@@ -585,6 +557,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                             }
                         }
                     }
+                    
                     tracker.dispose();
                     
                     /*
@@ -597,7 +570,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                      *  occur in the middle will be cancelled,  so there is not a lot  of
                      *  waste actually going on.
                      */
-                    
                     synchronized (this) {
                        	try {
                        		// wait for a max of 30 seconds for result, then cancel
@@ -611,26 +583,15 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                     }
                 }
                 else {
-//                    IValue val = null;
-//                    if (element instanceof IVariable) {
-//                        try {
-//                            val = ((IVariable)element).getValue();
-//                        } catch (DebugException e) {
-//                            detailComputed(null, e.getStatus().getMessage());
-//                        }
-//                    } else if (element instanceof IExpression) {
-//                        val = ((IExpression)element).getValue();
-//                    }
-                    if (element instanceof String) {
-                        message = (String) element;
-                    }
-                    else {
-                    	message = element.toString();
-                    }
+                    if (element instanceof String) { message = (String) element;   }
+                    else                           { message = element.toString(); }
                     fComputed = true;
                 }
-                // If no details were computed for the selected variable, clear the pane
-                // or use the message, if the variable was a java.lang.String
+                
+                /*
+                 *  If no details were computed for the selected variable, clear the pane
+                 *  or use the message.
+                 */
                 if (!fComputed){
                     if (message == null) {
                         detailComputed(null,""); //$NON-NLS-1$
@@ -672,12 +633,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 length = getDetailDocument().getLength();
                             }
                             if (length > 0) {
-                                insert = "\n" + result; //$NON-NLS-1$
+                                insert = CRLF + result;
                             }
                             try {
                                 int max = DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
                                 if (max > 0 && insert.length() > max) {
-                                    insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
+                                    insert = insert.substring(0, max) + DOTS;
                                 }
                                 if (fFirst) {
                                     getDetailDocument().set(insert);
@@ -708,19 +669,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     private String fDebugModelIdentifier;
     
     /**
-     * Controls the status line while the details area has focus.
-     * Displays the current cursor position in the text (line:character).
-     */
-    private StatusLineContributionItem fStatusLineItem;
-
-    /**
-     * The source viewer in which the computed string detail
+     * The text viewer in which the computed string detail
      * of selected variables will be displayed.
      */
-    private SourceViewer fSourceViewer;
+    private TextViewer fTextViewer;
     
     /**
-     * The last selection displayed in the source viewer.
+     * The last selection displayed in the text viewer.
      */
     private IStructuredSelection fLastDisplayed = null;
     
@@ -729,18 +684,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     private IDocument fDetailDocument;
     private DetailJob fDetailJob = null;
-    private final String fPositionLabelPattern = MessagesForDetailPane.DetailPane_LabelPattern;
-    private final PositionLabelValue fLineLabel = new PositionLabelValue();
-    private final PositionLabelValue fColumnLabel = new PositionLabelValue();
-    private final Object[] fPositionLabelPatternArguments = new Object[] {fLineLabel, fColumnLabel };
-    private ICursorListener fCursorListener;
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
      */
     public Control createControl(Composite parent) {
         
-        createSourceViewer(parent);
+        createTextViewer(parent);
         
         if (isInView()){
             createViewSpecificComponents();
@@ -749,31 +699,31 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             JFaceResources.getFontRegistry().addListener(this);
         }
         
-        return fSourceViewer.getControl();
+        return fTextViewer.getControl();
     }
 
     /**
-     * Creates the source viewer in the given parent composite
+     * Creates the text viewer in the given parent composite
      * 
-     * @param parent Parent composite to create the source viewer in
+     * @param parent Parent composite to create the text viewer in
      */
-    private void createSourceViewer(Composite parent) {
+    private void createTextViewer(Composite parent) {
         
-        // Create & configure a SourceViewer
-        fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
-        fSourceViewer.setDocument(getDetailDocument());
-        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
-        fSourceViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
-        fSourceViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
-        Control control = fSourceViewer.getControl();
+        // Create & configure a TextViewer
+        fTextViewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+        fTextViewer.setDocument(getDetailDocument());
+        fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+        fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+        fTextViewer.setEditable(false);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fTextViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
+        Control control = fTextViewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
         control.setLayoutData(gd);  
     }
 
     /**
      * Creates listeners and other components that should only be added to the
-     * source viewer when this detail pane is inside a view.
+     * text viewer when this detail pane is inside a view.
      */
     private void createViewSpecificComponents(){
         
@@ -786,18 +736,18 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         });
         
         // Add the selection listener so selection dependent actions get updated.
-        fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+        fTextViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 updateSelectionDependentActions();
             }
         });
         
         // Add a focus listener to update actions when details area gains focus
-        fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
+        fTextViewer.getControl().addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 
-                getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
+                getViewSite().setSelectionProvider(fTextViewer.getSelectionProvider());
                 
                 setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
                 setGlobalAction(IDebugView.COPY_ACTION, getAction(DETAIL_COPY_ACTION));
@@ -817,15 +767,8 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             }
         });
         
-        // Create a status line item displaying the current cursor location
-        fStatusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
-        IStatusLineManager manager= getViewSite().getActionBars().getStatusLineManager();
-        manager.add(fStatusLineItem);
-        fSourceViewer.getTextWidget().addMouseListener(getCursorListener());
-        fSourceViewer.getTextWidget().addKeyListener(getCursorListener());
-        
         // Add a context menu to the detail area
-        createDetailContextMenu(fSourceViewer.getTextWidget()); 
+        createDetailContextMenu(fTextViewer.getTextWidget()); 
     }
     
     /**
@@ -833,13 +776,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     private void createActions() {
        
-        TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
+        TextViewerAction textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.SELECT_ALL);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
-        textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
+        textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.COPY);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_COPY_ACTION);
@@ -849,10 +792,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             
         updateSelectionDependentActions();
         
-        IAction action = new DetailPaneWordWrapAction(fSourceViewer);
+        IAction action = new DetailPaneWordWrapAction(fTextViewer);
         setAction(DETAIL_WORD_WRAP_ACTION, action);
         
-        action = new DetailPaneMaxLengthAction(fSourceViewer.getControl().getShell());
+        action = new DetailPaneMaxLengthAction(fTextViewer.getControl().getShell());
         setAction(DETAIL_MAX_LENGTH_ACTION,action);
     }
     
@@ -873,7 +816,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         Menu menu= menuMgr.createContextMenu(menuControl);
         menuControl.setMenu(menu);
 
-        getViewSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, fSourceViewer.getSelectionProvider());
+        getViewSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, fTextViewer.getSelectionProvider());
     }
     
     /**
@@ -900,14 +843,14 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     public void display(IStructuredSelection selection) {
         
         if (selection == null){
-            clearSourceViewer();
+            clearTextViewer();
             return;
         }
                 
         fLastDisplayed = selection;
                         
         if ( selection.isEmpty() || !(selection instanceof ITreeSelection) ) {
-            clearSourceViewer();
+            clearTextViewer();
             return;
         }
         
@@ -945,8 +888,8 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * @see org.eclipse.debug.ui.IDetailPane#setFocus()
      */
     public boolean setFocus(){
-        if (fSourceViewer != null){
-            fSourceViewer.getTextWidget().setFocus();
+        if (fTextViewer != null){
+            fTextViewer.getTextWidget().setFocus();
             return true;
         }
         return false;
@@ -960,15 +903,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         fSelectionActions.clear();
         
         if (fDetailJob != null) fDetailJob.cancel();
-        fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
-        if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
+        fDebugModelIdentifier = null; // Setting this to null makes sure the text viewer is reconfigured with the model presentation after disposal
+        if (fTextViewer != null && fTextViewer.getControl() != null) fTextViewer.getControl().dispose();
         
         if (isInView()){
-            disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
-            disposeUndoRedoAction(ITextEditorActionConstants.REDO);
-            
-            getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
-            
             DsfUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
             JFaceResources.getFontRegistry().removeListener(this);  
         }
@@ -1001,10 +939,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     @SuppressWarnings("unchecked")
     public Object getAdapter(Class required) {
         if (IFindReplaceTarget.class.equals(required)) {
-            return fSourceViewer.getFindReplaceTarget();
+            return fTextViewer.getFindReplaceTarget();
         }
         if (ITextViewer.class.equals(required)) {
-            return fSourceViewer;
+            return fTextViewer;
         }
         return null;
     }
@@ -1020,15 +958,15 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     }
     
     /**
-     * Clears the source viewer, removes all text.
+     * Clears the text viewer, removes all text.
      */
-    protected void clearSourceViewer(){
+    protected void clearTextViewer(){
         if (fDetailJob != null) {
             fDetailJob.cancel();
         }
         fLastDisplayed = null;
         fDetailDocument.set(""); //$NON-NLS-1$
-        fSourceViewer.setEditable(false);
+        fTextViewer.setEditable(false);
     }
 
     /**
@@ -1036,87 +974,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      * currently being displayed
      */
     protected void configureDetailsViewer() {
-        SourceViewerConfiguration svc = new SourceViewerConfiguration();
-        
-        fSourceViewer.setEditable(false);
-        fSourceViewer.unconfigure();
-        fSourceViewer.configure(svc);
-        
-        if (isInView()){
-            createUndoRedoActions();
-        }
-    }
-
-    /**
-     * @return The formatted string describing cursor position
-     */
-    protected String getCursorPosition() {
-        
-        if (fSourceViewer == null) {
-            return ""; //$NON-NLS-1$
-        }
-        
-        StyledText styledText= fSourceViewer.getTextWidget();
-        int caret= styledText.getCaretOffset();
-        IDocument document= fSourceViewer.getDocument();
-    
-        if (document == null) {
-            return ""; //$NON-NLS-1$
-        }
-    
-        try {
-            
-            int line= document.getLineOfOffset(caret);
-    
-            int lineOffset= document.getLineOffset(line);
-            int tabWidth= styledText.getTabs();
-            int column= 0;
-            for (int i= lineOffset; i < caret; i++)
-                if ('\t' == document.getChar(i)) {
-                    column += tabWidth - (tabWidth == 0 ? 0 : column % tabWidth);
-                } else {
-                    column++;
-                }
-                    
-            fLineLabel.fValue= line + 1;
-            fColumnLabel.fValue= column + 1;
-            return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
-            
-        } catch (BadLocationException x) {
-            return ""; //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Returns this view's "cursor" listener to be installed on the view's
-     * associated details viewer. This listener is listening to key and mouse button events.
-     * It triggers the updating of the status line.
-     * 
-     * @return the listener
-     */
-    private ICursorListener getCursorListener() {
-        if (fCursorListener == null) {
-            fCursorListener= new ICursorListener() {
-                
-                public void keyPressed(KeyEvent e) {
-                    fStatusLineItem.setText(getCursorPosition());
-                }
-                
-                public void keyReleased(KeyEvent e) {
-                }
-                
-                public void mouseDoubleClick(MouseEvent e) {
-                }
-                
-                public void mouseDown(MouseEvent e) {
-                }
-                
-                public void mouseUp(MouseEvent e) {
-                    fStatusLineItem.setText(getCursorPosition());
-                }
-            };
-        }
-        return fCursorListener;
+        fTextViewer.setEditable(false);
     }
     
     /**
@@ -1142,64 +1000,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             configureDetailsViewer();
         }
     }
-    
-    /**
-     * Creates this editor's undo/re-do actions.
-     * <p>
-     * Subclasses may override or extend.</p>
-     *
-     * @since 3.2
-     */
-    protected void createUndoRedoActions() {
-        disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
-        disposeUndoRedoAction(ITextEditorActionConstants.REDO);
-        IUndoContext undoContext= getUndoContext();
-        if (undoContext != null) {
-            // Use actions provided by global undo/re-do
-            
-            // Create the undo action
-            OperationHistoryActionHandler undoAction= new UndoActionHandler(getViewSite(), undoContext);
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-            undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
-            setAction(ITextEditorActionConstants.UNDO, undoAction);
-            setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);           
-            
-            // Create the re-do action.
-            OperationHistoryActionHandler redoAction= new RedoActionHandler(getViewSite(), undoContext);
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-            redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
-            setAction(ITextEditorActionConstants.REDO, redoAction);
-            setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
-            
-            getViewSite().getActionBars().updateActionBars();
-        }
-    }   
-    
-    /**
-     * Disposes of the action with the specified ID
-     * 
-     * @param actionId the ID of the action to disposed
-     */
-    protected void disposeUndoRedoAction(String actionId) {
-        OperationHistoryActionHandler action = (OperationHistoryActionHandler) getAction(actionId);
-        if (action != null) {
-            action.dispose();
-            setAction(actionId, null);
-        }
-    }
-    
-    /**
-     * Returns this editor's viewer's undo manager undo context.
-     *
-     * @return the undo context or <code>null</code> if not available
-     * @since 3.2
-     */
-    private IUndoContext getUndoContext() {
-        IUndoManager undoManager= fSourceViewer.getUndoManager();
-        if (undoManager instanceof IUndoManagerExtension)
-            return ((IUndoManagerExtension)undoManager).getUndoContext();
-        return null;
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
@@ -1207,11 +1007,11 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
         if (propertyName.equals(IDsfDebugUIConstants.DETAIL_PANE_FONT)) {
-            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+            fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
         } else if (propertyName.equals(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
             display(fLastDisplayed);
         } else if (propertyName.equals(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
-            fSourceViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+            fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
             getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));    
         }
     }

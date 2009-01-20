@@ -34,7 +34,7 @@ case ${uname_s}${uname_m} in
   Linuxx86_64*) ep_arch=linux-gtk-x86_64 
                 cdt_arch=linux.x86_64
                 ;;
-  Linuxx86*) ep_arch=linux-gtk
+  Linuxx86*|Linuxi686*) ep_arch=linux-gtk
              cdt_arch=linux.x86
              ;;
 esac

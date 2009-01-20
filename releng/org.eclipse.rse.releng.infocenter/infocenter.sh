@@ -11,26 +11,28 @@
 #*******************************************************************************
 umask 022
 
-PATH=/opt/j2sdk1.4.2_12/bin:$PATH
+#PATH=/opt/j2sdk1.4.2_12/bin:$PATH
+PATH=/opt/JDKs/amd64/jdk1.6.0_11/bin:$PATH
 export PATH
 
-EHOME=/home/infocenter/eclipse3.2/eclipse
 if [ "$IHOME" = "" ]; then
   IHOME=/home/infocenter/latest
 fi
+EHOME=${IHOME}/eclipse/eclipse
+curdir=`pwd`
 
 if [ "$1" = "" -o "$1" = "help" ]; then
   echo "Usage: infocenter.sh [start|shutdown|addSite -from dir|apply]"
   exit 1
 fi
 
+HELP_PLUGIN=`ls $EHOME/plugins/org.eclipse.help.base_3.*.jar | sort | tail -1`
+
 java \
-  -classpath $EHOME/plugins/org.eclipse.help.base_3.2.0.v20060601.jar \
+  -classpath $HELP_PLUGIN \
   org.eclipse.help.standalone.Infocenter \
   -command $* \
   -eclipsehome $EHOME \
   -data $IHOME/workspace \
   -port 27127 \
-  -nl en -locales en \
-  -configuration file://$IHOME/config 
-
+  -nl en -locales en

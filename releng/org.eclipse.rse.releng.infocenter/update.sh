@@ -15,6 +15,7 @@ id
 if [ "$IHOME" = "" ]; then
   IHOME=/home/infocenter/latest
 fi
+ECL_DIR=$IHOME/eclipse
 curdir=`pwd`
 NEED_RESTART=0
 
@@ -64,7 +65,7 @@ if [ -e dsdp-mtj-SDK-incubation-latest.zip ]; then
   rm -rf eclipse
   NUM=`ls plugins.tmp/*.jar | wc -l`
   echo "MTJ plugins.tmp: NUM=$NUM"
-  if [ "$NUM" = "2" ]; then
+  if [ "$NUM" = "2" -o "$NUM" = "1" ]; then
     echo "Doc plugins got successfully, installing from plugins.tmp into plugins..."
     if [ -e plugins ]; then 
       rm -rf plugins
@@ -82,21 +83,15 @@ if [ "$NEED_RESTART" != "0" ]; then
   $IHOME/bin/infocenter.sh shutdown
 
   echo "Deploying new plug-ins..."
-  ######################### Deploy RSE #############################
-  rm $IHOME/plugins/rse/eclipse/plugins/*
-  cp -p $IHOME/deploy/rse/plugins/* $IHOME/plugins/rse/eclipse/plugins/
-  ####################### Deploy dd.dsf ############################
-  rm $IHOME/plugins/dd.dsf/eclipse/plugins/*
-  cp -p $IHOME/deploy/dd.dsf/plugins/* $IHOME/plugins/dd.dsf/eclipse/plugins/
-  ####################### Deploy nab ###############################
-  rm -rf $IHOME/plugins/nab/eclipse/plugins/*
-  cp -Rp $IHOME/deploy/nab/plugins/* $IHOME/plugins/nab/eclipse/plugins/
-  ####################### Deploy ercp ##############################
-  rm -rf $IHOME/plugins/ercp/eclipse/plugins/*
-  cp -Rp $IHOME/deploy/ercp/*.jar $IHOME/plugins/ercp/eclipse/plugins/
-  ####################### Deploy ercp ##############################
-  rm -rf $IHOME/plugins/mtj/eclipse/plugins/*
-  cp -Rp $IHOME/deploy/mtj/plugins/*.jar $IHOME/plugins/mtj/eclipse/plugins/
+  ######################### Deploy all #############################
+  for COMP in rse dd.dsf nab ercp mtj ; do
+    if [ ! -d "$ECL_DIR/eclipse/dropins/${COMP}" ]; then
+      mkdir "$ECL_DIR/eclipse/dropins/${COMP}"
+    else
+      rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"/*
+    fi
+    cp -Rp $IHOME/deploy/${COMP}/plugins/* "$ECL_DIR/eclipse/dropins/${COMP}"/
+  done 
   
   #TODO: not sure if we need to delete the old index to force re-indexing
   echo "Deleting old index..."

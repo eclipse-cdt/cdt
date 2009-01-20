@@ -11,6 +11,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -19,6 +20,8 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -73,7 +76,7 @@ public class IndexLocationFactory {
 	 */
 	public static IPath getPath(IIndexFileLocation location) {
 		String fp = location.getFullPath();
-		if(fp!=null) {
+		if (fp != null) {
 			return new Path(fp);
 		}
 		return getAbsolutePath(location);
@@ -86,7 +89,21 @@ public class IndexLocationFactory {
 	 * URI is not a filesystem path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
-		return URIUtil.toPath(location.getURI());
+		IPath path = URIUtil.toPath(location.getURI());
+		// Workaround for platform bug http://bugs.eclipse.org/bugs/show_bug.cgi?id=261457
+		if (path == null) {
+			try {
+				IFileStore store = EFS.getStore(location.getURI());
+				if (store == null)
+					return null;
+				File file = store.toLocalFile(EFS.NONE, null);
+				if (file == null)
+					return null;
+				path = new Path(file.getAbsolutePath());
+			} catch (CoreException e) {
+			}
+		}
+		return path;
 	}
 	
 	/**
@@ -114,7 +131,7 @@ public class IndexLocationFactory {
 	 */
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(absolutePath));
-		if (files.length==1) {
+		if (files.length == 1) {
 			IFile file = files[0];
 			if (file.exists())
 				return getWorkspaceIFL(file);
@@ -194,7 +211,7 @@ public class IndexLocationFactory {
 			return getWorkspaceIFL((IFile)res);
 		}
 		IPath location = tu.getLocation();
-		if(location!=null) {
+		if (location != null) {
 			return getExternalIFL(location);
 		}
 		return null;

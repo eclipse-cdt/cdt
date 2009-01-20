@@ -11,16 +11,20 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
+import java.io.File;
 import java.net.URI;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -63,7 +67,21 @@ public class IndexLocationFactory {
 	 * URI is not a filesystem path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
-		 return URIUtil.toPath(location.getURI());
+		IPath path = URIUtil.toPath(location.getURI());
+		// Workaround for platform bug http://bugs.eclipse.org/bugs/show_bug.cgi?id=261457
+		if (path == null) {
+			try {
+				IFileStore store = EFS.getStore(location.getURI());
+				if (store == null)
+					return null;
+				File file = store.toLocalFile(EFS.NONE, null);
+				if (file == null)
+					return null;
+				path = new Path(file.getAbsolutePath());
+			} catch (CoreException e) {
+			}
+		}
+		 return path;
 	}
 	
 	/**

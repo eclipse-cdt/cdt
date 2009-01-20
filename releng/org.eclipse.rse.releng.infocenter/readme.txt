@@ -10,11 +10,20 @@ This project can be checked out with
   cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp \
     co -d bin org.eclipse.tm.rse/releng/org.eclipse.tm.rse.releng.infocenter
 
-Prerequisites:
-* Eclipse 3.2 installed at /home/infocenter/eclipse3.2/eclipse
+Apache Installation:
+* vi /etc/httpd/conf/httpd.conf
+  ADD
+  AddDefaultCharset Off
+  ProxyPass /help/latest http://localhost:27127/help
+  ProxyPassReverse /help/latest http://localhost:27127/help
+
+Installation:
 * Infocenter home (IHOME) at /home/infocenter/latest
   - Scripts checked out at $IHOME/bin
   - Deployable doc plugins at $IHOME/deploy
+* cd $IHOME/bin
+  ./setup.sh
+  ./update.sh
 * Cronjob created to execute doit_nightly.sh
     ssh dsdp.eclipse.org -l infocenter
     crontab -e

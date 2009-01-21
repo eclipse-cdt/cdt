@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.dom.parser.c.CScope;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -43,37 +42,12 @@ public class ASTInternal {
 		return null;
 	}
 
-	public static void flushCache(IScope scope) {
-		if (scope instanceof CScope) {
-			((CScope) scope).flushCache();
-		}
-	}
-
-	public static boolean isFullyCached(IScope scope) throws DOMException {
-		if (scope instanceof CScope) {
-			return ((CScope) scope).isFullyCached();
-		}
-		return true;
-	}
-
-	public static void setFullyCached(IScope scope, boolean val) throws DOMException {
-		if (scope instanceof CScope) {
-			((CScope) scope).setFullyCached(val);
-		}
-	}
-
 	public static void addBinding(IScope scope, IBinding binding) throws DOMException {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addBinding(binding);
 		}		
 	}
 
-	public static void removeBinding(IScope scope, IBinding binding) throws DOMException {
-		if (scope instanceof CScope) {
-			((CScope) scope).removeBinding(binding);
-		}		
-	}
-	
 	public static void addName(IScope scope, IASTName name) {
 		if (scope instanceof IASTInternalScope) {
 			try {

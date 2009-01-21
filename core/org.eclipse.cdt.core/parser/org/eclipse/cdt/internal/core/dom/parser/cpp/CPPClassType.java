@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public void checkForDefinition() {
-		if (!checked) {
+		if (!checked && definition == null) {
 			FindDefinitionAction action = new FindDefinitionAction();
 			IASTNode node = CPPVisitor.getContainingBlockItem(getPhysicalNode()).getParent();
 
@@ -225,9 +225,8 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 					}
 				}
 			}
-			checked = true;
 		}
-		return;
+		checked = true;
 	}
 
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
@@ -282,9 +281,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public ICPPClassScope getCompositeScope() {
-		if (definition == null) {
-			checkForDefinition();
-		}
+		checkForDefinition();
 		if (definition != null) {
 			return getCompositeTypeSpecifier().getScope();
 		}

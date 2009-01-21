@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class DeclarationOptions {
     public static final DeclarationOptions 
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_CONSTRUCTOR_INITIALIZER),
     	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER),
-    	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD),
+    	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
     	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | ALLOW_CONSTRUCTOR_INITIALIZER),
     	LOCAL=	    new DeclarationOptions(ALLOW_CONSTRUCTOR_INITIALIZER),
     	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT),

@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
@@ -46,11 +45,6 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
     	fFunctionCallExpression= functionCall;
     }
     
-	@Override
-	protected final IScope getAffectedScope() {
-		return null;
-	}
-
 	@Override
 	public final IASTNode[] getNodes() {
 		return getExpressions();

@@ -1,19 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is a declarator for a non K&R C function.
  * 
- * @author Doug Schaefer
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
@@ -25,6 +26,13 @@ public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 	 */
 	public final static ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
 			"IASTStandardFunctionDeclarator.FUNCTION_PARAMETER - IASTParameterDeclaration for IASTStandardFunctionDeclarator"); //$NON-NLS-1$
+
+	/**
+	 * Get the scope for this declarator. Returns <code>null</code>, if this declarator does not
+	 * declare a function-prototype or function-definition.
+	 * @since 5.1
+	 */
+	public IScope getFunctionScope();
 
 	/**
 	 * Gets the parameter declarations for the function

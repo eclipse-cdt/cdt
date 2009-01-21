@@ -239,4 +239,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 			this.arg= null;
 		}
 	}
+
+	public void populateCache() {
+	}
 }

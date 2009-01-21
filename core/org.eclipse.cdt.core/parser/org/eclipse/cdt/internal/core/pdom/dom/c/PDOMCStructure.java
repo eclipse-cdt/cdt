@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 
@@ -113,7 +111,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	@Override
 	public Object clone() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 	
 	public int getKey() throws DOMException {
@@ -226,8 +224,8 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		return result;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+	public IScope getCompositeScope() {
+		return this;
 	}
 
 	public boolean isSameType(IType type) {
@@ -274,21 +272,28 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	public IBinding getBinding(char[] name) throws DOMException {
-		fail(); return null;
+		return findField(new String(name));
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
-		fail(); return null;
+		return getBinding(name.toCharArray());
 	}
 	
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
-		fail(); return null;
+		return getBindings(name.toCharArray());
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
-		fail(); return null;
+		return getBindings(name.toCharArray());
+	}
+
+	private IBinding[] getBindings(char[] name) throws DOMException {
+		IBinding b= getBinding(name);
+		if (b == null)
+			return IBinding.EMPTY_BINDING_ARRAY;
+		return new IBinding[]{b};
 	}
 	
 	public IIndexBinding getScopeBinding() {

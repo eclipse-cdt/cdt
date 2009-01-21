@@ -1,31 +1,37 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
- * @author jcamelon
+ * Models function declarators for plain c.
  */
 public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStandardFunctionDeclarator {
 
     private IASTParameterDeclaration [] parameters = null;
     private int parametersPos=-1;
     private boolean varArgs;
+    private IScope scope;
     
     public CASTFunctionDeclarator() {
 	}
@@ -93,5 +99,27 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         	}
         }
         super.replace(child, other);
+	}
+	
+	public IScope getFunctionScope() {
+        if (scope != null)
+            return scope;
+        
+        // introduce a scope for function declarations and definitions, only.
+        IASTNode node= getParent();
+        while(!(node instanceof IASTDeclaration)) {
+        	if (node==null)
+        		return null;
+        	node= node.getParent();
+        }
+        if (node instanceof IASTParameterDeclaration)
+        	return null;
+        
+        if (node instanceof IASTFunctionDefinition) {
+        	scope= ((IASTFunctionDefinition) node).getScope();
+        } else if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
+            scope = new CScope(this, EScopeKind.eLocal);
+        }
+        return scope;
 	}
 }

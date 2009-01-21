@@ -41,4 +41,11 @@ public interface IASTInternalScope extends IScope {
 	 * @throws DOMException
 	 */
 	public void addName(IASTName name) throws DOMException;
+	
+	/**
+	 * Can be called during ambiguity resolution to populate a scope without considering
+	 * the ambiguous branches. The rest of the names has to be cached one by one after
+	 * the ambiguities have been resolved.
+	 */
+	public void populateCache();
 }

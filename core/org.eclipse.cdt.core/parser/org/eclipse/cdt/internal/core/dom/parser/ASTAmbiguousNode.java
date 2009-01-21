@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -56,11 +55,6 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
      * Return the alternative nodes for this ambiguity.
      */
     public abstract IASTNode[] getNodes();
-
-    /**
-     * Returns the scope that may get polluted by alternatives of this ambiguity.
-     */
-    protected abstract IScope getAffectedScope();
     
     @Override
 	public final boolean accept(ASTVisitor visitor) {
@@ -76,7 +70,6 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 
     public IASTNode resolveAmbiguity(ASTVisitor resolver) {
     	beforeResolution();
-		final IScope scope= getAffectedScope();
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
@@ -85,10 +78,6 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
-			// flush scope, even if this is the first alternative. The ambiguous node may have contributed an
-		    // invalid binding to the scope during the resolution of other ambiguous nodes.
-			ASTInternal.flushCache(scope);
-
 			// setup the ast to use the alternative
 			owner.replace(nodeToReplace, alternative);
 			nodeToReplace= alternative;
@@ -145,7 +134,6 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		// switch back to the best alternative, if necessary.
 		if (nodeToReplace != bestAlternative) {
-			ASTInternal.flushCache(scope);
 			owner.replace(nodeToReplace, bestAlternative);
 		}
 		return bestAlternative;

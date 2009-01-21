@@ -15,10 +15,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
+public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
         IASTAmbiguousStatement {
 
     private IASTStatement [] stmts = new IASTStatement[2];

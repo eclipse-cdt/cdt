@@ -13,22 +13,31 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
-public class CASTAmbiguousStatement extends CASTAmbiguity implements IASTAmbiguousStatement {
+public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
 
     private IASTStatement [] stmts = new IASTStatement[2];
     private int stmtsPos=-1;
-    
-    
     
     public CASTAmbiguousStatement(IASTStatement... statements) {
 		for(IASTStatement s : statements)
 			addStatement(s);
 	}
     
-    
+	@Override
+	protected void beforeResolution() {
+		// populate containing scope, so that it will not be affected by the alternative branches.
+		IScope scope= CVisitor.getContainingScope(this);
+		if (scope instanceof IASTInternalScope) {
+			((IASTInternalScope) scope).populateCache();
+		}
+	}
+
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {

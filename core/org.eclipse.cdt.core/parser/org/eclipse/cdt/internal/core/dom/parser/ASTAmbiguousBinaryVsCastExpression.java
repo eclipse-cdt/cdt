@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.Assert;
@@ -55,11 +54,6 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
     public IType getExpressionType() {
     	return CVisitor.getExpressionType(getExpressions()[0]);
     }
-
-	@Override
-	protected final IScope getAffectedScope() {
-		return null;
-	}
 
 	@Override
 	public final IASTNode[] getNodes() {

@@ -304,6 +304,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         IASTDeclSpecifier declSpec= null;
         IASTDeclarator dtor= null;
+        IASTDeclSpecifier altDeclSpec= null;
+        IASTDeclarator altDeclarator= null;
         IToken markBeforDtor= null;
         try {
             declSpec = declSpecifierSeq(declOption);
@@ -341,6 +343,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (e.altSpec != null) {
         		declSpec= e.altSpec;
         		dtor= e.altDeclarator;
+            	altDeclSpec= e.declSpec;
+            	altDeclarator= e.declarator;
         	} else {
         		declSpec = e.declSpec;
         		dtor= e.declarator;
@@ -411,6 +415,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             simpleDeclaration.addDeclarator(declarator);
         
         ((ASTNode) simpleDeclaration).setOffsetAndLength(firstOffset, endOffset-firstOffset);
+        if ( altDeclSpec != null && altDeclarator != null) {
+        	simpleDeclaration= new CASTAmbiguousSimpleDeclaration(simpleDeclaration, altDeclSpec, altDeclarator);
+        }
         
         if (insertSemi) {
     		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, endOffset, 0);
@@ -425,7 +432,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		    throwBacktrack(firstOffset, LA(1).getEndOffset());
 
 		final IASTDeclarator outerDtor= declarators[0];
-		final IASTDeclarator fdtor= CVisitor.findTypeRelevantDeclarator(outerDtor);
+		final IASTDeclarator fdtor= ASTQueries.findTypeRelevantDeclarator(outerDtor);
 		if (fdtor instanceof IASTFunctionDeclarator == false)
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
@@ -1147,7 +1154,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLBRACE:
         	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.C_MEMBER 
         			|| option == DeclarationOptions.FUNCTION_STYLE_ASM) {
-        		if (CVisitor.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
+        		if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
         			return true;
         		}
         	}
@@ -1392,9 +1399,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         
         // try abstract declarator
         if (!option.fAllowAbstract) {
-        	// bit-fields may be abstract
-        	if (!option.fAllowBitField || LT(1) != IToken.tCOLON)
-        		throwBacktrack(LA(1));
+        	throwBacktrack(LA(1));
         }
         return declarator(pointerOps, nodeFactory.newName(), null, startingOffset, endOffset, option);
     }
@@ -1465,7 +1470,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 	private boolean isAbstract(IASTName declaratorName, IASTDeclarator nestedDeclarator) {
-		nestedDeclarator= CVisitor.findInnermostDeclarator(nestedDeclarator);
+		nestedDeclarator= ASTQueries.findInnermostDeclarator(nestedDeclarator);
 		if (nestedDeclarator != null) {
 			declaratorName= nestedDeclarator.getName();
 		}

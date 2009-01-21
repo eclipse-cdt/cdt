@@ -13,23 +13,17 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
+public class CPPASTAmbiguousExpression extends ASTAmbiguousNode implements
         IASTAmbiguousExpression {
 
     private IASTExpression [] exp = new IASTExpression[2];
     private int expPos=-1;
-    
-    @Override
-	public IScope getAffectedScope() {
-    	// an expression does not introduce names to a parent scope.
-    	return null;
-    }
     
     public CPPASTAmbiguousExpression(IASTExpression... expressions) {
 		for(IASTExpression e : expressions)

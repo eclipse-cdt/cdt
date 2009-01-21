@@ -15,8 +15,11 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -25,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  * Example: void f(int (D));  // is D a type?
  * @since 5.0.1
  */
-public class CASTAmbiguousDeclarator extends CASTAmbiguity implements IASTAmbiguousDeclarator {
+public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
 
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos=-1;
@@ -36,6 +39,15 @@ public class CASTAmbiguousDeclarator extends CASTAmbiguity implements IASTAmbigu
 			if (d != null) {
 				addDeclarator(d);
 			}
+		}
+	}
+    
+	@Override
+	protected void beforeResolution() {
+		// populate containing scope, so that it will not be affected by the alternative branches.
+		IScope scope= CVisitor.getContainingScope(this);
+		if (scope instanceof IASTInternalScope) {
+			((IASTInternalScope) scope).populateCache();
 		}
 	}
 

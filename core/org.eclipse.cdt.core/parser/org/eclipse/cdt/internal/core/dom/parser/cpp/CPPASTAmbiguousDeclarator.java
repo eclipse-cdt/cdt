@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.Assert;
  * <br>
  * Example: void f(int (D));  // is D a type?
  */
-public class CPPASTAmbiguousDeclarator extends CPPASTAmbiguity implements IASTAmbiguousDeclarator {
+public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
 
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos=-1;

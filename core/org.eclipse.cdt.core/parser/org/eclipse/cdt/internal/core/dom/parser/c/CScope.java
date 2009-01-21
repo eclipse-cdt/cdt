@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
@@ -20,13 +20,22 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -35,22 +44,30 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousParameterDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * @author aniefer
+ * Base implementation for c-scopes
  */
 public class CScope implements ICScope, IASTInternalScope {
 	/**
@@ -92,13 +109,12 @@ public class CScope implements ICScope, IASTInternalScope {
 	};
 	
     private IASTNode physicalNode = null;
-    private boolean isFullyCached = false;
+    private boolean isCached = false;
     
     private CharArrayObjectMap[] mapsToNameOrBinding = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
-    private ObjectMap reuseBindings= null;
 	private final EScopeKind kind;
     
-    public CScope( IASTNode physical, EScopeKind eKind){
+	public CScope(IASTNode physical, EScopeKind eKind) {
         physicalNode = physical;
         kind= eKind;
     }
@@ -148,9 +164,9 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find( String name ) throws DOMException {
-    	return CVisitor.findBindings( this, name, false );
-    }
+	public IBinding[] find(String name) throws DOMException {
+		return CVisitor.findBindings(this, name);
+	}
 
     public IBinding getBinding( int namespaceType, char [] name ){
     	Object o= mapsToNameOrBinding[namespaceType].get(name);
@@ -160,25 +176,11 @@ public class CScope implements ICScope, IASTInternalScope {
     	if (o instanceof IASTName) 
     		return ((IASTName) o).resolveBinding();
 
+    	if (o instanceof IASTName[]) {
+    		return ((IASTName[]) o)[0].resolveBinding();
+    	}
     	return null;
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
-	public void removeBinding(IBinding binding) {
-        int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
-				NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
-
-		final CharArrayObjectMap bindingsMap = mapsToNameOrBinding[type];
-		if( bindingsMap != CharArrayObjectMap.EMPTY_MAP ) {
-			Object o= bindingsMap.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
-			if (o != null && reuseBindings != null) {
-				reuseBindings.remove(o);
-			}
-		}
-		isFullyCached = false;
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
@@ -187,41 +189,36 @@ public class CScope implements ICScope, IASTInternalScope {
         return physicalNode;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public void addName( IASTName name ) {
-        int type = getNamespaceType( name );
-        CharArrayObjectMap map = mapsToNameOrBinding[type];
-		if( map == CharArrayObjectMap.EMPTY_MAP )
-            map= mapsToNameOrBinding[type] = new CharArrayObjectMap(1);
-        
-        final char [] n = name.toCharArray();
-        final Object current= map.get( n );
-        if (current instanceof IASTName) {
-        	final CASTName currentName = (CASTName)current;
-			if (currentName.getOffset() <= ((CASTName) name).getOffset() ){
-        		return;
-        	}
-			if (name.getBinding() == null) {
-        		// bug 232300: we need to make sure that the binding is picked up even if the name is removed
-        		// from the cache. Simply assigning it to the name is not enough, because a declaration or 
-        		// definition needs to be added to the binding.
-				IBinding reuseBinding= currentName.getBinding();
-				if (reuseBinding == null && reuseBindings != null) {
-					reuseBinding= (IBinding) reuseBindings.get(currentName);
-				}
-				if (reuseBinding != null) {
-	        		if (reuseBindings == null) {
-	        			reuseBindings= new ObjectMap(1);
-	        		}
-	        		reuseBindings.put(name, reuseBinding);
-	        		reuseBindings.remove(currentName);
-				} 
+	public void addName(IASTName name) {
+		final char[] nchars = name.toCharArray();
+		if (nchars.length == 0)
+			return;
+
+		int type = getNamespaceType(name);
+		CharArrayObjectMap map = mapsToNameOrBinding[type];
+		if (map == CharArrayObjectMap.EMPTY_MAP)
+			map = mapsToNameOrBinding[type] = new CharArrayObjectMap(1);
+
+		Object o= map.get(nchars);
+		if (o instanceof IASTName) {
+			if (o != name) {
+				map.put(nchars, new IASTName[] {(IASTName) o, name});
 			}
-        }
-        map.put(n, name);
-    }
+		} else if (o instanceof IASTName[]) {
+			final IASTName[] names = (IASTName[]) o;
+			for (IASTName n : names) {
+				if (n == null)
+					break;
+				if (n == name)
+					return;
+			}
+			final IASTName[] newNames= (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+			if (newNames != names)
+				map.put(nchars, newNames);
+		} else {
+			map.put(nchars, name);
+		}
+	}
 
     private int getNamespaceType( IASTName name ){
         ASTNodeProperty prop = name.getPropertyInParent();
@@ -243,38 +240,35 @@ public class CScope implements ICScope, IASTInternalScope {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
-    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) {
-	    char [] c = name.toCharArray();
+	public final IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
+		char[] c = name.toCharArray();
 	    if( c.length == 0  ){
 	        return null;
 	    }
 	    
-	    final int type = getNamespaceType( name );
-	    Object o = mapsToNameOrBinding[type].get( name.toCharArray() );
+	    populateCache();
+		final int type = getNamespaceType(name);
+		Object o = mapsToNameOrBinding[type].get(name.toCharArray());
 	    
-	    if( o instanceof IBinding )
-	        return (IBinding) o;
+		if (o instanceof IBinding)
+			return (IBinding) o;
 	
 	    if (o instanceof IASTName) {
-	    	final IASTName n= (IASTName) o;
-	    	if (!isTypeDefinition(name) || CVisitor.declaredBefore(n, name)) {
-	    		IBinding b= n.getBinding();
-	    		if (b != null)
-	    			return b;
-
-	    		if (reuseBindings != null) {
-	    			b= (IBinding) reuseBindings.get(n);
-	    			if (b != null)
-	    				return b;
-	    		}
-	    		if (resolve && n != name) {
-	    			return n.resolveBinding();
-	    		}
-	    	}
+	    	IBinding b= extractBinding((IASTName) o, resolve, name);
+	    	if (b != null)
+	    		return b;
+	    } else if (o instanceof IASTName[]) {
+	    	for (IASTName n: ((IASTName[]) o)) {
+				if (n == null)
+					break;
+				IBinding b= extractBinding(n, resolve, name);
+				if (b != null)
+					return b;
+			}
 	    }
 	    
     	IBinding result= null;
-    	if(physicalNode instanceof IASTTranslationUnit) {
+    	if (resolve && physicalNode instanceof IASTTranslationUnit) {
     		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
 			IIndex index= tu.getIndex();
     		if(index!=null) {
@@ -292,33 +286,47 @@ public class CScope implements ICScope, IASTInternalScope {
     	return result;
 	}
 
-    private boolean isTypeDefinition(IASTName name) {
-    	if (name.getPropertyInParent()==IASTNamedTypeSpecifier.NAME) {
-    		return true;
+	private IBinding extractBinding(final IASTName candidate, boolean resolve, IASTName forName) {
+		if (!resolve || acceptDeclaredAfter(forName) || CVisitor.declaredBefore(candidate, forName)) {
+			if (resolve && candidate != forName) {
+				return candidate.resolveBinding();
+			}
+			return candidate.getBinding();
+		}
+		return null;
+	}
+
+    private boolean acceptDeclaredAfter(IASTName name) {
+    	if (getKind() != EScopeKind.eGlobal)
+    		return false;
+    	final ASTNodeProperty propertyInParent = name.getPropertyInParent();
+		if (propertyInParent==IASTNamedTypeSpecifier.NAME || 
+				propertyInParent == IASTElaboratedTypeSpecifier.TYPE_NAME) {
+    		return false;
     	}
     	IASTNode parent= name.getParent();
     	while (parent != null) {
     		if (parent instanceof IASTUnaryExpression) {
     			if (((IASTUnaryExpression) parent).getOperator() == IGNUASTUnaryExpression.op_typeof)
-    				return true;
+    				return false;
     		}
     		else if (parent instanceof IASTTypeIdExpression) {
     			if (((IASTTypeIdExpression) parent).getOperator() == IASTTypeIdExpression.op_typeof)
-    				return true;
+    				return false;
     		}
     		parent= parent.getParent();
     	}
-    	return false;
+    	return true;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet ) {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
         char [] c = name.toCharArray();
-        
         Object[] obj = null;
-        
+
+        populateCache();
         for (CharArrayObjectMap map : mapsToNameOrBinding) {
         	if (prefixLookup) {
         		Object[] keys = map.keyArray();
@@ -333,47 +341,49 @@ public class CScope implements ICScope, IASTInternalScope {
         	}
         }
 
-       	if(physicalNode instanceof IASTTranslationUnit) {
-        	final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
-			IIndex index= tu.getIndex();
-        	if(index!=null) {
-        		try {
-        			IBinding[] bindings = prefixLookup ?
-							index.findBindingsForPrefix(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
-							index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
+		if (physicalNode instanceof IASTTranslationUnit) {
+			final IASTTranslationUnit tu = (IASTTranslationUnit) physicalNode;
+			IIndex index = tu.getIndex();
+			if (index != null) {
+				try {
+					IBinding[] bindings = prefixLookup ? index.findBindingsForPrefix(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null)
+							: index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
 					if (fileSet != null) {
-						bindings= fileSet.filterFileLocalBindings(bindings);
+						bindings = fileSet.filterFileLocalBindings(bindings);
 					}
-							
+
 					obj = ArrayUtil.addAll(Object.class, obj, bindings);
-        		} catch(CoreException ce) {
-        			CCorePlugin.log(ce);
-        		}
-        	}
-        }
+				} catch (CoreException ce) {
+					CCorePlugin.log(ce);
+				}
+			}
+		}
        	obj = ArrayUtil.trim(Object.class, obj);
        	IBinding[] result = null;
         
-       	for (Object element : obj) {
-            if( element instanceof IBinding ) {
-            	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
-            } else if (element instanceof IASTName) {
-    	    	final IASTName n= (IASTName) element;
-    	    	IBinding b= n.getBinding();
-    	    	if (b == null) {
-    	    		if (reuseBindings != null) {
-    	    			b= (IBinding) reuseBindings.get(n);
-    	    		}
-    	    		if (resolve && b == null && n != name) {
-    	    			b= n.resolveBinding();
-    	    		}
-    	    	}
-            	if (b != null) {
-                	result = (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
-            	}
-            		
-            }
-       	}
+		for (Object element : obj) {
+			if (element instanceof IBinding) {
+				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
+			} else  {
+				IASTName n= null;
+				if (element instanceof IASTName) {
+					n= (IASTName) element;
+				} else if (element instanceof IASTName[]) {
+					n = ((IASTName[]) element)[0];
+				}
+				if (n != null) {
+					IBinding b = n.getBinding();
+					if (b == null) {
+						if (resolve && n != name) {
+							b = n.resolveBinding();
+						}
+					}
+					if (b != null) {
+						result = (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
+					}
+				}
+			}
+		}
 
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
     }
@@ -392,19 +402,164 @@ public class CScope implements ICScope, IASTInternalScope {
     	return bindings[0];
     }
         
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#setFullyCached(boolean)
-     */
-    public void setFullyCached( boolean b ){
-        isFullyCached = b;
+    public void populateCache() {
+    	if (isCached)
+    		return;
+    	
+    	doPopulateCache();
+    	isCached= true;
     }
+    
+	protected void doPopulateCache() {
+		final IASTNode scopeNode = physicalNode;
+		IASTNode[] nodes = null;
+		if (scopeNode instanceof IASTCompoundStatement) {
+			IASTCompoundStatement compound = (IASTCompoundStatement) scopeNode;
+			if (scopeNode.getParent() instanceof IASTFunctionDefinition) {
+				IASTFunctionDeclarator dtor = ((IASTFunctionDefinition) scopeNode.getParent()).getDeclarator();
+				if (dtor instanceof IASTStandardFunctionDeclarator) {
+					nodes = ((IASTStandardFunctionDeclarator) dtor).getParameters();
+				} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
+					nodes = ((ICASTKnRFunctionDeclarator) dtor).getParameterDeclarations();
+				}
+			}
+			if (nodes == null || nodes.length == 0) {
+				nodes = compound.getStatements();
+			}
+		} else if (scopeNode instanceof IASTTranslationUnit) {
+			IASTTranslationUnit translation = (IASTTranslationUnit) scopeNode;
+			nodes = translation.getDeclarations();
+		} else if (scopeNode instanceof IASTStandardFunctionDeclarator) {
+			IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) scopeNode;
+			nodes = dtor.getParameters();
+		} else if (scopeNode instanceof ICASTKnRFunctionDeclarator) {
+			ICASTKnRFunctionDeclarator dtor = (ICASTKnRFunctionDeclarator) scopeNode;
+			nodes = dtor.getParameterDeclarations();
+		} else if (scopeNode instanceof IASTForStatement) {
+			final IASTForStatement forStmt = (IASTForStatement) scopeNode;
+			nodes= new IASTNode[] {forStmt.getInitializerStatement()};
+		}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#isFullyCached()
-     */
-    public boolean isFullyCached(){
-        return isFullyCached;
-    }
+		if (nodes != null) {
+			int idx = -1;
+			IASTNode node = nodes.length > 0 ? nodes[++idx] : null;
+			while (node != null) {
+				collectNames(node);
+				if (idx > -1 && ++idx < nodes.length) {
+					node = nodes[idx];
+				} else {
+					node = null;
+					if (nodes[0].getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER
+							|| nodes[0].getPropertyInParent() == IASTStandardFunctionDeclarator.FUNCTION_PARAMETER) {
+						// function body, we were looking at parameters, now
+						// check the body itself
+						IASTCompoundStatement compound = null;
+						if (scopeNode instanceof IASTCompoundStatement) {
+							compound = (IASTCompoundStatement) scopeNode;
+						} else if (scopeNode instanceof IASTFunctionDeclarator) {
+							IASTNode n = scopeNode.getParent();
+							while (n instanceof IASTDeclarator)
+								n = n.getParent();
+							if (n instanceof IASTFunctionDefinition) {
+								compound = (IASTCompoundStatement) ((IASTFunctionDefinition) n).getBody();
+							}
+						}
+						if (compound != null) {
+							nodes = compound.getStatements();
+							if (nodes.length > 0) {
+								idx = 0;
+								node = nodes[0];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+    
+	public void collectNames(IASTNode node) {
+	    if (node instanceof IASTDeclaration) {
+	        collectNames((IASTDeclaration) node);
+	    } else if (node instanceof IASTParameterDeclaration) {
+	        collectNames((IASTParameterDeclaration) node);
+	    } else if (node instanceof IASTDeclarationStatement) {
+			collectNames(((IASTDeclarationStatement)node).getDeclaration());
+		} 
+	}
+
+	private void collectNames(IASTParameterDeclaration paramDecl) {
+	    if (paramDecl == null || paramDecl instanceof IASTAmbiguousParameterDeclaration) 
+	    	return;
+	    
+		collectNames(paramDecl.getDeclarator());
+		collectNames(paramDecl.getDeclSpecifier());
+	}
+
+	private void collectNames(IASTDeclarator dtor) {
+		IASTDeclarator innermost= null;
+		while (dtor != null) {
+			if (dtor instanceof IASTAmbiguousDeclarator) {
+				innermost= null;
+				break;
+			}
+			innermost= dtor;
+			dtor= dtor.getNestedDeclarator();
+		}
+		if (innermost != null)
+			ASTInternal.addName(this, innermost.getName());
+	}
+	
+	private void collectNames(IASTDeclaration declaration) {
+		if (declaration instanceof IASTAmbiguousSimpleDeclaration)
+			return;
+		
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
+			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
+			for (IASTDeclarator dtor : declarators) {
+				collectNames(dtor);
+			}
+			collectNames(simpleDeclaration.getDeclSpecifier());
+		} else if (declaration instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
+			collectNames(functionDef.getDeclarator());
+			collectNames(functionDef.getDeclSpecifier()); 
+		}
+	}
+
+	private void collectNames(IASTDeclSpecifier declSpec) {
+		IASTName tempName = null;
+		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
+			tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+			ASTInternal.addName(this, tempName);
+		} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
+			tempName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+			ASTInternal.addName(this,  tempName);
+
+			//also have to check for any nested structs
+			IASTDeclaration[] nested = ((ICASTCompositeTypeSpecifier)declSpec).getMembers();
+			for (IASTDeclaration element : nested) {
+				if (element instanceof IASTSimpleDeclaration) {
+					IASTDeclSpecifier d = ((IASTSimpleDeclaration)element).getDeclSpecifier();
+					if (d instanceof ICASTCompositeTypeSpecifier || d instanceof IASTEnumerationSpecifier) {
+						collectNames(d);
+					}
+				}
+			}
+		} else if (declSpec instanceof ICASTEnumerationSpecifier) {
+		    ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
+		    tempName = enumeration.getName();
+		    ASTInternal.addName(this,  tempName);
+
+		    //check enumerators
+		    IASTEnumerator[] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
+		    for (IASTEnumerator enumerator : list) {
+		        if (enumerator == null) break;
+		        tempName = enumerator.getName();
+		        ASTInternal.addName(this,  tempName);
+		    }
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
@@ -416,50 +571,24 @@ public class CScope implements ICScope, IASTInternalScope {
 		return null;
 	}
 
-	public void flushCache() {
-		CharArrayObjectMap map= mapsToNameOrBinding[0];
-		CharArrayObjectMap builtins= null;
-		for (int i = 0; i < map.size(); i++) {
-			Object obj= map.getAt(i);
-			if (obj instanceof IASTName) {
-				((IASTName) obj).setBinding(null);
-			} else if (obj instanceof IBinding) {
-				if (builtins == null) {
-					builtins= new CharArrayObjectMap(2);
-				}
-				builtins.put(((IBinding) obj).getNameCharArray(), obj);
-			}
-		}
-		mapsToNameOrBinding[0]= builtins == null ? CharArrayObjectMap.EMPTY_MAP : builtins;
-
-		map= mapsToNameOrBinding[1];
-		builtins= null;
-		for (int i = 0; i < map.size(); i++) {
-			Object obj= map.getAt(i);
-			if (obj instanceof IASTName) {
-				((IASTName) obj).setBinding(null);
-			} else if (obj instanceof IBinding) {
-				if (builtins == null) {
-					builtins= new CharArrayObjectMap(2);
-				}
-				builtins.put(((IBinding) obj).getNameCharArray(), obj);
-			}
-		}
-		mapsToNameOrBinding[1]= builtins == null ? CharArrayObjectMap.EMPTY_MAP : builtins;
-		reuseBindings= null;
-		isFullyCached = false;
-	}
-
 	public void addBinding(IBinding binding) {
 		int type = NAMESPACE_TYPE_OTHER;
-        if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
-            type = NAMESPACE_TYPE_TAG;
-        }
-            
-        CharArrayObjectMap map = mapsToNameOrBinding[type];
-		if( map == CharArrayObjectMap.EMPTY_MAP )
-           map= mapsToNameOrBinding[type] = new CharArrayObjectMap(2);
-        
+		if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
+			type = NAMESPACE_TYPE_TAG;
+		}
+
+		CharArrayObjectMap map = mapsToNameOrBinding[type];
+		if (map == CharArrayObjectMap.EMPTY_MAP)
+			map = mapsToNameOrBinding[type] = new CharArrayObjectMap(2);
+
 		map.put(binding.getNameCharArray(), binding);
+	}
+
+	/**
+	 * In case there was an ambiguity the cache has to be populated for a second time.
+	 * However, we do not clear any names in order not to loose bindings. 
+	 */
+	public void markAsUncached() {
+		isCached= false;
 	}
 }

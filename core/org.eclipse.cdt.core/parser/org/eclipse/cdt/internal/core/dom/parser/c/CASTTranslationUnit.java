@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,9 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -24,11 +26,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * C-specific implementation of a translation unit.
  */
-public class CASTTranslationUnit extends ASTTranslationUnit {
+public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbiguityParent {
 	private CScope compilationUnit = null;
 
 	
@@ -93,4 +96,17 @@ public class CASTTranslationUnit extends ASTTranslationUnit {
 	protected ASTVisitor createAmbiguityNodeVisitor() {
 		return new CASTAmbiguityResolver();
 	}
+	
+    public void replace(IASTNode child, IASTNode other) {
+        if (fDeclarations == null) return;
+        for(int i=0; i < fDeclarations.length; ++i) {
+           if (fDeclarations[i] == null) break;
+           if (fDeclarations[i] == child) {
+               other.setParent(child.getParent());
+               other.setPropertyInParent(child.getPropertyInParent());
+               fDeclarations[i] = (IASTDeclaration) other;
+               return;
+           }
+        }
+    }
 }

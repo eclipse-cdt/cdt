@@ -1,25 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * A declaration statement.
  */
-public class CASTDeclarationStatement extends ASTNode implements IASTDeclarationStatement {
+public class CASTDeclarationStatement extends ASTNode implements IASTDeclarationStatement, IASTAmbiguityParent {
 
     private IASTDeclaration declaration;
 
@@ -71,4 +74,12 @@ public class CASTDeclarationStatement extends ASTNode implements IASTDeclaration
 		}
         return true;
     }
+
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == declaration) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			declaration = (IASTDeclaration) other;
+		}
+	}
 }

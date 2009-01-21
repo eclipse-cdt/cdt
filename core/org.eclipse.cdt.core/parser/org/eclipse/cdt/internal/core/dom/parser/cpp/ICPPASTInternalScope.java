@@ -29,11 +29,4 @@ public interface ICPPASTInternalScope extends IASTInternalScope, ICPPScope {
 	 */
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, 
 			IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) throws DOMException;
-	
-	/**
-	 * Can be called during ambiguity resolution to populate a scope without considering
-	 * the ambiguous branches. The rest of the names has to be cached one by one after
-	 * the ambiguities have been resolved.
-	 */
-	public void populateCache();
 }

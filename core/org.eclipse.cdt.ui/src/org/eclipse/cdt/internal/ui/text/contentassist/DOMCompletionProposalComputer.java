@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CBuiltinParameter;
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
+import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
+import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
@@ -263,7 +269,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			List<ICompletionProposal> proposals) {
 
 		if ((binding instanceof CPPImplicitFunction
-				|| binding instanceof CPPImplicitFunctionTemplate || binding instanceof CPPImplicitTypedef)
+				|| binding instanceof CPPImplicitFunctionTemplate 
+				|| binding instanceof CPPImplicitTypedef
+				|| binding instanceof CPPBuiltinVariable
+				|| binding instanceof CPPBuiltinParameter
+				|| binding instanceof CImplicitFunction
+				|| binding instanceof CImplicitTypedef
+				|| binding instanceof CBuiltinVariable
+				|| binding instanceof CBuiltinParameter)
 				&& !(binding instanceof CPPImplicitMethod)) {
 			return;
 		}

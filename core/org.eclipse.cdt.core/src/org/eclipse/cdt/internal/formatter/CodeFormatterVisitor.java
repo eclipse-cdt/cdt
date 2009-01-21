@@ -435,6 +435,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			// declarator
 			final IASTDeclarator declarator= node.getDeclarator();
 			if (declarator != null) {
+				skipNonWhitespaceToNode(declarator);
 				boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
 				if (needSpace) {
 					scribe.space();
@@ -2471,43 +2472,48 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 						scribe.startNewLine();
 					}
 				}
-			} else if (elseStatement == null && preferences.keep_simple_if_on_one_line) {
-				Alignment compactIfAlignment = scribe.createAlignment(
-						"compactIf", //$NON-NLS-1$
-						preferences.alignment_for_compact_if,
-						Alignment.R_OUTERMOST,
-						1,
-						scribe.scanner.getCurrentPosition(),
-						1,
-						false);
-				scribe.enterAlignment(compactIfAlignment);
-				boolean ok = false;
-				do {
-					try {
-						scribe.alignFragment(compactIfAlignment, 0);
-						scribe.space();
-						thenStatement.accept(this);
-						ok = true;
-					} catch (AlignmentException e) {
-						scribe.redoAlignment(e);
-					}
-				} while (!ok);
-				scribe.exitAlignment(compactIfAlignment, true);
-			} else if (preferences.keep_then_statement_on_same_line) {
-				scribe.space();
-				thenStatement.accept(this);
-				if (elseStatement != null) {
-					scribe.startNewLine();
-				}
 			} else {
-				scribe.printTrailingComment();
-				scribe.startNewLine();
-				scribe.indent();
-				thenStatement.accept(this);
-				if (elseStatement != null) {
-					scribe.startNewLine();
+				if (node.getFileLocation().getNodeOffset() == thenStatement.getFileLocation().getNodeOffset()) {
+					startNode(thenStatement);
 				}
-				scribe.unIndent();
+ 				if (elseStatement == null && preferences.keep_simple_if_on_one_line) {
+					Alignment compactIfAlignment = scribe.createAlignment(
+							"compactIf", //$NON-NLS-1$
+							preferences.alignment_for_compact_if,
+							Alignment.R_OUTERMOST,
+							1,
+							scribe.scanner.getCurrentPosition(),
+							1,
+							false);
+					scribe.enterAlignment(compactIfAlignment);
+					boolean ok = false;
+					do {
+						try {
+							scribe.alignFragment(compactIfAlignment, 0);
+							scribe.space();
+							thenStatement.accept(this);
+							ok = true;
+						} catch (AlignmentException e) {
+							scribe.redoAlignment(e);
+						}
+					} while (!ok);
+					scribe.exitAlignment(compactIfAlignment, true);
+				} else if (preferences.keep_then_statement_on_same_line) {
+					scribe.space();
+					thenStatement.accept(this);
+					if (elseStatement != null) {
+						scribe.startNewLine();
+					}
+				} else {
+					scribe.printTrailingComment();
+					scribe.startNewLine();
+					scribe.indent();
+					thenStatement.accept(this);
+					if (elseStatement != null) {
+						scribe.startNewLine();
+					}
+					scribe.unIndent();
+				}
 			}
 		}
 
@@ -3072,8 +3078,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private void formatBlock(IASTCompoundStatement block, String block_brace_position, boolean insertSpaceBeforeOpeningBrace, boolean indentStatements) {
-		formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
-		boolean endsWithMacroExpansion= endsWithMacroExpansion(block);
+		final boolean startsWithMacroExpansion= startsWithMacroExpansion(block);
+		if (!startsWithMacroExpansion) {
+			formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
+		} else {
+			scribe.startNewLine();
+			scribe.printComment();
+		}
+		final boolean endsWithMacroExpansion= endsWithMacroExpansion(block);
 		IASTStatement[] statements = block.getStatements();
 		final int statementsLength = statements.length;
 		if (statementsLength != 0) {
@@ -3097,7 +3109,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		if (!endsWithMacroExpansion) {
 			formatClosingBrace(block_brace_position);
-		} else {
+		} else if (!startsWithMacroExpansion) {
 			if (DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(block_brace_position)) {
 				scribe.unIndent();
 			}

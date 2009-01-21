@@ -119,7 +119,7 @@ public class MIRunControlEventProcessor_7_0
     			MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
     			// Change of state.
     			String state = exec.getAsyncClass();
-    			if ("stopped".equals(state)) { //$NON-NLS-1$
+    			if (STOPPED_REASON.equals(state)) {
     				// Re-set the thread and stack level to -1 when stopped event is recvd. 
     				// This is to synchronize the state between GDB back-end and AbstractMIControl. 
     				fCommandControl.resetCurrentThreadLevel();
@@ -154,7 +154,7 @@ public class MIRunControlEventProcessor_7_0
         				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         			}
     			}
-    			else if ("running".equals(state)) { //$NON-NLS-1$
+    			else if (RUNNING_REASON.equals(state)) {
 					MIEvent<?> event = createEvent(RUNNING_REASON, exec);
 					if (event != null) {
 						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
@@ -285,6 +285,11 @@ public class MIRunControlEventProcessor_7_0
     		IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
     		execDmc = procService.createExecutionContext(containerDmc, threadDmc, threadId);
     	}
+    	
+    	if (execDmc == null) {
+    		// Badly formatted event
+    		return null;
+    	}
 
     	MIEvent<?> event = null;
     	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
@@ -342,7 +347,7 @@ public class MIRunControlEventProcessor_7_0
         if (rr != null) {
             // Check if the state changed.
             String state = rr.getResultClass();
-            if ("running".equals(state)) { //$NON-NLS-1$
+            if (RUNNING_REASON.equals(state)) {
             	// Store the type of command that is the trigger for the coming
             	// *running event
                      if (cmd instanceof MIExecNext)            { fLastRunningCmdType = MIRunningEvent.NEXT; }

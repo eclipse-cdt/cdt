@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   IBM Corporation - Initial API and implementation
+ *   James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language;
 
@@ -33,13 +34,13 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,13 +54,13 @@ public class LanguageMappingStore {
 	private static final String PROJECT_MAPPINGS = "project-mappings"; //$NON-NLS-1$
 
 	private static final String WORKSPACE_MAPPINGS = "workspace-mappings"; //$NON-NLS-1$
-	
+
 	private static final String CONTENT_TYPE_MAPPING = "content-type-mapping"; //$NON-NLS-1$
-	
+
 	private static final String FILE_MAPPING = "file-mapping"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-	
+
 	private static final String ATTRIBUTE_CONTENT_TYPE = "content-type"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_LANGUAGE = "language"; //$NON-NLS-1$
@@ -68,31 +69,31 @@ public class LanguageMappingStore {
 
 	public LanguageMappingStore() {
 	}
-	
+
 	public ProjectLanguageConfiguration decodeMappings(IProject project) throws CoreException {
 		ProjectLanguageConfiguration config = new ProjectLanguageConfiguration();
 		ICDescriptor descriptor = getProjectDescription(project);
-		Element rootElement = descriptor.getProjectData(LANGUAGE_MAPPING_ID);
+		ICStorageElement rootElement = descriptor.getProjectStorageElement(LANGUAGE_MAPPING_ID);
 		if (rootElement == null) {
 			return config;
 		}
-		
-		NodeList mappingElements = rootElement.getElementsByTagName(PROJECT_MAPPINGS);
-		if (mappingElements.getLength() > 0) {
-			Element element = (Element) mappingElements.item(0);
+
+		ICStorageElement[] mappingElements = rootElement.getChildrenByName(PROJECT_MAPPINGS);
+		if (mappingElements.length > 0) {
+			ICStorageElement element = mappingElements[0];
 			config.setContentTypeMappings(decodeProjectContentTypeMappings(element));
 			config.setFileMappings(decodeFileMappings(element));
 		}
 		return config;
 	}
-	
-	private Map<String, Map<String, String>> decodeProjectContentTypeMappings(Element rootElement) {
+
+	private Map<String, Map<String, String>> decodeProjectContentTypeMappings(ICStorageElement rootElement) {
 		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
-		NodeList mappingElements = rootElement.getElementsByTagName(CONTENT_TYPE_MAPPING);
-		for (int j = 0; j < mappingElements.getLength(); j++) {
-			Element mapping = (Element) mappingElements.item(j);
+		ICStorageElement[] mappingElements = rootElement.getChildrenByName(CONTENT_TYPE_MAPPING);
+		for (int j = 0; j < mappingElements.length; j++) {
+			ICStorageElement mapping = mappingElements[j];
 			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
-			
+
 			Map<String, String> contentTypeMappings = decodedMappings.get(configuration);
 			if (contentTypeMappings == null) {
 				contentTypeMappings = new TreeMap<String, String>();
@@ -108,18 +109,18 @@ public class LanguageMappingStore {
 	protected ICDescriptor getProjectDescription(IProject project) throws CoreException {
 		return CCorePlugin.getDefault().getCProjectDescription(project, true);
 	}
-	
+
 	private Map<String, String> decodeContentTypeMappings(Element rootElement) throws CoreException {
 		return decodeMappings(rootElement, CONTENT_TYPE_MAPPING, ATTRIBUTE_CONTENT_TYPE, ATTRIBUTE_LANGUAGE);
 	}
-	
-	private Map<String, Map<String, String>> decodeFileMappings(Element rootElement) throws CoreException {
+
+	private Map<String, Map<String, String>> decodeFileMappings(ICStorageElement rootElement) throws CoreException {
 		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
-		NodeList mappingElements = rootElement.getElementsByTagName(FILE_MAPPING);
-		for (int j = 0; j < mappingElements.getLength(); j++) {
-			Element mapping = (Element) mappingElements.item(j);
+		ICStorageElement[] mappingElements = rootElement.getChildrenByName(FILE_MAPPING);
+		for (int j = 0; j < mappingElements.length; j++) {
+			ICStorageElement mapping = mappingElements[j];
 			String path = mapping.getAttribute(ATTRIBUTE_PATH);
-			
+
 			Map<String, String> configurationMappings = decodedMappings.get(path);
 			if (configurationMappings == null) {
 				configurationMappings = new TreeMap<String, String>();
@@ -131,7 +132,7 @@ public class LanguageMappingStore {
 		}
 		return decodedMappings;
 	}
-	
+
 	private Map<String, String> decodeMappings(Element rootElement, String category, String keyName, String valueName) {
 		Map<String, String> decodedMappings = new TreeMap<String, String>();
 		NodeList mappingElements = rootElement.getElementsByTagName(category);
@@ -146,36 +147,33 @@ public class LanguageMappingStore {
 
 	public void storeMappings(IProject project, ProjectLanguageConfiguration config) throws CoreException {
 		ICDescriptor descriptor = getProjectDescription(project);
-		Element rootElement = descriptor.getProjectData(LANGUAGE_MAPPING_ID);
-		clearChildren(rootElement);
+		ICStorageElement rootElement = descriptor.getProjectStorageElement(LANGUAGE_MAPPING_ID);
+		// clear all children and settings
+		rootElement.clear();
 
-		Document document = rootElement.getOwnerDocument();
-		Element projectMappings = document.createElement(PROJECT_MAPPINGS);
-		rootElement.appendChild(projectMappings);
-		
+		ICStorageElement projectMappings = rootElement.createChild(PROJECT_MAPPINGS);
+
 		addProjectContentTypeMappings(config.getContentTypeMappings(), projectMappings);
 		addFileMappings(config.getFileMappings(), projectMappings);
 		descriptor.saveProjectData();
 	}
 
-	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings, Element rootElement) {
-		Document document = rootElement.getOwnerDocument();
+	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings, ICStorageElement rootElement) {
 		Iterator<Entry<String, Map<String, String>>> entries = contentTypeMappings.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry<String, Map<String, String>> entry = entries.next();
-			
+
 			String configuration = entry.getKey();
 			Iterator<Entry<String, String>> contentTypeEntries = entry.getValue().entrySet().iterator();
 			while (contentTypeEntries.hasNext()) {
 				Entry<String, String> configurationEntry = contentTypeEntries.next();
 				String contentType = configurationEntry.getKey();
 				String language = configurationEntry.getValue();
-				
-				Element mapping = document.createElement(CONTENT_TYPE_MAPPING);
+
+				ICStorageElement mapping = rootElement.createChild(CONTENT_TYPE_MAPPING);
 				mapping.setAttribute(ATTRIBUTE_CONTENT_TYPE, contentType);
 				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
 				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
-				rootElement.appendChild(mapping);
 			}
 		}
 	}
@@ -193,7 +191,7 @@ public class LanguageMappingStore {
 			StreamResult result = new StreamResult(buffer);
 			serializer.transform(source, result);
 			String encodedMappings = buffer.getBuffer().toString();
-			
+
 			Preferences node = CCorePlugin.getDefault().getPluginPreferences();
 			node.setValue(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, encodedMappings);
 			CCorePlugin.getDefault().savePluginPreferences();
@@ -201,18 +199,18 @@ public class LanguageMappingStore {
 			throw new CoreException(Util.createStatus(e));
 		} catch (TransformerException e) {
 			throw new CoreException(Util.createStatus(e));
-		} 
+		}
 	}
-	
+
 	public WorkspaceLanguageConfiguration decodeWorkspaceMappings() throws CoreException {
 		Preferences node = CCorePlugin.getDefault().getPluginPreferences();
 		String encodedMappings = node.getString(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
 		WorkspaceLanguageConfiguration config = new WorkspaceLanguageConfiguration();
-		
+
 		if (encodedMappings == null || encodedMappings.length() == 0) {
 			return config;
 		}
-		
+
 		// The mappings are encoded as XML in a String so we need to parse it.
 		InputSource input = new InputSource(new StringReader(encodedMappings));
 		try {
@@ -227,7 +225,7 @@ public class LanguageMappingStore {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
-	
+
 	private Transformer createSerializer() throws CoreException {
 		try {
 			return TransformerFactory.newInstance().newTransformer();
@@ -235,14 +233,6 @@ public class LanguageMappingStore {
 			throw new CoreException(Util.createStatus(e));
 		} catch (TransformerFactoryConfigurationError e) {
 			throw new CoreException(Util.createStatus(e));
-		}
-	}
-
-	private void clearChildren(Element element) {
-		Node child = element.getFirstChild();
-		while (child != null) {
-			element.removeChild(child);
-			child = element.getFirstChild();
 		}
 	}
 
@@ -257,29 +247,22 @@ public class LanguageMappingStore {
 			rootElement.appendChild(mapping);
 		}
 	}
-	
+
 	private void addContentTypeMappings(Map<String, String> mappings, Element rootElement) {
 		addMappings(mappings, rootElement, CONTENT_TYPE_MAPPING, ATTRIBUTE_CONTENT_TYPE, ATTRIBUTE_LANGUAGE);
 	}
-	
-	private void addFileMappings(Map<String, Map<String, String>> mappings, Element rootElement) {
-		Document document = rootElement.getOwnerDocument();
-		Iterator<Entry<String, Map<String, String>>> entries = mappings.entrySet().iterator();
-		while (entries.hasNext()) {
-			Entry<String, Map<String, String>> entry = entries.next();
-			Element mapping = document.createElement(FILE_MAPPING);
-			
+
+	private void addFileMappings(Map<String, Map<String, String>> mappings, ICStorageElement rootElement) {
+		for (Map.Entry<String, Map<String, String>> entry : mappings.entrySet()) {
+			ICStorageElement mapping = rootElement.createChild(FILE_MAPPING);
 			String path = entry.getKey();
-			Iterator<Entry<String, String>> configurationEntries = entry.getValue().entrySet().iterator();
-			while (configurationEntries.hasNext()) {
-				Entry<String, String> configurationEntry = configurationEntries.next();
+			for (Entry<String, String> configurationEntry : entry.getValue().entrySet()) {
 				String configuration = configurationEntry.getKey();
 				String language = configurationEntry.getValue();
-				
+
 				mapping.setAttribute(ATTRIBUTE_PATH, path);
 				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
 				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
-				rootElement.appendChild(mapping);
 			}
 		}
 	}

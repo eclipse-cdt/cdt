@@ -652,7 +652,7 @@ class MockConfig implements ICConfigurationDescription {
 			CConfigurationData data) throws WriteAccessException {}
 	public void setDescription(String des) throws WriteAccessException {}
 	public void setName(String name) throws WriteAccessException {}
-	public void setReferenceInfo(Map refs) throws WriteAccessException {}
+	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {}
 	public void setSessionProperty(QualifiedName name, Object value) {}
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException,
 	WriteAccessException {}
@@ -663,8 +663,10 @@ class MockConfig implements ICConfigurationDescription {
 	public int getType() {return 0;}
 	public boolean isReadOnly() {return false;}
 	public boolean isValid() {return false;}
-	public ICStorageElement getStorage(String id, boolean create)
-	throws CoreException {
+	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
+		return null;
+	}
+	public ICStorageElement importStorage(String id, ICStorageElement storage) {
 		return null;
 	}
 
@@ -690,6 +692,8 @@ class MockConfig implements ICConfigurationDescription {
 	public CConfigurationStatus getConfigurationStatus() {
 		return CConfigurationStatus.CFG_STATUS_OK;
 	}
+
+	public void setReadOnly(boolean readOnly, boolean keepModify) {}
 }
 
 /*

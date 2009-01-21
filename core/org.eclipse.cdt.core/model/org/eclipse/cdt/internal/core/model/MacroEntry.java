@@ -73,6 +73,11 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 		}
 		return super.equals(obj);
 	}
+	
+	@Override
+	public int hashCode() {
+		return macroName.hashCode() + macroValue.hashCode() + super.hashCode();
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ * 	   James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -17,10 +18,11 @@ import java.util.List;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.core.runtime.CoreException;
 
 public class ManagedConfigStorageElement implements ICStorageElement {
 	private IManagedConfigElement fElement;
-	private List fChildList;
+	private List<IManagedConfigElement> fChildList;
 	private ManagedConfigStorageElement fParent;
 	public ManagedConfigStorageElement(IManagedConfigElement el){
 		this(el, null);
@@ -42,20 +44,36 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 	public String getAttribute(String name) {
 		return fElement.getAttribute(name);
 	}
+	
+	public boolean hasAttribute(String name) {
+		return fElement.getAttribute(name) != null;
+	}
 
 	public ICStorageElement[] getChildren() {
-		List list = getChildList(true);
-		return (ManagedConfigStorageElement[])list.toArray(new ManagedConfigStorageElement[list.size()]);
+		List<IManagedConfigElement> list = getChildList(true);
+		return list.toArray(new ManagedConfigStorageElement[list.size()]);
 	}
 	
-	private List getChildList(boolean create){
+	private List<IManagedConfigElement> getChildList(boolean create){
 		if(fChildList == null && create){
 			IManagedConfigElement children[] = fElement.getChildren();
 			
-			fChildList = new ArrayList(children.length);
+			fChildList = new ArrayList<IManagedConfigElement>(children.length);
 			fChildList.addAll(Arrays.asList(children));
 		}
 		return fChildList;
+	}
+	
+	public ICStorageElement[] getChildrenByName(String name) {
+		List<ICStorageElement> children = new ArrayList<ICStorageElement>();
+		for (ICStorageElement child : getChildren())
+			if (name.equals(child.getName()))
+				children.add(child);
+		return children.toArray(new ICStorageElement[children.size()]);
+	}
+	
+	public boolean hasChildren() {
+		return getChildList(true).isEmpty();
 	}
 
 	public String getName() {
@@ -92,6 +110,14 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 	}
 
 	public String[] getAttributeNames() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean equals(ICStorageElement other) {
 		throw new UnsupportedOperationException();
 	}
 }

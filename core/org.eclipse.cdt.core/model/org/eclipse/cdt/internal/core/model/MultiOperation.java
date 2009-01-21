@@ -180,9 +180,10 @@ public abstract class MultiOperation extends CModelOperation {
 					insertedTree = true;
 				}
 			}
-			if (insertedTree)
-				fDeltas = new ICElementDelta[] {rootDelta};
-			else
+			if (insertedTree) {
+				fDeltas.clear();
+				fDeltas.add(rootDelta);
+			} else
 				fDeltas = null;
 		}
 	}

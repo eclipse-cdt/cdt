@@ -14,6 +14,14 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionDelta;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 
+/**
+ * Events fired for the project delats.
+ * 
+ * FIXME JBB: Should work out the difference between DATA_APPLIED AND APPLIED events
+ * current DATA_APPLIED occurs first and fNewDescription is modified. Need to clearly define
+ * the project description state transitions
+ */
+
 public final class CProjectDescriptionEvent {
 	public static final int LOADED = 1;
 	public static final int ABOUT_TO_APPLY = 1 << 1;
@@ -23,7 +31,9 @@ public final class CProjectDescriptionEvent {
 	public static final int ALL = LOADED | ABOUT_TO_APPLY | APPLIED | COPY_CREATED | DATA_APPLIED;
 	
 	private int fType;
+	/** A *writable* new description */
 	private ICProjectDescription fNewDescription;
+	/** The previous description should be read-only */
 	private ICProjectDescription fOldDescription;
 	private ICProjectDescription fAppliedDescription;
 	private ICDescriptionDelta fProjDelta;
@@ -138,6 +148,10 @@ public final class CProjectDescriptionEvent {
 		return fOldDescription;
 	}
 
+	/**
+	 * Return the new description which is writeable
+	 * @return writable new description
+	 */
 	public ICProjectDescription getNewCProjectDescription() {
 		return fNewDescription;
 	}

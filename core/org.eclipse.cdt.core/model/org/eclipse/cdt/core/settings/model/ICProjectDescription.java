@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -127,7 +128,7 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * the get/setSettionsProperty methods allow to associate the session properties with the given project description
 	 * session properties are not persisted and are not restored on the next eclipse session
 	 * the scope of project description session properties is the current project description,
-	 * i.e. modifications to the properties are not applied untill the setProjectDescription call
+	 * i.e. modifications to the properties are not applied until the setProjectDescription call
 	 * 
 	 * @param name
 	 */
@@ -137,7 +138,7 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * the get/setSettionsProperty methods allow to associate the session properties with the given project description
 	 * session properties are not persisted and are not restored on the next eclipse session
 	 * the scope of project description session properties is the current project description,
-	 * i.e. modifications to the properties are not applied untill the setProjectDescription call
+	 * i.e. modifications to the properties are not applied until the setProjectDescription call
 	 * 
 	 * @param name
 	 * @param value

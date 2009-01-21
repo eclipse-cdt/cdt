@@ -27,6 +27,8 @@ import org.w3c.dom.NodeList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
@@ -117,23 +119,14 @@ class ProjectMap {
 	private static Map<IPath, String> load(IProject project) throws CoreException {
 		Map<IPath, String> result= new HashMap<IPath, String>();
 		ICDescriptor pd= CCorePlugin.getDefault().getCProjectDescription(project, true);
-		Element e= pd.getProjectData(ATTRVAL_STORAGEID);
-		if(e.hasChildNodes()) {
-			NodeList commentOwners= e.getElementsByTagName(ELEMENT_DOC_COMMENT_OWNER);
-			for(int i=0; i<commentOwners.getLength(); i++) {
-				Element node= (Element) commentOwners.item(i);
-				Node commentOwnerIDNode= node.getAttributes().getNamedItem(ATTRKEY_DCO_ID);
-
-				if(commentOwnerIDNode != null) {
-					String commentOwnerID= commentOwnerIDNode.getNodeValue();
-
-					NodeList paths= node.getElementsByTagName(ELEMENT_PATH);
-					for(int j=0; j<paths.getLength(); j++) {
-						Node path= paths.item(i);
-						Node pathValue= path.getAttributes().getNamedItem(ATTRKEY_PATH_VALUE);
-						if(pathValue != null) {
-							result.put(Path.fromPortableString(pathValue.getNodeValue()), commentOwnerID);
-						}
+		ICStorageElement e = pd.getProjectStorageElement(ATTRVAL_STORAGEID);
+		for (ICStorageElement node : e.getChildrenByName(ELEMENT_DOC_COMMENT_OWNER)) {
+			String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
+			if(commentOwnerID != null) {
+				for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
+					String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
+					if(pathValue != null) {
+						result.put(Path.fromPortableString(pathValue), commentOwnerID);
 					}
 				}
 			}
@@ -148,30 +141,23 @@ class ProjectMap {
 		ICDescriptor pd= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 
 		// remove current associations
-		Element data= pd.getProjectData(ATTRVAL_STORAGEID);
-		NodeList nl= data.getChildNodes();
-		for(int i=0; i<nl.getLength(); i++) {
-			Node node= nl.item(i);
-			if(node.getNodeType()== Node.ELEMENT_NODE) {
-				data.removeChild(node);
-			}
-		}
+		ICStorageElement data = pd.getProjectStorageElement(ATTRVAL_STORAGEID);
+		for (ICStorageElement child : data.getChildren())
+			data.removeChild(child);
 
 		// invert and persist associations
 		for(Iterator<String> i= fMap.values().iterator(); i.hasNext();) {
 			String cid= i.next();
-			Element commentNode= data.getOwnerDocument().createElement(ELEMENT_DOC_COMMENT_OWNER);
+			ICStorageElement commentNode = data.createChild(ELEMENT_DOC_COMMENT_OWNER);
 			commentNode.setAttribute(ATTRKEY_DCO_ID, cid);
 			for(Iterator<IPath> j= fMap.keySet().iterator(); j.hasNext(); ) {
 				IPath path= j.next();
 				String ccid= fMap.get(path);
 				if(cid.equals(ccid)) {
-					Element pathNode= data.getOwnerDocument().createElement(ELEMENT_PATH);
+					ICStorageElement pathNode = commentNode.createChild(ELEMENT_PATH);
 					pathNode.setAttribute(ATTRKEY_PATH_VALUE, path.toPortableString());
-					commentNode.appendChild(pathNode);
 				}
 			}
-			data.appendChild(commentNode);
 		}
 		pd.saveProjectData();
 	}

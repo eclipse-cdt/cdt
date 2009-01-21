@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -18,36 +19,37 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.core.runtime.CoreException;
 
 public class MapStorageElement implements ICStorageElement {
-	private HashMap fMap;
+	private HashMap<String, String> fMap;
 	private String fName;
 	private MapStorageElement fParent;
 	private static final String CHILDREN_KEY = "?children?"; //$NON-NLS-1$
 	private static final String NAME_KEY = "?name?"; //$NON-NLS-1$
 	private static final String VALUE_KEY = "?value?"; //$NON-NLS-1$
-	private List fChildren = new ArrayList();
+	private List<MapStorageElement> fChildren = new ArrayList<MapStorageElement>();
 	private String fValue;
 
 	public MapStorageElement(String name, MapStorageElement parent){
 		fName = name;
 		fParent = parent;
-		fMap = new HashMap();
+		fMap = new HashMap<String, String>();
 	}
 
-	public MapStorageElement(Map map, MapStorageElement parent){
-		fName = (String)map.get(getMapKey(NAME_KEY));
-		fValue = (String)map.get(getMapKey(VALUE_KEY));
-		fMap = new HashMap(map);
+	public MapStorageElement(Map<String, String> map, MapStorageElement parent){
+		fName = map.get(getMapKey(NAME_KEY));
+		fValue = map.get(getMapKey(VALUE_KEY));
+		fMap = new HashMap<String, String>(map);
 		fParent = parent;
 		
-		String children = (String)map.get(getMapKey(CHILDREN_KEY));
+		String children = map.get(getMapKey(CHILDREN_KEY));
 		if(children != null){
-			List childrenStrList = decodeList(children);
+			List<String> childrenStrList = decodeList(children);
 			int size = childrenStrList.size();
 			if(size != 0){
 				for(int i = 0; i < size; i++){
-					Map childMap = decodeMap((String)childrenStrList.get(i));
+					Map<String, String> childMap = decodeMap(childrenStrList.get(i));
 					MapStorageElement child = createChildElement(childMap);
 					fChildren.add(child);
 				}
@@ -55,7 +57,7 @@ public class MapStorageElement implements ICStorageElement {
 		}
 	}
 	
-	protected MapStorageElement createChildElement(Map childMap){
+	protected MapStorageElement createChildElement(Map<String, String> childMap){
 		return new MapStorageElement(childMap, this);
 	}
 	
@@ -63,8 +65,8 @@ public class MapStorageElement implements ICStorageElement {
 		return name;
 	}
 	
-	public Map toStringMap(){
-		Map map = (Map)fMap.clone();
+	public Map<String, String> toStringMap(){
+		Map<String, String> map = (Map<String, String>)fMap.clone();
 		if(fName != null)
 			map.put(getMapKey(NAME_KEY), fName);
 		else
@@ -77,10 +79,10 @@ public class MapStorageElement implements ICStorageElement {
 		
 		int size = fChildren.size();
 		if(size != 0){
-			List childrenStrList = new ArrayList(size);
+			List<String> childrenStrList = new ArrayList<String>(size);
 			for(int i = 0; i < size; i++){
-				MapStorageElement child = (MapStorageElement)fChildren.get(i);
-				Map childStrMap = child.toStringMap();
+				MapStorageElement child = fChildren.get(i);
+				Map<String, String> childStrMap = child.toStringMap();
 				String str = encodeMap(childStrMap);
 				childrenStrList.add(str);
 			}
@@ -118,9 +120,25 @@ public class MapStorageElement implements ICStorageElement {
 			return (String)o;
 		return null;
 	}
+	
+	public boolean hasAttribute(String name) {
+		return fMap.containsKey(getMapKey(name));
+	}
 
 	public ICStorageElement[] getChildren() {
-		return (MapStorageElement[])fChildren.toArray(new MapStorageElement[fChildren.size()]);
+		return fChildren.toArray(new MapStorageElement[fChildren.size()]);
+	}
+	
+	public ICStorageElement[] getChildrenByName(String name) {
+		List<ICStorageElement> children = new ArrayList<ICStorageElement>();
+		for (ICStorageElement child : fChildren)
+			if (name.equals(child.getName()))
+				children.add(child);
+		return new ICStorageElement[children.size()];
+	}
+	
+	public boolean hasChildren() {
+		return !fChildren.isEmpty();
 	}
 
 	public String getName() {
@@ -150,13 +168,13 @@ public class MapStorageElement implements ICStorageElement {
 		fMap.put(getMapKey(name), value);
 	}
 	
-	public static Map decodeMap(String value) {
-		List list = decodeList(value);
-		Map map = new HashMap();
+	public static Map<String, String> decodeMap(String value) {
+		List<String> list = decodeList(value);
+		Map<String, String> map = new HashMap<String, String>();
 		char escapeChar = '\\';
 
 		for(int i = 0; i < list.size(); i++){
-			StringBuffer line = new StringBuffer((String)list.get(i));
+			StringBuffer line = new StringBuffer(list.get(i));
 			int lndx = 0;
 			while (lndx < line.length()) {
 				if (line.charAt(lndx) == '=') {
@@ -176,8 +194,8 @@ public class MapStorageElement implements ICStorageElement {
 
 	}
 	
-	public static List decodeList(String value) {
-		List list = new ArrayList();
+	public static List<String> decodeList(String value) {
+		List<String> list = new ArrayList<String>();
 		if (value != null) {
 			StringBuffer envStr = new StringBuffer(value);
 			String escapeChars = "|\\"; //$NON-NLS-1$
@@ -222,8 +240,8 @@ public class MapStorageElement implements ICStorageElement {
 		return list;
 	}
 	
-	public static String encodeMap(Map values) {
-		List list = new ArrayList();
+	public static String encodeMap(Map<String, String> values) {
+		List<String> list = new ArrayList<String>();
 		Iterator entries = values.entrySet().iterator();
 		StringBuffer str = new StringBuffer();
 		while (entries.hasNext()) {
@@ -237,11 +255,11 @@ public class MapStorageElement implements ICStorageElement {
 		return encodeList(list);
 	}
 	
-	public static String encodeList(List values) {
+	public static String encodeList(List<String> values) {
 		StringBuffer str = new StringBuffer();
-		Iterator entries = values.iterator();
+		Iterator<String> entries = values.iterator();
 		while (entries.hasNext()) {
-			String entry = (String)entries.next();
+			String entry = entries.next();
 			str.append(escapeChars(entry, "|\\", '\\')); //$NON-NLS-1$
 //			str.append("="); //$NON-NLS-1$
 //			str.append(escapeChars((String)entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
@@ -276,7 +294,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	public String[] getAttributeNames() {
-		List list = new ArrayList(fMap.size());
+		List<String> list = new ArrayList<String>(fMap.size());
 		for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
 			String key = (String)entry.getKey();
@@ -285,6 +303,14 @@ public class MapStorageElement implements ICStorageElement {
 			}
 		}
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
+	}
+	
+	public 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
+		throw new UnsupportedOperationException();
+	}
+	
+	public boolean equals(ICStorageElement other) {
+		throw new UnsupportedOperationException();
 	}
 }

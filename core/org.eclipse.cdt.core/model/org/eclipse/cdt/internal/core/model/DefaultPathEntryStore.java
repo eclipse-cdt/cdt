@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -33,6 +34,8 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -89,16 +92,9 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
 		if (cdesc != null) {
 			ArrayList<IPathEntry> pathEntries = new ArrayList<IPathEntry>();
-			Element element = cdesc.getProjectData(PATH_ENTRY_ID);
-			NodeList list = element.getChildNodes();
-			for (int i = 0; i < list.getLength(); i++) {
-				Node childNode = list.item(i);
-				if (childNode != null && childNode.getNodeType() == Node.ELEMENT_NODE) {
-					if (childNode.getNodeName().equals(PATH_ENTRY)) {
-						pathEntries.add(decodePathEntry(fProject, (Element) childNode));
-					}
-				}
-			}
+			ICStorageElement entry = cdesc.getProjectStorageElement(PATH_ENTRY_ID);
+			for (ICStorageElement childNode : entry.getChildrenByName(PATH_ENTRY))
+				pathEntries.add(decodePathEntry(fProject, childNode));
 			IPathEntry[] entries = new IPathEntry[pathEntries.size()]; 
 			pathEntries.toArray(entries);
 			return entries;
@@ -111,23 +107,18 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			return;
 		}	
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
-		Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
+		ICStorageElement rootElement = descriptor.getProjectStorageElement(PATH_ENTRY_ID);
 		// Clear out all current children
-		Node child = rootElement.getFirstChild();
-		while (child != null) {
-			rootElement.removeChild(child);
-			child = rootElement.getFirstChild();
-		}
+		rootElement.clear();
 		// Save the entries
 		if (newRawEntries != null && newRawEntries.length > 0) {
 			// Serialize the include paths
-			Document doc = rootElement.getOwnerDocument();
-			encodePathEntries(fProject.getFullPath(), doc, rootElement, newRawEntries);
+			encodePathEntries(fProject.getFullPath(), rootElement, newRawEntries);
 		}
 		descriptor.saveProjectData();
 	}
 
-	static IPathEntry decodePathEntry(IProject project, Element element) throws CModelException {
+	static IPathEntry decodePathEntry(IProject project, ICStorageElement element) throws CModelException {
 		IPath projectPath = project.getFullPath();
 		
 		// kind
@@ -152,10 +143,10 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 
 		// check fo the base path
-		IPath basePath = new Path(element.getAttribute(ATTRIBUTE_BASE_PATH));
+		IPath basePath = new Path(element.hasAttribute(ATTRIBUTE_BASE_PATH) ? element.getAttribute(ATTRIBUTE_BASE_PATH) : "");
 
 		// get the base ref
-		IPath baseRef = new Path(element.getAttribute(ATTRIBUTE_BASE_REF));
+		IPath baseRef = new Path(element.hasAttribute(ATTRIBUTE_BASE_REF) ? element.getAttribute(ATTRIBUTE_BASE_REF) : "");
 
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
@@ -245,12 +236,11 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 	}
 
-	static void encodePathEntries(IPath projectPath, Document doc, Element configRootElement, IPathEntry[] entries) {
-		Element element;
+	static void encodePathEntries(IPath projectPath, ICStorageElement configRootElement, IPathEntry[] entries) {
+		ICStorageElement element;
 		for (IPathEntry entrie : entries) {
-			element = doc.createElement(PATH_ENTRY);
 
-			configRootElement.appendChild(element);
+			element = configRootElement.createChild(PATH_ENTRY);
 			int kind = entrie.getEntryKind();
 			// Set the kind
 			element.setAttribute(ATTRIBUTE_KIND, PathEntry.kindToString(kind));

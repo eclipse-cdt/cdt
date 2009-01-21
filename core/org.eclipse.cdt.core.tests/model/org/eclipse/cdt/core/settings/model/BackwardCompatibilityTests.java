@@ -219,8 +219,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 	private void doTestRm(IProject proj) throws CoreException{
 		final String DATA_ID = "testICDescriptorGetProjectData";
         ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(proj, false);
-        Element dataEl = dr.getProjectData(DATA_ID);
-        dataEl.getParentNode().removeChild(dataEl);
+        dr.removeProjectStorageElement(DATA_ID);
         dr.saveProjectData();
 	}
 	

@@ -40,15 +40,23 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * This resource change handler notices external changes to the cdt projects
+ * and associated project storage metadata files, as well as changes to
+ * source folders 
+ * 
+ * 
+ * delegates parts of it's functionality to CProjectDescriptio 
+ */
 public class ResourceChangeHandler extends ResourceChangeHandlerBase implements  ISaveParticipant {
 	CProjectDescriptionManager fMngr = CProjectDescriptionManager.getInstance();
 	
 	class RcMoveHandler implements IResourceMoveHandler {
-		Map fProjDesMap = new HashMap();
-		Set fRemovedProjSet = new HashSet();
+		Map<IProject, ICProjectDescription> fProjDesMap = new HashMap<IProject, ICProjectDescription>();
+		Set<IProject> fRemovedProjSet = new HashSet<IProject>();
 
 		public void handleProjectClose(IProject project) {
-			fMngr.setLoaddedDescription(project, null, true);
+			fMngr.projectClosedRemove(project);
 		}
 		
 		private ICExclusionPatternPathEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICExclusionPatternPathEntry[] entries){
@@ -63,28 +71,17 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return modified ? entries : null;
 		}
 	
+		@SuppressWarnings("fallthrough")
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
 			boolean proceed = true;
 			IProject fromProject = fromRc.getProject();
 			IProject toProject = toRc.getProject();
 			switch(toRc.getType()){
 			case IResource.PROJECT:{
-				ICProjectDescription des = getProjectDescription(fromProject, false);
+				fMngr.projectMove(fromProject, toProject);
 				fRemovedProjSet.add(fromProject);
-				if(des != null){
-					((CProjectDescription)des).updateProject(toProject);
-					synchronized (fMngr) {
-						fMngr.setLoaddedDescription(fromProject, null, true);
-						fMngr.setLoaddedDescription(toProject, des, true);
-					}
-					fProjDesMap.put(toProject, des);
-					ICConfigurationDescription[] cfgs = des.getConfigurations();
-					for(int i = 0; i < cfgs.length; i++){
-						cfgs[i].getConfigurationData();
-					}
-				}
 			}
-				break;
+			break;
 			case IResource.FOLDER:{
 				IPath fromFullPath = fromRc.getFullPath();
 				IPath toFullPath = toRc.getFullPath();
@@ -155,7 +152,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		
 		private ICProjectDescription getProjectDescription(IResource rc, boolean load){
 			IProject project = rc.getProject(); 
-			ICProjectDescription des = (ICProjectDescription)fProjDesMap.get(project);
+			ICProjectDescription des = fProjDesMap.get(project);
 			if(des == null && !fProjDesMap.containsKey(project)){
 				int flags = load ? 0 : CProjectDescriptionManager.GET_IF_LOADDED;
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
@@ -171,13 +168,13 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			fProjDesMap.put(project, des);
 		}
 		
-		private List checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
-			List updatedList = null;
+		private List<ICExclusionPatternPathEntry> checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
+			List<ICExclusionPatternPathEntry> updatedList = null;
 			int num = 0;
 			for(int k = 0; k < entries.length; k++){
 				if(entries[k].getFullPath().equals(rcFullPath)){
 					if(updatedList == null){
-						updatedList = new ArrayList(Arrays.asList(entries));
+						updatedList = new ArrayList<ICExclusionPatternPathEntry>(Arrays.asList(entries));
 					}
 					updatedList.remove(num);
 				} else {
@@ -187,12 +184,13 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return updatedList;
 		}
 	
+		@SuppressWarnings("fallthrough")
 		public boolean handleResourceRemove(IResource rc) {
 			boolean proceed = true;
 			IProject project = rc.getProject();
 			switch(rc.getType()){
 			case IResource.PROJECT:
-				fMngr.setLoaddedDescription(project, null, true);
+				fMngr.projectClosedRemove(project);
 				fRemovedProjSet.add(project);
 				proceed = false;
 				break;
@@ -205,11 +203,11 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						for(int i = 0; i < cfgDess.length; i++){
 							ICConfigurationDescription cfg = cfgDess[i];
 							ICExclusionPatternPathEntry[] entries = cfg.getSourceEntries();
-							List updatedList = checkRemove(rcFullPath, entries);
+							List<ICExclusionPatternPathEntry> updatedList = checkRemove(rcFullPath, entries);
 							
 							if(updatedList != null){
 								try {
-									cfg.setSourceEntries((ICSourceEntry[])updatedList.toArray(new ICSourceEntry[updatedList.size()]));
+									cfg.setSourceEntries(updatedList.toArray(new ICSourceEntry[updatedList.size()]));
 								} catch (WriteAccessException e) {
 									CCorePlugin.log(e);
 								} catch (CoreException e) {
@@ -241,7 +239,9 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 								try {
 									cfgDess[i].removeResourceDescription(rcDescription);
 								} catch (WriteAccessException e) {
+									CCorePlugin.log(e);
 								} catch (CoreException e) {
+									CCorePlugin.log(e);
 								}
 							}
 						}
@@ -254,28 +254,28 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		}
 
 		public void done() {
-			for(Iterator iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
+			for(Iterator<Map.Entry<IProject, ICProjectDescription>> iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
+				Map.Entry<IProject, ICProjectDescription> entry = iter.next();
 				if(fRemovedProjSet.contains(entry.getKey())){
 					iter.remove();
 				} else {
-					ICProjectDescription des = (ICProjectDescription)entry.getValue();
+					ICProjectDescription des = entry.getValue();
 					if(des != null && !des.isModified())
 						iter.remove();
 				}
 			}
 			
-			if(fProjDesMap.size() != 0){
-				fMngr.runWspModification(new IWorkspaceRunnable(){
+			if(!fProjDesMap.isEmpty()){
+				CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
 
 					public void run(IProgressMonitor monitor) throws CoreException {
-						for(Iterator iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
-							Map.Entry entry = (Map.Entry)iter.next();
-							IProject project = (IProject)entry.getKey();
+						for(Iterator<Map.Entry<IProject, ICProjectDescription>> iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
+							Map.Entry<IProject, ICProjectDescription> entry = iter.next();
+							IProject project = entry.getKey();
 							if(!project.isOpen())
 								continue;
 							
-							ICProjectDescription des = (ICProjectDescription)entry.getValue();
+							ICProjectDescription des = entry.getValue();
 							
 							try {
 								fMngr.setProjectDescription(project, des);
@@ -328,7 +328,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	}
 
 	@Override
-	protected void doHahdleResourceMove(IResourceChangeEvent event,
+	protected void doHandleResourceMove(IResourceChangeEvent event,
 			IResourceMoveHandler handler) {
 		switch(event.getType()){
 		case IResourceChangeEvent.POST_CHANGE:
@@ -348,34 +348,13 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						IResourceDelta child = children[k];
 						IResource rc = child.getResource();
 						if(rc.getType() != IResource.FILE)
-							continue;
-						
-						if(!CProjectDescriptionManager.STORAGE_FILE_NAME.equals(rc.getName()))
-							continue;
-						
-						//the .cproject file is changed
-						if((child.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED){
-							//project file does not exist or corrupted, remove
-							((RcMoveHandler)handler).setProjectDescription(rc.getProject(), null);
-							continue;
-						}
-						
-						try {
-							CProjectDescription des = CProjectDescriptionManager.getInstance().checkExternalProjectFileModification(rc);
-							if(des != null){
-								((RcMoveHandler)handler).setProjectDescription(rc.getProject(), des);
-							}
-						} catch (CoreException e) {
-							CCorePlugin.log(e);
-							//project file does not exist or corrupted, remove
-							((RcMoveHandler)handler).setProjectDescription(rc.getProject(), null);
-						}
+							continue;					
 					}
 				}
 			}
 			break;
 		}
-		super.doHahdleResourceMove(event, handler);
+		super.doHandleResourceMove(event, handler);
 	}
 	
 	

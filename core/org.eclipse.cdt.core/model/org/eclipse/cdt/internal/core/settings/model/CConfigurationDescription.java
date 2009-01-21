@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
+import org.eclipse.cdt.internal.core.settings.model.xml.InternalXmlStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -333,12 +335,20 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return getSpecSettings().getStorage(id, create);
 	}
 	
+	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
+		return getSpecSettings().importStorage(id, el);
+	}
+
 	public void removeStorage(String id) throws CoreException {
 		getSpecSettings().removeStorage(id);
 	}
 
-	public boolean containsStorage(String id) throws CoreException {
-		return getSpecSettings().containsStorage(id);
+	public void setReadOnly(boolean readOnly, boolean keepModify) {
+		try {
+			getSpecSettings().setReadOnly(readOnly, keepModify);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	public CConfigurationSpecSettings getSpecSettings() throws CoreException{

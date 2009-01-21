@@ -28,7 +28,7 @@ public abstract class CConfigurationDataProvider {
 
 	/**
 	 * requests the Configuration Data to be created for the given ConfigurationDescription
-	 * The method can be called in several caces:
+	 * The method can be called in several cases:
 	 * 1. When the new configuration is being created based upon the already existing one via 
 	 * theICProjectDescription.createConfiguration method call
 	 * 2. When the configuration copy (clone) is being created for the copy description

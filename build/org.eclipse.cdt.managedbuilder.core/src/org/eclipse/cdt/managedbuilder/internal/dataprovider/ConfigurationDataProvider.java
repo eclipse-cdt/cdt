@@ -108,6 +108,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
 		Builder b = (Builder)cfg.getEditableBuilder();
+		// Need to ensure that build macro supplier can get the description for this configuration during the write...
+		cfg.setConfigurationDescription(des);
 		if(b != null && b.isManagedBuildOn() && b.getBuildPathAttribute(false) == null){
 			String bPath = b.getDefaultBuildPath();
 			b.setBuildPathAttribute(bPath);

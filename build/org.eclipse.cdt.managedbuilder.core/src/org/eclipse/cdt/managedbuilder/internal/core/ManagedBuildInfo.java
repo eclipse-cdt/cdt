@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
-import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
+import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -743,7 +743,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if(managedProject != null){
 			Element projElement = doc.createElement(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
 			element.appendChild(projElement);
-			((ManagedProject)managedProject).serialize(new XmlStorageElement(projElement), true);
+			((ManagedProject)managedProject).serialize(XmlStorageUtil.createCStorageTree(projElement), true);
 		}
 		else{
 			Iterator iter = getTargets().listIterator();

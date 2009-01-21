@@ -161,27 +161,32 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
-	static CModelManager factory = null;
+	static volatile CModelManager factory = null;
 
 	private CModelManager() {
 	}
 
 	public static CModelManager getDefault() {
 		if (factory == null) {
-			factory = new CModelManager();
+			synchronized (CModelManager.class) {
+				if (factory != null)
+					return factory;
 
-			// Register to the workspace;
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
-																		IResourceChangeEvent.POST_CHANGE
-																				| IResourceChangeEvent.PRE_DELETE
-																				| IResourceChangeEvent.PRE_CLOSE);
+				factory = new CModelManager();
 
-			// Register the Core Model on the Descriptor
-			// Manager, it needs to know about changes.
-			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
-			// Register the Core Model on the ContentTypeManager
-			// it needs to know about changes.
-			Platform.getContentTypeManager().addContentTypeChangeListener(factory);
+				// Register to the workspace;
+				ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
+																			IResourceChangeEvent.POST_CHANGE
+																					| IResourceChangeEvent.PRE_DELETE
+																					| IResourceChangeEvent.PRE_CLOSE);
+
+				// Register the Core Model on the Descriptor
+				// Manager, it needs to know about changes.
+				CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
+				// Register the Core Model on the ContentTypeManager
+				// it needs to know about changes.
+				Platform.getContentTypeManager().addContentTypeChangeListener(factory);
+			}
 		}
 		return factory;
 	}
@@ -1153,8 +1158,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 		}
 
-		for (ICElement element : newElements.keySet())
-			this.cache.putInfo(element, newElements.get(element));
+		for (Map.Entry<ICElement, CElementInfo> element : newElements.entrySet())
+			this.cache.putInfo(element.getKey(), element.getValue());
 	}
 
 	/**
@@ -1212,10 +1217,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	/**
-	 *  
+	 * 
 	 */
 	public void startup() {
-		// Do any initialization.
+		// Initialization is performed on the first getDefault()...
 	}
 
 	/**
@@ -1234,6 +1239,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		for (BinaryRunner runner : runners) {
 			runner.stop();
 		}
+
+		// Nullify the static factory
+		factory = null;
 	}
 
 	private void checkForProjectRename(IResourceDelta delta) {

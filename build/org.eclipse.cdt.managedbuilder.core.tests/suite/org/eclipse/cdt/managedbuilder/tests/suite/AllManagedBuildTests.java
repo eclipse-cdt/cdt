@@ -8,12 +8,14 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTests;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
@@ -32,28 +34,28 @@ import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTests;
 import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTests;
 import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
 import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
 import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTests;
 import org.eclipse.cdt.projectmodel.tests.ProjectModelTests;
 
 /**
- *
+ * Main TestSuite for all the managed build tests
  */
 public class AllManagedBuildTests {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(AllManagedBuildTests.suite());
 	}
 	public static Test suite() {
-		//  May/2005 Turning off all indexing for now because the "original" indexer causes hangs... 
-		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_NO_INDEXER);
-		//  We could enable this later...
-		//CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_FULL_INDEXER);
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_FAST_INDEXER);
 
-		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.cdt.managedbuild.core.tests");
+		TestSuite suite = new TestSuite("Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
-// TODO uncoment this
+		// build.core.scannerconfig.tests
+		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
+
+		// managedbuilder.core.tests
 		suite.addTest(ManagedBuildCoreTests20.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());
@@ -68,13 +70,17 @@ public class AllManagedBuildTests {
 		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
-
 		suite.addTest(BuildDescriptionModelTests.suite());
 		suite.addTest(PathConverterTest.suite());
-		suite.addTest(ProjectModelTests.suite());
-		suite.addTest(OptionStringListValueTests.suite());
+
+		// managedbuilder.templateengine.tests
+		suite.addTest(AllTemplateEngineTests.suite());
+
+		// projectmodel.tests
 		suite.addTest(BackwardCompatiblityTests.suite());
 		suite.addTest(CProjectDescriptionSerializationTests.suite());
+		suite.addTest(OptionStringListValueTests.suite());
+		suite.addTest(ProjectModelTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

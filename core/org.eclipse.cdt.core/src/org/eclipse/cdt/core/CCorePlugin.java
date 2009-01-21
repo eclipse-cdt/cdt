@@ -58,6 +58,7 @@ import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -683,13 +684,17 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {
+		try {
 		if (!override) {
 			fNewCProjectDescriptionManager.getDescriptorManager().configure(project, id);
 		} else {
 			fNewCProjectDescriptionManager.getDescriptorManager().convert(project, id);
 		}
+		} catch (Exception e) {
+			throw ExceptionFactory.createCoreException(e);
+		}
 	}
-	
+
 	public ICDescriptorManager getCDescriptorManager() {
 		return fNewCProjectDescriptionManager.getDescriptorManager();
 	}

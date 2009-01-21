@@ -10,11 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICDescriptorOperation {
 	
+	/**
+	 * Call-back method executed atomically on a ICDescriptor in a runnable.
+	 * 
+	 * @see ICDescriptorManager#runDescriptorOperation(IProject, ICDescriptorOperation, IProgressMonitor)
+	 * @see ICDescriptorManager#runDescriptorOperation(IProject, ICProjectDescription, ICDescriptorOperation, IProgressMonitor)
+	 * @param descriptor
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException;
 
 }

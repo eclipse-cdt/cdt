@@ -29,7 +29,7 @@ public class AllCProjectDescriptionTests {
 		suite.addTest(ProjectCreationStateTests.suite());
 		suite.addTest(BackwardCompatibilityTests.suite());
 		suite.addTest(CProjectDescriptionBasicTests.suite());
+		suite.addTest(CProjectDescriptionStorageTests.suite());
         return suite;
-
     }
 }

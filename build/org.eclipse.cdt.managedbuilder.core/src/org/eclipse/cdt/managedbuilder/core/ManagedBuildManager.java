@@ -59,8 +59,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
@@ -2153,7 +2153,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				Node node = nodes.item(0);
 				
 				//  Create the internal representation of the project's MBS information
-				buildInfo = new ManagedBuildInfo(project, new XmlStorageElement((Element)node), true, fileVersion);
+				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element)node), true, fileVersion);
 				if (fileVersion != null) {
 	//				buildInfo.setVersion(fileVersion);
 					PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);

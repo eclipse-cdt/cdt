@@ -1,69 +1,61 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ * 	Intel Corporation - Initial API and implementation
+ * 	James Blackburn (Broadcom Corp.)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.internal.core.settings.model.xml;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
+import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Element;
 
+/**
+ *
+ * Internal XmlStorageElement adds the following functionality
+ *  - Dirty flag
+ *  - Read-only flag
+ *  - XmlStorage which corresponds to the Xml ICSettingsStorage
+ *	    if this ICStorageElement is root of a storage tree
+ */
 public class InternalXmlStorageElement extends XmlStorageElement {
 	boolean fIsDirty;
-	Element fElement;
 	private boolean fIsReadOnly;
-	private List fStorageList;
+	XmlStorage fStorage;
 
 	public InternalXmlStorageElement(Element element, ICStorageElement parent,
-			boolean alowReferencingParent, String[] attributeFilters,
+			String[] attributeFilters,
 			String[] childFilters, boolean readOnly) {
-		super(element, parent, alowReferencingParent, attributeFilters, childFilters);
-		fElement = element;
+		super(element, parent, attributeFilters, childFilters);
 		fIsReadOnly = readOnly;
 	}
 
 	public InternalXmlStorageElement(Element element, ICStorageElement parent,
 			boolean alowReferencingParent, boolean readOnly) {
 		super(element, parent, alowReferencingParent);
-		fElement = element;
 		fIsReadOnly = readOnly;
 	}
 
 	public InternalXmlStorageElement(Element element, boolean readOnly) {
 		super(element);
-		fElement = element;
 		fIsReadOnly = readOnly;
 	}
-	
-	void storageCreated(CStorage storage){
-		List list = getStorageList(true);
-		list.add(storage);
-	}
-	
-	private List getStorageList(boolean create){
-		if(fStorageList == null && create)
-			fStorageList = new ArrayList();
-		return fStorageList;
-	}
-	
+
 	public boolean isReadOnly(){
 		return fIsReadOnly;
 	}
-	
+
 	public void setReadOnly(boolean readOnly){
 		setReadOnly(readOnly, true);
 	}
-	
+
 	public void setReadOnly(boolean readOnly, boolean keepModify){
 		fIsReadOnly = readOnly;
 		fIsDirty &= keepModify;
@@ -74,40 +66,29 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 		}
 
 	}
-	
-	public boolean isDirty(){
+
+	public boolean isModified(){
 		if(fIsDirty)
 			return true;
-		
-		List list = getStorageList(false);
-		if(list != null){
-			for(Iterator iter = list.iterator(); iter.hasNext();){
-				CStorage storage = (CStorage)iter.next();
-				if(storage.isDirty())
-					return true;
-			}
-		}
-		
+
+		if (fStorage != null && fStorage.isModified())
+			return true;
+
 		ICStorageElement children[] = getChildren();
 		for(int i = 0; i < children.length; i++){
-			if(((InternalXmlStorageElement)children[i]).isDirty())
+			if(((InternalXmlStorageElement)children[i]).isModified())
 				return true;
 		}
-		
+
 		return false;
 	}
 
 	public void setDirty(boolean dirty){
 		fIsDirty = dirty;
-		
+
 		if(!dirty){
-			List list = getStorageList(false);
-			if(list != null){
-				for(Iterator iter = list.iterator(); iter.hasNext();){
-					CStorage storage = (CStorage)iter.next();
-					storage.setDirty(false);
-				}
-			}
+			if (fStorage != null)
+				fStorage.setDirty(false);
 
 			ICStorageElement children[] = getChildren();
 			for(int i = 0; i < children.length; i++){
@@ -115,14 +96,16 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 			}
 		}
 	}
+	
+	public void storageCreated(XmlStorage storage) {
+//		Assert.isTrue(fStorage == null, "Storage created on an XmlStorageElement already exists");
+		fStorage = storage;
+	}
 
 	@Override
 	public void clear() {
-		if(fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-
+		makeModification();
 		super.clear();
-		fIsDirty = true;
 	}
 
 	@Override
@@ -132,68 +115,70 @@ public class InternalXmlStorageElement extends XmlStorageElement {
 /*		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 */
-		return new InternalXmlStorageElement(element, this, alowReferencingParent, attributeFilters, childFilters, fIsReadOnly);
+		return new InternalXmlStorageElement(element, this, attributeFilters, childFilters, fIsReadOnly);
 	}
 
 	@Override
 	public ICStorageElement createChild(String name,
 			boolean alowReferencingParent, String[] attributeFilters,
 			String[] childFilters) {
-		if(fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-
-		fIsDirty = true;
-		return super.createChild(name, alowReferencingParent, attributeFilters,
-				childFilters);
+		makeModification();
+		return super.createChild(name, alowReferencingParent, attributeFilters, childFilters);
 	}
 
 	@Override
 	public ICStorageElement createChild(String name) {
-		if(fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-
-		fIsDirty = true;
+		makeModification();
 		return super.createChild(name);
 	}
 
 	@Override
 	public void removeAttribute(String name) {
-		fIsDirty = true;
+		makeModification();
 		super.removeAttribute(name);
 	}
 
 	@Override
 	public void setAttribute(String name, String value) {
-		fIsDirty = true;
+		makeModification();
 		super.setAttribute(name, value);
 	}
 
 	@Override
 	public void setValue(String value) {
-		fIsDirty = true;
+		makeModification();
 		super.setValue(value);
 	}
 
 	@Override
-	protected void removed() {
-		super.removed();
-	}
-
-	@Override
-	public ICStorageElement importChild(ICStorageElement el)
-			throws UnsupportedOperationException {
-		if(fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-		fIsDirty = true;
+	public ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException {
+		makeModification();
 		return super.importChild(el);
 	}
 
 	@Override
 	public void removeChild(ICStorageElement el) {
+		makeModification();
+		super.removeChild(el);
+	}
+
+	@Override
+	public ICSettingsStorage createSettingStorage(boolean readOnly) throws CoreException, UnsupportedOperationException {
+		if (!isReadOnly() && readOnly)
+			return new XmlStorage(fElement, true);
+		return new XmlStorage(this);
+	}
+
+	/**
+	 *  - Check whether modifcation is allowed
+	 *  - Mark this element as dirty
+	 *
+	 *  If modification is not allowed (fIsReadOnly == true)
+	 *  then throw write access exception.
+	 */
+	private void makeModification() {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-
 		fIsDirty = true;
-		super.removeChild(el);
 	}
 }

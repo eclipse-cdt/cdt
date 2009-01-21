@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 
 public class CProjectDescriptionDelta implements ICDescriptionDelta {
-	private List fChildList = new ArrayList();
+	private List<CProjectDescriptionDelta> fChildList = new ArrayList<CProjectDescriptionDelta>();
 	private CProjectDescriptionDelta fParent;
 	private ICSettingObject fSetting;
 	private ICSettingObject fOldSetting;
@@ -55,7 +55,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 	}
 
 	public ICDescriptionDelta[] getChildren() {
-		return (CProjectDescriptionDelta[])fChildList.toArray(new CProjectDescriptionDelta[fChildList.size()]);
+		return fChildList.toArray(new CProjectDescriptionDelta[fChildList.size()]);
 	}
 
 	public ICSettingObject getOldSetting() {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
@@ -35,9 +37,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * New ScannerConfigInfoFactory
@@ -93,31 +92,29 @@ public class ScannerConfigInfoFactory2 {
 			load(profileId);
 		}
 		
-	    private void load(String profileId) {
+		private void load(String profileId) {
 			ICDescriptor descriptor;
 			try {
 				descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
-				Element rootEl = descriptor != null ? descriptor.getProjectData(SCANNER_CONFIG) : null;
+				ICStorageElement rootEl = descriptor != null ? descriptor.getProjectStorageElement(SCANNER_CONFIG) : null;
 				InfoContext defaultContext = new InfoContext(fProject);
-				if(rootEl == null || !rootEl.hasChildNodes()){
+				if(rootEl == null || !rootEl.hasChildren()){
 					BuildProperty prop = new BuildProperty(this, fProject, defaultContext, (Store)create(MakeCorePlugin.getDefault().getPluginPreferences(), profileId, false), profileId);
 					fMap.put(defaultContext, prop);
 					prop.isDirty = true;
 				} else {
-					BuildProperty prop = new BuildProperty(this, fProject,defaultContext, profileId, rootEl);
+					BuildProperty prop = new BuildProperty(this, fProject, defaultContext, profileId, rootEl);
 					fMap.put(defaultContext, prop);
-					
-					for (Node sc = rootEl.getFirstChild();
-		                       sc != null; sc = sc.getNextSibling()) {
-		               if (sc.getNodeName().equals(ELEMENT_CS_INFO)) {
-		             	   Element el = (Element)sc;
-	               		   String instanceId = el.getAttribute(ATTRIBUTE_CS_INFO_INSTANCE_ID);
-	               		   if(instanceId.length() != 0){
-	               			   InfoContext c = new InfoContext(fProject, instanceId);
-	               			   BuildProperty p = new BuildProperty(this, fProject, c, profileId, el);
-	           		 		   fMap.put(c, p);
-	               		   }
-		                }
+
+					for (ICStorageElement sc : rootEl.getChildren()) {
+						if (sc.getName().equals(ELEMENT_CS_INFO)) {
+							String instanceId = sc.getAttribute(ATTRIBUTE_CS_INFO_INSTANCE_ID);
+							if(instanceId != null && instanceId.length() > 0){
+								InfoContext c = new InfoContext(fProject, instanceId);
+								BuildProperty p = new BuildProperty(this, fProject, c, profileId, sc);
+								fMap.put(c, p);
+							}
+						}
 					}
 				}
 			} catch (CoreException e) {
@@ -132,16 +129,10 @@ public class ScannerConfigInfoFactory2 {
 		public void save(boolean serializeDescriptor) throws CoreException {
 			if (isDirty()) {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
-				Element sc = descriptor.getProjectData(SCANNER_CONFIG);
+				ICStorageElement sc = descriptor.getProjectStorageElement(SCANNER_CONFIG);
 				
-                Document doc = sc.getOwnerDocument();
-
-                // Clear out all current children
-                Node child = sc.getFirstChild();
-                while (child != null) {
-                    sc.removeChild(child);
-                    child = sc.getFirstChild();
-                }
+				// Clear all child settings
+				sc.clear();
                 
 				BuildProperty prop = (BuildProperty)fMap.get(new InfoContext(fProject));
 				prop.store(sc);
@@ -161,10 +152,9 @@ public class ScannerConfigInfoFactory2 {
 					if(p == prop)
 						continue;
 					
-					Element el = doc.createElement(ELEMENT_CS_INFO);
+					ICStorageElement el = sc.createChild(ELEMENT_CS_INFO);
 					el.setAttribute(ATTRIBUTE_CS_INFO_INSTANCE_ID, instanceId);
 					p.store(el);
-					sc.appendChild(el);
 				}
 				
 				if(serializeDescriptor)
@@ -218,7 +208,7 @@ public class ScannerConfigInfoFactory2 {
 		public void save() throws CoreException {
 			if (isDirty()) {
                 
-				Set idSet = new HashSet(fMap.size() - 1);
+				Set<String> idSet = new HashSet<String>(fMap.size() - 1);
 				
 				Preference pref = (Preference)fMap.get(new InfoContext(null));
 				pref.store();
@@ -244,7 +234,7 @@ public class ScannerConfigInfoFactory2 {
 				}
 				
 				if(idSet.size() != 0){
-					String[] ids = (String[])idSet.toArray(new String[idSet.size()]);
+					String[] ids = idSet.toArray(new String[idSet.size()]);
 					String idsString = CDataUtil.arrayToString(ids, DELIMITER);
 					set(INFO_INSTANCE_IDS, idsString);
 				}
@@ -281,7 +271,7 @@ public class ScannerConfigInfoFactory2 {
 
 	
 	private static abstract class StoreSet implements IScannerConfigBuilderInfo2Set {
-		protected HashMap fMap = new HashMap();
+		protected HashMap<InfoContext, Store> fMap = new HashMap<InfoContext, Store>();
 		protected boolean fIsDirty;
 		
 		StoreSet(){
@@ -304,21 +294,21 @@ public class ScannerConfigInfoFactory2 {
 		}
 
 		public InfoContext[] getContexts() {
-			return (InfoContext[])fMap.keySet().toArray(new InfoContext[fMap.size()]);
+			return fMap.keySet().toArray(new InfoContext[fMap.size()]);
 		}
 
 		public IScannerConfigBuilderInfo2 getInfo(InfoContext context) {
-			return (IScannerConfigBuilderInfo2)fMap.get(context);
+			return fMap.get(context);
 		}
 
-		public Map getInfoMap() {
+		public Map<InfoContext, Store> getInfoMap() {
 			return Collections.unmodifiableMap(fMap);
 		}
 
 		public IScannerConfigBuilderInfo2 removeInfo(InfoContext context) throws CoreException {
 			checkRemoveInfo(context);
 			fIsDirty = true;
-			return (IScannerConfigBuilderInfo2)fMap.remove(context);
+			return fMap.remove(context);
 		}
 		
 		private void checkRemoveInfo(InfoContext context) throws CoreException{
@@ -329,8 +319,8 @@ public class ScannerConfigInfoFactory2 {
 		public boolean isDirty(){
 			if(fIsDirty)
 				return true;
-			for(Iterator iter = fMap.values().iterator(); iter.hasNext();){
-				Store prop = (Store)iter.next();
+			for(Iterator<Store> iter = fMap.values().iterator(); iter.hasNext();){
+				Store prop = iter.next();
 				if(prop.isDirty)
 					return true;
 			}
@@ -358,12 +348,14 @@ public class ScannerConfigInfoFactory2 {
 		protected boolean autoDiscoveryEnabled;
 		protected boolean problemReportingEnabled;
 		protected String selectedProfile = EMPTY_STRING;
-        protected Map profileOptionsMap; // (profileId, options)
+		/** Map from profile ID -> ProfileOptions */
+        protected Map<String, ProfileOptions> profileOptionsMap; 
         static class ProfileOptions {
     		protected boolean buildOutputFileActionEnabled;
     		protected String buildOutputFilePath = EMPTY_STRING;
     		protected boolean buildOutputParserEnabled;
-    		protected Map providerOptionsMap; // {providerId, options}
+    		/** Map from provider ID -> providerOptions */
+    		protected Map<String, ProviderOptions> providerOptionsMap; 
     		static class ProviderOptions {
     			protected String providerKind;	// derived
     			protected boolean providerOutputParserEnabled;
@@ -393,10 +385,9 @@ public class ScannerConfigInfoFactory2 {
         		this.buildOutputFileActionEnabled = base.buildOutputFileActionEnabled;
         		this.buildOutputFilePath = base.buildOutputFilePath;
         		this.buildOutputParserEnabled = base.buildOutputParserEnabled;
-        		this.providerOptionsMap = new LinkedHashMap(base.providerOptionsMap);
-        		for(Iterator iter = this.providerOptionsMap.entrySet().iterator(); iter.hasNext();){
-        			Map.Entry entry = (Map.Entry)iter.next();
-        			ProviderOptions basePo = (ProviderOptions)entry.getValue();
+        		this.providerOptionsMap = new LinkedHashMap<String, ProviderOptions>(base.providerOptionsMap);
+        		for (Map.Entry<String, ProviderOptions> entry : providerOptionsMap.entrySet()) {
+        			ProviderOptions basePo = entry.getValue();
         			entry.setValue(new ProviderOptions(basePo));
         		}
         	}
@@ -411,10 +402,9 @@ public class ScannerConfigInfoFactory2 {
 			this.autoDiscoveryEnabled = base.autoDiscoveryEnabled;
 			this.problemReportingEnabled = base.problemReportingEnabled;
 			this.selectedProfile = ScannerConfigProfileManager.NULL_PROFILE_ID.equals(profileId) ? base.selectedProfile : profileId;
-			this.profileOptionsMap = new LinkedHashMap(base.profileOptionsMap);
-    		for(Iterator iter = this.profileOptionsMap.entrySet().iterator(); iter.hasNext();){
-    			Map.Entry entry = (Map.Entry)iter.next();
-    			ProfileOptions basePo = (ProfileOptions)entry.getValue();
+			this.profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(base.profileOptionsMap);
+			for (Map.Entry<String, ProfileOptions> entry : profileOptionsMap.entrySet()) {
+    			ProfileOptions basePo = entry.getValue();
     			entry.setValue(new ProfileOptions(basePo));
     		}
 			
@@ -473,15 +463,15 @@ public class ScannerConfigInfoFactory2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getProfileIdList()
          */
-        public List getProfileIdList() {
-            return new ArrayList(profileOptionsMap.keySet());
+        public List<String> getProfileIdList() {
+            return new ArrayList<String>(profileOptionsMap.keySet());
         }
 
         /* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#isBuildOutputFileActionEnabled()
 		 */
 		public boolean isBuildOutputFileActionEnabled() {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             return (po != null) ? po.buildOutputFileActionEnabled : false;
 		}
 
@@ -489,7 +479,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setBuildOutputFileActionEnabled(boolean)
 		 */
 		public void setBuildOutputFileActionEnabled(boolean enable) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
                 po.buildOutputFileActionEnabled = setDirty(po.buildOutputFileActionEnabled, enable);
             }
@@ -499,7 +489,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getBuildOutputFilePath()
 		 */
 		public String getBuildOutputFilePath() {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
 			return (po != null) ? po.buildOutputFilePath : EMPTY_STRING;
 		}
 
@@ -507,7 +497,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setBuildOutputFilePath(java.lang.String)
 		 */
 		public void setBuildOutputFilePath(String path) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
                 po.buildOutputFilePath = setDirty(po.buildOutputFilePath, path);
             }
@@ -517,7 +507,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#isBuildOutputParserEnabled()
 		 */
 		public boolean isBuildOutputParserEnabled() {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
 			return (po != null) ? po.buildOutputParserEnabled : true;
 		}
 
@@ -525,7 +515,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setBuildOutputParserEnabled(boolean)
 		 */
 		public void setBuildOutputParserEnabled(boolean enable) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
                 po.buildOutputParserEnabled = setDirty(po.buildOutputParserEnabled, enable);
             }
@@ -536,7 +526,7 @@ public class ScannerConfigInfoFactory2 {
 		 */
 		@SuppressWarnings("unchecked")
 		public List<String> getProviderIdList() {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             return (po != null) ? new ArrayList<String>(po.providerOptionsMap.keySet()) : new ArrayList<String>(0);
 		}
 
@@ -558,9 +548,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#isSIProviderOutputParserEnabled(java.lang.String)
 		 */
 		public boolean isProviderOutputParserEnabled(String providerId) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-    			ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+    			ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			return (ppo == null) ? false : ppo.providerOutputParserEnabled;
             }
             return false;
@@ -570,9 +560,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setSIProviderOutputParserEnabled(java.lang.String, boolean)
 		 */
 		public void setProviderOutputParserEnabled(String providerId, boolean enable) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-    			ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+    			ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			if (ppo != null) {
                     ppo.providerOutputParserEnabled = setDirty(ppo.providerOutputParserEnabled, enable);
     			}
@@ -583,9 +573,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#isUseDefaultProviderCommand(java.lang.String)
 		 */
 		public boolean isUseDefaultProviderCommand(String providerId) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
                 return (ppo == null) ? false : ppo.providerRunUseDefault;
             }
             return false;
@@ -595,9 +585,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setUseDefaultProviderCommand(java.lang.String, boolean)
 		 */
 		public void setUseDefaultProviderCommand(String providerId, boolean enable) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			if (ppo != null) {
                     ppo.providerRunUseDefault = setDirty(ppo.providerRunUseDefault, enable);
     			}
@@ -608,9 +598,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getProviderRunCommand(java.lang.String)
 		 */
 		public String getProviderRunCommand(String providerId) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
                 return (ppo == null) ? null : ppo.providerRunCommand;
             }
             return null;
@@ -620,9 +610,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setProviderRunCommand(java.lang.String, java.lang.String)
 		 */
 		public void setProviderRunCommand(String providerId, String command) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			if (ppo != null) {
                     ppo.providerRunCommand = setDirty(ppo.providerRunCommand, command);
     			}
@@ -633,9 +623,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getProviderRunArguments(java.lang.String)
 		 */
 		public String getProviderRunArguments(String providerId) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
                 return (ppo == null) ? null : ppo.providerRunArguments;
             }
             return null;
@@ -645,9 +635,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setProviderRunArguments(java.lang.String, java.lang.String)
 		 */
 		public void setProviderRunArguments(String providerId, String arguments) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			if (ppo != null) {
                     ppo.providerRunArguments = setDirty(ppo.providerRunArguments, arguments);
     			}
@@ -658,9 +648,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getProviderOpenFilePath(java.lang.String)
 		 */
 		public String getProviderOpenFilePath(String providerId) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
                 return (ppo == null) ? null : ppo.providerOpenFilePath;
             }
             return null;
@@ -670,9 +660,9 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setProviderOpenFilePath(java.lang.String, java.lang.String)
 		 */
 		public void setProviderOpenFilePath(String providerId, String filePath) {
-            ProfileOptions po = (ProfileOptions) profileOptionsMap.get(selectedProfile);
+            ProfileOptions po = profileOptionsMap.get(selectedProfile);
             if (po != null) {
-                ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+                ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
     			if (ppo != null) {
                     ppo.providerOpenFilePath = setDirty(ppo.providerOpenFilePath, filePath);
     			}
@@ -711,7 +701,7 @@ public class ScannerConfigInfoFactory2 {
                     po.buildOutputFilePath = (buildOutputFilePath != null) ? buildOutputFilePath : EMPTY_STRING;  
                 }
             }
-            po.providerOptionsMap = new LinkedHashMap(providerIds.size());
+            po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
             for (int i = 0; i < providerIds.size(); ++i) {
                 ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
                 String providerId = (String) providerIds.get(i);
@@ -751,7 +741,7 @@ public class ScannerConfigInfoFactory2 {
         private String profileId;
         private ScannerConfigInfoSet container;
 
-		BuildProperty(ScannerConfigInfoSet container, IProject project, InfoContext context, String profileId, Element element) {
+		BuildProperty(ScannerConfigInfoSet container, IProject project, InfoContext context, String profileId, ICStorageElement element) {
 			super();
 			this.project = project;
 			this.context = context;
@@ -779,27 +769,26 @@ public class ScannerConfigInfoFactory2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2.Store#load()
          */
-        protected void load(Element element) {
+        protected void load(ICStorageElement element) {
 //			ICDescriptor descriptor;
-            List profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
-            List loadedProfiles = new ArrayList();
+            List<String> profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
+            List<String> loadedProfiles = new ArrayList<String>();
 //			try {
 //				descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-				for (Node sc = element.getFirstChild();
-                        sc != null; sc = sc.getNextSibling()) {
-                    if (sc.getNodeName().equals(SC_AUTODISCOVERY)) {
+            	for (ICStorageElement sc : element.getChildren()) {
+                    if (sc.getName().equals(SC_AUTODISCOVERY)) {
                         autoDiscoveryEnabled = Boolean.valueOf(
-                                ((Element)sc).getAttribute(ENABLED)).booleanValue();
+                                sc.getAttribute(ENABLED)).booleanValue();
                         selectedProfile = (profileId == ScannerConfigProfileManager.NULL_PROFILE_ID) 
-                                ? ((Element)sc).getAttribute(SELECTED_PROFILE_ID)
+                                ? sc.getAttribute(SELECTED_PROFILE_ID)
                                 : profileId;
                         problemReportingEnabled = Boolean.valueOf(
-                        		((Element)sc).getAttribute(PROBLEM_REPORTING_ENABLED)).booleanValue();
+                        		sc.getAttribute(PROBLEM_REPORTING_ENABLED)).booleanValue();
                     }
-                    else if (sc.getNodeName().equals(PROFILE)) {
-						if (profileIds.contains(((Element)sc).getAttribute(ID))) {
-							load(sc);
-                            loadedProfiles.add(((Element)sc).getAttribute(ID));
+                    else if (sc.getName().equals(PROFILE)) {
+						if (profileIds.contains(sc.getAttribute(ID))) {
+							loadProfile(sc);
+                            loadedProfiles.add(sc.getAttribute(ID));
 						}
 					}
 				}
@@ -844,7 +833,7 @@ public class ScannerConfigInfoFactory2 {
             ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
                     getSCProfileConfiguration(profileId);
 
-            po.providerOptionsMap = new LinkedHashMap();
+            po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>();
             for (Iterator i = configuredProfile.getSIProviderIds().iterator(); i.hasNext(); ) {
                 String providerId = (String) i.next();
                 ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
@@ -865,7 +854,7 @@ public class ScannerConfigInfoFactory2 {
             }
             
             if (profileOptionsMap == null) {
-                profileOptionsMap = new LinkedHashMap();
+                profileOptionsMap = new LinkedHashMap<String, ProfileOptions>();
             }
             profileOptionsMap.put(profileId, po);
         }
@@ -898,10 +887,10 @@ public class ScannerConfigInfoFactory2 {
 						getSCProfileConfiguration(selectedProfile);
 				// get the one and only provider id
 				String providerId = (String) configuredProfile.getSIProviderIds().get(0);
-                po.providerOptionsMap = new LinkedHashMap(1);
+                po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(1);
 				po.providerOptionsMap.put(providerId, ppo);
                 
-                profileOptionsMap = new LinkedHashMap(1);
+                profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(1);
                 profileOptionsMap.put(profileId, po);
                 
                 // store migrated data
@@ -918,42 +907,37 @@ public class ScannerConfigInfoFactory2 {
 		/**
 		 * @param profile
 		 */
-		private void load(Node profile) {
+		private void loadProfile(ICStorageElement profile) {
             if (profileOptionsMap == null) {
-                profileOptionsMap = new LinkedHashMap(1);
+                profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(1);
             }
             ProfileOptions po = new ProfileOptions();
-            String profileId = ((Element)profile).getAttribute(ID);
+            String profileId = profile.getAttribute(ID);
             profileOptionsMap.put(profileId, po);
             // get the list of providers from the profile configuration
             ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
                     getSCProfileConfiguration(profileId);
-            List providerIds = configuredProfile.getSIProviderIds();
+            List<String> providerIds = configuredProfile.getSIProviderIds();
             int providerCounter = 0;
-            po.providerOptionsMap = new LinkedHashMap(providerIds.size());
+            po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
 
-			for (Node child = profile.getFirstChild(); 
-                    child != null; 
-                    child = child.getNextSibling()) {
+            for (ICStorageElement child : profile.getChildren()) {
     			// buildOutputProvider element
-    			if (BUILD_OUTPUT_PROVIDER.equals(child.getNodeName())) {
-    				for (Node grandchild = child.getFirstChild(); 
-                            grandchild != null;
-                            grandchild = grandchild.getNextSibling()) {
-                        
-        				if (OPEN_ACTION.equals(grandchild.getNodeName())) {
+    			if (BUILD_OUTPUT_PROVIDER.equals(child.getName())) {
+    				for (ICStorageElement grandchild : child.getChildren()) {
+        				if (OPEN_ACTION.equals(grandchild.getName())) {
         					po.buildOutputFileActionEnabled = Boolean.valueOf(
-                                    ((Element)grandchild).getAttribute(ENABLED)).booleanValue();
-        					po.buildOutputFilePath = ((Element)grandchild).getAttribute(FILE_PATH);
+                                    grandchild.getAttribute(ENABLED)).booleanValue();
+        					po.buildOutputFilePath = grandchild.getAttribute(FILE_PATH);
         				}
-                        else if (PARSER.equals(grandchild.getNodeName())) {
+                        else if (PARSER.equals(grandchild.getName())) {
         					po.buildOutputParserEnabled = Boolean.valueOf(
-                                    ((Element)grandchild).getAttribute(ENABLED)).booleanValue();
+                                    grandchild.getAttribute(ENABLED)).booleanValue();
         				}
                     }
     			}
-                else if (SCANNER_INFO_PROVIDER.equals(child.getNodeName())) {
-					String providerId = ((Element)child).getAttribute(ID);
+                else if (SCANNER_INFO_PROVIDER.equals(child.getName())) {
+					String providerId = child.getAttribute(ID);
 					if (providerIds.get(providerCounter).equals(providerId)) {
 						// new provider
 						ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
@@ -961,23 +945,21 @@ public class ScannerConfigInfoFactory2 {
                         ppo.providerKind = configuredProfile.getScannerInfoProviderElement(
                               providerId).getProviderKind();
 						
-                        for (Node grandchild = child.getFirstChild();
-                                grandchild != null;
-                                grandchild = grandchild.getNextSibling()) {
+                        for (ICStorageElement grandchild : child.getChildren()) {
                             // action
-    						if (RUN_ACTION.equals(grandchild.getNodeName())) {
+    						if (RUN_ACTION.equals(grandchild.getName())) {
     							ppo.providerRunUseDefault = Boolean.valueOf(
-                                        ((Element)grandchild).getAttribute(USE_DEFAULT)).booleanValue(); 
-    							ppo.providerRunCommand = ((Element)grandchild).getAttribute(COMMAND);
-    							ppo.providerRunArguments = ((Element)grandchild).getAttribute(ARGUMENTS);
+                                        grandchild.getAttribute(USE_DEFAULT)).booleanValue(); 
+    							ppo.providerRunCommand = grandchild.getAttribute(COMMAND);
+    							ppo.providerRunArguments = grandchild.getAttribute(ARGUMENTS);
     						}
-    						else if (OPEN_ACTION.equals(grandchild.getNodeName())) {
-    							ppo.providerOpenFilePath = ((Element)grandchild).getAttribute(FILE_PATH);
+    						else if (OPEN_ACTION.equals(grandchild.getName())) {
+    							ppo.providerOpenFilePath = grandchild.getAttribute(FILE_PATH);
     						}
                             // parser
-                            else if (PARSER.equals(grandchild.getNodeName())) {
+                            else if (PARSER.equals(grandchild.getName())) {
                                 ppo.providerOutputParserEnabled = Boolean.valueOf(
-                                        ((Element)grandchild).getAttribute(ENABLED)).booleanValue();
+                                        grandchild.getAttribute(ENABLED)).booleanValue();
                             }
                         }
                         ++providerCounter;
@@ -990,31 +972,25 @@ public class ScannerConfigInfoFactory2 {
             }
 		}
 
-		private void store(Element sc)/* throws CoreException */{
+		private void store(ICStorageElement sc)/* throws CoreException */{
 //			if (isDirty || force) {
 //				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
 //				Element sc = descriptor.getProjectData(SCANNER_CONFIG);
-                Document doc = sc.getOwnerDocument();
 
-                // Clear out all current children
-                Node child = sc.getFirstChild();
-                while (child != null) {
-                    sc.removeChild(child);
-                    child = sc.getFirstChild();
-                }
+                // Clear children
+                for (ICStorageElement child : sc.getChildren())
+                	sc.removeChild(child);
 
-                Element autod = doc.createElement(SC_AUTODISCOVERY);
-                sc.appendChild(autod);
+                ICStorageElement autod = sc.createChild(SC_AUTODISCOVERY);
 				autod.setAttribute(ENABLED, Boolean.toString(autoDiscoveryEnabled));
 				autod.setAttribute(SELECTED_PROFILE_ID, selectedProfile);
 				autod.setAttribute(PROBLEM_REPORTING_ENABLED, Boolean.toString(problemReportingEnabled));
 
-				for (Iterator i = profileOptionsMap.keySet().iterator(); i.hasNext();) {
-                    String profileId = (String) i.next();
-                    Element profile = doc.createElement(PROFILE);
+				for (Iterator<String> i = profileOptionsMap.keySet().iterator(); i.hasNext();) {
+                    String profileId = i.next();
+                    ICStorageElement profile = sc.createChild(PROFILE);
 					profile.setAttribute(ID, profileId);
-					store(profile, (ProfileOptions) profileOptionsMap.get(profileId));
-				    sc.appendChild(profile);
+					store(profile, profileOptionsMap.get(profileId));
                 }
 				
 				isDirty = false;
@@ -1027,32 +1003,28 @@ public class ScannerConfigInfoFactory2 {
 		 * @param profile element
 		 * @param profile options 
 		 */
-		private void store(Element profile, ProfileOptions po) {
-			Element child, grandchild;
-			Document doc = profile.getOwnerDocument();
+		private void store(ICStorageElement profile, ProfileOptions po) {
+			ICStorageElement child, grandchild;
 			// buildOutputProvider element
-			child = doc.createElement(BUILD_OUTPUT_PROVIDER);
-			grandchild = doc.createElement(OPEN_ACTION);
+			child = profile.createChild(BUILD_OUTPUT_PROVIDER);
+			grandchild = child.createChild(OPEN_ACTION);
 			grandchild.setAttribute(ENABLED, Boolean.toString(po.buildOutputFileActionEnabled));
 			if(po.buildOutputFilePath != null)
 				grandchild.setAttribute(FILE_PATH, po.buildOutputFilePath);
-			child.appendChild(grandchild);
-			grandchild = doc.createElement(PARSER);
+			grandchild = child.createChild(PARSER);
 			grandchild.setAttribute(ENABLED, Boolean.toString(po.buildOutputParserEnabled));
-			child.appendChild(grandchild);
-			profile.appendChild(child);
 			// scannerInfoProvider elements
 			// get the list of providers from the profile configuration
 //			ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 //					getSCProfileConfiguration(selectedProfile);
 //			List providerIds = configuredProfile.getSIProviderIds();
-            List providerIds = new ArrayList(po.providerOptionsMap.keySet());
+            List<String> providerIds = new ArrayList<String>(po.providerOptionsMap.keySet());
 			for (int i = 0; i < providerIds.size(); ++i) {
-				String providerId = (String) providerIds.get(i);
-				ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) po.providerOptionsMap.get(providerId);
+				String providerId = providerIds.get(i);
+				ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
 				
 				if (ppo != null) {
-					child = doc.createElement(SCANNER_INFO_PROVIDER);
+					child = profile.createChild(SCANNER_INFO_PROVIDER);
 					child.setAttribute(ID, providerId);
 					
 					// action
@@ -1061,7 +1033,7 @@ public class ScannerConfigInfoFactory2 {
                     String providerKind = ppo.providerKind;
                     
 					if (providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.RUN)) {
-						grandchild = doc.createElement(RUN_ACTION); 
+						grandchild = child.createChild(RUN_ACTION);
 						grandchild.setAttribute(USE_DEFAULT, Boolean.toString(ppo.providerRunUseDefault)); 
 						if(ppo.providerRunCommand != null)
 							grandchild.setAttribute(COMMAND, ppo.providerRunCommand);
@@ -1069,16 +1041,13 @@ public class ScannerConfigInfoFactory2 {
 							grandchild.setAttribute(ARGUMENTS, ppo.providerRunArguments);
 					}
 					else if (providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.OPEN)) {
-						grandchild = doc.createElement(OPEN_ACTION); 
+						grandchild = child.createChild(OPEN_ACTION);
 						if(ppo.providerOpenFilePath != null)
 							grandchild.setAttribute(FILE_PATH, ppo.providerOpenFilePath);
 					}
-					child.appendChild(grandchild);
 					// parser
-                    grandchild = doc.createElement(PARSER);
+					grandchild = child.createChild(PARSER);
                     grandchild.setAttribute(ENABLED, Boolean.toString(ppo.providerOutputParserEnabled));
-                    child.appendChild(grandchild);
-                    profile.appendChild(child);
 				}
 				else {
 					// missing provider options - error
@@ -1095,17 +1064,6 @@ public class ScannerConfigInfoFactory2 {
         		container.save(true);
         		isDirty = false;
         	}
-//            if (store()) {
-//                ICDescriptorOperation op = new ICDescriptorOperation() {
-//                    
-//                     public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-//                         descriptor.saveProjectData();
-//                     }
-//                      
-//                 };
-//                 CCorePlugin.getDefault().getCDescriptorManager().
-//                         runDescriptorOperation(project, op, null);
-//            }
         }
         
         public InfoContext getContext(){
@@ -1176,7 +1134,7 @@ public class ScannerConfigInfoFactory2 {
                 selectedProfile = prefs.getDefaultString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX);
             }
             List profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
-            profileOptionsMap = new LinkedHashMap(profileIds.size());
+            profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(profileIds.size());
             for (Iterator I = profileIds.iterator(); I.hasNext(); ) {
             	String profileId = (String) I.next();
 	            ProfileOptions po = new ProfileOptions();
@@ -1195,7 +1153,7 @@ public class ScannerConfigInfoFactory2 {
 				ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 						getSCProfileConfiguration(profileId);
 				List providerIds = configuredProfile.getSIProviderIds();
-				po.providerOptionsMap = new LinkedHashMap(providerIds.size());
+				po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
 				for (int i = 0; i < providerIds.size(); ++i) {
 					String providerId = (String) providerIds.get(i);
 					ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
@@ -1229,10 +1187,10 @@ public class ScannerConfigInfoFactory2 {
 				set(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX, selectedProfile);
 				set(prefix + SCANNER_CONFIG_PROBLEM_REPORTING_ENABLED_SUFFIX, problemReportingEnabled);
 				
-				List profileIds = new ArrayList(profileOptionsMap.keySet());
-				for (Iterator I = profileIds.iterator(); I.hasNext(); ) {
-					String profileId = (String) I.next();
-					ProfileOptions po = (ProfileOptions) profileOptionsMap.get(profileId);
+				List<String> profileIds = new ArrayList<String>(profileOptionsMap.keySet());
+				for (Iterator<String> I = profileIds.iterator(); I.hasNext(); ) {
+					String profileId = I.next();
+					ProfileOptions po = profileOptionsMap.get(profileId);
 					
                     set(SCD + prefix + profileId + DOT + ENABLED, !useDefaults);
 					set(SCD + prefix + profileId + BUILD_OUTPUT_OPEN_ACTION_ENABLED, po.buildOutputFileActionEnabled);
@@ -1244,8 +1202,7 @@ public class ScannerConfigInfoFactory2 {
 					List providerIds = configuredProfile.getSIProviderIds();
 					for (int i = 0; i < providerIds.size(); ++i) {
 						String providerId = (String) providerIds.get(i);
-						ProfileOptions.ProviderOptions ppo = (ProfileOptions.ProviderOptions) 
-								po.providerOptionsMap.get(providerId);
+						ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
 						
 						set(SCD + prefix + profileId + DOT + providerId + SI_PROVIDER_PARSER_ENABLED,
 								ppo.providerOutputParserEnabled);

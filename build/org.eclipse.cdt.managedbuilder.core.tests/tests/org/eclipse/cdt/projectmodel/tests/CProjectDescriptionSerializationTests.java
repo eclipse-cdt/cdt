@@ -15,10 +15,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -32,6 +35,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 /**
  * Creates a project in a loop and checks that it is created with appropriate number
  * of build configurations
@@ -139,4 +144,66 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			}
 		}
 	}
+	
+	/**
+	 * This test is intended to check persistentProperties after a project is created.
+	 * @throws Exception
+	 */
+	public void testPersistentProperties() throws Exception {
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
+		
+		String pluginProjectTypeId = "cdt.managedbuild.target.gnu.cygwin.exe";
+		final String projectName = "testPersistentProperties";
+		
+		{
+			// Create model project and accompanied descriptions
+			IProject project = BuildSystemTestHelper.createProject(projectName);
+			ICProjectDescription des = coreModel.createProjectDescription(project, false);
+			Assert.assertNotNull("createDescription returned null!", des);
+			
+			{
+				ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+				IProjectType type = ManagedBuildManager.getProjectType(pluginProjectTypeId);
+				Assert.assertNotNull("project type not found", type);
+				
+				ManagedProject mProj = new ManagedProject(project, type);
+				info.setManagedProject(mProj);
+				
+				IConfiguration cfgs[] = type.getConfigurations();
+				Assert.assertNotNull("configurations not found", cfgs);
+				Assert.assertTrue("no configurations found in the project type",cfgs.length>0);
+				
+				for (IConfiguration configuration : cfgs) {
+					String id = ManagedBuildManager.calculateChildId(configuration.getId(), null);
+					Configuration config = new Configuration(mProj, (Configuration)configuration, id, false, true, false);
+					CConfigurationData data = config.getConfigurationData();
+					Assert.assertNotNull("data is null for created configuration", data);
+					ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+				}
+				Assert.assertEquals(2, des.getConfigurations().length);
+			}
+			
+			coreModel.setProjectDescription(project, des);
+			Assert.assertEquals(project, des.getProject());
+			
+			Thread.sleep(1000);  // let scanner discovery participate
+			try {
+				QualifiedName pdomName = new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName");
+				QualifiedName activeCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "activeConfiguration");
+				QualifiedName settingCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "settingConfiguration");
+				QualifiedName discoveredScannerConfigFileName = new QualifiedName(MakeCorePlugin.PLUGIN_ID, "discoveredScannerConfigFileName");
+				
+				assertTrue("pdomName", project.getPersistentProperties().containsKey(pdomName));
+				assertTrue("activeCfg", project.getPersistentProperties().containsKey(activeCfg));
+				assertTrue("discoveredScannerConfigFileName", project.getPersistentProperties().containsKey(discoveredScannerConfigFileName));
+				assertTrue("settingCfg", project.getPersistentProperties().containsKey(settingCfg));
+			} catch (CoreException e) {
+				Assert.fail(e.getMessage());
+			}
+				
+			project.close(null);
+		}
+	}
+
 }

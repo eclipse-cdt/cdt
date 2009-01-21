@@ -12,6 +12,9 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IProject;
 
+/**
+ * This represents an executable extension in the cmodel hierarchy
+ */
 public interface ICExtension {
 	public IProject getProject();
 	public ICExtensionReference getExtensionReference();

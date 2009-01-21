@@ -43,6 +43,11 @@
    <extension-point id="CIndex" name="%CIndex.name" schema="schema/CIndex.exsd"/>
    <extension-point id="externalSettingsProvider" name="%externalSettingsProvider.name" schema="schema/externalSettingsProvider.exsd"/>
 <!-- =================================================================================== -->
+<!-- CProjectDescriptionStorage provides addition types of project description storage      -->
+<!-- =================================================================================== -->
+   <extension-point id="CProjectDescriptionStorage" name="%CProjectDescriptionStorage.name" schema="schema/CProjectDescriptionStorage.exsd"/>
+   
+<!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
    <extension
@@ -609,6 +614,23 @@
          <simple name="valueName"/>
          <simple name="appName"/>
       </processType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CProjectDescriptionStorage">
+      <CProjectStorageType
+            class="org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorageFactory"
+            id="XmlProjectDescriptionStorage"
+            max_version="4.0.0"
+            name="Xml Storage (single file)"
+            version="4.0.0">
+      </CProjectStorageType>
+      <CProjectStorageType
+            class="org.eclipse.cdt.internal.core.settings.model.xml2.XmlProjectDescriptionStorage2Factory"
+            id="XmlProjectDescriptionStorage2"
+            max_version="5.0.0"
+            name="Xml Storage (Separate Files)"
+            version="5.0.0">
+      </CProjectStorageType>
    </extension>
 
 </plugin>

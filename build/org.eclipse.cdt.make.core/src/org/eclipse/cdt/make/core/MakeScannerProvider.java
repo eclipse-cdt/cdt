@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.ScannerProvider;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -111,20 +113,20 @@ public class MakeScannerProvider extends ScannerProvider {
 	 * Loads the build file and parses the nodes for build information. The information is then associated with the resource for the
 	 * duration of the session.
 	 */
-	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
+	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {		
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
-		Node child = descriptor.getProjectData(CDESCRIPTOR_ID).getFirstChild();
+		ICStorageElement storage = descriptor.getProjectStorageElement(CDESCRIPTOR_ID);
+
 		ArrayList includes = new ArrayList();
 		ArrayList symbols = new ArrayList();
-		while (child != null) {
-			if (child.getNodeName().equals(INCLUDE_PATH)) {
+		for (ICStorageElement child : storage.getChildren()) {
+			if (child.getName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
 				includes.add( ((Element)child).getAttribute(PATH));
-			} else if (child.getNodeName().equals(DEFINED_SYMBOL)) {
+			} else if (child.getName().equals(DEFINED_SYMBOL)) {
 				// Add the symbol to the symbol list
 				symbols.add( ((Element)child).getAttribute(SYMBOL));
 			}
-			child = child.getNextSibling();
 		}
 		MakeScannerInfo info = new MakeScannerInfo(project);
 		info.setIncludePaths((String[])includes.toArray(new String[includes.size()]));
@@ -193,15 +195,11 @@ public class MakeScannerProvider extends ScannerProvider {
 
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 
-				Element rootElement = descriptor.getProjectData(CDESCRIPTOR_ID);
+				ICStorageElement rootElement = descriptor.getProjectStorageElement(CDESCRIPTOR_ID);
 
 				// Clear out all current children
 				// Note: Probably would be a better idea to merge in the data
-				Node child = rootElement.getFirstChild();
-				while (child != null) {
-					rootElement.removeChild(child);
-					child = rootElement.getFirstChild();
-				}
+				rootElement.clear();
 
 				descriptor.saveProjectData();
 				migrateToCPathEntries(scannerInfo);

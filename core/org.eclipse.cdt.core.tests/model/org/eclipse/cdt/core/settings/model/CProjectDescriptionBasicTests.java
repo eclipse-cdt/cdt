@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import java.util.Map;
+
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -189,6 +192,7 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		
 		assertTrue(failed);
 	}
+	
 
 	public void testBug242955() throws Exception {
 		CoreModel coreModel = CoreModel.getDefault();

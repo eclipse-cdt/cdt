@@ -28,7 +28,7 @@ public final class SettingsContext implements IModificationContext{
 	private int fFlags;
 	
 	
-	SettingsContext(IProject project){
+	public SettingsContext(IProject project){
 		fProject = project;
 	}
 
@@ -76,7 +76,7 @@ public final class SettingsContext implements IModificationContext{
 		getCompositeWorkspaceRunnable(true).add(runnable);
 	}
 	
-	IWorkspaceRunnable createOperationRunnable() {
+	public IWorkspaceRunnable createOperationRunnable() {
 		CompositeWorkspaceRunnable result = new CompositeWorkspaceRunnable(null);
 		
 		IWorkspaceRunnable r = getSetEclipseProjectDescriptionRunnable();

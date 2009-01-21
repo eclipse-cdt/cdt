@@ -8,58 +8,143 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * Anton Leherbauer (Wind River Systems)
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorManager;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.internal.core.settings.model.CStorage;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
-import org.eclipse.cdt.internal.core.settings.model.InternalXmlStorageElement;
+import org.eclipse.cdt.internal.core.settings.model.SynchronizedStorageElement;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 
-public class CConfigBasedDescriptor implements ICDescriptor {
+/**
+ * Concrete ICDescriptor for a Project.
+ *
+ * There is only one of these per project.  Settings are serialized into all the
+ * ICConfigurationDescriptions of the project.  Methods which change or access data
+ * on the descriptor use the Eclipse ILock 'fLock' on the given descriptor instance.
+ *
+ * Structural changes made to extension elements are persisted immediately to
+ * the project description.
+ *
+ * Changes made to child storage elements are serialized to the project description
+ * with saveProjectData(...) and the serializingJob.
+ *
+ * Users should consider using {@link ICDescriptorManager#runDescriptorOperation} for threadsafe
+ * access to the project's configuration.  However failing this does provide some basic
+ * concurrency on {@link #getProjectStorageElement(String)} by wrapping the returned
+ * ICStorageElement in an {@link SynchronizedStorageElement}.  Note that this is best
+ * effort, so concurrent structural changes to the tree (such as one thread removing
+ * an element from a tree while another is writing to it) may result in inconsistent data
+ * stored.
+ *
+ */
+final public class CConfigBasedDescriptor implements ICDescriptor {
 	private static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
-	
+	/** The current default setting configuration description
+	 *  Equivalent to {@link ICProjectDescription#getDefaultSettingConfiguration()}*/
 	private ICConfigurationDescription fCfgDes;
-	private IProject fProject;
 	private COwner fOwner;
-	private final HashMap<String, ArrayList<ICExtensionReference>> fDesMap = new HashMap<String, ArrayList<ICExtensionReference>>();
-	private final HashMap<String, Element> fStorageDataElMap = new HashMap<String, Element>();
-	private boolean fApplyOnChange = true;
-	private boolean fIsDirty;
+
+	/** Map: storageModule ID -> ICStorageElement <br/>
+	 *  CDescriptor's map of so far uncommited storage elements. */
+	private final Map<String, SynchronizedStorageElement> fStorageDataElMap = new HashMap<String, SynchronizedStorageElement>();
+	private volatile boolean fIsDirty;
+	/** Current CDescriptor Event which tracks changes between operationStart & operationStop */
 	private CDescriptorEvent fOpEvent;
-	private boolean fIsOpStarted;
-	
-	final class CConfigBaseDescriptorExtensionReference implements ICExtensionReference{
-		private ICConfigExtensionReference fCfgExtRef;
+	/** Flag indicating whether an operation has started */
+	private volatile boolean fIsOpStarted;
+
+	/** This descriptor's lock */
+	final ILock fLock = Job.getJobManager().newLock();
+	/**
+	 * The Job the actually does the data applying (by getting and setting the current project description)
+	 * saveProjectData never does the saving itself, rather it schedules this job to run.
+	 * During the setCProjectDescriptionOperation the changes in this ICDescriptor are synchronized into the
+	 * project description being persisted.
+	 */
+	class SerializingJob extends Job {
+		public SerializingJob(String name) {
+			super (name);
+			setSystem(true);
+			// This rule must contain that in SetCProjectDescriptionOperation
+			// (Resource scheduling rules are always obtained before data structure locks to prevent deadlocks.)
+			setRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				fLock.acquire();
+				// No point scheduling the run if the project is closed...
+				if (!getProject().isAccessible())
+					return Status.CANCEL_STATUS;
+				serialize();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			} finally {
+				fLock.release();
+			}
+			return Status.OK_STATUS;
+		}
+
+		public void serialize() throws CoreException {
+			if (!getProject().isAccessible())
+				throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), getProject().getName())); //$NON-NLS-1$
+			if(fIsDirty) {
+				ICProjectDescription des = fCfgDes.getProjectDescription();
+				if(des.isCdtProjectCreating())
+					des.setCdtProjectCreated();
+				CProjectDescriptionManager.getInstance().setProjectDescription(getProject(), des);
+				fIsDirty = false;
+			}
+		}
+	}
+	SerializingJob serializingJob = new SerializingJob("CConfigBasedDescriptor Serializing Job"); //$NON-NLS-1$ (system)
+
+	/**
+	 * Concrete implementation of ICExtensionReference based on ICConfigExtensionReference elements.
+ 	 * In the old world ICExtensions had no notion of which configuration they belong to.
+ 	 * As a result all state that would have be persisted at the ICExtension level is saved to all
+ 	 * the configurations in the project
+	 *
+	 * This is a lightweight proxy onto ICConfigExtensionReference and doesn't hold any state
+	 * itself (though alters the isDirty state and descriptor event of the containing Descriptor).
+	 */
+	final class CConfigBaseDescriptorExtensionReference implements ICExtensionReference {
+		/** The ICConfigExtensionReference this is based on -- the identifying feature of this ICExtensionReference */
+		private final ICConfigExtensionReference fCfgExtRef;
 		CConfigBaseDescriptorExtensionReference(ICConfigExtensionReference cfgRef){
-			fCfgExtRef = cfgRef; 
+			fCfgExtRef = cfgRef;
 		}
 
 		public ICExtension createExtension() throws CoreException {
@@ -67,7 +152,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(fCfgExtRef, CEXTENSION_NAME, false);
 			cExtension = (InternalCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
 			cExtension.setExtensionReference(this);
-			cExtension.setProject(fProject);
+			cExtension.setProject(getProject());
 			return (ICExtension)cExtension;
 		}
 
@@ -105,6 +190,18 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 					setOpEvent(new CDescriptorEvent(CConfigBasedDescriptor.this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 			}
 		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj instanceof CConfigBaseDescriptorExtensionReference)
+				return fCfgExtRef.equals(((CConfigBaseDescriptorExtensionReference)obj).fCfgExtRef);
+			return fCfgExtRef.equals(obj);
+		}
+		@Override
+		public int hashCode() {
+			return fCfgExtRef.hashCode();
+		}
 	}
 
 	public CConfigBasedDescriptor(ICConfigurationDescription des) throws CoreException{
@@ -114,315 +211,473 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public CConfigBasedDescriptor(ICConfigurationDescription des, boolean write) throws CoreException{
 		updateConfiguration(des, write);
 	}
-	
-	public void setApplyOnChange(boolean apply){
-		if(fApplyOnChange == apply)
-			return;
-		
-		fApplyOnChange = apply;
-	}
-	
-	public boolean isApplyOnChange(){
-		return fApplyOnChange;
-	}
-	
-	public void apply(boolean force) throws CoreException{
-		if(force || fIsDirty){
-			ICProjectDescription des = fCfgDes.getProjectDescription();
-			if(des.isCdtProjectCreating())
-				des.setCdtProjectCreated();
-			CProjectDescriptionManager.getInstance().setProjectDescription(fProject, des);
-			fIsDirty = false;
-		}
-	}
-	
-	private void checkApply() throws CoreException {
-		if(fApplyOnChange){
-			apply(false);
-			fIsDirty = false;
-		} else {
-			fIsDirty = true;
-		}
-	}
-	
-	public ICExtensionReference create(String extensionPoint, String id)
-			throws CoreException {
-		ICConfigExtensionReference ref = fCfgDes.create(extensionPoint, id);
 
-		//write is done for all configurations to avoid "data loss" on configuration change
-		ICProjectDescription des = fCfgDes.getProjectDescription();
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for (ICConfigurationDescription cfg : cfgs) {
-			if(cfg != fCfgDes){
-				try {
-					cfg.create(extensionPoint, id);
-				} catch (CoreException e){
-				}
-			}
+	/**
+	 * Persist the current project description (to persist changes to the ICExtensions)
+	 * @param force
+	 * @throws CoreException
+	 */
+	void apply(boolean force) throws CoreException {
+		fIsDirty |= force;
+		if (!fIsDirty)
+			return;
+
+		// If we're already serializing the project description, schedule a job
+		// to perform the serialization...
+		if (CProjectDescriptionManager.getInstance().isCurrentThreadSetProjectDescription()) {
+			serializingJob.schedule();
+			return;
 		}
-		
-		ICExtensionReference r = create(ref);
-		fIsDirty = true;
-		checkApply();
-		if(isOperationStarted())
-			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
-		return r;
+
+		// Deadlock warning: path entry, for example, can do getStorageElement
+		// in resource delta (while holding the workspace lock). As CModelOperation
+		// runs the job as a workspace runnable, this leads to potential deadlock.
+		//
+		// So before applying, we ensure that we hold the project resource rule
+		// before getting the 'lock' on the datastructures
+
+//		final IProject project = getProject();
+		// Release the lock
+		final int lockDepth = fLock.getDepth();
+		for (int i = 0; i < lockDepth ; ++i)
+			fLock.release();
+
+		try {
+			// This rule must contain that in SetCProjectDescriptionOperation
+			Job.getJobManager().beginRule(ResourcesPlugin.getWorkspace().getRoot(), new NullProgressMonitor());
+			try {
+				fLock.acquire();
+				serializingJob.serialize();
+			} finally {
+				if (lockDepth == 0) // Only release the lock if it wasn't previously held on entrance to this method
+					fLock.release();
+				else // Reacquire the lock to the appropriate depth
+					for (int i = 0; i < lockDepth - 1; i++)
+						fLock.acquire();
+			}
+		} finally {
+			Job.getJobManager().endRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
 	}
-	
+
+	private void checkApply() throws CoreException {
+		apply(false);
+	}
+
+	/**
+	 * Set the dirty flag
+	 * @param dirty
+	 */
 	void setDirty(boolean dirty){
 		fIsDirty = dirty;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#create(java.lang.String, java.lang.String)
+	 */
+	public ICExtensionReference create(String extensionPoint, String id) throws CoreException {
+		try {
+			fLock.acquire();
+			ICConfigExtensionReference ref = fCfgDes.create(extensionPoint, id);
+
+			//write is done for all configurations to avoid "data loss" on configuration change
+			ICProjectDescription des = fCfgDes.getProjectDescription();
+			ICConfigurationDescription cfgs[] = des.getConfigurations();
+			for (ICConfigurationDescription cfg : cfgs) {
+				if(cfg != fCfgDes){
+					try {
+						cfg.create(extensionPoint, id);
+					} catch (CoreException e){
+						CCorePlugin.log(e);
+					}
+				}
+			}
+
+			ICExtensionReference r = new CConfigBaseDescriptorExtensionReference(ref);
+			fIsDirty = true;
+			checkApply();
+			if(isOperationStarted())
+				setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
+			return r;
+		} finally {
+			fLock.release();
+		}
+	}
+
+	/**
+	 * Equivalent to {@link #updateConfiguration(ICConfigurationDescription, true)}
+	 * @param des the new ICConfigurationDescription
+	 * @throws CoreException
+	 */
 	public void updateConfiguration(ICConfigurationDescription des) throws CoreException{
 		updateConfiguration(des, true);
 	}
 
+	/**
+	 * Update the currently default (settings) configuration
+	 * @param des
+	 * @param write
+	 * @throws CoreException
+	 */
 	public void updateConfiguration(ICConfigurationDescription des, boolean write) throws CoreException{
-		if(write && des instanceof CConfigurationDescriptionCache)
-			throw new IllegalArgumentException();
-		
-		fCfgDes = des;
-		fProject = fCfgDes.getProjectDescription().getProject();
-		CConfigurationSpecSettings settings = ((IInternalCCfgInfo)fCfgDes).getSpecSettings(); 
-		fOwner = settings.getCOwner();
-//		settings.setDescriptor(this);
-		fStorageDataElMap.clear();
-	}
-	
-	private CConfigBaseDescriptorExtensionReference create(ICConfigExtensionReference ref){
-		CConfigBaseDescriptorExtensionReference dr = new CConfigBaseDescriptorExtensionReference(ref);
-		synchronized (fDesMap) {
-			ArrayList<ICExtensionReference> list = fDesMap.get(ref.getExtensionPoint());
-			if(list == null){
-				list = new ArrayList<ICExtensionReference>(1);
-				fDesMap.put(ref.getExtensionPoint(), list);
-			} else {
-				list.ensureCapacity(list.size() + 1);
-			}
-			list.add(dr);
+		try {
+			fLock.acquire();
+			if(write && des instanceof CConfigurationDescriptionCache)
+				throw new IllegalArgumentException();
+
+			fCfgDes = des;
+			CConfigurationSpecSettings settings = ((IInternalCCfgInfo)fCfgDes).getSpecSettings();
+			fOwner = settings.getCOwner();
+		} finally {
+			fLock.release();
 		}
-		return dr;
 	}
 
+	/**
+	 * Attempt to return an ICExtensionReference array based on the ICConfigExtensionReferences
+	 * contained in this project description (which match the extensionPointId).
+	 *
+	 * Fetches all the ICConfigExtensionReferences from the project's configurations.
+	 *
+	 * Previously this cached the current set of ICExtensionReferences,
+	 * but this cache was never used (it was always overwritten by this method).
+	 *
+	 * FIXME re-add caching (the current behaviour mirrors the previous behaviour -- just tidier)
+	 *  @return an array of ICExtenionReference
+	 */
 	public ICExtensionReference[] get(String extensionPoint) {
-		ICConfigExtensionReference[] rs = fCfgDes.get(extensionPoint);
-		ArrayList<ICConfigExtensionReference> refs = new ArrayList<ICConfigExtensionReference>();
-		refs.addAll(Arrays.asList(rs));
-		
-		ICConfigurationDescription[] cfgs = 
-			fCfgDes.getProjectDescription().getConfigurations();
-		
-		for (int i=0; i<cfgs.length; i++) {
-			if (!fCfgDes.equals(cfgs[i])) {
-				rs = cfgs[i].get(extensionPoint); 
-				for (int j=0; j<rs.length; j++) {
-					if (!refs.contains(rs[j]))
-						refs.add(rs[j]);
-				}
-			}
+		try {
+			fLock.acquire();
+			LinkedHashSet<ICExtensionReference> extRefs = new LinkedHashSet<ICExtensionReference>();
+
+			// Add the ICConfigExtensionReferences for the current configuration description
+			for (ICConfigExtensionReference cfgRes : fCfgDes.get(extensionPoint))
+				extRefs.add(new CConfigBaseDescriptorExtensionReference(cfgRes));
+
+			for (ICConfigurationDescription cfg : fCfgDes.getProjectDescription().getConfigurations())
+				if (!cfg.equals(fCfgDes))
+					for (ICConfigExtensionReference cfgRes : fCfgDes.get(extensionPoint))
+						extRefs.add(new CConfigBaseDescriptorExtensionReference(cfgRes));
+
+			return extRefs.toArray(new ICExtensionReference[extRefs.size()]);
+		} finally {
+			fLock.release();
 		}
-		ICConfigExtensionReference cfgRefs[] = 
-			refs.toArray(
-							new ICConfigExtensionReference[refs.size()]);
-
-		if(cfgRefs.length == 0){
-			return new ICExtensionReference[0];
-		}
-		
-		ICExtensionReference[] extRefs = new ICExtensionReference[cfgRefs.length];
-		synchronized (fDesMap) {
-			ArrayList<ICExtensionReference> list = fDesMap.get(extensionPoint);
-			//		if(list == null){
-			//			list = new ArrayList(cfgRefs.length);
-			//			fDesMap.put(extensionPoint, list);
-			//		}
-
-			//		list = (ArrayList)list.clone();
-			//
-			//		CConfigBaseDescriptorExtensionReference[] refs = (CConfigBaseDescriptorExtensionReference[])list.
-			//			toArray(new CConfigBaseDescriptorExtensionReference[list.size()]);
-			int num = cfgRefs.length - 1;
-
-			for(int i = cfgRefs.length - 1; i >= 0; i--){
-				ICConfigExtensionReference ref = cfgRefs[i];
-				int k= -1;
-				if (list != null) {
-					for(k= list.size()-1; k >= 0; k--){
-						CConfigBaseDescriptorExtensionReference r = (CConfigBaseDescriptorExtensionReference)list.get(k);
-						if(r.fCfgExtRef == ref){
-							extRefs[num--] = r;
-							list.remove(k);
-							break;
-						}
-					}
-				}
-				if(k < 0){
-					extRefs[num--] = new CConfigBaseDescriptorExtensionReference(ref);
-				}
-			}
-
-			if(list == null){
-				list = new ArrayList<ICExtensionReference>(cfgRefs.length);
-				fDesMap.put(extensionPoint, list);
-			} else {
-				list.clear();
-				list.ensureCapacity(cfgRefs.length);
-			}
-
-			list.addAll(Arrays.asList(extRefs));
-			list.trimToSize();
-		}
-		return extRefs;
 	}
 
-	public ICExtensionReference[] get(String extensionPoint, boolean update)
-			throws CoreException {
-		ICExtensionReference[] refs = get(extensionPoint);
-		if(refs.length == 0 && update){
-			boolean prevApplyOnChange = fApplyOnChange;
-			fApplyOnChange = false;
-			fOwner.update(fProject, this, extensionPoint);
-			fApplyOnChange = prevApplyOnChange;
-			checkApply();
-			refs = get(extensionPoint);
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#get(java.lang.String, boolean)
+	 */
+	public ICExtensionReference[] get(String extensionPoint, boolean update) throws CoreException {
+		try {
+			fLock.acquire();
+			ICExtensionReference[] refs = get(extensionPoint);
+			if(refs.length == 0 && update){
+				fOwner.update(getProject(), this, extensionPoint);
+				checkApply();
+				refs = get(extensionPoint);
+			}
+			return refs;
+		} finally {
+			fLock.release();
 		}
-		return get(extensionPoint);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#getPlatform()
+	 */
 	public String getPlatform() {
-		return fOwner.getPlatform();
+		try {
+			fLock.acquire();
+			return fOwner.getPlatform();
+		} finally {
+			fLock.release();
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#getProject()
+	 */
 	public IProject getProject() {
-		return fProject;
+		try {
+			fLock.acquire();
+			return fCfgDes.getProjectDescription().getProject();
+		} finally {
+			fLock.release();
+		}
 	}
 
-	public Element getProjectData(String id) throws CoreException {
-	    // avoid deadlock by using different lock here.                                  
-		synchronized(fStorageDataElMap /*CProjectDescriptionManager.getInstance()*/){
-			Element el = fStorageDataElMap.get(id);
-			if(el == null || el.getParentNode() == null){
-				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, false);
-				if(storageEl == null){
-					try {
-						DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-						Document doc = builder.newDocument();
-						el = CStorage.createStorageXmlElement(doc, id);
-						doc.appendChild(el);
-					} catch (ParserConfigurationException e) {
-						throw ExceptionFactory.createCoreException(e);
-					}
-				} else {
-					el = CProjectDescriptionManager.getInstance().createXmlElementCopy(storageEl);
+	/**
+	 * Note that in the current implementation of the xml based project description
+	 * it is not safe to work on the same storage element in more than one thread.
+	 *
+	 * It is likely that doing so will return a concurrent modification exception on the
+	 * returned ICStorageElement. We must allow this as this is how the existing implementation
+	 * behaves.
+	 */
+	public ICStorageElement getProjectStorageElement(String id) throws CoreException {
+		try {
+			fLock.acquire();
+			// Check if the storage element already exists in our local map
+			SynchronizedStorageElement storageEl = fStorageDataElMap.get(id);
+			if(storageEl == null){
+				ICStorageElement el = fCfgDes.getStorage(id, true);
+				try {
+					el = el.createCopy();
+				} catch (UnsupportedOperationException e) {
+					throw ExceptionFactory.createCoreException(e);
 				}
-				fStorageDataElMap.put(id, el);
+				storageEl = SynchronizedStorageElement.synchronizedElement(el);
+				fStorageDataElMap.put(id, storageEl);
 			}
-			return el;
+			return storageEl;
+		} finally {
+			fLock.release();
+		}
+	}
+
+	public void removeProjectStorageElement(String id) throws CoreException {
+		try {
+			fLock.acquire();
+			fStorageDataElMap.put(id, null);
+		} finally {
+			fLock.release();
 		}
 	}
 
 	public ICOwnerInfo getProjectOwner() {
-		return fOwner;
+		try {
+			fLock.acquire();
+			return fOwner;
+		} finally {
+			fLock.release();
+		}
 	}
 
 	public void remove(ICExtensionReference extension) throws CoreException {
-		ICConfigExtensionReference ref =((CConfigBaseDescriptorExtensionReference)extension).fCfgExtRef;
-		fCfgDes.remove(ref);
+		try {
+			fLock.acquire();
+			ICConfigExtensionReference ref = ((CConfigBaseDescriptorExtensionReference)extension).fCfgExtRef;
+			fCfgDes.remove(ref);
 
-		//write is done for all configurations to avoid "data loss" on configuration change
-		ICProjectDescription des = fCfgDes.getProjectDescription();
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for (ICConfigurationDescription cfg : cfgs) {
-			if(cfg != fCfgDes){
-				try {
-					ICConfigExtensionReference rs[] = cfg.get(ref.getExtensionPoint());
-					for (ICConfigExtensionReference element : rs) {
-						if(ref.getID().equals(element.getID())){
-							cfg.remove(element);
-							break;
+			// write is done for all configurations to avoid "data loss" on configuration change
+			for (ICConfigurationDescription cfg : fCfgDes.getProjectDescription().getConfigurations()) {
+				if(cfg != fCfgDes){
+					try {
+						ICConfigExtensionReference rs[] = cfg.get(ref.getExtensionPoint());
+						for (ICConfigExtensionReference element : rs) {
+							if(ref.getID().equals(element.getID())){
+								cfg.remove(element);
+								break;
+							}
 						}
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
 					}
-				} catch (CoreException e) {
 				}
 			}
+			fIsDirty = true;
+			checkApply();
+			if(isOperationStarted())
+				setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
+		} finally {
+			fLock.release();
 		}
-		fIsDirty = true;
-		checkApply();
-		if(isOperationStarted())
-			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
 	public void remove(String extensionPoint) throws CoreException {
-		fCfgDes.remove(extensionPoint);
-		
-		//write is done for all configurations to avoid "data loss" on configuration change
-		ICProjectDescription des = fCfgDes.getProjectDescription();
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for (ICConfigurationDescription cfg : cfgs) {
-			if(cfg != fCfgDes){
-				try {
-					cfg.remove(extensionPoint);
-				} catch (CoreException e) {
+		try {
+			fLock.acquire();
+			fCfgDes.remove(extensionPoint);
+			//write is done for all configurations to avoid "data loss" on configuration change
+			for (ICConfigurationDescription cfg : fCfgDes.getProjectDescription().getConfigurations()) {
+				if(cfg != fCfgDes){
+					try {
+						cfg.remove(extensionPoint);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
+			fIsDirty = true;
+			checkApply();
+			if(isOperationStarted())
+				setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
+		} finally {
+			fLock.release();
 		}
-		fIsDirty = true;
-		checkApply();
-		if(isOperationStarted())
-			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#saveProjectData()
+	 */
 	public void saveProjectData() throws CoreException {
-		if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
-			fIsDirty = true;
-		
-		checkApply();
-		if(isOperationStarted())
-			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
+		try {
+			fLock.acquire();
+			// Reconcile changes into the current project description
+			if(reconcile(this, fCfgDes.getProjectDescription())) {
+				// Dirty => Apply
+				fIsDirty = true;
+				apply(true);
+				if(isOperationStarted())
+					setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
+			}
+		} finally {
+			fLock.release();
+		}
 	}
-	
-	public Map<String, Element> getStorageDataElMap(){
-		@SuppressWarnings("unchecked")
-		final HashMap<String, Element> clone = (HashMap<String, Element>)fStorageDataElMap.clone();
-		return clone; 
-	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptor#getConfigurationDescription()
+	 */
 	public ICConfigurationDescription getConfigurationDescription() {
-		return fCfgDes;
+		try {
+			fLock.acquire();
+			return fCfgDes;
+		} finally {
+			fLock.release();
+		}
 	}
+
+	/*
+	 * Event handling routines
+	 */
 
 	void setOpEvent(CDescriptorEvent event) {
-		if(!isOperationStarted())
-			return;
+		try {
+			fLock.acquire();
+			if(!isOperationStarted())
+				return;
 
-		if (event.getType() == CDescriptorEvent.CDTPROJECT_ADDED) {
-			fOpEvent = event;
-		} else if (event.getType() == CDescriptorEvent.CDTPROJECT_REMOVED) {
-			fOpEvent = event;
-		} else {
-			if (fOpEvent == null) {
+			if (event.getType() == CDescriptorEvent.CDTPROJECT_ADDED) {
 				fOpEvent = event;
-			} else if ( (fOpEvent.getFlags() & event.getFlags()) != event.getFlags()) {
-				fOpEvent = new CDescriptorEvent(event.getDescriptor(), event.getType(),
-						fOpEvent.getFlags() | event.getFlags());
+			} else if (event.getType() == CDescriptorEvent.CDTPROJECT_REMOVED) {
+				fOpEvent = event;
+			} else {
+				if (fOpEvent == null) {
+					fOpEvent = event;
+				} else if ( (fOpEvent.getFlags() & event.getFlags()) != event.getFlags()) {
+					fOpEvent = new CDescriptorEvent(event.getDescriptor(), event.getType(),
+							fOpEvent.getFlags() | event.getFlags());
+				}
 			}
+		} finally {
+			fLock.release();
 		}
 	}
-	
+
 	boolean isOperationStarted(){
 		return fIsOpStarted;
 	}
-	
+
 	void operationStart(){
 		fIsOpStarted = true;
 	}
 
+	/**
+	 * Mark the operation as over -- return the CDescriptorEvent
+	 * @return
+	 */
 	CDescriptorEvent operationStop(){
-		fIsOpStarted = false;
-		CDescriptorEvent e = fOpEvent;
-		fOpEvent = null;
-		
-		return e;
+		try {
+			fLock.acquire();
+			fIsOpStarted = false;
+			CDescriptorEvent e = fOpEvent;
+			fOpEvent = null;
+			return e;
+		} finally {
+			fLock.release();
+		}
+	}
+
+	/*
+	 *
+	 * The reconcile methods below are for copying storage element changes from the current
+	 * CConfigBasedDescriptor to the passed in writable project description
+	 *
+	 */
+	/**
+	 * Copies the changes made to the CConfigBasedDescriptor to the ICProjectDescription
+	 *
+	 * The changes are reconciled into all the project's configurations!
+	 * @param descriptor
+	 * @param des
+	 * @return boolean indicating whether changes were made
+	 */
+	public static boolean reconcile(CConfigBasedDescriptor descriptor, ICProjectDescription des){
+		try {
+			descriptor.fLock.acquire();
+
+			Map<String, SynchronizedStorageElement> map = descriptor.fStorageDataElMap;
+			boolean reconciled = false;
+			if(!map.isEmpty()){
+				for (Map.Entry<String, SynchronizedStorageElement> entry : map.entrySet()) {
+					String id = entry.getKey();
+					SynchronizedStorageElement synchStor = entry.getValue();
+
+					if (synchStor != null ) {
+						// Lock the synchronized storage element to prevent further changes
+						synchronized (synchStor) {
+							if(reconcile(id, synchStor.getOriginalElement(), des))
+								reconciled = true;
+						}
+					} else {
+						if (reconcile(id, null, des))
+							reconciled = true;
+					}
+				}
+			}
+			return reconciled;
+		} finally {
+			descriptor.fLock.release();
+		}
+	}
+
+	private static boolean reconcile(String id, ICStorageElement newStorEl, ICProjectDescription des) {
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		boolean reconciled = false;
+
+		for(int i = 0; i < cfgs.length; i++){
+			try {
+				if(reconcile(id, newStorEl, cfgs[i]))
+					reconciled = true;
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+
+		return reconciled;
+	}
+
+	private static boolean reconcile(String id, ICStorageElement newStorEl, ICConfigurationDescription cfg) throws CoreException{
+		CConfigurationSpecSettings setting = ((IInternalCCfgInfo)cfg).getSpecSettings();
+		ICStorageElement storEl = setting.getStorage(id, false);
+
+		boolean modified = false;
+
+		if(storEl != null){
+			if(newStorEl == null){
+				setting.removeStorage(id);
+				modified = true;
+			} else {
+				if(!newStorEl.equals(storEl)){
+					setting.importStorage(id, newStorEl);
+					modified = true;
+				}
+			}
+		} else {
+			if(newStorEl != null){
+				setting.importStorage(id, newStorEl);
+				modified = true;
+			}
+		}
+		return modified;
 	}
 
 }

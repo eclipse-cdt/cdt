@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -17,85 +18,103 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
+import org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * The operation which actually causes the CProjectDescription to be serialized
+ *
+ * This organizes the firing the {@link CProjectDescriptionEvent}s to all listeners
+ */
 public class SetCProjectDescriptionOperation extends CModelOperation {
-	private CProjectDescription fSetDescription;
-	private int fFlags;
+	/** The ProjectDescription Storage being used for this project description */
+	private final AbstractCProjectDescriptionStorage fPrjDescStorage;
+	private final CProjectDescription fSetDescription;
+	private final int fFlags;
 
-	SetCProjectDescriptionOperation(ICProject cProject, CProjectDescription description, int flags){
+	/**
+	 * Operation used for persisting the new CProjectDescription
+	 * @param prjDescStorage
+	 * @param cProject
+	 * @param description
+	 * @param flags
+	 */
+	public SetCProjectDescriptionOperation(AbstractCProjectDescriptionStorage prjDescStorage, ICProject cProject, CProjectDescription description, int flags){
 		super(cProject);
+		this.fPrjDescStorage = prjDescStorage;
 		fFlags = flags;
 		fSetDescription = description;
 	}
-	
+
 	@Override
 	protected void executeOperation() throws CModelException {
 		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
 		ICProject cProject = (ICProject)getElementToProcess();
 		final IProject project = cProject.getProject();
-		
-		CProjectDescription fOldDescriptionCache = (CProjectDescription)mngr.getProjectDescription(project, false);
-		
-		CProjectDescriptionEvent event = mngr.createAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
-		mngr.notifyListeners(event);
+
+		ICProjectDescription fOldDescriptionCache = mngr.getProjectDescription(project, false);
+
+		AbstractCProjectDescriptionStorage.fireAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
 		CProjectDescription fNewDescriptionCache = null;
 		SettingsContext context = new SettingsContext(project);
 		boolean modified = false;
-		
+
 		if(fSetDescription != null){
-			InternalXmlStorageElement el = null;
+			ICStorageElement newEl = null;
+			ICSettingsStorage newStorage = null;
 			try {
-				InternalXmlStorageElement base = (InternalXmlStorageElement)fSetDescription.getRootStorageElement();
-				modified = base.isDirty();
-				el = mngr.copyElement(base, false);
-			} catch (CoreException e2) {
+				ICStorageElement base = fSetDescription.getRootStorageElement();
+				modified = fSetDescription.isModified();
+//				el = base;
+				// FIXME JBB there is deep magic going on here.  The project descriptions are being
+				//           changed in non-obvious ways
+				newEl = fPrjDescStorage.copyElement(base, false);
+				newStorage = fPrjDescStorage.getStorageForElement(newEl);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
-	
+
 			boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
 			if(creating)
 				creating = fSetDescription.isCdtProjectCreating();
-	
+
 			if(!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
 				throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
-	
-			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
-			
+
+			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, newStorage, newEl, creating);
+
 			boolean envStates[] = getEnvStates(fNewDescriptionCache);
 			try {
-				mngr.setDescriptionApplying(project, fNewDescriptionCache);
+				fPrjDescStorage.setThreadLocalProjectDesc(fNewDescriptionCache);
 				modified |= fNewDescriptionCache.applyDatas(context);
 			} finally {
-				mngr.clearDescriptionApplying(project);
+				fPrjDescStorage.setThreadLocalProjectDesc(null);
 				setEnvStates(fNewDescriptionCache, envStates);
 			}
 		} else {
 			modified = fOldDescriptionCache != null;
 		}
-		
+
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
 		mngr.checkRemovedConfigurations(delta);
-		
-		
+
+		// Generate the c element deltas
 		ICElementDelta cElementDeltas[] = mngr.generateCElementDeltas(cProject, delta);
+		for (ICElementDelta d : cElementDeltas)
+			addDelta(d);
 
-		if (cElementDeltas.length > 0) {
-			for (int i = 0; i < cElementDeltas.length; i++) {
-				addDelta(cElementDeltas[i]);
-			}
-		}
-
-		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
-		
 		if(fSetDescription != null)
 			fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
-		
+
 		try {
 			final IProjectDescription eDes = context.getEclipseProjectDescription();
 			if(mngr.checkHandleActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, eDes, new NullProgressMonitor())){
@@ -104,58 +123,83 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		} catch (CoreException e2) {
 			CCorePlugin.log(e2);
 		}
-		
-		event = mngr.createDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
-		mngr.notifyListeners(event);
-		
-		cProject.close();
-		
+
+		// fNewDescriptionCache is still writable and may be written to at this point
+		AbstractCProjectDescriptionStorage.fireDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+
+		cProject.close(); // Why?
+
 //		ExternalSettingsManager.getInstance().updateDepentents(delta);
-		
+
 		if(fNewDescriptionCache != null){
 			fNewDescriptionCache.doneApplying();
 		}
-		
-		event = mngr.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+
+		// Set 'fSetProjectDescription' as the new read-only project description on the block
+		fPrjDescStorage.setCurrentDescription(fNewDescriptionCache, true);
+
+		CProjectDescriptionEvent event = AbstractCProjectDescriptionStorage.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
 
 		try {
+			IWorkspaceRunnable toRun = null;
 			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE)){
 				if(modified || isPersistentCoreSettingChanged(event)){
-					context.addWorkspaceRunnable(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+					toRun = fPrjDescStorage.createDesSerializationRunnable();
+					if (toRun != null)
+						context.addWorkspaceRunnable(toRun);
 				}
 			}
-			IWorkspaceRunnable toRun = context.createOperationRunnable();
-			
+			toRun = context.createOperationRunnable();
+
 			if(toRun != null)
-				mngr.runWspModification(toRun, new NullProgressMonitor());
+				CProjectDescriptionManager.runWspModification(toRun, getSchedulingRule(), new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
 	}
-	
+
+	// Can't use project scoped rule see CProjectDescriptionBasicTests...
+//	/*
+//	 * Instead of using the workspace scheduling rule, use a more refined project scoped rule.
+//	 * This must contain the rule in CConfigBasedDescriptor.setApply(...)
+//	 * (non-Javadoc)
+//	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#getSchedulingRule()
+//	 */
+//	@Override
+//	public ISchedulingRule getSchedulingRule() {
+////		return null;
+//		return fPrjDescStorage.getProject();
+//	}
+
 	private static boolean isPersistentCoreSettingChanged(CProjectDescriptionEvent event){
 		ICDescriptionDelta delta = event.getProjectDelta();
 		if(delta == null)
 			return false;
 		if(delta.getDeltaKind() != ICDescriptionDelta.CHANGED)
 			return true;
-		
+
 		if(delta.getChildren().length != 0)
 			return true;
-		
-		int flags = delta.getChangeFlags(); 
+
+		int flags = delta.getChangeFlags();
 		if(flags != 0 && flags != ICDescriptionDelta.ACTIVE_CFG)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return false;
 	}
 
+	/**
+	 * Returns a boolean array corresponding to whether the environemnt is
+	 * dirty on the configurations in the array returned by projDesc.getConfigurations()
+	 * @param pd
+	 * @return boolean[] indicating which configurations have a dirty environment
+	 */
 	private boolean[] getEnvStates(CProjectDescription pd) {
 		ICConfigurationDescription[] cfs = pd.getConfigurations();
 		boolean[] result = new boolean[cfs.length];
@@ -165,19 +209,28 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
 					if (ss != null && ss.getEnvironment() != null)
 						result[i] = ss.getEnvironment().isDirty();
-				} catch (CoreException e) {};
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Set
+	 * @param pd
+	 * @param data
+	 */
 	private void setEnvStates(CProjectDescription pd, boolean[] data) {
 		ICConfigurationDescription[] cfs = pd.getConfigurations();
 		if (cfs == null || data == null)
 			return;
 		for (int i=0; i<cfs.length; i++) {
-			if (data.length <= i) 
-				break; // unprobable;
+			if (data.length <= i) {
+				CCorePlugin.log("Error: setEnvStates: different number of configurations as there are envDatas...", new Exception()); //$NON-NLS-1$
+				break;
+			}
 			if (!data[i])
 				continue; // write only TRUE values
 			if (cfs[i] instanceof IInternalCCfgInfo) {
@@ -185,7 +238,9 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
 					if (ss != null && ss.getEnvironment() != null)
 						ss.getEnvironment().setDirty(true);
-				} catch (CoreException e) {};
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
 			}
 		}
 	}

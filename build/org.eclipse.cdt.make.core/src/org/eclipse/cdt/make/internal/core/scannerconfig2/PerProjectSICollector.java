@@ -365,7 +365,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#getDefinedSymbols()
      */
-    public Map<?, ?> getDefinedSymbols() {
+    public Map getDefinedSymbols() {
         Map<?, ?> definedSymbols = ScannerConfigUtil.scSymbolEntryMap2Map(sumDiscoveredSymbols);
         return definedSymbols;
     }

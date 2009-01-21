@@ -42,7 +42,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 
 	private class DeltaVisitor implements IResourceDeltaVisitor{
 //		private IResourceDelta fRootDelta;
-		private Map fMoveMap = new HashMap();
+		private Map<IResource, IResource> fMoveMap = new HashMap<IResource, IResource>();
 		private IResourceMoveHandler fHandler;
 
 		public DeltaVisitor(IResourceMoveHandler handler, IResourceDelta rootDelta){
@@ -126,7 +126,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
 			IResourceMoveHandler handler = createResourceMoveHandler(event);
-			doHahdleResourceMove(event, handler);
+			doHandleResourceMove(event, handler);
 		}
 	}
 	
@@ -139,7 +139,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		}
 	}
 	
-	protected void doHahdleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
+	protected void doHandleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
 		switch (event.getType()) {
 			case IResourceChangeEvent.PRE_CLOSE:
 				IProject project = (IProject)event.getResource();

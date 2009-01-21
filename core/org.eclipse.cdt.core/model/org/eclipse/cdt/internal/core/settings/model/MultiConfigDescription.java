@@ -520,6 +520,15 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#setReadOnly(boolean, boolean)
+	 */
+	public void setReadOnly(boolean readOnly, boolean keepModify) {
+		for (ICConfigurationDescription cfg : fCfgs)
+			cfg.setReadOnly(readOnly, keepModify);		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isValid()
 	 */
@@ -536,6 +545,14 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	public ICStorageElement getStorage(String id, boolean create)
 			throws CoreException {
 		System.out.println("Bad multi access: MultiConfigDescription.getStorage()");
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#getStorage(java.lang.String, boolean)
+	 */
+	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
+		System.out.println("Bad multi access: MultiConfigDescription.importStorage()");
 		return null;
 	}
 

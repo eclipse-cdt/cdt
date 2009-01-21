@@ -58,7 +58,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private CProjectDescription fParent;
 	private PathSettingsContainer fPathSettingContainer = PathSettingsContainer.createRootContainer();
 	private ResourceDescriptionHolder fRcHolder = new ResourceDescriptionHolder(fPathSettingContainer, true);
-	private List fChildList = new ArrayList();
+	private List<ICSettingObject> fChildList = new ArrayList<ICSettingObject>();
 	private CConfigurationSpecSettings fSpecSettings;
 	private CConfigurationData fData;
 	private CConfigurationDescriptionCache fBaseCache;
@@ -270,7 +270,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	}
 
 	public ICSettingObject[] getChildSettings() {
-		return (ICSettingObject[])fChildList.toArray(new ICSettingObject[fChildList.size()]);
+		return fChildList.toArray(new ICSettingObject[fChildList.size()]);
 	}
 
 	public ICConfigurationDescription getConfiguration() {
@@ -292,9 +292,9 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	public void removeStorage(String id) throws CoreException {
 		getSpecSettings().removeStorage(id);
 	}
-
-	public boolean containsStorage(String id) throws CoreException {
-		return getSpecSettings().containsStorage(id);
+	
+	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
+		return getSpecSettings().importStorage(id, el);
 	}
 
 	public CConfigurationSpecSettings getSpecSettings() /*throws CoreException*/{
@@ -347,6 +347,11 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 
 	public boolean isReadOnly() {
 		return !fInitializing;
+	}
+
+	public void setReadOnly(boolean readOnly, boolean keepModify) {
+		if (readOnly)
+			throw ExceptionFactory.createIsReadOnlyException();
 	}
 
 	public ICTargetPlatformSetting getTargetPlatformSetting() {

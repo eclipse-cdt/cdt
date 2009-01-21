@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Holds executable extension information in the 
+ * project configuration.  Like ICExtensionReference
+ * but has knowledge of its ICConfigurationDescription
+ * 
+ * @see ICExtensionReference
+ */
 public interface ICConfigExtensionReference {
     /**
      * Return the extension point of this reference.
@@ -40,7 +48,7 @@ public interface ICConfigExtensionReference {
 
     /**
      * Returns the project descriptor which this extension reference belongs to.
-     * @return the ICDescriptor
+     * @return the {@link ICConfigurationDescription}
      */
     public ICConfigurationDescription getConfiguration();
     

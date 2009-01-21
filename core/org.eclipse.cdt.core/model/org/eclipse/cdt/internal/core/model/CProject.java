@@ -324,15 +324,13 @@ public class CProject extends Openable implements ICProject {
 		setPreferences(preferences); // always reset (26255)
 
 		if (newOptions != null) {
-			Iterator<String> keys = newOptions.keySet().iterator();
-
-			while (keys.hasNext()) {
-				String key = keys.next();
+			for (Map.Entry<String, String> e : newOptions.entrySet()) {
+				String key = e.getKey();
 				if (!CModelManager.OptionNames.contains(key))
 					continue; // unrecognized option
 
 				// no filtering for encoding (custom encoding for project is allowed)
-				String value = newOptions.get(key);
+				String value = e.getValue();
 				preferences.setDefault(key, CUSTOM_DEFAULT_OPTION_VALUE); // empty string isn't the default (26251)
 				preferences.setValue(key, value);
 			}

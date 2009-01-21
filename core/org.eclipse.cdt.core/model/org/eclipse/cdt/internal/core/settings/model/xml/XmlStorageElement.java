@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,31 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
-package org.eclipse.cdt.core.settings.model.util;
+package org.eclipse.cdt.internal.core.settings.model.xml;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -25,60 +40,47 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 public class XmlStorageElement implements ICStorageElement {
+	
+	protected static final String[] emptyStringList = new String[0];
 
-	Element fElement;
+	public Element fElement;
 	private ICStorageElement fParent;
-	private List fChildList = new ArrayList();
+	protected List<ICStorageElement> fChildList = new ArrayList<ICStorageElement>();
 	private boolean fChildrenCreated;
 	private String[] fAttributeFilters;
 	private String[] fChildFilters;
-	private boolean fParentRefAlowed;
 
 	public XmlStorageElement(Element element){
 		this(element, null, false);
 	}
 
 	public XmlStorageElement(Element element, ICStorageElement parent, boolean alowReferencingParent){
-		this(element, parent, alowReferencingParent, null, null);
+		this(element, parent, null, null);
 	}
 
 	public XmlStorageElement(Element element,
 			ICStorageElement parent,
-			boolean alowReferencingParent,
 			String[] attributeFilters,
 			String[] childFilters){
 		fElement = element;
 		fParent = parent;
-		fParentRefAlowed = alowReferencingParent;
 		
 		if(attributeFilters != null && attributeFilters.length != 0)
-			fAttributeFilters = (String[])attributeFilters.clone();
+			fAttributeFilters = attributeFilters.clone();
 		
 		if(childFilters != null && childFilters.length != 0)
-			fChildFilters = (String[])childFilters.clone();
+			fChildFilters = childFilters.clone();
 	}
 	
-//	public String[] getAttributeFilters(){
-//		if(fAttributeFilters != null)
-//			return (String[])fAttributeFilters.clone();
-//		return null;
-//	}
-
-//	public String[] getChildFilters(){
-//		if(fChildFilters != null)
-//			return (String[])fChildFilters.clone();
-//		return null;
-//	}
-//	
-//	public boolean isParentRefAlowed(){
-//		return fParentRefAlowed;
-//	}
-
+	/**
+	 * Create ICStorageElement children from Xml tree
+	 */
 	private void createChildren(){
 		if(fChildrenCreated)
 			return;
-		
+
 		fChildrenCreated = true;
+		fChildList.clear();
 		NodeList list = fElement.getChildNodes();
 		int size = list.getLength();
 		for(int i = 0; i < size; i++){
@@ -103,14 +105,14 @@ public class XmlStorageElement implements ICStorageElement {
 			boolean alowReferencingParent,
 			String[] attributeFilters,
 			String[] childFilters){
-		return new XmlStorageElement(element, this, alowReferencingParent, attributeFilters, childFilters);
+		return new XmlStorageElement(element, this, attributeFilters, childFilters);
 	}
 
 	public ICStorageElement[] getChildren() {
 		return getChildren(XmlStorageElement.class);
 	}
 
-	protected ICStorageElement[] getChildren(Class clazz){
+	protected ICStorageElement[] getChildren(Class<XmlStorageElement> clazz){
 		return getChildren(clazz, true);
 	}
 
@@ -118,24 +120,42 @@ public class XmlStorageElement implements ICStorageElement {
 		return getChildren(XmlStorageElement.class, load);
 	}
 
-	protected ICStorageElement[] getChildren(Class clazz, boolean load){
+	protected ICStorageElement[] getChildren(Class<XmlStorageElement> clazz, boolean load){
 		if(load)
 			createChildren();
 
 		ICStorageElement[] children = (ICStorageElement[])java.lang.reflect.Array.newInstance(
                                 clazz, fChildList.size());
 
-		return (ICStorageElement[])fChildList.toArray(children);
+		return fChildList.toArray(children);
+	}
+
+	public ICStorageElement[] getChildrenByName(String name) {
+		createChildren();
+		ArrayList<ICStorageElement> children = new ArrayList<ICStorageElement>();
+		for (ICStorageElement child : fChildList)
+			if (name.equals(child.getName()))
+				children.add(child);
+		return children.toArray(new ICStorageElement[children.size()]);
+	}
+	
+	public boolean hasChildren() {
+		createChildren();
+		return !fChildList.isEmpty();
 	}
 
 	public ICStorageElement getParent() {
-		return fParentRefAlowed ? fParent : null;
+		return fParent;
 	}
 
 	public String getAttribute(String name) {
 		if(isPropertyAlowed(name) && fElement.hasAttribute(name))
 			return fElement.getAttribute(name);
 		return null;
+	}
+	
+	public boolean hasAttribute(String name) {
+		return fElement.hasAttribute(name);
 	}
 	
 	private boolean isPropertyAlowed(String name){
@@ -162,27 +182,22 @@ public class XmlStorageElement implements ICStorageElement {
 		return true;
 	}
 
-//	protected void childRemoved(ICStorageElement child) {
-//		fChildList.remove(child);
-//	}
-	
-	protected void removed(){
-//		fElement.getParentNode().removeChild(fElement);
-		fElement = null;
-//		if(fParent != null)
-//			((XmlStorageElement)fParent).childRemoved(this);
-	}
-	
-
 	public void removeChild(ICStorageElement el) {
 		if(el instanceof XmlStorageElement){
 			ICStorageElement[] children = getChildren();
 			for(int i = 0; i < children.length; i++){
 				if(children[i] == el){
 					XmlStorageElement xmlEl = (XmlStorageElement)el;
+					Node nextSibling = xmlEl.fElement.getNextSibling();
 					fElement.removeChild(xmlEl.fElement);
+					if (nextSibling != null && nextSibling.getNodeType() == Node.TEXT_NODE) {
+						String value = nextSibling.getNodeValue();
+						if (value != null && value.trim().length() == 0) {
+							// remove whitespace
+							fElement.removeChild(nextSibling);
+						}
+					}
 					fChildList.remove(el);
-					xmlEl.removed();
 				}
 			}
 		}
@@ -202,26 +217,28 @@ public class XmlStorageElement implements ICStorageElement {
 	public void clear(){
 		createChildren();
 
-		ICStorageElement children[] = (ICStorageElement[])fChildList.toArray(new ICStorageElement[fChildList.size()]);
+		ICStorageElement children[] = fChildList.toArray(new ICStorageElement[fChildList.size()]);
 		for(int i = 0; i < children.length; i++){
 			removeChild(children[i]);
 		}
-		
+
 		NamedNodeMap map = fElement.getAttributes();
 		for(int i = 0; i < map.getLength(); i++){
 			Node attr = map.item(i);
 			if(isPropertyAlowed(attr.getNodeName()))
 				map.removeNamedItem(attr.getNodeName());
 		}
-		
-		NodeList list = fElement.getChildNodes();
-		for(int i = 0; i < list.getLength(); i++){
-			Node node = list.item(i);
+
+		Node node = fElement.getFirstChild();
+		while (node != null) {
+			Node nextChildNode = node.getNextSibling();
 			if(node.getNodeType() == Node.TEXT_NODE)
 				fElement.removeChild(node);
+			// update the pointer
+			node = nextChildNode;
 		}
 	}
-	
+
 	public ICStorageElement createChild(String name, 
 			boolean alowReferencingParent,
 			String[] attributeFilters,
@@ -304,37 +321,29 @@ public class XmlStorageElement implements ICStorageElement {
 			xmlEl = (Element)fElement.appendChild(xmlEl);
 			return createAddChild(xmlEl, alowReferencingParent, attributeFilters, childFilters);
 		} else {
+			// FIXME JBB allow import of other types of ICStorageElement
 			throw new UnsupportedOperationException();
 		}
 	}
 	
 	public String[] getAttributeFilters(){
 		if(fAttributeFilters != null)
-			return (String[])fAttributeFilters.clone();
-		return new String[0];
+			return fAttributeFilters.clone();
+		return emptyStringList;
 	}
 
 	public String[] getChildFilters(){
 		if(fChildFilters != null)
-			return (String[])fChildFilters.clone();
-		return new String[0];
+			return fChildFilters.clone();
+		return emptyStringList;
 	}
 
-	public boolean isParentRefAlowed(){
-		return fParentRefAlowed;
-	}
-	
-	public boolean matches(ICStorageElement el){
+	public boolean equals(ICStorageElement el){
 		if(!getName().equals(el.getName()))
 			return false;
 		
-		String value = getValue();
-		if(value == null){
-			if(el.getValue() != null)
-				return false;
-		} else if(!value.equals(el.getValue()))
+		if (!valuesMatch(getValue(), el.getValue()))
 			return false;
-
 		
 		String[] attrs = getAttributeNames();
 		String[] otherAttrs = el.getAttributeNames();
@@ -342,7 +351,7 @@ public class XmlStorageElement implements ICStorageElement {
 			return false;
 		
 		if(attrs.length != 0){
-			Set set = new HashSet(Arrays.asList(attrs));
+			Set<String> set = new HashSet<String>(Arrays.asList(attrs));
 			set.removeAll(Arrays.asList(otherAttrs));
 			if(set.size() != 0)
 				return false;
@@ -363,7 +372,7 @@ public class XmlStorageElement implements ICStorageElement {
 		
 		if(children.length != 0){
 			for(int i = 0; i < children.length; i++){
-				if(!children[i].matches(otherChildren[i]))
+				if(!children[i].equals(otherChildren[i]))
 					return false;
 			}
 		}
@@ -371,17 +380,103 @@ public class XmlStorageElement implements ICStorageElement {
 		return true;
 	}
 
+	private static boolean valuesMatch(String value, String other) {
+		if(value == null) {
+			return other == null || other.trim().length() == 0;
+		} else if (other == null) {
+			return value.trim().length() == 0;
+		} else {
+			return value.trim().equals(other.trim());
+		}
+	}
+
 	public String[] getAttributeNames() {
 		NamedNodeMap nodeMap = fElement.getAttributes();
 		int length = nodeMap.getLength();
-		List list = new ArrayList(length);
+		List<String> list = new ArrayList<String>(length);
 		for(int i = 0; i < length; i++){
 			Node node = nodeMap.item(i);
 			String name = node.getNodeName();
 			if(isPropertyAlowed(name))
 				list.add(name);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
+	}
+	
+	public ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
+		Element newEl = createXmlElementCopy();
+		return new XmlStorageElement(newEl, null, fAttributeFilters, fChildFilters);
+	}
+	
+	protected Element createXmlElementCopy() throws CoreException {
+
+		try {
+			Element newXmlEl = null;
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			if(fElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE){
+				Document baseDoc = fElement.getOwnerDocument();
+				NodeList list = baseDoc.getChildNodes();
+				for(int i = 0; i < list.getLength(); i++){
+					Node node = list.item(i);
+					node = importAddNode(doc, node);
+					if(node.getNodeType() == Node.ELEMENT_NODE && newXmlEl == null){
+						newXmlEl = (Element)node;
+					}
+				}
+				
+			} else {
+				newXmlEl = (Element)importAddNode(doc, fElement);
+			}
+//			Document baseDoc = el.fElement.getOwnerDocument();
+//			Element baseEl = baseDoc.getDocumentElement();
+//			Element newXmlEl = (Element)doc.importNode(baseEl, true);
+
+			
+//			doc.appendChild(newXmlEl);
+			return newXmlEl;
+		} catch (ParserConfigurationException e) {
+			throw ExceptionFactory.createCoreException(e);
+		} catch (FactoryConfigurationError e) {
+			throw ExceptionFactory.createCoreException(e);
+		}
+	}
+
+	private Node importAddNode(Document doc, Node node){
+		if(node.getOwnerDocument().equals(doc)){
+			node = node.cloneNode(true);
+		} else {
+			node = doc.importNode(node, true);
+		}
+	
+		return doc.appendChild(node);
+	}
+
+	public ICSettingsStorage createSettingStorage(boolean readOnly) throws CoreException, UnsupportedOperationException {
+		return new XmlStorage(fElement, readOnly);
+	}
+
+	/*
+	 * toString() outputs XML tree -- useful for debugging
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
+
+			DOMSource source = new DOMSource(fElement);
+			StreamResult result = new StreamResult(stream);
+			transformer.transform(source, result);
+			builder.append(stream.toString());
+
+		} catch (Exception e){
+			return fElement.toString();
+		}
+
+		return builder.toString();
 	}
 
 }

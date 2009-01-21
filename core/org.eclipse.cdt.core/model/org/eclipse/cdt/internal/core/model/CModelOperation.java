@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -64,7 +66,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * empty result if no elements are created, or if this
 	 * operation is not actually executed.
 	 */
-	protected static ICElement[] fgEmptyResult= new ICElement[] {};
+	protected static final ICElement[] fgEmptyResult= new ICElement[] {};
 
 	/**
 	 * Collection of <code>ICElementDelta</code>s created by this operation.
@@ -73,7 +75,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * deltas. This collection is registered with the C Model notification
 	 * manager if the operation completes successfully.
 	 */
-	protected ICElementDelta[] fDeltas= null;
+	protected List<ICElementDelta> fDeltas= null;
 
 	/**
 	 * The elements created by this operation - empty
@@ -105,7 +107,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/*
 	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
 	 */
-	protected static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
+	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
 
 	protected CModelOperation() {
 	}
@@ -163,14 +165,9 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * when the operation completes.
 	 */
 	protected void addDelta(ICElementDelta delta) {
-		if (fDeltas == null) {
-			fDeltas= new ICElementDelta[] {delta};
-		} else {
-			ICElementDelta[] copy= new ICElementDelta[fDeltas.length + 1];
-			System.arraycopy(fDeltas, 0, copy, 0, fDeltas.length);
-			copy[fDeltas.length]= delta;
-			fDeltas= copy;
-		}
+		if (fDeltas == null)
+			fDeltas = new LinkedList<ICElementDelta>();
+		fDeltas.add(delta);
 	}
 
 	/*

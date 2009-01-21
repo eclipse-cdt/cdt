@@ -38,7 +38,7 @@ public class CConfigurationDataProviderDescriptor {
 	private String[] fNatureIds;
 	private String[] fConflictingNatureIds;
 	
-	CConfigurationDataProviderDescriptor(IExtension extension){
+	public CConfigurationDataProviderDescriptor(IExtension extension){
 		fId = extension.getUniqueIdentifier();
 		fExtension = extension;
 		fProviderElement = getProviderElement(extension);

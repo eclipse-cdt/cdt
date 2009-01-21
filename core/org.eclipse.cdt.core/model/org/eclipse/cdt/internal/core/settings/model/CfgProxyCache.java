@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.core.runtime.IPath;
 
 public class CfgProxyCache implements IProxyCache {
-	private HashMap fProxyMap = new HashMap();
+	private HashMap<String, CDataProxy> fProxyMap = new HashMap<String, CDataProxy>();
 	private PathSettingsContainer fPathContainer;
 	
 	CfgProxyCache(PathSettingsContainer pathDesContainer){
@@ -69,21 +69,21 @@ public class CfgProxyCache implements IProxyCache {
 	}
 
 	public CDataProxy[] getCachedProxies() {
-		Collection c = fProxyMap.values();
-		return (CDataProxy[])c.toArray(new CDataProxy[c.size()]);
+		Collection<CDataProxy> c = fProxyMap.values();
+		return c.toArray(new CDataProxy[c.size()]);
 	}
 
 	public CDataProxy getCachedProxy(String id) {
-		return (CDataProxy)fProxyMap.get(id);
+		return fProxyMap.get(id);
 	}
 
 	public void removeCachedProxy(String id) {
-		CDataProxy proxy = (CDataProxy)fProxyMap.get(id);
+		CDataProxy proxy = fProxyMap.get(id);
 		removeCachedProxy(proxy);
 	}
 
-	public Map getCachedProxiesMap() {
-		return (Map)fProxyMap.clone();
+	public Map<String, CDataProxy> getCachedProxiesMap() {
+		return (Map<String, CDataProxy>)fProxyMap.clone();
 	}
 
 	public CDataProxy getCachedProxy(CDataObject data) {

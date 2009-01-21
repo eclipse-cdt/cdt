@@ -4,27 +4,39 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
+/**
+ * This is reference to {@link ICExtension} elements as stored
+ * in the Project Description.
+ *
+ * This has no notion of the ICConfigurationDescription,
+ * for that see {@link ICConfigExtensionReference}
+ *
+ * @see ICConfigExtensionReference
+ * @see ICExtension
+ * @see ICDescriptor
+ */
 public interface ICExtensionReference {
 
     /**
      * Return the extension point of this reference.
-     * 
+     *
      * @return String
      */
     public String getExtension();
 
     /**
      * Return the extension ID of this reference.
-     * 
+     *
      * @return String
      */
     public String getID();
@@ -45,19 +57,19 @@ public interface ICExtensionReference {
      * @return the ICDescriptor
      */
     public ICDescriptor getCDescriptor();
-    
+
 	/**
-	 * Creates and returns a new instance of the cextension executable 
+	 * Creates and returns a new instance of the cextension executable
 	 * identified by the &lt;run&gt; attribute of the cextension.
 	 * <p>
-	 * The ICExtension is instantiated using its 0-argument public 
+	 * The ICExtension is instantiated using its 0-argument public
 	 * constructor. If the class implements the
 	 * <code>org.eclipse.core.runtime.IExecutableExtension</code> interface, the method
 	 * <code>setInitializationData</code> is called, passing to the object
-	 * the configuration information that was used to create it. 
+	 * the configuration information that was used to create it.
 	 * </p>
 	 * <p>
-	 * Unlike other methods on this object, invoking this method may activate 
+	 * Unlike other methods on this object, invoking this method may activate
 	 * the plug-in.
 	 * </p>
 	 *
@@ -75,18 +87,18 @@ public interface ICExtensionReference {
      * <p>
      * Each child corresponds to a nested XML element in the configuration
      * markup. For example, the configuration markup
-     * 
+     *
      * <pre>
      *  &lt;view&gt;
-     *  &amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&lt;verticalHint&gt;top&lt;/verticalHint&gt;
-     *  &amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&lt;horizontalHint&gt;left&lt;/horizontalHint&gt;
+     *  &nbsp&nbsp&nbsp&nbsp&lt;verticalHint&gt;top&lt;/verticalHint&gt;
+     *  &nbsp&nbsp&nbsp&nbsp&lt;horizontalHint&gt;left&lt;/horizontalHint&gt;
      *  &lt;/view&gt;
      * </pre>
-     * 
+     *
      * corresponds to a configuration element, named <code>"view"</code>,
      * with two children.
      * </p>
-     * 
+     *
      * @return the child configuration elements
      */
     public IConfigurationElement[] getExtensionElements() throws CoreException;

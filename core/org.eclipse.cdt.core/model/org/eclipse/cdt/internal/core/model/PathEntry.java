@@ -70,6 +70,11 @@ public class PathEntry implements IPathEntry {
 		}
 		return super.equals(obj);
 	}
+	
+	@Override
+	public int hashCode() {
+		return path.hashCode() + entryKind * 17 + (isExported ? 3 : 2);
+	}
 
 	/**
 	 * Returns the kind from its <code>String</code> form.

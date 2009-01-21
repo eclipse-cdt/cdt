@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -14,16 +15,58 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * This interface represents the manager of CDT Project descriptions.
+ */
 public interface ICProjectDescriptionManager {
+	/*
+	 * setProjectDescription flags
+	 */
+	/** Flag indicating that the description should be serialized even
+	 *  if the ProjectDescription isn't marked as modified.
+	 *  @see ICProjectDescriptionManager#setProjectDescription(IProject, ICProjectDescription, int, IProgressMonitor) */
 	public static final int SET_FORCE = 1;
+	/** Flag indicating that the project description shouldn't be serialized.
+	 * @see ICProjectDescriptionManager#setProjectDescription(IProject, ICProjectDescription, int, IProgressMonitor) */
 	public static final int SET_NO_SERIALIZE = 1 << 1;
 
+	/*
+	 * getProjectDescription flags
+	 */
+
+	/** Flag indicating writable project description is required
+	 * @see ICProjectDescriptionManager#getProjectDescription(IProject, int) */
 	public static final int GET_WRITABLE = 1 << 2;
+	/** Return the project description <b>only</b> if it's already loaded */
 	public static final int GET_IF_LOADDED = 1 << 3;
+	/** 
+	 * Flag indicating that a new empty ICProjectDescription should be created and returned 
+	 * (irrespective of whether one already exists) 
+	 */
+	public static final int GET_EMPTY_PROJECT_DESCRIPTION = 1 << 4;
+	/**
+	 * Flag indicating that the user has called createProjectDescription.
+	 * i.e. a description should be returned irrespective of whether one already exists.
+	 * If the project already has a description and !{@link #GET_EMPTY_PROJECT_DESCRIPTION}
+	 * the existing description will be returned, otherwise a new description is returned
+	 */
+	public static final int GET_CREATE_DESCRIPTION = 1 << 5;
+	/** 
+	 * Flag indicating that the Project is in the process of being created (i.e.
+	 * the user is working through the new project dialog...) This flag doesn't
+	 * affect whether a description should or shouldn't be created.
+	 * 
+ 	 * @see #GET_CREATE_DESCRIPTION
+	 * @see ICProjectDescription#isCdtProjectCreating() 
+	 */
+	public static final int PROJECT_CREATING = 1 << 6;
 
 	/**
-	 * this method is a full equivalent to {@link #createProjectDescription(IProject, boolean, false)}
-	 * 
+	 * This method is a full equivalent to: <br />
+	 *  - <code> createProjectDescription(IProject, boolean, false) </code> <br />
+	 *  - <code> getProjectDescription(IProject, GET_WRITABLE | loadIfExists ? 0 : GET_EMPTY_PROJECT_DESCRIPTION) </code> <br />
+	 * and returns a writable project description which is either empty or a copy of the previous configuration description
+	 * if loadIfExists == true.
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
 	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException;
@@ -44,8 +87,45 @@ public interface ICProjectDescriptionManager {
 	 * @throws CoreException
 	 */
 	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException;
-
 	
+	/**
+	 * This method is called to save/apply the project description
+	 * the method should be called to apply changes made to the project description
+	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)} 
+	 * 
+	 * Note that having persisted changes to the description, the passed in ICProjectDescription is read-only 
+	 * and shouldn't be used.  If the user wishes to continue editing the ICProjectDescription they must ensure
+	 * they getProjectDescription again. 
+	 * 
+	 * @param project
+	 * @param des
+	 * @throws CoreException
+	 * 
+	 * @see {@link #getProjectDescription(IProject, boolean)}
+	 * @see #createProjectDescription(IProject, boolean)
+	 */
+	void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException;
+
+	/**
+	 * This method is called to 
+	 * @param project
+	 * @param des
+	 * @param force
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * 
+	 * @param project
+	 * @param des
+	 * @param flags
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * returns the project description associated with this project or null if the project does not contain the
 	 * CDT data associated with it. 
@@ -61,24 +141,6 @@ public interface ICProjectDescriptionManager {
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
 	ICProjectDescription getProjectDescription(IProject project);
-	
-	/**
-	 * this method is called to save/apply the project description
-	 * the method should be called to apply changes made to the project description
-	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)} 
-	 * 
-	 * @param project
-	 * @param des
-	 * @throws CoreException
-	 * 
-	 * @see {@link #getProjectDescription(IProject, boolean)}
-	 * @see #createProjectDescription(IProject, boolean)
-	 */
-	void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException;
-
-	void setProjectDescription(IProject project, ICProjectDescription des, boolean force, IProgressMonitor monitor) throws CoreException;
-
-	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * returns the project description associated with this project or null if the project does not contain the
@@ -94,12 +156,12 @@ public interface ICProjectDescriptionManager {
 	 * All set* calls to the read-only description result in the {@link WriteAccessException}
 	 * 
 	 * When the writable description is requested, the description copy is created.
-	 * Changes to this description will not be reflected/used by the core and Build System untill the
+	 * Changes to this description will not be reflected/used by the core and Build System until the
 	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 *
 	 * Each getProjectDescription(project, true) returns a new copy of the project description 
 	 * 
-	 * The writable description uses the cached data untill the first set call
+	 * The writable description uses the cached data until the first set call
 	 * after that the description communicates directly to the Build System
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
 	 * This ensures the Core<->Build System settings integrity
@@ -108,12 +170,18 @@ public interface ICProjectDescriptionManager {
 	 * CDT data associated with it. 
 	 */
 	ICProjectDescription getProjectDescription(IProject project, boolean write);
-
+	
+	/**
+	 * @see ICProjectDescriptionManager#createProjectDescription(IProject, boolean)
+	 * @param project
+	 * @param flags
+	 * @return
+	 */
 	ICProjectDescription getProjectDescription(IProject project, int flags);
 
 	/**
-	 * forces the cached data of the specified projects to be re-calculated.
-	 * if the <code>projects</code> argument is <code>null</code> al projects 
+	 * forces the cached data of the specified projects to be re-loaded.
+	 * if the <code>projects</code> argument is <code>null</code> all projects 
 	 * within the workspace are updated
 	 * 
 	 * @param projects
@@ -136,8 +204,25 @@ public interface ICProjectDescriptionManager {
 	 */
 	boolean isNewStyleProject(ICProjectDescription des);
 	
+	/**
+	 * Register a listener for changes on the set of known ICProjectDescriptions for the specified set
+	 * of events
+	 * 
+	 * @param listener
+	 * @param eventTypes see the eventTypes in {@link CProjectDescriptionEvent}
+	 * @see CProjectDescriptionEvent#ABOUT_TO_APPLY
+	 * @see CProjectDescriptionEvent#APPLIED
+	 * @see CProjectDescriptionEvent#COPY_CREATED
+	 * @see CProjectDescriptionEvent#DATA_APPLIED
+	 * @see CProjectDescriptionEvent#LOADED
+	 * @see CProjectDescriptionEvent#ALL
+	 */
 	void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes);
 
+	/**
+	 * Remove the listener from the set of ICProjecctDescriptionListeners
+	 * @param listener
+	 */
 	void removeCProjectDescriptionListener(ICProjectDescriptionListener listener);
 	
 	/**

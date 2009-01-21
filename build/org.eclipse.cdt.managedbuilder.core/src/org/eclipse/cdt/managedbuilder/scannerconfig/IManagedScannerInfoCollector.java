@@ -17,7 +17,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Interface that a colelctor of compiler information must implement.
+ * Interface that a collector of compiler information must implement.
  * @since 2.0
  */
 public interface IManagedScannerInfoCollector extends IScannerInfoCollector {
@@ -31,7 +31,7 @@ public interface IManagedScannerInfoCollector extends IScannerInfoCollector {
 	 *  
 	 * @return a <code>Map</code> of defined symbols and values
 	 */
-	public Map getDefinedSymbols();
+	public Map<String, String> getDefinedSymbols();
 	
 	
 	/**

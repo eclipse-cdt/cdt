@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -122,6 +123,16 @@ public abstract class APathEntry extends PathEntry {
 			return true;
 		}
 		return super.equals(obj);
+	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = Arrays.hashCode(exclusionPatterns);
+		if (basePath != null)
+			hashCode += basePath.hashCode();
+		if (baseRef != null)
+			hashCode += baseRef.hashCode();
+		return hashCode + super.hashCode();
 	}
 
 	/* (non-Javadoc)

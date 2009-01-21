@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Use ICStorageElement
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -14,24 +15,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -42,10 +36,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class ProjectTargets {
 
@@ -65,7 +55,7 @@ public class ProjectTargets {
 	private static final String BAD_TARGET = "buidlTarget"; //$NON-NLS-1$
 	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 
-	private HashMap targetMap = new HashMap();
+	private HashMap<IContainer, List<IMakeTarget>> targetMap = new HashMap<IContainer, List<IMakeTarget>>();
 
 	private IProject project;
 
@@ -75,68 +65,54 @@ public class ProjectTargets {
 
 		this.project = project;
 
-		Document document = translateCDTProjectToDocument();
+		ICStorageElement rootElement = null;
+		try {
+			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
+			rootElement = descriptor.getProjectStorageElement(MAKE_TARGET_KEY);
 
-		//Historical ... fall back to the workspace and look in previous
-		// location
-		if (document == null || !document.hasChildNodes()) {
-			IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
-					TARGETS_EXT);
-			targetFile = targetFilePath.toFile();
-			try {
-				InputStream input = new FileInputStream(targetFile);
-				document = translateInputStreamToDocument(input);
-				writeTargets = true; // update cdtproject
-			} catch (FileNotFoundException ex) {
-				/* Ignore */
-			}
-		}
-
-		if (document != null) {
-			extractMakeTargetsFromDocument(document, manager);
-			if (writeTargets) {
+			//Historical ... fall back to the workspace and look in previous XML file location
+			if (rootElement.getChildren().length == 0) {
+				IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
+						TARGETS_EXT);
+				targetFile = targetFilePath.toFile();
 				try {
-					Document doc = getAsXML();
-					translateDocumentToCDTProject(doc);
-				} catch (Exception e) {
-					targetFile = null;
-				}
-				if (targetFile != null) {
-					targetFile.delete(); // removed old
+					InputStream input = new FileInputStream(targetFile);
+					ICStorageElement oldElement = translateInputStreamToDocument(input);
+					rootElement.importChild(oldElement);
+					writeTargets = true; // update the project description
+				} catch (FileNotFoundException ex) {
+					/* Ignore */
 				}
 			}
-		}
-	}
 
-	protected String getString(Node target, String tagName) {
-		Node node = searchNode(target, tagName);
-		return node != null ? (node.getFirstChild() == null ? null : node.getFirstChild().getNodeValue()) : null;
-	}
-
-	protected Node searchNode(Node target, String tagName) {
-		NodeList list = target.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			if (list.item(i).getNodeName().equals(tagName))
-				return list.item(i);
+			if (rootElement != null) {
+				extractMakeTargetsFromDocument(rootElement, manager);
+				// If write targets then we have converted previous make targets
+				if (writeTargets) {
+					saveTargets();
+					if (targetFile != null) {
+						targetFile.delete(); // removed old
+					}
+				}
+			}
+		} catch (Exception e) {
+			MakeCorePlugin.log(e);
 		}
-		return null;
 	}
 
 	public IMakeTarget[] get(IContainer container) {
-		ArrayList list = (ArrayList) targetMap.get(container);
+		List<IMakeTarget> list = targetMap.get(container);
 		if (list != null) {
-			return (IMakeTarget[]) list.toArray(new IMakeTarget[list.size()]);
+			return list.toArray(new IMakeTarget[list.size()]);
 		}
 		return new IMakeTarget[0];
 	}
 
 	public IMakeTarget findTarget(IContainer container, String name) {
-		ArrayList list = (ArrayList) targetMap.get(container);
+		List<IMakeTarget> list = targetMap.get(container);
 		if (list != null) {
-			Iterator targets = list.iterator();
-			while (targets.hasNext()) {
-				IMakeTarget target = (IMakeTarget) targets.next();
-				if (target.getName().equals(name)) {
+			for (IMakeTarget target : list) {
+				if (name.equals(target.getName())) {
 					return target;
 				}
 			}
@@ -145,20 +121,20 @@ public class ProjectTargets {
 	}
 
 	public void add(MakeTarget target) throws CoreException {
-		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
+		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
 					MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
-			list = new ArrayList();
+			list = new ArrayList<IMakeTarget>();
 			targetMap.put(target.getContainer(), list);
 		}
 		list.add(target);
 	}
 
 	public boolean contains(MakeTarget target) {
-		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
+		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			return true;
 		}
@@ -166,7 +142,7 @@ public class ProjectTargets {
 	}
 
 	public boolean remove(MakeTarget target) {
-		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
+		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list == null || !list.contains(target)) {
 			return false;
 		}
@@ -181,219 +157,138 @@ public class ProjectTargets {
 		return project;
 	}
 
-	protected Document getAsXML() throws CoreException {
-		Document doc;
-		try {
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-		} catch (ParserConfigurationException ex) {
-			//This should never happen.
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					"Error creating new XML storage document", ex)); //$NON-NLS-1$
-		}
-		Element targetsRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
-		doc.appendChild(targetsRootElement);
-		Iterator container = targetMap.entrySet().iterator();
-		while (container.hasNext()) {
-			List targets = (List) ((Map.Entry) container.next()).getValue();
-			for (int i = 0; i < targets.size(); i++) {
-				MakeTarget target = (MakeTarget) targets.get(i);
-				targetsRootElement.appendChild(createTargetElement(doc, target));
-			}
-		}
-		return doc;
-	}
-
-	private Node createTargetElement(Document doc, MakeTarget target) {
-		Element targetElem = doc.createElement(TARGET_ELEMENT);
+	/**
+	 * Persist the MakeTarget as a child of parent
+	 * @param parent
+	 * @param target
+	 * @return create ICStorageElement
+	 */
+	private ICStorageElement createTargetElement(ICStorageElement parent, IMakeTarget target) {
+		ICStorageElement targetElem = parent.createChild(TARGET_ELEMENT);
 		targetElem.setAttribute(TARGET_ATTR_NAME, target.getName());
 		targetElem.setAttribute(TARGET_ATTR_ID, target.getTargetBuilderID());
 		targetElem.setAttribute(TARGET_ATTR_PATH, target.getContainer().getProjectRelativePath().toString());
-		Element elem = doc.createElement(TARGET_COMMAND);
-		targetElem.appendChild(elem);
-		elem.appendChild(doc.createTextNode(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make"))); //$NON-NLS-1$
+		ICStorageElement elem = targetElem.createChild(TARGET_COMMAND);
+		elem.setValue(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
 
 		String targetAttr = target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
 		if ( targetAttr != null) {
-			elem = doc.createElement(TARGET_ARGUMENTS);
-			elem.appendChild(doc.createTextNode(targetAttr));
-			targetElem.appendChild(elem);
+			elem = targetElem.createChild(TARGET_ARGUMENTS);
+			elem.setValue(targetAttr);
 		}
 
 		targetAttr = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, null);
 		if (targetAttr != null) {
-			elem = doc.createElement(TARGET);
-			elem.appendChild(doc.createTextNode(targetAttr));
-			targetElem.appendChild(elem);
+			elem = targetElem.createChild(TARGET);
+			elem.setValue(targetAttr);
 		}
 
-		elem = doc.createElement(TARGET_STOP_ON_ERROR);
-		elem.appendChild(doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
-		targetElem.appendChild(elem);
+		elem = targetElem.createChild(TARGET_STOP_ON_ERROR);
+		elem.setValue(new Boolean(target.isStopOnError()).toString());
 
-		elem = doc.createElement(TARGET_USE_DEFAULT_CMD);
-		elem.appendChild(doc.createTextNode(new Boolean(target.isDefaultBuildCmd()).toString()));
-		targetElem.appendChild(elem);
-		
-		elem = doc.createElement(TARGET_RUN_ALL_BUILDERS);
-		elem.appendChild(doc.createTextNode(new Boolean(target.runAllBuilders()).toString()));
-		targetElem.appendChild(elem);
+		elem = targetElem.createChild(TARGET_USE_DEFAULT_CMD);
+		elem.setValue(new Boolean(target.isDefaultBuildCmd()).toString());
+
+		elem = targetElem.createChild(TARGET_RUN_ALL_BUILDERS);
+		elem.setValue(new Boolean(target.runAllBuilders()).toString());
+
 		return targetElem;
 	}
 
-	public void saveTargets() throws CoreException {
-		Document doc = getAsXML();
-		//Historical method would save the output to the stream specified
-		//translateDocumentToOutputStream(doc, output);
-		translateDocumentToCDTProject(doc);
-	}
-
-	protected void saveTargets(Document doc, OutputStream output) throws TransformerException {
-		TransformerFactory factory = TransformerFactory.newInstance();
-		Transformer transformer;
-		transformer = factory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-
-		DOMSource source = new DOMSource(doc);
-		StreamResult outputTarget = new StreamResult(output);
-		transformer.transform(source, outputTarget);
-	}
 	/**
-	 * This output method saves the information into the .cdtproject metadata file.
-	 * 
-	 * @param doc
+	 * Saves the targets to the project description
 	 * @throws CoreException
 	 */
-	protected void translateDocumentToCDTProject(Document doc) throws CoreException {
-		ICDescriptor descriptor;
-		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
-
-		Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
+	public void saveTargets() throws CoreException {
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
+		ICStorageElement rootElement = descriptor.getProjectStorageElement(MAKE_TARGET_KEY);
 
 		//Nuke the children since we are going to write out new ones
-		NodeList kids = rootElement.getChildNodes();
-		for (int i = 0; i < kids.getLength(); i++) {
-			rootElement.removeChild(kids.item(i));
-			i--;
-		}
+		rootElement.clear();
 
-		//Extract the root of our temporary document
-		Node node = doc.getFirstChild();
-		if (node.hasChildNodes()) {
-			//Create a copy which is a part of the new document
-			Node appendNode = rootElement.getOwnerDocument().importNode(node, true);
-			//Put the copy into the document in the appropriate location
-			rootElement.appendChild(appendNode);
-		}
+		// Fetch the ProjectTargets as ICStorageElements
+		rootElement = rootElement.createChild(BUILD_TARGET_ELEMENT);
+		for (Entry<IContainer, List<IMakeTarget>> e : targetMap.entrySet())
+			for (IMakeTarget target : e.getValue())
+				createTargetElement(rootElement, target);
+
 		//Save the results
 		descriptor.saveProjectData();
 	}
 
 	/**
-	 * This method parses the .cdtproject file for the XML document describing the build targets.
-	 * 
+	 * This method loads an old style XML document provided in the input stream
+	 * and returns an ICStorageElemnt wrapping it.
 	 * @param input
-	 * @return
+	 * @return ICStorageElement or null
 	 */
-	protected Document translateCDTProjectToDocument() {
-		Document document = null;
-		Element rootElement = null;
+	protected ICStorageElement translateInputStreamToDocument(InputStream input) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			ICDescriptor descriptor;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
-
-			rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
-		} catch (ParserConfigurationException e) {
-			return document;
-		} catch (CoreException e) {
-			return document;
-		}
-		NodeList list = rootElement.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				Node appendNode = document.importNode(list.item(i), true);
-				document.appendChild(appendNode);
-				break; // should never have multiple <buildtargets>
-			}
-		}
-		return document;
-	}
-
-	/**
-	 * This method parses the input stream for the XML document describing the build targets.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	protected Document translateInputStreamToDocument(InputStream input) {
-		Document document = null;
-		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+			return XmlStorageUtil.createCStorageTree(document);
 		} catch (Exception e) {
 			MakeCorePlugin.log(e);
 		}
-		return document;
+		return null;
 	}
 
 	/**
 	 * Extract the make target information which is contained in the XML Document
-	 * 
+	 *
 	 * @param document
 	 */
-	protected void extractMakeTargetsFromDocument(Document document, MakeTargetManager manager) {
-		Node node = document.getFirstChild();
-		if (node != null && node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
-			NodeList list = node.getChildNodes();
-			for (int i = 0; i < list.getLength(); i++) {
-				node = list.item(i);
-				if (node.getNodeName().equals(TARGET_ELEMENT)) {
-					IContainer container = null;
-					NamedNodeMap attr = node.getAttributes();
-					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
-					if (path != null && !path.equals("")) { //$NON-NLS-1$
-						container = project.getFolder(path);
-					} else {
-						container = project;
-					}
-					try {
-						MakeTarget target = new MakeTarget(manager, project, attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(),
-								attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue());
-						target.setContainer(container);
-						String option = getString(node, TARGET_STOP_ON_ERROR);
-						if (option != null) {
-							target.setStopOnError(Boolean.valueOf(option).booleanValue());
+	protected void extractMakeTargetsFromDocument(ICStorageElement root, MakeTargetManager manager) {
+		for (ICStorageElement node : root.getChildren()) {
+			if (node.getName().equals(BUILD_TARGET_ELEMENT)) {
+				for (ICStorageElement child : node.getChildren()) {
+					node = child;
+					if (node.getName().equals(TARGET_ELEMENT)) {
+						IContainer container = null;
+						String path = node.getAttribute(TARGET_ATTR_PATH);
+						if (path != null && !path.equals("")) { //$NON-NLS-1$
+							container = project.getFolder(path);
+						} else {
+							container = project;
 						}
-						option = getString(node, TARGET_USE_DEFAULT_CMD);
-						if (option != null) {
-							target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
+						try {
+							MakeTarget target = new MakeTarget(manager, project, node.getAttribute(TARGET_ATTR_ID),
+									node.getAttribute(TARGET_ATTR_NAME));
+							target.setContainer(container);
+							ICStorageElement[] option = node.getChildrenByName(TARGET_STOP_ON_ERROR);
+							if (option.length > 0) {
+								target.setStopOnError(Boolean.valueOf(option[0].getValue()).booleanValue());
+							}
+							option =  node.getChildrenByName(TARGET_USE_DEFAULT_CMD);
+							if (option.length > 0) {
+								target.setUseDefaultBuildCmd(Boolean.valueOf(option[0].getValue()).booleanValue());
+							}
+							option =  node.getChildrenByName(TARGET_COMMAND);
+							if (option.length > 0) {
+								target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, option[0].getValue());
+							}
+							option = node.getChildrenByName(TARGET_ARGUMENTS);
+							if (option.length > 0) {
+								target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, option[0].getValue());
+							} else if (!target.isDefaultBuildCmd()) {
+								// Clear build-arguments set in target constructor to project defaults
+								target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
+							}
+							option = node.getChildrenByName(BAD_TARGET);
+							if (option.length > 0) {
+								target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option[0].getValue());
+							}
+							option = node.getChildrenByName(TARGET);
+							if (option.length > 0) {
+								target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option[0].getValue());
+							}
+							option = node.getChildrenByName(TARGET_RUN_ALL_BUILDERS);
+							if (option.length > 0) {
+								target.setRunAllBuilders(Boolean.valueOf(option[0].getValue()).booleanValue());
+							}
+							add(target);
+						} catch (CoreException e) {
+							MakeCorePlugin.log(e);
 						}
-						option = getString(node, TARGET_COMMAND);
-						if (option != null) {
-							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, option);
-						}
-						option = getString(node, TARGET_ARGUMENTS);
-						if (option != null) {
-							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, option);
-						} else if (!target.isDefaultBuildCmd()) {
-							// Clear build-arguments set in target constructor to project defaults
-							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
-						}
-						option = getString(node, BAD_TARGET);
-						if (option != null) {
-							target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option);
-						}
-						option = getString(node, TARGET);
-						if (option != null) {
-							target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option);
-						}
-						option = getString(node, TARGET_RUN_ALL_BUILDERS);
-						if (option != null) {
-							target.setRunAllBuilders(Boolean.valueOf(option).booleanValue());
-						}
-						add(target);
-					} catch (CoreException e) {
-						MakeCorePlugin.log(e);
 					}
 				}
 			}

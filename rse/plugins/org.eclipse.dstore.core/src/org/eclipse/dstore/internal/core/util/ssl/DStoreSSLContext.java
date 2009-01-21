@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * Noriaki Takatsu  (IBM) - [259905][api] Provide a facility to use its own keystore
+ * David McKnight  (IBM) - [259905][api] provide public API for getting/setting key managers for SSLContext
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util.ssl;
@@ -25,18 +26,13 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.eclipse.dstore.core.util.ssl.BaseSSLContext;
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
 import org.eclipse.dstore.core.util.ssl.IDataStoreTrustManager;
 
 
 public class DStoreSSLContext
 {
-	private static KeyManager[] _keyManagers;
-
-	public static void setKeyManager(KeyManager[] keyManagers)
-	{
-		_keyManagers = keyManagers;
-	}
 	
 	public static SSLContext getServerSSLContext(String filePath, String password)
 	{
@@ -44,7 +40,8 @@ public class DStoreSSLContext
 
 		try
 		{
-			if (_keyManagers == null)
+			KeyManager[] keyManagers = BaseSSLContext.getKeyManagers();
+			if (keyManagers == null)
 			{
 				KeyStore ks = DStoreKeyStore.getKeyStore(filePath, password);
 				String keymgrAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
@@ -57,7 +54,7 @@ public class DStoreSSLContext
 			else
 			{
 				serverContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
-				serverContext.init(_keyManagers, null, null);
+				serverContext.init(keyManagers, null, null);
 			}
 			
 		}
@@ -81,7 +78,8 @@ public class DStoreSSLContext
 			mgrs[0] = trustManager;
 			
 			
-			clientContext.init(_keyManagers, mgrs, null);
+			KeyManager[] keyManagers = BaseSSLContext.getKeyManagers();
+			clientContext.init(keyManagers, mgrs, null);
 			}
 		catch (Exception e)
 		{

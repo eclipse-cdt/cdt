@@ -3011,25 +3011,27 @@ public class AST2Tests extends AST2BaseTest {
 	// struct s1 { struct s2 *s2p; /* ... */ }; // D1 
 	// struct s2 { struct s1 *s1p; /* ... */ }; // D2 
 	public void testBug84186() throws Exception {
-		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, ParserLanguage.C);
-		CNameCollector col = new CNameCollector();
-		tu.accept(col);
-		assertEquals(col.size(), 6);
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			final String code = getAboveComment();
+			IASTTranslationUnit tu = parse(code, lang);
+			CNameCollector col = new CNameCollector();
+			tu.accept(col);
+			assertEquals(col.size(), 6);
 
-		ICompositeType s_ref = (ICompositeType) col.getName(1).resolveBinding();
-		ICompositeType s_decl = (ICompositeType) col.getName(3).resolveBinding();
-		assertSame(s_ref, s_decl);
+			ICompositeType s_ref = (ICompositeType) col.getName(1).resolveBinding();
+			ICompositeType s_decl = (ICompositeType) col.getName(3).resolveBinding();
+			assertSame(s_ref, s_decl);
 
-		
-		tu = parse(code, ParserLanguage.C);
-		col = new CNameCollector();
-		tu.accept(col);
-		assertEquals(col.size(), 6);
 
-		s_decl = (ICompositeType) col.getName(3).resolveBinding();
-		s_ref = (ICompositeType) col.getName(1).resolveBinding();
-		assertSame(s_ref, s_decl);
+			tu = parse(code, lang);
+			col = new CNameCollector();
+			tu.accept(col);
+			assertEquals(col.size(), 6);
+
+			s_decl = (ICompositeType) col.getName(3).resolveBinding();
+			s_ref = (ICompositeType) col.getName(1).resolveBinding();
+			assertSame(s_ref, s_decl);
+		}
 	}
 	
 	// typedef struct { int a; } S;      
@@ -5927,5 +5929,26 @@ public class AST2Tests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
 		ITypedef td= bh.assertNonProblem("TInt; //", 4);
 		IField f= bh.assertNonProblem("a;", 1);
+	}
+	
+	//	struct beta {
+	//		int glob;
+	//	};
+	//	void foo() {
+	//		struct beta* pg;
+	//		struct beta;
+	//		struct beta* pl;
+	//
+	//		struct beta {
+	//			char loc;
+	//		};
+	//		pg->glob= 0;
+	//		pl->loc= 1;
+	//	}
+	public void testLocalVsGlobalStruct_Bug255973() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+		}
 	}
 }

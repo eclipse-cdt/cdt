@@ -23,7 +23,7 @@ public interface IASTInternalScope extends IScope {
     /**
      * Return the physical IASTNode that this scope was created for
      */
-    public IASTNode getPhysicalNode() throws DOMException;
+    public IASTNode getPhysicalNode();
 		
 	/**
 	 * This adds an IBinding to the scope.  It is primarily used by the parser to add

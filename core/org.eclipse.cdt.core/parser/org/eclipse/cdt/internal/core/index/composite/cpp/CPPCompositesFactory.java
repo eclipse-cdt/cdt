@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,10 +110,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			throw new CompositingNotImplementedError(ce.getMessage());		
-		} catch(DOMException ce) {
-			CCorePlugin.log(ce);
-			throw new CompositingNotImplementedError(ce.getMessage());		
-		}
+		} 
 	}
 
 	/* (non-Javadoc)

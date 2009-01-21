@@ -492,7 +492,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	    	return;
 	    
 		collectNames(paramDecl.getDeclarator());
-		collectNames(paramDecl.getDeclSpecifier());
+		collectNames(paramDecl.getDeclSpecifier(), false);
 	}
 
 	private void collectNames(IASTDeclarator dtor) {
@@ -519,19 +519,21 @@ public class CScope implements ICScope, IASTInternalScope {
 			for (IASTDeclarator dtor : declarators) {
 				collectNames(dtor);
 			}
-			collectNames(simpleDeclaration.getDeclSpecifier());
+			collectNames(simpleDeclaration.getDeclSpecifier(), declarators.length == 0);
 		} else if (declaration instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 			collectNames(functionDef.getDeclarator());
-			collectNames(functionDef.getDeclSpecifier()); 
+			collectNames(functionDef.getDeclSpecifier(), false); 
 		}
 	}
 
-	private void collectNames(IASTDeclSpecifier declSpec) {
+	private void collectNames(IASTDeclSpecifier declSpec, boolean forceElabSpec) {
 		IASTName tempName = null;
 		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
-			tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
-			ASTInternal.addName(this, tempName);
+			if (forceElabSpec || physicalNode instanceof IASTTranslationUnit) {
+				tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+				ASTInternal.addName(this, tempName);
+			}
 		} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
 			tempName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
 			ASTInternal.addName(this,  tempName);
@@ -542,7 +544,7 @@ public class CScope implements ICScope, IASTInternalScope {
 				if (element instanceof IASTSimpleDeclaration) {
 					IASTDeclSpecifier d = ((IASTSimpleDeclaration)element).getDeclSpecifier();
 					if (d instanceof ICASTCompositeTypeSpecifier || d instanceof IASTEnumerationSpecifier) {
-						collectNames(d);
+						collectNames(d, false);
 					}
 				}
 			}

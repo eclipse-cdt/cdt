@@ -545,32 +545,50 @@ public class CVisitor extends ASTQueries {
 		IASTName name = elabTypeSpec.getName();
 		if (parent instanceof IASTDeclaration) {
 			IBinding binding= null;
-			if (parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)parent).getDeclarators().length == 0) {
+			IScope insertIntoScope= null;
+			if (parent instanceof IASTSimpleDeclaration 
+					&& ((IASTSimpleDeclaration)parent).getDeclarators().length == 0) {
 				IScope scope= getContainingScope(elabTypeSpec);
 				try {
+					while (scope instanceof ICCompositeTypeScope)
+						scope= scope.getParent();
+
 					binding= scope.getBinding(name, false);
 				} catch (DOMException e) {
 				}
+				if (binding != null) {
+					if (binding instanceof CEnumeration) {
+				        ((CEnumeration)binding).addDeclaration(name);
+				    } else if (binding instanceof CStructure) {
+				    	((CStructure) binding).addDeclaration(name);
+				    }
+				}
 			} else {
 				binding= resolveBinding(elabTypeSpec);
+				if (binding == null) {
+					insertIntoScope= elabTypeSpec.getTranslationUnit().getScope();
+					try {
+						binding= insertIntoScope.getBinding(name, false);
+						if (binding != null) {
+							if (binding instanceof CEnumeration) {
+						        ((CEnumeration)binding).addDeclaration(name);
+						    } else if (binding instanceof CStructure) {
+						    	((CStructure) binding).addDeclaration(name);
+						    }
+						}
+					} catch (DOMException e) {
+					}
+				}
 			}
-			if (binding != null) {
-				if (binding instanceof CEnumeration) {
-			        ((CEnumeration)binding).addDeclaration(name);
-			    } else if (binding instanceof CStructure) {
-			    	((CStructure) binding).addDeclaration(name);
-			    }
-			} else {
+			if (binding == null) {
 				if (elabTypeSpec.getKind() == IASTElaboratedTypeSpecifier.k_enum) {
 			        binding = new CEnumeration(name);
 			    } else {
 			        binding = new CStructure(name);    
 			    }
-				
-				try {
-					ASTInternal.addName(binding.getScope(), name);
-                } catch (DOMException e) {
-                }
+				if (insertIntoScope != null) {
+					ASTInternal.addName(insertIntoScope, name);
+				}
 			}
 			
 			return binding;

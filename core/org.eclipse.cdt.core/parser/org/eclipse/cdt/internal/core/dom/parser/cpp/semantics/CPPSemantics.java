@@ -1190,7 +1190,7 @@ public class CPPSemantics {
 				    continue;
 		        }
 			}
-		    if (item instanceof IASTLabelStatement) 
+		    while (item instanceof IASTLabelStatement) 
 		    	item= ((IASTLabelStatement) item).getNestedStatement();
 		    if (item instanceof IASTDeclarationStatement)
 		        item = ((IASTDeclarationStatement)item).getDeclaration();
@@ -1345,7 +1345,8 @@ public class CPPSemantics {
 			
 			IASTName specName = null;
 			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
-				specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
+				if (declarators.length == 0 || scope.getPhysicalNode() instanceof IASTTranslationUnit)
+					specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
 			} else if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				specName = compSpec.getName();

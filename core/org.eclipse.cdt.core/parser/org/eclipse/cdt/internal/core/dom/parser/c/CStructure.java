@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
@@ -234,20 +235,16 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 			return;
 
 		decl.setBinding(this);
-		if (declarations == null) {
+		if (declarations == null || declarations.length == 0) {
 			declarations = new IASTName[] { decl };
 			return;
 		}
-		for (int i = 0; i < declarations.length; i++) {
-			if (declarations[i] == null) {
-				declarations[i] = decl;
-				return;
-			}
+		IASTName first= declarations[0];
+		if (((ASTNode) first).getOffset() > ((ASTNode) decl).getOffset()) {
+			declarations[0]= decl;
+			decl= first;
 		}
-		IASTName tmp[] = new IASTName[declarations.length * 2];
-		System.arraycopy(declarations, 0, tmp, 0, declarations.length);
-		tmp[declarations.length] = decl;
-		declarations = tmp;
+		declarations= (IASTName[]) ArrayUtil.append(IASTName.class, declarations, decl);
 	}
 
 

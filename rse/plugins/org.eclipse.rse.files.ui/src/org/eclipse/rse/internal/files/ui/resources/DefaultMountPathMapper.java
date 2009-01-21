@@ -14,12 +14,18 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM) - [195285] mount path mapper changes
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
 
+import java.io.File;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class DefaultMountPathMapper implements ISystemMountPathMapper
 {
@@ -36,7 +42,19 @@ public class DefaultMountPathMapper implements ISystemMountPathMapper
 	
 	public String getWorkspaceMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subSystem)
 	{
-		return remotePath;
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
+		boolean shareCachedFiles = store.getBoolean(ISystemFilePreferencesConstants.SHARECACHEDFILES);
+		
+		// if we're not sharing cached files, then we need a unique path for each connection
+		if (!shareCachedFiles){
+			// prefix with the connection alias
+			String alias = subSystem.getHostAliasName();
+			String configID = subSystem.getConfigurationId();
+			return alias + '.' + configID + File.separatorChar + remotePath;
+		}
+		else {
+			return remotePath;
+		}
 	}
 	
 	/**

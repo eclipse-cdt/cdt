@@ -18,6 +18,7 @@
  * David McKnight   (IBM) - [195285] mount path mapper changes
  * David McKnight   (IBM)        - [228343] RSE unable to recover after RemoteSystemsTempfiles deletion
  * David McKnight   (IBM)        - [253262] Cache Cleanup is removing .settings directory
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -151,6 +152,7 @@ public class SystemRemoteEditManager
 	public String getWorkspacePathFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
 		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath, subsystem);
+				
 		if (mapper != null)
 		{
 			return mapper.getWorkspaceMappingFor(hostname, remotePath, subsystem);
@@ -189,6 +191,12 @@ public class SystemRemoteEditManager
 				}
 			}
 		}
+		
+		// no result - fall back to the default
+		if (result == null){
+			return new DefaultMountPathMapper();
+		}
+		
 		return result;
 	}
 

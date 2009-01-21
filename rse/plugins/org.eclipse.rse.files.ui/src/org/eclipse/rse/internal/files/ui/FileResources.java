@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * Rupen Mardirossian (IBM)		 - [227213] Added RESID_CONFLICT_COPY_PATTERN to be used for copying resources to parent folder.
  * David Dykstal (IBM) [231841] Correcting messages for folder creation
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -82,6 +83,8 @@ public class FileResources extends NLS
 	public static String RESID_PREF_UNIVERSAL_SHOWHIDDEN_LABEL;
 	
 	public static String RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_LABEL;
+	
+	public static String RESID_PREF_UNIVERSAL_SHARE_CACHED_FILES_LABEL;
 
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_TYPE_LABEL;
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_TYPE_TOOLTIP;

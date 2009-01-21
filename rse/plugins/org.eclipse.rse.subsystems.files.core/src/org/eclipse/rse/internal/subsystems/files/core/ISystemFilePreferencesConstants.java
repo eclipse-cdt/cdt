@@ -16,6 +16,7 @@
  * David McKnight  (IBM) - [191367] setting supertransfer to be disabled by default
  * Xuan Chen (IBM)       - [191367] setting supertransfer back to enabled by default
  * Xuan Chen (IBM)       - [202686] Supertransfer should be disabled by default for 2.0.1
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -31,6 +32,8 @@ public interface ISystemFilePreferencesConstants
     
     public static final String PRESERVETIMESTAMPS     = ROOT + "preservetimestamps"; //$NON-NLS-1$
     
+    public static final String SHARECACHEDFILES       = ROOT + "sharecachedfiles";//$NON-NLS-1$
+    
 	public static final String LIMIT_CACHE             = ROOT + "limit.cache"; //$NON-NLS-1$
 	public static final String MAX_CACHE_SIZE          = ROOT + "max.cache.size"; //$NON-NLS-1$
 
@@ -42,6 +45,7 @@ public interface ISystemFilePreferencesConstants
     
     public static final boolean DEFAULT_SHOW_HIDDEN              = true;
     public static final boolean DEFAULT_PRESERVETIMESTAMPS       = true;
+    public static final boolean DEFAULT_SHARECACHEDFILES        = true;
     public static final int     DEFAULT_FILETRANSFERMODE         = 0;
     
 	public static final int FILETRANSFERMODE_BINARY 			= 0;

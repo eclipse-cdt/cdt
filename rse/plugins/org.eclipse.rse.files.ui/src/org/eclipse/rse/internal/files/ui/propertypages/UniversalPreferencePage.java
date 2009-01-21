@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -299,6 +300,16 @@ public class UniversalPreferencePage
 		
 		store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, true);
 
+		// field to indicate whether or not to share cached files between different connections
+		// to the same remote host
+		BooleanFieldEditor shareCachedFiles = new BooleanFieldEditor (
+				ISystemFilePreferencesConstants.SHARECACHEDFILES,
+				FileResources.RESID_PREF_UNIVERSAL_SHARE_CACHED_FILES_LABEL,
+				propertiesComposite);
+		
+		addField(shareCachedFiles);
+		
+		store.setDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES, ISystemFilePreferencesConstants.DEFAULT_SHARECACHEDFILES);
 		
 		// download and upload buffer size
 		Group transferGroup = new Group(parent, SWT.NULL);
@@ -418,6 +429,7 @@ public class UniversalPreferencePage
 	{
 		store.setDefault(ISystemFilePreferencesConstants.SHOWHIDDEN, false);
 		store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, ISystemFilePreferencesConstants.DEFAULT_PRESERVETIMESTAMPS);
+		store.setDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES, ISystemFilePreferencesConstants.DEFAULT_SHARECACHEDFILES);
 		store.setDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER, ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
 		store.setDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE, ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
 		store.setDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);

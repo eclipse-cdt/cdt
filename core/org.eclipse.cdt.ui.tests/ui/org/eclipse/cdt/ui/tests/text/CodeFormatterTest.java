@@ -1091,4 +1091,43 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testDotStarAndArrowStarOperators_Bug257700() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//void zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz1(unsigned char __attribute__((unused)) x, unsigned char __attribute__((unused)) y){;}
+
+	//void zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz1(
+	//		unsigned char __attribute__((unused)) x,
+	//		unsigned char __attribute__((unused)) y) {
+	//	;
+	//}
+	public void test__attribute__InParameterDecl_Bug206271() throws Exception {
+		assertFormatterResult();
+	}
+	
+	//#define assert(e) if(!(e)) printf("Failed assertion")
+	//void test(){assert(1 > 0);}
+
+	//#define assert(e) if(!(e)) printf("Failed assertion")
+	//void test() {
+	//	assert(1 > 0);
+	//}
+
+	public void testMacroFormatting1_Bug241819() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define PRINT if(printswitch) printf
+	//void test(){int i=0;PRINT("Watch the format");if(i>0){i=1;}}
+
+	//#define PRINT if(printswitch) printf
+	//void test() {
+	//	int i = 0;
+	//	PRINT("Watch the format");
+	//	if (i > 0) {
+	//		i = 1;
+	//	}
+	//}
+	public void testMacroFormatting2_Bug241819() throws Exception {
+		assertFormatterResult();
+	}
+
 }

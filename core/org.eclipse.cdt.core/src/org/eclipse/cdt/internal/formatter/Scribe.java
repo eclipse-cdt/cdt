@@ -637,10 +637,8 @@ public class Scribe {
 		try {
 			scanner.resetTo(Math.max(startOffset, currentPosition), startOffset + length - 1);
 			int parenLevel= 0;
-			boolean lastTokenWasGT= false;
 			while (true) {
 				boolean hasWhitespace= printComment();
-				boolean isGT= false;
 				currentToken= scanner.nextToken();
 				if (currentToken == null) {
 					if (hasWhitespace) {
@@ -677,8 +675,10 @@ public class Scribe {
 						for (int i= 0; i < preferences.continuation_indentation; i++) {
 							indent();
 						}
-						// HACK: avoid indent in same line
-						column= indentationLevel + 1;
+						if (column <= indentationLevel) {
+							// HACK: avoid indent in same line
+							column= indentationLevel + 1;
+						}
 					}
 					break;
 				case Token.tRPAREN:
@@ -689,12 +689,6 @@ public class Scribe {
 						}
 					}
 					print(currentToken.getLength(), hasWhitespace);
-					break;
-				case Token.tGT:
-					if (lastTokenWasGT) {
-						print(currentToken.getLength(), true);
-					}
-					isGT= true;
 					break;
 				case Token.tSEMI:
 					print(currentToken.getLength(), preferences.insert_space_before_semicolon);
@@ -723,7 +717,6 @@ public class Scribe {
 					}
 				}
 				hasWhitespace= false;
-				lastTokenWasGT= isGT;
 			}
 		} finally {
 			scannerEndPosition= savedScannerEndPos;
@@ -1679,7 +1672,7 @@ public class Scribe {
 	}
 
 	boolean shouldSkip(int offset) {
-		return offset >= fSkipStartOffset && offset <= fSkipEndOffset;
+		return offset >= fSkipStartOffset;
 	}
 
 	void skipRange(int offset, int endOffset) {

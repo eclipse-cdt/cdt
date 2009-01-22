@@ -276,7 +276,23 @@ public class CValue extends AbstractCValue {
 		CVariableFormat format = getParentVariable().getFormat(); 
 		if ( CVariableFormat.NATURAL.equals( format ) ) {
 			byte byteValue = (byte)value.byteValue();
-			return ((Character.isISOControl( (char)byteValue ) && byteValue != '\b' && byteValue != '\t' && byteValue != '\n' && byteValue != '\f' && byteValue != '\r') || byteValue < 0) ? Byte.toString(byteValue) : new String( new byte[]{ '\'', byteValue, '\'' } ); //$NON-NLS-1$
+			switch (byteValue) {
+			case '\b':
+				return "'\\b'"; 
+			case '\t':
+				return "'\\t'";
+			case '\n':
+				return "'\\n'";
+			case '\f':
+				return "'\\f'";
+			case '\r':
+				return "'\\r'";
+			}
+			
+			if (Character.isISOControl(byteValue) || byteValue < 0)
+				return Byte.toString(byteValue);
+			
+			return new String( new byte[]{ '\'', byteValue, '\'' } ); //$NON-NLS-1$
 		}
 		else if ( CVariableFormat.DECIMAL.equals( format ) ) {
 			return (isUnsigned()) ? Integer.toString( value.shortValue() ) : Integer.toString( (byte)value.byteValue() );

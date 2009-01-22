@@ -656,6 +656,8 @@ public class CPPSemantics {
 			}
 		}
 		
+		// this is a workaround, properly fixed on the main branch (bug 237026)
+		HashSet<IScope> handledScopes= new HashSet<IScope>();
 		while (scope != null) {
 			if (scope instanceof IIndexScope && data.tu != null) {
 				scope= (ICPPScope) data.tu.mapToASTScope(((IIndexScope) scope));
@@ -741,6 +743,7 @@ public class CPPSemantics {
 			if (blockItem != null)
 				node = blockItem;
 			
+			handledScopes.add(scope);
 			ICPPScope parentScope = (ICPPScope) getParentScope(scope, data.tu);
 			if (parentScope instanceof ICPPTemplateScope) {
 			    IASTNode declNode = node;
@@ -755,6 +758,10 @@ public class CPPSemantics {
 			            parentScope = templateScope;
 			        }
 			    }
+			}
+			// workaround on the maintenance branch, proper fix in 6.0, see bug 237026.
+			while (handledScopes.contains(parentScope)) {
+				parentScope= (ICPPScope) parentScope.getParent();
 			}
 			scope = parentScope;
 		}
@@ -1919,7 +1926,7 @@ public class CPPSemantics {
 			IASTExpression[] exps = (IASTExpression[]) params;
 			IType[] result = new IType[exps.length];
 			for (int i = 0; i < exps.length; i++) {
-			    result[i] = CPPVisitor.getExpressionType(exps[i]);
+			    result[i] = exps[i].getExpressionType();
             }
 			return result;
 		} else if (params instanceof IASTParameterDeclaration[]) {
@@ -2240,7 +2247,7 @@ public class CPPSemantics {
                 // target is the left side of an assignment
                 IASTBinaryExpression binaryExp = (IASTBinaryExpression) node.getParent();
                 IASTExpression exp = binaryExp.getOperand1();
-                return CPPVisitor.getExpressionType(exp);
+                return exp.getExpressionType();
             } else if (prop == IASTFunctionCallExpression.PARAMETERS ||
             		(prop == IASTExpressionList.NESTED_EXPRESSION &&
                     node.getParent().getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)) {
@@ -2372,7 +2379,7 @@ public class CPPSemantics {
 	            }
 	        }
         } else {
-            IType type = CPPVisitor.getExpressionType(exp);
+            IType type = exp.getExpressionType();
             type = getUltimateType(type, false);
             if (type instanceof IFunctionType) {
                 result = new IFunctionType[] { (IFunctionType) type };

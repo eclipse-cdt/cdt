@@ -27,6 +27,7 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
     private int op;
     private IASTExpression operand1;
     private IASTExpression operand2;
+    private IType type;
 
     public CPPASTBinaryExpression() {
 	}
@@ -108,7 +109,9 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
     }
 
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+    	if (type == null) {
+    		type= CPPVisitor.getExpressionType(this);
+    	}
+    	return type;
     }
-    
 }

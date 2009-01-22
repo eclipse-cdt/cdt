@@ -319,11 +319,11 @@ class LookupData {
         		if (tempNameParent instanceof ICPPASTUnaryExpression) {
         			ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempNameParent;
         			IASTExpression oprd= unaryExp.getOperand();
-        			return CPPVisitor.getExpressionType(oprd);
+        			return oprd.getExpressionType();
         		}
         		if (tempNameParent instanceof ICPPASTFieldReference) {
         			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
-        			IType implied = CPPVisitor.getExpressionType(fieldRef.getFieldOwner());
+        			IType implied = fieldRef.getFieldOwner().getExpressionType();
         			if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
         				return ((IPointerType)implied).getType();
         			}
@@ -331,13 +331,13 @@ class LookupData {
         		}
         		if (tempNameParent instanceof IASTArraySubscriptExpression) {
              		IASTExpression exp = ((IASTArraySubscriptExpression)tempNameParent).getArrayExpression();
-             		return CPPVisitor.getExpressionType(exp);
+             		return exp.getExpressionType();
              	} 
         		if (tempNameParent instanceof IASTFunctionCallExpression) {
-        			return CPPVisitor.getExpressionType(((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression());
+        			return ((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression().getExpressionType();
         		}
         		if (tempNameParent instanceof IASTBinaryExpression) {
-        			return CPPVisitor.getExpressionType(((IASTBinaryExpression) tempNameParent).getOperand1());
+        			return ((IASTBinaryExpression) tempNameParent).getOperand1().getExpressionType();
         		}
         		return null;
         	} 

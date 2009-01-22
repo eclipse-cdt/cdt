@@ -26,12 +26,14 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -53,10 +55,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -86,6 +90,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected Label fProgLabel;
 	protected Text fProgText;
 	protected Button fSearchButton;
+	protected Combo fBuildConfigCombo;
 
 	private final boolean fWantsTerminalOption;
 	protected Button fTerminalButton;
@@ -128,6 +133,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		createVerticalSpacer(comp, 1);
 		createProjectGroup(comp, 1);
+		createBuildConfigCombo(comp, 1);
 		createExeFileGroup(comp, 1);
 		createVerticalSpacer(comp, 1);
 		if (wantsTerminalOption() /* && ProcessFactory.supportesTerminal() */) {
@@ -159,6 +165,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProjText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent evt) {
+				updateBuildConfigCombo(EMPTY_STRING);
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -170,6 +177,56 @@ public class CMainTab extends CLaunchConfigurationTab {
 				handleProjectButtonSelected();
 				updateLaunchConfigurationDialog();
 			}
+		});
+	}
+
+	protected void updateBuildConfigCombo(String selectedConfigID) {
+		fBuildConfigCombo.removeAll();
+		fBuildConfigCombo.add(LaunchMessages.getString("CMainTab.Use_Active")); //$NON-NLS-1$
+		fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
+		fBuildConfigCombo.select(0);
+		ICProject cproject = getCProject();
+		if (cproject != null){
+
+			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
+			if (projDes != null)
+			{
+				int selIndex = 0;
+				ICConfigurationDescription[] configurations = projDes.getConfigurations();
+				ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
+				for (int i = 0; i < configurations.length; i++) {
+					String configName = configurations[i].getName();
+					fBuildConfigCombo.add(configName);
+					fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
+					if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()))
+						selIndex = i + 1;
+				}
+				fBuildConfigCombo.select(selIndex);
+			}
+
+		}
+		
+	}
+
+	protected void createBuildConfigCombo(Composite parent, int colspan) {
+		Composite comboComp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		comboComp.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = colspan;
+		comboComp.setLayoutData(gd);
+		Label dlabel = new Label(comboComp, SWT.NONE);
+		dlabel.setText(LaunchMessages.getString("CMainTab.Build_Config")); //$NON-NLS-1$
+		fBuildConfigCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
+		fBuildConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fBuildConfigCombo.addSelectionListener(new SelectionListener() {
+		    public void widgetSelected(SelectionEvent e) {
+		    	updateLaunchConfigurationDialog();
+		    }
+
+		    public void widgetDefaultSelected(SelectionEvent e) {
+		    	updateLaunchConfigurationDialog();
+		    }
 		});
 	}
 
@@ -266,12 +323,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = EMPTY_STRING;
+		String configName = EMPTY_STRING;
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+			configName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);			
 		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
 		fProjText.setText(projectName);
+		updateBuildConfigCombo(configName);		
 	}
 
 	protected void updateProgramFromConfig(ILaunchConfiguration config) {
@@ -294,19 +354,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (cProject != null)
 		{
 			config.setMappedResources(new IResource[] { cProject.getProject() });
-			try { // Only initialize the build config ID once.
-				if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, "").length() == 0)//$NON-NLS-1$
-				{
-					ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
-					if (projDes != null)
-					{
-						String buildConfigID = projDes.getActiveConfiguration().getId();
-						config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);			
-					}				
-				}
-			} catch (CoreException e) { e.printStackTrace(); }
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fProgText.getText());
 		if (fTerminalButton != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, fTerminalButton.getSelection());
@@ -637,6 +687,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		// corresponding text boxes)
 		// plus getContext will use this to base context from if set.
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
 		ICElement cElement = null;
 		cElement = getContext(config, getPlatform(config));
 		if (cElement != null) {

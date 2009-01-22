@@ -81,6 +81,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * A list of prequisite projects ordered by their build order.
 	 */
 	private List orderedProjects;
+	private String preLaunchBuildConfiguration;
 
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException;
@@ -582,7 +583,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			if (buildConfigID.length() > 0 && projDes != null)
 			{
 				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
-				if (null != buildConfiguration) {
+				if (buildConfiguration != null) {
+					preLaunchBuildConfiguration = projDes.getActiveConfiguration().getId();
 					buildConfiguration.setActive();
 					CDTPropertyManager.performOk(null);
 				}
@@ -648,7 +650,29 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		} finally {
 			monitor.done();
 		}
+		
+		if (continueLaunch) // If no problems then restore the previous build configuration. Otherwise leave it so the user can fix the build issues.
+			resetBuildConfiguration(project);
+		
 		return continueLaunch;
+	}
+
+	private void resetBuildConfiguration(IProject buildProject) {
+		// Restore the active configuration if it was changed for the launch
+		if (preLaunchBuildConfiguration != null) {
+			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(buildProject);
+			
+			if (preLaunchBuildConfiguration.length() > 0 && projDes != null)
+			{
+				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(preLaunchBuildConfiguration);
+				if (buildConfiguration != null) {
+					buildConfiguration.setActive();
+					CDTPropertyManager.performOk(null);
+				}
+			}
+
+		}
+		preLaunchBuildConfiguration = null;
 	}
 
 	/**

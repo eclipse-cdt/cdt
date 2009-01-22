@@ -161,6 +161,8 @@ public class BuildSystemEnvironmentSupplier implements
 			
 		if(context instanceof ICConfigurationDescription){
 			ICConfigurationDescription cfg = (ICConfigurationDescription)context;
+			if (cfg.getBuildSetting() == null)
+				return null;
 			IEnvironmentContributor supplier = cfg.getBuildSetting().getBuildEnvironmentContributor();
 			if(supplier == null)
 				return null;
@@ -178,6 +180,8 @@ public class BuildSystemEnvironmentSupplier implements
 		IEnvironmentVariable variables[] = null;
 		if(context instanceof ICConfigurationDescription){
 			ICConfigurationDescription cfg = (ICConfigurationDescription)context;
+			if (cfg.getBuildSetting() == null)
+				return new IEnvironmentVariable[0];
 			IEnvironmentContributor supplier = cfg.getBuildSetting().getBuildEnvironmentContributor();
 			if(supplier == null)
 				return new IEnvironmentVariable[0];

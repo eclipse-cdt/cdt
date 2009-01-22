@@ -6,29 +6,30 @@
 	      id="org.eclipse.dd.debug.ui.memory.transport.dd"
 	      name="org.eclipse.dd.debug.ui.memory.transport.dd"
 	      point="org.eclipse.dd.debug.ui.memory.transport.memoryTransport">
+	      
 	    <importer 
 	        name="SRecordImporter"
 	        id="org.eclipse.dd.debug.ui.memory.transport.SRecordImporter"
 	        class="org.eclipse.dd.debug.ui.memory.transport.SRecordImporter">
 	    </importer>
-	    
 	    <exporter 
 	        name="SRecordExporter"
 	        id="org.eclipse.dd.debug.ui.memory.transport.SRecordExporter"
 	        class="org.eclipse.dd.debug.ui.memory.transport.SRecordExporter">
 	    </exporter>
 	    
+	    <importer 
+	        name="PlainTextImporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter">
+	    </importer>
 	    <exporter 
 	        name="PlainTextExporter"
 	        id="org.eclipse.dd.debug.ui.memory.transport.PlainTextExporter"
 	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextExporter">
 	    </exporter>
 	    
-	    <importer 
-	        name="SRecordImporter"
-	        id="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter"
-	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextImporter">
-	    </importer>
+	    
 	</extension>
 	
 	<extension point="org.eclipse.ui.viewActions">

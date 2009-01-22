@@ -105,15 +105,25 @@ public class SelectionHelper {
 	
 	protected static Region createExpressionPosition(IASTNode expression) {
 
-		int start = 0;
+		int start = Integer.MAX_VALUE;
 		int nodeLength = 0;
 		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
 		if (nodeLocations.length != 1) {
 			for (IASTNodeLocation location : nodeLocations) {
 				if (location instanceof IASTMacroExpansionLocation) {
 					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
-					start = macroLoc.asFileLocation().getNodeOffset();
-					nodeLength = macroLoc.asFileLocation().getNodeLength();
+					int nodeOffset = macroLoc.asFileLocation().getNodeOffset();
+					if(nodeOffset < start) {
+						start = nodeOffset;
+					}
+					nodeLength += macroLoc.asFileLocation().getNodeLength();
+				}else {
+					IASTFileLocation loc = expression.getFileLocation();
+					int nodeOffset = loc.getNodeOffset();
+					if(nodeOffset < start) {
+						start = nodeOffset;
+					}
+					nodeLength = loc.getNodeLength();
 				}
 			}
 		} else {

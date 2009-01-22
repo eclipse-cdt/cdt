@@ -714,8 +714,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTStatement stmt) {
-				if (!(stmt instanceof IASTCompoundStatement)
-						&& SelectionHelper.isSelectedFile(region, stmt, file)) {
+				if ( SelectionHelper.isSelectedFile(region, stmt, file)) {
 					container.add(stmt);
 					return PROCESS_SKIP;
 				}

@@ -2564,3 +2564,31 @@ int main() {
 	return 0;
 }
 
+//!Bug#262000 refactoring "extract function" misinterprets artificial blocks
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.cpp
+methodname=exp
+//@main.cpp
+int main(int argc, char **argv) {
+
+	/*$*/int a = 0;
+	{
+		a++;
+	}/*$$*/
+
+}
+
+//=
+void exp()
+{
+    int a = 0;
+    {
+        a++;
+    }
+}
+
+int main(int argc, char **argv) {
+    exp();
+}
+

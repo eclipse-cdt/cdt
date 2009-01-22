@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +76,7 @@ import org.eclipse.core.runtime.Status;
  * but they are synchronized.  This is safe as long as structural changes aren't made to the same
  * project storage element from multiple threads.
  *
- * @see {ICDescriptor} for more
+ * @see ICDescriptor for more
  */
 final public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private volatile static CConfigBasedDescriptorManager fInstance;
@@ -387,7 +386,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 */
 	private static CConfigBasedDescriptor loadDescriptor(CProjectDescription des) throws CoreException {
 		if (des == null)
-			throw ExceptionFactory.createCoreException("CProjectDescription des is null");
+			throw ExceptionFactory.createCoreException("CProjectDescription des is null"); //$NON-NLS-1$
 
 		if(des.isReadOnly())
 			des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);

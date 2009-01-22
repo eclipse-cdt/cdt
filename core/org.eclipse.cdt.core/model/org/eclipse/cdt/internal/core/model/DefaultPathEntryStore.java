@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
@@ -42,10 +41,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * PathEntryStore
@@ -143,10 +138,10 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 
 		// check fo the base path
-		IPath basePath = new Path(element.hasAttribute(ATTRIBUTE_BASE_PATH) ? element.getAttribute(ATTRIBUTE_BASE_PATH) : "");
+		IPath basePath = new Path(element.hasAttribute(ATTRIBUTE_BASE_PATH) ? element.getAttribute(ATTRIBUTE_BASE_PATH) : ""); //$NON-NLS-1$
 
 		// get the base ref
-		IPath baseRef = new Path(element.hasAttribute(ATTRIBUTE_BASE_REF) ? element.getAttribute(ATTRIBUTE_BASE_REF) : "");
+		IPath baseRef = new Path(element.hasAttribute(ATTRIBUTE_BASE_REF) ? element.getAttribute(ATTRIBUTE_BASE_REF) : ""); //$NON-NLS-1$
 
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);

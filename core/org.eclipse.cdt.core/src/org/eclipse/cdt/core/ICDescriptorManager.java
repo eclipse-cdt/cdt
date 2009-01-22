@@ -25,7 +25,7 @@ public interface ICDescriptorManager {
 	/**
  	 * Return the ICDescriptor for the project.  If project doesn't contain
  	 * an ICDescriptor then one is created.
- 	 * Equivalent to: {@link ICDescriptorManager#getDescriptor(IProject, true)}
+ 	 * Equivalent to: {@code ICDescriptorManager#getDescriptor(project, true)}
  	 * 
  	 * Users should consider batching changes in an ICDescriptorOperation
  	 * 

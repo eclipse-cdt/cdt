@@ -230,7 +230,7 @@ public class ErrorParserManager extends OutputStream {
 						return;
 					}
 				} catch (Exception e){
-					String message = "Error parsing line [" + lineToParse + "]"; //$NON-NLS-2$
+					String message = "Error parsing line [" + lineToParse + "]";  //$NON-NLS-1$//$NON-NLS-2$
 					CCorePlugin.log(message, e);
 				}
 			}

@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.w3c.dom.Element;
 
 public class BackwardCompatibilityTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "BackwardCompatibilityTests_";
@@ -40,9 +39,11 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		return suite(BackwardCompatibilityTests.class, "_");
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		try {
 			if(p1 != null){

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import java.util.Map;
-
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;

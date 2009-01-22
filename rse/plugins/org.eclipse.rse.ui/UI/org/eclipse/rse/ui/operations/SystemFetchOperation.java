@@ -23,11 +23,14 @@
  * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  * David McKnight   (IBM)        - [243263] NPE on expanding a filter
+ * David McKnight   (IBM)        - [260777] [ssh] Deadlock when changing selection after multiple hibernate/resume cycles
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +45,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.DisplayErrorMessageJob;
 import org.eclipse.rse.internal.ui.GenericMessages;
@@ -74,6 +78,38 @@ import org.eclipse.ui.progress.IElementCollector;
  */
 public class SystemFetchOperation extends JobChangeAdapter implements IRunnableWithProgress
 {
+	private static class ConnectorServicePool {
+		
+		private static List _connectingConnectorServices = new ArrayList();
+		
+		public synchronized void add(IConnectorService cs) {
+			_connectingConnectorServices.add(cs);
+		}
+		
+		public synchronized void remove(IConnectorService cs) {
+			_connectingConnectorServices.remove(cs);
+			notifyAll();
+		}
+		
+		public synchronized boolean contains(IConnectorService cs) {
+			return _connectingConnectorServices.contains(cs);
+		}
+		
+		public synchronized void waitUntilNotContained(IConnectorService cs) {
+			while (contains(cs)){ // wait until the connector service is no longer in the list
+				try {				
+						wait();			
+				}
+				catch (InterruptedException e){			
+					e.printStackTrace();
+				}
+				catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
     protected IWorkbenchPart _part;
     protected Object _remoteObject;
     protected IElementCollector _collector;
@@ -81,6 +117,8 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     protected ISystemViewElementAdapter _adapter;
     protected boolean _canRunAsJob;
     protected InvocationTargetException _exc;
+    
+    private static ConnectorServicePool _connectorServicePool = new ConnectorServicePool();
 
     /**
      * Creates an instance of this fetch operation. This instance cannot be run in a job, but must be invoked directly.
@@ -228,6 +266,68 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			registry.connectedStatusChange(_ss, true, false);
 		}
 	}
+	
+	
+	private boolean ensureConnected(SubSystem ss, IProgressMonitor monitor) throws InterruptedException {
+		if (!ss.isConnected() && 
+				!ss.isOffline()) // skip the connect if offline, but still follow through because we need to follow through in the subsystem
+		{
+			IConnectorService connectorService = ss.getConnectorService();
+			
+			boolean alreadyConnecting = false;
+			
+			// is this connector service already connecting?	
+			alreadyConnecting = _connectorServicePool.contains(connectorService);
+			
+			if (alreadyConnecting){
+				// connector service already attempting connect
+				// need to wait for it to complete
+				// before we can return out of this method
+				_connectorServicePool.waitUntilNotContained(connectorService);
+			}
+			else {
+				_connectorServicePool.add(connectorService);
+				
+				Display dis = Display.getDefault();
+				PromptForPassword prompter = new PromptForPassword(ss);
+				dis.syncExec(prompter);
+				if (prompter.isCancelled()) {
+					SystemMessage cancelledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
+					SystemMessageObject cancelledMessageObject = new SystemMessageObject(cancelledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
+					_collector.add(cancelledMessageObject, monitor);
+					_connectorServicePool.remove(connectorService);				
+					throw new InterruptedException();
+				}
+				try
+				{
+					connectorService.connect(monitor);
+					if (_exc != null)
+					{
+						showOperationErrorMessage(null, _exc, ss);
+					}
+				}
+				catch (InvocationTargetException exc)
+				{
+	          	  	showOperationErrorMessage(null, exc, ss);	          	  	
+					_connectorServicePool.remove(connectorService);
+	          	  	return false;
+				}
+				catch (Exception e)
+				{
+					showOperationErrorMessage(null, e, ss);
+					_connectorServicePool.remove(connectorService);
+					return false;
+				}
+				finally {
+					_connectorServicePool.remove(connectorService);
+				}
+
+				dis.asyncExec(new UpdateRegistry(ss));			
+			}
+		}
+		return ss.isConnected();
+		
+	}
 
 	/**
 	 * Subclasses must override this method to perform the operation.
@@ -261,44 +361,12 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			}
 		}
 		
-		synchronized (ss.getConnectorService())
-		{
-		if (!ss.isConnected() && !isPromptable && 
-				!ss.isOffline()) // skip the connect if offline, but still follow through because we need to follow through in the subsystem
-		{
-
-			Display dis = Display.getDefault();
-			PromptForPassword prompter = new PromptForPassword(ss);
-			dis.syncExec(prompter);
-			if (prompter.isCancelled()) {
-				SystemMessage cancelledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
-				SystemMessageObject cancelledMessageObject = new SystemMessageObject(cancelledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
-				_collector.add(cancelledMessageObject, monitor);
-				throw new InterruptedException();
-			}
-			try
-			{
-				ss.getConnectorService().connect(monitor);
-				if (_exc != null)
-				{
-					showOperationErrorMessage(null, _exc, ss);
-				}
-			}
-			catch (InvocationTargetException exc)
-			{
-          	  	showOperationErrorMessage(null, exc, ss);
-          	  	return;
-			}
-			catch (Exception e)
-			{
-				showOperationErrorMessage(null, e, ss);
+		if (!isPromptable){
+			if (!ensureConnected(ss, monitor)){
 				return;
 			}
-
-			dis.asyncExec(new UpdateRegistry(ss));
-
 		}
-		}
+
 		
 		Object[] children = null;
   	  	// we first test to see if this is an expand-to filter in effect for this

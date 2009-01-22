@@ -278,15 +278,15 @@ public class CValue extends AbstractCValue {
 			byte byteValue = (byte)value.byteValue();
 			switch (byteValue) {
 			case '\b':
-				return "'\\b'"; 
+				return "'\\b'";		//$NON-NLS-1$
 			case '\t':
-				return "'\\t'";
+				return "'\\t'";		//$NON-NLS-1$
 			case '\n':
-				return "'\\n'";
+				return "'\\n'";		//$NON-NLS-1$
 			case '\f':
-				return "'\\f'";
+				return "'\\f'";		//$NON-NLS-1$
 			case '\r':
-				return "'\\r'";
+				return "'\\r'";		//$NON-NLS-1$
 			}
 			
 			if (Character.isISOControl(byteValue) || byteValue < 0)

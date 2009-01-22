@@ -290,8 +290,11 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	}
 	
 	private void endContainersSourceDirector() {
-		for (ISourceContainer cont : containers)
-			cont.init(getDirector());
+		if (containers != null)
+		{
+			for (ISourceContainer cont : containers)
+				cont.init(getDirector());
+		}
 		containers = null;
 	}
 }

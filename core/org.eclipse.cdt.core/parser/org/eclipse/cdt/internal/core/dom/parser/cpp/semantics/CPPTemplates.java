@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -220,7 +221,7 @@ public class CPPTemplates {
 			IASTName start= name;
 			ICPPASTFunctionDefinition func= CPPVisitor.findEnclosingFunctionDefinition(name);
 			if (func != null) {
-				start= CPPVisitor.findInnermostDeclarator(func.getDeclarator()).getName();
+				start= ASTQueries.findInnermostDeclarator(func.getDeclarator()).getName();
 				start= start.getLastName();
 			}
 
@@ -403,7 +404,7 @@ public class CPPTemplates {
 		else if (param instanceof ICPPASTTemplatedTypeTemplateParameter)
 			return ((ICPPASTTemplatedTypeTemplateParameter) param).getName();
 		else if (param instanceof ICPPASTParameterDeclaration)
-			return CPPVisitor.findInnermostDeclarator(((ICPPASTParameterDeclaration) param).getDeclarator()).getName();
+			return ASTQueries.findInnermostDeclarator(((ICPPASTParameterDeclaration) param).getDeclarator()).getName();
 		return null;
 	}
 
@@ -437,12 +438,12 @@ public class CPPTemplates {
 					}
 				} else {
 					IASTDeclarator dtor = dtors[0];
-					dtor= CPPVisitor.findInnermostDeclarator(dtor);
+					dtor= ASTQueries.findInnermostDeclarator(dtor);
 					name = dtor.getName();
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
 				IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
-				dtor= CPPVisitor.findInnermostDeclarator(dtor);
+				dtor= ASTQueries.findInnermostDeclarator(dtor);
 				name = dtor.getName();
 			}
 			if (name == null)
@@ -482,7 +483,7 @@ public class CPPTemplates {
     	}
     	assert templateParameter instanceof ICPPASTParameterDeclaration;
     	final IASTDeclarator dtor = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
-    	return new CPPTemplateNonTypeParameter(CPPVisitor.findInnermostDeclarator(dtor).getName());
+    	return new CPPTemplateNonTypeParameter(ASTQueries.findInnermostDeclarator(dtor).getName());
 	}
 	
 	static public ICPPScope getContainingScope(IASTNode node) {
@@ -570,7 +571,6 @@ public class CPPTemplates {
 						if (isDecl || isDef) {
 							if (partialSpec == null) {
 								partialSpec = new CPPClassTemplatePartialSpecialization(id);
-								// mstodo how to add partial specialization to class template from index?
 								if (template instanceof ICPPInternalClassTemplate)
 									((ICPPInternalClassTemplate) template).addPartialSpecialization(partialSpec);
 								return partialSpec;
@@ -686,7 +686,7 @@ public class CPPTemplates {
 
 	public static ICPPSpecialization createSpecialization(ICPPClassSpecialization owner, IBinding decl, ICPPTemplateParameterMap tpMap) {
 		
-		// mstodo- specializations of partial specializations
+		// mstodo specializations of partial specializations
 		if (decl instanceof ICPPClassTemplatePartialSpecialization)
 			return null;
 
@@ -1161,7 +1161,7 @@ public class CPPTemplates {
 			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) decl;
 			IASTDeclarator[] dtors = sdecl.getDeclarators();
 			if (dtors != null && dtors.length > 0) {
-				name= CPPVisitor.findInnermostDeclarator(dtors[0]).getName();
+				name= ASTQueries.findInnermostDeclarator(dtors[0]).getName();
 			} else {
 				IASTDeclSpecifier declspec = sdecl.getDeclSpecifier();
 				if (declspec instanceof IASTCompositeTypeSpecifier) {
@@ -1172,7 +1172,7 @@ public class CPPTemplates {
 			} 
 		} else if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
-			name= CPPVisitor.findInnermostDeclarator(fdef.getDeclarator()).getName();
+			name= ASTQueries.findInnermostDeclarator(fdef.getDeclarator()).getName();
 		}
 		return name;
 	}
@@ -1242,7 +1242,7 @@ public class CPPTemplates {
 		    }
 		} else if (nestedDecl instanceof IASTFunctionDefinition) {
 		    IASTDeclarator declarator = ((IASTFunctionDefinition) nestedDecl).getDeclarator();
-		    declarator= CPPVisitor.findInnermostDeclarator(declarator);
+		    declarator= ASTQueries.findInnermostDeclarator(declarator);
 			name = declarator.getName();
 		}
 		if (name != null) {

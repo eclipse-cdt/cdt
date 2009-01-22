@@ -624,13 +624,11 @@ public class CPPVisitor extends ASTQueries {
                 return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    }
 		    // if we don't resolve the target type first, we get a problem binding in case the typedef
-		    // redeclares the target type:
-		    // typedef struct S S;
-		    // mstodo this is a hack, remove it!
+		    // redeclares the target type, otherwise it is safer to defer the resolution of the target type.
 		    IType targetType= createType(declarator);
 		    CPPTypedef td= new CPPTypedef(name);
 		    td.setType(targetType);
-			binding = td;
+		    binding = td;
 		} else if (funcDeclarator != null) {
 			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction) {
 			    IFunction function = (IFunction) binding;

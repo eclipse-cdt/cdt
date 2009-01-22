@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  */
 public class AST2BaseTest extends BaseTestCase {
     protected static final IParserLogService NULL_LOG = new NullLogService();
+	protected static boolean sValidateCopy;
 
     public AST2BaseTest() {
     	super();
@@ -98,7 +99,14 @@ public class AST2BaseTest extends BaseTestCase {
     	super(name);
     }
     
-    protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
+    
+    @Override
+	protected void setUp() throws Exception {
+    	sValidateCopy= true;
+		super.setUp();
+	}
+
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
     	return parse(code, lang, false, true);
     }
     
@@ -144,7 +152,8 @@ public class AST2BaseTest extends BaseTestCase {
         
         IASTTranslationUnit tu = parser.parse();
         assertTrue(tu.isFrozen());
-        validateCopy(tu);
+        if (sValidateCopy)
+        	validateCopy(tu);
 
         if (parser.encounteredError() && expectNoProblems)
             throw new ParserException("FAILURE"); //$NON-NLS-1$

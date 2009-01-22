@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -1751,15 +1752,23 @@ public class CPPSemantics {
 
 	        	if (type == null) {
 	                type = temp;
-	        	} else if (type != temp && !((IType)type).isSameType((IType) temp)) {
-	        		boolean i1= isFromIndex(type);
-	        		boolean i2= isFromIndex(temp);
-	        		if (i1 != i2) { 
-	        			if (i1)  
-	        				type= temp;
-	        		} else {
-	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
-	        		}
+	        	} else if (type != temp) {
+        			boolean i1= isFromIndex(type);
+        			boolean i2= isFromIndex(temp);
+        			if (i1 != i2) {
+        				// prefer non-index bindings
+        				if (i1)  
+        					type= temp;
+        			} else {
+        				if (((IType)type).isSameType((IType) temp)) {
+        					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
+        						// prefer non-typedefs
+        						type= temp;
+        					}
+        				} else {
+        					return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+        				}
+        			}
 	            }
 	        } else {
 	        	if (obj == null) {

@@ -5799,6 +5799,7 @@ public class AST2Tests extends AST2BaseTest {
 	
 	// };
 	public void testScalabilityOfLargeTrivialInitializer_Bug253690() throws Exception {
+		sValidateCopy= false;
 		final int AMOUNT= 250000;
 		final StringBuffer[] input = getContents(3);
 		StringBuilder buf= new StringBuilder();
@@ -5821,7 +5822,7 @@ public class AST2Tests extends AST2BaseTest {
 	}
 
 	private long memoryUsed() {
-		System.gc();System.gc();System.gc();
+		System.gc();System.gc();System.gc();System.gc();System.gc();
 		final Runtime runtime = Runtime.getRuntime();
 		return runtime.totalMemory()-runtime.freeMemory();
 	}
@@ -5949,6 +5950,23 @@ public class AST2Tests extends AST2BaseTest {
 		final String code= getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+		}
+	}
+	
+	// typedef struct A A;
+	// struct A; // struct
+	// struct A* a;
+	public void testTypedefWithSameName() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+			
+			BindingAssertionHelper ba= new BindingAssertionHelper(code, lang == ParserLanguage.CPP);
+			ITypedef t= ba.assertNonProblem("A;", 1);
+			ICompositeType s1= ba.assertNonProblem("A; // struct", 1);
+			ICompositeType s2= ba.assertNonProblem("A*", 1);
+			assertSame(s1, s2);
+			assertSame(s1, t.getType());
 		}
 	}
 }

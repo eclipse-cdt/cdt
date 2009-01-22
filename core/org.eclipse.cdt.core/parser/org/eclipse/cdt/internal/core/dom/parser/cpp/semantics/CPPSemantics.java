@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -1171,6 +1173,15 @@ public class CPPSemantics {
 		} else if (parent instanceof ICPPASTTemplateDeclaration) {
 			ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) parent;
 			nodes = template.getTemplateParameters();
+		} else if (parent instanceof ICPPASTForStatement) {
+			ICPPASTForStatement forStatement = (ICPPASTForStatement) parent;
+			final IASTDeclaration conditionDeclaration = forStatement.getConditionDeclaration();
+			IASTStatement initDeclaration= forStatement.getInitializerStatement();
+			if (conditionDeclaration != null) {
+				nodes= new IASTNode[] {initDeclaration, conditionDeclaration};
+			} else {
+				nodes= new IASTNode[] {initDeclaration};
+			}
 		}
 		
 		int idx = -1;
@@ -1216,7 +1227,7 @@ public class CPPSemantics {
 					}
 				}
 			} else {
-				populateCache(scope, item, (item == parent));
+				populateCache(scope, item);
 			}
 		    
 			if (nodes != null && ++idx < nodes.length) {
@@ -1269,7 +1280,7 @@ public class CPPSemantics {
 		}
 	}
 
-	public static void populateCache(ICPPASTInternalScope scope, IASTNode node, boolean checkAux) {
+	public static void populateCache(ICPPASTInternalScope scope, IASTNode node) {
 	    IASTDeclaration declaration = null;
 	    if (node instanceof ICPPASTTemplateDeclaration) {
 			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
@@ -1279,18 +1290,7 @@ public class CPPSemantics {
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
 	    } else if (node instanceof ICPPASTCatchHandler) {
 			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
-	    } else if (node instanceof ICPPASTForStatement && checkAux) {
-			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;
-			if (forStatement.getConditionDeclaration() == null) {
-				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement)
-					declaration = ((IASTDeclarationStatement)forStatement.getInitializerStatement()).getDeclaration();
-			} else {
-				if (forStatement.getInitializerStatement() instanceof IASTDeclarationStatement) {
-					populateCache(scope, forStatement.getInitializerStatement(), checkAux);
-				}
-				declaration = forStatement.getConditionDeclaration();
-			}
-        } else if (node instanceof ICPPASTSwitchStatement) {
+	    } else if (node instanceof ICPPASTSwitchStatement) {
         	declaration = ((ICPPASTSwitchStatement)node).getControllerDeclaration();
         } else if (node instanceof ICPPASTIfStatement) {
         	declaration = ((ICPPASTIfStatement)node).getConditionDeclaration();
@@ -1323,7 +1323,19 @@ public class CPPSemantics {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
-			if (!declSpec.isFriend()) {
+			IScope dtorScope= scope;
+			if (declSpec.isFriend()) {
+				// friends are added to an enclosing scope. They have to be added such that they are
+				// picked up when this scope is re-populated during ambiguity resolution, while the
+				// enclosing scope is left as it is.
+				try {
+					while (dtorScope.getKind() == EScopeKind.eClassType)
+						dtorScope= dtorScope.getParent();
+				} catch (DOMException e) {
+					dtorScope= null;
+				}
+			}				
+			if (dtorScope != null) {
 				for (IASTDeclarator declarator : declarators) {
 					IASTDeclarator innermost= null;
 					while (declarator != null) {
@@ -1336,28 +1348,38 @@ public class CPPSemantics {
 					}
 					if (innermost != null) {
 						IASTName declaratorName = innermost.getName();
-						ASTInternal.addName(scope,  declaratorName);
+						ASTInternal.addName(dtorScope,  declaratorName);
 					}
 				}
 			}
 	
 			// declSpec 
-			
 			IASTName specName = null;
 			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
-				if (declarators.length == 0 || scope.getPhysicalNode() instanceof IASTTranslationUnit)
+				if (declarators.length == 0 || scope.getPhysicalNode() instanceof IASTTranslationUnit) {
 					specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
+				}
 			} else if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				specName = compSpec.getName();
 				
-				// anonymous union?             //GCC supports anonymous structs too
-				if (declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
-				    specName.getLookupKey().length == 0) {
+				// anonymous union or struct (GCC supports anonymous structs too)
+				if (declarators.length == 0 && specName.getLookupKey().length == 0) {
 				    IASTDeclaration[] decls = compSpec.getMembers();
 				    for (IASTDeclaration decl : decls) {
-                        populateCache(scope, decl, checkAux);
+                        populateCache(scope, decl);
                     }
+				} else {
+					// collect friends enclosed in nested classes
+					switch (scope.getKind()) {
+					case eLocal:
+					case eGlobal:
+					case eNamespace:
+						compSpec.accept(new FriendCollector(scope));
+						break;
+					default:
+						break;
+					}
 				}
 			} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;

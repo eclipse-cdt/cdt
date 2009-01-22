@@ -6433,4 +6433,72 @@ public class AST2CPPTests extends AST2BaseTest {
         ITypedef s2= (ITypedef) ((IPointerType) d.getType()).getType();
         assertInstance(((IFunctionType) s2.getType()).getParameterTypes()[0], IBasicType.class);
     }
+    
+    //    namespace A {
+    //    	class X {
+    //    		friend void f(int);
+    //    		class Y {
+    //    			friend void g(int);
+    //    		};
+    //    	};
+    //    	void test() { 
+    //         f(1);
+    //         g(1);
+    //      } 
+    //    }
+    public void testFriendFunctionResolution_86368_1() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f1= bh.assertNonProblem("f(int)", 1);
+		IFunction f2= bh.assertNonProblem("f(1)", 1);
+		assertSame(f1, f2);
+		IFunction g1= bh.assertNonProblem("g(int)", 1);
+		IFunction g2= bh.assertNonProblem("g(1)", 1);
+		assertSame(g1, g2);
+
+		bh= new BindingAssertionHelper(code, true);
+		f2= bh.assertNonProblem("f(1)", 1);
+		f1= bh.assertNonProblem("f(int)", 1);
+		assertSame(f1, f2);
+		g2= bh.assertNonProblem("g(1)", 1);
+		g1= bh.assertNonProblem("g(int)", 1);
+		assertSame(g1, g2);
+    }
+
+    //    namespace A {
+    //    	void f(int);
+    //    }
+    //    using A::f;
+    //    namespace A {
+    //    	void f(char); // openReferences fails
+    //    }
+    //    void foo() {
+    //    	f('i');
+    //    }
+    //    void bar() {
+    //    	using A::f;
+    //    	f('c');
+    //    }
+    public void testFriendFunctionResolution_86368_2() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f1= bh.assertNonProblem("f(int)", 1);
+		IFunction f2= bh.assertNonProblem("f('i')", 1);
+		assertSame(f1, f2);
+		IFunction g1= bh.assertNonProblem("f(char)", 1);
+		IFunction g2= bh.assertNonProblem("f('c')", 1);
+		assertSame(g1, g2);
+
+		bh= new BindingAssertionHelper(code, true);
+		f2= bh.assertNonProblem("f('i')", 1);
+		f1= bh.assertNonProblem("f(int)", 1);
+		assertSame(f1, f2);
+		g2= bh.assertNonProblem("f('c')", 1);
+		g1= bh.assertNonProblem("f(char)", 1);
+		assertSame(g1, g2);
+    }
 }

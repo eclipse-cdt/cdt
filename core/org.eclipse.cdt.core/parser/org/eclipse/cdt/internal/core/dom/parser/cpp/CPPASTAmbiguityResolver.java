@@ -166,7 +166,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	private void repopulateScope(IASTDeclaration declaration) {
 		IScope scope= CPPVisitor.getContainingScope(declaration);
 		if (scope instanceof ICPPASTInternalScope) {
-			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration, false);
+			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}
 	}
 

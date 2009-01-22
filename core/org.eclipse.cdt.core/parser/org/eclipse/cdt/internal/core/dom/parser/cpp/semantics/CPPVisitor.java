@@ -18,6 +18,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -568,9 +569,11 @@ public class CPPVisitor extends ASTQueries {
 			if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 				if (declSpec.isFriend()) {
+					isFriendDecl= true;
 					try {
-						scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
-						isFriendDecl= true;
+						while (scope.getKind() == EScopeKind.eClassType) {
+							scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
+						}
 					} catch (DOMException e1) {
 					}
 				}
@@ -661,10 +664,6 @@ public class CPPVisitor extends ASTQueries {
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate(name)
 								   : new CPPFunction((ICPPASTFunctionDeclarator) funcDeclarator);
-				// friend functions may be declared in a different scope than the owner scope
-				if (simpleDecl != null && ((ICPPASTDeclSpecifier) simpleDecl.getDeclSpecifier()).isFriend()) {
-					ASTInternal.addName(scope, name);
-				}
 			}
 		} else if (parent instanceof IASTSimpleDeclaration) {
     	    IType t1 = null, t2 = null;

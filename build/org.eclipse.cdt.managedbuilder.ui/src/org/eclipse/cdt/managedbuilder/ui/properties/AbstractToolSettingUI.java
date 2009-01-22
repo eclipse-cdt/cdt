@@ -27,18 +27,14 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	 * @param style
 	 */
 	protected AbstractToolSettingUI(IResourceInfo info) {
- 		// fix for PR 63973
- 		// If we use a grid layout then widgets that should be layed out horizontally,
- 		// e.g. StringButtonFieldEditor, will have their component widgets
- 		// arranged vertically.  This looks terrible when you have for instance
- 		// a StringButtonFieldEditor, which has a label, an edit box, and a "modify" button
- 		// to the right because all three will be stacked vertically.
- 		super(FLAT);
- 		// end fix for 63973
-		noDefaultAndApplyButton();
-		fInfo = info;
+		this(info, GRID);
 	}
 	
+	protected AbstractToolSettingUI(IResourceInfo info, int style) {
+ 		super(style);
+ 		noDefaultAndApplyButton();
+		fInfo = info;	
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -72,4 +68,5 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	public abstract boolean isFor(Object obj1, Object obj2);
 	public abstract void updateFields();
 	public abstract void setValues();
+	
 }

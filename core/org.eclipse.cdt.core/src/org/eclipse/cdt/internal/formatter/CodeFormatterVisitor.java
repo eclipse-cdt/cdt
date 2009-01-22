@@ -436,7 +436,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			// declarator
 			final IASTDeclarator declarator= node.getDeclarator();
 			if (declarator != null) {
-				skipNonWhitespaceToNode(declarator);
 				boolean needSpace= declarator.getPointerOperators().length > 0 && scribe.printComment();
 				if (needSpace) {
 					scribe.space();

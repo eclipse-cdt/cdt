@@ -1130,4 +1130,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//bool member __attribute__ ((__unused__)) = false;
+
+	//bool member __attribute__ ((__unused__)) = false;
+	public void testPreserveSpaceBetweenNameAnd__attribute__Bug261967() throws Exception {
+		assertFormatterResult();
+	}
 }

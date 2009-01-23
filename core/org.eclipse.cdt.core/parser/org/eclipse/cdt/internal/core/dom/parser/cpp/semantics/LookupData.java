@@ -394,9 +394,10 @@ public class LookupData {
         	if (prop == IASTFieldReference.FIELD_NAME) {
         		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
         		IType implied= CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldRef);
-        		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
-        		if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
-    				return ((IPointerType)implied).getType();
+        		if (fieldRef.isPointerDereference()) {
+            		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
+            		if (implied instanceof IPointerType)
+            			return ((IPointerType)implied).getType();
     			}
         		return implied;
         	}

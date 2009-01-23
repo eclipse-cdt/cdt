@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -844,7 +844,17 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // void A::foo() volatile       { bar();/*2*/ }
     // void A::foo() const          { bar();/*3*/ }
     // void A::foo()                { bar();/*4*/ }
-    public void _testMemberFunctionDisambiguationByCVness_238409() throws Exception {
+    // void test() {
+    //   A a;
+    //   const A ca;
+    //   volatile A va;
+    //   const volatile A cva;
+    //   cva.bar();/*5*/
+    //   va.bar();/*6*/
+    //   ca.bar();/*7*/
+    //   a.bar();/*8*/
+    // }
+    public void testMemberFunctionDisambiguationByCVness_238409() throws Exception {
     	ICPPMethod bar_cv= getBindingFromASTName("bar();/*1*/", 3, ICPPMethod.class);
     	ICPPMethod bar_v=  getBindingFromASTName("bar();/*2*/", 3, ICPPMethod.class);
     	ICPPMethod bar_c=  getBindingFromASTName("bar();/*3*/", 3, ICPPMethod.class);
@@ -853,6 +863,20 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	ICPPFunctionType bar_v_ft=  bar_v.getType();
     	ICPPFunctionType bar_c_ft=  bar_c.getType();
     	ICPPFunctionType bar_ft=    bar.getType();
+    	
+    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
+    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
+    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
+    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
+    	
+    	bar_cv= getBindingFromASTName("bar();/*5*/", 3, ICPPMethod.class);
+    	bar_v=  getBindingFromASTName("bar();/*6*/", 3, ICPPMethod.class);
+    	bar_c=  getBindingFromASTName("bar();/*7*/", 3, ICPPMethod.class);
+    	bar=    getBindingFromASTName("bar();/*8*/", 3, ICPPMethod.class);
+    	bar_cv_ft= bar_cv.getType();
+    	bar_v_ft=  bar_v.getType();
+    	bar_c_ft=  bar_c.getType();
+    	bar_ft=    bar.getType();
     	
     	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
     	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());

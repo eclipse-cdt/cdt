@@ -6501,4 +6501,62 @@ public class AST2CPPTests extends AST2BaseTest {
 		g1= bh.assertNonProblem("f(char)", 1);
 		assertSame(g1, g2);
     }
+    
+    // class A {
+    // public:
+    //    void foo() const volatile;
+    //    void foo() volatile;
+    //    void foo() const;
+    //    void foo();
+    //    void bar() const volatile;
+    //    void bar() volatile;
+    //    void bar() const;
+    //    void bar();
+    // };
+    // void A::foo() const volatile { bar();/*1*/ }
+    // void A::foo() volatile       { bar();/*2*/ }
+    // void A::foo() const          { bar();/*3*/ }
+    // void A::foo()                { bar();/*4*/ }
+    // void test() {
+    //   A a;
+    //   const A ca;
+    //   volatile A va;
+    //   const volatile A cva;
+    //   cva.bar();/*5*/
+    //   va.bar();/*6*/
+    //   ca.bar();/*7*/
+    //   a.bar();/*8*/
+    // }
+    public void testMemberFunctionDisambiguationByCVness_238409() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+    	ICPPMethod bar_cv= bh.assertNonProblem("bar();/*1*/", 3, ICPPMethod.class);
+    	ICPPMethod bar_v=  bh.assertNonProblem("bar();/*2*/", 3, ICPPMethod.class);
+    	ICPPMethod bar_c=  bh.assertNonProblem("bar();/*3*/", 3, ICPPMethod.class);
+    	ICPPMethod bar=    bh.assertNonProblem("bar();/*4*/", 3, ICPPMethod.class);
+    	ICPPFunctionType bar_cv_ft= bar_cv.getType();
+    	ICPPFunctionType bar_v_ft=  bar_v.getType();
+    	ICPPFunctionType bar_c_ft=  bar_c.getType();
+    	ICPPFunctionType bar_ft=    bar.getType();
+    	
+    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
+    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
+    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
+    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
+
+    	bar_cv= bh.assertNonProblem("bar();/*5*/", 3, ICPPMethod.class);
+    	bar_v=  bh.assertNonProblem("bar();/*6*/", 3, ICPPMethod.class);
+    	bar_c=  bh.assertNonProblem("bar();/*7*/", 3, ICPPMethod.class);
+    	bar=    bh.assertNonProblem("bar();/*8*/", 3, ICPPMethod.class);
+    	bar_cv_ft= bar_cv.getType();
+    	bar_v_ft=  bar_v.getType();
+    	bar_c_ft=  bar_c.getType();
+    	bar_ft=    bar.getType();
+    	
+    	assertTrue(bar_cv_ft.isConst()); assertTrue(bar_cv_ft.isVolatile());
+    	assertTrue(!bar_v_ft.isConst()); assertTrue(bar_v_ft.isVolatile());
+    	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
+    	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
+    }
 }

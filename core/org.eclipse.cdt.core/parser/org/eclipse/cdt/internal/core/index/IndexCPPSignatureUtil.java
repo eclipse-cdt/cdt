@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.core.runtime.CoreException;
@@ -55,6 +58,13 @@ public class IndexCPPSignatureUtil {
 		if (binding instanceof IFunction) {
 			IFunction function = (IFunction) binding;
 			buffer.append(getFunctionParameterString((function.getType())));
+		}
+		if (binding instanceof ICPPMethod && !(binding instanceof ICPPConstructor)) {
+			ICPPFunctionType ft = ((ICPPMethod) binding).getType();
+			if (ft.isConst())
+				buffer.append('c');
+			if (ft.isVolatile())
+				buffer.append('v');
 		}
 		
 		return buffer.toString();

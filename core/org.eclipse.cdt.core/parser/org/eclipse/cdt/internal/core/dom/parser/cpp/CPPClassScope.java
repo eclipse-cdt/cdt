@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -133,7 +134,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredDestructor()) {
 			//destructor: ~A()
-			IPointerType thisType= new CPPPointerType(clsType);
+			// a destructor can be called for const and volatile objects
+			IPointerType thisType= new CPPPointerType(new CPPQualifierType(clsType, true, true));
 			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, thisType);
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
 			ICPPMethod m = new CPPImplicitMethod(this, dtorName, ft, voidPs);
@@ -456,7 +458,7 @@ class ImplicitsAnalysis {
 			}
 
 			boolean nameEquals= false;
-			char[] dtorname= CPPVisitor.findInnermostDeclarator(dcltor).getName().getLookupKey();
+			char[] dtorname= ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();
 			if (constructor) {
 				nameEquals= CharArrayUtils.equals(dtorname, name);
 			} else {
@@ -489,7 +491,7 @@ class ImplicitsAnalysis {
 			if (dcltor instanceof ICPPASTFunctionDeclarator == false)
 				continue;
 			
-			final char[] nchars= CPPVisitor.findInnermostDeclarator(dcltor).getName().getLookupKey();
+			final char[] nchars= ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();
 			if (!CharArrayUtils.equals(nchars, OverloadableOperator.ASSIGN.toCharArray())) 
 	        	continue;
 			
@@ -510,7 +512,7 @@ class ImplicitsAnalysis {
 	 */
 	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
 		boolean result= false;
-		IASTDeclarator pdtor= CPPVisitor.findTypeRelevantDeclarator(dec.getDeclarator());
+		IASTDeclarator pdtor= ASTQueries.findTypeRelevantDeclarator(dec.getDeclarator());
 		if (pdtor.getPointerOperators().length == 1 &&
 				pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator &&
 				pdtor.getParent() == dec &&

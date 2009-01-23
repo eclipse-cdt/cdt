@@ -1535,7 +1535,12 @@ public class CPPVisitor extends ASTQueries {
 	    if (thisType instanceof IPointerType) {
 			try {
 				IType classType = ((IPointerType) thisType).getType();
-		    	thisType = new CPPPointerType(classType, fnDtor.isConst(), fnDtor.isVolatile());
+				// a destructor can be called for const and volatile objects
+				final char[] lookupKey = name.getLookupKey();
+				final boolean isDestructor= lookupKey.length > 0 && lookupKey[0]=='~';
+		    	final boolean isConst = isDestructor || fnDtor.isConst();
+				final boolean isVolatile = isDestructor || fnDtor.isVolatile();
+				thisType = new CPPPointerType(classType, isConst, isVolatile);
 			} catch (DOMException e) {
 			}
 	    } else {

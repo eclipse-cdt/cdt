@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,6 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -832,15 +831,17 @@ public class Conversions {
 	private static final boolean isCompleteType(IType type) {
 		type= getUltimateType(type, false);
 		if (type instanceof ICPPClassType) {
-			if (type instanceof ICPPInternalBinding) {
-				return (((ICPPInternalBinding) type).getDefinition() != null);
-			}
 			if (type instanceof IIndexFragmentBinding) {
 				try {
 					return ((IIndexFragmentBinding) type).hasDefinition();
 				} catch(CoreException ce) {
 					CCorePlugin.log(ce);
 				}
+			}
+			try {
+				return ((ICPPClassType) type).getCompositeScope() != null;
+			} catch (DOMException e) {
+				return false;
 			}
 		}
 		

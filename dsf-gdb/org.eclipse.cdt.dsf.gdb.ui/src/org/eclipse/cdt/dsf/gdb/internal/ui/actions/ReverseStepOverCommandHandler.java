@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Command handler to trigger a reverse stepover operation
+ * 
+ * @since 2.0
  */
 public class ReverseStepOverCommandHandler extends RetargetDebugContextCommand {
 

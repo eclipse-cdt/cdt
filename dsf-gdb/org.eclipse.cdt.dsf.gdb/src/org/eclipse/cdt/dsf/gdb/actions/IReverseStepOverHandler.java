@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.gdb.actions;
 
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 public interface IReverseStepOverHandler {
 	public boolean canReverseStepOver(ISelection debugContext);
 	public void reverseStepOver(ISelection debugContext);

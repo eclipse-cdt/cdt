@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Command handler to trigger a reverse resume operation
+ * 
+ * @since 2.0
  */
 public class ReverseResumeCommandHandler extends RetargetDebugContextCommand {
 

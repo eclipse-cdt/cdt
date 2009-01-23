@@ -13,7 +13,10 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-/**  Step backwards i source lines, entering function calls. 
+/**  
+ * Step backwards i source lines, entering function calls. 
+ * 
+ * @since 2.0
  */
 public class MIExecReverseStep extends MICommand<MIInfo> {
 

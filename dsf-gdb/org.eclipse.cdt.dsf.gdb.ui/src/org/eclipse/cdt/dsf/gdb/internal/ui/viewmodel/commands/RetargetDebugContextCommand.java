@@ -34,6 +34,8 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Base class for actions which delegate functionality to an adapter retrieved
  * from the current debug context.
+ * 
+ * @since 2.0
  */
 abstract public class RetargetDebugContextCommand extends AbstractHandler implements IDebugContextListener  {
 

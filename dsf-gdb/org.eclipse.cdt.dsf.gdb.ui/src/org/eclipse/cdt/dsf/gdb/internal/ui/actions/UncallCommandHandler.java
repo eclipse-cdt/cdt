@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Command handler to trigger an uncall operation
+ * 
+ * @since 2.0
  */
 public class UncallCommandHandler extends RetargetDebugContextCommand {
 

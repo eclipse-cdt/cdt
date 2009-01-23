@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.gdb.actions;
 
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 public interface IUncallHandler {
 	public boolean canUncall(ISelection debugContext);
 	public void uncall(ISelection debugContext);

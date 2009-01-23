@@ -265,9 +265,9 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     
     // State flags
 	private boolean fSuspended = true;
-    protected boolean fResumePending = false;
+    private boolean fResumePending = false;
 	private boolean fStepping = false;
-	protected boolean fTerminated = false;
+	private boolean fTerminated = false;
 	
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
@@ -305,6 +305,15 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     
     public boolean isValid() { return true; }
     
+    /** @since 2.0 */
+    protected boolean isResumePending() { return fResumePending; }
+    /** @since 2.0 */
+    protected void setResumePending(boolean pending) { fResumePending = pending; }
+    /** @since 2.0 */
+    protected boolean isTerminated() { return fTerminated; }
+    /** @since 2.0 */
+    protected void setTerminated(boolean terminated) { fTerminated = terminated; }
+    
     @SuppressWarnings("unchecked")
     public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
         if (dmc instanceof IExecutionDMContext) {
@@ -316,7 +325,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     }
     
     public CommandCache getCache() { return fMICommandCache; }
-    public ICommandControlService getConnection() { return fConnection; }
+    /** @since 2.0 */
+    protected ICommandControlService getConnection() { return fConnection; }
 
     public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
         return new MIExecutionDMC(getSession().getId(), container, threadId);
@@ -474,6 +484,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         rm.done();
 	}
 
+    /** @since 2.0 */
 	protected boolean doCanResume(IExecutionDMContext context) {
 	    return !fTerminated && isSuspended(context) && !fResumePending;
 	}

@@ -17,6 +17,9 @@ import org.eclipse.cdt.dsf.gdb.actions.IReverseStepIntoHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 @Immutable
 public class GdbReverseStepIntoCommand extends GdbAbstractReverseStepCommand implements IReverseStepIntoHandler {
 

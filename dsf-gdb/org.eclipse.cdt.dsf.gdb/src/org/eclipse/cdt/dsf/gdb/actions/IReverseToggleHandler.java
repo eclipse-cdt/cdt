@@ -13,6 +13,9 @@ package org.eclipse.cdt.dsf.gdb.actions;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 public interface IReverseToggleHandler {
 	public boolean canToggleReverse(ISelection debugContext);
 	public void toggleReverse(ISelection debugContext);

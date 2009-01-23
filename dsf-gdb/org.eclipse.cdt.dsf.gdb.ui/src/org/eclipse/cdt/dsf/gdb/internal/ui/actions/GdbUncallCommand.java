@@ -17,6 +17,9 @@ import org.eclipse.cdt.dsf.gdb.actions.IUncallHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 @Immutable
 public class GdbUncallCommand extends GdbAbstractReverseStepCommand implements IUncallHandler {
 

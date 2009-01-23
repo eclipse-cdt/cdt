@@ -28,6 +28,9 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+/**
+ * @since 2.0
+ */
 @Immutable
 public class GdbReverseResumeCommand implements IReverseResumeHandler {
     

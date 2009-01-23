@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.gdb.actions;
 
 import org.eclipse.jface.viewers.ISelection;
 
+/**
+ * @since 2.0
+ */
 public interface IReverseStepIntoHandler {
 	public boolean canReverseStepInto(ISelection debugContext);
 	public void reverseStepInto(ISelection debugContext);

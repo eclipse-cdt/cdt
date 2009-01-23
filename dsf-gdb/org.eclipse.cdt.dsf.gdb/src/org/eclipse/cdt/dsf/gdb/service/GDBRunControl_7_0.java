@@ -131,11 +131,13 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 				});
     }
 
+    /** @since 2.0 */
 	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseModeEnabled && doCanResume(context));
 		rm.done();
 	}
 
+    /** @since 2.0 */
 	public void canReverseStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
 	   	if (context instanceof IContainerDMContext) {
     		rm.setData(false);
@@ -146,13 +148,15 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	   	canReverseResume(context, rm);		
 	}
 
+    /** @since 2.0 */
 	public boolean isReverseStepping(IExecutionDMContext context) {
-		return !fTerminated && fReverseStepping;
+		return !isTerminated() && fReverseStepping;
 	}
 
+    /** @since 2.0 */
 	public void reverseResume(IExecutionDMContext context, final RequestMonitor rm) {
 		if (fReverseModeEnabled && doCanResume(context)) {
-            fResumePending = true;
+            setResumePending(true);
             // Cygwin GDB will accept commands and execute them after the step
             // which is not what we want, so mark the target as unavailable
             // as soon as we send a resume command.
@@ -196,6 +200,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		
 	}
 
+    /** @since 2.0 */
 	public void reverseStep(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
 
@@ -212,7 +217,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             return;
         }
 
-        fResumePending = true;
+    	setResumePending(true);
         fReverseStepping = true;
         getCache().setContextAvailable(context, false);
         MICommand<MIInfo> cmd = null;
@@ -272,16 +277,19 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         // end temporary
 	}
 
+    /** @since 2.0 */
 	public void canEnableReverseMode(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseSupported);
 		rm.done();
 	}
 
+    /** @since 2.0 */
     public void isReverseModeEnabled(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseModeEnabled);
 		rm.done();
 	}
 
+    /** @since 2.0 */
     public void enableReverseMode(ICommandControlDMContext context, final boolean enable, final RequestMonitor rm) {
     	if (!fReverseSupported) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$
@@ -317,8 +325,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	}
 	}
     
+    /** @since 2.0 */
     public void setReverseModeEnabled(boolean enabled) {
     	fReverseModeEnabled = enabled;
-    	System.setProperty("debug.reverse.enabled", Boolean.toString(enabled));
     }
 }

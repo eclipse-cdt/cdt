@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Command handler to toggle reverse debugging mode
+ * 
+ * @since 2.0
  */
 public class ReverseToggleCommandHandler extends RetargetDebugContextCommand {
 

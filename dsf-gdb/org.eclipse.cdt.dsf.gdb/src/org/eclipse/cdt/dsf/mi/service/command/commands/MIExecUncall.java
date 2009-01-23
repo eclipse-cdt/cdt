@@ -13,7 +13,11 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-/** Steps backward one source code line, not entering function calls. 
+/** 
+ * Steps backward until the line where the current method
+ * was originally called.
+ * 
+ *  @since 2.0
  */
 public class MIExecUncall extends MICommand<MIInfo> {
 

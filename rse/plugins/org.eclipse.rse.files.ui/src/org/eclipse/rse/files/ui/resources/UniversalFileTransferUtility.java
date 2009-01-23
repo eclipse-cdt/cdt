@@ -50,6 +50,7 @@
  * David McKnight     (IBM)      - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  * David McKnight     (IBM)      - [236723] UniversalFileTransferUtility..uploadResourcesFromWorkspace should query remote folder encoding
  * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
+ * David McKnight     (IBM)      - [262092] Special characters are missing when pasting a file on a different connection
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1585,8 +1586,8 @@ public class UniversalFileTransferUtility {
 						{
 							srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
 							if (srcCharSet == null || srcCharSet.length() == 0)
-							{
-								srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+							{	
+								srcCharSet = srcFileOrFolder.getWorkspace().getRoot().getDefaultCharset();
 							}
 						}
 						catch (CoreException e)
@@ -1809,7 +1810,7 @@ public class UniversalFileTransferUtility {
 						srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
 						if (srcCharSet == null || srcCharSet.length() == 0)
 						{
-							srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+							srcCharSet = srcFileOrFolder.getWorkspace().getRoot().getDefaultCharset();
 						}
 					}
 					catch (CoreException e)

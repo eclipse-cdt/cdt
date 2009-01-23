@@ -512,24 +512,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
             getVMProvider().updateNode(
                 this,
                 new VMChildrenUpdate(
-                    parentDelta, getVMProvider().getPresentationContext(), 0, 2,
+                    parentDelta, getVMProvider().getPresentationContext(), 0, 1,
                     new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
                         @Override
                         public void handleCompleted() {
                             final List<Object> data= getData();
 							if (data != null && data.size() != 0) {
 								parentDelta.addNode(data.get(0), 0, IModelDelta.SELECT | IModelDelta.STATE);
-								
-						        // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
-						        // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
-						        // refresh the whole stack trace with every step would slow down stepping too much.
-						        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-						        if (runControlService != null && 
-                                    triggeringCtx != null && runControlService.isStepping(triggeringCtx) &&
-						            data.size() >= 2)
-						        {
-                                    parentDelta.addNode( data.get(1), 1, IModelDelta.STATE);
-						        }
                             }
                             // Even in case of errors, complete the request monitor.
                             rm.done();

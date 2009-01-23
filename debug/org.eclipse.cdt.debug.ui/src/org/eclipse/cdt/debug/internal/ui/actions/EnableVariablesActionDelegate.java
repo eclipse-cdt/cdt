@@ -85,7 +85,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 			public void run() {
 				while( it.hasNext() ) {
 					IEnableDisableTarget target = getEnableDisableTarget( it.next() );
-					if ( target != null ) {
+					if ( target != null && target.canEnableDisable() ) {
 						try {
 							if ( size > 1 ) {
 								target.setEnabled( isEnableAction() );
@@ -124,12 +124,12 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 		boolean allDisabled = true;
 		while( it.hasNext() ) {
 			IEnableDisableTarget target = getEnableDisableTarget( it.next() );
-			if ( target != null && !target.canEnableDisable() )
-				continue;
-			if ( target.isEnabled() )
-				allDisabled = false;
-			else
-				allEnabled = false;
+			if ( target != null && target.canEnableDisable() ) {
+				if ( target.isEnabled() )
+					allDisabled = false;
+				else
+					allEnabled = false;
+			}
 		}
 		if ( isEnableAction() )
 			action.setEnabled( !allEnabled );

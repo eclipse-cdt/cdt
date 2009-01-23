@@ -637,12 +637,14 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
         
         // Iterate through the current active proxies to try to find a proxy with the same
-        // element and re-use it if found.  At the same time purge proxies that are no longer
+        // element and re-use it if found. Only disposed proxies can be re-used because
+        // multiple viewers cannot use the same proxy.  Also at this time purge other proxies 
+        // that are no longer installed.
         IVMModelProxy proxy = null;
         for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
             IVMModelProxy next = itr.next();
             if (next != null) {
-            	if (next.getRootElement().equals(element)) {
+            	if (next.getRootElement().equals(element) && next.isDisposed()) {
             		proxy = next;
             	} else if (next.isDisposed()) {
             		itr.remove();

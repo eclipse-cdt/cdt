@@ -819,11 +819,17 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     @Override
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
         // Iterate through the current active proxies to try to find a proxy with the same
-        // element and re-use it if found.  At the same time purge proxies that are no longer
+        // element and re-use it if found.  Only disposed proxies can be re-used because
+        // multiple viewers cannot use the same proxy.
+        // 
+        // Unlike in the base class, do not remove proxies just because they were disposed 
+        // by the viewer.  These proxies can contain modification history for variables in 
+        // their cache.  The proxies will be removed once their cache entries are emptied.  
+        // See rootElementRemovedFromCache().
         IVMModelProxy proxy = null;
         for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
             IVMModelProxy next = itr.next();
-            if (next != null && next.getRootElement().equals(element)) {
+            if (next != null && next.getRootElement().equals(element) && next.isDisposed()) {
                 proxy = next;
                 break;
             }

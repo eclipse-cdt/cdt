@@ -27,7 +27,6 @@ import org.eclipse.dd.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -160,7 +159,7 @@ public class PlainTextImporter implements IMemoryImporter {
 		}
 		catch(Exception e)
 		{
-			DebugUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 		    	DebugException.INTERNAL_ERROR, "Failure", e));
 		}
 		
@@ -295,10 +294,6 @@ public class PlainTextImporter implements IMemoryImporter {
 					{	
 						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
 						
-						BigInteger offset = null;
-						if(!fUseCustomAddress)
-							offset = BigInteger.ZERO;
-						
 						BigInteger scrollToAddress = null;
 						
 						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
@@ -333,13 +328,16 @@ public class PlainTextImporter implements IMemoryImporter {
 								if(scrollToAddress == null)
 									scrollToAddress = recordAddress;
 								
-								memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) 
-									fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead)), data);
+								BigInteger writeAddress = 
+									
+									recordAddress.subtract(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead));
+								
+								memoryWriter.write(writeAddress, data);
 								
 								bytesRead += data.length;
 							}
 							
-							recordAddress = recordAddress.and(BigInteger.valueOf(bytesRead));
+							recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
 							
 							jobCount = jobCount.add(BigInteger.valueOf(bytesRead));
 							while(jobCount.compareTo(factor) >= 0)
@@ -360,7 +358,7 @@ public class PlainTextImporter implements IMemoryImporter {
 					}
 					catch(Exception e) 
 					{ 
-						DebugUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 					    	DebugException.INTERNAL_ERROR, "Failure", e));	
 					}
 				}

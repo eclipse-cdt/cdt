@@ -12,18 +12,13 @@
 package org.eclipse.dd.debug.ui.memory.transport.actions;
 
 import org.eclipse.dd.debug.ui.memory.transport.ImportMemoryDialog;
+import org.eclipse.dd.debug.ui.memory.transport.MemoryTransportPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
-import org.eclipse.debug.internal.ui.views.memory.MemoryViewIdRegistry;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
@@ -77,7 +72,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 		if(memBlock == null)
 			return;
 			
-		ImportMemoryDialog dialog = new ImportMemoryDialog(DebugUIPlugin.getShell(), memBlock, fView);
+		ImportMemoryDialog dialog = new ImportMemoryDialog(MemoryTransportPlugin.getShell(), memBlock, fView);
 		dialog.open();
 		
 		dialog.getResult();

@@ -12,7 +12,7 @@
 package org.eclipse.dd.debug.ui.memory.transport;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.util.Properties;
 
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class SRecordExporter implements IMemoryExporter 
+public class RAWBinaryExporter implements IMemoryExporter 
 {
 	File fOutputFile;
 	BigInteger fStartAddress;
@@ -157,8 +157,7 @@ public class SRecordExporter implements IMemoryExporter
 		{
 			BigInteger startAddress = null;
 			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock)
-					.getBigBaseAddress(); // FIXME use selection/caret address?
+				startAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
 			else
 				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
 			
@@ -183,8 +182,6 @@ public class SRecordExporter implements IMemoryExporter
 		fileButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void widgetSelected(SelectionEvent e) {
@@ -382,30 +379,28 @@ public class SRecordExporter implements IMemoryExporter
 	
 	public String getId()
 	{
-		return "srecord";
+		return "rawbinary";
 	}
 	
 	public String getName()
 	{
-		return "SRecord";
+		return "RAW Binary";
 	}
 	
 	public void exportMemory() 
 	{
-		Job job = new Job("Memory Export to S-Record File"){ //$NON-NLS-1$
+		Job job = new Job("Memory Export to RAW Binary File"){ //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				
 				try
 				{
 					try
 					{	
-						// FIXME 4 byte default
-						
-						BigInteger DATA_PER_RECORD = BigInteger.valueOf(16);
+						BigInteger DATA_PER_RECORD = BigInteger.valueOf(1024);
 						
 						BigInteger transferAddress = fStartAddress;
 						
-						FileWriter writer = new FileWriter(fOutputFile);
+						FileOutputStream writer = new FileOutputStream(fOutputFile);
 						
 						BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_RECORD);
 						BigInteger factor = BigInteger.ONE;
@@ -424,56 +419,18 @@ public class SRecordExporter implements IMemoryExporter
 							if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
 								length = fEndAddress.subtract(transferAddress);
 							
-							writer.write("S3"); // FIXME 4 byte address
-							
-							StringBuffer buf = new StringBuffer();
-							
-							BigInteger sRecordLength = BigInteger.valueOf(4); // address size
-							sRecordLength = sRecordLength.add(length);
-							sRecordLength = sRecordLength.add(BigInteger.ONE); // checksum
-							
-							String transferAddressString = transferAddress.toString(16);
-							
-							String lengthString = sRecordLength.toString(16);
-							if(lengthString.length() == 1)
-								buf.append("0");
-							buf.append(lengthString);
-							for(int i = 0; i < 8 - transferAddressString.length(); i++)
-								buf.append("0");
-							buf.append(transferAddressString);
-							
 							// data
+							byte[] byteValues = new byte[length.intValue()];
 							
 							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress, 
 								length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
 							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
 							{
-								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
-								if(bString.length() == 1)
-									buf.append("0");
-								buf.append(bString);
+								byteValues[byteIndex] = bytes[byteIndex].getValue();
 							}
 							
-							/*
-							 * The least significant byte of the one's complement of the sum of the values
-	                         * represented by the pairs of characters making up the records length, address,
-	                         * and the code/data fields.
-							 */
-							byte checksum = 0;
 							
-							for(int i = 0; i < buf.length(); i+=2)
-							{
-								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
-								checksum += value.byteValue();
-							}
-							
-							String bString = BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16);
-							if(bString.length() == 1)
-								buf.append("0");
-							buf.append(bString);
-
-							writer.write(buf.toString().toUpperCase());
-							writer.write("\n");
+							writer.write(byteValues);
 							
 							transferAddress = transferAddress.add(length);
 							

@@ -29,6 +29,16 @@
 	        class="org.eclipse.dd.debug.ui.memory.transport.PlainTextExporter">
 	    </exporter>
 	    
+	    <importer 
+	        name="RAWBinaryImporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.RAWBinaryImporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.RAWBinaryImporter">
+	    </importer>
+	    <exporter 
+	        name="RAWBInaryExporter"
+	        id="org.eclipse.dd.debug.ui.memory.transport.RAWBinaryExporter"
+	        class="org.eclipse.dd.debug.ui.memory.transport.RAWBinaryExporter">
+	    </exporter>
 	    
 	</extension>
 	

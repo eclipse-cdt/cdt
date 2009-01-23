@@ -14,7 +14,6 @@ package org.eclipse.dd.debug.ui.memory.transport;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -151,7 +149,7 @@ public class ExportMemoryDialog extends SelectionDialog
 					exporters.addElement((IMemoryExporter) element.createExecutableExtension("class"));
 				}
 				catch(Exception e) {
-				DebugUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 			    		DebugException.INTERNAL_ERROR, "Failure", e));
 				}
 			}

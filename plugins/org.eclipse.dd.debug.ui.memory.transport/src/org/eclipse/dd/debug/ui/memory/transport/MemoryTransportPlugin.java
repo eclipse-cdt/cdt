@@ -11,6 +11,9 @@
 
 package org.eclipse.dd.debug.ui.memory.transport;
 
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class MemoryTransportPlugin extends AbstractUIPlugin 
@@ -37,5 +40,25 @@ public class MemoryTransportPlugin extends AbstractUIPlugin
 	 */
 	public static String getUniqueIdentifier() {
 		return PLUGIN_ID;
+	}
+	
+	/**
+	 * Returns the currently active workbench window shell or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the currently active workbench window shell or <code>null</code>
+	 */
+	public static Shell getShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		}
+		else {
+			return window.getShell();
+		}
+		return null;
 	}
 }

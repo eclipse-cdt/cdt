@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -195,7 +194,7 @@ public class ImportMemoryDialog extends SelectionDialog
 					importers.addElement((IMemoryImporter) element.createExecutableExtension("class"));
 				}
 				catch(Exception e) {
-					DebugUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 			    		DebugException.INTERNAL_ERROR, "Failure", e));
 				}
 			}
@@ -232,10 +231,9 @@ public class ImportMemoryDialog extends SelectionDialog
 			}
 		});
 		
-		
 		fFormatCombo.select(0);
-		fCurrentControl = fFormatImporters[0].createControl(container, 
-				fMemoryBlock, fProperties, ImportMemoryDialog.this);
+		fCurrentControl = 
+			fFormatImporters[0].createControl(container,fMemoryBlock, fProperties, ImportMemoryDialog.this);
 		
 		return composite;
 	}
@@ -244,6 +242,4 @@ public class ImportMemoryDialog extends SelectionDialog
 	{
 		getButton(IDialogConstants.OK_ID).setEnabled(isValid);
 	}
-
-	
 }

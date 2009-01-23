@@ -11,10 +11,8 @@
 
 package org.eclipse.dd.debug.ui.memory.transport;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.Properties;
 
@@ -42,7 +40,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class SRecordImporter implements IMemoryImporter {
+public class RAWBinaryImporter implements IMemoryImporter {
 
 	File fInputFile;
 	BigInteger fStartAddress;
@@ -50,9 +48,6 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	private Text fStartText;
 	private Text fFileText;
-	
-	private Button fComboRestoreToThisAddress;
-	private Button fComboRestoreToFileAddress;
 	
 	private Button fScrollToBeginningOnImportComplete;
 	
@@ -77,8 +72,6 @@ public class SRecordImporter implements IMemoryImporter {
 				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
 				fProperties.setProperty(TRANSFER_START, fStartText.getText());
 				fProperties.setProperty(TRANSFER_SCROLL_TO_START, fScrollToStart.toString());
-				fProperties.setProperty(TRANSFER_CUSTOM_START_ADDRESS, "" + fComboRestoreToThisAddress.getSelection());
-				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
 				
@@ -90,47 +83,16 @@ public class SRecordImporter implements IMemoryImporter {
 		formLayout.marginWidth = formLayout.marginHeight = 9;
 		composite.setLayout(formLayout);
 		
-		// restore to file address
-		
-		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
-		fComboRestoreToFileAddress.setSelection(true);
-		fComboRestoreToFileAddress.setText("Restore to address specified in the file");
-		fComboRestoreToFileAddress.setSelection(!new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false")).booleanValue());
-		//comboRestoreToFileAddress.setLayoutData(data);
-		
 		// restore to this address
 		
-		fComboRestoreToThisAddress = new Button(composite, SWT.RADIO);
-		fComboRestoreToThisAddress.setText("Restore to this address: "); 
-		fComboRestoreToThisAddress.setSelection(new Boolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false")).booleanValue());
-		FormData data = new FormData();
-		data.top = new FormAttachment(fComboRestoreToFileAddress);
-		fComboRestoreToThisAddress.setLayoutData(data);
+		Label labelStartText = new Label(composite, SWT.NONE);
+		labelStartText.setText("Restore to address: ");
 		
 		fStartText = new Text(composite, SWT.NONE);
-		data = new FormData();
-		data.top = new FormAttachment(fComboRestoreToFileAddress);
-		data.left = new FormAttachment(fComboRestoreToThisAddress);
+		FormData data = new FormData();
+		data.left = new FormAttachment(labelStartText);
 		data.width = 100;
 		fStartText.setLayoutData(data);
-		
-		fComboRestoreToFileAddress.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-
-			public void widgetSelected(SelectionEvent e) {
-				validate();
-			}
-		});
-		
-		fComboRestoreToThisAddress.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-
-			public void widgetSelected(SelectionEvent e) {
-				validate();
-			}
-		});
 		
 		// file
 		
@@ -161,8 +123,7 @@ public class SRecordImporter implements IMemoryImporter {
 		{
 			BigInteger startAddress = null;
 			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock)
-					.getBigBaseAddress(); // FIXME use selection/caret address?
+				startAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
 			else
 				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
 			
@@ -181,8 +142,6 @@ public class SRecordImporter implements IMemoryImporter {
 		fileButton.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void widgetSelected(SelectionEvent e) {
@@ -256,17 +215,9 @@ public class SRecordImporter implements IMemoryImporter {
 		
 		try
 		{
-			boolean restoreToAddress = fComboRestoreToThisAddress.getSelection();
-			if ( restoreToAddress ) {
-				getStartAddress();
-			}
-			
-			boolean restoreToAddressFromFile = fComboRestoreToFileAddress.getSelection();
-			if ( restoreToAddressFromFile ) {
-				if(!getFile().exists()) {
-					isValid = false;
-				}
-			}
+			getStartAddress();
+			if(!getFile().exists())
+				isValid = false;
 		}
 		catch(Exception e)
 		{
@@ -298,16 +249,16 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	public String getId()
 	{
-		return "srecord";
+		return "rawbinary";
 	}
 	
 	public String getName()
 	{
-		return "SRecord";
+		return "RAW Binary";
 	}
 	
 	public void importMemory() {
-		Job job = new Job("Memory Import from S-Record File"){ //$NON-NLS-1$
+		Job job = new Job("Memory Import from RAW Binary File"){ //$NON-NLS-1$
 			
 			public IStatus run(IProgressMonitor monitor) {
 				
@@ -317,17 +268,9 @@ public class SRecordImporter implements IMemoryImporter {
 					{	
 						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
 						
-						// FIXME 4 byte default
-						
-						final int CHECKSUM_LENGTH = 1;
-						
 						BigInteger scrollToAddress = null;
 						
-						BigInteger offset = null;
-						if(!fProperties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false").equals("true"))
-							offset = BigInteger.ZERO;
-						
-						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
+						FileInputStream reader = new FileInputStream(fInputFile);
 						
 						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
 						BigInteger factor = BigInteger.ONE;
@@ -336,83 +279,43 @@ public class SRecordImporter implements IMemoryImporter {
 							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
 							jobs = jobs.divide(factor);
 						}
-							
+						
+						byte[] byteValues = new byte[1024];
+						
 						monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
 						
 						BigInteger jobCount = BigInteger.ZERO;
-						String line = reader.readLine();
-						while(line != null && !monitor.isCanceled())
+						int actualByteCount = reader.read(byteValues);
+						BigInteger recordAddress = fStartAddress;
+						
+						while(actualByteCount != -1 && !monitor.isCanceled())
 						{
-							String recordType = line.substring(0, 2);
-							int recordCount = Integer.parseInt(line.substring(2, 4), 16);
-							int bytesRead = 4 + recordCount;
-							int position = 4;
-							int addressSize = 0;
-							
-							BigInteger recordAddress = null;
-				
-							if("S3".equals(recordType)) //$NON-NLS-1$
-								addressSize = 4;
-							else if("S1".equals(recordType)) //$NON-NLS-1$
-								addressSize = 2;
-							else if("S2".equals(recordType)) //$NON-NLS-1$
-								addressSize = 3;
-							
-							recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
-							recordCount -= addressSize;
-							position += addressSize * 2;
-							
-							if(offset == null)
-								offset = fStartAddress.subtract(recordAddress);
-							
-							recordAddress = recordAddress.add(offset);
-							
-							byte data[] = new byte[recordCount - CHECKSUM_LENGTH];
+							byte data[] = new byte[actualByteCount];
 							for(int i = 0; i < data.length; i++)
 							{
-								data[i] = new BigInteger(line.substring(position++, position++ + 1), 16).byteValue();
+								data[i] = byteValues[i];
 							}
 
-							/*
-							 * The least significant byte of the one's complement of the sum of the values
-	                         * represented by the pairs of characters making up the records length, address,
-	                         * and the code/data fields.
-							 */
-							StringBuffer buf = new StringBuffer(line.substring(2));
-							byte checksum = 0;
-							
-							for(int i = 0; i < buf.length(); i+=2)
-							{
-								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
-								checksum += value.byteValue();
-							}
-							
-							/*
-							 * Since we included the checksum in the checksum calculation the checksum
-							 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
-							 * calculation here.
-							 */
-							if ( checksum != (byte) -1 ) {
-								reader.close();
-								monitor.done();
-								return new Status( IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(), "Checksum failure of line = " + line); //$NON-NLS-1$
-							}
-							
 							if(scrollToAddress == null)
 								scrollToAddress = recordAddress;
 							
-							// FIXME error on incorrect checksum
+							BigInteger baseAddress = null;
+							if(fMemoryBlock instanceof IMemoryBlockExtension)
+								baseAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
+							else
+								baseAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
 							
-							memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
+							memoryWriter.write(recordAddress.subtract(baseAddress), data);
 
-							jobCount = jobCount.add(BigInteger.valueOf(bytesRead));
+							jobCount = jobCount.add(BigInteger.valueOf(actualByteCount));
 							while(jobCount.compareTo(factor) >= 0)
 							{
 								jobCount = jobCount.subtract(factor);
 								monitor.worked(1);
 							}
 							
-							line = reader.readLine();
+							recordAddress.add(BigInteger.valueOf(actualByteCount));
+							actualByteCount = reader.read(byteValues);
  						}
 						
 						memoryWriter.flush();

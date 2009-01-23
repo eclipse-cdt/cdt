@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,14 +29,14 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 
 	public static IFunction createForSample(IFunction sample, IASTName name) throws DOMException {
 		if (sample instanceof ICPPConstructor)
-			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner(), name);
+			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner());
 		
-		return new CPPUnknownFunction(sample.getOwner(), name.getLastName());
+		return new CPPUnknownFunction(sample.getOwner(), sample.getNameCharArray());
 	}
 
 	private ICPPFunctionType fType;
 
-	public CPPUnknownFunction(IBinding owner, IASTName name) {
+	public CPPUnknownFunction(IBinding owner, char[] name) {
 		super(owner, name);
 	}
 

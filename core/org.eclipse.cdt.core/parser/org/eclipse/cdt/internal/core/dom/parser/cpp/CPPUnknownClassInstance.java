@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Google, Inc and others.
+ * Copyright (c) 2008, 2009 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -28,7 +27,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnknownClassInstance {
 	private final ICPPTemplateArgument[] arguments;
 
-	public CPPUnknownClassInstance(ICPPUnknownBinding scopeBinding, IASTName name, ICPPTemplateArgument[] arguments) {
+	public CPPUnknownClassInstance(ICPPUnknownBinding scopeBinding, char[] name, ICPPTemplateArgument[] arguments) {
 		super(scopeBinding, name);
 		this.arguments = arguments;
 	}

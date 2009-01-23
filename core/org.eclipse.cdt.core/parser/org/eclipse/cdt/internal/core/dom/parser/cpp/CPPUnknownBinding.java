@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -35,9 +36,10 @@ public class CPPUnknownBinding extends PlatformObject
     private ICPPScope unknownScope;
     protected IASTName name;
 
-    public CPPUnknownBinding(IBinding owner, IASTName name) {
+    public CPPUnknownBinding(IBinding owner, char[] name) {
         super();
-        this.name = name;
+        this.name = new CPPASTName(name);
+        this.name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
         fOwner= owner;
     }
 

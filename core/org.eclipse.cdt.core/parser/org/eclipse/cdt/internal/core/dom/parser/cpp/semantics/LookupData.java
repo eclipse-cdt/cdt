@@ -99,6 +99,7 @@ public class LookupData {
 	public boolean prefixLookup = false;
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
+	public boolean checkPointOfDecl= true; // for lookup of unknown bindings the point of declaration can be reversed.
 
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
@@ -245,7 +246,8 @@ public class LookupData {
 
 	private boolean considerConstructors() {
 		if (astName == null) return false;
-		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
+		final ASTNodeProperty propertyInParent = astName.getPropertyInParent();
+		if (propertyInParent == CPPSemantics.STRING_LOOKUP_PROPERTY || propertyInParent == null) return false;
 		IASTNode p1 = astName.getParent();
 		IASTNode p2 = p1.getParent();
 		

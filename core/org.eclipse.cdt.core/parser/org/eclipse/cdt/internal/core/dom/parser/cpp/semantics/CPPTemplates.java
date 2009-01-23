@@ -125,7 +125,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -552,7 +551,7 @@ public class CPPTemplates {
 				IBinding owner= template.getOwner();
 				if (owner instanceof ICPPUnknownBinding) {
 					ICPPTemplateArgument[] args= createTemplateArgumentArray(id);
-					return new CPPUnknownClassInstance((ICPPUnknownBinding) template.getOwner(), id, args);
+					return new CPPUnknownClassInstance((ICPPUnknownBinding) template.getOwner(), id.getSimpleID(), args);
 				}
 			}
 
@@ -2034,35 +2033,26 @@ public class CPPTemplates {
             		final ICPPTemplateArgument[] arguments = ucli.getArguments();
             		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(arguments, tpMap, within);
             		if (!t.equals(owner) && newArgs != arguments) {
-            			result= new CPPUnknownClassInstance((ICPPUnknownBinding) t, ucli.getUnknownName(), newArgs);
+            			result= new CPPUnknownClassInstance((ICPPUnknownBinding) t, ucli.getNameCharArray(), newArgs);
             		}
             	} else if (!t.equals(owner)) {
             		if (unknown instanceof ICPPUnknownClassType) {
-            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getUnknownName());
+            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getNameCharArray());
             		} else if (unknown instanceof IFunction) {
-            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getUnknownName());
+            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getNameCharArray());
             		} else {
-            			result= new CPPUnknownBinding((ICPPUnknownBinding) t, unknown.getUnknownName());
+            			result= new CPPUnknownBinding((ICPPUnknownBinding) t, unknown.getNameCharArray());
             		}
             	} 
             } else if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null) {
-	            	IASTName name= unknown.getUnknownName();
-	            	if (name != null) {
-	            		IBinding[] candidates;
-	            		if (s instanceof ICPPASTInternalScope) {
-	            			candidates= ((ICPPASTInternalScope) s).getBindings(name, true, false, null, false);
-	            		} else {
-	            			candidates= s.getBindings(name, true, false, null);
+	            	result= CPPSemantics.resolveUnknownName(s, unknown);
+	            	if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
+	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
+	            		if (result instanceof ICPPClassTemplate) {
+	            			result = instantiate((ICPPClassTemplate) result, newArgs);
 	            		}
-	            		result= CPPSemantics.resolveAmbiguities(name, candidates);
-	    	            if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
-	    	            	ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
-	    	            	if (result instanceof ICPPClassTemplate) {
-	    	            		result = instantiate((ICPPClassTemplate) result, newArgs);
-	    	            	}
-	    	            }
 	            	}
 	            }
             }

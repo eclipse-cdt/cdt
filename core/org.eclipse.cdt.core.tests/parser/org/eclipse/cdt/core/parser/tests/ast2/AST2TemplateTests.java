@@ -3631,4 +3631,32 @@ public class AST2TemplateTests extends AST2BaseTest {
         ICPPConstructor ctor= bh.assertNonProblem("XT/**/", 2);
         ctor= bh.assertNonProblem("XT<T>/**/", 5);
     }
+    
+    //    template <typename T> class XT {
+    //    	public:
+    //    		typedef typename T::Nested TD;
+    //    };
+    //
+    //    class Base {
+    //    	public:
+    //    		typedef int Nested;
+    //    };
+    //
+    //    class Derived : public Base {
+    //    };
+    //
+    //    void test() {
+    //    	XT<Derived>::TD x;
+    //    }
+    public void testResolutionOfUnknownBindings_262163() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP); 
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+        IVariable x= bh.assertNonProblem("x;", 1);
+        ITypedef Nested= bh.assertNonProblem("Nested;", 6);
+        IType t= x.getType();
+        assertInstance(t, ITypedef.class);
+        t= ((ITypedef) t).getType();
+        assertSame(t, Nested);
+    }
 }

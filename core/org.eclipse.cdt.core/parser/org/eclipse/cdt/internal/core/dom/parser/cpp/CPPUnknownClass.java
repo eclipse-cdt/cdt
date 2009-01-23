@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -31,10 +30,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownClassType {
 	public static CPPUnknownClass createUnnamedInstance() {
-    	return new CPPUnknownClass(null, new CPPASTName());
+    	return new CPPUnknownClass(null, CharArrayUtils.EMPTY);
     }
     
-    public CPPUnknownClass(IBinding binding, IASTName name) {
+    public CPPUnknownClass(IBinding binding, char[] name) {
         super(binding, name);
     }
 

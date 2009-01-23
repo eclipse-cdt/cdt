@@ -148,11 +148,11 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
         IBinding result= o[idx];
         if (result == null) {
         	if (type) {
-        		result= new CPPUnknownClass(binding, name.getLastName());
+        		result= new CPPUnknownClass(binding, name.getSimpleID());
         	} else if (function) {
-        		result= new CPPUnknownFunction(binding, name.getLastName());
+        		result= new CPPUnknownFunction(binding, name.getSimpleID());
         	} else {
-        		result= new CPPUnknownBinding(binding, name.getLastName());
+        		result= new CPPUnknownBinding(binding, name.getSimpleID());
         	}
         	o[idx]= result;
         }

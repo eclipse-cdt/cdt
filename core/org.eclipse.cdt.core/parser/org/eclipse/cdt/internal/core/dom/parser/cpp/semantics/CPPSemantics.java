@@ -340,7 +340,7 @@ public class CPPSemantics {
 						}
 					}
 					if (cls instanceof ICPPDeferredClassInstance) {
-						binding= new CPPUnknownConstructor(cls, data.astName);
+						binding= new CPPUnknownConstructor(cls);
 					} else {
 						// Force resolution of constructor bindings
 						final ICPPConstructor[] constructors = cls.getConstructors();
@@ -377,12 +377,12 @@ public class CPPSemantics {
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
 			if (data.functionParameters != null) {
-				binding= new CPPUnknownFunction(data.skippedScope, name.getLastName());
+				binding= new CPPUnknownFunction(data.skippedScope, name.getSimpleID());
 			} else {
 				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
-					binding= new CPPUnknownClass(data.skippedScope, name.getLastName());
+					binding= new CPPUnknownClass(data.skippedScope, name.getSimpleID());
 				} else {
-					binding= new CPPUnknownBinding(data.skippedScope, name.getLastName());
+					binding= new CPPUnknownBinding(data.skippedScope, name.getSimpleID());
 				}
 			}
 		}
@@ -733,7 +733,7 @@ public class CPPSemantics {
 			blockItem = CPPVisitor.getContainingBlockItem(blockItem);
 			
 			if (!data.usingDirectivesOnly) {
-				IBinding[] bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
+				IBinding[] bindings= getBindingsFromScope(scope, fileSet, data);
 				if (data.typesOnly) {
 					removeObjects(bindings);
 				}
@@ -773,7 +773,7 @@ public class CPPSemantics {
 			}
 			
 			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope) {
-				mergeResults(data, lookupInParents(data, scope, ((ICPPClassScope) scope).getClassType()), true);
+				mergeResults(data, lookupInParents(data, scope, ((ICPPClassScope) scope).getClassType(), fileSet), true);
 			}
 			
 			if (!data.contentAssist && (data.problem != null || data.hasResults()))
@@ -793,6 +793,16 @@ public class CPPSemantics {
 				nextScope= getParentScope(scope, data.tu);
 			}
 		}
+	}
+
+	private static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
+		IBinding[] bindings;
+		if (scope instanceof ICPPASTInternalScope) {
+			bindings= ((ICPPASTInternalScope) scope).getBindings(data.astName, true, data.prefixLookup, fileSet, data.checkPointOfDecl);
+		} else {
+			bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
+		}
+		return bindings;
 	}
 
 	private static void removeObjects(final IBinding[] bindings) {
@@ -850,7 +860,7 @@ public class CPPSemantics {
 		return (ICPPScope) parentScope;
 	}
 
-	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope) {
+	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope, IIndexFileSet fileSet) {
 		if (lookIn instanceof ICPPClassScope == false)
 			return null;
 		
@@ -916,13 +926,13 @@ public class CPPSemantics {
 					// is circular inheritance
 					if (!data.inheritanceChain.containsKey(classScope)) {
 						//is this name define in this scope?
-						IBinding[] inCurrentScope= classScope.getBindings(data.astName, true, data.prefixLookup);
+						IBinding[] inCurrentScope= getBindingsFromScope(classScope, fileSet, data);
 						if (data.typesOnly) {
 							removeObjects(inCurrentScope);
 						}
 						final boolean isEmpty= inCurrentScope.length == 0 || inCurrentScope[0] == null;
 						if (data.contentAssist) {
-							Object temp = lookupInParents(data, classScope, overallScope);
+							Object temp = lookupInParents(data, classScope, overallScope, fileSet);
 							if (!isEmpty) {
 								inherited = mergePrefixResults(null, inCurrentScope, true);
 								inherited = mergePrefixResults((CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true);
@@ -930,7 +940,7 @@ public class CPPSemantics {
 								inherited= temp;
 							}
 						} else if (isEmpty) {
-							inherited= lookupInParents(data, classScope, overallScope);
+							inherited= lookupInParents(data, classScope, overallScope, fileSet);
 						} else {
 							inherited= inCurrentScope;
 							visitVirtualBaseClasses(data, cls);
@@ -1658,7 +1668,7 @@ public class CPPSemantics {
 	    Object[] items = (Object[]) data.foundItems;
 	    for (int i = 0; i < items.length && items[i] != null; i++) {
 	        Object o = items[i];
-	        boolean declaredBefore = declaredBefore(o, name, indexBased);
+	        boolean declaredBefore = !data.checkPointOfDecl || declaredBefore(o, name, indexBased);
 	        boolean checkResolvedNamesOnly= false;
 	        if (!data.checkWholeClassScope && !declaredBefore) {
 	        	if (name.getRoleOfName(false) != IASTNameOwner.r_reference) {
@@ -2727,4 +2737,33 @@ public class CPPSemantics {
 		}
 		return false;
 	}
+	
+	static protected IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown) {
+		final IASTName unknownName = unknown.getUnknownName();
+		LookupData data = new LookupData(unknownName);
+		data.checkPointOfDecl= false;
+		data.typesOnly= unknown instanceof IType;
+		
+		try {
+            // 2: lookup
+            lookup(data, scope);
+        } catch (DOMException e) {
+            data.problem = (ProblemBinding) e.getProblem();
+        }
+		
+		if (data.problem != null)
+		    return data.problem;
+		
+		// 3: resolve ambiguities
+		IBinding binding;
+        try {
+            binding = resolveAmbiguities(data, unknownName);
+        } catch (DOMException e) {
+            binding = e.getProblem();
+        }
+        // 4: post processing
+		binding = postResolution(binding, data);
+		return binding;
+	}
+
 }

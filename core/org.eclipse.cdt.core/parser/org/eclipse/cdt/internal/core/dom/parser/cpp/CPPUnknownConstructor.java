@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
@@ -21,8 +20,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
  */
 public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPConstructor {
 
-	public CPPUnknownConstructor(ICPPClassType owner, IASTName name) {
-		super(owner, name);
+	public CPPUnknownConstructor(ICPPClassType owner) {
+		super(owner, owner.getNameCharArray());
 	}
 
 	public boolean isExplicit() throws DOMException {

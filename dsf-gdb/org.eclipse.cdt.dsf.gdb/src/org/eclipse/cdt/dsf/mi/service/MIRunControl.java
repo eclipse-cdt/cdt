@@ -265,9 +265,9 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     
     // State flags
 	private boolean fSuspended = true;
-    private boolean fResumePending = false;
+    protected boolean fResumePending = false;
 	private boolean fStepping = false;
-	private boolean fTerminated = false;
+	protected boolean fTerminated = false;
 	
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
@@ -316,7 +316,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     }
     
     public CommandCache getCache() { return fMICommandCache; }
-    
+    public ICommandControlService getConnection() { return fConnection; }
+
     public IMIExecutionDMContext createMIExecutionContext(IContainerDMContext container, int threadId) {
         return new MIExecutionDMC(getSession().getId(), container, threadId);
     }
@@ -472,8 +473,8 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         rm.setData(doCanResume(context));
         rm.done();
 	}
-	
-	private boolean doCanResume(IExecutionDMContext context) {
+
+	protected boolean doCanResume(IExecutionDMContext context) {
 	    return !fTerminated && isSuspended(context) && !fResumePending;
 	}
 
@@ -602,11 +603,11 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
                 break;
             case STEP_RETURN:
                 // The -exec-finish command operates on the selected stack frame, but here we always
-                // want it to operate on the stop stack frame.  So we manually create a top-frame
+                // want it to operate on the top stack frame.  So we manually create a top-frame
                 // context to use with the MI command.
                 // We get a local instance of the stack service because the stack service can be shut
                 // down before the run control service is shut down.  So it is possible for the
-                // getService() reqeust below to return null.
+                // getService() request below to return null.
                 MIStack stackService = getServicesTracker().getService(MIStack.class);
                 if (stackService != null) {
                     IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);

@@ -9,7 +9,8 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson		      - Modified for additional functionality
  *     Ericsson           - Version 7.0
- *     Nokia - create and use backend service. 
+ *     Nokia              - create and use backend service. 
+ *     Ericsson           - Added IReverseControl support
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -24,17 +25,32 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
+import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseContinue;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNext;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNextInstruction;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStep;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStepInstruction;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
+import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class GDBRunControl_7_0 extends MIRunControl {
+public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunControl {
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
+	private boolean fReverseSupported = true;
+	private boolean fReverseStepping = false;
+	private boolean fReverseModeEnabled = false;
 
     public GDBRunControl_7_0(DsfSession session) {
         super(session);
@@ -55,7 +71,8 @@ public class GDBRunControl_7_0 extends MIRunControl {
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
 
-        register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName()}, 
+        register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName(),
+        					  IReverseRunControl.class.getName()}, 
         		 new Hashtable<String,String>());
         requestMonitor.done();
     }
@@ -112,5 +129,196 @@ public class GDBRunControl_7_0 extends MIRunControl {
 						rm.done();
 					}
 				});
+    }
+
+	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		rm.setData(fReverseModeEnabled && doCanResume(context));
+		rm.done();
+	}
+
+	public void canReverseStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+	   	if (context instanceof IContainerDMContext) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+
+	   	canReverseResume(context, rm);		
+	}
+
+	public boolean isReverseStepping(IExecutionDMContext context) {
+		return !fTerminated && fReverseStepping;
+	}
+
+	public void reverseResume(IExecutionDMContext context, final RequestMonitor rm) {
+		if (fReverseModeEnabled && doCanResume(context)) {
+            fResumePending = true;
+            // Cygwin GDB will accept commands and execute them after the step
+            // which is not what we want, so mark the target as unavailable
+            // as soon as we send a resume command.
+            getCache().setContextAvailable(context, false);
+            MIExecReverseContinue cmd = null;
+            if (context instanceof IContainerDMContext) {
+            	cmd = new MIExecReverseContinue(context);
+            } else {
+        		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+    			if (dmc == null){
+    	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+    	            rm.done();
+    	            return;
+    			}
+            	cmd = new MIExecReverseContinue(dmc);
+            }
+//            getConnection().queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+            // temporary
+            final MIExecReverseContinue finalcmd = cmd;
+            final IExecutionDMContext finaldmc = context;
+            getConnection().queueCommand(
+            		new RawCommand(finaldmc, "set exec-direction reverse"),
+            		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+            			@Override
+            			public void handleSuccess() {
+            				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
+                    			@Override
+                    			public void handleSuccess() {
+                    	            getConnection().queueCommand(
+                    	            		new RawCommand(finaldmc, "set exec-direction forward"),
+                    	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+                    			}
+            				});
+            			}
+            		});
+            // end temporary
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + ", is already running or reverse not enabled.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.done();
+        }
+		
+	}
+
+	public void reverseStep(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+    	assert context != null;
+
+    	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null){
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.done();
+            return;
+		}
+    	
+    	if (!fReverseModeEnabled || !doCanResume(context)) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Cannot resume context", null)); //$NON-NLS-1$
+            rm.done();
+            return;
+        }
+
+        fResumePending = true;
+        fReverseStepping = true;
+        getCache().setContextAvailable(context, false);
+        MICommand<MIInfo> cmd = null;
+        switch(stepType) {
+            case STEP_INTO:
+            	cmd = new MIExecReverseStep(dmc, 1);
+                break;
+            case STEP_OVER:
+                cmd = new MIExecReverseNext(dmc, 1);
+                break;
+            case STEP_RETURN:
+                // The -exec-finish command operates on the selected stack frame, but here we always
+                // want it to operate on the top stack frame.  So we manually create a top-frame
+                // context to use with the MI command.
+                // We get a local instance of the stack service because the stack service can be shut
+                // down before the run control service is shut down.  So it is possible for the
+                // getService() request below to return null.
+                MIStack stackService = getServicesTracker().getService(MIStack.class);
+                if (stackService != null) {
+                    IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
+                    cmd = new MIExecUncall(topFrameDmc);
+                } else {
+                    rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
+                    rm.done();
+                    return;
+                }
+                break;
+            case INSTRUCTION_STEP_INTO:
+                cmd = new MIExecReverseStepInstruction(dmc, 1);
+                break;
+            case INSTRUCTION_STEP_OVER:
+                cmd = new MIExecReverseNextInstruction(dmc, 1);
+                break;
+            default:
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
+                rm.done();
+        }
+        
+        // temporary
+        final MICommand<MIInfo> finalcmd = cmd;
+        final IExecutionDMContext finaldmc = context;
+        getConnection().queueCommand(
+        		new RawCommand(finaldmc, "set exec-direction reverse"),
+        		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+        			@Override
+        			public void handleSuccess() {
+        				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
+                			@Override
+                			public void handleSuccess() {
+                	            getConnection().queueCommand(
+                	            		new RawCommand(finaldmc, "set exec-direction forward"),
+                	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+                			}
+        				});
+        			}
+        		});
+        // end temporary
+	}
+
+	public void canEnableReverseMode(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
+		rm.setData(fReverseSupported);
+		rm.done();
+	}
+
+    public void isReverseModeEnabled(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
+		rm.setData(fReverseModeEnabled);
+		rm.done();
+	}
+
+    public void enableReverseMode(ICommandControlDMContext context, final boolean enable, final RequestMonitor rm) {
+    	if (!fReverseSupported) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$
+    		rm.done();
+    		return;
+    	}
+    	
+    	if (fReverseModeEnabled == enable) {
+    		rm.done();
+    		return;
+    	}
+    	
+    	if (enable) {
+        	getConnection().queueCommand(
+        			new RawCommand(context, "record"), //$NON-NLS-1$
+        			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+        				@Override
+        				public void handleSuccess() {
+        					setReverseModeEnabled(true);
+        					rm.done();
+        				}
+        			});
+    	} else {
+        	getConnection().queueCommand(
+        			new RawCommand(context, "stoprecord"), //$NON-NLS-1$
+        			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+        				@Override
+        				public void handleSuccess() {
+        					setReverseModeEnabled(false);
+        					rm.done();
+        				}
+        			});
+    	}
+	}
+    
+    public void setReverseModeEnabled(boolean enabled) {
+    	fReverseModeEnabled = enabled;
+    	System.setProperty("debug.reverse.enabled", Boolean.toString(enabled));
     }
 }

@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -258,14 +259,14 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     	return true;
     }
 
-     /*
+    /**
      * Start the program.
      */
     public void start(GdbLaunch launch, final RequestMonitor requestMonitor) {
     	startOrRestart(launch, false, requestMonitor);
     }
 
-    /*
+    /**
      * Before restarting the inferior, we must re-initialize its input/output streams
      * and create a new inferior process object.  Then we can restart the inferior.
      */
@@ -273,8 +274,9 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
    		startOrRestart(launch, true, requestMonitor);
     }
 
-    /*
+    /**
      * Insert breakpoint at entry if set, and start or restart the program.
+     * Note that restart does not apply to remote or attach sessions.
      */
     protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
     	if (fMIBackend.getIsAttachSession()) {
@@ -307,7 +309,20 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     		return;
     	}
 
-    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor);
+    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    		@Override
+    		public void handleSuccess() {
+    	    	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
+    	    	GDBRunControl_7_0 reverseService = servicesTracker.getService(GDBRunControl_7_0.class);
+    	    	servicesTracker.dispose();
+
+    			if (reverseService != null) {
+    				// When starting or restarting a program, reverse mode is automatically disabled
+    				reverseService.setReverseModeEnabled(false);
+    			}
+    			requestMonitor.done();
+    		}
+    	};
 
     	if (!stopInMain) {
     		// Just start the program.
@@ -335,7 +350,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     	}
     }
 
-    /*
+    /**
      * This method creates a new inferior process object based on the current Pty or output stream.
      */
     public void createInferiorProcess() {

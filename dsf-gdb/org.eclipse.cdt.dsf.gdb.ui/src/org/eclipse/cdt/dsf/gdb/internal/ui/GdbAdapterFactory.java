@@ -32,10 +32,20 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.DefaultRefreshAllTarget;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.IRefreshAllTarget;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
+import org.eclipse.cdt.dsf.gdb.actions.IReverseResumeHandler;
+import org.eclipse.cdt.dsf.gdb.actions.IReverseStepIntoHandler;
+import org.eclipse.cdt.dsf.gdb.actions.IReverseStepOverHandler;
+import org.eclipse.cdt.dsf.gdb.actions.IReverseToggleHandler;
+import org.eclipse.cdt.dsf.gdb.actions.IUncallHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfTerminateCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbConnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRestartCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseResumeCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseStepIntoCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseStepOverCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseToggleCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbUncallCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
@@ -77,10 +87,14 @@ public class GdbAdapterFactory
         final GdbViewModelAdapter fViewModelAdapter;
         final DsfSourceDisplayAdapter fSourceDisplayAdapter;
         final DsfStepIntoCommand fStepIntoCommand;
+        final GdbReverseStepIntoCommand fReverseStepIntoCommand;
         final DsfStepOverCommand fStepOverCommand;
+        final GdbReverseStepOverCommand fReverseStepOverCommand;
         final DsfStepReturnCommand fStepReturnCommand;
+        final GdbUncallCommand fUncallCommand;
         final DsfSuspendCommand fSuspendCommand;
         final DsfResumeCommand fResumeCommand;
+        final GdbReverseResumeCommand fReverseResumeCommand;
         final GdbRestartCommand fRestartCommand;
         final DsfTerminateCommand fTerminateCommand;
         final GdbConnectCommand fConnectCommand;
@@ -91,6 +105,7 @@ public class GdbAdapterFactory
 		final IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
 		final SteppingController fSteppingController;
         final DefaultRefreshAllTarget fRefreshAllTarget;
+        final GdbReverseToggleCommand fReverseToggleTarget;
 
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -111,10 +126,14 @@ public class GdbAdapterFactory
             
             fSteppingModeTarget= new DsfSteppingModeTarget();
             fStepIntoCommand = new DsfStepIntoCommand(session, fSteppingModeTarget);
+            fReverseStepIntoCommand = new GdbReverseStepIntoCommand(session, fSteppingModeTarget);
             fStepOverCommand = new DsfStepOverCommand(session, fSteppingModeTarget);
+            fReverseStepOverCommand = new GdbReverseStepOverCommand(session, fSteppingModeTarget);
             fStepReturnCommand = new DsfStepReturnCommand(session);
+            fUncallCommand = new GdbUncallCommand(session, fSteppingModeTarget);
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
+            fReverseResumeCommand = new GdbReverseResumeCommand(session);
             fRestartCommand = new GdbRestartCommand(session, fLaunch);
             fTerminateCommand = new DsfTerminateCommand(session);
             fConnectCommand = new GdbConnectCommand(session);
@@ -122,19 +141,25 @@ public class GdbAdapterFactory
             fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
             fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
             fRefreshAllTarget = new DefaultRefreshAllTarget();
+            fReverseToggleTarget = new GdbReverseToggleCommand(session);
             
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
+            session.registerModelAdapter(IReverseStepIntoHandler.class, fReverseStepIntoCommand);
             session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);
+            session.registerModelAdapter(IReverseStepOverHandler.class, fReverseStepOverCommand);
             session.registerModelAdapter(IStepReturnHandler.class, fStepReturnCommand);
+            session.registerModelAdapter(IUncallHandler.class, fUncallCommand);
             session.registerModelAdapter(ISuspendHandler.class, fSuspendCommand);
             session.registerModelAdapter(IResumeHandler.class, fResumeCommand);
+            session.registerModelAdapter(IReverseResumeHandler.class, fReverseResumeCommand);
             session.registerModelAdapter(IRestart.class, fRestartCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
             session.registerModelAdapter(IConnect.class, fConnectCommand);
             session.registerModelAdapter(IDisconnectHandler.class, fDisconnectCommand);
             session.registerModelAdapter(IModelSelectionPolicyFactory.class, fModelSelectionPolicyFactory);
             session.registerModelAdapter(IRefreshAllTarget.class, fRefreshAllTarget);
+            session.registerModelAdapter(IReverseToggleHandler.class, fReverseToggleTarget);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -165,27 +190,37 @@ public class GdbAdapterFactory
 
             session.unregisterModelAdapter(ISteppingModeTarget.class);
             session.unregisterModelAdapter(IStepIntoHandler.class);
+            session.unregisterModelAdapter(IReverseStepIntoHandler.class);
             session.unregisterModelAdapter(IStepOverHandler.class);
+            session.unregisterModelAdapter(IReverseStepOverHandler.class);
             session.unregisterModelAdapter(IStepReturnHandler.class);
+            session.unregisterModelAdapter(IUncallHandler.class);
             session.unregisterModelAdapter(ISuspendHandler.class);
             session.unregisterModelAdapter(IResumeHandler.class);
+            session.unregisterModelAdapter(IReverseResumeHandler.class);
             session.unregisterModelAdapter(IRestart.class);
             session.unregisterModelAdapter(ITerminateHandler.class);
             session.unregisterModelAdapter(IConnect.class);
             session.unregisterModelAdapter(IDisconnectHandler.class);
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
             session.unregisterModelAdapter(IRefreshAllTarget.class);
+            session.unregisterModelAdapter(IReverseToggleHandler.class);
             
             fStepIntoCommand.dispose();
+            fReverseStepIntoCommand.dispose();
             fStepOverCommand.dispose();
+            fReverseStepOverCommand.dispose();
             fStepReturnCommand.dispose();
+            fUncallCommand.dispose();
             fSuspendCommand.dispose();
             fResumeCommand.dispose();
+            fReverseResumeCommand.dispose();
             fRestartCommand.dispose();
             fTerminateCommand.dispose();
             fConnectCommand.dispose();
             fDisconnectCommand.dispose();
             fSuspendTrigger.dispose();
+            fReverseToggleTarget.dispose();
         }
     }
 

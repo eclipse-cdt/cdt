@@ -334,9 +334,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 							// Determine if any byte within the cell was modified
 							boolean changed = false;
 							for (int j = i; j < (i + 4) && j < length; j++) {
-								newBlock[j].setFlags(fBlock[distance + j].getFlags());
-								if (newBlock[j].getValue() != fBlock[distance + j].getValue())
-									changed = true;
+								if ( j < fBlock.length ) {
+									newBlock[j].setFlags(fBlock[distance + j].getFlags());
+									if (newBlock[j].getValue() != fBlock[distance + j].getValue())
+										changed = true;
+								}
 							}
 							// If so, flag the whole cell as modified
 							if (changed)
@@ -373,9 +375,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 							// Determine if any byte within the cell was modified
 							boolean changed = false;
 							for (int j = i; j < (i + 4) && j < length; j++) {
-								newBlock[distance + j].setFlags(fBlock[j].getFlags());
-								if (newBlock[distance + j].getValue() != fBlock[j].getValue())
-									changed = true;
+								if ( j < fBlock.length ) {
+									newBlock[distance + j].setFlags(fBlock[j].getFlags());
+									if (newBlock[distance + j].getValue() != fBlock[j].getValue())
+										changed = true;
+								}
 							}
 							// If so, flag the whole cell as modified
 							if (changed)

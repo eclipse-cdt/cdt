@@ -6559,4 +6559,22 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue(bar_c_ft.isConst());  assertTrue(!bar_c_ft.isVolatile());
     	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
     }
+    
+    
+    //    void test1(float f);
+    //    void test1(void);
+    //    void blabla() {
+    //    	test1(1);
+    //    }
+    //    enum E {e1};
+    //    class C {};
+    //    void test2(float f);
+    //    void test2(C c);
+    //    void blabla2() {
+    //    	test2(e1);
+    //    }
+    public void testOverloadResolution_262191() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+    }
 }

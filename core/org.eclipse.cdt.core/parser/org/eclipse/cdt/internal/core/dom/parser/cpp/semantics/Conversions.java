@@ -778,7 +778,7 @@ public class Conversions {
 			}
 		}
 
-		if (t instanceof IBasicType && s instanceof IBasicType || s instanceof IEnumeration) {
+		if (t instanceof IBasicType && (s instanceof IBasicType || s instanceof IEnumeration)) {
 			// 4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			// An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;

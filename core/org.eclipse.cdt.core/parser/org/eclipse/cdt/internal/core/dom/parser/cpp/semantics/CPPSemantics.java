@@ -1899,7 +1899,7 @@ public class CPPSemantics {
 				
 			final IParameter[] params = function.getParameters();
 			int numPars = params.length;
-			if (numArgs == 0 && numPars == 1) {
+			if (numArgs < 2 && numPars == 1) {
 				// check for void
 			    IType t = SemanticUtil.getUltimateTypeViaTypedefs(params[0].getType());
 			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)

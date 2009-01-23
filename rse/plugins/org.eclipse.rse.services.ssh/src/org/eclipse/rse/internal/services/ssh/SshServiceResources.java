@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
  * Yu-Fen Kuo       (MontaVista) - [170910] Integrate the TM Terminal View with RSE
+ * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh;
@@ -31,10 +32,6 @@ public class SshServiceResources extends NLS {
 
 	public static String SftpFileService_Name;
 
-	public static String SshShellService_Description;
-
-	public static String SshShellService_Name;
-	
 	public static String SshTerminalService_Name;
 	
 	public static String SshTerminalService_Description;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,16 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.terminal;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.internal.services.ssh.SshServiceResources;
-import org.eclipse.rse.internal.services.ssh.shell.SshShellService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.terminals.AbstractTerminalService;
 import org.eclipse.rse.services.terminals.ITerminalShell;
@@ -29,7 +27,6 @@ import org.eclipse.rse.services.terminals.ITerminalShell;
 public class SshTerminalService extends AbstractTerminalService implements ISshService {
 
 	private final ISshSessionProvider fSessionProvider;
-	private SshShellService fRelatedShellService;
 
     public SshTerminalService(ISshSessionProvider sessionProvider) {
     	fSessionProvider = sessionProvider;
@@ -45,46 +42,7 @@ public class SshTerminalService extends AbstractTerminalService implements ISshS
         return hostShell;
     }
 
-    /**
-	 * Return an RSE IShellService related to this Terminal Service.
-	 */
-	protected synchronized SshShellService getRelatedShellService() {
-		if (fRelatedShellService == null) {
-			fRelatedShellService = new SshShellService(getSessionProvider());
-		}
-		return fRelatedShellService;
-	}
-
-	/**
-	 * Adapt this terminal service to different (potentially contributed)
-	 * interfaces, in order to provide additional functionality.
-	 *
-	 * Asks the adapter manager first whether it got any contributed adapter; if
-	 * none is found contributed externally, try to adapt to an SshShellService.
-	 * That way, clients can easily convert this ITerminalService into an
-	 * IShellService:
-	 *
-	 * <pre>
-	 * IShellService ss = (IShellService) myTerminalService.getAdapter(IShellService.class);
-	 * </pre>
-	 *
-	 * @see IAdaptable
-	 * @see PlatformObject#getAdapter(Class)
-	 */
-    public Object getAdapter(Class adapter) {
-		// TODO I'm not sure if this is the right way doing things. First of
-		// all, we're holding on to the created terminal service forever if
-		// we're asked for it, thus needing extra memory.
-		// Second, by asking the adapter manager first, we might get no chance
-		// returning what we think is right.
-    	Object o = super.getAdapter(adapter);
-    	if (o==null && adapter.isAssignableFrom(SshShellService.class)) {
-    		return getRelatedShellService();
-		}
-		return o;
-	}
-
-	public String getName() {
+    public String getName() {
         return SshServiceResources.SshTerminalService_Name;
     }
 

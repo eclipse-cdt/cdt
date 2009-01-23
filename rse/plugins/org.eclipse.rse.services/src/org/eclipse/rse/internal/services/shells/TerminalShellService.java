@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [170910] Adopt RSE ITerminalService API for SSH
  * Anna Dushistova  (MontaVista) - adapted from SshShellService
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
  *******************************************************************************/
 package org.eclipse.rse.internal.services.shells;
 
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 
+import org.eclipse.rse.internal.services.RSEServicesMessages;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.AbstractShellService;
 import org.eclipse.rse.services.shells.IHostShell;
@@ -93,4 +95,15 @@ public class TerminalShellService extends AbstractShellService {
 		}
 		return o;
 	}
+	
+	public String getName()
+	{
+		return RSEServicesMessages.TerminalShellService_name;
+	}
+
+	public String getDescription()
+	{
+		return RSEServicesMessages.TerminalShellService_description;
+	}
+
 }

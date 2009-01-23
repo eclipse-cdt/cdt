@@ -13,6 +13,5 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services.ssh;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
  org.eclipse.rse.internal.services.ssh.files;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
- org.eclipse.rse.internal.services.ssh.shell;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
  org.eclipse.rse.internal.services.ssh.terminal;x-friends:="org.eclipse.rse.subsystems.shells.ssh"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

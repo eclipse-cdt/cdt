@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Sheldon D'souza  (Celunite)   - Adapted from SshServiceCommandShell
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.shells.telnet;
 
@@ -27,7 +28,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.services.shells.TerminalServiceHostShell;
-import org.eclipse.rse.internal.services.telnet.shell.TelnetHostShell;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
@@ -179,9 +179,6 @@ public class TelnetServiceCommandShell extends ServiceCommandShell {
 		//assert shell instanceof TelnetHostShell;
 		if (shell instanceof TerminalServiceHostShell) {
 			return ((TerminalServiceHostShell)shell).getPromptCommand();
-		}
-		if (shell instanceof TelnetHostShell) {
-			return ((TelnetHostShell)shell).getPromptCommand();
 		}
 		//return something impossible such that nothing is ever matched
 		return "\uffff"; //$NON-NLS-1$

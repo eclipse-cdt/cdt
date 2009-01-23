@@ -58,6 +58,7 @@
  * Anna Dushistova  (MontaVista) - [226550] [api] Launch Shell and Launch Terminal actions should be contributed declaratively
  * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
  * David McKnight     (IBM)      - [251860] Rename a file/folder to a hidden file causes problems
+ * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -317,7 +318,8 @@ public class SystemViewRemoteFileAdapter
 		boolean canRead = true;
 		boolean supportsSearch = true;
 		boolean supportsArchiveManagement = false;
-
+		boolean offline = false;
+		
 		// perf improvement... phil
 		Object firstSelection = selection.getFirstElement();
 		IRemoteFile firstFile = null;
@@ -327,9 +329,13 @@ public class SystemViewRemoteFileAdapter
 			elementType = firstFile.isDirectory() || firstFile.isRoot() ? 1 : 0;
 			isArchive = firstFile.isArchive();
 			canRead = firstFile.canRead();
+			
+			IRemoteFileSubSystem fileSubSystem = firstFile.getParentRemoteFileSubSystem();
+			
+			offline = fileSubSystem.isOffline();
 
-			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
-			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+			supportsSearch = fileSubSystem.getParentRemoteFileSubSystemConfiguration().supportsSearch();
+			supportsArchiveManagement = fileSubSystem.getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		}
 		else
 			return;
@@ -353,25 +359,24 @@ public class SystemViewRemoteFileAdapter
 
 		if ((elementType == 1 || (isArchive && supportsArchiveManagement)))
 		{
-			if (!foldersOnly && canRead)
+			if (!foldersOnly)
 			{
 				if (addNewFile == null)
 				{
-					addNewFile = new SystemNewFileAction(shell);
+					addNewFile = new SystemNewFileAction(shell);					
 				}
+				addNewFile.setEnabled(canRead && !offline);
 				menu.add(ISystemContextMenuConstants.GROUP_NEW, addNewFile);
 			}
 			if (!filesOnly)
 			{
-			    if (canRead)
-			    {
-			        if (addNewFolder == null)
-			        {
-			            addNewFolder = new SystemNewFolderAction(shell);
-			        }
-			        menu.add(ISystemContextMenuConstants.GROUP_NEW, addNewFolder);
-			    }
-
+		        if (addNewFolder == null)
+		        {
+		            addNewFolder = new SystemNewFolderAction(shell);		            
+		        }
+		        addNewFolder.setEnabled(canRead && !offline);
+		        menu.add(ISystemContextMenuConstants.GROUP_NEW, addNewFolder);
+	
 				if (addNewFilter == null)
 				{
 					addNewFilter = new SystemNewFileFilterFromFolderAction(shell);
@@ -382,33 +387,27 @@ public class SystemViewRemoteFileAdapter
 			}
 
 		}
-		else
-		{
-		    if (canRead)
-		    {
-		    	// open
-		    	String label = SystemResources.ACTION_CASCADING_OPEN_LABEL;
-		   	    String tooltip = SystemResources.ACTION_CASCADING_OPEN_TOOLTIP;
-		   		SystemEditFilesAction action = new SystemEditFilesAction(label, tooltip, shell);
-		   		menu.add(ISystemContextMenuConstants.GROUP_OPEN, action);
+		else {		
+	    	// open
+	    	String label = SystemResources.ACTION_CASCADING_OPEN_LABEL;
+	   	    String tooltip = SystemResources.ACTION_CASCADING_OPEN_TOOLTIP;
+	   		SystemEditFilesAction action = new SystemEditFilesAction(label, tooltip, shell);
+	   		menu.add(ISystemContextMenuConstants.GROUP_OPEN, action);
+	   		action.setEnabled(canRead && !offline);
 
-		   		// open with ->
+	   		// open with ->
 
-				MenuManager submenu =
-					new MenuManager(FileResources.ResourceNavigator_openWith,
-						ISystemContextMenuConstants.GROUP_OPENWITH);
+			MenuManager submenu =
+				new MenuManager(FileResources.ResourceNavigator_openWith,
+					ISystemContextMenuConstants.GROUP_OPENWITH);
 
-				if (openWithMenu == null)
-				{
-					openWithMenu = new SystemRemoteFileOpenWithMenu();
-				}
-				openWithMenu.updateSelection(selection);
-				submenu.add(openWithMenu);
-				menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
-
-
-
-		    }
+			if (openWithMenu == null)
+			{
+				openWithMenu = new SystemRemoteFileOpenWithMenu();
+			}
+			openWithMenu.updateSelection(selection);			
+			submenu.add(openWithMenu);
+			menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
 		}
 
 
@@ -444,35 +443,40 @@ public class SystemViewRemoteFileAdapter
 		{
 			replaceEditionAction = new SystemReplaceWithEditionAction(shell);
 		}
-		if (canRead && supportsSearch)
+		if (supportsSearch)
 		{
 		    //menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, addToArchiveAction);
 
 			// add search action
 			menu.add(ISystemContextMenuConstants.GROUP_SEARCH, searchAction);
+			searchAction.setEnabled(canRead && !offline);
 		}
 
-		if (!firstFile.isRoot() && canRead)
+		if (!firstFile.isRoot())
 		{
 			menu.add(menuGroup, copyClipboardAction);
+			copyClipboardAction.setEnabled(canRead && !offline);
 			if (elementType == 0)
 			{
 				menu.add(ISystemContextMenuConstants.GROUP_COMPAREWITH, compareFilesAction);
 				menu.add(ISystemContextMenuConstants.GROUP_COMPAREWITH, compareEditionAction);
 				menu.add(ISystemContextMenuConstants.GROUP_REPLACEWITH, replaceEditionAction);
+				
+				compareFilesAction.setEnabled(canRead && !offline);
+				compareEditionAction.setEnabled(canRead && !offline);
+				replaceEditionAction.setEnabled(canRead && !offline);
 			}
 		}
 
 		if (elementType == 1 || (isArchive && supportsArchiveManagement))
 		{
-		    if (canRead)
-		    {
-		        menu.add(menuGroup, pasteClipboardAction);
-		    }
+		    menu.add(menuGroup, pasteClipboardAction);
+		    pasteClipboardAction.setEnabled(canRead && !offline);		 
 		}
-		if (!firstFile.isRoot() && canRead)
+		if (!firstFile.isRoot())
 		{
 			menu.add(menuGroup, moveAction);
+			moveAction.setEnabled(canRead && !offline);
 		}
 	}
 
@@ -1491,7 +1495,9 @@ public class SystemViewRemoteFileAdapter
 	{
 	    if (element instanceof IRemoteFile)
 	    {
-	        return ((IRemoteFile)element).canRead();
+	    	IRemoteFile file = (IRemoteFile)element;
+	    	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
+	        return file.canRead() && !offline;
 	    }
 		return true;
 	}
@@ -1506,8 +1512,9 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) element;
+	    	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
 			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
-			return file.canRead() && file.canWrite() && (file.isDirectory() || file.isRoot() || (file.isArchive() && supportsArchiveManagement));
+			return !offline && file.canRead() && file.canWrite() && (file.isDirectory() || file.isRoot() || (file.isArchive() && supportsArchiveManagement));
 		}
 
 		return false;
@@ -2727,8 +2734,8 @@ public class SystemViewRemoteFileAdapter
 	public boolean canDelete(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		//System.out.println("INSIDE CANDELETE FOR ADAPTER: RETURNING " + !file.isRoot());
-		return !file.isRoot() && file.canRead();
+    	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
+ 		return !file.isRoot() && file.canRead() && !offline;
 	}
 
 
@@ -2861,7 +2868,8 @@ public class SystemViewRemoteFileAdapter
 	public boolean canRename(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		return !file.isRoot() && file.canRead();
+    	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
+		return !file.isRoot() && file.canRead() && !offline;
 	}
 
 	private void moveTempResource(IResource localResource, IPath newLocalPath, IRemoteFileSubSystem ss, String newRemotePath)
@@ -3357,7 +3365,8 @@ public class SystemViewRemoteFileAdapter
 		IRemoteFile remoteFile = (IRemoteFile) element;
 		if (remoteFile.isFile())
 		{
-			return remoteFile.canRead();
+	    	boolean offline = remoteFile.getParentRemoteFileSubSystem().isOffline();
+			return remoteFile.canRead() && !offline;
 		}
 		return false;
 	}

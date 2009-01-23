@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2008 IBM Corporation and others. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
+-->
+
 <?eclipse version="3.0"?>
 <plugin>
    
@@ -100,19 +116,19 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"   
-            id="org.eclipse.rse.files.importexport.projectImportExport">
-         <filter
-               name="isDirectory"
-               value="true">
-         </filter>
-            
+            id="org.eclipse.rse.files.importexport.projectImportExport"> 
+            <filter name="isDirectory" value="true"/>                            
+         
          <action
-               label="%ImportToProject.label"
+               label="%ImportToProject.label" 
                tooltip="%ImportToProject.tooltip"
                class="org.eclipse.rse.internal.importexport.files.RemoteFileImportToProjectActionDelegate"
                menubarPath="group.importexport"
-               enablesFor="1"
+               enablesFor="1"                              
                id="importToProject">
+               <enablement>
+                <objectState name="offline" value="false"/>
+               </enablement>
          </action>
          
          <action
@@ -122,6 +138,9 @@
                menubarPath="group.importexport"
                enablesFor="1"
                id="exportFromProject">
+               <enablement>
+                <objectState name="offline" value="false"/>
+               </enablement>
          </action>
       </objectContribution>
    </extension>

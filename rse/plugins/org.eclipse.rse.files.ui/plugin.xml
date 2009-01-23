@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+Copyright (c) 2008 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,12 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
-Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
-Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
-David McKnight (IBM) - [187711] Link with Editor action for System View
-David McKnight (IBM) - [209593] [api] add support for "file permissions" and "owner" properties for unix files
-Johnson Ma (Wind River) - [195402] Add tar.gz archive support
+David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -448,14 +443,17 @@ Johnson Ma (Wind River) - [195402] Add tar.gz archive support
             objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
             id="org.eclipse.rse.files.ui.actions.synchronizeCache">
                 <visibility> 
-                	<objectState name="isdirectory" value="true"/>                  
-            </visibility>
+                	<objectState name="isdirectory" value="true"/>    
+                </visibility>        
          <action
                label="%synchronizeCache.label"
                 tooltip="%synchronizeCache.tooltip"
                class="org.eclipse.rse.internal.files.ui.actions.SynchronizeCacheActionDelegate"
                menubarPath="group.importexport"
                id="synchronizeCache">
+               <enablement>
+                <objectState name="offline" value="false"/>
+               </enablement>
          </action>
       </objectContribution>
       </extension>

@@ -12,19 +12,22 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.wizards.SystemNewFolderWizard;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -65,4 +68,19 @@ public class SystemNewFolderAction extends SystemBaseWizardAction
    	     return newFolderWizard;
     }
    
+	public boolean checkObjectType(Object selectedObject)
+	{
+		if (selectedObject instanceof IAdaptable){
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)selectedObject).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null){
+				ISubSystem ss = adapter.getSubSystem(selectedObject);
+				if (ss != null){
+					if (ss.isOffline()){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 }

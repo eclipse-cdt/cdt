@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -130,6 +131,9 @@ implements  IValidatorRemoteSelection
 			Object selectedObject = e.next();
 			if (!(selectedObject instanceof IRemoteFile))
 				enable = false;
+			else {
+				enable = !((IRemoteFile)selectedObject).getParentRemoteFileSubSystem().isOffline();
+			}
 		}
 		return enable;
 	}
@@ -588,4 +592,7 @@ implements  IValidatorRemoteSelection
 	{
 		return null;
 	}
+
+	
+
 }

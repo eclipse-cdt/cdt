@@ -413,6 +413,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		
 		fFindButton.setEnabled(valid);
+		fFindAllButton.setEnabled(valid);
 		fReplaceButton.setEnabled(replaceValid);
 		fReplaceFindButton.setEnabled(replaceValid);
 		fReplaceAllButton.setEnabled(replaceValid);

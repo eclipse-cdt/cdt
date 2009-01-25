@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -274,16 +274,13 @@ public class PDOMMacro implements IIndexMacro, IIndexFragmentBinding, IASTFileLo
 	public String getFileName() {
 		try {
 			PDOMFile file = getFile();
-			if(file!=null) {
-				/*
-				 * We need to spec. what this method can return to know
-				 * how to implement this. Existing implmentations return
-				 * the absolute path, so here we attempt to do the same.
-				 */
-				URI uri = file.getLocation().getURI();
-				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
-					return uri.getSchemeSpecificPart();
+			if (file == null) {
+				return null;
 			}
+			// We need to spec. what this method can return to know
+			// how to implement this. Existing implementations return
+			// the absolute path, so here we attempt to do the same.
+			return IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

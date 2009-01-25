@@ -62,10 +62,10 @@ public class IndexLocationFactory {
 	}
 	
 	/**
-	 * Returns the absolute file path of an URI or null if the 
-	 * URI is not a filesystem path.
-	 * @return the absolute file path of an URI or null if the 
-	 * URI is not a filesystem path.
+	 * Returns the absolute file path of a location, or {@code null}
+	 * if the location is not a filesystem path.
+	 * @return the absolute file path of a location, or {@code null}
+	 * if the location is not a filesystem path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
 		IPath path = URIUtil.toPath(location.getURI());

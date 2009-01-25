@@ -11,28 +11,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  */
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
-
 	private final PDOM pdom;
 	private final int record;
 	
@@ -160,7 +156,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		setNameField(BINDING_NEXT_OFFSET, name);
 	}
 	
-	public IIndexFile getFile() throws CoreException {
+	public PDOMFile getFile() throws CoreException {
 		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
 	}
@@ -285,20 +281,14 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public String getFileName() {
 		try {
-			PDOMFile file = (PDOMFile) getFile();
-			if (file != null) {
-				/*
-				 * We need to spec. what this method can return to know
-				 * how to implement this. Existing implementations return
-				 * the absolute path, so here we attempt to do the same.
-				 */
-				URI uri = file.getLocation().getURI();
-				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
-					return uri.getSchemeSpecificPart();
-				File f = EFS.getStore(uri).toLocalFile(0, null);
-				if (f != null)
-					return f.getAbsolutePath();
+			PDOMFile file = getFile();
+			if (file == null) {
+				return null;
 			}
+			// We need to spec. what this method can return to know
+			// how to implement this. Existing implementations return
+			// the absolute path, so here we attempt to do the same.
+			return IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -339,9 +329,9 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		// Delete from the binding chain
 		PDOMName prevName = getPrevInBinding();
 		PDOMName nextName = getNextInBinding();
-		if (prevName != null)
+		if (prevName != null) {
 			prevName.setNextInBinding(nextName);
-		else {
+		} else {
 			switch (getFlags(DECL_DEF_REF_MASK)) {
 			case IS_DECLARATION:
 				getBinding().setFirstDeclaration(nextName);

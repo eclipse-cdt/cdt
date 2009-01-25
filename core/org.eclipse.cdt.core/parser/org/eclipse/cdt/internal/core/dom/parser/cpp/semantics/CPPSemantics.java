@@ -1336,11 +1336,11 @@ public class CPPSemantics {
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			IScope dtorScope= scope;
 			if (declSpec.isFriend()) {
-				// friends are added to an enclosing scope. They have to be added such that they are
+				// Friends are added to an enclosing scope. They have to be added such that they are
 				// picked up when this scope is re-populated during ambiguity resolution, while the
 				// enclosing scope is left as it is.
 				try {
-					while (dtorScope.getKind() == EScopeKind.eClassType)
+					while (dtorScope != null && dtorScope.getKind() == EScopeKind.eClassType)
 						dtorScope= dtorScope.getParent();
 				} catch (DOMException e) {
 					dtorScope= null;
@@ -1374,14 +1374,14 @@ public class CPPSemantics {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				specName = compSpec.getName();
 				
-				// anonymous union or struct (GCC supports anonymous structs too)
+				// Anonymous union or struct (GCC supports anonymous structs too)
 				if (declarators.length == 0 && specName.getLookupKey().length == 0) {
 				    IASTDeclaration[] decls = compSpec.getMembers();
 				    for (IASTDeclaration decl : decls) {
                         populateCache(scope, decl);
                     }
 				} else {
-					// collect friends enclosed in nested classes
+					// Collect friends enclosed in nested classes
 					switch (scope.getKind()) {
 					case eLocal:
 					case eGlobal:
@@ -1396,7 +1396,7 @@ public class CPPSemantics {
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
 			    specName = enumeration.getName();
 
-			    // check enumerators too
+			    // Check enumerators too
 			    IASTEnumerator[] list = enumeration.getEnumerators();
 			    IASTName tempName;
 			    for (IASTEnumerator enumerator : list) {

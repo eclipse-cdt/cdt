@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Represents declarations, definitions and references to bindings, except for macros.
@@ -174,14 +176,15 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	public String getFileName() {
 		try {
-			PDOMFile file = getFile();
+			IIndexFile file = getFile();
 			if (file == null) {
 				return null;
 			}
-			// We need to spec. what this method can return to know
+			// We need to specify what this method can return to know
 			// how to implement this. Existing implementations return
 			// the absolute path, so here we attempt to do the same.
-			return IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
+			IPath location = IndexLocationFactory.getAbsolutePath(file.getLocation());
+			return location != null ? location.toOSString() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

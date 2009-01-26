@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -132,7 +133,6 @@ import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * This is our implementation of the IParser interface, serving as a parser for
@@ -806,7 +806,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	
         		if (LT(1) == IToken.tLPAREN) {
             		if (plcmt != null && 
-            				CPPVisitor.findTypeRelevantDeclarator(typeid2.getAbstractDeclarator()) instanceof IASTArrayDeclarator) {
+            				ASTQueries.findTypeRelevantDeclarator(typeid2.getAbstractDeclarator()) instanceof IASTArrayDeclarator) {
             			throwBacktrack(LA(1));
             		}
 
@@ -1894,7 +1894,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
     	
 		final IASTDeclarator outerDtor= dtors[0];
-		final IASTDeclarator dtor= CPPVisitor.findTypeRelevantDeclarator(outerDtor);
+		final IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator(outerDtor);
 		if (dtor instanceof ICPPASTFunctionDeclarator == false)
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
@@ -2357,8 +2357,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private boolean canBeConstructorDestructorOrConversion(DeclarationOptions declOption, int storageClass, int options, IASTDeclarator dtor) {
 		final int forbid= CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | FRIEND;
 		if (storageClass == IASTDeclSpecifier.sc_unspecified && (options & forbid) == 0) {
-			if (CPPVisitor.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
-				IASTName name= CPPVisitor.findInnermostDeclarator(dtor).getName();
+			if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
+				IASTName name= ASTQueries.findInnermostDeclarator(dtor).getName();
 				if (name instanceof ICPPASTQualifiedName) {
 					final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 					final IASTName names[]= qname.getNames();
@@ -2451,7 +2451,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_volatile:
         	if (option == DeclarationOptions.GLOBAL || option == DeclarationOptions.CPP_MEMBER
         			|| option == DeclarationOptions.FUNCTION_STYLE_ASM) {
-        		if (CPPVisitor.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
+        		if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
         			return true;
         		}
         	}
@@ -2529,11 +2529,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		if (dtor1 instanceof IASTFunctionDeclarator == false)
     			return dtor1;
     		
-    		// optimization outside of function bodies and inside of templates
-    		if (functionBodyCount == 0) 
-    			return dtor1;
-    		
-    		// avoid second option for function definitions
     		end1= LA(1);
     		switch(end1.getType()) {
     		case IToken.tLBRACE: case IToken.tCOLON:
@@ -2545,7 +2540,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		bt= e;
     	} 
     	
-    	if (!option.fAllowConstructorInitializer || !canHaveConstructorInitializer(declspec)) {
+    	if (!option.fAllowConstructorInitializer || !canHaveConstructorInitializer(declspec, dtor1)) {
     		if (bt != null)
     			throw bt;
     		return dtor1;
@@ -2571,12 +2566,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return dtor1;
 		}
 		
-		CPPASTAmbiguousDeclarator dtor= new CPPASTAmbiguousDeclarator(dtor2, dtor1);
+		if (functionBodyCount != 0) {
+			// prefer the variable prototype:
+			IASTDeclarator h= dtor1; dtor1= dtor2; dtor2= h;
+		}
+		CPPASTAmbiguousDeclarator dtor= new CPPASTAmbiguousDeclarator(dtor1, dtor2);
 		dtor.setOffsetAndLength((ASTNode) dtor1);
 		return dtor;
     }
 
-	private boolean canHaveConstructorInitializer(IASTDeclSpecifier declspec) {
+	private boolean canHaveConstructorInitializer(IASTDeclSpecifier declspec, IASTDeclarator dtor) {
 		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier sspec= (ICPPASTSimpleDeclSpecifier) declspec;
 			switch(sspec.getType()) {
@@ -2601,6 +2600,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				return false;
 			}
 		}
+		
+		if (dtor != null) {
+			IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName().getLastName();
+			if (name instanceof ICPPASTTemplateId) {
+				name= ((ICPPASTTemplateId) name).getTemplateName();
+			}
+			if (name instanceof ICPPASTOperatorName || name instanceof ICPPASTConversionName)
+				return false;
+		}
+		
 		return true;
 	}
 

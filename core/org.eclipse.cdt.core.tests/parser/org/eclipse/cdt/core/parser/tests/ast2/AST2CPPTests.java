@@ -4613,7 +4613,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	// int t= 0;
 	// int s ( t );
-	public void _testBug211756() throws Exception {
+	public void testBug211756() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) (tu.getDeclarations()[1]);
 		IASTDeclarator d = sd.getDeclarators()[0];

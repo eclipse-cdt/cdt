@@ -20,6 +20,7 @@ Anna Dushistova  (MontaVista) - [227535] [rseterminal][api] terminals.ui should 
 Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands menu placement and category
 David McKnight   (IBM)        - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View        
 David McKnight   (IBM)        - [260792] Default prompt text color/background color for Remote Shell view is difficult to see
+Uwe Stieber      (Wind River) - [245039] [contributions][api] Provide property tester implementations in parallel to the older action filters
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -498,6 +499,9 @@ David McKnight   (IBM)        - [260792] Default prompt text color/background co
         </viewerContentBinding>
     </extension>
 	
+<!-- ================================================================= -->
+<!-- RSE Property Tester contributions   							   -->
+<!-- ================================================================= -->
 	<extension point="org.eclipse.core.expressions.propertyTesters">
         <propertyTester
              id="org.eclipse.rse.ui.SubSystemPropertyTester"
@@ -505,6 +509,13 @@ David McKnight   (IBM)        - [260792] Default prompt text color/background co
              namespace="org.eclipse.rse.core"
              properties="hasSubSystemCategory, isOffline"
              class="org.eclipse.rse.internal.ui.subsystems.SubSystemPropertyTester">
+        </propertyTester>
+        <propertyTester
+             class="org.eclipse.rse.internal.ui.view.SystemViewPropertyTester"
+             id="org.eclipse.rse.internal.ui.view.SystemViewPropertyTester"
+             namespace="org.eclipse.rse.ui"           
+             properties="name,type,hasChildren,connected,offline,systemType,systemTypeId,subsystemConfigurationId,subsystemConfigurationCategory,isRemote"
+             type="org.eclipse.rse.ui.view.ISystemViewElementAdapter">
         </propertyTester>
     </extension>
 

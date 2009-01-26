@@ -59,6 +59,7 @@
  * Martin Oberhuber (Wind River) - [234215] improve API documentation for doDelete and doDeleteBatch
  * David McKnight     (IBM)      - [251860] Rename a file/folder to a hidden file causes problems
  * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
+ * David McKnight   (IBM)        - [254769] Don't get latest file when opening a file always
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3263,6 +3264,13 @@ public class SystemViewRemoteFileAdapter
 		*/
 		else if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 		{
+			// make sure we're using the latest version of remoteFile
+			try {
+				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+			}
+			catch (Exception e){				
+			}
+			
 			// only handle double click if object is a file
 			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);
 			if (editable != null)
@@ -3316,17 +3324,18 @@ public class SystemViewRemoteFileAdapter
 		boolean newFile = !file.exists();
 
 		// detect whether there exists a temp copy already
-		if (!newFile && file.exists())
+		if (!newFile)
 		{
 			// we have a local copy of this file, so we need to compare timestamps
-
+			
 			// get stored modification stamp
 			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+			long oldRemoteModifiedStamp = remoteFile.getLastModified();
 
 			// get updated remoteFile so we get the current remote timestamp
-			//remoteFile.markStale(true);
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
-			if (!subsystem.isOffline()){ // only do this check when online..if offline we assume the temp file is okay
+			if (!subsystem.isOffline()){ // only do this check when online..if offline we assume the temp file is okay			
+				remoteFile.markStale(true);
 				try
 				{
 					remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
@@ -3334,6 +3343,9 @@ public class SystemViewRemoteFileAdapter
 				catch (Exception e)
 				{
 				}
+				
+				// make sure that the editable is using an uptodate version
+				((SystemEditableRemoteFile)editable).setRemoteFile(remoteFile);
 			}
 
 			// get the remote modified stamp
@@ -3342,7 +3354,7 @@ public class SystemViewRemoteFileAdapter
 			// get dirty flag
 			boolean dirty = properties.getDirty();
 
-			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
+			boolean remoteNewer = (oldRemoteModifiedStamp != remoteModifiedStamp) || (storedModifiedStamp != remoteModifiedStamp);
 
 			String remoteEncoding = remoteFile.getEncoding();
 			String storedEncoding = properties.getEncoding();

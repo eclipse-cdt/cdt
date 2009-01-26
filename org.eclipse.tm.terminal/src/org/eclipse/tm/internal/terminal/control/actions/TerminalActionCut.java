@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Uwe Stieber (Wind River) - [260372] [terminal] Certain terminal actions are enabled if no target terminal control is available
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.actions;
 
@@ -47,9 +48,7 @@ public class TerminalActionCut extends AbstractTerminalAction {
 	}
 
 	public void updateAction(boolean aboutToShow) {
-		boolean bEnabled;
-
-		bEnabled = !aboutToShow;
-		setEnabled(bEnabled);
+		// Cut is always disabled
+		setEnabled(false);
 	}
 }

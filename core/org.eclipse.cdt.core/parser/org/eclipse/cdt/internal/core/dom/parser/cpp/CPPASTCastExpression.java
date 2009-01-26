@@ -14,7 +14,9 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -92,4 +94,9 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
 		}
         return true;
     }
+
+	@Override
+	public IType getExpressionType() {
+		return CPPVisitor.createType(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator());
+	}
 }

@@ -11,13 +11,26 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author jcamelon
@@ -110,7 +123,46 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+    	try {
+    		IType t= null;
+    		if (functionName instanceof IASTIdExpression) {
+    			final IBinding binding= ((IASTIdExpression) functionName).getName().resolvePreBinding();
+    			if (binding instanceof ICPPConstructor) {
+    				IBinding owner= binding.getOwner();
+    				if (owner instanceof ICPPClassType) {
+    					return (ICPPClassType) owner;
+    				}
+    				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE, binding.getName().toCharArray());
+    			} else if (binding instanceof IFunction) {
+    				t = ((IFunction) binding).getType();
+    			} else if (binding instanceof IVariable) {
+    				t = ((IVariable) binding).getType();
+    			} else if (binding instanceof IType) {
+    				return (IType) binding;  // constructor or simple type initializer
+    			} else if (binding instanceof IProblemBinding) {
+    				return (IProblemBinding) binding;
+    			}
+    		} else {
+    			t= functionName.getExpressionType();
+    		}
+
+    		t= SemanticUtil.getUltimateTypeUptoPointers(t);
+    		if (t instanceof IFunctionType) {
+    			return ((IFunctionType) t).getReturnType();
+    		} else if (t instanceof ICPPClassType) {
+    			ICPPFunction op = CPPSemantics.findOperator(this, (ICPPClassType) t);
+    			if (op != null) {
+    				return op.getType().getReturnType();
+    			}
+    		} else if (t instanceof IPointerType) {
+    			t= SemanticUtil.getUltimateTypeUptoPointers(((IPointerType) t).getType());
+    			if (t instanceof IFunctionType) {
+    				return ((IFunctionType) t).getReturnType();
+    			}
+    		}
+		} catch (DOMException e) {
+			return e.getProblem();
+		} 
+		return null;
     }
-    
 }

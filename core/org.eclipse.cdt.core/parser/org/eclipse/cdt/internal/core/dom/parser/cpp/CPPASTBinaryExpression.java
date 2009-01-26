@@ -11,13 +11,25 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author jcamelon
@@ -123,8 +135,84 @@ public class CPPASTBinaryExpression extends ASTNode implements
 
     public IType getExpressionType() {
     	if (type == null) {
-    		type= CPPVisitor.getExpressionType(this);
+    		type= createExpressionType();
     	}
     	return type;
     }
+
+	private IType createExpressionType() {
+
+        // Check for overloaded operator.
+		IType type1 = getOperand1().getExpressionType();
+		IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
+		if (ultimateType1 instanceof IProblemBinding) {
+			return type1;
+		}
+		if (ultimateType1 instanceof ICPPClassType) {
+			ICPPFunction operator= CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
+			if (operator != null) {
+				try {
+					return operator.getType().getReturnType();
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+			}
+		}
+		IType type2 = getOperand2().getExpressionType();
+		IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
+		if (ultimateType2 instanceof IProblemBinding) {
+			return type2;
+		}
+		if (ultimateType1 instanceof ICPPClassType || ultimateType1 instanceof IEnumeration ||
+				ultimateType2 instanceof ICPPClassType || ultimateType2 instanceof IEnumeration) {
+			// If at least one of the types is user defined, the operator can be overloaded.
+			ICPPFunction operator = CPPSemantics.findOverloadedOperator(this);
+			if (operator != null) {
+				try {
+					return operator.getType().getReturnType();
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+			}
+		}
+        
+        final int op = getOperator();
+        switch (op) {
+        case IASTBinaryExpression.op_lessEqual:
+        case IASTBinaryExpression.op_lessThan:
+        case IASTBinaryExpression.op_greaterEqual:
+        case IASTBinaryExpression.op_greaterThan:
+        case IASTBinaryExpression.op_logicalAnd:
+        case IASTBinaryExpression.op_logicalOr:
+        case IASTBinaryExpression.op_equals:
+        case IASTBinaryExpression.op_notequals:
+        	CPPBasicType basicType= new CPPBasicType(ICPPBasicType.t_bool, 0);
+        	basicType.setFromExpression(this);
+        	return basicType;
+        case IASTBinaryExpression.op_plus:
+        	if (ultimateType2 instanceof IPointerType) {
+        		return ultimateType2;
+        	}
+        	break;
+        case IASTBinaryExpression.op_minus:
+        	if (ultimateType2 instanceof IPointerType) {
+        		if (ultimateType1 instanceof IPointerType) {
+        			return CPPVisitor.getPointerDiffType(this);
+        		}
+        		return ultimateType1;
+        	}
+        	break;
+        case ICPPASTBinaryExpression.op_pmarrow:
+        case ICPPASTBinaryExpression.op_pmdot:
+        	if (type2 instanceof ICPPPointerToMemberType) {
+        		try {
+        			return ((ICPPPointerToMemberType) type2).getType();
+        		} catch (DOMException e) {
+        			return e.getProblem();
+        		}
+        	} 
+        	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray()); 
+        }
+		return type1;
+	}
 }

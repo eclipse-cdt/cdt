@@ -2442,8 +2442,10 @@ public class CPPSemantics {
      */
     public static IType getChainedMemberAccessOperatorReturnType(ICPPASTFieldReference fieldReference) throws DOMException {
     	IASTExpression owner = fieldReference.getFieldOwner();
-    	IType type= CPPVisitor.getExpressionType(owner);
+    	if (owner == null)
+    		return null;
     	
+    	IType type= owner.getExpressionType();
     	if (!fieldReference.isPointerDereference())
     		return type;
     	

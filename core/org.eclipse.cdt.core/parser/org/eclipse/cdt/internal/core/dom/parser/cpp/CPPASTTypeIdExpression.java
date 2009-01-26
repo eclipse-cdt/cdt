@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -83,8 +84,13 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
         return true;
     }
     
-    public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
-    }
-    
+	public IType getExpressionType() {
+		switch (getOperator()) {
+		case IASTTypeIdExpression.op_sizeof:
+			return CPPVisitor.get_SIZE_T(this);
+		case IASTTypeIdExpression.op_typeid:
+			return CPPVisitor.get_type_info(this);
+		}
+		return CPPVisitor.createType(getTypeId());
+	}
 }

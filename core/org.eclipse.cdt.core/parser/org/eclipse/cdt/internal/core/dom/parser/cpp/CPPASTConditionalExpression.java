@@ -14,10 +14,10 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -134,7 +134,14 @@ public class CPPASTConditionalExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+		IASTExpression positiveExpression = getPositiveResultExpression();
+		if (positiveExpression == null) {
+			positiveExpression= getLogicalConditionExpression();
+		}
+		IType t2 = positiveExpression.getExpressionType();
+		IType t3 = getNegativeResultExpression().getExpressionType();
+		if (t3 instanceof IPointerType || t2 == null)
+			return t3;
+		return t2;
     }
-    
 }

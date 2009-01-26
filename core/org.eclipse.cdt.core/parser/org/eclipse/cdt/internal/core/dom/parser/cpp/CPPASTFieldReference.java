@@ -15,18 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -140,7 +144,24 @@ public class CPPASTFieldReference extends ASTNode implements
     }
 
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+		IASTName name= getFieldName();
+		IBinding binding = name.resolvePreBinding();
+		try {
+			if (binding instanceof IVariable) {
+                return ((IVariable) binding).getType();
+			} else if (binding instanceof IEnumerator) {
+				return ((IEnumerator) binding).getType();
+			} else if (binding instanceof IFunction) {
+				return ((IFunction) binding).getType();
+			}  else if (binding instanceof ICPPUnknownBinding) {
+				return CPPUnknownClass.createUnnamedInstance();
+			} else if (binding instanceof IProblemBinding) {
+				return (IType) binding;
+			} 
+	    } catch (DOMException e) {
+	        return e.getProblem();
+        }
+	    return null;
     }
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {

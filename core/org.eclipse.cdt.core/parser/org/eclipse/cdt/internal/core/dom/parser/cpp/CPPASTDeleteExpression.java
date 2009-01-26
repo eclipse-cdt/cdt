@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * @author jcamelon
@@ -100,7 +100,6 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+    	return CPPSemantics.VOID_TYPE;
     }
-    
 }

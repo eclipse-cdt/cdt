@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -59,7 +58,7 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(getExpressions()[0]);
+    	return fCastExpression.getExpressionType();
     }
 
 	public IASTExpression[] getExpressions() {

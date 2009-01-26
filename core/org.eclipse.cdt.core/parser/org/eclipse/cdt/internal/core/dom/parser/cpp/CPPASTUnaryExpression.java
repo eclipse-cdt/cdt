@@ -11,13 +11,26 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author jcamelon
@@ -97,7 +110,66 @@ public class CPPASTUnaryExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+    	final int op= getOperator();
+		switch (op) {
+		case IASTUnaryExpression.op_sizeof:
+			return CPPVisitor.get_SIZE_T(this);
+		case IASTUnaryExpression.op_typeid:
+			return CPPVisitor.get_type_info(this);
+		}
+		
+		IType type= getOperand().getExpressionType();
+		type = SemanticUtil.getUltimateTypeViaTypedefs(type);
+
+		if (op == IASTUnaryExpression.op_star) {
+		    try {
+		    	type = SemanticUtil.getUltimateTypeUptoPointers(type);
+		    	if (type instanceof IProblemBinding) {
+		    		return type;
+		    	}
+				if (type instanceof ICPPClassType) {
+					ICPPFunction operator= CPPSemantics.findOperator(this, (ICPPClassType) type);
+					if (operator != null) {
+						return operator.getType().getReturnType();
+					}
+				} else if (type instanceof IPointerType || type instanceof IArrayType) {
+					return ((ITypeContainer) type).getType();
+				} else if (type instanceof ICPPUnknownType) {
+					return CPPUnknownClass.createUnnamedInstance();
+				}
+				return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE,
+						this.getRawSignature().toCharArray());
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
+		} else if (op == IASTUnaryExpression.op_amper) {
+			if (type instanceof ICPPReferenceType) {
+				try {
+					type = ((ICPPReferenceType) type).getType();
+				} catch (DOMException e) {
+				}
+			}
+			if (type instanceof ICPPFunctionType) {
+				ICPPFunctionType functionType = (ICPPFunctionType) type;
+				IPointerType thisType = functionType.getThisType();
+				if (thisType != null) {
+					IType nestedType;
+					try {
+						nestedType = thisType.getType();
+						while (nestedType instanceof ITypeContainer) {
+							nestedType = ((ITypeContainer) nestedType).getType();
+						}
+					} catch (DOMException e) {
+						return e.getProblem();
+					}
+					return new CPPPointerToMemberType(type, (ICPPClassType) nestedType,
+							thisType.isConst(), thisType.isVolatile());
+				}
+			}
+			return new CPPPointerType(type);
+		} else if (type instanceof CPPBasicType) {
+			((CPPBasicType) type).setFromExpression(this);
+		}
+		return type;
     }
-    
 }

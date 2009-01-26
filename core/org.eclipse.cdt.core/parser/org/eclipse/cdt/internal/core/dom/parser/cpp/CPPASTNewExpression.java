@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
@@ -131,7 +132,7 @@ public class CPPASTNewExpression extends ASTNode implements
     public IASTExpression [] getNewTypeIdArrayExpressions() {
         if( arrayExpressions == null ) {
         	if (typeId != null) {
-        		IASTDeclarator dtor= CPPVisitor.findInnermostDeclarator(typeId.getAbstractDeclarator());
+        		IASTDeclarator dtor= ASTQueries.findInnermostDeclarator(typeId.getAbstractDeclarator());
         		if (dtor instanceof IASTArrayDeclarator) {
         			IASTArrayDeclarator ad= (IASTArrayDeclarator) dtor;
         			IASTArrayModifier[] ams= ad.getArrayModifiers();
@@ -151,7 +152,7 @@ public class CPPASTNewExpression extends ASTNode implements
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
         assertNotFrozen();
     	Assert.isNotNull(typeId);
-    	IASTDeclarator dtor= CPPVisitor.findInnermostDeclarator(typeId.getAbstractDeclarator());
+    	IASTDeclarator dtor= ASTQueries.findInnermostDeclarator(typeId.getAbstractDeclarator());
     	if (dtor instanceof IASTArrayDeclarator == false) {
     		Assert.isNotNull(dtor);
     		Assert.isTrue(dtor.getParent() == typeId);
@@ -208,7 +209,6 @@ public class CPPASTNewExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+		return CPPVisitor.createType(getTypeId());
     }
-    
 }

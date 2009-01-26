@@ -12,10 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -75,7 +76,13 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
-    }
-    
+		IASTCompoundStatement compound = getCompoundStatement();
+		IASTStatement[] statements = compound.getStatements();
+		if (statements.length > 0) {
+			IASTStatement st = statements[statements.length - 1];
+			if (st instanceof IASTExpressionStatement)
+				return ((IASTExpressionStatement) st).getExpression().getExpressionType();
+		}
+		return null;
+	}
 }

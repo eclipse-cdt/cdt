@@ -11,13 +11,19 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
  
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author jcamelon
@@ -111,7 +117,25 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
     }
 
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+		IType t = getArrayExpression().getExpressionType();
+		t= SemanticUtil.getUltimateTypeUptoPointers(t);
+		try {
+			if (t instanceof ICPPClassType) {
+				ICPPFunction op = CPPSemantics.findOperator(this, (ICPPClassType) t);
+				if (op != null) {
+					return op.getType().getReturnType();
+				}
+			}
+			if (t instanceof IPointerType) {
+				return ((IPointerType) t).getType();
+			}
+			if (t instanceof IArrayType) {
+				return ((IArrayType) t).getType();
+			}
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		return null;
     }
     
 }

@@ -238,4 +238,16 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	public IIndexName getScopeName() {
 		return fBinding.getScopeName();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PDOMCPPClassScope)
+			return fBinding.equals(((PDOMCPPClassScope) obj).fBinding);
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return fBinding.hashCode();
+	}
 }

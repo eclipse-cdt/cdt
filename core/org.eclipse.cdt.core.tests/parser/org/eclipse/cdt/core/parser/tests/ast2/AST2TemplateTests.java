@@ -3659,4 +3659,31 @@ public class AST2TemplateTests extends AST2BaseTest {
         t= ((ITypedef) t).getType();
         assertSame(t, Nested);
     }
+
+	//  template<typename _CharT>
+	//  struct StringBase {
+	//    typedef int size_type;
+	//  };
+	//
+	//  template<typename _CharT, template<typename> class _Base = StringBase>
+	//  struct VersaString;
+	//
+	//  template<typename _CharT, template<typename> class _Base>
+	//  struct VersaString : private _Base<_CharT> {
+	//    typedef typename _Base<_CharT>::size_type size_type;
+	//  };
+	//
+	//  template<typename _CharT>
+	//  struct BasicString : public VersaString<_CharT> {
+	//    typedef typename VersaString<_CharT>::size_type size_type;
+	//    BasicString substr(size_type __pos = 0) const;
+	//  };
+	//
+	//  void test(BasicString<char> s) {
+	//    s.substr(0);
+	//  }
+    public void _testResolutionOfUnknownBindings_262328() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("substr(0)", 6, ICPPMethod.class);
+    }
 }

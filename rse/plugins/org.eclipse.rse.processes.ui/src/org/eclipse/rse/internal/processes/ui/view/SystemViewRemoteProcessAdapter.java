@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
@@ -52,7 +52,6 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -60,8 +59,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 
 public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
-		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter
-{	
+ implements ISystemRemoteElementAdapter
+{
 	private SystemCopyToClipboardAction copyClipboardAction;
 	public boolean canDrag(Object element)
 	{
@@ -88,15 +87,15 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	private static final Object[] EMPTY_LIST = new Object[0];
 	private static PropertyDescriptor[] propertyDescriptorArray = null;
 	private SystemKillProcessAction killProcessAction;
-	
+
 	public void addActions(SystemMenuManager menu,
 			IStructuredSelection selection, Shell parent, String menuGroup)
 	{
 		if (killProcessAction == null)
 			killProcessAction = new SystemKillProcessAction(shell);
         menu.add(ISystemContextMenuConstants.GROUP_CHANGE, killProcessAction);
-        
-        
+
+
         if (copyClipboardAction == null)
 		{
         	Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
@@ -111,10 +110,10 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			IRemoteProcess process = (IRemoteProcess)element;
 			return process.getParentRemoteProcessSubSystem();
-		}		
+		}
 		return super.getSubSystem(element);
 	}
-	
+
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
 		//return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
@@ -126,9 +125,9 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		String text = ((IRemoteProcess) element).getLabel();
 		return (text == null) ? "" : text; //$NON-NLS-1$
 	}
-	
-	/** 
-	 * Used for stuff like clipboard text copy 
+
+	/**
+	 * Used for stuff like clipboard text copy
 	 */
 	public String getAlternateText(Object element)
 	{
@@ -176,9 +175,9 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		IRemoteProcess process = (IRemoteProcess) element;
 		IRemoteProcessSubSystem ss = process.getParentRemoteProcessSubSystem();
 		IHostProcessFilter orgRpfs = process.getFilterString();
-		
+
 		Object[] children = null;
-		
+
 		try
 		{
 			children = ss.listAllProcesses(orgRpfs, process.getContext(), null);
@@ -195,9 +194,9 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		catch (Exception exc)
 		{
 			children = new SystemMessageObject[1];
-			SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(ProcessesPlugin.PLUGIN_ID,
 					ICommonMessageIds.MSG_EXPAND_FAILED,
-					IStatus.ERROR, 					
+					IStatus.ERROR,
 					CommonMessages.MSG_EXPAND_FAILED);
 			children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
 			SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
@@ -207,30 +206,30 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
-		
+
 		if (propertyDescriptorArray == null)
-		{	
+		{
 			int nbrOfProperties = ISystemProcessRemoteConstants.PROCESS_ATTRIBUTES_COUNT;
-			
+
 			propertyDescriptorArray = new PropertyDescriptor[nbrOfProperties];
-			
+
 			int idx = -1;
 
 			// pid
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_PID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PID_TOOLTIP);
-			
+
 			// name
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_NAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_NAME_TOOLTIP);
 
 			// state
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_STATE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_TOOLTIP);			
-			
+			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_STATE, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_STATE_TOOLTIP);
+
 			// uid
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_UID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_UID_TOOLTIP);
-			
+
 			// username
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_USERNAME, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_USERNAME_TOOLTIP);
-			
+
 			// ppid
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_PPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_PPID_TOOLTIP);
 
@@ -239,7 +238,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 
 			// tgid
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_TGID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TGID_TOOLTIP);
-		
+
 			// tracerpid
 			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemProcessPropertyConstants.P_PROCESS_TRACERPID, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_LABEL, SystemProcessesViewResources.RESID_PROPERTY_PROCESS_TRACERPID_TOOLTIP);
 
@@ -261,10 +260,10 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	{
 		return getPropertyValue(key, true);
 	}
-	
+
 	/**
 	 * Returns the current value for the named property.
-	 * 
+	 *
 	 * @param property the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
@@ -273,7 +272,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	{
 		String name = (String) property;
 		IRemoteProcess process = (IRemoteProcess) propertySourceInput;
-		
+
 		if (name.equals(ISystemProcessPropertyConstants.P_PROCESS_GID))
 		{
 			if (formatted)
@@ -343,7 +342,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 			{
 				return new Long(process.getTracerPid());
 			}
-		}		
+		}
 		if (name.equals(ISystemProcessPropertyConstants.P_PROCESS_UID))
 		{
 			if (formatted)
@@ -384,7 +383,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		else
 			return null; //super.getPropertyValue(name);
 	}
-	
+
 	protected String formatState(String state)
 	{
 		if (state == null) return ""; //$NON-NLS-1$
@@ -392,8 +391,8 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		String longState = ""; //$NON-NLS-1$
 		String[] allStates = state.split(","); //$NON-NLS-1$
 		if (allStates == null) return longState;
-		
-		SystemProcessStatesContentProvider zstates = new SystemProcessStatesContentProvider();		
+
+		SystemProcessStatesContentProvider zstates = new SystemProcessStatesContentProvider();
 		for (int i = 0; i < allStates.length; i++)
 		{
 			longState = longState + allStates[i].charAt(0) + "-" + zstates.getStateString(allStates[i]); //$NON-NLS-1$
@@ -402,7 +401,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		}
 		return longState;
 	}
-	
+
 	/**
 	 * Return fully qualified name that uniquely identifies this remote object's remote parent within its subsystem
 	 */
@@ -419,7 +418,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	 * spawned it.
 	 * <p>
 	 * The shell is required in order to set the cursor to a busy state if a remote trip is required.
-	 * 
+	 *
 	 * @return an IRemoteProcess object for the parent
 	 */
 	public Object getRemoteParent(Object element, IProgressMonitor monitor) throws Exception
@@ -429,11 +428,11 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 
 	/**
 	 * Given a remote object, return the unqualified names of the objects contained in that parent. This is
-	 *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not 
+	 *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not
 	 *  enough to just enumerate all the objects in the parent for this purpose, because duplicate
-	 *  names are allowed if the types are different, such as on iSeries. In this case return only 
+	 *  names are allowed if the types are different, such as on iSeries. In this case return only
 	 *  the names which should be used to do name-uniqueness validation on a rename operation.
-	 * 
+	 *
 	 * @return an array of all file and folder names in the parent of the given IRemoteFile object
 	 */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
@@ -475,7 +474,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		return ISystemProcessRemoteTypes.TYPECATEGORY;
 	}
 
-	/** 
+	/**
 	 * Return the subsystem factory id that owns this remote object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.
 	 */
@@ -496,7 +495,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		}*/
 		return false;
 	}
-	
+
 	/*
 	 * Return whether deferred queries are supported.
 	 */

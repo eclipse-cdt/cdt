@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [180562] dont implement ISystemOutputRemoteTypes
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
@@ -79,7 +79,6 @@ import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -91,13 +90,13 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 /**
  * This is the adapter for smart output from remote commands, such that they can support right click actions and such.
  */
-public class SystemViewRemoteOutputAdapter extends AbstractSystemViewAdapter 
-implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
+public class SystemViewRemoteOutputAdapter extends AbstractSystemViewAdapter
+implements ISystemRemoteElementAdapter
 {
 
 
 	protected IPropertyDescriptor[] _propertyDescriptors;
-	
+
 	private SystemCopyToClipboardAction _copyOutputAction = null;
 	private SystemPasteFromClipboardAction _pasteToPromptAction = null;
 
@@ -107,10 +106,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	private IAction _exportShellHistoryAction = null;
 	private IAction _exportShellOutputAction = null;
 	private List _shellActions = null;
-	
+
 	private IPropertyDescriptor _shellPropertyDescriptors[];
 	private IPropertyDescriptor _outputPropertyDescriptors[];
-	
+
 	public SystemViewRemoteOutputAdapter()
 	{
 	    _shellActions = new ArrayList();
@@ -131,9 +130,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 				{
 					_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
 				}
-				
+
 				menu.add(menuGroup, _copyOutputAction);
-	
+
 				if (selection.size() == 1)
 				{
 					 if (firstSelection instanceof IRemoteLineReference)
@@ -146,7 +145,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 							{
 								_pasteToPromptAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
 							}
-							
+
 							menu.add(menuGroup, _pasteToPromptAction);
 						}
 						else if (type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
@@ -155,25 +154,25 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 							if (output.getAbsolutePath() != null)
 							{
 								// TODO
-								// add directory actions here						
+								// add directory actions here
 							}
 						}
 						else
 						{
 							IRemoteOutput output = (IRemoteOutput)firstSelection;
-							
+
 							if (output.getAbsolutePath() != null)
 							{
 								IRemoteFile rfile = SystemRemoteFileLineOpenWithMenu.outputToFile(output);
 								if (rfile != null && rfile.isFile()) // for 196842
 								{
 										//SystemCreateEditLineActions createActions = new SystemCreateEditLineActions();
-								    	//createActions.create(menu, selection, shell, menuGroup);			
+								    	//createActions.create(menu, selection, shell, menuGroup);
 										// open with ->
 										MenuManager submenu =
 											new MenuManager(ShellResources.ACTION_OPEN_WITH_LABEL,
 												ISystemContextMenuConstants.GROUP_OPENWITH);
-										
+
 										SystemRemoteFileLineOpenWithMenu  openWithMenu = new SystemRemoteFileLineOpenWithMenu();
 										openWithMenu.updateSelection(selection);
 										submenu.add(openWithMenu);
@@ -182,9 +181,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 							}
 						}
 					}
-					 
-					
-					 
+
+
+
 				}
 		    }
 		    else if (firstSelection instanceof IRemoteCommandShell)
@@ -193,12 +192,12 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		        if (_showInShellView == null)
 		        {
 		            _showInShellView = new SystemShowInShellViewAction(shell);
-		 
+
 		        }
 		        menu.add(ISystemContextMenuConstants.GROUP_OPEN,_showInShellView);
-		        
+
 		        getShellActions(cmdShell.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration());
-		        
+
 		        menu.add(ISystemContextMenuConstants.GROUP_CHANGE, _terminateShellAction);
 		        menu.add(ISystemContextMenuConstants.GROUP_CHANGE, _terminateRemoveShellAction);
 		        menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, _exportShellOutputAction);
@@ -210,7 +209,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			return;
 		}
 	}
-	
+
 	public List getShellActions(IRemoteCmdSubSystemConfiguration factory)
 	{
 	    getShell();
@@ -219,7 +218,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	    {
 	        if (_terminateShellAction == null)
 	        {
-	            _terminateShellAction = new SystemTerminateShellAction(shell);	
+	            _terminateShellAction = new SystemTerminateShellAction(shell);
 	        }
             _shellActions.add(_terminateShellAction);
 	        if (_terminateRemoveShellAction == null)
@@ -227,20 +226,20 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	            _terminateRemoveShellAction = new SystemTerminateRemoveShellAction(shell);
 	        }
             _shellActions.add(_terminateRemoveShellAction);
-	        
+
 	        _shellActions.add(new Separator());
-	        
+
 	        ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
-	        
+
 	        _exportShellOutputAction = factoryAdapter.getCommandShellOutputExportAction(shell);
 	        _shellActions.add(_exportShellOutputAction);
 	        _exportShellHistoryAction = factoryAdapter.getCommandShellHistoryExportAction(shell);
 	        _shellActions.add(_exportShellHistoryAction);
-	       
+
 	    }
 	    return _shellActions;
 	}
-	
+
 	/**
 	 * Returns the parent command object for a line of output
 	 */
@@ -268,7 +267,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			{
 			    text = translateTabs(text);
 			}
-			
+
 			int tagIndex = text.indexOf("BEGIN-END-TAG"); //$NON-NLS-1$
 			if (tagIndex == 0)
 			{
@@ -279,7 +278,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			    //return text.substring(0, tagIndex - 6);
 			    return text.substring(0, tagIndex);
 			}
-			
+
 			return text;
 		}
 		else if (element instanceof IRemoteCommandShell)
@@ -290,7 +289,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		return null;
 	}
 
-	
+
 	protected String translateTabs(String tabbedString)
 		{
 		    int columnWidth = 8;
@@ -320,9 +319,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		        {
 		            untabbedBuf.append(c);
 		            currentOffset++;
-		        }	        
+		        }
 		    }
-		    
+
 		    return untabbedBuf.toString();
 		}
 	/**
@@ -348,13 +347,13 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	 */
 	public Object[] getChildren(IAdaptable element, IProgressMonitor monitor)
 	{
-	  
+
 	        if (element instanceof IRemoteCommandShell)
 	        {
 		    	IRemoteCommandShell output = (IRemoteCommandShell) element;
 				return output.listOutput();
 			}
-	   
+
 		return null;
 	}
 
@@ -374,7 +373,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	    else
 	    {
 	        return false;
-	    }		
+	    }
 	}
 
 	/**
@@ -422,20 +421,20 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 
 		return file;
 	}
-	
-	
-	
+
+
+
 	protected IEditorRegistry getEditorRegistry()
 	{
 		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
-	
+
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
 		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Opens the appropriate editor for a remote output object
 	 */
@@ -445,10 +444,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		if (element instanceof IRemoteOutput)
 		{
 			IRemoteOutput output = (IRemoteOutput) element;
-	
+
 			IRemoteFile file = outputToFile(output);
 			if (file != null && file.isFile())
-			{									
+			{
 					doOpen(file, output);
 					return true;
 			}
@@ -464,8 +463,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		}
 		return result;
 	}
-	
-	
+
+
 	private void doOpen(IRemoteFile remoteFile, IRemoteOutput output)
 	{
 		if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
@@ -477,7 +476,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 				int line = output.getLine();
 				int charStart = output.getCharStart();
 				int charEnd = output.getCharEnd();
-				
+
 				try
 				{
 					boolean isOpen = editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN;
@@ -495,7 +494,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 					{
 						DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, false, line, charStart, charEnd);
 						oJob.schedule();
-					}					
+					}
 				}
 				catch (Exception e)
 				{
@@ -503,7 +502,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 		}
 	}
-			
+
 	private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
 	{
 		// DY:  check if the file exists and is read-only (because it was previously opened
@@ -511,15 +510,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		IFile file = editable.getLocalResource();
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		boolean newFile = !file.exists();
-	
+
 		// detect whether there exists a temp copy already
 		if (!newFile && file.exists())
 		{
 			// we have a local copy of this file, so we need to compare timestamps
-	
+
 			// get stored modification stamp
 			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
-	
+
 			// get updated remoteFile so we get the current remote timestamp
 			//remoteFile.markStale(true);
 			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
@@ -529,36 +528,36 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			catch (Exception e)
 			{
-				
+
 			}
-	
+
 			// get the remote modified stamp
 			long remoteModifiedStamp = remoteFile.getLastModified();
-	
+
 			// get dirty flag
 			boolean dirty = properties.getDirty();
-	
+
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-			
+
 			String remoteEncoding = remoteFile.getEncoding();
 			String storedEncoding = properties.getEncoding();
-			
+
 			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
 
 			boolean usedBinary = properties.getUsedBinaryTransfer();
 			boolean isBinary = remoteFile.isBinary();
-			
-			return (!dirty && 
-					!remoteNewer && 
+
+			return (!dirty &&
+					!remoteNewer &&
 					usedBinary == isBinary &&
 					!encodingChanged);
 		}
 		return false;
 	}
-	
 
-	
-	
+
+
+
 	/**
 	 * Returns the associated subsystem for this line of remote output or remote command
 	 */
@@ -573,9 +572,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		{
 			IRemoteOutput output = (IRemoteOutput) element;
 			String type = output.getType();
-			
-			
-			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+
+
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) ||
 					type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
 				// bug 233475, fall back to the file subsystem
 				IRemoteFile file = outputToFile(output);
@@ -583,7 +582,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 					return file.getParentRemoteFileSubSystem();
 				}
 			}
-			
+
 			Object parent = output.getParent();
 			if (parent instanceof IRemoteCommandShell)
 			{
@@ -606,15 +605,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			return cmd.getId();
 		}
 		else if (element instanceof IRemoteOutput)
-		{						
+		{
 			IRemoteOutput out = (IRemoteOutput) element;
-			
+
 			String type = out.getType();
-			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+			if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) ||
 					type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
 				return out.getAbsolutePath();
 			}
-			
+
 			String str = getAbsoluteParentName(element);
 			return str + ":" + out.getIndex(); //$NON-NLS-1$
 		}
@@ -694,10 +693,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	}
 
 	/**
-	  * Some view has updated the name or properties of this remote object. As a result, the 
+	  * Some view has updated the name or properties of this remote object. As a result, the
 	  *  remote object's contents need to be refreshed. You are given the old remote object that has
 	  *  old data, and you are given the new remote object that has the new data. For example, on a
-	  *  rename the old object still has the old name attribute while the new object has the new 
+	  *  rename the old object still has the old name attribute while the new object has the new
 	  *  new attribute.
 	  * <p>
 	  * This is called by viewers like SystemView in response to rename and property change events.
@@ -727,9 +726,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 
 	/**
 	  * Given a remote object, return the unqualified names of the objects contained in that parent. This is
-	  *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not 
+	  *  used for testing for uniqueness on a rename operation, for example. Sometimes, it is not
 	  *  enough to just enumerate all the objects in the parent for this purpose, because duplicate
-	  *  names are allowed if the types are different, such as on iSeries. In this case return only 
+	  *  names are allowed if the types are different, such as on iSeries. In this case return only
 	  *  the names which should be used to do name-uniqueness validation on a rename operation.
 	  */
 	public String[] getRemoteParentNamesInUse(Object element, IProgressMonitor monitor) throws Exception
@@ -742,7 +741,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	* Returns the current collection of property descriptors.
 	* By default returns descriptors for name and type only.
 	* Override if desired.
-	* @return an array containing all descriptors.  
+	* @return an array containing all descriptors.
 	*/
 	protected Object internalGetPropertyValue(Object key)
 	{
@@ -775,7 +774,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 			{
-				imageDescriptor = //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER); 
+				imageDescriptor = //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
 			}
 			else if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE))
@@ -828,7 +827,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			IRemoteCommandShell command = (IRemoteCommandShell) element;
 			IRemoteCmdSubSystemConfiguration factory = command.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration();
 			 ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
-			ImageDescriptor imageDescriptor = null; 			
+			ImageDescriptor imageDescriptor = null;
 			if (command.isActive())
 			{
 				imageDescriptor = factoryAdapter.getActiveCommandShellImageDescriptor();
@@ -841,7 +840,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		}
 
 		else
-		{ // return some default	 
+		{ // return some default
 			ImageDescriptor imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
 			return imageDescriptor;
 		}
@@ -899,7 +898,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	{
 		return false;
 	}
-	
+
 	/**
 	 * Return true if this object is renamable by the user. If so, when selected,
 	 *  the Rename popup menu item will be enabled.
@@ -912,7 +911,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 
 	/**
 	 * Perform the rename action. By default does nothing. Override if your object is renamable.
-	 * Return true if this was successful. Return false if it failed and you issued a msg. 
+	 * Return true if this was successful. Return false if it failed and you issued a msg.
 	 * Throw an exception if it failed and you want to use the generic msg.
 	 */
 	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
@@ -929,7 +928,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	 */
 	public boolean canDrop(Object element)
 	{
-	    /*DKM -for now disabling - the function doesn't 
+	    /*DKM -for now disabling - the function doesn't
 	     * make sense for other types of prompts like
 	     * RAD4z
 		if (element instanceof IRemoteOutput)
@@ -948,15 +947,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			if (output.getType().equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
 				IRemoteFile file = outputToFile(output);
 				ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);
-				return fadapter.canDrop(file);			
+				return fadapter.canDrop(file);
 			}
 		}
-		
+
 		return false;
 	}
 
 	/**
-	 * Indicates whether the specified object can be copied 
+	 * Indicates whether the specified object can be copied
 	 * @param element the object to copy
 	 */
 	public boolean canDrag(Object element)
@@ -976,7 +975,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	/**
 	 * Copy the specified remote output object.  This method returns a string representing
 	 * the text of the remote output;
-	 * 
+	 *
 	 * @param element the output to copy
 	 * @param sameSystemType not applicable for remote output
 	 * @param monitor the progress monitor
@@ -1000,16 +999,16 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			if (element instanceof IRemoteOutput){
 				IRemoteOutput output = (IRemoteOutput)element;
 				String type = output.getType();
-				if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || 
+				if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) ||
 						type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY)){
 					IRemoteFile file = outputToFile(output);
 					if (file != null){
-						ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);					
+						ISystemDragDropAdapter fadapter = (ISystemDragDropAdapter)((IAdaptable)file).getAdapter(ISystemDragDropAdapter.class);
 						return fadapter.doDrag(file, sameSystemType, monitor);
-					}			
+					}
 				}
 			}
-			
+
 			return getText(element);
 		}
 	}
@@ -1120,12 +1119,12 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	{
 		return null;
 	}
-	
+
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
 	    return getUniquePropertyDescriptors();
 	}
-	
+
 	public IPropertyDescriptor[] getUniquePropertyDescriptors()
 	{
 		if (propertySourceInput instanceof IRemoteCommandShell)
@@ -1133,7 +1132,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		    if (_shellPropertyDescriptors == null)
 		    {
 		        _shellPropertyDescriptors = new IPropertyDescriptor[2];
-		        
+
 		        _shellPropertyDescriptors[0] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_STATUS, ShellResources.RESID_PROPERTY_SHELL_STATUS_LABEL, ShellResources.RESID_PROPERTY_SHELL_STATUS_TOOLTIP);
 		        _shellPropertyDescriptors[1] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_SHELL_CONTEXT, ShellResources.RESID_PROPERTY_SHELL_CONTEXT_LABEL, ShellResources.RESID_PROPERTY_SHELL_CONTEXT_TOOLTIP);
 		    }
@@ -1148,10 +1147,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		    return _outputPropertyDescriptors;
 		}
 	}
-	
+
 	/**
 	 * Returns the current value for the named property.
-	 * 
+	 *
 	 * @param property the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
@@ -1180,13 +1179,13 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
-	
+
+
 	/**
 	 * Don't show properties for remote output
 	 */
 	public boolean showProperties(Object element){
 		return false;
 	}
-	
+
 }

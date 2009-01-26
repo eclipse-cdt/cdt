@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,7 +200,7 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class SystemViewRemoteFileAdapter
 	extends AbstractSystemViewAdapter
-	implements ISystemViewElementAdapter, ISystemRemoteElementAdapter
+ implements ISystemRemoteElementAdapter
 {
 
 	private String xlatedSize = null;
@@ -319,7 +319,7 @@ public class SystemViewRemoteFileAdapter
 		boolean supportsSearch = true;
 		boolean supportsArchiveManagement = false;
 		boolean offline = false;
-		
+
 		// perf improvement... phil
 		Object firstSelection = selection.getFirstElement();
 		IRemoteFile firstFile = null;
@@ -329,9 +329,9 @@ public class SystemViewRemoteFileAdapter
 			elementType = firstFile.isDirectory() || firstFile.isRoot() ? 1 : 0;
 			isArchive = firstFile.isArchive();
 			canRead = firstFile.canRead();
-			
+
 			IRemoteFileSubSystem fileSubSystem = firstFile.getParentRemoteFileSubSystem();
-			
+
 			offline = fileSubSystem.isOffline();
 
 			supportsSearch = fileSubSystem.getParentRemoteFileSubSystemConfiguration().supportsSearch();
@@ -363,7 +363,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (addNewFile == null)
 				{
-					addNewFile = new SystemNewFileAction(shell);					
+					addNewFile = new SystemNewFileAction(shell);
 				}
 				addNewFile.setEnabled(canRead && !offline);
 				menu.add(ISystemContextMenuConstants.GROUP_NEW, addNewFile);
@@ -372,11 +372,11 @@ public class SystemViewRemoteFileAdapter
 			{
 		        if (addNewFolder == null)
 		        {
-		            addNewFolder = new SystemNewFolderAction(shell);		            
+		            addNewFolder = new SystemNewFolderAction(shell);
 		        }
 		        addNewFolder.setEnabled(canRead && !offline);
 		        menu.add(ISystemContextMenuConstants.GROUP_NEW, addNewFolder);
-	
+
 				if (addNewFilter == null)
 				{
 					addNewFilter = new SystemNewFileFilterFromFolderAction(shell);
@@ -387,7 +387,7 @@ public class SystemViewRemoteFileAdapter
 			}
 
 		}
-		else {		
+		else {
 	    	// open
 	    	String label = SystemResources.ACTION_CASCADING_OPEN_LABEL;
 	   	    String tooltip = SystemResources.ACTION_CASCADING_OPEN_TOOLTIP;
@@ -405,7 +405,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				openWithMenu = new SystemRemoteFileOpenWithMenu();
 			}
-			openWithMenu.updateSelection(selection);			
+			openWithMenu.updateSelection(selection);
 			submenu.add(openWithMenu);
 			menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
 		}
@@ -461,7 +461,7 @@ public class SystemViewRemoteFileAdapter
 				menu.add(ISystemContextMenuConstants.GROUP_COMPAREWITH, compareFilesAction);
 				menu.add(ISystemContextMenuConstants.GROUP_COMPAREWITH, compareEditionAction);
 				menu.add(ISystemContextMenuConstants.GROUP_REPLACEWITH, replaceEditionAction);
-				
+
 				compareFilesAction.setEnabled(canRead && !offline);
 				compareEditionAction.setEnabled(canRead && !offline);
 				replaceEditionAction.setEnabled(canRead && !offline);
@@ -471,7 +471,7 @@ public class SystemViewRemoteFileAdapter
 		if (elementType == 1 || (isArchive && supportsArchiveManagement))
 		{
 		    menu.add(menuGroup, pasteClipboardAction);
-		    pasteClipboardAction.setEnabled(canRead && !offline);		 
+		    pasteClipboardAction.setEnabled(canRead && !offline);
 		}
 		if (!firstFile.isRoot())
 		{
@@ -3232,7 +3232,7 @@ public class SystemViewRemoteFileAdapter
 		names = new String[children.length];
 		for (int idx = 0; idx < names.length; idx++)
 		{
-			names[idx] = ((IRemoteFile) children[idx]).getName();
+			names[idx] = (children[idx]).getName();
 		}
 
 		return names;

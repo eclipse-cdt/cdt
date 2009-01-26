@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * @author jcamelon
@@ -98,7 +97,6 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CPPVisitor.getExpressionType(this);
+    	return new CPPBasicType(st, 0);
     }
-    
 }

@@ -6560,7 +6560,6 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue(!bar_ft.isConst());   assertTrue(!bar_ft.isVolatile());
     }
     
-    
     //    void test1(float f);
     //    void test1(void);
     //    void blabla() {
@@ -6576,5 +6575,19 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testOverloadResolution_262191() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
+    }
+    
+    // enum E {e1};
+    // typedef int TInt;
+    // void select(int);
+    // void test() {
+    //    int a= TInt(1); 
+    //    E e= E(0);
+    //    void* h;
+    //    select (int (h) + 1);
+    //  }  
+    public void testSimpleTypeConstructorExpressions() throws Exception {
+		final String code= getAboveComment();
+    	parseAndCheckBindings(code);
     }
 }

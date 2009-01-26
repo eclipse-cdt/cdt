@@ -13,14 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
@@ -109,13 +106,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 					IBinding b= name.resolvePreBinding();
 					if (b instanceof IProblemBinding) {
 						issues++;
-					} else if (b instanceof IType && name.getPropertyInParent() == IASTIdExpression.ID_NAME) {
-			        	// mstodo misused types, should be part of postResolution.
-			        	IASTNode grand= name.getParent().getParent();
-			        	if (!(grand instanceof ICPPASTTemplatedTypeTemplateParameter)) {
-			        		issues++;
-			        	}
-					}
+					} 
 				} catch (Exception t) {
 					issues++;
 				}

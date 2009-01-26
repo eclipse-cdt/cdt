@@ -5969,4 +5969,15 @@ public class AST2Tests extends AST2BaseTest {
 			assertSame(s1, t.getType());
 		}
 	}
+	
+    // typedef int TInt;
+    // int a= TInt; //ref 
+    public void testTypeAsExpressionIsProblem_261175() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertProblem("TInt; //ref", 4);
+
+		bh= new BindingAssertionHelper(code, false);
+		bh.assertProblem("TInt; //ref", 4);
+    }
 }

@@ -316,18 +316,8 @@ public class CPPSemantics {
 		}
 		
 		if (data.considerConstructors) {
-			ICPPClassType cls= null;
-//			if (binding instanceof ITypedef) {
-//				// mstodo constructor off typedef
-//				IType t= SemanticUtil.getUltimateTypeViaTypedefs((IType) binding);
-//				if (t instanceof ICPPClassType) {
-//					cls= (ICPPClassType) t;
-//				}
-//			} else 
 			if (binding instanceof ICPPClassType) {
-				cls= (ICPPClassType) binding;
-			}
-			if (cls != null) {
+				ICPPClassType cls= (ICPPClassType) binding;
 				try {
 					if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
 						if (data.tu != null) {
@@ -401,16 +391,18 @@ public class CPPSemantics {
 	        			binding = new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 	        		}
 	        	} 
-	        	// mstodo misused types, important for ambiguity resolution.
-//	        } else if (namePropertyInParent == IASTIdExpression.ID_NAME) {
-//	        	if (binding instanceof IType) {
-//		        	IASTNode parent= name.getParent().getParent();
-//		        	if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
-//			        	// default for template template parameter is an id-expression, which is a type.
-//		        	} else {		        		
-//		        		binding= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
-//		        	}
-//	        	}
+	        } else if (namePropertyInParent == IASTIdExpression.ID_NAME) {
+	        	if (binding instanceof IType) {
+		        	IASTNode parent= name.getParent().getParent();
+		        	if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
+			        	// default for template template parameter is an id-expression, which is a type.
+		        	} else if (data.considerConstructors && 
+		        			(binding instanceof ICPPUnknownType || binding instanceof ITypedef || binding instanceof IEnumeration)) {
+		        		// constructor or simple-type constructor
+		        	} else {
+		        		binding= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
+		        	}
+	        	}
 	        }
         }
         

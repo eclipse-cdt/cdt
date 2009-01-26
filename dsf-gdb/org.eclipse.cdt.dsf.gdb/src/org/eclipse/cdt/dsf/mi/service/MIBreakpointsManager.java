@@ -56,6 +56,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.BreakpointAddedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.BreakpointRemovedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIRunControl.SuspendedEvent;
 import org.eclipse.cdt.dsf.mi.service.breakpoint.actions.BreakpointActionAdapter;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIGDBExitEvent;
@@ -1202,15 +1203,21 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Breakpoint actions
     //-------------------------------------------------------------------------
 
-    @DsfServiceEventHandler
-    public void eventDispatched(MIBreakpointHitEvent e) {
-        performBreakpointAction(e.getDMContext(), e.getNumber());
-    }
+	@DsfServiceEventHandler 
+    public void eventDispatched(SuspendedEvent e) {
 
-    @DsfServiceEventHandler
-    public void eventDispatched(MIWatchpointTriggerEvent e) {
-        performBreakpointAction(e.getDMContext(), e.getNumber());
-    }
+		if (e.getMIEvent() instanceof MIBreakpointHitEvent) {
+			MIBreakpointHitEvent evt = (MIBreakpointHitEvent) e.getMIEvent();
+	        performBreakpointAction(evt.getDMContext(), evt.getNumber());
+	        return;
+		}
+
+		if (e.getMIEvent() instanceof MIWatchpointTriggerEvent) {
+			MIWatchpointTriggerEvent evt = (MIWatchpointTriggerEvent) e.getMIEvent();
+	        performBreakpointAction(evt.getDMContext(), evt.getNumber());
+	        return;
+		}
+	}
 
     private void performBreakpointAction(final IDMContext context, int number) {
         // Identify the platform breakpoint

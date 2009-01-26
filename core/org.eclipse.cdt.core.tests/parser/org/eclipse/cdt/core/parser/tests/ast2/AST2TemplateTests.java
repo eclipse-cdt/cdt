@@ -3676,7 +3676,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  template<typename _CharT>
 	//  struct BasicString : public VersaString<_CharT> {
 	//    typedef typename VersaString<_CharT>::size_type size_type;
-	//    BasicString substr(size_type __pos = 0) const;
+	//    BasicString substr(size_type pos) const;
 	//  };
 	//
 	//  void test(BasicString<char> s) {

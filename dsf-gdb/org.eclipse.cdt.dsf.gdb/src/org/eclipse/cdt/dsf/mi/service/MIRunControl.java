@@ -536,7 +536,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
                     }
             	}
             );
-        }else {
+        } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
         }

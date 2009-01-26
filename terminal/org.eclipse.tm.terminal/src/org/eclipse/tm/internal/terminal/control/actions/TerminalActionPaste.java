@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
+ * Uwe Stieber (Wind River) - [260372] [terminal] Certain terminal actions are enabled if no target terminal control is available
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.actions;
 
@@ -50,9 +51,9 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 	}
 
 	public void updateAction(boolean aboutToShow) {
-		boolean bEnabled = false;
 		ITerminalViewControl target = getTarget();
-		if (target != null) {
+		boolean bEnabled = target != null;
+		if (bEnabled) {
 			String strText = (String) target.getClipboard().getContents(
 					TextTransfer.getInstance());
 			bEnabled = ((strText != null) && (!strText.equals("")) && (target.getState() == TerminalState.CONNECTED));//$NON-NLS-1$

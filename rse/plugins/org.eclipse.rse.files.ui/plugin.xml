@@ -13,6 +13,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
+David McKnight   (IBM)        - [218227][usability] Contribute a "Show in RSE" action to Resource Navigator and Project Explorer
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -474,5 +475,21 @@ David McKnight   (IBM)        - [261019] New File/Folder actions available in Wo
         	 </action>
 	     </viewContribution>
 	   </extension>
+	   
+	 <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"   
+            id="org.eclipse.rse.ui.ShowResourceInSystemsView">
+         <action id="org.eclipse.rse.ui.ShowResourceInSystemsViewAction"
+               label="%ShowInRSEView.label"
+               tooltip="%ShowInRSEView.tooltip"
+               class="org.eclipse.rse.internal.files.ui.actions.ShowResourceInSystemsViewDelegate">
+               menubarPath="group.goto"
+               enablesFor="1"               
+               id="showResourceInSystemsView">
+         </action>
+        </objectContribution>
+     </extension>
 </plugin>
  

@@ -10,6 +10,7 @@
  *
  * Contributors:
  * David McKnight     (IBM)  - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View
+ * David McKnight     (IBM)  - [218227][usability] Contribute a "Show in RSE" action to Resource Navigator and Project Explorer
  ********************************************************************************/
 package org.eclipse.rse.internal.ui.actions;
 
@@ -318,7 +319,7 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 
 	}
 	private IAction _action;
-	private Object _remoteObject;
+	protected Object _selectedObject;
 	private SystemViewPart _systemViewPart;
 
 	public void init(IViewPart view) {
@@ -330,19 +331,19 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 		SystemView systemTree = viewPart.getSystemView();
 
 		// now we've got to show the object in this view part
-		TreeItem item = (TreeItem)systemTree.findFirstRemoteItemReference(_remoteObject, null);
+		TreeItem item = (TreeItem)systemTree.findFirstRemoteItemReference(_selectedObject, null);
 		if (item != null){
 			systemTree.getTree().setSelection(item);
 		}
-		else if (_remoteObject instanceof IAdaptable)
+		else if (_selectedObject instanceof IAdaptable)
 		{
-			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)_remoteObject).getAdapter(ISystemViewElementAdapter.class);
+			ISystemViewElementAdapter adapter = getAdapter((IAdaptable)_selectedObject);
 			if (adapter != null){
-				ISubSystem subSystem = adapter.getSubSystem(_remoteObject);
+				ISubSystem subSystem = adapter.getSubSystem(_selectedObject);
 				if (subSystem.getSubSystemConfiguration().supportsFilters()){
 					// no match, so we will expand from filter
 					// query matching filter in  a job (to avoid main thread)
-					LinkFromFilterJob job = new LinkFromFilterJob((IAdaptable)_remoteObject, systemTree);
+					LinkFromFilterJob job = new LinkFromFilterJob((IAdaptable)_selectedObject, systemTree);
 					job.schedule();
 				}
 				else {
@@ -351,7 +352,7 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 
 					// put these items in the tree and look for remote object
 					// if we can't find the remote object under this, the ShowChildrenInTree will recurse
-					Display.getDefault().asyncExec(new ShowChildrenInTree(subSystem, children, null, systemTree, (IAdaptable)_remoteObject));
+					Display.getDefault().asyncExec(new ShowChildrenInTree(subSystem, children, null, systemTree, (IAdaptable)_selectedObject));
 				}
 			}
 		}
@@ -381,7 +382,7 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 		IStructuredSelection sel = (IStructuredSelection)selection;
 		if (sel.size() == 1){
 			_action.setEnabled(true);
-			_remoteObject = sel.getFirstElement();
+			_selectedObject = sel.getFirstElement();
 		}
 		else {
 			_action.setEnabled(false);

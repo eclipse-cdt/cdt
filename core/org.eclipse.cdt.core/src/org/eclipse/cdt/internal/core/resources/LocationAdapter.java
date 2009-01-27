@@ -33,7 +33,10 @@ abstract class LocationAdapter<T> {
 	public static final LocationAdapter<IPath> PATH = new LocationAdapter<IPath>() {
 		@Override
 		public String extractName(IPath location) {
-			return location.lastSegment();
+			String name = location.lastSegment();
+			if (name != null)
+				return name;
+			return location.toString();
 		}
 
 		@Override

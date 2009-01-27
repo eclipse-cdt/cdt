@@ -1,23 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
- *******************************************************************************/
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -26,34 +26,22 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * Represents a specialization of a class-template
+ * Represents a specialization of a partial class-template specialization
  */
-public class CPPClassTemplateSpecialization extends CPPClassSpecialization
-		implements ICPPClassTemplate, ICPPInternalClassTemplate {
+public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClassSpecialization
+		implements ICPPClassTemplatePartialSpecializationSpecialization, ICPPInternalClassTemplate {
 
 	private ObjectMap instances = null;
 	private ICPPDeferredClassInstance fDeferredInstance;
-	private ICPPClassTemplatePartialSpecialization[] fPartialSpecs;
+	private ICPPClassTemplate fClassTemplate;
 
-	public CPPClassTemplateSpecialization(ICPPClassTemplate orig, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
-		super(orig, owner, argumentMap);
-	}
-
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
-		if (fPartialSpecs == null) {
-			ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
-			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
-			ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
-			for (int i = 0; i < orig.length; i++) {
-				spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i]);
-			}
-			fPartialSpecs = spec;
-		}
-		return fPartialSpecs;
+	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig, ICPPClassTemplate template, ICPPTemplateParameterMap argumentMap) throws DOMException {
+		super(orig, template.getOwner(), argumentMap);
+		fClassTemplate= template;
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
+		ICPPClassTemplatePartialSpecialization template = (ICPPClassTemplatePartialSpecialization) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
 
@@ -83,14 +71,6 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 
-	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-	}
-
-	@Override
-	public String toString() {
-		return getName();
-	}
-	
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}
@@ -101,5 +81,45 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 			fDeferredInstance= new CPPDeferredClassInstance(this, args, getCompositeScope());
 		}
 		return fDeferredInstance;
+	}
+
+	public ICPPClassTemplate getPrimaryClassTemplate() {
+		return fClassTemplate;
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
+		ICPPTemplateArgument[] args = ((ICPPClassTemplatePartialSpecialization) getSpecializedBinding()).getTemplateArguments();
+		final IBinding owner = getOwner();
+		if (owner instanceof ICPPClassSpecialization) {
+			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), (ICPPClassSpecialization) owner); 
+		}
+		return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), null);
+	}
+	
+	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
+	}
+
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+	}
+	
+	@Override
+	public String toString() {
+		try {
+			return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
+		} catch (DOMException e) {
+			return super.toString() + '<' + e.getProblem().toString() + '>';
+		}
+	}
+	
+	@Override
+	@Deprecated
+	public ObjectMap getArgumentMap() {
+		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
+	}
+	
+	@Deprecated
+	public IType[] getArguments() throws DOMException {
+		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 }

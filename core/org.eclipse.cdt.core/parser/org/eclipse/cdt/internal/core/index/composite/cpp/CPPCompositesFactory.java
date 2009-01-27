@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -197,6 +198,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					}
 				} else if (binding instanceof ICPPTemplateDefinition) {
 					if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+						if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization)
+							return new CompositeCPPClassTemplatePartialSpecializationSpecialization(this, (ICPPClassTemplatePartialSpecializationSpecialization) binding);
 						return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) findOneBinding(binding));
 					} else if (binding instanceof ICPPClassType) {
 						return new CompositeCPPClassTemplateSpecialization(this, (ICPPClassType) binding);

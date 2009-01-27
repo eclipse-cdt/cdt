@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -44,8 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * @author aniefer
- *
+ * Specialization of a class.
  */
 public class CPPClassSpecialization extends CPPSpecialization 
 		implements ICPPClassSpecialization, ICPPInternalClassTypeMixinHost {
@@ -71,7 +70,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 				return result;
 		}
 		
-		IBinding result= CPPTemplates.createSpecialization(this, original, getTemplateParameterMap());
+		IBinding result= CPPTemplates.createSpecialization(this, original);
 		synchronized(this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null) 

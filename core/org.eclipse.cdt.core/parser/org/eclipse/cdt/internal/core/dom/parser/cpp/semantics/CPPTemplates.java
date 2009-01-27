@@ -97,6 +97,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorSpecialization;
@@ -683,14 +684,17 @@ public class CPPTemplates {
 		return instance;
 	}
 
-	public static ICPPSpecialization createSpecialization(ICPPClassSpecialization owner, IBinding decl, ICPPTemplateParameterMap tpMap) {
-		
-		// mstodo specializations of partial specializations
-		if (decl instanceof ICPPClassTemplatePartialSpecialization)
-			return null;
-
+	public static ICPPSpecialization createSpecialization(ICPPClassSpecialization owner, IBinding decl) {
 		ICPPSpecialization spec = null;
-		if (decl instanceof ICPPClassTemplate) {
+		final ICPPTemplateParameterMap tpMap= owner.getTemplateParameterMap();
+		if (decl instanceof ICPPClassTemplatePartialSpecialization) {
+			try {
+				ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) decl;
+				ICPPClassTemplate template= (ICPPClassTemplate) owner.specializeMember(pspec.getPrimaryClassTemplate());
+				spec= new CPPClassTemplatePartialSpecializationSpecialization(pspec, template, tpMap);
+			} catch (DOMException e) {
+			}
+		} else if (decl instanceof ICPPClassTemplate) {
 			spec = new CPPClassTemplateSpecialization((ICPPClassTemplate) decl, owner, tpMap);
 		} else if (decl instanceof ICPPClassType) {
 			spec = new CPPClassSpecialization((ICPPClassType) decl, owner, tpMap);

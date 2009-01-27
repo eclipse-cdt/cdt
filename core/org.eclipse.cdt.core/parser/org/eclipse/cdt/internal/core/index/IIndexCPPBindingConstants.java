@@ -60,4 +60,5 @@ public interface IIndexCPPBindingConstants {
 	 int CPP_TEMPLATE_NON_TYPE_PARAMETER= IIndexBindingConstants.LAST_CONSTANT + 44;
 	 int CPP_FRIEND_DECLARATION = IIndexBindingConstants.LAST_CONSTANT + 45;
 	 int CPP_TEMPLATE_TEMPLATE_PARAMETER= IIndexBindingConstants.LAST_CONSTANT + 46;
+	 int CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC = IIndexBindingConstants.LAST_CONSTANT + 47;
 }

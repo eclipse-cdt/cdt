@@ -1805,7 +1805,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		ICPPClassType BI = (ICPPClassType) col.getName(19).resolveBinding();
 		assertTrue(BI instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance)BI).getSpecializedBinding(), spec);
+		final IBinding partialSpecSpec = ((ICPPTemplateInstance)BI).getSpecializedBinding();
+		assertTrue(partialSpecSpec instanceof ICPPSpecialization);
+		IBinding partialSpec= ((ICPPSpecialization) partialSpecSpec).getSpecializedBinding();
+		assertSame(partialSpec, spec);
 	}
 	
 	// template <class T> int f(T); // #1
@@ -3592,7 +3595,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//      new A<B, int>(&B::m);
 	//    }
 	//  };
-    public void _testNestedTemplates_259872_2() throws Exception {
+    public void testNestedTemplates_259872_2() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
     }

@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -144,10 +145,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	class ConfigurePartialSpecialization implements Runnable {
-		PDOMCPPClassTemplatePartialSpecialization partial;
+		IPDOMPartialSpecialization partial;
 		ICPPClassTemplatePartialSpecialization binding;
 		
-		public ConfigurePartialSpecialization(PDOMCPPClassTemplatePartialSpecialization partial,
+		public ConfigurePartialSpecialization(IPDOMPartialSpecialization partial,
 				ICPPClassTemplatePartialSpecialization binding) {
 			this.partial = partial;
 			this.binding = binding;
@@ -461,6 +462,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					return CPP_CLASS_INSTANCE;		
 				}
 			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
+				if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization)
+					return CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC;
 				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
 			} else if (binding instanceof ICPPField) {
 				return CPP_FIELD_SPECIALIZATION;
@@ -766,6 +769,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPClassTemplate(pdom, record);
 		case CPP_CLASS_TEMPLATE_PARTIAL_SPEC:
 			return new PDOMCPPClassTemplatePartialSpecialization(pdom, record);
+		case CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC:
+			return new PDOMCPPClassTemplatePartialSpecializationSpecialization(pdom, record);
 		case CPP_FUNCTION_INSTANCE:
 			return new PDOMCPPFunctionInstance(pdom, record);
 		case CPP_METHOD_INSTANCE:

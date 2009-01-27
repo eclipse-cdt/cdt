@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,19 +33,23 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 		super(cf, ct);
 	}
 	
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations()
-			throws DOMException {		
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 		try {
-			IIndexFragmentBinding[] bindings= ((CIndex)((CPPCompositesFactory) cf).getContext()).findEquivalentBindings(rbinding);
-			IIndexFragmentBinding[][] preresult= new IIndexFragmentBinding[bindings.length][];
-			
-			for (int i= 0; i < bindings.length; i++) {
-				ICPPClassTemplatePartialSpecialization[] ss= ((ICPPClassTemplate) bindings[i]).getPartialSpecializations();
-				preresult[i]= new IIndexFragmentBinding[ss.length];
+			final CIndex cIndex = (CIndex) ((CPPCompositesFactory) cf).getContext();
+			IIndexFragmentBinding[] bindings = cIndex.findEquivalentBindings(rbinding);
+			IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[bindings.length][];
+
+			for (int i = 0; i < bindings.length; i++) {
+				final ICPPClassTemplate template = (ICPPClassTemplate) bindings[i];
+				ICPPClassTemplatePartialSpecialization[] ss = template.getPartialSpecializations();
+				preresult[i] = new IIndexFragmentBinding[ss.length];
 				System.arraycopy(ss, 0, preresult[i], 0, ss.length);
 			}
-			
-			return (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.addAll(ICPPClassTemplatePartialSpecialization.class, null, cf.getCompositeBindings(preresult));
+
+			return (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.addAll(
+					ICPPClassTemplatePartialSpecialization.class,
+					ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY, cf
+							.getCompositeBindings(preresult));
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);
 			return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;

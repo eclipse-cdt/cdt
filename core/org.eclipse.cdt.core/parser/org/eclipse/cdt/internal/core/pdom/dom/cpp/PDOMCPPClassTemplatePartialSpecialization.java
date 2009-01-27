@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.CoreException;
  * Partial specialization of a class template for the index.
  */
 class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate 
-		implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization, IPDOMOverloader {
+		implements IPDOMPartialSpecialization, ICPPSpecialization, IPDOMOverloader {
 	
 	private static final int ARGUMENTS = PDOMCPPClassTemplate.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = PDOMCPPClassTemplate.RECORD_SIZE + 4;

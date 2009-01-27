@@ -15,11 +15,14 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -72,9 +75,16 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	}
 
 	private Control createStatusPage(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(CEditorMessages.Scalability_outlineDisabled); 
-		return label;
+		final Link link= new Link(parent, SWT.NONE);
+		link.setText(CEditorMessages.Scalability_outlineDisabled);
+		link.setToolTipText(CEditorMessages.Scalability_linkToolTip);
+		link.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), "org.eclipse.cdt.ui.preferences.CScalabilityPreferences", null, null).open(); //$NON-NLS-1$
+			}
+		});
+		return link;
 	}
 
 	@Override

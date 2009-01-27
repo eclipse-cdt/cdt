@@ -48,6 +48,7 @@ public final class CEditorMessages extends NLS {
 	public static String GotoMatchingBracket_error_bracketOutsideSelectedElement;
 	public static String Scalability_message;
 	public static String Scalability_info;
+	public static String Scalability_linkToolTip;
 	public static String Scalability_reappear;
 	public static String Scalability_outlineDisabled;
 	public static String ToggleComment_error_title;

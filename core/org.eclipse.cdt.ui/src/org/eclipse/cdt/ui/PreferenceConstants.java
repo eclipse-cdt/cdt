@@ -1597,7 +1597,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_ALERT, true);
 		store.setDefault(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, 5000);
 		store.setDefault(PreferenceConstants.SCALABILITY_ENABLE_ALL, false);
-		store.setDefault(PreferenceConstants.SCALABILITY_RECONCILER, false);
+		store.setDefault(PreferenceConstants.SCALABILITY_RECONCILER, true);
 		store.setDefault(PreferenceConstants.SCALABILITY_SYNTAX_COLOR, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.service.command;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,8 +24,10 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
+import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.cdt.examples.dsf.pda.service.commands.PDACommandResult;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,7 +38,8 @@ public class BasicTests extends CommandControlTestsBase {
 
     @BeforeClass
     public static void setProgram() {
-        fProgram = "samples/example.pda";
+        File programFile = PDAPlugin.getFileInPlugin(new Path("samples/example.pda"));
+        fProgram = programFile.getPath();
     }
 
     @Test

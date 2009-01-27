@@ -9,7 +9,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.variables,
  org.eclipse.debug.core,
  org.eclipse.cdt.dsf,
- org.junit4;bundle-version="4.3.1",
  org.eclipse.cdt.core;bundle-version="5.0.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.examples.dsf.pda,

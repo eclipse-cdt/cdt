@@ -120,6 +120,9 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
 		IType t = getArrayExpression().getExpressionType();
 		t= SemanticUtil.getUltimateTypeUptoPointers(t);
 		try {
+			if (t instanceof ICPPUnknownType) {
+				return CPPUnknownClass.createUnnamedInstance();
+			}
 			if (t instanceof ICPPClassType) {
 				ICPPFunction op = CPPSemantics.findOperator(this, (ICPPClassType) t);
 				if (op != null) {

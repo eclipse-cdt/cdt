@@ -3702,4 +3702,18 @@ public class AST2TemplateTests extends AST2BaseTest {
     	String code= getAboveComment();
     	parseAndCheckBindings(code, ParserLanguage.CPP);
     }
+    
+    // class C {};
+    // template<typename T> class XT {
+    //    T field;
+    //    void bla() {
+    //       C c;
+    //       field[0].m(c);
+    //    }
+    // };
+    public void testResolutionOfUnknownArrayAccess() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.CPP);
+    }
+    
 }

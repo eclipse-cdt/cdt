@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -1618,6 +1619,34 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] refs = fIndex.findNames(bindings[0], IIndex.FIND_REFERENCES);
 			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	//	namespace ns {
+	//		template<typename T> class X {};
+	//	}
+	//	class Y : public ns::X<int> {
+	//	};
+	public void testInstanceInheritance_258745() throws Exception {
+		String code= getContentsForTest(1)[0];
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", code);
+		waitUntilFileIsIndexed(file, 4000);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("Y".toCharArray(), false, IndexFilter.ALL_DECLARED, NPM);
+			assertEquals(1, bindings.length);
+			ICPPClassType ct= (ICPPClassType) bindings[0];
+			final ICPPBase[] bases = ct.getBases();
+			assertEquals(1, bases.length);
+			IBinding inst = bases[0].getBaseClass();
+			assertTrue(inst instanceof ICPPTemplateInstance);
+
+			IIndexName name= (IIndexName) bases[0].getBaseClassSpecifierName();
+			IBinding inst2= fIndex.findBinding(name);
+			assertEquals(inst, inst2);
 		} finally {
 			fIndex.releaseReadLock();
 		}

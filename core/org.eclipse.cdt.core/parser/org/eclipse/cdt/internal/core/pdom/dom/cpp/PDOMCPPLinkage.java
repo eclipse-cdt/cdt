@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -830,16 +829,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		super.onCreateName(file, name, pdomName);
 		
 		IASTNode parentNode= name.getParent();
-		IASTNode nameNode = name;
-		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
-				parentNode.getParent() instanceof ICPPASTQualifiedName) {
-			nameNode = parentNode;
-			parentNode = parentNode.getParent();
-		}
 		if (parentNode instanceof ICPPASTQualifiedName) {
-		    if (nameNode != ((ICPPASTQualifiedName) parentNode).getLastName()) {
-		    	return;
-		    }
+			if (name != ((ICPPASTQualifiedName) parentNode).getLastName())
+				return;
 	    	parentNode = parentNode.getParent();
 		}
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
@@ -861,8 +853,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					pdomName.setIsBaseSpecifier(true);
 				}
 			}
-		}
-		else if (parentNode instanceof ICPPASTUsingDirective) {
+		} else if (parentNode instanceof ICPPASTUsingDirective) {
 			IScope container= CPPVisitor.getContainingScope(name);
 			try {
 				boolean doit= false;
@@ -892,8 +883,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}
-		}
-		else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
+		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
 			if (elaboratedSpecifier.isFriend()) {
 				pdomName.setIsFriendSpecifier(true);
@@ -903,8 +893,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(pdom, pdomName));
 				}
 			}
-		}
-		else if (parentNode instanceof ICPPASTFunctionDeclarator) {			
+		} else if (parentNode instanceof ICPPASTFunctionDeclarator) {			
 			if (parentNode.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration grandparentNode = (IASTSimpleDeclaration) parentNode.getParent();
 				if (grandparentNode.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {

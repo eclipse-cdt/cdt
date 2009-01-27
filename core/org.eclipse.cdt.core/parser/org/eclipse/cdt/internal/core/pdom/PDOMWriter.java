@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -388,14 +389,17 @@ abstract public class PDOMWriter {
 	
 	protected final boolean isRequiredReference(IASTName name) {
 		IASTNode parentNode= name.getParent();
+		if (parentNode instanceof ICPPASTQualifiedName) {
+			if (name != ((ICPPASTQualifiedName) parentNode).getLastName())
+				return false;
+			parentNode= parentNode.getParent();
+		}
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
 			return true;
-		}
-		else if (parentNode instanceof IASTDeclSpecifier) {
+		} else if (parentNode instanceof IASTDeclSpecifier) {
 			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
 			return ds.getStorageClass() == IASTDeclSpecifier.sc_typedef;
-		}
-		else if (parentNode instanceof ICPPASTUsingDirective) {
+		} else if (parentNode instanceof ICPPASTUsingDirective) {
 			return true;
 		}
 		return false;

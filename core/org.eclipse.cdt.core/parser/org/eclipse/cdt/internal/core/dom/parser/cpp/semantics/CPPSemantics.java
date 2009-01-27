@@ -2006,6 +2006,9 @@ public class CPPSemantics {
 				if (++viableCount == 1) {
 					firstViable= f;
 				}
+				if (f instanceof ICPPUnknownBinding) {
+					return f;
+				}
 			}
 		}
 		if (firstViable == null) 

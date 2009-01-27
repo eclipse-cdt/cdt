@@ -3689,4 +3689,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("substr(0)", 6, ICPPMethod.class);
     }
+    
+    // class C {};
+    // template<typename T> class XT {
+    //    T field;
+    //    void bla() {
+    //       C c;
+    //       field.m(c);
+    //    }
+    // };
+    public void testResolutionOfUnknownFunctions() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.CPP);
+    }
 }

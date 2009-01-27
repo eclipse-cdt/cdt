@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author aniefer
+ * A template template parameter.
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
 		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding,
@@ -51,9 +51,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	private ObjectMap instances;
 	private ICPPScope unknownScope;
 	
-	/**
-	 * @param name
-	 */
 	public CPPTemplateTemplateParameter(IASTName name) {
 		super(name);
 	}
@@ -152,14 +149,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 
 	public IScope getCompositeScope() throws DOMException {
 		return null;
-	}
-
-	@Override
-	public void addDefinition(IASTNode node) {
-	}
-
-	@Override
-	public void addDeclaration(IASTNode node) {
 	}
 
     public boolean isSameType(IType type) {

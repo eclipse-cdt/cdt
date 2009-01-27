@@ -3685,7 +3685,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  void test(BasicString<char> s) {
 	//    s.substr(0);
 	//  }
-    public void _testResolutionOfUnknownBindings_262328() throws Exception {
+    public void testResolutionOfUnknownBindings_262328() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("substr(0)", 6, ICPPMethod.class);
     }

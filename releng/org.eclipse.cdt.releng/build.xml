@@ -64,7 +64,13 @@
 			<property name="builder" value="${basedir}/lrparser"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
+			<property name="builder" value="${basedir}/lrparser.sdk"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
 			<property name="builder" value="${basedir}/upc"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
+			<property name="builder" value="${basedir}/upc.sdk"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
 			<property name="builder" value="${basedir}/xlc"/>
@@ -88,7 +94,13 @@
 			<property name="builder" value="${basedir}/lrparser"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/lrparser.sdk"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/upc"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/upc.sdk"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/xlc"/>
@@ -422,6 +434,9 @@
 			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.sdk.feature"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.tests"/>
 		</antcall>
 		<antcall target="tagone">
@@ -429,6 +444,9 @@
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.sdk.feature"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.tests"/>

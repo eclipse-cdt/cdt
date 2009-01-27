@@ -26,10 +26,11 @@ import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Base class for actions which delegate functionality to an adapter retrieved
@@ -39,41 +40,39 @@ import org.eclipse.ui.PlatformUI;
  */
 abstract public class RetargetDebugContextCommand extends AbstractHandler implements IDebugContextListener  {
 
-    private IWorkbenchWindow fWindow = null;
     private ISelection fDebugContext;
-    protected Object fTargetAdapter = null;
-    // The button representing the command
-    protected ToolItem fToolItem = null;
-	
+    private Object fTargetAdapter = null;
+    private IDebugContextService fContextService = null;
+    private String fCommandId = null;
+    
+    protected Object getTargetAdapter() { return fTargetAdapter; }
+    protected ISelection getDebugContext() { return fDebugContext; }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
     public RetargetDebugContextCommand() {
-    	fWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        IDebugContextService debugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
-        debugContextService.addPostDebugContextListener(this);
-        fDebugContext = debugContextService.getActiveContext(); 
+    	IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    	fContextService = DebugUITools.getDebugContextManager().getContextService(window);
+    	fContextService.addPostDebugContextListener(this);
+        fDebugContext = fContextService.getActiveContext(); 
         update();
     }
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// Store the toolItem in case we need to act on it.
-		fToolItem = null;
-		if (event.getTrigger() instanceof Event) {
-			Event swtEvent = (Event)event.getTrigger();
-			if (swtEvent.widget instanceof ToolItem) {
-				fToolItem = (ToolItem)swtEvent.widget;
-			}
-		}
+		fCommandId = event.getCommand().getId();
 		
         if (fTargetAdapter != null) {
             try {
             	performCommand(fTargetAdapter, fDebugContext);
             } catch (ExecutionException e) {
-                ErrorDialog.openError(fWindow.getShell(), MessagesForVMActions.RetargetDebugContextAction_ErrorDialog_title, MessagesForVMActions.RetargetDebugContextAction_ErrorDialog_message, null); 
+            	Shell shell = HandlerUtil.getActiveWorkbenchWindowChecked(event).getShell();
+                ErrorDialog.openError(shell, MessagesForVMActions.RetargetDebugContextAction_ErrorDialog_title, MessagesForVMActions.RetargetDebugContextAction_ErrorDialog_message, null); 
             }
         }
- 
+
+        update();
+        
 		return null;
 	}
     
@@ -103,6 +102,8 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
     protected abstract Class<?> getAdapterClass();
 
     public void update() {
+    	boolean enabled = false;
+    	
         fTargetAdapter = null;
         if (fDebugContext instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) fDebugContext;
@@ -111,19 +112,28 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
                 if (object instanceof IAdaptable) {
                     fTargetAdapter = getAdapter((IAdaptable) object);
                     if (fTargetAdapter != null) {
-                    	setBaseEnabled(canPerformCommand(fTargetAdapter, fDebugContext));
-                        return;
-                    }
+                    	enabled = canPerformCommand(fTargetAdapter, fDebugContext);
+                    } 
                 }
             }
         }
         
-        setBaseEnabled(false);
+       	setBaseEnabled(enabled);
+        
+        if (fCommandId != null) {
+        	ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+        	if (commandService != null) {
+        		commandService.refreshElements(fCommandId, null);
+        	}
+        }
     }
 
     @Override
 	public void dispose() {
-        DebugUITools.getDebugContextManager().getContextService(fWindow).removePostDebugContextListener(this);
+    	// Must use the stored service.  If we try to fetch the service
+    	// again with the workbenchWindow, it may fail if the window is
+    	// already closed.
+    	fContextService.removePostDebugContextListener(this);
         fTargetAdapter = null;
     }
     

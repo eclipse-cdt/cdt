@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.util.Map;
+
 import org.eclipse.cdt.dsf.gdb.actions.IReverseToggleHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.commands.RetargetDebugContextCommand;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * Command handler to toggle reverse debugging mode
  * 
  * @since 2.0
  */
-public class ReverseToggleCommandHandler extends RetargetDebugContextCommand {
+public class ReverseToggleCommandHandler extends RetargetDebugContextCommand implements IElementUpdater {
 
     @Override
     protected boolean canPerformCommand(Object target, ISelection debugContext) {
@@ -37,17 +40,16 @@ public class ReverseToggleCommandHandler extends RetargetDebugContextCommand {
     protected void performCommand(Object target, ISelection debugContext) throws ExecutionException {
         ((IReverseToggleHandler)target).toggleReverse(debugContext);
     }
-    
-    @Override
-    public void debugContextChanged(DebugContextEvent event) {
-        super.debugContextChanged(event);
-        
+
+	public void updateElement(UIElement element, Map parameters) {
         // Make sure the toggle state reflects the actual state
         // We must check this, in case we have multiple launches
         // or if we re-launch
-        if (fTargetAdapter != null && fToolItem != null) {
-        	boolean toggled = ((IReverseToggleHandler)fTargetAdapter).isReverseToggled(event.getContext());
-        	fToolItem.setSelection(toggled);
-        }
-    }
+		if (getTargetAdapter() == null) {
+			element.setChecked(false);
+		} else {
+			boolean toggled = ((IReverseToggleHandler)getTargetAdapter()).isReverseToggled(getDebugContext());
+			element.setChecked(toggled);
+		}
+	}
 }

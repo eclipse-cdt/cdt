@@ -221,7 +221,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -236,7 +236,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -251,7 +251,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -263,6 +263,22 @@
                icon="icons/full/obj16/uncall.gif"
                label="%command.uncall.label"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.run?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseToggle"
+               icon="icons/full/obj16/reversetoggle.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.button.reverseToggle"
+               label="%command.reverseToggle.label"
+               style="toggle">
             <visibleWhen
                   checkEnabled="false">
                <reference
@@ -281,7 +297,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -296,7 +312,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -311,7 +327,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -326,7 +342,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -341,7 +357,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -356,7 +372,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -371,7 +387,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -386,7 +402,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
                </reference>
             </visibleWhen>
          </command>
@@ -444,6 +460,32 @@
             </test>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingEnabled">
+         <and>
+            <reference
+                  definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsGdbUIPluginActive">
+            </reference>
+            <reference
+                  definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+            </reference>
+            <or>
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.cdt.dsf.gdb.ui.isReverseDebuggingEnabled">
+                  </test>
+               </with>
+               <with
+                     variable="selection">
+                  <test
+                        property="org.eclipse.cdt.dsf.gdb.ui.isReverseDebuggingEnabled">
+                  </test>
+               </with>
+            </or>
+         </and>
+      </definition>
+      
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -500,14 +542,14 @@
             id="org.eclipse.cdt.dsf.gdb.ui.selectionReverseDebuggingTester"
             namespace="org.eclipse.cdt.dsf.gdb.ui"
             properties="isReverseDebuggingEnabled"
-            type="org.eclipse.jface.viewers.TreeSelection">
+            type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
       </propertyTester>
       <propertyTester
             class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.ReverseDebuggingPropertyTester"
             id="org.eclipse.cdt.dsf.gdb.ui.partReverseDebuggingTester"
             namespace="org.eclipse.cdt.dsf.gdb.ui"
             properties="isReverseDebuggingEnabled"
-            type="org.eclipse.debug.ui.IDebugView">
+            type="org.eclipse.ui.IWorkbenchPart">
       </propertyTester>
    </extension>
    

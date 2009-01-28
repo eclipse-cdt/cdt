@@ -10,29 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 public class EnvironmentReader {
 	private static Properties envVars = null;
-	private static Vector<String> rawVars = null;
+	private static ArrayList<String> rawVars = null;
 
-	public static Properties getEnvVars() {
+	public static synchronized Properties getEnvVars() {
 		if (null != envVars) {
-			return (Properties)envVars.clone();
+			return (Properties) envVars.clone();
 		}
 		envVars = new Properties();
-		rawVars = new Vector<String>();
-		Map<String,String> envMap = System.getenv();
+		rawVars = new ArrayList<String>();
+		Map<String, String> envMap = System.getenv();
 		for (String var : envMap.keySet()) {
-	        String value = envMap.get(var);
+			String value = envMap.get(var);
 			envVars.setProperty(var, value);
 			rawVars.add(var + "=" + value); //$NON-NLS-1$
-        }
-		rawVars.trimToSize();
-		return (Properties)envVars.clone();
+		}
+		return (Properties) envVars.clone();
 	}
 
 	public static String getEnvVar(String key) {
@@ -40,9 +38,9 @@ public class EnvironmentReader {
 		return p.getProperty(key);
 	}
 
-	public static String[] getRawEnvVars() {
-		if (rawVars==null) 
+	public static synchronized String[] getRawEnvVars() {
+		if (rawVars == null)
 			getEnvVars();
-		return rawVars.toArray(new String[0]);
+		return rawVars.toArray(new String[rawVars.size()]);
 	}
 }

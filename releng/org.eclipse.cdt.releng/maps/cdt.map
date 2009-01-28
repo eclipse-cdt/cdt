@@ -109,7 +109,7 @@ plugin@org.eclipse.cdt.tests.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cv
 feature@org.eclipse.cdt.examples.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf-feature
 
 ! DSF-GDB Integration
-plugin@org.eclipse.cdt.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.gdb
-plugin@org.eclipse.cdt.dsf.gdb.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.gdb.ui
-plugin@org.eclipse.cdt.tests.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.tests.dsf.gdb
-feature@org.eclipse.cdt.gnu.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.gnu.dsf-feature
+plugin@org.eclipse.cdt.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb
+plugin@org.eclipse.cdt.dsf.gdb.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb.ui
+plugin@org.eclipse.cdt.tests.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb
+feature@org.eclipse.cdt.gnu.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.gnu.dsf-feature

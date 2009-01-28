@@ -81,9 +81,11 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
 			<property name="builder" value="${basedir}/util"/>
 		</ant>
+		<!--
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
 			<property name="builder" value="${basedir}/dsfgdb"/>
 		</ant>
+		-->
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/platform"/>
 		</ant>
@@ -114,9 +116,11 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/util"/>
 		</ant>
+		<!--
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/dsfgdb"/>
 		</ant>
+		-->
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">

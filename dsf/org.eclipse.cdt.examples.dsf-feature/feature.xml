@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.cdt.gnu.debug"
+      id="org.eclipse.cdt.examples.dsf"
       label="%featureName"
       version="5.1.0.qualifier"
       provider-name="%providerName">
@@ -22,32 +22,37 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.console" version="3.1.100" match="compatible"/>
-      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.dsf"/>
+      <import plugin="org.eclipse.cdt.dsf.ui"/>
+      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.variables" version="3.1.100" match="compatible"/>
-      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.ui" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.debug.core" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.debug.mi.core" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.debug.ui" version="5.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.eclipse.cdt.dsf.gdb"
+         id="org.eclipse.cdt.examples.dsf"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.dsf.gdb.ui"
+         id="org.eclipse.cdt.examples.dsf.pda"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.examples.dsf.pda.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -98,3 +98,18 @@ feature@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroo
 plugin@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn
 plugin@org.eclipse.cdt.mylyn.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn.ui
 feature@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn-feature
+
+! DSF 
+plugin@org.eclipse.cdt.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf
+plugin@org.eclipse.cdt.dsf.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.ui
+plugin@org.eclipse.cdt.examples.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf
+plugin@org.eclipse.cdt.examples.dsf.pda=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf.pda
+plugin@org.eclipse.cdt.examples.dsf.pda.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf.pda.ui
+plugin@org.eclipse.cdt.tests.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.tests.dsf
+feature@org.eclipse.cdt.examples.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf-feature
+
+! DSF-GDB Integration
+plugin@org.eclipse.cdt.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.gdb
+plugin@org.eclipse.cdt.dsf.gdb.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.gdb.ui
+plugin@org.eclipse.cdt.tests.dsf.gdb=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.tests.dsf.gdb
+feature@org.eclipse.cdt.gnu.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.gnu.dsf-feature

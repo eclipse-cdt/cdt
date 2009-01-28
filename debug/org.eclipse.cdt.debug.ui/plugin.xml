@@ -171,6 +171,67 @@
          </action>
       </actionSet>
    </extension>
+   
+   <extension 
+         point="org.eclipse.ui.menus">
+        <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
+            <menu 
+                 id="org.eclipse.cdt.debug.ui.expressionsView_CVariableFormatMenu" 
+            	 label="%CVariableFormatMenu.label">
+             <visibleWhen>
+             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
+             </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.debug.ui.numberFormats"
+	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
+	           </dynamic>
+	           <separator name="formatGroup" visible="false"/>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.debug.ui.CVariableFormatMenu" 
+            	 label="%CVariableFormatMenu.label">
+             <visibleWhen>
+             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
+             </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.debug.ui.numberFormats"
+	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
+	           </dynamic>
+    		  <separator name="formatGroup" visible="false"/>
+	           
+            </menu>         
+       </menuContribution>
+      </extension>
+      
+      <extension point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported">
+			    <with variable="selection">
+               	   <count
+                         value="+">
+               	   </count>
+                   <iterate>
+                       <test property="org.eclipse.cdt.debug.ui.canFormatObject" value="true"/>
+                   </iterate>
+               </with>
+      </definition>   
+      </extension>
+   
+      <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.cdt.debug.ui"
+            properties="canFormatObject"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="org.eclipse.cdt.debug.internal.ui.actions.CanFormatObjectTester"
+            id="org.eclipse.cdt.debug.ui.canFormatObjectTester">
+      </propertyTester>
+      </extension>
+      
+     
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
@@ -415,50 +476,8 @@
                id="org.eclipse.cdt.debug.ui.actions.ViewMemoryAction">
          </action>
       </objectContribution>
-     
- <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
-            id="org.eclipse.cdt.debug.ui.CVariableActions">
-         <menu
-               label="%CVariableFormatMenu.label"
-               path="renderGroup"
-               id="org.eclipse.cdt.debug.ui.CVariableFormatMenu">
-            <separator
-                  name="formatGroup">
-            </separator>
-         </menu>
-         <action
-               label="%HexVariableFormatAction.label"
-               helpContextId="hexadecimal_variable_format_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.HexVariableFormatActionDelegate"
-               menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.HexVariableFormatActionDelegate">
-         </action>
-         <action
-               label="%DecVariableFormatAction.label"
-               helpContextId="decimal_variable_format_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.DecVariableFormatActionDelegate"
-               menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.DecVariableFormatActionDelegate">
-         </action>
-         <action
-               label="%NaturalVariableFormatAction.label"
-               helpContextId="naturall_variable_format_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate"
-               menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.BinaryVariableFormatActionDelegate"
-               enablesFor="1"
-               helpContextId="binary_variable_format_action_context"
-               id="org.eclipse.cdt.debug.internal.ui.actions.BinaryVariableFormatActionDelegate"
-               label="%BinaryVariableFormatAction.label"
-               menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"/>
-      </objectContribution>
+
+
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
             id="org.eclipse.cdt.debug.ui.SignalActions">

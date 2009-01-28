@@ -690,6 +690,11 @@
                label="%AddWatchpoint.label"
                menubarPath="additions"
                tooltip="%AddWatchpoint.tooltip">
+               <enablement>
+                  <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+               </enablement>
          </action>
       </viewerContribution>
       <viewerContribution

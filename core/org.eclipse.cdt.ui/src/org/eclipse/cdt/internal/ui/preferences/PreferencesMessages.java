@@ -298,6 +298,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CPluginPreferencePage_6;
 	public static String CPluginPreferencePage_7;
 	public static String CPluginPreferencePage_caption;
+	public static String CPluginPreferencePage_cdtDialogs_group;
+	public static String CPluginPreferencePage_clear_button;
+	public static String CPluginPreferencePage_clearDoNotShowAgainSettings_label;
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;
 	public static String CPluginPreferencePage_performanceHint;

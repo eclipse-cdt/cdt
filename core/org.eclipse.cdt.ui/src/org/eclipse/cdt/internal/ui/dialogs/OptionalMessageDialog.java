@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,10 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CUIMessages;
@@ -35,14 +34,15 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
  * to choose that the dialog isn't shown again the next time.
  */ 
 public class OptionalMessageDialog extends MessageDialog {
-	
 	// String constants for widgets
 	private static final String CHECKBOX_TEXT= CUIMessages.OptionalMessageDialog_dontShowAgain;  
 
 	// Dialog store id constants
 	private static final String STORE_ID= "OptionalMessageDialog.hide."; //$NON-NLS-1$
+	private static final String KEY_DETAIL = ".detail"; //$NON-NLS-1$
 
 	public static final int NOT_SHOWN= IDialogConstants.CLIENT_ID + 1;
+	public static final int NO_DETAIL= -1;
 	
 	private Button fHideDialogCheckBox;
 	private String fId;
@@ -107,6 +107,26 @@ public class OptionalMessageDialog extends MessageDialog {
 	public static boolean isDialogEnabled(String key) {
 		IDialogSettings settings= getDialogSettings();
 		return !settings.getBoolean(key);
+	}
+	
+	/**
+	 * Sets a detail for the dialog.
+	 */
+	public static void setDialogDetail(String key, int detail) {
+		IDialogSettings settings= getDialogSettings();
+		settings.put(key+KEY_DETAIL, detail);
+	}
+
+	/**
+	 * Returns the detail for this dialog, or NO_DETAIL, if none.
+	 */
+	public static int getDialogDetail(String key) {
+		IDialogSettings settings= getDialogSettings();
+		try {
+			return settings.getInt(key+KEY_DETAIL);
+		} catch (NumberFormatException e) {
+			return NO_DETAIL;
+		}
 	}
 	
 	/**

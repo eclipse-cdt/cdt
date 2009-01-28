@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,7 +38,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * The page for general C/C++ preferences.
@@ -148,6 +153,34 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd2.verticalIndent = GROUP_VINDENT;
 		noteControl.setLayoutData(gd2);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns= 2;
+
+		Group dontAskGroup= new Group(parent, SWT.NONE);
+		dontAskGroup.setLayout(layout);
+		dontAskGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dontAskGroup.setText(PreferencesMessages.CPluginPreferencePage_cdtDialogs_group);
+
+		Label label= new Label(dontAskGroup, SWT.WRAP);
+		label.setText(PreferencesMessages.CPluginPreferencePage_clearDoNotShowAgainSettings_label);
+		GridData data= new GridData(GridData.FILL, GridData.CENTER, true, false);
+		data.widthHint= convertVerticalDLUsToPixels(50);
+		label.setLayoutData(data);
+
+		Button clearButton= new Button(dontAskGroup, SWT.PUSH);
+		clearButton.setText(PreferencesMessages.CPluginPreferencePage_clear_button);
+		clearButton.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		clearButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				OptionalMessageDialog.clearAllRememberedStates();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				OptionalMessageDialog.clearAllRememberedStates();
+			}
+		});
+		SWTUtil.setButtonDimensionHint(clearButton);
+		Dialog.applyDialogFont(parent);
 	}
 	@Override
 	protected Composite createNoteComposite(Font font, Composite composite,

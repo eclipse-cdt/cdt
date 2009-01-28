@@ -36,6 +36,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -70,6 +72,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -80,12 +83,14 @@ import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 
 /**
  * It is a parent for all standard CDT property pages
@@ -135,6 +140,8 @@ implements
 	private static final int SAVE_MODE_OK = 1;
 	private static final int SAVE_MODE_APPLY = 2;
 	private static final int SAVE_MODE_APPLYOK = 3;
+	
+	private static final String PREF_ASK_REINDEX = "askReindex"; //$NON-NLS-1$
 	
 	private final Image IMG_WARN = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
@@ -589,6 +596,7 @@ implements
 		}
 		final ICResourceDescription local_cfgd = lc;
 		
+		final boolean rebuildIndex= isIndexerAffected();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			
 			private void sendOK() {
@@ -650,7 +658,56 @@ implements
 					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {}
+		
+		if (rebuildIndex)
+			rebuildIndex();
 		return true;
+	}
+
+	private boolean isIndexerAffected() {
+		ICProjectDescription desc= CoreModel.getDefault().getProjectDescription(getProject(), false);
+		if (desc == null || desc.isCdtProjectCreating())
+			return false;
+
+		Iterator<InternalTab> it = itabs.iterator();
+		while(it.hasNext()) {
+			InternalTab tab = it.next();
+			if (tab != null) {
+				ICPropertyTab tabtab = tab.tab;
+				if (tabtab instanceof AbstractLangsListTab) {
+					final AbstractLangsListTab langListTab = (AbstractLangsListTab) tabtab;
+					switch(langListTab.getKind()) {
+					case ICSettingEntry.INCLUDE_PATH:
+					case ICSettingEntry.MACRO:
+					case ICSettingEntry.INCLUDE_FILE:
+					case ICSettingEntry.MACRO_FILE:
+						if (langListTab.hadSomeModification()) {
+							return true;
+						}
+						break;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private void rebuildIndex() {
+		final Shell shell= getShell();
+		final String title= getTitle();
+		final String msg= UIMessages.getString("AbstractPage.rebuildIndex.question"); //$NON-NLS-1$
+		int result= OptionalMessageDialog.open(PREF_ASK_REINDEX,
+				shell, title, null /* default image */, msg, MessageDialog.QUESTION, 
+				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+		if (result == OptionalMessageDialog.NOT_SHOWN) {
+			result= OptionalMessageDialog.getDialogDetail(PREF_ASK_REINDEX);
+		} else if (result != SWT.DEFAULT) {
+			OptionalMessageDialog.setDialogDetail(PREF_ASK_REINDEX, result);
+		}
+		if (result == 0) { // first button
+			final IProject project = getProject();
+			CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(project));
+		}
 	}
 
 	private void populateConfigurations() {

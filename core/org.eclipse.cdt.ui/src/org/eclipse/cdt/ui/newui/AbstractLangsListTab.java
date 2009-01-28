@@ -88,6 +88,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected ArrayList<ICSettingEntry> exported; 
 	protected SashForm sashForm;
 	protected ICLanguageSetting [] ls; // all languages known
+	private boolean fHadSomeModification;
 	
 	protected final static String[] BUTTONS = {ADD_STR, EDIT_STR, DEL_STR, 
 			UIMessages.getString("AbstractLangsListTab.2"), //$NON-NLS-1$
@@ -407,6 +408,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	
 	private void performAdd(ICLanguageSettingEntry ent) {
 		if (ent != null) {
+			fHadSomeModification= true;
 			if ((toAllCfgs || toAllLang) && ! (getResDesc() instanceof ICMultiResourceDescription)) {
 				addToAll(ent);
 			} else {
@@ -465,6 +467,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSettingEntry ent = doEdit(old);
 		toAllLang = false;
 		if (ent != null) {
+			fHadSomeModification= true;
 			if (isWModifyMode() && (lang instanceof MultiLanguageSetting)) {
 				performMulti(ent, old);
 			} else {
@@ -479,6 +482,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	
 	private void performDelete(int n) {
 		if (n == -1) return;
+		fHadSomeModification= true;
 		int[] ids = table.getSelectionIndices();
 		if (isWModifyMode() && (lang instanceof MultiLanguageSetting)) {
 			for (int x=ids.length-1; x>=0; x--) {
@@ -607,6 +611,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
+		fHadSomeModification= false;
 		if (page.isMultiCfg()) {
 			ICLanguageSetting [] sr = ls;
 			if (dst instanceof ICMultiItemsHolder) {
@@ -636,6 +641,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	
 	@Override
 	protected void performDefaults() {
+		fHadSomeModification= true;
 		TreeItem[] tis = langTree.getItems();
 		for (int i=0; i<tis.length; i++) {
 			Object ob = tis[i].getData();
@@ -781,4 +787,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			columnToFit.setWidth(table.getBounds().width - 4);
 	}
 
+	/**
+	 * Returns whether the tab was modified by the user in any way. The flag is  
+	 * cleared after pressing apply or ok.
+	 * @since 5.1
+	 */
+	protected final boolean hadSomeModification() {
+		return fHadSomeModification;
+	}
 }

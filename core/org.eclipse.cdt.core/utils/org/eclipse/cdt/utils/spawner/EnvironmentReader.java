@@ -19,7 +19,7 @@ public class EnvironmentReader {
 	private static Properties envVars = null;
 	private static ArrayList<String> rawVars = null;
 
-	public static Properties getEnvVars() {
+	public static synchronized Properties getEnvVars() {
 		if (null != envVars) {
 			return (Properties)envVars.clone();
 		}
@@ -41,9 +41,9 @@ public class EnvironmentReader {
 		return p.getProperty(key);
 	}
 
-	public static String[] getRawEnvVars() {
+	public static synchronized String[] getRawEnvVars() {
 		if (rawVars==null) 
 			getEnvVars();
-		return rawVars.toArray(new String[0]);
+		return rawVars.toArray(new String[rawVars.size()]);
 	}
 }

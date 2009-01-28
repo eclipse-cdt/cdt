@@ -48,10 +48,10 @@
 	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_5.1.0@timeStamp@.jar" version="5.1.0@timeStamp@">
+	<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.examples.dsf" url="features/org.eclipse.examples.dsf_5.1.0@timeStamp@.jar" version="5.1.0@timeStamp@">
+	<feature id="org.eclipse.cdt.examples.dsf" url="features/org.eclipse.examples.dsf_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

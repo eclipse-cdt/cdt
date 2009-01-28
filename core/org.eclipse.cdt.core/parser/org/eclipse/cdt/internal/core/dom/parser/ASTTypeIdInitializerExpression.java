@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,11 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 
 /**
  * Compound literals for c and c++.
  */
-public class ASTTypeIdInitializerExpression extends ASTNode implements IASTTypeIdInitializerExpression {
+public abstract class ASTTypeIdInitializerExpression extends ASTNode implements IASTTypeIdInitializerExpression {
     private IASTTypeId typeId;
     private IASTInitializer initializer;
 
@@ -32,12 +30,6 @@ public class ASTTypeIdInitializerExpression extends ASTNode implements IASTTypeI
 	public ASTTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i) {
 		setTypeId(t);
 		setInitializer(i);
-	}
-
-	public ASTTypeIdInitializerExpression copy() {
-		ASTTypeIdInitializerExpression copy = new ASTTypeIdInitializerExpression();
-		initializeCopy(copy);
-		return copy;
 	}
 
 	protected void initializeCopy(ASTTypeIdInitializerExpression copy) {
@@ -93,9 +85,5 @@ public class ASTTypeIdInitializerExpression extends ASTNode implements IASTTypeI
 	        }
 		}
         return true;
-    }
-    
-    public IType getExpressionType() {
-    	return CVisitor.getExpressionType(this);
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 
@@ -23,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 public class CASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression implements
         ICASTTypeIdInitializerExpression {
 
-	public CASTTypeIdInitializerExpression() {
+	private CASTTypeIdInitializerExpression() {
 		super();
 	}
 
@@ -31,10 +32,13 @@ public class CASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpress
 		super(typeId, initializer);
 	}
 
-	@Override
 	public CASTTypeIdInitializerExpression copy() {
 		CASTTypeIdInitializerExpression copy = new CASTTypeIdInitializerExpression();
 		initializeCopy(copy);
 		return copy;
+	}
+
+	public IType getExpressionType() {
+		return CVisitor.createType(getTypeId().getAbstractDeclarator());
 	}
 }

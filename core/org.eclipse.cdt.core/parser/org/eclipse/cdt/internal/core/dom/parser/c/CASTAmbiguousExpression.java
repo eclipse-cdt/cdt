@@ -49,7 +49,7 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
     }
 
     public IType getExpressionType() {
-    	return CVisitor.getExpressionType(this);
+    	return null;
     }
 
 	public IASTExpression copy() {

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -15,12 +16,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * Conditional expression in C
  */
 public class CASTConditionalExpression extends ASTNode implements
         IASTConditionalExpression, IASTAmbiguityParent {
@@ -132,7 +134,14 @@ public class CASTConditionalExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-    	return CVisitor.getExpressionType(this);
-    }
-    
+		IASTExpression positiveExpression = getPositiveResultExpression();
+		if (positiveExpression == null) {
+			positiveExpression= getLogicalConditionExpression();
+		}
+		IType t2 = positiveExpression.getExpressionType();
+		IType t3 = getNegativeResultExpression().getExpressionType();
+		if (t3 instanceof IPointerType || t2 == null)
+			return t3;
+		return t2;
+	}
 }

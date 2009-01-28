@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -18,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author jcamelon
+ * Type-id or unary operation on a type-id.
  */
 public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpression {
 
@@ -84,6 +85,9 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
     }
     
     public IType getExpressionType() {
-    	return CVisitor.getExpressionType(this);
+    	if (getOperator() == op_sizeof) {
+			return CVisitor.getSize_T(this);
+		}
+    	return CVisitor.createType(typeId.getAbstractDeclarator());
     }
 }

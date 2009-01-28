@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -52,7 +51,7 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
     }
     
     public IType getExpressionType() {
-    	return CVisitor.getExpressionType(getExpressions()[0]);
+    	return null;
     }
 
 	@Override

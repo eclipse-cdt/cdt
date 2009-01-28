@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -82,9 +83,21 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
         return true;
     }
     
-    public IType getExpressionType() {
-    	return CVisitor.getExpressionType(this);
-    }
+	public IType getExpressionType() {
+		switch (getKind()) {
+		case IASTLiteralExpression.lk_char_constant:
+			return new CBasicType(IBasicType.t_char, 0, this);
+		case IASTLiteralExpression.lk_float_constant:
+			return new CBasicType(IBasicType.t_float, 0, this);
+		case IASTLiteralExpression.lk_integer_constant:
+			return new CBasicType(IBasicType.t_int, 0, this);
+		case IASTLiteralExpression.lk_string_literal:
+			IType type = new CBasicType(IBasicType.t_char, 0, this);
+			type = new CQualifierType(type, true, false, false);
+			return new CPointerType(type, 0);
+		}
+		return null;
+	}
     
     /**
      * @deprecated, use {@link #setValue(char[])}, instead.

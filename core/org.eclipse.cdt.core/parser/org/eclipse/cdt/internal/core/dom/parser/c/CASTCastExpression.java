@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -14,9 +15,10 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * @author jcamelon
+ * Cast expressions for c
  */
 public class CASTCastExpression extends CASTUnaryExpression implements IASTCastExpression {
 
@@ -79,5 +81,11 @@ public class CASTCastExpression extends CASTUnaryExpression implements IASTCastE
         
         
         return true;
+    }
+    
+    @Override
+	public IType getExpressionType() {
+        IASTTypeId id= getTypeId();
+        return CVisitor.createType(id.getAbstractDeclarator());
     }
 }

@@ -1278,13 +1278,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     @DsfServiceEventHandler
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
-        // bug 243899: The call to terminate results in an exception,  
-        // need to investigate.
-        //terminated();
+        terminated();
     }
 
     private void terminated() {
-        clearBreakpointStatus(fPlatformBPs.keySet().toArray(new ICBreakpoint[fPlatformBPs.size()]));
+    	// Reset the breakpoint install count
+    	for (IBreakpointsTargetDMContext ctx : fPlatformBPs.keySet()) {
+            clearBreakpointStatus(fPlatformBPs.get(ctx).keySet().toArray(new ICBreakpoint[fPlatformBPs.size()]));
+    	}
         fPlatformBPs.clear();
     }
 

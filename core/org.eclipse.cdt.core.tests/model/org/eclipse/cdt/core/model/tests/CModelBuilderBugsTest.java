@@ -69,4 +69,9 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		assertEquals("decl", functions[1].getElementName());
 	}
 
+	public void testModelBuilderBug262785() throws Exception {
+		assertNotNull(fTU.getElement("Unknown1::method"));
+		assertNotNull(fTU.getElement("Unknown2::method"));
+	}
+
 }

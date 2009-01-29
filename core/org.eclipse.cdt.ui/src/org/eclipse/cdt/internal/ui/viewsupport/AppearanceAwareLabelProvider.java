@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,17 +25,12 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 
 	public final static int DEFAULT_TEXTFLAGS= CElementBaseLabels.M_PARAMETER_TYPES | CElementBaseLabels.PROJECT_POST_QUALIFIED;
 	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
-	
-	private int fTextFlagMask;
-	private int fImageFlagMask;
 
 	/**
 	 * Constructor for AppearanceAwareLabelProvider.
 	 */
 	public AppearanceAwareLabelProvider(int textFlags, int imageFlags) {
 		super(textFlags, imageFlags);
-		initMasks();
-//		PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
 	}
 
 	/**
@@ -45,40 +40,10 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 		this(DEFAULT_TEXTFLAGS, DEFAULT_IMAGEFLAGS);
 	}
 	
-	private void initMasks() {
-		fTextFlagMask= -1;
-		fImageFlagMask= -1;
-	}
-
 	/*
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-	}
-
-	/*
-	 * @see IBaseLabelProvider#dispose()
-	 */
-	@Override
-	public void dispose() {
-//		PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
-		super.dispose();
-	}
-
-	/*
-	 * @see CUILabelProvider#evaluateImageFlags()
-	 */
-	@Override
-	protected int evaluateImageFlags(Object element) {
-		return getImageFlags() & fImageFlagMask;
-	}
-
-	/*
-	 * @see CUILabelProvider#evaluateTextFlags()
-	 */
-	@Override
-	protected int evaluateTextFlags(Object element) {
-		return getTextFlags() & fTextFlagMask;
 	}
 
 }

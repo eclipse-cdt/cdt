@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -747,6 +747,14 @@ public class PreferenceConstants {
 	 */
 	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls whether the Outline view should group member definitions.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.1
+	 */
+	public static final String OUTLINE_GROUP_MEMBERS= "org.eclipse.cdt.ui.outline.groupmembers"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view

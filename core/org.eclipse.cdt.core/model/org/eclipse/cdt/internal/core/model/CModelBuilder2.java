@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -812,7 +813,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
         final IASTDeclSpecifier declSpecifier= functionDeclaration.getDeclSpecifier();
 
-		final String functionName= ASTStringUtil.getSimpleName(name);
+		final String simpleName= ASTStringUtil.getSimpleName(name);
 		final String[] parameterTypes= ASTStringUtil.getParameterSignatureArray(declarator);
 		final String returnType= ASTStringUtil.getReturnTypeString(declSpecifier, declarator);
 
@@ -822,12 +823,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
 
 			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator)declarator;
-			final IASTName simpleName;
+			final IASTName simpleAstName;
 			if (name instanceof ICPPASTQualifiedName) {
 				final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
-				simpleName= quName.getLastName();
+				simpleAstName= quName.getLastName();
 			} else {
-				simpleName= name;
+				simpleAstName= name;
 			}
 			IScope scope= null;
 			// try to avoid expensive resolution of scope and binding
@@ -843,8 +844,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					}
 				}
 				if (!isMethod) {
-					scope= CPPVisitor.getContainingScope(simpleName);
-			        isMethod= scope instanceof ICPPClassScope || simpleName.resolveBinding() instanceof ICPPMethod;
+					scope= CPPVisitor.getContainingScope(simpleAstName);
+			        isMethod= scope instanceof ICPPClassScope || simpleAstName.resolveBinding() instanceof ICPPMethod;
 				}
 			}
 			if (isMethod) {
@@ -870,7 +871,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				info= methodInfo;
 				ICPPMethod methodBinding= null;
 				if (scope != null) {
-					final IBinding binding= simpleName.resolveBinding();
+					final IBinding binding= simpleAstName.resolveBinding();
 					if (binding instanceof ICPPMethod) {
 						methodBinding= (ICPPMethod)binding;
 					}
@@ -897,19 +898,34 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					final boolean isConstructor;
 					if (scope != null) {
 						isConstructor= CPPVisitor.isConstructor(scope, declarator);
+					} else if (parent instanceof IStructure) {
+						isConstructor= parent.getElementName().equals(simpleName);
+					} else if (name instanceof ICPPASTQualifiedName) {
+						final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
+						final IASTName[] names= quName.getNames();
+						isConstructor= names.length >= 2 && simpleName.equals(ASTStringUtil.getSimpleName(names[names.length-2]));
 					} else {
-						isConstructor= parent.getElementName().equals(functionName);
+						isConstructor= false;
 					}
 					methodElement.setConstructor(isConstructor);
-					methodElement.setDestructor(functionName.charAt(0) == '~');
+					methodElement.setDestructor(simpleName.charAt(0) == '~');
 				}
 			} else {
+				String functionName= ASTStringUtil.getQualifiedName(name);
+				// strip namespace qualifier if parent is same namespace
+				if (name instanceof ICPPASTQualifiedName && parent instanceof INamespace) {
+					final ICPPASTQualifiedName quName= (ICPPASTQualifiedName)name;
+					final IASTName[] names= quName.getNames();
+				 	if (names.length >= 2 && parent.getElementName().equals(ASTStringUtil.getSimpleName(names[names.length-2]))) {
+				 		functionName= simpleName;
+				 	}
+				}
 				if (isTemplate) {
 					// template function
-					element= new FunctionTemplate(parent, ASTStringUtil.getSimpleName(name));
+					element= new FunctionTemplate(parent, functionName);
 				} else {
 					// function
-					element= new Function(parent, ASTStringUtil.getSimpleName(name));
+					element= new Function(parent, functionName);
 				}
 				element.setParameterTypes(parameterTypes);
 				element.setReturnType(returnType);
@@ -918,6 +934,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 
 		} else {
+			final String functionName= ASTStringUtil.getQualifiedName(name);
 			element= new Function(parent, functionName);
 			element.setParameterTypes(parameterTypes);
 			element.setReturnType(returnType);
@@ -1205,7 +1222,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @return the scope or <code>null</code>
 	 */
 	private static IScope getScope(IASTName astName) {
-		IBinding binding= astName.getBinding();
+		IBinding binding= astName.resolveBinding();
 		if (binding != null) {
 			try {
 				return binding.getScope();

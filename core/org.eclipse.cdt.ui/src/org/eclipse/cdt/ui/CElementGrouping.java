@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,8 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 				return CPluginImages.DESC_OBJS_INCCONT;
 			case NAMESPACE_GROUPING:
 				return CPluginImages.DESC_OBJS_NAMESPACE;
+			case CLASS_GROUPING:
+				return CPluginImages.DESC_OBJS_CLASS;
 		}
 		return super.getImageDescriptor(object);
 	}
@@ -74,4 +76,11 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 		return null;
 	}
 
+	/*
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getLabel(null);
+	}
 }

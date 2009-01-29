@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -72,7 +73,10 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	public CContentOutlinerProvider(TreeViewer viewer, IWorkbenchPartSite site) {
 		super(true, true);
 		treeViewer = viewer;
-		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		final IPreferenceStore store = PreferenceConstants.getPreferenceStore();
+		setIncludesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		setNamespacesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
+		setMemberGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 	}
 
 	/**
@@ -346,6 +350,15 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 					boolean value = ((Boolean) newValue).booleanValue();
 					if (areNamespacesGroup() != value) {
 						setNamespacesGrouping(value);
+						contentUpdated();
+					}
+				}
+			} else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_MEMBERS)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean) newValue).booleanValue();
+					if (isMemberGroupingEnabled() != value) {
+						setMemberGrouping(value);
 						contentUpdated();
 					}
 				}

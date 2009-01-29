@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -77,6 +78,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fProvideWorkingCopy= false;
 	protected boolean fIncludesGrouping= false;
 	protected boolean fNamespacesGrouping= false;
+	protected boolean fMemberGrouping= false;
 	
 	public BaseCElementContentProvider() {
 		this(false, false);
@@ -89,7 +91,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns whether the members are provided when asking
-	 * for a TU's or ClassFile's children.
+	 * for a TU's children.
 	 */
 	public boolean getProvideMembers() {
 		return fProvideMembers;
@@ -97,7 +99,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns whether the members are provided when asking
-	 * for a TU's or ClassFile's children.
+	 * for a TU's children.
 	 */
 	public void setProvideMembers(boolean b) {
 		fProvideMembers= b;
@@ -147,6 +149,21 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 */
 	public void setNamespacesGrouping(boolean b) {
 	    fNamespacesGrouping = b;
+	}
+
+	/**
+	 * @return whether grouping of members is enabled
+	 */
+	public boolean isMemberGroupingEnabled() {
+		return fMemberGrouping;
+	}
+	
+	/**
+	 * Enable/disable member grouping by common namespace.
+	 * @param enable
+	 */
+	public void setMemberGrouping(boolean enable) {
+		fMemberGrouping = enable;
 	}
 
 	/* (non-Cdoc)
@@ -205,6 +222,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return ((IArchive)element).getChildren();
 			} else if (element instanceof IBinaryModule) {
 				return ((IBinaryModule)element).getChildren();
+			} else if (element instanceof INamespace) {
+				return getNamespaceChildren((INamespace) element);
 			} else if (element instanceof ISourceReference  && element instanceof IParent) {
 				return ((IParent)element).getChildren();
 			} else if (element instanceof IProject) {
@@ -265,6 +284,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return true;
 			}
 		}
+		
+		if (element instanceof CElementGrouping) {
+			return true;
+		}
+
 		Object[] children= getChildren(element);
 		return (children != null) && children.length > 0;
 	}
@@ -317,7 +341,28 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				}
 			}
 		}
-
+		if (parent instanceof INamespace && fNamespacesGrouping) {
+			final INamespace namespace = (INamespace)parent;
+			final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(), namespace, fMemberGrouping);
+			if (grouping.getNamespaces().length > 2) {
+				parent = grouping;
+			}
+		}
+		if (parent instanceof IMember && fMemberGrouping) {
+			final IMember member = (IMember)parent;
+			final String ns = getElementNamespace(member);
+			if (ns != null) {
+				Object parentParent = member.getParent();
+				if (parentParent instanceof INamespace && fNamespacesGrouping) {
+					final INamespace namespace = (INamespace)parent;
+					final NamespacesGrouping grouping = new NamespacesGrouping(namespace.getTranslationUnit(), namespace);
+					if (grouping.getNamespaces().length > 2) {
+						parentParent = grouping;
+					}
+				}
+				return new MembersGrouping(parentParent, ns);
+			}
+		}
 		// if we are doing grouping for the includes return the grouping container.
 		if (element instanceof IInclude && fIncludesGrouping) {
 			parent = new IncludesGrouping(((IInclude)element).getTranslationUnit());
@@ -382,31 +427,21 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			children = list.toArray();
 		}
+		Map<String, NamespacesGrouping> nsmap = new HashMap<String, NamespacesGrouping>();
 		if (fNamespacesGrouping) {
 			// check if there is another namespace with the same name for the same parent
 			List<Object> list = new ArrayList<Object>(children.length);
-			Map<String, NamespacesGrouping> map = new HashMap<String, NamespacesGrouping>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof INamespace) {
 					INamespace n1 = (INamespace)children[i];
-					NamespacesGrouping namespacesGrouping = map.get(n1.getElementName());
+					NamespacesGrouping namespacesGrouping = nsmap.get(n1.getElementName());
 					if (namespacesGrouping == null) {
-						for (int j = i + 1; j < children.length; ++j) {
-							if (children[j] instanceof INamespace) {
-								INamespace n2 = (INamespace)children[j];
-								if (n1.getElementName().equals(n2.getElementName())) {
-									if (namespacesGrouping == null) {
-										namespacesGrouping = new NamespacesGrouping(unit, n1);
-										map.put(n1.getElementName(), namespacesGrouping);
-									}
-									namespacesGrouping.addNamespace(n2);
-								}
-							}
-						}
-						if (namespacesGrouping == null) {
-							list.add(n1);
-						} else {
+						namespacesGrouping = new NamespacesGrouping(unit, n1, fMemberGrouping);
+						if (namespacesGrouping.getNamespaces().length > 1) {
+							nsmap.put(n1.getElementName(), namespacesGrouping);
 							list.add(namespacesGrouping);
+						} else {
+							list.add(children[i]);
 						}
 					}
 				} else {
@@ -415,7 +450,65 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			children = list.toArray();
 		}
+		if (fMemberGrouping) {
+			// check if there is another member with the same namespace for the same parent
+			List<Object> list = new ArrayList<Object>(children.length);
+			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i] instanceof IMember) {
+					final ICElement member = (ICElement)children[i];
+					String namespace = getElementNamespace(member);
+					MembersGrouping memberGrouping = map.get(namespace);
+					if (memberGrouping == null) {
+						memberGrouping = new MembersGrouping(unit, namespace);
+						map.put(namespace, memberGrouping);
+						list.add(memberGrouping);
+					}
+				} else if (fNamespacesGrouping && children[i] instanceof INamespace) {
+					if (!nsmap.containsKey(((INamespace) children[i]).getElementName())) {
+						list.add(children[i]);
+					}
+				} else {
+					list.add(children[i]);
+				}
+			}
+			children = list.toArray();
+		}
 		return children;
+	}
+
+	protected Object[] getNamespaceChildren(IParent element) throws CModelException {
+		Object[] children = element.getChildren();
+		if (fMemberGrouping) {
+			// check if there is another member with the same namespace for the same parent
+			List<Object> list = new ArrayList<Object>(children.length);
+			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i] instanceof IMember) {
+					final ICElement member = (ICElement)children[i];
+					String namespace = getElementNamespace(member);
+					MembersGrouping memberGrouping = map.get(namespace);
+					if (memberGrouping == null) {
+						memberGrouping = new MembersGrouping(element, namespace);
+						map.put(namespace, memberGrouping);
+						list.add(memberGrouping);
+					}
+				} else {
+					list.add(children[i]);
+				}
+			}
+			children = list.toArray();
+		}
+		return children;
+	}
+
+	private static String getElementNamespace(ICElement member) {
+		String name = member.getElementName();
+		int idx = name.lastIndexOf("::"); //$NON-NLS-1$
+		if (idx < 0) {
+			return null;
+		}
+		return name.substring(0, idx);
 	}
 
 	protected Object[] getCResources(ICContainer container) throws CModelException {

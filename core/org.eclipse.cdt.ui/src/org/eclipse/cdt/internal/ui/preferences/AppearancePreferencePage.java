@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,21 @@
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -47,6 +46,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	private SelectionButtonDialogField fOutlineGroupNamespaces;
 	private SelectionButtonDialogField fCViewGroupIncludes;
 	private SelectionButtonDialogField fCViewSeparateHeaderAndSource;
+	private SelectionButtonDialogField fOutlineGroupMembers;
 	
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -70,6 +70,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setDialogFieldListener(listener);
 		fOutlineGroupNamespaces.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupNamespaces_label); 
 
+		fOutlineGroupMembers= new SelectionButtonDialogField(SWT.CHECK);
+		fOutlineGroupMembers.setDialogFieldListener(listener);
+		fOutlineGroupMembers.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupMethods_label); 
+
 		fCViewGroupIncludes= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewGroupIncludes.setDialogFieldListener(listener);
 		fCViewGroupIncludes.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupIncludes_label); 
@@ -86,6 +90,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewSeparateHeaderAndSource.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
 		fOutlineGroupIncludes.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
+		fOutlineGroupMembers.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 	}
 	
 	/*
@@ -116,6 +121,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewGroupIncludes.doFillIntoGrid(result, nColumns);
 		fOutlineGroupIncludes.doFillIntoGrid(result, nColumns);
 		fOutlineGroupNamespaces.doFillIntoGrid(result, nColumns);
+		fOutlineGroupMembers.doFillIntoGrid(result, nColumns);
 
 		new Separator().doFillIntoGrid(result, nColumns);
 		
@@ -164,9 +170,14 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE, fCViewSeparateHeaderAndSource.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, fOutlineGroupIncludes.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
-		CUIPlugin.getDefault().savePluginPreferences();
+		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, fOutlineGroupMembers.isSelected());
+		try {
+			new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).flush();
+		} catch (BackingStoreException exc) {
+			CUIPlugin.log(exc);
+		}
 		return super.performOk();
-	}	
+	}
 	
 	/*
 	 * @see PreferencePage#performDefaults()
@@ -179,6 +190,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewSeparateHeaderAndSource.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
 		fOutlineGroupIncludes.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
+		fOutlineGroupMembers.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		super.performDefaults();
 	}
 }

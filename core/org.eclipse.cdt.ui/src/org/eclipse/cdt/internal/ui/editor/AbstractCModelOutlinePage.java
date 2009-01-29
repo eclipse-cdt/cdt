@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -60,8 +61,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
-import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 
@@ -79,6 +80,7 @@ import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
@@ -87,6 +89,49 @@ import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
  * @since 5.0
  */
 public abstract class AbstractCModelOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener, IAdaptable {
+
+	/**
+	 * The default label provider for the outline.
+	 */
+	protected static class COutlineLabelProvider extends AppearanceAwareLabelProvider {
+
+		/**
+		 * Flag whether to show member definitions with qualified or simple names.
+		 */
+		private boolean fSimpleName;
+
+		public COutlineLabelProvider(int textFlags, int imageFlags) {
+			super(textFlags, imageFlags);
+			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
+			fSimpleName= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
+		}
+
+		@Override
+		public void dispose() {
+			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
+			super.dispose();
+		}
+		
+		@Override
+		protected int evaluateTextFlags(Object element) {
+			if (fSimpleName) {
+				return super.evaluateTextFlags(element) | CElementBaseLabels.M_SIMPLE_NAME | CElementBaseLabels.F_SIMPLE_NAME;
+			}
+			return super.evaluateTextFlags(element);
+		}
+		
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (PreferenceConstants.OUTLINE_GROUP_MEMBERS.equals(event.getProperty())) {
+				final Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					fSimpleName= ((Boolean) newValue).booleanValue();
+				} else {
+					fSimpleName= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
+				}
+			}
+		}
+	}
 
 	/**
 	 * A specialized tree viewer for outline content.
@@ -106,8 +151,8 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 			if (node instanceof Item) {
 				Item i= (Item) node;
 				final Object data = i.getData();
-				// don't expand groupings by default
-				if (data instanceof CElementGrouping) {
+				// don't expand include grouping by default
+				if (data instanceof IncludesGrouping) {
 					return;
 				} else if (data instanceof ICElement) {
 					if (!shouldExpandElement((ICElement)data)) {
@@ -375,13 +420,17 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
 		fTreeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
-		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
+		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
 		fTreeViewer.setAutoExpandLevel(3);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.addSelectionChangedListener(this);
 		return fTreeViewer;
 	}
 
+	private CUILabelProvider createLabelProvider() {
+		return new COutlineLabelProvider(TEXT_FLAGS, IMAGE_FLAGS);
+	}
+	
 	@Override
 	public void createControl(Composite parent) {
 		fTreeViewer = createTreeViewer(parent);

@@ -10,3 +10,6 @@ namespace nsTest {
    void nsTest::inlined2() {};  // wrong label in outline: nsTest::inlined(): void
    void nsTest::decl2();        // label in outline (ok):  decl(): void
 }
+//http://bugs.eclipse.org/262785
+void Unknown1::method() {}      // no qualifier in outline
+void Unknown2::method() {}      // no qualifier in outline

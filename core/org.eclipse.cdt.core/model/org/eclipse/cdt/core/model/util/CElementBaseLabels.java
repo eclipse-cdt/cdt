@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,13 @@ public class CElementBaseLabels {
 	public final static int M_PARAMETER_TYPES= 1 << 0;
 
 	/**
+	 * Method definition names without qualifier.
+	 * e.g. <code>foo(int)</code>
+	 * @since 5.1
+	 */
+	public final static int M_SIMPLE_NAME= 1 << 1;
+
+	/**
 	 * Method names contain thrown exceptions.
 	 * e.g. <code>foo throw( IOException )</code>
 	 */
@@ -81,6 +88,13 @@ public class CElementBaseLabels {
 	 * e.g. <code>ClassName<T></code>
 	 */
 	public final static int TEMPLATE_PARAMETERS= 1 << 7;
+
+	/**
+	 * Static field names without qualifier.
+	 * e.g. <code>fHello</code>
+	 * @since 5.1
+	 */
+	public final static int F_SIMPLE_NAME= 1 << 8;
 
 	/**
 	 * Field names contain the declared type (appended)
@@ -349,7 +363,11 @@ public class CElementBaseLabels {
 			}
 		}
 		
-		buf.append( method.getElementName() );
+		if (getFlag(flags, M_SIMPLE_NAME)) {
+			buf.append(getSimpleName(method.getElementName()));
+		} else {
+			buf.append(method.getElementName());
+		}
 		
 		//template parameters
 		if (method instanceof ITemplate) {
@@ -413,6 +431,20 @@ public class CElementBaseLabels {
 		}
 	}
 
+	/**
+	 * Strip any qualifier from the given name.
+	 * 
+	 * @param elementName
+	 * @return a "simple" name
+	 */
+	private static String getSimpleName(String elementName) {
+		int idx = elementName.indexOf("::"); //$NON-NLS-1$
+		if (idx >= 0) {
+			return elementName.substring(idx+2);
+		}
+		return elementName;
+	}
+
 	private static void getTemplateParameters(ITemplate template, int flags, StringBuffer buf) {
 		if (getFlag(flags, TEMPLATE_PARAMETERS)) {
 			String[] types = template.getTemplateParameterTypes();
@@ -452,7 +484,11 @@ public class CElementBaseLabels {
 			}
 		}
 		
-		buf.append( field.getElementName() );
+		if (getFlag(flags, F_SIMPLE_NAME)) {
+			buf.append(getSimpleName(field.getElementName()));
+		} else {
+			buf.append(field.getElementName());
+		}
 				
 		if( getFlag( flags, F_APP_TYPE_SIGNATURE ) && field.exists()) {
 			buf.append( DECL_STRING );

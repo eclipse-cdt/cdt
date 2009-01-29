@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,8 @@ import org.eclipse.cdt.core.model.ISourceRoot;
  *  6 Source roots
  *  5 C Elements
  *  6 non C Elements
+ *  
+ *  @noextend This class is not intended to be subclassed by clients.
  */
 public class CElementSorter extends ViewerSorter { 
 
@@ -66,12 +68,16 @@ public class CElementSorter extends ViewerSorter {
 	protected static final int BINARIES = 23;
 	protected static final int ARCHIVES = 24;
 	
-	protected static final int INCLUDES = 30;
-	protected static final int MACROS = 31;
+	protected static final int INCLUDES = 28;
+	protected static final int MACROS = 29;
+	protected static final int USINGS = 30;
 	protected static final int NAMESPACES = 32;
 	protected static final int NAMESPACES_RESERVED = 33;
 	protected static final int NAMESPACES_SYSTEM = 34;
-	protected static final int USINGS = 35;
+	/**
+	 * @since 5.1
+	 */
+	protected static final int TYPES = 35;
 	protected static final int VARIABLEDECLARATIONS = 36;
 	protected static final int FUNCTIONDECLARATIONS = 37;
 	protected static final int VARIABLES = 38;
@@ -179,8 +185,7 @@ public class CElementSorter extends ViewerSorter {
 			case ICElement.C_TEMPLATE_UNION:
 			case ICElement.C_TEMPLATE_UNION_DECLARATION:
 			case ICElement.C_ENUMERATION:
-				// TODO need own categories
-				return NAMESPACES;
+				return TYPES;
 			case ICElement.C_FUNCTION_DECLARATION:
 			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 				return FUNCTIONDECLARATIONS;
@@ -223,7 +228,7 @@ public class CElementSorter extends ViewerSorter {
 			case CElementGrouping.INCLUDES_GROUPING:
 				return INCLUDES;
 			case CElementGrouping.CLASS_GROUPING:
-				return VARIABLES;
+				return TYPES;
 			case CElementGrouping.NAMESPACE_GROUPING:
 				return NAMESPACES;
 			case CElementGrouping.LIBRARY_REF_CONTAINER:
@@ -289,17 +294,6 @@ public class CElementSorter extends ViewerSorter {
 			return compareWithLabelProvider(viewer, e1, e2);
 		}
 		
-		if (cat1 == NAMESPACES) {
-			// workaround for missing category for classes, structs, etc.
-			int type1 = ((ICElement) e1).getElementType();
-			int type2 = ((ICElement) e2).getElementType();
-			if (type1 != type2) {
-				if (type1 == ICElement.C_NAMESPACE || type2 == ICElement.C_NAMESPACE) {
-					return type1 - type2;
-				}
-			}
-		}
-
 		String ns1 = ""; //$NON-NLS-1$
 		String ns2 = ns1;
 		
@@ -327,7 +321,7 @@ public class CElementSorter extends ViewerSorter {
 				name2 = name2.substring(idx + 2);
 			}
 		    if (name2.length() > 0 && name2.charAt(0) == '~') {
-		    	name2 = name1.substring(1);
+		    	name2 = name2.substring(1);
 		    }
 		} else {
 			name2 = e2.toString();

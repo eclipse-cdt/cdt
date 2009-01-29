@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -183,6 +184,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	// bug 217102: namespace scopes from the index have to be mapped back to the AST.
 	public IScope mapToASTScope(IIndexScope scope) {
 		return fScopeMapper.mapToASTScope(scope);
+	}
+	// bug 262719: class types from the index have to be mapped back to the AST.
+	public ICPPClassType mapToAST(ICPPClassType binding) {
+		return fScopeMapper.mapToAST(binding);
 	}
 
 	/**

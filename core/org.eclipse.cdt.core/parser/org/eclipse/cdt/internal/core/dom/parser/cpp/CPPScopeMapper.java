@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -119,13 +129,44 @@ public class CPPScopeMapper {
 			return fOffset;
 		}
 	}
-
 	
+	/**
+	 * Collector for class definitions.
+	 */
+	private class Visitor extends ASTVisitor {
+		Visitor() {
+			shouldVisitDeclarations = true;
+		}
+
+		@Override
+		public int visit(IASTDeclaration declaration) {
+			if (declaration instanceof IASTSimpleDeclaration) {
+				IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+				if (declspec instanceof IASTCompositeTypeSpecifier) {
+					IASTCompositeTypeSpecifier cts = (IASTCompositeTypeSpecifier) declspec;
+					final IASTName name = cts.getName();
+					final char[] nameChars = name.toCharArray();
+					if (nameChars.length > 0) {
+						IASTName[] names= fClasses.get(nameChars);
+						names= (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+						fClasses.put(nameChars, names);
+					}
+					return PROCESS_CONTINUE;
+				}
+				return PROCESS_SKIP;
+			} else if (declaration instanceof IASTASMDeclaration
+					|| declaration instanceof IASTFunctionDefinition) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+	}
 	
 	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
 	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<String, NamespaceScopeWrapper>();
 	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<String, List<UsingDirectiveWrapper>>();
 	private final CPPASTTranslationUnit fTu;
+	protected CharArrayMap<IASTName[]> fClasses;
 
 
 	public CPPScopeMapper(CPPASTTranslationUnit tu) {
@@ -241,5 +282,27 @@ public class CPPScopeMapper {
 			}
 		}
 		return scope;
+	}
+	
+	public ICPPClassType mapToAST(ICPPClassType type) {
+		if (fClasses == null) {
+			fClasses= new CharArrayMap<IASTName[]>();
+			fTu.accept(new Visitor());
+		}
+		IASTName[] names= fClasses.get(type.getNameCharArray());
+		if (names != null) {
+			for (IASTName name : names) {
+				if (name == null)
+					break;
+				IBinding b= name.resolveBinding();
+				if (b instanceof ICPPClassType) {
+					final ICPPClassType mapped = (ICPPClassType) b;
+					if (mapped.isSameType(type)) {
+						return mapped;
+					}
+				}
+			}
+		}
+		return type;
 	}
 }

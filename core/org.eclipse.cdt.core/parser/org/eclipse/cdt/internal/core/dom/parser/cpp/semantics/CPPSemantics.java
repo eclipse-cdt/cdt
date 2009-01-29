@@ -2102,6 +2102,9 @@ public class CPPSemantics {
 							sourceExp, source, target, isImpliedObject);
 				}
 				
+				if (cost.rank < 0)
+					continue function_loop;
+				
 				currFnCost[j] = cost;
 			}
 			

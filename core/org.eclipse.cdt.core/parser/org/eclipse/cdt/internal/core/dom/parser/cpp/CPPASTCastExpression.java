@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author jcamelon
+ * Cast expression for c++
  */
 public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPASTCastExpression {
 
@@ -97,6 +98,6 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
 
 	@Override
 	public IType getExpressionType() {
-		return CPPVisitor.createType(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator());
+		return CPPVisitor.createType(typeId.getAbstractDeclarator());
 	}
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
+ *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
@@ -45,8 +45,6 @@ import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- * 
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
@@ -61,6 +59,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
+	protected static final int[] FILE_LOCAL_REC_DUMMY = new int[]{0};
 
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
@@ -204,13 +203,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
-	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding) throws CoreException {
+	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding, PDOMBinding glob) throws CoreException {
 		int rec= 0;
 		if (parent instanceof PDOMBinding) {
 			rec= ((PDOMBinding) parent).getLocalToFileRec();
 		}
 		if (rec == 0) {
-			PDOMFile file= getLocalToFile(binding);
+			PDOMFile file= getLocalToFile(binding, glob);
 			if (file != null) {
 				rec= file.getRecord();
 			}
@@ -218,29 +217,29 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return rec;
 	}
 
-	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
+	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
 		if (pdom instanceof WritablePDOM) {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
 			try {
 				if (binding instanceof IField) {
 					return null;
 				}
-				boolean checkInSourceOnly= false;
+				boolean checkIfInSourceOnly= false;
 				boolean requireDefinition= false;
 				if (binding instanceof IVariable) {
 					if (!(binding instanceof IField)) {
-						checkInSourceOnly= ((IVariable) binding).isStatic();
+						checkIfInSourceOnly= ((IVariable) binding).isStatic();
 					}
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
-					checkInSourceOnly= ASTInternal.isStatic(f, false);
+					checkIfInSourceOnly= ASTInternal.isStatic(f, false);
 				} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
-					checkInSourceOnly= true;
+					checkIfInSourceOnly= true;
 					requireDefinition= true;
 				}
 
-				if (checkInSourceOnly) {
-					String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition);
+				if (checkIfInSourceOnly) {
+					String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
 					if (path != null) {
 						return wpdom.getFileForASTPath(getLinkageID(), path);
 					}

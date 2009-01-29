@@ -610,6 +610,9 @@ public class CVisitor extends ASTQueries {
 	    }
 		
 		if (type != null && type instanceof ICompositeType) {
+			if (type instanceof IIndexBinding) {
+				type= ((CASTTranslationUnit) fieldReference.getTranslationUnit()).mapToASTType((ICompositeType) type);
+			}
 		    if (prefix) {
 		        IBinding[] result = null;
 		        try {

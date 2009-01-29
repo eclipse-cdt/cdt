@@ -91,6 +91,8 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 		    	return;
 		} 
 		final char[] c= name.getLookupKey();
+		if (c.length == 0)
+			return;
 		Object o = bindings.get(c);
 		if (o != null) {
 		    if (o instanceof ObjectSet) {
@@ -304,6 +306,9 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
         if (bindings == null)
             bindings = new CharArrayObjectMap(1);
         char[] c = binding.getNameCharArray();
+        if (c.length == 0) {
+        	return;
+        }
         Object o = bindings.get(c);
         if (o != null) {
             if (o instanceof ObjectSet) {

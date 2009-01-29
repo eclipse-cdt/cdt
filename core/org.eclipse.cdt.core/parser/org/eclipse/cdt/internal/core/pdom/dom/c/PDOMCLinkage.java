@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
+ *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Container for c bindings
  */
 class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
@@ -85,9 +85,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			if (parent == null)
 				return null;
 		
-			pdomBinding = adaptBinding(parent, binding);
+			int[] localToFileHolder= {0};
+			pdomBinding = adaptBinding(parent, binding, localToFileHolder);
 			if (pdomBinding == null) {
-				pdomBinding = createBinding(parent, binding);
+				pdomBinding = createBinding(parent, binding, localToFileHolder[0]);
 				if (pdomBinding != null) {
 					pdom.putCachedResult(inputBinding, pdomBinding);
 				}
@@ -103,9 +104,8 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return pdomBinding;
 	}
 	
-	private PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException {
+	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, int localToFile) throws CoreException {
 		PDOMBinding pdomBinding= null;
-		PDOMNode inheritFileLocal= parent;
 
 		if (binding instanceof IField) { // must be before IVariable
 			if (parent instanceof IPDOMMemberOwner)
@@ -125,7 +125,6 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				IType enumeration= ((IEnumerator)binding).getType();
 				if (enumeration instanceof IEnumeration) {
 					PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
-					inheritFileLocal= pdomEnumeration;
 					if (pdomEnumeration instanceof PDOMCEnumeration)
 						pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
 				}
@@ -137,7 +136,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 
 		if (pdomBinding != null) {
-			pdomBinding.setLocalToFileRec(getLocalToFileRec(inheritFileLocal, binding));
+			pdomBinding.setLocalToFileRec(localToFile);
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -228,10 +227,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 	@Override
 	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		return adaptBinding(null, inputBinding);
+		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
 	}
 	
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding) throws CoreException {
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, int[] localToFileHolder) throws CoreException {
 		if (inputBinding instanceof CompositeIndexBinding) {
 			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
 		}
@@ -250,14 +249,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return null;
 		}
 
-		result= doAdaptBinding(parent, binding);
+		result= doAdaptBinding(parent, binding, localToFileHolder);
 		if (result != null) {
 			pdom.putCachedResult(inputBinding, result);
 		}
 		return result;
 	}
 
-	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding) throws CoreException {
+	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding, int[] localToFileHolder) throws CoreException {
 		if (parent == null) {
 			parent= getAdaptedParent(binding);
 		}
@@ -274,12 +273,24 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 
 		if (parent == this) {
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
-			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
+			final int[] bindingTypes = new int[] {getBindingType(binding)};
+			final char[] nameChars = binding.getNameCharArray();
+			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), getPDOM(), nameChars, bindingTypes, 0);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			if (localToFileRec == 0)
+				return nonLocal;
+			localToFileHolder[0]= localToFileRec;
+			return FindBinding.findBinding(getIndex(), getPDOM(), nameChars, bindingTypes, localToFileRec);
 		} 
 		if (parent instanceof IPDOMMemberOwner) {
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
-			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
+			final int[] bindingTypes = new int[] {getBindingType(binding)};
+			final char[] nameChars = binding.getNameCharArray();
+			PDOMBinding nonLocal= FindBinding.findBinding(parent, getPDOM(), nameChars, bindingTypes, 0);
+			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			if (localToFileRec == 0)
+				return nonLocal;
+			localToFileHolder[0]= localToFileRec;
+			return FindBinding.findBinding(parent, getPDOM(), nameChars, bindingTypes, localToFileRec);
 		}
 		return null;
 	}

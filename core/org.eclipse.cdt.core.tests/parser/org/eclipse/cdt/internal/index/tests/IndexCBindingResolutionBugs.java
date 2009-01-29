@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -396,5 +396,19 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertEquals(1, params.length);
 		assertTrue(params[0].getType() instanceof IBasicType);
 		assertEquals(IBasicType.t_int, ((IBasicType)params[0].getType()).getType());
+	}
+	
+	//	typedef struct S S;
+	//	void setValue(S *pSelf, int value);
+
+	//	struct S {
+	//		int value;
+	//	};
+	//	void setValue(S *pSelf, int value) {
+	//		pSelf->value = value;
+	//	}
+	public void testOpaqueStruct_Bug262719() throws Exception {
+		IBinding b = getBindingFromASTName("value =", 5);
+		assertTrue(b instanceof IField);
 	}
 }

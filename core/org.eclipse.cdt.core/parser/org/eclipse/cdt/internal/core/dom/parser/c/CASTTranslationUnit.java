@@ -20,8 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -33,7 +35,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbiguityParent {
 	private CScope compilationUnit = null;
+	private CStructMapper fStructMapper;
 
+	public CASTTranslationUnit() {
+		fStructMapper= new CStructMapper(this);
+	}
 	
 	public CASTTranslationUnit copy() {
 		CASTTranslationUnit copy = new CASTTranslationUnit();
@@ -109,4 +115,11 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
            }
         }
     }
+    
+	/**
+	 * Maps structs from the index into this AST.
+	 */
+	public IType mapToASTType(ICompositeType type) {
+		return fStructMapper.mapToAST(type);
+	}
 }

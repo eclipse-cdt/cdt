@@ -37,6 +37,6 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 	
 	public IType getExpressionType() {
 		final IASTTypeId typeId = getTypeId();
-		return CPPVisitor.createType(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator());
+		return CPPVisitor.createType(typeId.getAbstractDeclarator());
 	}
 }

@@ -76,6 +76,7 @@ import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
@@ -246,12 +247,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (parent == null)
 				return null;
 		
-			pdomBinding = adaptBinding(parent, binding);
+			int fileLocalRec[]= {0};
+			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
 			if (pdomBinding != null) {
 				pdom.putCachedResult(inputBinding, pdomBinding);
 			} else {
 				try {
-					pdomBinding = createBinding(parent, binding);
+					pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
 					if (pdomBinding != null) {
 						pdom.putCachedResult(inputBinding, pdomBinding);
 					}
@@ -293,9 +295,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return false;
 	}
 
-	PDOMBinding createBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
+	PDOMBinding createBinding(PDOMNode parent, IBinding binding, int fileLocalRec) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
-		PDOMNode inheritFileLocal = parent;
 
 		// template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter) 
@@ -358,7 +359,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
 				if (pdomEnumeration instanceof PDOMCPPEnumeration) {
 					pdomBinding = new PDOMCPPEnumerator(pdom, parent, etor,	(PDOMCPPEnumeration)pdomEnumeration);
-					inheritFileLocal= pdomEnumeration;
 				}
 			}
 		} else if (binding instanceof ITypedef) {
@@ -366,7 +366,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if (pdomBinding != null) {
-			pdomBinding.setLocalToFileRec(getLocalToFileRec(inheritFileLocal, binding));
+			pdomBinding.setLocalToFileRec(fileLocalRec);
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -426,6 +426,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
 	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding) throws CoreException {
 		try {
+			final int fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
@@ -433,7 +434,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					if (!(method instanceof IProblemBinding)) {
 						PDOMBinding pdomBinding= adaptBinding(method);
 						if (pdomBinding == null) {
-							createBinding(type, method);
+							createBinding(type, method, fileLocalRec);
 						} else if (!pdomBinding.hasDefinition()) {
 							pdomBinding.update(this, method);
 						}
@@ -550,10 +551,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		return adaptBinding(null, inputBinding);
+		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
 	}
 
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding) throws CoreException {
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, int[] fileLocalRecHolder) throws CoreException {
 		if (cannotAdapt(inputBinding)) {
 			return null;
 		}
@@ -569,7 +570,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return null;
 		}
 
-		result= doAdaptBinding(parent, binding);
+		result= doAdaptBinding(parent, binding, fileLocalRecHolder);
 		if (result != null) {
 			pdom.putCachedResult(inputBinding, result);
 		}
@@ -579,7 +580,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	/**
 	 * Find the equivalent binding, or binding place holder within this PDOM
 	 */
-	private final PDOMBinding doAdaptBinding(PDOMNode parent, IBinding binding) throws CoreException {
+	private final PDOMBinding doAdaptBinding(PDOMNode parent, IBinding binding, int[] fileLocalRecHolder) throws CoreException {
 		if (parent == null) {
 			parent= adaptOrAddParent(false, binding);
 		}
@@ -596,21 +597,33 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if (parent == this) {
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
-			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
+			PDOMBinding glob= CPPFindBinding.findBinding(getIndex(), this, binding, 0);
+			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			if (loc == 0) 
+				return glob;
+			fileLocalRecHolder[0]= loc;
+			return CPPFindBinding.findBinding(getIndex(), this, binding, loc);
 		}
 		if (parent instanceof PDOMCPPNamespace) {
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
-			return CPPFindBinding.findBinding(((PDOMCPPNamespace) parent).getIndex(), this, binding,
-					localToFileRec);
+			final BTree btree = ((PDOMCPPNamespace) parent).getIndex();
+			PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
+			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			if (loc == 0) 
+				return glob;
+			fileLocalRecHolder[0]= loc;
+			return CPPFindBinding.findBinding(btree, this, binding,	loc);
 		}
 		if (binding instanceof ICPPTemplateParameter && parent instanceof IPDOMCPPTemplateParameterOwner) {
 			return (PDOMBinding) ((IPDOMCPPTemplateParameterOwner) parent).adaptTemplateParameter(
 					(ICPPTemplateParameter) binding);
 		}
 		if (parent instanceof IPDOMMemberOwner) {
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding);
-			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
+			PDOMBinding glob= CPPFindBinding.findBinding(parent, this, binding, 0);
+			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			if (loc == 0) 
+				return glob;
+			fileLocalRecHolder[0]= loc;
+			return CPPFindBinding.findBinding(parent, this, binding, loc);
 		}
 		return null;
 	}
@@ -957,7 +970,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
+	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
 		if (pdom instanceof WritablePDOM) {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
 			PDOMFile file= null;
@@ -967,7 +980,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					file= wpdom.getFileForASTPath(getLinkageID(), path);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
-				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false);
+				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
 				if (path != null) {
 					file= wpdom.getFileForASTPath(getLinkageID(), path);
 				}
@@ -977,7 +990,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					IBinding owner= binding.getOwner();
 					if (owner instanceof ICPPNamespace) {
 						if (owner.getNameCharArray().length == 0) {
-							String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false);
+							String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
 							if (path != null) {
 								file= wpdom.getFileForASTPath(getLinkageID(), path);
 							}
@@ -993,6 +1006,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding instanceof ICPPMember) {
 			return null;
 		}
-		return super.getLocalToFile(binding);
+		return super.getLocalToFile(binding, glob);
 	}
 }

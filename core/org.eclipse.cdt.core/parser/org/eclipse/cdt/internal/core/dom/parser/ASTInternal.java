@@ -21,6 +21,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Access to methods on scopes and bindings internal to the parser.
@@ -74,7 +76,7 @@ public class ASTInternal {
 		}
 	}
 
-	public static String getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition) {
+	public static String getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition, PDOMBinding nonLocal) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -107,6 +109,13 @@ public class ASTInternal {
 						return null;
 					}
 				}
+			}
+		}
+		if (requireDefinition && nonLocal != null) {
+			try {
+				if (nonLocal.hasDeclaration())
+					return null;
+			} catch (CoreException e) {
 			}
 		}
 		return filePath;

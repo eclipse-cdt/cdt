@@ -60,7 +60,7 @@ import org.w3c.dom.NodeList;
  * 
  * @author vhirsl
  */
-public final class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoCollectorCleaner {
+public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoCollectorCleaner {
 	private static final int INCLUDE_PATH 		= 1;
 	private static final int QUOTE_INCLUDE_PATH = 2;
 	private static final int INCLUDE_FILE		= 3;
@@ -223,6 +223,10 @@ public final class PerFileSICollector implements IScannerInfoCollector3, IScanne
         catch (CoreException e) {
             MakeCorePlugin.log(e);
         }
+	}
+
+	protected InfoContext getInfoContext() {
+		return context;
 	}
 
 	/* (non-Javadoc)

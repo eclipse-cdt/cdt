@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.ui.dialogs;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig.jobs.BuildOutputReaderJob;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
  * @author vhirsl
  */
 public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
-    private static final String providerId = "makefileGenerator";  //$NON-NLS-1$
 
     private Button bopEnabledButton;
     private Text bopOpenFileText;
@@ -260,7 +260,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setBuildOutputFilePath(getBopOpenFileText());
             buildInfo.setBuildOutputParserEnabled(bopEnabledButton.getSelection());
-            buildInfo.setProviderOutputParserEnabled(providerId, bopEnabledButton.getSelection());
+            buildInfo.setProviderOutputParserEnabled(getProviderIDForSelectedProfile(), bopEnabledButton.getSelection());
         }
     }
 
@@ -272,6 +272,15 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
             setBopOpenFileText(buildInfo.getBuildOutputFilePath());
             bopEnabledButton.setSelection(buildInfo.isBuildOutputParserEnabled());
         }
+    }
+    
+    private String getProviderIDForSelectedProfile() {
+    	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
+    	// Provider IDs for selected profile
+    	List providerIDs = builderInfo.getProviderIdList(); 
+    	if(providerIDs.size() == 0)
+    		return "";
+    	return (String)providerIDs.iterator().next(); 
     }
 
 }

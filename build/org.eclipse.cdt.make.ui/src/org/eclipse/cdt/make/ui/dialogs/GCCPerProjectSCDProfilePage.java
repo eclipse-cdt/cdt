@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.ui.dialogs;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig.jobs.BuildOutputReaderJob;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
  * @author vhirsl
  */
 public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
-    private static final String providerId = "specsFile";  //$NON-NLS-1$
     
     private static Object lock = GCCPerProjectSCDProfilePage.class;
     private Shell shell;
@@ -251,10 +251,22 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     }
     
     private void initializeValues() {
-        bopEnabledButton.setSelection(getContainer().getBuildInfo().isBuildOutputParserEnabled());
-        setBopOpenFileText(getContainer().getBuildInfo().getBuildOutputFilePath());
-        sipEnabledButton.setSelection(getContainer().getBuildInfo().isProviderOutputParserEnabled(providerId));
-        sipRunCommandText.setText(getContainer().getBuildInfo().getProviderRunCommand(providerId));
+    	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
+    	String providerId = getProviderIDForSelectedProfile(); 
+    	
+    	bopEnabledButton.setSelection(builderInfo.isBuildOutputParserEnabled());
+        setBopOpenFileText(builderInfo.getBuildOutputFilePath());
+        sipEnabledButton.setSelection(builderInfo.isProviderOutputParserEnabled(providerId));
+        sipRunCommandText.setText(builderInfo.getProviderRunCommand(providerId));
+    }
+    
+    private String getProviderIDForSelectedProfile() {
+    	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
+    	// Provider IDs for selected profile
+    	List providerIDs = builderInfo.getProviderIdList(); 
+    	if(providerIDs.size() == 0)
+    		return "";
+    	return (String)providerIDs.iterator().next(); 
     }
 
     private void handleBOPLoadFileButtonSelected() {
@@ -318,7 +330,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setBuildOutputFilePath(getBopOpenFileText());
             buildInfo.setBuildOutputParserEnabled(bopEnabledButton.getSelection());
-            
+            String providerId = getProviderIDForSelectedProfile();
             buildInfo.setProviderOutputParserEnabled(providerId, sipEnabledButton.getSelection());
             buildInfo.setProviderRunCommand(providerId, sipRunCommandText.getText().trim());
         }
@@ -331,7 +343,8 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         if (buildInfo != null) {
             setBopOpenFileText(buildInfo.getBuildOutputFilePath());
             bopEnabledButton.setSelection(buildInfo.isBuildOutputParserEnabled());
-            
+
+            String providerId = getProviderIDForSelectedProfile();
             sipEnabledButton.setSelection(buildInfo.isProviderOutputParserEnabled(providerId));
             sipRunCommandText.setText(buildInfo.getProviderRunCommand(providerId));
         }

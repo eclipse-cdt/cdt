@@ -218,14 +218,7 @@ public class MakeBuilder extends ACBuilder {
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 					monitor.subTask(MakeMessages.getString("MakeBuilder.Updating_project")); //$NON-NLS-1$
-
-					try {
-						// Do not allow the cancel of the refresh, since the builder is external
-						// to Eclipse, files may have been created/modified and we will be out-of-sync.
-						// The caveat is for hugue projects, it may take sometimes at every build.
-						currProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-					} catch (CoreException e) {
-					}
+					refreshProject(currProject);
 				} else {
 					errMsg = launcher.getErrorMessage();
 				}
@@ -262,6 +255,23 @@ public class MakeBuilder extends ACBuilder {
 		}
 		return (isClean);
 	}
+	
+	/**
+	 * Refresh project. Can be overridden to not call actual refresh or to do something else.
+	 * Method is called after build is complete.
+	 * @param project
+	 */
+	protected void refreshProject(IProject project) {
+		try {
+			// Do not allow the cancel of the refresh, since the builder is external
+			// to Eclipse, files may have been created/modified and we will be out-of-sync.
+			// The caveat is for huge projects, it may take sometimes at every build.
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e);
+		}
+	}
+
 
 	/**
 	 * Check whether the build has been canceled.

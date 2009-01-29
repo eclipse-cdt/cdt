@@ -33,6 +33,11 @@ public interface ICDebugUIConstants {
     public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
 
     /**
+     * Signals view identifier (value <code>"org.eclipse.cdt.debug.ui.SignalsView"</code>).
+     */
+    public static final String ID_SIGNALS_VIEW = PREFIX + "SignalsView"; //$NON-NLS-1$
+
+    /**
      * Deafult disassembly editor identifier (value <code>"org.eclipse.cdt.debug.ui.disassemblyEditor"</code>).
      */
     public static final String ID_DEFAULT_DISASSEMBLY_EDITOR = PREFIX + "disassemblyEditor"; //$NON-NLS-1$

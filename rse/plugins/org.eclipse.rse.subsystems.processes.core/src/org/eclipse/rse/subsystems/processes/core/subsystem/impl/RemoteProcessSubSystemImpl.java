@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [262930] Remote System Details view not restoring filter memento input
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
@@ -175,6 +176,12 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	 */
 	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
+		// first attempt getting filter
+		Object filterRef = super.getObjectWithAbsoluteName(key, monitor);
+		if (filterRef != null) {
+			return filterRef;
+		}
+		
 		try
 		{
 			long pid = Long.parseLong(key);

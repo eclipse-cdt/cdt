@@ -45,6 +45,7 @@
  * David McKnight   (IBM)        - [244270] Explicit check for isOffline and just returning block implementing a cache for Work Offline
  * Don Yantzi       (IBM)        - [244807] Delay connecting if resolving filters while restoring from cache
  * David McKnight   (IBM)        - [226787] [services] Dstore processes subsystem is empty after switching from shell processes
+ * David McKnight   (IBM)        - [262930] Remote System Details view not restoring filter memento input
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -923,22 +924,51 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		try
 		{
 			ISystemFilterPoolReferenceManager filterMgr = getFilterPoolReferenceManager();
+			String modString = filterID.replace('.', ',');
+			
+			String[] segments = modString.split(",");
 
-			int indexOfDot = filterID.indexOf('.');
-			if (indexOfDot > 0)
+			if (segments.length > 0)
 			{
-				String mgrName = filterID.substring(0, indexOfDot);
+				// this is the profile
+				String mgrName = segments[0];
 
+				// this is the filter pool manager for the profile
 				ISystemFilterPoolManager mgr = parentSubSystemConfiguration.getSystemFilterPoolManager(mgrName);
 
-				int indexOfDot2 = filterID.indexOf('.', indexOfDot + 1);
-				if (mgr != null && indexOfDot2 > 0)
-				{
-					String filterPoolName = filterID.substring(indexOfDot + 1, indexOfDot2);
+				if (mgr != null && segments.length > 1){
+					// name of the filter is the last segment
+					String filterName = segments[segments.length - 1];
+					
+					// filter pool name is the 3rd and 2nd to last segment
+					//String filterPoolName = 
+				//		segments[segments.length - 3] + '.' +
+					//	segments[segments.length - 2];
+					
+					
+					ISystemFilterPool filterPool = null;
+					ISystemFilterPool[] filterPools = mgr.getSystemFilterPools();
+					for (int p = 0; p < filterPools.length && filterPool == null; p++){
+						ISystemFilterPool pool = filterPools[p];
+						String realPoolName = pool.getName();
+						
+						// check for match
+						String filterPoolName = segments[segments.length - 2];
+						for (int s = 3; s < segments.length && filterPool == null; s++){
+							if (filterPoolName.equals(realPoolName)){
+								filterPool = pool;
+							}
+							else if (realPoolName.endsWith(filterPoolName)){
+								filterPoolName = segments[segments.length - s] + '.' + filterPoolName;
+							}
+							else {
+								// no match
+								break;								
+							}
+						}						
+					}
 
-					ISystemFilterPool filterPool = mgr.getSystemFilterPool(filterPoolName);
 
-					String filterName = filterID.substring(indexOfDot2 + 1, filterID.length());
 					if (filterPool != null)
 					{
 						ISystemFilter filter = filterPool.getSystemFilter(filterName);

@@ -1818,6 +1818,13 @@ public class InputType extends BuildObject implements IInputType {
 		if(id == null){
 			id = ((Tool)tool).getDiscoveryProfileId();
 		}
+		// if there is more than one ('|'-separated), return the first one
+		// TODO: expand interface with String[] getDiscoveryProfileIds(ITool tool)
+		if(null != id) {
+			int nPos = id.indexOf('|');
+			if (nPos > 0)
+				id = id.substring(0, nPos);
+		}
 		return id;
 	}
 	

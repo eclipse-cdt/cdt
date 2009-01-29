@@ -105,15 +105,11 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             // Print the command for visual interaction.
             launcher.showCommand(true);
 
-            // add additional arguments
-            // subclass can change default behavior
-            String[] compileArguments = prepareArguments( 
-                    buildInfo.isUseDefaultProviderCommand(providerId));
-
-            String ca = coligate(compileArguments);
+            String[] comandLineOptions = getCommandLineOptions();
+            String ca = coligate(comandLineOptions);
 
             monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
-                    + fCompileCommand.toString() + ca);
+                    + getCommandToLaunch() + ca);
             cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
             
             ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
@@ -121,7 +117,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
-            Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher, env), fWorkingDirectory);
+            Process p = launcher.execute(getCommandToLaunch(), comandLineOptions, setEnvironment(launcher, env), fWorkingDirectory);
             if (p != null) {
                 try {
                     // Close the input of the Process explicitely.
@@ -158,7 +154,16 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         return true;
     }
     
-
+    protected IPath getCommandToLaunch() {
+    	return fCompileCommand;
+    }
+    
+    protected String[] getCommandLineOptions() {
+        // add additional arguments
+        // subclass can change default behavior
+        return prepareArguments( 
+                buildInfo.isUseDefaultProviderCommand(providerId));
+    }
     
     /**
      * Initialization of protected fields. 

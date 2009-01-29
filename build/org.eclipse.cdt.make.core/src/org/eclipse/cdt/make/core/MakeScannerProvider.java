@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @deprecated @author DInglis

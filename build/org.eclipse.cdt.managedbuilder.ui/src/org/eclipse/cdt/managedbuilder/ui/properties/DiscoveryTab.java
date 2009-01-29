@@ -33,6 +33,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.core.InputType;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
@@ -54,6 +56,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -71,6 +74,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
     private static final String PROFILE_NAME = "name"; //$NON-NLS-1$
     private static final int DEFAULT_HEIGHT = 110;
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
+	private Label fTableDefinition;
     private Table resTable;
     private Button scEnabledButton;
     private Button scProblemReportingEnabledButton;
@@ -118,9 +122,16 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		sashForm = new SashForm(usercomp, SWT.NONE);
 		sashForm.setOrientation(SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-    	
-		resTable = new Table(sashForm, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		
+		Composite comp = new Composite(sashForm, SWT.NONE);
+		comp.setLayout(new GridLayout(1, true));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		fTableDefinition = new Label(comp, SWT.LEFT);
+		fTableDefinition.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		resTable = new Table(comp, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 150;
 		resTable.setLayoutData(gd);
 		resTable.addSelectionListener(new SelectionAdapter() {
@@ -205,8 +216,16 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
  	}
  	
  	private void updateData() {
- 		if (scopeComboBox != null) 
- 			scopeComboBox.select(cbi.isPerRcTypeDiscovery() ? 0 : 1);
+ 		int selScope = 0;
+ 		String lblText = "Tools:";
+ 		if(!cbi.isPerRcTypeDiscovery()) {
+ 			selScope = 1;
+ 			lblText = "Configuration:";
+ 		} 
+		if (scopeComboBox != null) 
+			scopeComboBox.select(selScope);
+		fTableDefinition.setText(lblText);
+ 		
  		
  		Map<CfgInfoContext, IScannerConfigBuilderInfo2> m = cbi.getInfoMap();
  		int pos = resTable.getSelectionIndex();
@@ -291,9 +310,41 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         int counter = 0;
         int pos = 0;
         String savedId = buildInfo.getSelectedProfileId();
+        ITool[] tools = null;
+		Tool tool = (Tool)iContext.getTool();
+		if(null == tool) {
+			IConfiguration conf = iContext.getConfiguration();
+			if(null != conf) {
+				tools = conf.getToolChain().getTools();
+			}
+			if(null == tools)
+				return;
+		}
+		else
+			tools = new ITool[] { tool };
+        
         for (String profileId : profilesList) {
-            if (!cbi.isProfileSupported(iContext, profileId)) 
- 				continue; 
+    		boolean ok = false;
+        	for(int i = 0; i < tools.length; ++i) {
+        		IInputType[] inputTypes = ((Tool)tools[i]).getAllInputTypes();
+	        	if(null != inputTypes) {
+		        	for(IInputType it : inputTypes) {
+		        		String[] requiedProfiles = getDiscoveryProfileIds(tools[i], it);
+		        		if(null != requiedProfiles) {
+		        			for(String requiredProfile : requiedProfiles) {
+				        		if(profileId.equals(requiredProfile)) {
+				        			ok = true;
+				        			break;
+				        		}
+		        			}
+		        		}
+		        	}
+	        	}
+	        	if(ok)
+	        		break;
+        	}
+        	if(!ok)
+        		continue;
  			visibleProfilesList.add(profileId);
             labels[counter] = profiles[counter] = getProfileName(profileId);
             if (profileId.equals(savedId)) 
@@ -325,7 +376,18 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         handleDiscoveryProfileChanged();
  	}
  	
- 	private String[] normalize(String[] labels, String[] ids, int counter) {
+ 	private String[] getDiscoveryProfileIds(ITool iTool, IInputType it) {
+		String attribute = ((InputType)it).getDiscoveryProfileIdAttribute();
+		if(null == attribute)
+			return new String[0];
+		// FIXME: temporary; we should add new method to IInputType instead of that
+		String[] profileIds = attribute.split("\\|");
+		for(int i = 0; i < profileIds.length; ++i)
+			profileIds[i] = profileIds[i].trim();
+		return profileIds;
+	}
+
+	private String[] normalize(String[] labels, String[] ids, int counter) {
  		int mode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES);
 		String[] tmp = new String[counter];
  		// Always show either Name + ID, or ID only

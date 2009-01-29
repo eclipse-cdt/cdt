@@ -1284,7 +1284,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private void terminated() {
     	// Reset the breakpoint install count
     	for (IBreakpointsTargetDMContext ctx : fPlatformBPs.keySet()) {
-            clearBreakpointStatus(fPlatformBPs.get(ctx).keySet().toArray(new ICBreakpoint[fPlatformBPs.size()]));
+    		Map<ICBreakpoint, Map<String, Object>> breakpoints = fPlatformBPs.get(ctx);
+            clearBreakpointStatus(breakpoints.keySet().toArray(new ICBreakpoint[breakpoints.size()]));
     	}
         fPlatformBPs.clear();
     }

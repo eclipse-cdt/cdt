@@ -771,11 +771,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.startNewLine();
 			for (int i = 0; i < memberDecls.length; i++) {
 				IASTDeclaration declaration = memberDecls[i];
-				if (declaration instanceof ICPPASTVisibilityLabel) {
-					visit((ICPPASTVisibilityLabel)declaration);
-				} else {
-					declaration.accept(this);
-				}
+				declaration.accept(this);
 				scribe.startNewLine();
 			}
 			if (preferences.indent_body_declarations_compare_to_namespace_header) {
@@ -799,26 +795,27 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		
 		// member declarations
 		IASTDeclaration[] memberDecls= node.getDeclarations();
-		// TLETODO [formatter] need options for linkage specification
-		formatLeftCurlyBrace(line, preferences.brace_position_for_namespace_declaration);
-		formatOpeningBrace(preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
-		if (preferences.indent_body_declarations_compare_to_namespace_header) {
-			scribe.indent();
-		}
-		scribe.startNewLine();
-		for (int i = 0; i < memberDecls.length; i++) {
-			IASTDeclaration declaration = memberDecls[i];
-			if (declaration instanceof ICPPASTVisibilityLabel) {
-				visit((ICPPASTVisibilityLabel)declaration);
-			} else {
-				declaration.accept(this);
+		if (memberDecls.length == 1 && peekNextToken() != Token.tLBRACE) {
+			scribe.space();
+			memberDecls[0].accept(this);
+		} else {
+			// TLETODO [formatter] need options for linkage specification
+			formatLeftCurlyBrace(line, preferences.brace_position_for_namespace_declaration);
+			formatOpeningBrace(preferences.brace_position_for_namespace_declaration, preferences.insert_space_before_opening_brace_in_namespace_declaration);
+			if (preferences.indent_body_declarations_compare_to_namespace_header) {
+				scribe.indent();
 			}
 			scribe.startNewLine();
+			for (int i = 0; i < memberDecls.length; i++) {
+				IASTDeclaration declaration = memberDecls[i];
+				declaration.accept(this);
+				scribe.startNewLine();
+			}
+			if (preferences.indent_body_declarations_compare_to_namespace_header) {
+				scribe.unIndent();
+			}
+			formatClosingBrace(preferences.brace_position_for_namespace_declaration);
 		}
-		if (preferences.indent_body_declarations_compare_to_namespace_header) {
-			scribe.unIndent();
-		}
-		formatClosingBrace(preferences.brace_position_for_namespace_declaration);
 		return PROCESS_SKIP;
 	}
 

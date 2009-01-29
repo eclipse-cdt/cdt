@@ -1136,4 +1136,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveSpaceBetweenNameAnd__attribute__Bug261967() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//extern "C" void f(int i, char c, float x);
+
+	//extern "C" void f(int i, char c, float x);
+	public void testPreserveSpaceInExternCDeclaration() throws Exception {
+		assertFormatterResult();
+	}
+	
 }

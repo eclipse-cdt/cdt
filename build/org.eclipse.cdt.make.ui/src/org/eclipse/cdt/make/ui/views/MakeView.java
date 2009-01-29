@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Andrew Gvozdev (Quoin Inc.)
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
@@ -14,6 +15,16 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.dnd.AbstractContainerAreaDropAdapter;
+import org.eclipse.cdt.make.internal.ui.dnd.AbstractSelectionDragAdapter;
+import org.eclipse.cdt.make.internal.ui.dnd.FileTransferDropTargetListener;
+import org.eclipse.cdt.make.internal.ui.dnd.LocalTransferDragSourceListener;
+import org.eclipse.cdt.make.internal.ui.dnd.LocalTransferDropTargetListener;
+import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransfer;
+import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransferDragSourceListener;
+import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransferDropTargetListener;
+import org.eclipse.cdt.make.internal.ui.dnd.TextTransferDragSourceListener;
+import org.eclipse.cdt.make.internal.ui.dnd.TextTransferDropTargetListener;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.MakeLabelProvider;
@@ -31,6 +42,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.DelegatingDragAdapter;
+import org.eclipse.jface.util.DelegatingDropAdapter;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,20 +54,32 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 public class MakeView extends ViewPart {
+
+	private Clipboard clipboard;
 
 	private BuildTargetAction buildTargetAction;
 	private EditTargetAction editTargetAction;
 	private DeleteTargetAction deleteTargetAction;
 	AddTargetAction addTargetAction;
+	private CopyTargetAction copyTargetAction;
+	private PasteTargetAction pasteTargetAction;
 	TreeViewer fViewer;
 	DrillDownAdapter drillDownAdapter;
 	private Action trimEmptyFolderAction;
@@ -65,24 +90,27 @@ public class MakeView extends ViewPart {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fViewer.getTree().setFocus();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(parent, IMakeHelpContextIds.MAKE_VIEW);
 		fViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fViewer.setUseHashlookup(true);
 		fViewer.setContentProvider(new MakeContentProvider());
 		fViewer.setLabelProvider(new MakeLabelProvider());
+		initDragAndDrop();
 
 		drillDownAdapter = new DrillDownAdapter(fViewer);
 
@@ -100,6 +128,7 @@ public class MakeView extends ViewPart {
 		});
 		fViewer.getControl().addKeyListener(new KeyAdapter() {
 
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					handleDeleteKeyPressed();
@@ -111,6 +140,7 @@ public class MakeView extends ViewPart {
 		fViewer.setLabelProvider(new MakeLabelProvider());
 		fViewer.setSorter(new ViewerSorter() {
 
+			@Override
 			public int category(Object element) {
 				if (element instanceof IResource) {
 					return 0;
@@ -127,8 +157,52 @@ public class MakeView extends ViewPart {
 	}
 
 	/**
+	 * Initialize drag and drop operations.
+	 */
+	private void initDragAndDrop() {
+		int opers= DND.DROP_COPY | DND.DROP_MOVE;
+
+		// LocalSelectionTransfer is used inside Make Target View
+		// TextTransfer is used to drag outside the View or eclipse
+		Transfer[] dragTransfers= {
+			LocalSelectionTransfer.getInstance(),
+			MakeTargetTransfer.getInstance(),
+			TextTransfer.getInstance(),
+		};
+		AbstractSelectionDragAdapter[] dragListeners = {
+			new LocalTransferDragSourceListener(fViewer),
+			new MakeTargetTransferDragSourceListener(fViewer),
+			new TextTransferDragSourceListener(fViewer),
+		};
+
+		DelegatingDragAdapter delegatingDragAdapter = new DelegatingDragAdapter();
+		for (AbstractSelectionDragAdapter dragListener : dragListeners) {
+			delegatingDragAdapter.addDragSourceListener(dragListener);
+		}
+		fViewer.addDragSupport(opers, dragTransfers, delegatingDragAdapter);
+
+		Transfer[] dropTransfers= {
+			LocalSelectionTransfer.getInstance(),
+			MakeTargetTransfer.getInstance(),
+			FileTransfer.getInstance(),
+			TextTransfer.getInstance(),
+		};
+		AbstractContainerAreaDropAdapter[] dropListeners = {
+			new LocalTransferDropTargetListener(fViewer),
+			new MakeTargetTransferDropTargetListener(fViewer),
+			new FileTransferDropTargetListener(fViewer),
+			new TextTransferDropTargetListener(fViewer),
+		};
+		DelegatingDropAdapter delegatingDropAdapter = new DelegatingDropAdapter();
+		for (AbstractContainerAreaDropAdapter dropListener : dropListeners) {
+			delegatingDropAdapter.addDropTargetListener(dropListener);
+		}
+		fViewer.addDropSupport(opers | DND.DROP_DEFAULT, dropTransfers, delegatingDropAdapter);
+	}
+
+	/**
 	 * Returns setting for this control.
-	 * 
+	 *
 	 * @return Settings.
 	 */
 	IDialogSettings getSettings() {
@@ -150,7 +224,7 @@ public class MakeView extends ViewPart {
 			setChecked(getSettings().getBoolean(FILTER_EMPTY_FOLDERS));
 			MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_FILTER); //$NON-NLS-1$
 			fViewer.addFilter(new ViewerFilter() {
-				//Check the make targets of the specified container, and if they don't exist, run 
+				//Check the make targets of the specified container, and if they don't exist, run
 				//through the children looking for the first match that we can find that contains
 				//a make target.
 				private boolean hasMakeTargets(IFolder container) throws CoreException {
@@ -183,7 +257,8 @@ public class MakeView extends ViewPart {
 
 					return haveTargets[0];
 				}
-				
+
+				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					if (isChecked() && element instanceof IFolder) {
 						try {
@@ -197,6 +272,7 @@ public class MakeView extends ViewPart {
 			});
 		}
 
+		@Override
 		public void run() {
 			fViewer.refresh();
 			getSettings().put(FILTER_EMPTY_FOLDERS, isChecked());
@@ -204,16 +280,27 @@ public class MakeView extends ViewPart {
 	}
 
 	private void makeActions() {
-		buildTargetAction = new BuildTargetAction(fViewer.getControl().getShell());
-		addTargetAction = new AddTargetAction(fViewer.getControl().getShell());
-		deleteTargetAction = new DeleteTargetAction(fViewer.getControl().getShell());
-		editTargetAction = new EditTargetAction(fViewer.getControl().getShell());
+		Shell shell = fViewer.getControl().getShell();
+
+		clipboard = new Clipboard(shell.getDisplay());
+
+		buildTargetAction = new BuildTargetAction(shell);
+		addTargetAction = new AddTargetAction(shell);
+		copyTargetAction = new CopyTargetAction(shell, clipboard, pasteTargetAction);
+		pasteTargetAction = new PasteTargetAction(shell, clipboard);
+		deleteTargetAction = new DeleteTargetAction(shell);
+		editTargetAction = new EditTargetAction(shell);
 		trimEmptyFolderAction = new FilterEmtpyFoldersAction();
 	}
 	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
+		IActionBars actionBars = getViewSite().getActionBars();
+		fillLocalPullDown(actionBars.getMenuManager());
+		fillLocalToolBar(actionBars.getToolBarManager());
+
+		TextActionHandler textActionHandler = new TextActionHandler(actionBars); // hooks handlers
+		textActionHandler.setCopyAction(copyTargetAction);
+		textActionHandler.setPasteAction(pasteTargetAction);
+		textActionHandler.setDeleteAction(deleteTargetAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager toolBar) {
@@ -243,6 +330,8 @@ public class MakeView extends ViewPart {
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(buildTargetAction);
 		manager.add(addTargetAction);
+		manager.add(copyTargetAction);
+		manager.add(pasteTargetAction);
 		manager.add(deleteTargetAction);
 		manager.add(editTargetAction);
 		manager.add(new Separator());
@@ -270,5 +359,20 @@ public class MakeView extends ViewPart {
 		buildTargetAction.selectionChanged(sel);
 		deleteTargetAction.selectionChanged(sel);
 		editTargetAction.selectionChanged(sel);
+		copyTargetAction.selectionChanged(sel);
+		pasteTargetAction.selectionChanged(sel);
 	}
+
+	/**
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	@Override
+	public void dispose() {
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
+		super.dispose();
+	}
+
 }

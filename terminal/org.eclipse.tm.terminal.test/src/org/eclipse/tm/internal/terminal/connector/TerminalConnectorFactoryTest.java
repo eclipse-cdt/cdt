@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
@@ -175,6 +176,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		assertFalse(c.isInitialized());
 		c.save(null);
 		assertFalse(c.isInitialized());
+		if (!Platform.isRunning()) return;
 		c.getAdapter(ConnectorMock.class);
 		assertFalse(c.isInitialized());
 	}
@@ -254,6 +256,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 	}
 
 	public void testGetAdapter() {
+		if (!Platform.isRunning()) return;
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c = makeTerminalConnector(mock);
 		assertNull(c.getAdapter(ConnectorMock.class));

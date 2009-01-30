@@ -25,6 +25,7 @@ public class AutomatedPluginTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AutomatedPluginTests.class.getName());
 		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorPluginTest.class);
+		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorFactoryTest.class);
 		return suite;
 	}
 

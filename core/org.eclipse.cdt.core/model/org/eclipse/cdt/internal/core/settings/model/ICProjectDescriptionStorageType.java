@@ -103,13 +103,15 @@ public interface ICProjectDescriptionStorageType {
 		}
 
 		private static Version getVersion(IConfigurationElement element, String id, Version defaultValue) throws IllegalArgumentException{
-			if (defaultValue == null)
-				return new Version(element.getAttribute(id));
-			Version v = defaultValue;
+			String value = element.getAttribute(id);
+			if (value==null) 
+				return defaultValue;
+			Version v;
 			try {
-				v = new Version(element.getAttribute(id));
+				v = new Version(value);
 			} catch (Exception e) {
 				// If an exception occurred return the default value
+				v = defaultValue;
 			}
 			return v;
 		}

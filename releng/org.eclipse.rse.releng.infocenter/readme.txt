@@ -35,6 +35,7 @@ Other infocenter administration commands:
   infocenter.sh start &
 
 For more documentation on infocenter, see
-http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/ua_help_setup_infocenter.htm
+http://help.eclipse.org/ganymede/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/ua_help_setup_infocenter.htm
+http://help.eclipse.org/stable/topic/org.eclipse.platform.doc.isv/guide/ua_help_setup_infocenter.htm
 
 -- Martin Oberhuber, 20-Jul-2006

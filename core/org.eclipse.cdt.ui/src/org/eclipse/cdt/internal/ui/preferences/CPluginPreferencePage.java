@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		gr2.setLayoutData(gd2);
 		gr2.setLayout(new GridLayout());
 
-		boolean b2 = ACBuilder.buildRefConfig();
+		boolean b2 = ACBuilder.buildConfigResourceChanges();
 		
 		b3 = new Button(gr2, SWT.CHECK);
 		b3.setText(PreferencesMessages.CPluginPreferencePage_7);
@@ -144,15 +144,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		gd2.verticalIndent = GROUP_VINDENT;
 		b3.setLayoutData(gd2);
 		b3.setSelection(b2);
-		
-		noteControl= createNoteComposite(
-				JFaceResources.getDialogFont(), 
-				gr2, 
-				PreferencesMessages.CPluginPreferencePage_note, 
-				PreferencesMessages.CPluginPreferencePage_6);
-		gd2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd2.verticalIndent = GROUP_VINDENT;
-		noteControl.setLayoutData(gd2);
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns= 2;
@@ -234,7 +225,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		ACBuilder.setAllConfigBuild(false);
-		ACBuilder.setBuildRefConfig(false);
+		ACBuilder.setBuildConfigResourceChanges(false);
 	}
 	
 	/* (non-Javadoc)
@@ -247,7 +238,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		// tell the Core Plugin about this preference
 		CCorePlugin.getDefault().setStructuralParseMode(useStructuralParseMode());
 		ACBuilder.setAllConfigBuild(b2.getSelection());
-		ACBuilder.setBuildRefConfig(b3.getSelection());
+		ACBuilder.setBuildConfigResourceChanges(b3.getSelection());
 		return true;
 	}
 
@@ -255,7 +246,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	protected void performDefaults() {
     	super.performDefaults();
 		ACBuilder.setAllConfigBuild(false);
-		ACBuilder.setBuildRefConfig(false);
+		ACBuilder.setBuildConfigResourceChanges(false);
 		b1.setSelection(true);
 		b2.setSelection(false);
 		b3.setSelection(false);

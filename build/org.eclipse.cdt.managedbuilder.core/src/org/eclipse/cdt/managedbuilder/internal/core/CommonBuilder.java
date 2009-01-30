@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -490,7 +490,23 @@ public class CommonBuilder extends ACBuilder {
 		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
 		return des != null && !des.isCdtProjectCreating();
 	}
-
+	
+	private class MyBoolean {
+	    private boolean value;
+	    
+	    public MyBoolean (boolean value) {
+	        this.value = value;
+	    }
+	    
+	    public boolean getValue() {
+	        return value;
+	    }
+	    
+	    public void setValue(boolean value) {
+	        this.value = value;
+	    }
+	    
+	}
 	/**
 	 * @see IncrementalProjectBuilder#build
 	 */
@@ -513,12 +529,12 @@ public class CommonBuilder extends ACBuilder {
 			for (IConfiguration cfg : cfgs) {
 				info.setDefaultConfiguration(cfg);
 				IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
-				projects = build(kind, project, builders, true, monitor);
+				projects = build(kind, project, builders, true, monitor, new MyBoolean(false));
 			}
 			info.setDefaultConfiguration(defCfg);
 		} else {
 			IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
-			projects = build(kind, project, builders, true, monitor);
+			projects = build(kind, project, builders, true, monitor, new MyBoolean(false));
 		}
 		
 		if(VERBOSE)
@@ -527,7 +543,7 @@ public class CommonBuilder extends ACBuilder {
 		return projects;
 	}
 	
-	protected IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor) throws CoreException{
+	protected IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor, MyBoolean isBuild) throws CoreException{
 		if(!isCdtProjectCreated(project))
 			return project.getReferencedProjects();
 
@@ -545,7 +561,7 @@ public class CommonBuilder extends ACBuilder {
 			monitor.beginTask("", num + rcfgs.length); //$NON-NLS-1$
 
 			if(rcfgs.length != 0){
-				Set<IProject> set = buildReferencedConfigs(rcfgs, new SubProgressMonitor(monitor, 1));// = getProjectsSet(cfgs);
+				Set<IProject> set = buildReferencedConfigs(rcfgs, new SubProgressMonitor(monitor, 1), isBuild);// = getProjectsSet(cfgs);
 				if(set.size() != 0){
 					set.addAll(Arrays.asList(refProjects));
 					refProjects = set.toArray(new IProject[set.size()]);
@@ -553,7 +569,23 @@ public class CommonBuilder extends ACBuilder {
 			}
 
 			for(int i = 0; i < num; i++){
-				build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+			    //bug 219337
+			    if (kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
+    			    if (buildConfigResourceChanges()) { //only build projects with project resource changes
+    			        IResourceDelta delta = getDelta(project);
+                        if (delta != null && delta.getAffectedChildren().length > 0) { //project resource has changed within Eclipse, need to build this configuration
+                            isBuild.setValue(true);
+                            build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+                        }
+                        else if (isBuild.getValue()) { //one of its dependencies have rebuilt, need to rebuild this configuration
+                            build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+                        }
+    			    } else { //the default behaviour: 'make' is invoked on all configurations and incremental build is handled by 'make'	    
+    			        build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+    			    }
+			    } else { //FULL_BUILD or CLEAN
+			        build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
+			    }
 			}
 		}
 		
@@ -564,37 +596,25 @@ public class CommonBuilder extends ACBuilder {
 		return refProjects;
 	}
 	
-	private Set<IProject> buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor){
+	private Set<IProject> buildReferencedConfigs(IConfiguration[] cfgs, IProgressMonitor monitor, MyBoolean refConfigChanged){
 		Set<IProject> projSet = getProjectsSet(cfgs);
 		cfgs = filterConfigsToBuild(cfgs);
+		MyBoolean nextConfigChanged = new MyBoolean(false);
 
 		if(cfgs.length != 0){
 			monitor.beginTask(ManagedMakeMessages.getResourceString("CommonBuilder.22"), cfgs.length); //$NON-NLS-1$
 			for(int i = 0; i < cfgs.length; i++){
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				nextConfigChanged.setValue(false);
 				try {
 					IConfiguration cfg = cfgs[i];
 					IBuilder builder = cfg.getEditableBuilder();
 //					CfgBuildInfo bInfo = new CfgBuildInfo(builder, false);
 					
-					//bug 219337
-					if (buildRefConfig()){						
-						IProject currProject = cfg.getOwner().getProject(); //get the project of the current referenced configuration
-						IBuilder[] builders = new IBuilder[]{builder};
-						IConfiguration[] refConfigs = getReferencedConfigs(builders); //referenced configurations of the current project
-						if (refConfigs.length <=0) { //if this is not a dependent project, then we don't build unless there's a change within the workspace
-							IResourceDelta delta = getDelta(currProject);
-							if (delta != null && delta.getAffectedChildren().length <= 0) { //do not build when there are no changes since last build						
-								projSet.addAll(Arrays.asList(currProject.getReferencedProjects()));
-								return projSet;
-							}
-						}
-					}
-					
 					if(VERBOSE)
 						outputTrace(cfg.getOwner().getProject().getName(), ">>>>building reference cfg " + cfg.getName()); //$NON-NLS-1$
 
-					IProject[] projs = build(INCREMENTAL_BUILD, cfg.getOwner().getProject(), new IBuilder[]{builder}, false, subMonitor);
+					IProject[] projs = build(INCREMENTAL_BUILD, cfg.getOwner().getProject(), new IBuilder[]{builder}, false, subMonitor, nextConfigChanged);
 
 					if(VERBOSE)
 						outputTrace(cfg.getOwner().getProject().getName(), "<<<<done building reference cfg " + cfg.getName()); //$NON-NLS-1$
@@ -605,6 +625,7 @@ public class CommonBuilder extends ACBuilder {
 				} finally {
 					subMonitor.done();
 				}
+				refConfigChanged.setValue(refConfigChanged.getValue() || nextConfigChanged.getValue());
 			}
 		} else {
 			monitor.done();

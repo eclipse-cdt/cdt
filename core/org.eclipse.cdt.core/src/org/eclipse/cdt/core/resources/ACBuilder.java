@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Preferences;
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
 	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
-	private static final String PREF_BUILD_REFERENCED_CONFIGS = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
+	private static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 
 	/**
@@ -105,25 +105,25 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	}
 	
 	/**
-	 * Preference for building referenced projects only when there are changes within Eclipse.
-	 * Dependent projects will be built regardless.
-	 * @return true if referenced projects will be build when changes within the project in Eclipse
+	 * Preference for building configurations only when there are resource changes within Eclipse or
+	 * when there are changes in its references.
+	 * @return true if configurations will be build when project resource changes within Eclipse 
 	 *         false otherwise
 	 * @since 5.1
 	 */
-	public static boolean buildRefConfig() {
+	public static boolean buildConfigResourceChanges() {
 		//bug 219337
-		return prefs.getBoolean(PREF_BUILD_REFERENCED_CONFIGS);
+		return prefs.getBoolean(PREF_BUILD_CONFIGS_RESOURCE_CHANGES);
 	}
 	
 	/**
-	 * Preference for building referenced projects only when there are changes within Eclipse.
-	 * Dependent projects will be built regardless.
+	 * Preference for building configurations only when there are resource changes within Eclipse or
+	 * when there are changes in its references.
 	 * @param enable
 	 * @since 5.1
 	 */
-	public static void setBuildRefConfig(boolean enable) {
-		prefs.setValue(PREF_BUILD_REFERENCED_CONFIGS, enable);		
+	public static void setBuildConfigResourceChanges(boolean enable) {
+		prefs.setValue(PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);		
 	}
 	
 }

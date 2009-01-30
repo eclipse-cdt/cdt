@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 
 public class C99Parser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -172,7 +173,7 @@ public C99Parser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu, astStack);
+	action = new  C99BuildASTParserAction (this, tu, astStack,  CNodeFactory.getDefault() ,  C99SecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -234,8 +235,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, C99Parsersym.TK_EOF_TOKEN));
 }
 
-public C99Parser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, mapFrom);
+public C99Parser(IParserActionTokenProvider parser) {  // constructor
+	tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
 
 
@@ -324,7 +325,7 @@ public C99Parser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 26:  postfix_expression ::= ( type_name ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 26:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
             //
             case 26: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -384,13 +385,13 @@ public C99Parser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 41:  unary_expression ::= sizeof ( type_name )
+            // Rule 41:  unary_expression ::= sizeof ( type_id )
             //
             case 41: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);             break;
             }  
   
             //
-            // Rule 43:  cast_expression ::= ( type_name ) cast_expression
+            // Rule 43:  cast_expression ::= ( type_id ) cast_expression
             //
             case 43: { action.   consumeExpressionCast(IASTCastExpression.op_cast);             break;
             }  
@@ -1074,13 +1075,13 @@ public C99Parser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 267:  type_name ::= specifier_qualifier_list
+            // Rule 267:  type_id ::= specifier_qualifier_list
             //
             case 267: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 268:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 268:  type_id ::= specifier_qualifier_list abstract_declarator
             //
             case 268: { action.   consumeTypeId(true);             break;
             }  

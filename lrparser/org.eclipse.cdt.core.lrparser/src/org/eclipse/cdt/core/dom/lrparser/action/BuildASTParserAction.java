@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,9 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/** Abstract factory for creating AST node objects */
 	private final INodeFactory nodeFactory;
 	
+	/** Abstract factory for creating secondary parsers */
+	private final ISecondaryParserFactory parserFactory;
+	
 	
 	/**
 	 * Returns true if the token is an identifier.
@@ -98,39 +101,23 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	protected abstract boolean isIdentifierToken(IToken token);
 	
 	
-	/**
-	 * Get the parser that will recognize expressions.
-	 */
-	protected abstract IParser getExpressionParser();
-	
-	
-	/**
-	 * Expression parser that does not recognize cast expressions,
-	 * used to disambiguate casts. 
-	 */
-	protected abstract IParser getNoCastExpressionParser();
-	
-	
-	/**
-	 * Expression parser that treats all sizeof and typeid expressions
-	 * as unary expressions.
-	 */
-	protected abstract IParser getSizeofExpressionParser();
-	
-	
+
 	
 	/**
 	 * Create a new parser action.
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public BuildASTParserAction(INodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+	public BuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
 		super(parser, tu, astStack);
 		
 		if(nodeFactory == null)
 			throw new NullPointerException("nodeFactory is null"); //$NON-NLS-1$
+		if(parserFactory == null)
+			throw new NullPointerException("parserFactory is null"); //$NON-NLS-1$
 		
 		this.nodeFactory = nodeFactory;
+		this.parserFactory = parserFactory;
 	}
 
 
@@ -188,7 +175,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 			List<IToken> expressionTokens = parser.getRuleTokens();
 			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
 			
-			IParser expressionParser = getExpressionParser();
+			IParser expressionParser = parserFactory.getExpressionParser(parser);
 			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser, expressionTokens);
 			
 			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
@@ -365,7 +352,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTNode alternateExpr = null;
 		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
 			// try parsing as non-cast to resolve ambiguities
-			IParser secondaryParser = getNoCastExpressionParser();
+			IParser secondaryParser = parserFactory.getNoCastExpressionParser(parser);
 			alternateExpr = runSecondaryParser(secondaryParser);
 		}
 		
@@ -405,7 +392,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		IParser secondaryParser = getSizeofExpressionParser(); 
+		IParser secondaryParser = parserFactory.getSizeofExpressionParser(parser); 
 		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)

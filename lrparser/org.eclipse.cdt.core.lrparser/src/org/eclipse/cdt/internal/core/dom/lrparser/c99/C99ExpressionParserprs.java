@@ -972,7 +972,7 @@ public class C99ExpressionParserprs implements lpg.lpgjavaruntime.ParseTable, C9
             "expression",
             "postfix_expression",
             "member_name",
-            "type_name",
+            "type_id",
             "initializer_list",
             "unary_expression",
             "cast_expression",

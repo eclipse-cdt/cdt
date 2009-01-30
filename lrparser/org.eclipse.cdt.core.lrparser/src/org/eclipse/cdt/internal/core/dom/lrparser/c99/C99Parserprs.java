@@ -1280,7 +1280,7 @@ public class C99Parserprs implements lpg.lpgjavaruntime.ParseTable, C99Parsersym
             "expression",
             "postfix_expression",
             "member_name",
-            "type_name",
+            "type_id",
             "initializer_list",
             "unary_expression",
             "cast_expression",

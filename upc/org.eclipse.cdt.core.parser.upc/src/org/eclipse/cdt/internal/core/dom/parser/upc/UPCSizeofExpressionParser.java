@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 
 import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
+import org.eclipse.cdt.core.dom.parser.upc.UPCSecondaryParserFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
@@ -179,7 +181,7 @@ public UPCSizeofExpressionParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  UPCParserAction ( UPCASTNodeFactory.DEFAULT_INSTANCE , this, tu, astStack);
+	action = new  UPCParserAction (this, tu, astStack,  UPCASTNodeFactory.DEFAULT_INSTANCE ,  UPCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -241,8 +243,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, UPCSizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(UPCSizeofExpressionParsersym.orderedTerminalSymbols, mapFrom);
+public UPCSizeofExpressionParser(IParserActionTokenProvider parser) {  // constructor
+	tokenMap = new TokenMap(UPCSizeofExpressionParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
 
 
@@ -331,7 +333,7 @@ public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 26:  postfix_expression ::= ( type_name ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 26:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
             //
             case 26: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -391,7 +393,7 @@ public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 42:  cast_expression ::= ( type_name ) cast_expression
+            // Rule 42:  cast_expression ::= ( type_id ) cast_expression
             //
             case 42: { action.   consumeExpressionCast(IASTCastExpression.op_cast);             break;
             }  
@@ -1075,13 +1077,13 @@ public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 266:  type_name ::= specifier_qualifier_list
+            // Rule 266:  type_id ::= specifier_qualifier_list
             //
             case 266: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 267:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 267:  type_id ::= specifier_qualifier_list abstract_declarator
             //
             case 267: { action.   consumeTypeId(true);             break;
             }  
@@ -1261,7 +1263,7 @@ public UPCSizeofExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 315:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 315:  no_sizeof_type_id_start ::= ERROR_TOKEN
             //
             case 315: { action.   consumeExpressionProblem();             break;
             }  

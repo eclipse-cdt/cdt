@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,12 +145,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoCastExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPNoFunctionDeclaratorParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPSizeofExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPTemplateTypeParameterParser;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
@@ -177,6 +172,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	/** Used to create the AST node objects */
 	protected final ICPPNodeFactory nodeFactory;
 	
+	protected final ICPPSecondaryParserFactory parserFactory;
+	
 	/** Stack that provides easy access to the current class name, used to disambiguate declarators. */
 	protected final LinkedList<IASTName> classNames = new LinkedList<IASTName>();
 	
@@ -186,10 +183,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public CPPBuildASTParserAction(ICPPNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
-		super(nodeFactory, parser, tu, astStack);
+	public CPPBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory, ICPPSecondaryParserFactory parserFactory) {
+		super(parser, tu, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
+		this.parserFactory = parserFactory;
 		this.tokenMap = new TokenMap(CPPParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
 	
@@ -213,28 +211,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		return nodeFactory.newName(image);
 	}
 
-	@Override
-	protected IParser getExpressionParser() {
-		return new CPPExpressionParser(parser.getOrderedTerminalSymbols()); 
-	}
-	
-	@Override
-	protected IParser getNoCastExpressionParser() {
-		return new CPPNoCastExpressionParser(parser.getOrderedTerminalSymbols());
-	}
-	
-	@Override
-	protected IParser getSizeofExpressionParser() {
-		return new CPPSizeofExpressionParser(parser.getOrderedTerminalSymbols());
-	}
-	
-	protected IParser getTemplateTypeParameterParser() {
-		return new CPPTemplateTypeParameterParser(parser.getOrderedTerminalSymbols());
-	}
-	
-	protected IParser getNoFunctionDeclaratorParser() {
-		return new CPPNoFunctionDeclaratorParser(parser.getOrderedTerminalSymbols()); 
-	}
 
 	
 	public void consumeNewInitializer() {
@@ -481,7 +457,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 */
 	public void consumeTemplateArgumentTypeId() {
 		// TODO is this necessary? It should be able to tell if it looks like an id expression
-		IParser secondaryParser = getExpressionParser();
+		IParser secondaryParser = parserFactory.getExpressionParser(parser);
 		IASTNode result = runSecondaryParser(secondaryParser);
 		
 		// The grammar rule allows assignment_expression, but the ambiguity
@@ -1383,7 +1359,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;
 		
-		IParser secondaryParser = getNoFunctionDeclaratorParser(); 
+		IParser secondaryParser = parserFactory.getNoFunctionDeclaratorParser(parser); 
 		IASTNode notFunctionDeclarator = runSecondaryParser(secondaryParser);
 	
 		if(notFunctionDeclarator == null || notFunctionDeclarator instanceof IASTProblemDeclaration)
@@ -1792,7 +1768,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      * Yes its a hack.
      */
     public void consumeTemplateParamterDeclaration() {
-    	IParser typeParameterParser = getTemplateTypeParameterParser();
+    	IParser typeParameterParser = parserFactory.getTemplateTypeParameterParser(parser);
     	IASTNode alternate = runSecondaryParser(typeParameterParser);
     	
 		if(alternate == null || alternate instanceof IASTProblemDeclaration)

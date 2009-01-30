@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 
 public class C99NoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -172,7 +173,7 @@ public C99NoCastExpressionParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu, astStack);
+	action = new  C99BuildASTParserAction (this, tu, astStack,  CNodeFactory.getDefault() ,  C99SecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -234,8 +235,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, C99NoCastExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(C99NoCastExpressionParsersym.orderedTerminalSymbols, mapFrom);
+public C99NoCastExpressionParser(IParserActionTokenProvider parser) {  // constructor
+	tokenMap = new TokenMap(C99NoCastExpressionParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
 
 
@@ -324,7 +325,7 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 26:  postfix_expression ::= ( type_name ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 26:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
             //
             case 26: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -384,7 +385,7 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 41:  unary_expression ::= sizeof ( type_name )
+            // Rule 41:  unary_expression ::= sizeof ( type_id )
             //
             case 41: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);             break;
             }  
@@ -1068,13 +1069,13 @@ public C99NoCastExpressionParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 266:  type_name ::= specifier_qualifier_list
+            // Rule 266:  type_id ::= specifier_qualifier_list
             //
             case 266: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 267:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 267:  type_id ::= specifier_qualifier_list abstract_declarator
             //
             case 267: { action.   consumeTypeId(true);             break;
             }  

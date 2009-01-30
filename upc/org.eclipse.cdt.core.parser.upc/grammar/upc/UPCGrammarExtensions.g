@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2007 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -13,12 +13,14 @@
 $Define
 	$build_action_class /. UPCParserAction ./
 	$node_factory_create_expression /. UPCASTNodeFactory.DEFAULT_INSTANCE ./
+	$parser_factory_create_expression /. UPCSecondaryParserFactory.getDefault() ./
 $End
 
 
 $Globals
 /.
 import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
+import org.eclipse.cdt.core.dom.parser.upc.UPCSecondaryParserFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
@@ -67,15 +69,15 @@ literal
 unary_expression
     ::= 'upc_localsizeof' unary_expression
           /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_localsizeof); $EndBuild ./
-      | 'upc_localsizeof' '(' type_name ')'
+      | 'upc_localsizeof' '(' type_id ')'
           /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_localsizeof); $EndBuild ./
       | 'upc_blocksizeof' unary_expression
           /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_blocksizeof); $EndBuild ./
-      | 'upc_blocksizeof' '(' type_name ')'
+      | 'upc_blocksizeof' '(' type_id ')'
           /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_blocksizeof); $EndBuild ./
       | 'upc_elemsizeof'  unary_expression
           /. $Build  consumeExpressionUnarySizeofOperator(IUPCASTUnarySizeofExpression.upc_elemsizeof); $EndBuild ./
-      | 'upc_elemsizeof'  '(' type_name ')'
+      | 'upc_elemsizeof'  '(' type_id ')'
           /. $Build  consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_elemsizeof); $EndBuild ./
       
       

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,8 @@ public interface IParser extends ITokenCollector {
 		 * The LR parsers do not actually skip the parsing of function bodies, 
 		 * but this option does have the effect of not generating AST nodes
 		 * for function bodies.
+		 * 
+		 * TODO Implement this
 		 */
 		//OPTION_SKIP_FUNCTION_BODIES,
 		

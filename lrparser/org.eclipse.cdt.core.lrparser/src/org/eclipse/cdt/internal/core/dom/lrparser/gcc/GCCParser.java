@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
 
 public class GCCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
 {
@@ -174,12 +176,12 @@ public GCCParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  C99BuildASTParserAction ( CNodeFactory.getDefault() , this, tu, astStack);
+	action = new  C99BuildASTParserAction (this, tu, astStack,  CNodeFactory.getDefault() ,  GCCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	
 
-	gnuAction = new  GCCBuildASTParserAction  ( CNodeFactory.getDefault() , this, tu, astStack);
+	gnuAction = new  GCCBuildASTParserAction  (this, tu, astStack,  CNodeFactory.getDefault() );
 	gnuAction.setParserOptions(options);
 	
 
@@ -241,8 +243,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, GCCParsersym.TK_EOF_TOKEN));
 }
 
-public GCCParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(GCCParsersym.orderedTerminalSymbols, mapFrom);
+public GCCParser(IParserActionTokenProvider parser) {  // constructor
+	tokenMap = new TokenMap(GCCParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
 
 
@@ -333,7 +335,7 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 26:  postfix_expression ::= ( type_name ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 26:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
             //
             case 26: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -393,13 +395,13 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 41:  unary_expression ::= sizeof ( type_name )
+            // Rule 41:  unary_expression ::= sizeof ( type_id )
             //
             case 41: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);             break;
             }  
   
             //
-            // Rule 43:  cast_expression ::= ( type_name ) cast_expression
+            // Rule 43:  cast_expression ::= ( type_id ) cast_expression
             //
             case 43: { action.   consumeExpressionCast(IASTCastExpression.op_cast);             break;
             }  
@@ -1083,13 +1085,13 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 267:  type_name ::= specifier_qualifier_list
+            // Rule 267:  type_id ::= specifier_qualifier_list
             //
             case 267: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 268:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 268:  type_id ::= specifier_qualifier_list abstract_declarator
             //
             case 268: { action.   consumeTypeId(true);             break;
             }  
@@ -1279,18 +1281,48 @@ private  GCCBuildASTParserAction  gnuAction;
             //
             case 341: {  gnuAction.consumeDeclarationASM();           break;
             } 
+  
+            //
+            // Rule 352:  unary_expression ::= __alignof__ unary_expression
+            //
+            case 352: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
+            }  
+  
+            //
+            // Rule 353:  unary_expression ::= __alignof__ ( type_id )
+            //
+            case 353: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);             break;
+            }  
+  
+            //
+            // Rule 354:  unary_expression ::= typeof unary_expression
+            //
+            case 354: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            }  
+  
+            //
+            // Rule 355:  unary_expression ::= typeof ( type_id )
+            //
+            case 355: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            }  
  
             //
-            // Rule 365:  designator_base ::= identifier_token :
+            // Rule 371:  field_name_designator ::= identifier_token :
             //
-            case 365: {  gnuAction.consumeDesignatorField();            break;
+            case 371: {  gnuAction.consumeDesignatorField();            break;
             } 
  
             //
-            // Rule 366:  designator_base ::= [ constant_expression ... constant_expression ]
+            // Rule 372:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 366: {  gnuAction.consumeDesignatorArray();            break;
+            case 372: {  gnuAction.consumeDesignatorArray();            break;
             } 
+  
+            //
+            // Rule 373:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            //
+            case 373: { action.   consumeInitializerDesignated();             break;
+            }  
 
     
             default:

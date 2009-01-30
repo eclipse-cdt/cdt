@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -320,7 +320,8 @@ $Define
 	$additional_interfaces /. , IParserActionTokenProvider, IParser $extra_interfaces ./
 	
 	$build_action_class /.  ./  -- name of the class that has the AST building callbacks
-	$node_factory_create_expression /.  ./  -- expression that will create the node factory
+	$node_factory_create_expression /.  ./  -- expression that will create the INodeFactory
+	$parser_factory_create_expression /.  ./ -- expression that will create the ISecondaryParserFactory
 	
 	$action_initializations /. ./
 	
@@ -349,7 +350,7 @@ $Headers
 	}
 	
 	private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-		action = new $build_action_class($node_factory_create_expression, this, tu, astStack);
+		action = new $build_action_class(this, tu, astStack, $node_factory_create_expression, $parser_factory_create_expression);
 		action.setParserOptions(options);
 		
 		$action_initializations
@@ -422,8 +423,8 @@ $Headers
 		addToken(new Token(null, 0, 0, $sym_type.TK_EOF_TOKEN));
 	}
 	
-	public $action_type(String[] mapFrom) {  // constructor
-		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, mapFrom);
+	public $action_type(IParserActionTokenProvider parser) {  // constructor
+		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}	
 	
 

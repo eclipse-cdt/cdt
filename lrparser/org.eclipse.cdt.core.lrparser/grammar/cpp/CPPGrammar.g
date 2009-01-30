@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -103,6 +103,7 @@ $Globals
     import org.eclipse.cdt.core.dom.ast.cpp.*;
 	import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
+	import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPSecondaryParserFactory;
 ./
 $End
 
@@ -110,6 +111,7 @@ $End
 $Define
 	$build_action_class /. CPPBuildASTParserAction ./
 	$node_factory_create_expression /. CPPNodeFactory.getDefault() ./
+	$parser_factory_create_expression /. CPPSecondaryParserFactory.getDefault() ./
 $End
 
 
@@ -177,8 +179,6 @@ identifier_token
 
 literal
     ::= 'integer'
-           /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_integer_constant); $EndBuild ./
-      | '0'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_integer_constant); $EndBuild ./
       | 'floating'
            /. $Build  consumeExpressionLiteral(ICPPASTLiteralExpression.lk_float_constant); $EndBuild ./

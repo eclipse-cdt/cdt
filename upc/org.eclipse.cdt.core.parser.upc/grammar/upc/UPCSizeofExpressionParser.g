@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ $Import
 $DropRules
 
 unary_expression
-    ::= 'upc_localsizeof' '(' type_name ')'
-      | 'upc_blocksizeof' '(' type_name ')'
-      | 'upc_elemsizeof'  '(' type_name ')'
+    ::= 'upc_localsizeof' '(' type_id ')'
+      | 'upc_blocksizeof' '(' type_id ')'
+      | 'upc_elemsizeof'  '(' type_id ')'
           
 $End

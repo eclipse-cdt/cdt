@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2008, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ $Define
 
 	$action_initializations /.
 	
-		gnuAction = new $gnu_action_class ($node_factory_create_expression, this, tu, astStack);
+		gnuAction = new $gnu_action_class (this, tu, astStack, $node_factory_create_expression);
 		gnuAction.setParserOptions(options);
 		
 	./
@@ -134,6 +134,19 @@ extended_asm_param
       | 'stringlit' '(' 'identifier' ')'
       | 'stringlit' '(' '*' 'identifier' ')'
 
+
+
+unary_expression
+    ::= '__alignof__' unary_expression
+          /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);  $EndBuild ./
+      | '__alignof__' '(' type_id ')'
+          /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);  $EndBuild ./  
+      | 'typeof' unary_expression
+          /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);  $EndBuild ./
+      | 'typeof' '(' type_id ')'
+          /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);  $EndBuild ./  
+          
+    
 
 $End
 

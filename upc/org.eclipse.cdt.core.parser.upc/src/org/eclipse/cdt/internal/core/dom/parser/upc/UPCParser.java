@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 
 import org.eclipse.cdt.core.dom.parser.upc.UPCASTNodeFactory;
+import org.eclipse.cdt.core.dom.parser.upc.UPCSecondaryParserFactory;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
@@ -179,7 +181,7 @@ public UPCParser() {  // constructor
 }
 
 private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  UPCParserAction ( UPCASTNodeFactory.DEFAULT_INSTANCE , this, tu, astStack);
+	action = new  UPCParserAction (this, tu, astStack,  UPCASTNodeFactory.DEFAULT_INSTANCE ,  UPCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -241,8 +243,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, UPCParsersym.TK_EOF_TOKEN));
 }
 
-public UPCParser(String[] mapFrom) {  // constructor
-	tokenMap = new TokenMap(UPCParsersym.orderedTerminalSymbols, mapFrom);
+public UPCParser(IParserActionTokenProvider parser) {  // constructor
+	tokenMap = new TokenMap(UPCParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
 
 
@@ -331,7 +333,7 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 26:  postfix_expression ::= ( type_name ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 26:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
             //
             case 26: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -391,13 +393,13 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 41:  unary_expression ::= sizeof ( type_name )
+            // Rule 41:  unary_expression ::= sizeof ( type_id )
             //
             case 41: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);             break;
             }  
   
             //
-            // Rule 43:  cast_expression ::= ( type_name ) cast_expression
+            // Rule 43:  cast_expression ::= ( type_id ) cast_expression
             //
             case 43: { action.   consumeExpressionCast(IASTCastExpression.op_cast);             break;
             }  
@@ -1081,13 +1083,13 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 267:  type_name ::= specifier_qualifier_list
+            // Rule 267:  type_id ::= specifier_qualifier_list
             //
             case 267: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 268:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 268:  type_id ::= specifier_qualifier_list abstract_declarator
             //
             case 268: { action.   consumeTypeId(true);             break;
             }  
@@ -1291,7 +1293,7 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 319:  unary_expression ::= upc_localsizeof ( type_name )
+            // Rule 319:  unary_expression ::= upc_localsizeof ( type_id )
             //
             case 319: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_localsizeof);            break;
             }  
@@ -1303,7 +1305,7 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 321:  unary_expression ::= upc_blocksizeof ( type_name )
+            // Rule 321:  unary_expression ::= upc_blocksizeof ( type_id )
             //
             case 321: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_blocksizeof);            break;
             }  
@@ -1315,7 +1317,7 @@ public UPCParser(String[] mapFrom) {  // constructor
             }  
   
             //
-            // Rule 323:  unary_expression ::= upc_elemsizeof ( type_name )
+            // Rule 323:  unary_expression ::= upc_elemsizeof ( type_id )
             //
             case 323: { action.   consumeExpressionSizeofTypeId(IUPCASTUnarySizeofExpression.upc_elemsizeof);            break;
             }  

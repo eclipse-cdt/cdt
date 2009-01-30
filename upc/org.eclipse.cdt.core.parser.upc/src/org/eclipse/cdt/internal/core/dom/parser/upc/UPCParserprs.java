@@ -1886,7 +1886,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
             "expression",
             "postfix_expression",
             "member_name",
-            "type_name",
+            "type_id",
             "initializer_list",
             "unary_expression",
             "cast_expression",

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,17 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCExpressionParser;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCNoCastExpressionParser;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCSizeofExpressionParser;
 
 
 /**
@@ -49,8 +46,8 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * @param parser
 	 * @param tu
 	 */
-	public UPCParserAction(UPCASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
-		super(nodeFactory, parser, tu, astStack);
+	public UPCParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, UPCASTNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, tu, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 		nodeFactory.setUseC99SizeofExpressions();
 	}
@@ -61,20 +58,7 @@ public class UPCParserAction extends C99BuildASTParserAction {
 		return token.getKind() == TK_Completion;
 	}
 		
-	@Override
-	protected IParser getExpressionParser() {
-		return new UPCExpressionParser(parser.getOrderedTerminalSymbols());
-	}
-
-	@Override
-	protected IParser getNoCastExpressionParser() {
-		return new UPCNoCastExpressionParser(parser.getOrderedTerminalSymbols());
-	}
-
-	@Override
-	protected IParser getSizeofExpressionParser() {
-		return new UPCSizeofExpressionParser(parser.getOrderedTerminalSymbols());
-	}
+	
 
 
 	/**************************************************************************************

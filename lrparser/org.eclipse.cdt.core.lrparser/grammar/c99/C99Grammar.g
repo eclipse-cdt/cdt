@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ $Globals
 /.	
 	import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 ./
 $End
 
@@ -104,6 +105,7 @@ $End
 $Define
 	$build_action_class /. C99BuildASTParserAction ./
 	$node_factory_create_expression /. CNodeFactory.getDefault() ./
+	$parser_factory_create_expression /. C99SecondaryParserFactory.getDefault() ./
 $End
 
 
@@ -186,7 +188,7 @@ postfix_expression
          /. $Build   consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixIncr);  $EndBuild ./
       | postfix_expression '--'
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixDecr);  $EndBuild ./
-      | '(' type_name ')' '{' <openscope-ast> initializer_list comma_opt '}'
+      | '(' type_id ')' '{' <openscope-ast> initializer_list comma_opt '}'
           /. $Build  consumeExpressionTypeIdInitializer();  $EndBuild ./
  
  
@@ -220,13 +222,13 @@ unary_expression
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_not);  $EndBuild ./
       | 'sizeof' unary_expression
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);  $EndBuild ./
-      | 'sizeof' '(' type_name ')'
+      | 'sizeof' '(' type_id ')'
           /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);  $EndBuild ./  
           
 
 cast_expression
     ::= unary_expression
-      | '(' type_name ')' cast_expression
+      | '(' type_id ')' cast_expression
           /. $Build  consumeExpressionCast(IASTCastExpression.op_cast);  $EndBuild ./
 
 
@@ -845,7 +847,7 @@ complete_parameter_declarator
 
 
 -- only used in expressions, eg) sizeof, casts etc...
-type_name
+type_id
     ::= specifier_qualifier_list
           /. $Build  consumeTypeId(false);  $EndBuild ./
       | specifier_qualifier_list abstract_declarator

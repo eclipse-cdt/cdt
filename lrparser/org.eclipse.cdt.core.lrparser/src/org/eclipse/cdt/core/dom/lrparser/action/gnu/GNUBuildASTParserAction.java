@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
 import java.util.List;
@@ -20,7 +30,7 @@ public class GNUBuildASTParserAction extends AbstractParserAction {
 	
 	private final TokenMap tokenMap;
 	
-	public GNUBuildASTParserAction(INodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+	public GNUBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, INodeFactory nodeFactory) {
 		super(parser, tu, astStack);
 		
 		this.nodeFactory = nodeFactory;

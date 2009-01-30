@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,18 +62,15 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99ExpressionParser;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99NoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99SizeofExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
@@ -98,8 +95,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public C99BuildASTParserAction(ICNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
-		super(nodeFactory, parser, tu, astStack);
+	public C99BuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, ICNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, tu, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
 		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
@@ -121,20 +118,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		return baseKind(token) == TK_identifier;
 	}
 	
-	@Override
-	protected IParser getExpressionParser() {
-		return new C99ExpressionParser(parser.getOrderedTerminalSymbols()); 
-	}
-
-	@Override
-	protected IParser getNoCastExpressionParser() {
-		return new C99NoCastExpressionParser(parser.getOrderedTerminalSymbols());
-	}
-	
-	@Override
-	protected IParser getSizeofExpressionParser() {
-		return new C99SizeofExpressionParser(parser.getOrderedTerminalSymbols());
-	}
 	
 	@Override
 	protected IASTName createName(char[] image) {

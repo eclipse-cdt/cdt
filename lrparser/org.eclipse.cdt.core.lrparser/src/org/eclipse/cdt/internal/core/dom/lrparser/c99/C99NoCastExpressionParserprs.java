@@ -968,7 +968,7 @@ public class C99NoCastExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
             "expression",
             "postfix_expression",
             "member_name",
-            "type_name",
+            "type_id",
             "initializer_list",
             "unary_expression",
             "cast_expression",

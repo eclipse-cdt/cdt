@@ -122,7 +122,6 @@ public class SerialConnectWorker extends Thread {
 		final String strID = getOwnershipId();
 		SerialPort serialPort = null;
 		try {
-			fControl.setState(TerminalState.OPENED);
 			ISerialSettings s=fConn.getSerialSettings();
 			portName=s.getSerialPort();
 			try {

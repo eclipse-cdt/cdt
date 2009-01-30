@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
@@ -60,10 +59,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 
-	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
-		super(pdom, parent, method, true);
+	public PDOMCPPMethod(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
+		super(linkage, parent, method, true);
 
-		Database db = pdom.getDB();
+		Database db = getDB();
 
 		try {
 			byte annotation= PDOMCPPAnnotation.encodeExtraAnnotation(method);
@@ -73,8 +72,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		}
 	}
 
-	public PDOMCPPMethod(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPMethod(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -83,7 +82,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 			ICPPMethod method= (ICPPMethod) newBinding;
 			super.update(linkage, newBinding);
 			try {
-				pdom.getDB().putByte(record + ANNOTATION1, PDOMCPPAnnotation.encodeExtraAnnotation(method));
+				getDB().putByte(record + ANNOTATION1, PDOMCPPAnnotation.encodeExtraAnnotation(method));
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -57,16 +56,16 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	private ICPPScope fUnknownScope;
 	private int fCachedParamID= -1;
 	
-	public PDOMCPPTemplateTypeParameter(PDOM pdom, PDOMNode parent, ICPPTemplateTypeParameter param) 
+	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTypeParameter param) 
 			throws CoreException {
-		super(pdom, parent, param.getNameCharArray());
+		super(linkage, parent, param.getNameCharArray());
 		
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		db.putInt(record + PARAMETERID, param.getParameterID());
 	}
 
-	public PDOMCPPTemplateTypeParameter(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	private void readParamID() {
 		if (fCachedParamID == -1) {
 			try {
-				final Database db = pdom.getDB();
+				final Database db = getDB();
 				fCachedParamID= db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -108,13 +107,13 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 	
@@ -131,7 +130,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 
 	public IType getDefault() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + DEFAULT_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + DEFAULT_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -171,7 +170,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 				IType dflt= val.getTypeValue();
 				if (dflt != null) {
 					final Database db= getPDOM().getDB();
-					PDOMNode typeNode = getLinkageImpl().addType(this, dflt);
+					PDOMNode typeNode = getLinkage().addType(this, dflt);
 					if (typeNode != null) {
 						db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
 					}
@@ -194,9 +193,9 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 				// ignore
 			}
 			if (newDefault != null) {
-				final Database db = pdom.getDB();
+				final Database db = getDB();
 				IType mytype= getDefault();
-				PDOMNode typeNode = getLinkageImpl().addType(this, newDefault);
+				PDOMNode typeNode = getLinkage().addType(this, newDefault);
 				if (typeNode != null) {
 					db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
 					if (mytype != null) 

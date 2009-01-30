@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -45,15 +45,15 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	public static final int IS_IMAGINARY = 0x20;
 	public static final int IS_COMPLEX = 0x40;
 	
-	public PDOMCBasicType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCBasicType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCBasicType(PDOM pdom, PDOMNode parent, ICBasicType type) throws CoreException {
-		super(pdom, parent);
+	public PDOMCBasicType(PDOMLinkage linkage, PDOMNode parent, ICBasicType type) throws CoreException {
+		super(linkage, parent);
 
 		try {
-			Database db = pdom.getDB();
+			Database db = getDB();
 			db.putChar(record + TYPE_ID, (char)type.getType());
 
 			char flags = 0;
@@ -84,7 +84,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 
 	public int getType() {
 		try {
-			return pdom.getDB().getChar(record + TYPE_ID);
+			return getDB().getChar(record + TYPE_ID);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -142,7 +142,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	}
 	
 	private char getFlags() throws CoreException {
-		return pdom.getDB().getChar(record + FLAGS);
+		return getDB().getChar(record + FLAGS);
 	}
 	
 	private boolean flagSet(int flag) {

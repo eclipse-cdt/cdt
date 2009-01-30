@@ -250,12 +250,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			int fileLocalRec[]= {0};
 			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
 			if (pdomBinding != null) {
-				pdom.putCachedResult(inputBinding, pdomBinding);
+				getPDOM().putCachedResult(inputBinding, pdomBinding);
 			} else {
 				try {
 					pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
 					if (pdomBinding != null) {
-						pdom.putCachedResult(inputBinding, pdomBinding);
+						getPDOM().putCachedResult(inputBinding, pdomBinding);
 					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
@@ -311,58 +311,58 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = createSpecialization(parent, pdomSpecialized, binding);
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPField(pdom, parent, (ICPPField) binding);
+				pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding);
 			}
 		} else if (binding instanceof ICPPVariable) {
 			ICPPVariable var= (ICPPVariable) binding;
-			pdomBinding = new PDOMCPPVariable(pdom, parent, var);
+			pdomBinding = new PDOMCPPVariable(this, parent, var);
 		} else if (binding instanceof ICPPFunctionTemplate) {
 			if (binding instanceof ICPPConstructor) {
-				pdomBinding= new PDOMCPPConstructorTemplate(pdom, this, parent, (ICPPConstructor) binding);
+				pdomBinding= new PDOMCPPConstructorTemplate(this, parent, (ICPPConstructor) binding);
 			} else if (binding instanceof ICPPMethod) {
-				pdomBinding= new PDOMCPPMethodTemplate(pdom, this, parent, (ICPPMethod) binding);
+				pdomBinding= new PDOMCPPMethodTemplate(this, parent, (ICPPMethod) binding);
 			} else if (binding instanceof ICPPFunction) {
-				pdomBinding= new PDOMCPPFunctionTemplate(pdom, this, parent, (ICPPFunctionTemplate) binding);
+				pdomBinding= new PDOMCPPFunctionTemplate(this, parent, (ICPPFunctionTemplate) binding);
 			}
 		} else if (binding instanceof ICPPConstructor) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPConstructor(pdom, parent, (ICPPConstructor)binding);
+				pdomBinding = new PDOMCPPConstructor(this, parent, (ICPPConstructor)binding);
 			}
 		} else if (binding instanceof ICPPMethod) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
+				pdomBinding = new PDOMCPPMethod(this, parent, (ICPPMethod)binding);
 			}
 		} else if (binding instanceof ICPPFunction) {
-			pdomBinding = new PDOMCPPFunction(pdom, parent, (ICPPFunction) binding, true);
+			pdomBinding = new PDOMCPPFunction(this, parent, (ICPPFunction) binding, true);
 		} else if (binding instanceof ICPPClassTemplate) {
-			pdomBinding= new PDOMCPPClassTemplate(pdom, this, parent, (ICPPClassTemplate) binding);
+			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
 			if (binding instanceof ICPPUnknownClassInstance) {
-				pdomBinding= new PDOMCPPUnknownClassInstance(pdom, parent, (ICPPUnknownClassInstance) binding);
+				pdomBinding= new PDOMCPPUnknownClassInstance(this, parent, (ICPPUnknownClassInstance) binding);
 			} else if (binding instanceof ICPPUnknownClassType) {
-				pdomBinding= new PDOMCPPUnknownClassType(pdom, parent, (ICPPUnknownClassType) binding);
+				pdomBinding= new PDOMCPPUnknownClassType(this, parent, (ICPPUnknownClassType) binding);
 			} else {
-				pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
+				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
 			}
 		} else if (binding instanceof ICPPNamespaceAlias) {
-			pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
+			pdomBinding = new PDOMCPPNamespaceAlias(this, parent, (ICPPNamespaceAlias) binding);
 		} else if (binding instanceof ICPPNamespace) {
-			pdomBinding = new PDOMCPPNamespace(pdom, parent, (ICPPNamespace) binding);
+			pdomBinding = new PDOMCPPNamespace(this, parent, (ICPPNamespace) binding);
 		} else if (binding instanceof ICPPUsingDeclaration) {
-			pdomBinding = new PDOMCPPUsingDeclaration(pdom, parent, (ICPPUsingDeclaration) binding);
+			pdomBinding = new PDOMCPPUsingDeclaration(this, parent, (ICPPUsingDeclaration) binding);
 		} else if (binding instanceof IEnumeration) {
-			pdomBinding = new PDOMCPPEnumeration(pdom, parent, (IEnumeration) binding);
+			pdomBinding = new PDOMCPPEnumeration(this, parent, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
 			final IEnumerator etor = (IEnumerator) binding;
 			IType enumeration= etor.getType();
 			if (enumeration instanceof IEnumeration) {
 				PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
 				if (pdomEnumeration instanceof PDOMCPPEnumeration) {
-					pdomBinding = new PDOMCPPEnumerator(pdom, parent, etor,	(PDOMCPPEnumeration)pdomEnumeration);
+					pdomBinding = new PDOMCPPEnumerator(this, parent, etor,	(PDOMCPPEnumeration)pdomEnumeration);
 				}
 			}
 		} else if (binding instanceof ITypedef) {
-			pdomBinding = new PDOMCPPTypedef(pdom, parent, (ITypedef)binding);
+			pdomBinding = new PDOMCPPTypedef(this, parent, (ITypedef)binding);
 		}
 
 		if (pdomBinding != null) {
@@ -379,46 +379,45 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		PDOMBinding result= null;
 		if (special instanceof ICPPDeferredClassInstance) {
 			if (orig instanceof ICPPClassTemplate) {
-				result= new PDOMCPPDeferredClassInstance(pdom,	parent, (ICPPDeferredClassInstance) special, orig);
+				result= new PDOMCPPDeferredClassInstance(this,	parent, (ICPPDeferredClassInstance) special, orig);
 			}
 		} else if (special instanceof ICPPTemplateInstance) {
 			if (special instanceof ICPPConstructor && orig instanceof ICPPConstructor) {
-				result= new PDOMCPPConstructorInstance(pdom, parent, (ICPPConstructor) special, orig);
+				result= new PDOMCPPConstructorInstance(this, parent, (ICPPConstructor) special, orig);
 			} else if (special instanceof ICPPMethod && orig instanceof ICPPMethod) {
-				result= new PDOMCPPMethodInstance(pdom, parent, (ICPPMethod) special, orig);
+				result= new PDOMCPPMethodInstance(this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction && orig instanceof ICPPFunction) {
-				result= new PDOMCPPFunctionInstance(pdom, parent, (ICPPFunction) special, orig);
+				result= new PDOMCPPFunctionInstance(this, parent, (ICPPFunction) special, orig);
 			} else if (special instanceof ICPPClassType && orig instanceof ICPPClassType) {
-				result= new PDOMCPPClassInstance(pdom, parent, (ICPPClassType) special, orig);
+				result= new PDOMCPPClassInstance(this, parent, (ICPPClassType) special, orig);
 			}
 		} else if (special instanceof ICPPClassTemplatePartialSpecialization) {
 			if (orig instanceof PDOMCPPClassTemplate) {
 				result= new PDOMCPPClassTemplatePartialSpecialization(
-						pdom, this, parent, (ICPPClassTemplatePartialSpecialization) special,
-						(PDOMCPPClassTemplate) orig);
+						this, parent, (ICPPClassTemplatePartialSpecialization) special, (PDOMCPPClassTemplate) orig);
 			}
 		} else if (special instanceof ICPPField) {
-			result= new PDOMCPPFieldSpecialization(pdom, parent, (ICPPField) special, orig);
+			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);
 		} else if (special instanceof ICPPFunctionTemplate) {
 			if (special instanceof ICPPConstructor) {
-				result= new PDOMCPPConstructorTemplateSpecialization( pdom, parent, (ICPPConstructor) special, orig); 
+				result= new PDOMCPPConstructorTemplateSpecialization( this, parent, (ICPPConstructor) special, orig); 
 			} else if (special instanceof ICPPMethod) {
-				result= new PDOMCPPMethodTemplateSpecialization( pdom, parent, (ICPPMethod) special, orig);
+				result= new PDOMCPPMethodTemplateSpecialization( this, parent, (ICPPMethod) special, orig);
 			} else if (special instanceof ICPPFunction) {
-				result= new PDOMCPPFunctionTemplateSpecialization( pdom, parent, (ICPPFunctionTemplate) special, orig);
+				result= new PDOMCPPFunctionTemplateSpecialization( this, parent, (ICPPFunctionTemplate) special, orig);
 			}
 		} else if (special instanceof ICPPConstructor) {
-			result= new PDOMCPPConstructorSpecialization(pdom, parent, (ICPPConstructor) special, orig);
+			result= new PDOMCPPConstructorSpecialization(this, parent, (ICPPConstructor) special, orig);
 		} else if (special instanceof ICPPMethod) {
-			result= new PDOMCPPMethodSpecialization(pdom, parent, (ICPPMethod) special, orig);
+			result= new PDOMCPPMethodSpecialization(this, parent, (ICPPMethod) special, orig);
 		} else if (special instanceof ICPPFunction) {
-			result= new PDOMCPPFunctionSpecialization(pdom, parent, (ICPPFunction) special, orig);
+			result= new PDOMCPPFunctionSpecialization(this, parent, (ICPPFunction) special, orig);
 		} else if (special instanceof ICPPClassTemplate) {
-			result= new PDOMCPPClassTemplateSpecialization(pdom, parent, (ICPPClassTemplate) special, orig);
+			result= new PDOMCPPClassTemplateSpecialization(this, parent, (ICPPClassTemplate) special, orig);
 		} else if (special instanceof ICPPClassType) {
-			result= new PDOMCPPClassSpecialization(pdom, parent, (ICPPClassType) special, orig);
+			result= new PDOMCPPClassSpecialization(this, parent, (ICPPClassType) special, orig);
 		} else if (special instanceof ITypedef) {
-			result= new PDOMCPPTypedefSpecialization(pdom, parent, (ITypedef) special, orig);
+			result= new PDOMCPPTypedefSpecialization(this, parent, (ITypedef) special, orig);
 		}
 		
 		return result;
@@ -572,7 +571,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		result= doAdaptBinding(parent, binding, fileLocalRecHolder);
 		if (result != null) {
-			pdom.putCachedResult(inputBinding, result);
+			getPDOM().putCachedResult(inputBinding, result);
 		}
 		return result;
 	}
@@ -695,13 +694,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 			} catch (DOMException e) {
 			}
-			return new PDOMGPPBasicType(pdom, parent, gbt);
+			return new PDOMGPPBasicType(this, parent, gbt);
 		}
 		if (type instanceof ICPPBasicType) {
-			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType) type);
+			return new PDOMCPPBasicType(this, parent, (ICPPBasicType) type);
 		}
 		if (type instanceof ICPPFunctionType) {
-			return new PDOMCPPFunctionType(pdom, parent, (ICPPFunctionType) type);
+			return new PDOMCPPFunctionType(this, parent, (ICPPFunctionType) type);
 		}
 		if (type instanceof ICPPClassType) {
 			return addBinding((ICPPClassType) type, null);
@@ -713,10 +712,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return addBinding((ITypedef) type, null);
 		}
 		if (type instanceof ICPPReferenceType) {
-			return new PDOMCPPReferenceType(pdom, parent, (ICPPReferenceType) type);
+			return new PDOMCPPReferenceType(this, parent, (ICPPReferenceType) type);
 		}
 		if (type instanceof ICPPPointerToMemberType) {
-			return new PDOMCPPPointerToMemberType(pdom, parent,	(ICPPPointerToMemberType) type);
+			return new PDOMCPPPointerToMemberType(this, parent,	(ICPPPointerToMemberType) type);
 		}
 		if (type instanceof ICPPTemplateTypeParameter) {
 			return addBinding((ICPPTemplateTypeParameter) type, null);
@@ -736,97 +735,97 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (record == 0)
 			return null;
 
-		switch (PDOMNode.getNodeType(pdom, record)) {
+		switch (PDOMNode.getNodeType(getDB(), record)) {
 		case CPPVARIABLE:
-			return new PDOMCPPVariable(pdom, record);
+			return new PDOMCPPVariable(this, record);
 		case CPPFUNCTION:
-			return new PDOMCPPFunction(pdom, record);
+			return new PDOMCPPFunction(this, record);
 		case CPPCLASSTYPE:
-			return new PDOMCPPClassType(pdom, record);
+			return new PDOMCPPClassType(this, record);
 		case CPPFIELD:
-			return new PDOMCPPField(pdom, record);
+			return new PDOMCPPField(this, record);
 		case CPP_CONSTRUCTOR:
-			return new PDOMCPPConstructor(pdom, record);
+			return new PDOMCPPConstructor(this, record);
 		case CPPMETHOD:
-			return new PDOMCPPMethod(pdom, record);
+			return new PDOMCPPMethod(this, record);
 		case CPPNAMESPACE:
-			return new PDOMCPPNamespace(pdom, record);
+			return new PDOMCPPNamespace(this, record);
 		case CPPNAMESPACEALIAS:
-			return new PDOMCPPNamespaceAlias(pdom, record);
+			return new PDOMCPPNamespaceAlias(this, record);
 		case CPP_USING_DECLARATION:
-			return new PDOMCPPUsingDeclaration(pdom, record);
+			return new PDOMCPPUsingDeclaration(this, record);
 		case GPPBASICTYPE:
-			return new PDOMGPPBasicType(pdom, record);
+			return new PDOMGPPBasicType(this, record);
 		case CPPBASICTYPE:
-			return new PDOMCPPBasicType(pdom, record);
+			return new PDOMCPPBasicType(this, record);
 		case CPPPARAMETER:
-			return new PDOMCPPParameter(pdom, record);
+			return new PDOMCPPParameter(this, record);
 		case CPPENUMERATION:
-			return new PDOMCPPEnumeration(pdom, record);
+			return new PDOMCPPEnumeration(this, record);
 		case CPPENUMERATOR:
-			return new PDOMCPPEnumerator(pdom, record);
+			return new PDOMCPPEnumerator(this, record);
 		case CPPTYPEDEF:
-			return new PDOMCPPTypedef(pdom, record);
+			return new PDOMCPPTypedef(this, record);
 		case CPP_POINTER_TO_MEMBER_TYPE:
-			return new PDOMCPPPointerToMemberType(pdom, record);
+			return new PDOMCPPPointerToMemberType(this, record);
 		case CPP_REFERENCE_TYPE:
-			return new PDOMCPPReferenceType(pdom, record);
+			return new PDOMCPPReferenceType(this, record);
 		case CPP_FUNCTION_TEMPLATE:
-			return new PDOMCPPFunctionTemplate(pdom, record);
+			return new PDOMCPPFunctionTemplate(this, record);
 		case CPP_METHOD_TEMPLATE:
-			return new PDOMCPPMethodTemplate(pdom, record);
+			return new PDOMCPPMethodTemplate(this, record);
 		case CPP_CONSTRUCTOR_TEMPLATE:
-			return new PDOMCPPConstructorTemplate(pdom, record);
+			return new PDOMCPPConstructorTemplate(this, record);
 		case CPP_CLASS_TEMPLATE:
-			return new PDOMCPPClassTemplate(pdom, record);
+			return new PDOMCPPClassTemplate(this, record);
 		case CPP_CLASS_TEMPLATE_PARTIAL_SPEC:
-			return new PDOMCPPClassTemplatePartialSpecialization(pdom, record);
+			return new PDOMCPPClassTemplatePartialSpecialization(this, record);
 		case CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC:
-			return new PDOMCPPClassTemplatePartialSpecializationSpecialization(pdom, record);
+			return new PDOMCPPClassTemplatePartialSpecializationSpecialization(this, record);
 		case CPP_FUNCTION_INSTANCE:
-			return new PDOMCPPFunctionInstance(pdom, record);
+			return new PDOMCPPFunctionInstance(this, record);
 		case CPP_METHOD_INSTANCE:
-			return new PDOMCPPMethodInstance(pdom, record);
+			return new PDOMCPPMethodInstance(this, record);
 		case CPP_CONSTRUCTOR_INSTANCE:
-			return new PDOMCPPConstructorInstance(pdom, record);
+			return new PDOMCPPConstructorInstance(this, record);
 		case CPP_CLASS_INSTANCE:
-			return new PDOMCPPClassInstance(pdom, record);
+			return new PDOMCPPClassInstance(this, record);
 		case CPP_DEFERRED_CLASS_INSTANCE:
-			return new PDOMCPPDeferredClassInstance(pdom, record);
+			return new PDOMCPPDeferredClassInstance(this, record);
 		case CPP_UNKNOWN_CLASS_TYPE:
-			return new PDOMCPPUnknownClassType(pdom, record);
+			return new PDOMCPPUnknownClassType(this, record);
 		case CPP_UNKNOWN_CLASS_INSTANCE:
-			return new PDOMCPPUnknownClassInstance(pdom, record);
+			return new PDOMCPPUnknownClassInstance(this, record);
 		case CPP_TEMPLATE_TYPE_PARAMETER:
-			return new PDOMCPPTemplateTypeParameter(pdom, record);
+			return new PDOMCPPTemplateTypeParameter(this, record);
 		case CPP_TEMPLATE_TEMPLATE_PARAMETER:
-			return new PDOMCPPTemplateTemplateParameter(pdom, record);
+			return new PDOMCPPTemplateTemplateParameter(this, record);
 		case CPP_TEMPLATE_NON_TYPE_PARAMETER:
-			return new PDOMCPPTemplateNonTypeParameter(pdom, record);
+			return new PDOMCPPTemplateNonTypeParameter(this, record);
 		case CPP_FIELD_SPECIALIZATION:
-			return new PDOMCPPFieldSpecialization(pdom, record);
+			return new PDOMCPPFieldSpecialization(this, record);
 		case CPP_FUNCTION_SPECIALIZATION:
-			return new PDOMCPPFunctionSpecialization(pdom, record);
+			return new PDOMCPPFunctionSpecialization(this, record);
 		case CPP_METHOD_SPECIALIZATION:
-			return new PDOMCPPMethodSpecialization(pdom, record);
+			return new PDOMCPPMethodSpecialization(this, record);
 		case CPP_CONSTRUCTOR_SPECIALIZATION:
-			return new PDOMCPPConstructorSpecialization(pdom, record);
+			return new PDOMCPPConstructorSpecialization(this, record);
 		case CPP_CLASS_SPECIALIZATION:
-			return new PDOMCPPClassSpecialization(pdom, record);
+			return new PDOMCPPClassSpecialization(this, record);
 		case CPP_FUNCTION_TEMPLATE_SPECIALIZATION:
-			return new PDOMCPPFunctionTemplateSpecialization(pdom, record);
+			return new PDOMCPPFunctionTemplateSpecialization(this, record);
 		case CPP_METHOD_TEMPLATE_SPECIALIZATION:
-			return new PDOMCPPMethodTemplateSpecialization(pdom, record);
+			return new PDOMCPPMethodTemplateSpecialization(this, record);
 		case CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION:
-			return new PDOMCPPConstructorTemplateSpecialization(pdom, record);
+			return new PDOMCPPConstructorTemplateSpecialization(this, record);
 		case CPP_CLASS_TEMPLATE_SPECIALIZATION:
-			return new PDOMCPPClassTemplateSpecialization(pdom, record);
+			return new PDOMCPPClassTemplateSpecialization(this, record);
 		case CPP_TYPEDEF_SPECIALIZATION:
-			return new PDOMCPPTypedefSpecialization(pdom, record);
+			return new PDOMCPPTypedefSpecialization(this, record);
 		case CPP_FUNCTION_TYPE:
-			return new PDOMCPPFunctionType(pdom, record);
+			return new PDOMCPPFunctionType(this, record);
 		case CPP_PARAMETER_SPECIALIZATION:
-			return new PDOMCPPParameterSpecialization(pdom, record);
+			return new PDOMCPPParameterSpecialization(this, record);
 		default:
 			return super.getNode(record);
 		}
@@ -834,7 +833,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	public IBTreeComparator getIndexComparator() {
-		return new CPPFindBinding.CPPBindingBTreeComparator(pdom);
+		return new CPPFindBinding.CPPBindingBTreeComparator(this);
 	}
 
 	@Override
@@ -854,13 +853,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
 				if (derivedClassBinding instanceof PDOMCPPClassType) {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType) derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
+					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
 					pdomName.setIsBaseSpecifier(true);
 				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
 					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization) derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(),
+					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
 					pdomName.setIsBaseSpecifier(true);
@@ -903,7 +902,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				PDOMName enclClassName= (PDOMName) pdomName.getEnclosingDefinition();
 				PDOMBinding enclClassBinding= enclClassName.getBinding();
 				if (enclClassBinding instanceof PDOMCPPClassType) {
-					((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(pdom, pdomName));
+					((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(this, pdomName));
 				}
 			}
 		} else if (parentNode instanceof ICPPASTFunctionDeclarator) {			
@@ -915,7 +914,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						PDOMName enclClassName= (PDOMName) pdomName.getEnclosingDefinition();
 						PDOMBinding enclClassBinding= enclClassName.getBinding();
 						if (enclClassBinding instanceof PDOMCPPClassType) {
-							((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(pdom, pdomName));
+							((PDOMCPPClassType)enclClassBinding).addFriend(new PDOMCPPFriend(this, pdomName));
 						}
 					}
 				}
@@ -971,6 +970,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	@Override
 	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
+		PDOM pdom = getPDOM();
 		if (pdom instanceof WritablePDOM) {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
 			PDOMFile file= null;

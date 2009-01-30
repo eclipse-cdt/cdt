@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -47,19 +46,19 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	
 	private IPDOMCPPTemplateParameter[] params;  // Cached template parameters.
 
-	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template)
+	public PDOMCPPFunctionTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template)
 			throws CoreException, DOMException {
-		super(pdom, parent, template, false);
+		super(linkage, parent, template, false);
 		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
-		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(pdom, this, origParams);
-		final Database db = pdom.getDB();
+		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
+		final Database db = getDB();
 		int rec= PDOMTemplateParameterArray.putArray(db, params);
 		db.putInt(record + TEMPLATE_PARAMS, rec);
 		linkage.new ConfigureFunctionTemplate(template, this);
 	}
 
-	public PDOMCPPFunctionTemplate(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFunctionTemplate(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -80,7 +79,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				int rec= pdom.getDB().getInt(record + TEMPLATE_PARAMS);
+				int rec= getDB().getInt(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
 					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {

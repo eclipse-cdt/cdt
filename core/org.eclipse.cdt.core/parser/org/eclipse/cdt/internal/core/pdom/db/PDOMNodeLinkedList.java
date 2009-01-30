@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class PDOMNodeLinkedList {
-	private PDOM pdom;
 	private int offset;
 	private PDOMLinkage linkage;
 	private boolean allowsNull;
@@ -33,8 +31,7 @@ public class PDOMNodeLinkedList {
 	private static final int FIRST_MEMBER = 0;
 	protected static final int RECORD_SIZE = 4;
 
-	public PDOMNodeLinkedList(PDOM pdom, int offset, PDOMLinkage linkage, boolean allowsNulls) {
-		this.pdom = pdom;
+	public PDOMNodeLinkedList(PDOMLinkage linkage, int offset, boolean allowsNulls) {
 		this.offset = offset;
 		this.linkage = linkage;
 		this.allowsNull = allowsNulls;
@@ -43,12 +40,11 @@ public class PDOMNodeLinkedList {
 	/**
 	 * Creates an object representing a linked list at the specified offset of the specified pdom.
 	 * The linked list created may not hold null items
-	 * @param pdom
-	 * @param offset
 	 * @param linkage
+	 * @param offset
 	 */
-	public PDOMNodeLinkedList(PDOM pdom, int offset, PDOMLinkage linkage) {
-		this(pdom, offset, linkage, false);
+	public PDOMNodeLinkedList(PDOMLinkage linkage, int offset) {
+		this(linkage, offset, false);
 	}
 
 	protected int getRecordSize() {
@@ -56,7 +52,7 @@ public class PDOMNodeLinkedList {
 	}
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		Database db = pdom.getDB();
+		Database db = linkage.getDB();
 		int firstItem = db.getInt(offset + FIRST_MEMBER);
 		if (firstItem == 0)
 			return;
@@ -81,7 +77,7 @@ public class PDOMNodeLinkedList {
 	}
 	
 	private ListItem getFirstMemberItem() throws CoreException {
-		Database db = pdom.getDB();
+		Database db = linkage.getDB();
 		int item = db.getInt(offset + FIRST_MEMBER);
 		return item != 0 ? new ListItem(db, item) : null;
 	}
@@ -93,7 +89,7 @@ public class PDOMNodeLinkedList {
 	 * @return The node at position {@code pos}, or {@code null} if no such node exists.
 	 */
 	public PDOMNode getNodeAt(int pos) throws CoreException {
-		Database db = pdom.getDB();
+		Database db = linkage.getDB();
 		int firstItem = db.getInt(offset + FIRST_MEMBER);
 		if (firstItem == 0) {
 			return null;
@@ -120,7 +116,7 @@ public class PDOMNodeLinkedList {
 	}
 	
 	protected void addMember(int record) throws CoreException {
-		Database db = pdom.getDB();
+		Database db = linkage.getDB();
 		ListItem firstMember = getFirstMemberItem();
 		if (firstMember == null) {
 			firstMember = new ListItem(db);

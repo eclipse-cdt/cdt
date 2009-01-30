@@ -90,12 +90,12 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			if (pdomBinding == null) {
 				pdomBinding = createBinding(parent, binding, localToFileHolder[0]);
 				if (pdomBinding != null) {
-					pdom.putCachedResult(inputBinding, pdomBinding);
+					getPDOM().putCachedResult(inputBinding, pdomBinding);
 				}
 				return pdomBinding;
 			}
 
-			pdom.putCachedResult(inputBinding, pdomBinding);
+			getPDOM().putCachedResult(inputBinding, pdomBinding);
 		}
 		
 		if (shouldUpdate(pdomBinding, fromName)) {
@@ -109,30 +109,30 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 		if (binding instanceof IField) { // must be before IVariable
 			if (parent instanceof IPDOMMemberOwner)
-				pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
+				pdomBinding = new PDOMCField(this, (IPDOMMemberOwner)parent, (IField) binding);
 		} else if (binding instanceof IVariable) {
 			IVariable var= (IVariable) binding;
-			pdomBinding = new PDOMCVariable(pdom, parent, var);
+			pdomBinding = new PDOMCVariable(this, parent, var);
 		} else if (binding instanceof IFunction) {
 			IFunction func= (IFunction) binding;
-			pdomBinding = new PDOMCFunction(pdom, parent, func);
+			pdomBinding = new PDOMCFunction(this, parent, func);
 		} else if (binding instanceof ICompositeType) {
-			pdomBinding = new PDOMCStructure(pdom, parent, (ICompositeType) binding);
+			pdomBinding = new PDOMCStructure(this, parent, (ICompositeType) binding);
 		} else if (binding instanceof IEnumeration) {
-			pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
+			pdomBinding = new PDOMCEnumeration(this, parent, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
 			try {
 				IType enumeration= ((IEnumerator)binding).getType();
 				if (enumeration instanceof IEnumeration) {
 					PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
 					if (pdomEnumeration instanceof PDOMCEnumeration)
-						pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
+						pdomBinding = new PDOMCEnumerator(this, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
 				}
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}
 		} else if (binding instanceof ITypedef) {
-			pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
+			pdomBinding = new PDOMCTypedef(this, parent, (ITypedef)binding);
 		}
 
 		if (pdomBinding != null) {
@@ -251,7 +251,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 		result= doAdaptBinding(parent, binding, localToFileHolder);
 		if (result != null) {
-			pdom.putCachedResult(inputBinding, result);
+			getPDOM().putCachedResult(inputBinding, result);
 		}
 		return result;
 	}
@@ -275,22 +275,22 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (parent == this) {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
-			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), getPDOM(), nameChars, bindingTypes, 0);
+			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
 			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;
-			return FindBinding.findBinding(getIndex(), getPDOM(), nameChars, bindingTypes, localToFileRec);
+			return FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, localToFileRec);
 		} 
 		if (parent instanceof IPDOMMemberOwner) {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
-			PDOMBinding nonLocal= FindBinding.findBinding(parent, getPDOM(), nameChars, bindingTypes, 0);
+			PDOMBinding nonLocal= FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
 			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;
-			return FindBinding.findBinding(parent, getPDOM(), nameChars, bindingTypes, localToFileRec);
+			return FindBinding.findBinding(parent, this, nameChars, bindingTypes, localToFileRec);
 		}
 		return null;
 	}
@@ -300,27 +300,27 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (record == 0)
 			return null;
 
-		switch (PDOMNode.getNodeType(pdom, record)) {
+		switch (PDOMNode.getNodeType(getDB(), record)) {
 		case CVARIABLE:
-			return new PDOMCVariable(pdom, record);
+			return new PDOMCVariable(this, record);
 		case CFUNCTION:
-			return new PDOMCFunction(pdom, record);
+			return new PDOMCFunction(this, record);
 		case CSTRUCTURE:
-			return new PDOMCStructure(pdom, record);
+			return new PDOMCStructure(this, record);
 		case CFIELD:
-			return new PDOMCField(pdom, record);
+			return new PDOMCField(this, record);
 		case CENUMERATION:
-			return new PDOMCEnumeration(pdom, record);
+			return new PDOMCEnumeration(this, record);
 		case CENUMERATOR:
-			return new PDOMCEnumerator(pdom, record);
+			return new PDOMCEnumerator(this, record);
 		case CTYPEDEF:
-			return new PDOMCTypedef(pdom, record);
+			return new PDOMCTypedef(this, record);
 		case CPARAMETER:
-			return new PDOMCParameter(pdom, record);
+			return new PDOMCParameter(this, record);
 		case CBASICTYPE:
-			return new PDOMCBasicType(pdom, record);
+			return new PDOMCBasicType(this, record);
 		case CFUNCTIONTYPE:
-			return new PDOMCFunctionType(pdom, record);
+			return new PDOMCFunctionType(this, record);
 		}
 
 		return super.getNode(record);
@@ -332,9 +332,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return null;
 		
 		if (type instanceof ICBasicType) {
-			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
+			return new PDOMCBasicType(this, parent, (ICBasicType)type);
 		} else if(type instanceof IFunctionType) {
-			return new PDOMCFunctionType(pdom, parent, (IFunctionType)type);
+			return new PDOMCFunctionType(this, parent, (IFunctionType)type);
 		} else if (type instanceof IBinding) {
 			return addBinding((IBinding)type, null);
 		}
@@ -344,6 +344,6 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	
 	@Override
 	public IBTreeComparator getIndexComparator() {
-		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
+		return new FindBinding.DefaultBindingBTreeComparator(this);
 	}
 }

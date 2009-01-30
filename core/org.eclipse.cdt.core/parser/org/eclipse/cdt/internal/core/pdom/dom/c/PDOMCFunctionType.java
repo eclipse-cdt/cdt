@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -53,16 +52,15 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMNode.RECORD_SIZE + 8;
 
-	public PDOMCFunctionType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCFunctionType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
-	public PDOMCFunctionType(PDOM pdom, PDOMNode parent, IFunctionType type) throws CoreException {
-		super(pdom, parent);
+	public PDOMCFunctionType(PDOMLinkage linkage, PDOMNode parent, IFunctionType type) throws CoreException {
+		super(linkage, parent);
 
 		try {
-			PDOMLinkage linkage= parent.getLinkageImpl();
-			PDOMNodeLinkedList list= new PDOMNodeLinkedList(pdom, record + TYPELIST, parent.getLinkageImpl(), true);
+			PDOMNodeLinkedList list= new PDOMNodeLinkedList(parent.getLinkage(), record + TYPELIST, true);
 			setReturnType(type.getReturnType());
 			IType[] pt= type.getParameterTypes();
 			for (int i = 0; i < pt.length; i++) {
@@ -81,7 +79,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	@Override
 	public void delete(final PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getReturnType(), record);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TYPELIST, true);
 		list.accept(new IPDOMVisitor() {
 			public void leave(IPDOMNode node) throws CoreException {
 			}
@@ -152,7 +150,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	public IType[] getParameterTypes() {
 		final List<IType> result= new ArrayList<IType>();
 		try {
-			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TYPELIST, true);
 			list.accept(new IPDOMVisitor() {
 				public void leave(IPDOMNode node) throws CoreException {
 					result.add((IType)node);
@@ -169,7 +167,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 
 	public IType getReturnType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + RETURN_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -180,9 +178,9 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	}
 
 	public void setReturnType(IType type) throws CoreException {
-		PDOMNode typeNode = getLinkageImpl().addType(this, type);
+		PDOMNode typeNode = getLinkage().addType(this, type);
 		if (typeNode != null) {
-			pdom.getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
+			getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
  * @author Doug Schaefer
  */
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
-	private final PDOM pdom;
+	private final PDOMLinkage linkage;
 	private final int record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
@@ -57,10 +56,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public static final int WRITE_ACCESS 						= 0x40;
 
 	
-	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
+	public PDOMName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller)
 			throws CoreException {
-		this.pdom = pdom;
-		Database db = pdom.getDB();
+		this.linkage = linkage;
+		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
 
 		// What kind of name are we
@@ -105,8 +104,8 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return IS_REFERENCE;
 	}
 	
-	public PDOMName(PDOM pdom, int nameRecord) {
-		this.pdom = pdom;
+	public PDOMName(PDOMLinkage linkage, int nameRecord) {
+		this.linkage = linkage;
 		this.record = nameRecord;
 	}
 	
@@ -115,16 +114,16 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 
 	private int getRecField(int offset) throws CoreException {
-		return pdom.getDB().getInt(record + offset);
+		return linkage.getDB().getInt(record + offset);
 	}
 
 	private void setRecField(int offset, int fieldrec) throws CoreException {
-		pdom.getDB().putInt(record + offset, fieldrec);
+		linkage.getDB().putInt(record + offset, fieldrec);
 	}
 
 	public PDOMBinding getBinding() throws CoreException {
 		int bindingrec = getRecField(BINDING_REC_OFFSET);
-		return pdom.getBinding(bindingrec);
+		return linkage.getBinding(bindingrec);
 	}
 
 	public void setBinding(PDOMBinding binding) throws CoreException {
@@ -134,7 +133,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	private PDOMName getNameField(int offset) throws CoreException {
 		int namerec = getRecField(offset);
-		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
 	}
 
 	private void setNameField(int offset, PDOMName name) throws CoreException {
@@ -159,17 +158,17 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 	
 	public PDOMFile getFile() throws CoreException {
-		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
-		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
+		int filerec = linkage.getDB().getInt(record + FILE_REC_OFFSET);
+		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
 	}
 
 	public IIndexName getEnclosingDefinition() throws CoreException {
 		int namerec = getEnclosingDefinitionRecord();
-		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
 	}
 
 	int getEnclosingDefinitionRecord() throws CoreException {
-		return pdom.getDB().getInt(record + CALLER_REC_OFFSET);
+		return linkage.getDB().getInt(record + CALLER_REC_OFFSET);
 	}
 	
 	public PDOMName getNextInFile() throws CoreException {
@@ -190,9 +189,9 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public char[] getSimpleID() {
 		try {
-			Database db = pdom.getDB();
+			Database db = linkage.getDB();
 			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
-			PDOMBinding binding = pdom.getBinding(bindingRec);
+			PDOMBinding binding = linkage.getBinding(bindingRec);
 			return binding != null ? binding.getNameCharArray() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -206,25 +205,25 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 	
 	private int getFlags(int mask) throws CoreException {
-		return pdom.getDB().getByte(record + FLAGS) & mask;
+		return linkage.getDB().getByte(record + FLAGS) & mask;
 	}
 
 	public void setIsFriendSpecifier(boolean val) throws CoreException {
-		int flags= pdom.getDB().getByte(record + FLAGS) & 0xff;
+		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
 		if (val) 
 			flags |= IS_FRIEND_SPEC;
 		else
 			flags &= ~IS_FRIEND_SPEC;
-		pdom.getDB().putByte(record + FLAGS, (byte) flags);
+		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public void setIsBaseSpecifier(boolean val) throws CoreException {
-		int flags= pdom.getDB().getByte(record + FLAGS) & 0xff;
+		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
 		if (val) 
 			flags |= IS_INHERITANCE_SPEC;
 		else
 			flags &= ~IS_INHERITANCE_SPEC;
-		pdom.getDB().putByte(record + FLAGS, (byte) flags);
+		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public boolean isFriendSpecifier() throws CoreException {
@@ -312,7 +311,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeLength() {
 		try {
-			return (pdom.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
+			return (linkage.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -321,7 +320,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeOffset() {
 		try {
-			return pdom.getDB().get3ByteUnsignedInt(record + NODE_OFFSET_OFFSET);
+			return linkage.getDB().get3ByteUnsignedInt(record + NODE_OFFSET_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -352,11 +351,11 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			nextName.setPrevInBinding(prevName);
 
 		// Delete our record
-		pdom.getDB().free(record);
+		linkage.getDB().free(record);
 	}
 
 	public IIndexFragment getIndexFragment() {
-		return pdom;
+		return linkage.getPDOM();
 	}
 
 	public IIndexName[] getEnclosedNames() throws CoreException {

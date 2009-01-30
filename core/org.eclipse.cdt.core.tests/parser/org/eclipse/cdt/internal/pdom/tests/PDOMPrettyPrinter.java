@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -76,29 +77,42 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	 * @param index
 	 * @param linkageID
 	 */
-	public static void dumpLinkage(IIndex index, final String linkageID) {
+	public static void dumpLinkage(IIndex index, final int linkageID) {
 		final IPDOMVisitor v= new PDOMPrettyPrinter();
 		IIndexFragment[] frg= ((CIndex)index).getPrimaryFragments();
 		for (IIndexFragment element : frg) {
 			final PDOM pdom = (PDOM) element;
-			try {
-				pdom.getLinkage(linkageID).getIndex().accept(
-						new IBTreeVisitor() {
-							public int compare(int record) throws CoreException {
-								return 0;
-							}
-							public boolean visit(int record) throws CoreException {
-								if(record==0) return false;
-								PDOMNode node= pdom.getLinkage(linkageID).getNode(record);
-								if(v.visit(node))
-									node.accept(v);
-								v.leave(node);
-								return true;
-							}
-						});
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+			dumpLinkage(pdom, linkageID, v);
+		}
+	}
+
+	public static void dumpLinkage(PDOM pdom, final int linkageID) {
+		final IPDOMVisitor v= new PDOMPrettyPrinter();
+		dumpLinkage(pdom, linkageID, v);
+	}
+
+	private static void dumpLinkage(final PDOM pdom, final int linkageID, final IPDOMVisitor v) {
+		try {
+			final PDOMLinkage linkage = pdom.getLinkage(linkageID);
+			if (linkage != null) {
+				linkage.getIndex().accept(new IBTreeVisitor() {
+					public int compare(int record) throws CoreException {
+						return 0;
+					}
+
+					public boolean visit(int record) throws CoreException {
+						if (record == 0)
+							return false;
+						PDOMNode node = linkage.getNode(record);
+						if (v.visit(node))
+							node.accept(v);
+						v.leave(node);
+						return true;
+					}
+				});
 			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
 		}
 	}
 }

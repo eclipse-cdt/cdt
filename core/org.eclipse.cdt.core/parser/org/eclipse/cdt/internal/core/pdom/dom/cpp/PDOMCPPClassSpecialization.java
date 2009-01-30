@@ -42,10 +42,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -68,13 +68,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	private ICPPClassScope fScope;
 	private ObjectMap specializationMap= null;
 	
-	public PDOMCPPClassSpecialization(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding specialized)
+	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) classType, specialized);
+		super(linkage, parent, (ICPPSpecialization) classType, specialized);
 	}
 
-	public PDOMCPPClassSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPClassSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -95,7 +95,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public IBinding specializeMember(IBinding original) {	
 		if (specializationMap == null) {
 			final Integer key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
-			Object cached= pdom.getCachedResult(key);
+			Object cached= getPDOM().getCachedResult(key);
 			if (cached != null) {
 				specializationMap= (ObjectMap) cached;
 			} else {
@@ -112,7 +112,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
-				specializationMap= (ObjectMap) pdom.putCachedResult(key, newMap, false);
+				specializationMap= (ObjectMap) getPDOM().putCachedResult(key, newMap, false);
 			}
 		}
 		synchronized (specializationMap) {
@@ -148,13 +148,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRSTBASE);
-		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRSTBASE);
+		return rec != 0 ? new PDOMCPPBase(getLinkage(), rec) : null;
 	}
 
 	private void setFirstBase(PDOMCPPBase base) throws CoreException {
 		int rec = base != null ? base.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRSTBASE, rec);
+		getDB().putInt(record + FIRSTBASE, rec);
 	}
 	
 	public void addBase(PDOMCPPBase base) throws CoreException {
@@ -195,7 +195,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		
 		// this is an explicit specialization
 		Integer key= record + PDOMCPPLinkage.CACHE_BASES;
-		ICPPBase[] bases= (ICPPBase[]) pdom.getCachedResult(key);
+		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
 			return bases;
 
@@ -205,7 +205,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				list.add(base);
 			Collections.reverse(list);
 			bases = list.toArray(new ICPPBase[list.size()]);
-			pdom.putCachedResult(key, bases);
+			getPDOM().putCachedResult(key, bases);
 			return bases;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -355,13 +355,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 
 	
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 

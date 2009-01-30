@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,18 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 
-	public PDOMCPPConstructor(PDOM pdom, PDOMNode parent, ICPPConstructor method) throws CoreException, DOMException {
-		super(pdom, parent, method);
+	public PDOMCPPConstructor(PDOMLinkage linkage, PDOMNode parent, ICPPConstructor method) throws CoreException, DOMException {
+		super(linkage, parent, method);
 	}
 
-	public PDOMCPPConstructor(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPConstructor(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	public boolean isExplicit() throws DOMException {

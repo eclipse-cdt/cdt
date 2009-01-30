@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -35,14 +34,14 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent, ICPPNamespaceAlias alias)
+	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, PDOMNode parent, ICPPNamespaceAlias alias)
 	throws CoreException {
-		super(pdom, parent, alias.getNameCharArray());
-		setTargetBinding(parent.getLinkageImpl(), alias.getBinding());
+		super(linkage, parent, alias.getNameCharArray());
+		setTargetBinding(parent.getLinkage(), alias.getBinding());
 	}
 
-	public PDOMCPPNamespaceAlias(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -59,8 +58,8 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	}
 	
 	private void setTargetBinding(PDOMLinkage linkage, IBinding target) throws CoreException {
-		PDOMBinding namespace = getLinkageImpl().adaptBinding(target);
-		pdom.getDB().putInt(record + NAMESPACE_BINDING, 
+		PDOMBinding namespace = getLinkage().adaptBinding(target);
+		getDB().putInt(record + NAMESPACE_BINDING, 
 				namespace != null ? namespace.getRecord() : 0);
 	}
 
@@ -99,7 +98,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 
 	public IBinding getBinding() {
 		try {
-			return (IBinding) getLinkageImpl().getNode(getPDOM().getDB().getInt(record + NAMESPACE_BINDING));
+			return (IBinding) getLinkage().getNode(getPDOM().getDB().getInt(record + NAMESPACE_BINDING));
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,12 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
 	
-	protected PDOMBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
-		super(pdom, parent, name);
+	protected PDOMBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
+		super(linkage, parent, name);
 	}
 	
-	public PDOMBinding(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMBinding(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -81,13 +81,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			&& db.getInt(record + FIRST_REF_OFFSET) == 0;
 	}
 	
-	@Override
-	public int getRecord() {
-		return record;
-	}
-
 	public final boolean hasDeclaration() throws CoreException {
-		Database db = pdom.getDB();
+		Database db = getDB();
 		return db.getInt(record + FIRST_DECL_OFFSET) != 0
 			|| db.getInt(record + FIRST_DEF_OFFSET) != 0;
 	}
@@ -120,50 +115,50 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 	
 	public PDOMName getFirstDeclaration() throws CoreException {
-		int namerec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
-		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+		int namerec = getDB().getInt(record + FIRST_DECL_OFFSET);
+		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 	
 	public void setFirstDeclaration(PDOMName name) throws CoreException {
 		int namerec = name != null ? name.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_DECL_OFFSET, namerec);
+		getDB().putInt(record + FIRST_DECL_OFFSET, namerec);
 	}
 	
 	public PDOMName getFirstDefinition() throws CoreException {
-		int namerec = pdom.getDB().getInt(record + FIRST_DEF_OFFSET);
-		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+		int namerec = getDB().getInt(record + FIRST_DEF_OFFSET);
+		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 	
 	public void setFirstDefinition(PDOMName name) throws CoreException {
 		int namerec = name != null ? name.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
+		getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
 	}
 	
 	public PDOMName getFirstReference() throws CoreException {
-		int namerec = pdom.getDB().getInt(record + FIRST_REF_OFFSET);
-		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+		int namerec = getDB().getInt(record + FIRST_REF_OFFSET);
+		return namerec != 0 ? new PDOMName(getLinkage(), namerec) : null;
 	}
 	
 	public void setFirstReference(PDOMName name) throws CoreException {
 		int namerec = name != null ? name.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_REF_OFFSET, namerec);
+		getDB().putInt(record + FIRST_REF_OFFSET, namerec);
 	}
 	
 	public final PDOMFile getLocalToFile() throws CoreException {
-		final int filerec = getLocalToFileRec(pdom, record);
-		return filerec == 0 ? null : new PDOMFile(pdom, filerec);
+		final int filerec = getLocalToFileRec(getDB(), record);
+		return filerec == 0 ? null : new PDOMFile(getLinkage(), filerec);
 	}
 
 	public final int getLocalToFileRec() throws CoreException {
-		return pdom.getDB().getInt(record + LOCAL_TO_FILE);
+		return getLocalToFileRec(getDB(), record);
 	}
 
-	public static int getLocalToFileRec(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + LOCAL_TO_FILE);
+	public static int getLocalToFileRec(Database db, int record) throws CoreException {
+		return db.getInt(record + LOCAL_TO_FILE);
 	}
 
 	public final void setLocalToFileRec(int rec) throws CoreException {
-		pdom.getDB().putInt(record + LOCAL_TO_FILE, rec);
+		getDB().putInt(record + LOCAL_TO_FILE, rec);
 	}
 
 	public String getName() {
@@ -218,7 +213,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 	
 	public IIndexFragment getFragment() {
-		return pdom;
+		return getPDOM();
 	}
 
 	@Override
@@ -230,7 +225,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	@Override
 	public String toString() {
 		try {
-			return getName() + " " + getConstantNameForValue(getLinkageImpl(), getNodeType());  //$NON-NLS-1$
+			return getName() + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
 		} catch (CoreException ce) {
 			return getName() + " " + getNodeType();  //$NON-NLS-1$
 		}
@@ -301,7 +296,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 	
 	final public boolean isFileLocal() throws CoreException {
-		return pdom.getDB().getInt(record + LOCAL_TO_FILE) != 0;
+		return getDB().getInt(record + LOCAL_TO_FILE) != 0;
 	}
 
 	public boolean hasDefinition() throws CoreException {

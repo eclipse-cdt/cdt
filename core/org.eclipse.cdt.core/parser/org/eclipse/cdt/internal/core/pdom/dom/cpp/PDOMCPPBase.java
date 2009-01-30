@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -35,19 +35,19 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	
 	protected static final int RECORD_SIZE = 9;
 	
-	protected final PDOM pdom;
-	protected final int record;
+	private final PDOMLinkage linkage;
+	private final int record;
 	
 	private PDOMBinding fCachedBaseClass;
 	
-	public PDOMCPPBase(PDOM pdom, int record) {
-		this.pdom = pdom;
+	public PDOMCPPBase(PDOMLinkage linkage, int record) {
+		this.linkage = linkage;
 		this.record = record;
 	}
 	
-	public PDOMCPPBase(PDOM pdom, PDOMName baseClassSpec, boolean isVirtual, int visibility) throws CoreException {
-		this.pdom = pdom;
-		Database db = pdom.getDB();
+	public PDOMCPPBase(PDOMLinkage linkage, PDOMName baseClassSpec, boolean isVirtual, int visibility) throws CoreException {
+		this.linkage = linkage;
+		Database db = getDB();
 		this.record = db.malloc(RECORD_SIZE);
 		
 		int baserec = baseClassSpec != null ? baseClassSpec.getRecord() : 0;
@@ -57,29 +57,33 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		db.putByte(record + FLAGS, flags);
 	}
 
+	private Database getDB() {
+		return linkage.getDB();
+	}
+
 	public int getRecord() {
 		return record;
 	}
 	
 	public void setNextBase(PDOMCPPBase nextBase) throws CoreException {
 		int rec = nextBase != null ? nextBase.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXTBASE, rec);
+		getDB().putInt(record + NEXTBASE, rec);
 	}
 	
 	public PDOMCPPBase getNextBase() throws CoreException {
-		int rec = pdom.getDB().getInt(record + NEXTBASE);
-		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
+		int rec = getDB().getInt(record + NEXTBASE);
+		return rec != 0 ? new PDOMCPPBase(linkage, rec) : null;
 	}
 	
 	private int getFlags() throws CoreException {
-		return pdom.getDB().getByte(record + FLAGS);
+		return getDB().getByte(record + FLAGS);
 	}
 
 	public PDOMName getBaseClassSpecifierName() {
 		try {
-			int rec = pdom.getDB().getInt(record + BASECLASS_SPECIFIER);
+			int rec = getDB().getInt(record + BASECLASS_SPECIFIER);
 			if (rec != 0) {
-				return new PDOMName(pdom, rec);
+				return new PDOMName(linkage, rec);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -126,7 +130,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 
 	public void delete() throws CoreException {
-		pdom.getDB().free(record);
+		getDB().free(record);
 	}
 	
 	public void setBaseClass(IBinding binding) {

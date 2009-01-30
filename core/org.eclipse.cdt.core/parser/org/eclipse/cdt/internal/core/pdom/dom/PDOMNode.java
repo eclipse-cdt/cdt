@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,42 +31,58 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	
 	protected static final int RECORD_SIZE = 8;
 	
-	protected final PDOM pdom;
+	private final PDOMLinkage fLinkage;
 	protected final int record;
 	
 	private int cachedParentRecord;
 	
-	protected PDOMNode(PDOM pdom, int record) {
-		this.pdom = pdom;
+	protected PDOMNode(PDOMLinkage linkage, int record) {
+		fLinkage = linkage;
 		this.record = record;
 	}
-	
-	protected PDOMNode(PDOM pdom, PDOMNode parent) throws CoreException {
-		this.pdom = pdom;
-		Database db = pdom.getDB();
-		
-		record = db.malloc(getRecordSize());
 
-		// type
+	protected PDOMNode(PDOMLinkage linkage, PDOMNode parent) throws CoreException {
+		this(linkage.getDB(), linkage, parent == null ? 0 : parent.getRecord());
+	}
+
+	/**
+	 * For linkages, only.
+	 */
+	protected PDOMNode(Database db) throws CoreException {
+		this(db, null, 0);
+	}
+	
+	protected PDOMNode(Database db, PDOMLinkage linkage, int parentRec) throws CoreException {
+		this.fLinkage = linkage;
+
+		record = db.malloc(getRecordSize());
 		db.putInt(record + TYPE, getNodeType());
 		
-		// parent
-		cachedParentRecord= parent != null ? parent.getRecord() : 0;
-		db.putInt(record + PARENT, cachedParentRecord);
+		cachedParentRecord= parentRec;
+		db.putInt(record + PARENT, parentRec);
+	}
+
+	protected Database getDB() {
+		return fLinkage.getDB();
+	}
+
+	public PDOM getPDOM() {
+		return fLinkage.getPDOM();
+	}
+	
+	public PDOMLinkage getLinkage() throws CoreException {
+		return fLinkage;
 	}
 
 	protected abstract int getRecordSize();
 	public abstract int getNodeType();
 	
-	public PDOM getPDOM() {
-		return pdom;
-	}
 	
-	public int getRecord() {
+	public final int getRecord() {
 		return record;
 	}
 	
-	public int getId() {
+	public final int getBindingID() {
 		return record;
 	}
 
@@ -77,7 +93,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 */
 	public boolean isChildOf(PDOMNode other) {
 		try {
-			return other.pdom == pdom && other.record == getParentNodeRec();
+			return other.fLinkage == fLinkage && other.record == getParentNodeRec();
 		} catch (CoreException e) {
 			return false;
 		}
@@ -89,7 +105,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 			return true;
 		if (obj instanceof PDOMNode) {
 			PDOMNode other = (PDOMNode)obj;
-			return pdom == other.pdom && record == other.record;
+			return getPDOM() == other.getPDOM() && record == other.record;
 		}
 		
 		return super.equals(obj);
@@ -97,53 +113,33 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	@Override
 	public final int hashCode() {
-		return System.identityHashCode(pdom) + 41*record;
+		return System.identityHashCode(getPDOM()) + 41*record;
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		// No children here.
 	}
 	
-	public static int getNodeType(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + TYPE);
+	public static int getNodeType(Database db, int record) throws CoreException {
+		return db.getInt(record + TYPE);
 	}
 	
 	public int getParentNodeRec() throws CoreException {
 		if (cachedParentRecord != 0) {
 			return cachedParentRecord;
 		}
-		return cachedParentRecord= pdom.getDB().getInt(record + PARENT);
+		return cachedParentRecord= getDB().getInt(record + PARENT);
 	}
 	
 	public PDOMNode getParentNode() throws CoreException {
 		int parentrec = getParentNodeRec();
-		return parentrec != 0 ? getLinkageImpl().getNode(parentrec) : null;
+		return parentrec != 0 ? getLinkage().getNode(parentrec) : null;
 	}
 	
-	public PDOMLinkage getLinkage() throws CoreException {
-		return getLinkage(pdom, record);
-	}
-
-	public final PDOMLinkage getLinkageImpl() throws CoreException {
-		return getLinkage();
-	}
-
-	public static PDOMLinkage getLinkage(PDOM pdom, int record) throws CoreException {
-		Database db = pdom.getDB();
-		int linkagerec = record;
-		int parentrec = db.getInt(linkagerec + PARENT);
-		while (parentrec != 0) {
-			linkagerec = parentrec;
-			parentrec = db.getInt(linkagerec + PARENT);
-		}
-		
-		return pdom.getLinkage(linkagerec);
-	}
-
 	public void addChild(PDOMNode child) throws CoreException {
 		// nothing here
 	}
-	
+		
 	/**
 	 * Convenience method for fetching a byte from the database.
 	 * @param offset Location of the byte.
@@ -151,17 +147,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 */
 	protected byte getByte(int offset) {
 		try {
-			return pdom.getDB().getByte(offset);
-		}
-		catch (CoreException e) {
-			CCorePlugin.log(e);
-			return 0;
-		}
-	}
-
-	protected int getInt(int offset) {
-		try {
-			return pdom.getDB().getInt(offset);
+			return getDB().getByte(offset);
 		}
 		catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -187,6 +173,6 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 * @throws CoreException 
 	 */
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		pdom.getDB().free(record);
+		getDB().free(record);
 	}
 }

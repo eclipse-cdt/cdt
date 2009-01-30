@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -60,12 +59,12 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
 	
-	public PDOMCVariable(PDOM pdom, PDOMNode parent, IVariable variable) throws CoreException {
-		super(pdom, parent, variable.getNameCharArray());
+	public PDOMCVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
+		super(linkage, parent, variable.getNameCharArray());
 
 		try {
-			final Database db = pdom.getDB();
-			setType(parent.getLinkageImpl(), variable.getType());
+			final Database db = getDB();
+			setType(parent.getLinkage(), variable.getType());
 			db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
 			
 			setValue(db, variable);
@@ -83,7 +82,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			IType mytype= getType();
 			int valueRec= db.getInt(record + VALUE_OFFSET);
@@ -104,11 +103,11 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	private void setType(final PDOMLinkage linkage, final IType type) throws CoreException {
 		final PDOMNode typeNode = linkage.addType(this, type);
-		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
-	public PDOMCVariable(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCVariable(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -123,8 +122,8 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	
 	public IType getType() {
 		try {
-			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
-			return (IType)getLinkageImpl().getNode(typeRec);
+			int typeRec = getDB().getInt(record + TYPE_OFFSET);
+			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -133,7 +132,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	public IValue getInitialValue() {
 		try {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
 			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {

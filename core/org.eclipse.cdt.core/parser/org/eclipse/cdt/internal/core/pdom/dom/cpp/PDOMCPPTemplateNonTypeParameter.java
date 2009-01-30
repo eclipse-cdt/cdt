@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -51,15 +50,15 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPVariable.RECORD_SIZE + 12;
 	
-	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, PDOMNode parent,
+	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {
-		super(pdom, parent, param.getNameCharArray());
-		final Database db = pdom.getDB();
+		super(linkage, parent, param.getNameCharArray());
+		final Database db = getDB();
 		db.putInt(record + PARAMETERID, param.getParameterID());
 	}
 
-	public PDOMCPPTemplateNonTypeParameter(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -74,7 +73,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			int rec= db.getInt(record + DEFAULTVAL);
 			IValue val= PDOMValue.restore(db, getLinkage(), rec);
 			if (val == null) 
@@ -91,7 +90,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		if (newBinding instanceof ICPPTemplateNonTypeParameter) {
 			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			IType mytype= getType();
 			int valueRec= db.getInt(record + DEFAULTVAL);
 			try {
@@ -114,7 +113,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		if (type instanceof PDOMNode) {
 			((PDOMNode) type).delete(linkage);
 		}
-		Database db= pdom.getDB();
+		Database db= getDB();
 		int valueRec= db.getInt(record + DEFAULTVAL);
 		PDOMValue.delete(db, valueRec);
 	}
@@ -137,7 +136,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	private void readParamID() {
 		if (fCachedParamID == -1) {
 			try {
-				final Database db = pdom.getDB();
+				final Database db = getDB();
 				fCachedParamID= db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -148,7 +147,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		PDOMNode typeNode = linkage.addType(this, newType);
-		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	public void configure(ICPPTemplateParameter param) {
@@ -156,7 +155,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 			if (param instanceof ICPPTemplateNonTypeParameter) {
 				ICPPTemplateNonTypeParameter nonTypeParm= (ICPPTemplateNonTypeParameter) param;
 				setType(getLinkage(), nonTypeParm.getType());
-				final Database db= pdom.getDB();
+				final Database db= getDB();
 				setDefaultValue(db, nonTypeParm);
 			} 
 		} catch (CoreException e) {
@@ -181,8 +180,8 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 
 	public IType getType() {
 		try {
-			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
-			return (IType)getLinkageImpl().getNode(typeRec);
+			int typeRec = getDB().getInt(record + TYPE_OFFSET);
+			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

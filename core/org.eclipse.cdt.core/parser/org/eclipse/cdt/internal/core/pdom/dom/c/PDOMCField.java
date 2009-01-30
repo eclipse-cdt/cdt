@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,12 +27,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCField extends PDOMCVariable implements IField {
 
-	public PDOMCField(PDOM pdom, IPDOMMemberOwner parent, IField field) throws CoreException {
-		super(pdom, (PDOMNode) parent, field);
+	public PDOMCField(PDOMLinkage linkage, IPDOMMemberOwner parent, IField field) throws CoreException {
+		super(linkage, (PDOMNode) parent, field);
 	}
 
-	public PDOMCField(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCField(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override

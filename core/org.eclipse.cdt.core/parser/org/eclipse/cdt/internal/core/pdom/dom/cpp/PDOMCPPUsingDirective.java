@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	}
 
 	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, int prevRecInFile, PDOMCPPNamespace containerNS, PDOMBinding nominated) throws CoreException {
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final int containerRec= containerNS == null ? 0 : containerNS.getRecord();
 		final int nominatedRec= nominated.getRecord();
 		
@@ -62,7 +62,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	 */
 	public ICPPNamespaceScope getNominatedScope() {
 		try {
-			int rec = fLinkage.getPDOM().getDB().getInt(fRecord + NOMINATED_NAMESPACE);
+			int rec = fLinkage.getDB().getInt(fRecord + NOMINATED_NAMESPACE);
 			PDOMNode node= fLinkage.getNode(rec);
 			if (node instanceof ICPPNamespace) {
 				return ((ICPPNamespace) node).getNamespaceScope();
@@ -80,7 +80,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	 */
 	public IScope getContainingScope() {
 		try {
-			int rec = fLinkage.getPDOM().getDB().getInt(fRecord + CONTAINER_NAMESPACE);
+			int rec = fLinkage.getDB().getInt(fRecord + CONTAINER_NAMESPACE);
 			if (rec != 0) {
 				PDOMNode node= fLinkage.getNode(rec);
 				if (node instanceof PDOMCPPNamespace) {
@@ -105,7 +105,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	}
 
 	public int getPreviousRec() throws CoreException {
-		final Database db= fLinkage.getPDOM().getDB();
+		final Database db= fLinkage.getDB();
 		return db.getInt(fRecord + PREV_DIRECTIVE_OF_FILE);
 	}
 
@@ -116,6 +116,6 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	}
 
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		fLinkage.getPDOM().getDB().free(fRecord);
+		fLinkage.getDB().free(fRecord);
 	}
 }

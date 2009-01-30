@@ -65,19 +65,38 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final int LINKAGE= 0; // special one for myself
 
 	private BTree fMacroIndex= null;
+	private final PDOM fPDOM;
+	private final Database fDatabase;
 
 	public PDOMLinkage(PDOM pdom, int record) {
-		super(pdom, record);
+		super(null, record);
+		fPDOM= pdom;
+		fDatabase= pdom.getDB();
 	}
 
 	protected PDOMLinkage(PDOM pdom, String languageId, char[] name) throws CoreException {
-		super(pdom, null, name);
-		Database db = pdom.getDB();
+		super(pdom.getDB(), name);
+		final Database db= pdom.getDB();
 
-		// id
+		fPDOM= pdom;
+		fDatabase= db;
 		db.putInt(record + ID_OFFSET, db.newString(languageId).getRecord());
-
 		pdom.insertLinkage(this);
+	}
+	
+	@Override
+	public final PDOM getPDOM() {
+		return fPDOM;
+	}
+	
+	@Override
+	public final PDOMLinkage getLinkage() throws CoreException {
+		return this;
+	}
+	
+	@Override
+	public final Database getDB()  {
+		return fDatabase;
 	}
 
 	@Override
@@ -90,7 +109,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return LINKAGE;
 	}
 
-	public static IString getId(PDOM pdom, int record) throws CoreException {
+	public static IString getLinkageID(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);
@@ -101,11 +120,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public void setNext(int nextrec) throws CoreException {
-		pdom.getDB().putInt(record + NEXT_OFFSET, nextrec);
+		getDB().putInt(record + NEXT_OFFSET, nextrec);
 	}
 
 	public BTree getIndex() throws CoreException {
-		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getIndexComparator());
+		return new BTree(getDB(), record + INDEX_OFFSET, getIndexComparator());
 	}
 
 	/**
@@ -113,7 +132,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @throws CoreException
 	 */
 	public BTree getNestedBindingsIndex() throws CoreException {
-		return new BTree(getPDOM().getDB(), record + NESTED_BINDINGS_INDEX, getNestedBindingsComparator());
+		return new BTree(fDatabase, record + NESTED_BINDINGS_INDEX, getNestedBindingsComparator());
 	}
 
 	@Override
@@ -138,35 +157,38 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 	}
 
-	@Override
-	public PDOMLinkage getLinkage() throws CoreException {
-		return this;
-	}
 
 	@Override
 	public final void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
+	
+	public final PDOMBinding getBinding(int record) throws CoreException {
+		final PDOMNode node= getNode(record);
+		if (node instanceof PDOMBinding)
+			return (PDOMBinding) node;
+		return null;
+	}
 
 	public PDOMNode getNode(int record) throws CoreException {
-		switch (PDOMNode.getNodeType(pdom, record)) {
+		switch (PDOMNode.getNodeType(fDatabase, record)) {
 		case POINTER_TYPE:
-			return new PDOMPointerType(pdom, record);
+			return new PDOMPointerType(this, record);
 		case ARRAY_TYPE:
-			return new PDOMArrayType(pdom, record);
+			return new PDOMArrayType(this, record);
 		case QUALIFIER_TYPE:
-			return new PDOMQualifierType(pdom, record);
+			return new PDOMQualifierType(this, record);
 		}
 		return null;
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof IPointerType)
-			return new PDOMPointerType(pdom, parent, (IPointerType)type);
+			return new PDOMPointerType(this, parent, (IPointerType)type);
 		else if (type instanceof IArrayType) 
-			return new PDOMArrayType(pdom, parent, (IArrayType) type);
+			return new PDOMArrayType(this, parent, (IArrayType) type);
 		else if (type instanceof IQualifierType)
-			return new PDOMQualifierType(pdom, parent, (IQualifierType)type);
+			return new PDOMQualifierType(this, parent, (IQualifierType)type);
 		else
 			return null;
 	}
@@ -198,7 +220,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				return pdomBinding;
 			}
 		}
-		return (PDOMBinding) pdom.getCachedResult(binding);
+		return (PDOMBinding) fPDOM.getCachedResult(binding);
 	}
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
@@ -218,8 +240,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
-		if (pdom instanceof WritablePDOM) {
-			final WritablePDOM wpdom= (WritablePDOM) pdom;
+		if (fPDOM instanceof WritablePDOM) {
+			final WritablePDOM wpdom= (WritablePDOM) fPDOM;
 			try {
 				if (binding instanceof IField) {
 					return null;
@@ -333,45 +355,45 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public BTree getMacroIndex() {
 		if (fMacroIndex == null) {
-			fMacroIndex= new BTree(pdom.getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(pdom));
+			fMacroIndex= new BTree(getDB(), record + MACRO_BTREE, new FindBinding.MacroBTreeComparator(fDatabase));
 		}
 		return fMacroIndex;
 	}
 
 	public PDOMMacroContainer findMacroContainer(final char[] name) throws CoreException {
-		return findMacroContainer(name, pdom.createKeyForCache(record, name));
+		return findMacroContainer(name, fPDOM.createKeyForCache(record, name));
 	}
 
 	private PDOMMacroContainer findMacroContainer(final char[] name, final String key) throws CoreException {
-		Object result= pdom.getCachedResult(key);
+		Object result= fPDOM.getCachedResult(key);
 		if (result instanceof PDOMMacroContainer) {
 			return ((PDOMMacroContainer) result);
 		}
 		assert result==null;
 		
-		MacroContainerFinder visitor = new MacroContainerFinder(pdom, name);
+		MacroContainerFinder visitor = new MacroContainerFinder(this, name);
 		getMacroIndex().accept(visitor);
 		PDOMMacroContainer container= visitor.getMacroContainer();
 		if (container != null) {
-			pdom.putCachedResult(key, container);
+			fPDOM.putCachedResult(key, container);
 		}
 		return container;
 	}
 
 	public PDOMMacroContainer getMacroContainer(char[] name) throws CoreException {
-		String key= pdom.createKeyForCache(record, name);
+		String key= fPDOM.createKeyForCache(record, name);
 		PDOMMacroContainer result= findMacroContainer(name, key);
 		if (result == null) {
-			result= new PDOMMacroContainer(pdom, this, name);
+			result= new PDOMMacroContainer(this, name);
 			getMacroIndex().insert(result.getRecord());
-			pdom.putCachedResult(key, result);
+			fPDOM.putCachedResult(key, result);
 		}
 		return result;
 	}
 
 	public void removeMacroContainer (PDOMMacroContainer container) throws CoreException {
-		String key= pdom.createKeyForCache(record, container.getNameCharArray());
-		pdom.putCachedResult(key, null);
+		String key= fPDOM.createKeyForCache(record, container.getNameCharArray());
+		fPDOM.putCachedResult(key, null);
 		getMacroIndex().delete(container.getRecord());
 	}
 

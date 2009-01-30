@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -48,7 +47,7 @@ public class PDOMTemplateParameterArray {
 	 */
 	public static IPDOMCPPTemplateParameter[] getArray(PDOMNode parent, int rec) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
@@ -68,10 +67,10 @@ public class PDOMTemplateParameterArray {
 	/**
 	 * Creates template parameters in the pdom
 	 */
-	public static IPDOMCPPTemplateParameter[] createPDOMTemplateParameters(PDOM pdom, PDOMNode parent, ICPPTemplateParameter[] origParams) throws CoreException, DOMException {
+	public static IPDOMCPPTemplateParameter[] createPDOMTemplateParameters(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateParameter[] origParams) throws CoreException, DOMException {
 		IPDOMCPPTemplateParameter[] params= new IPDOMCPPTemplateParameter[origParams.length];
 		for (int i = 0; i < origParams.length; i++) {
-			params[i]= createPDOMTemplateParameter(pdom, parent, origParams[i]);
+			params[i]= createPDOMTemplateParameter(linkage, parent, origParams[i]);
 		}
 		return params;
 	}
@@ -79,14 +78,14 @@ public class PDOMTemplateParameterArray {
 	/**
 	 * Creates a template parameter in the pdom
 	 */
-	public static IPDOMCPPTemplateParameter createPDOMTemplateParameter(PDOM pdom, PDOMNode parent, ICPPTemplateParameter origParam) throws CoreException, DOMException {
+	public static IPDOMCPPTemplateParameter createPDOMTemplateParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateParameter origParam) throws CoreException, DOMException {
 		IPDOMCPPTemplateParameter param= null;
 		if (origParam instanceof ICPPTemplateNonTypeParameter) {
-			param= new PDOMCPPTemplateNonTypeParameter(pdom, parent, (ICPPTemplateNonTypeParameter) origParam);
+			param= new PDOMCPPTemplateNonTypeParameter(linkage, parent, (ICPPTemplateNonTypeParameter) origParam);
 		} else if (origParam instanceof ICPPTemplateTypeParameter) {
-			param= new PDOMCPPTemplateTypeParameter(pdom, parent, (ICPPTemplateTypeParameter) origParam);
+			param= new PDOMCPPTemplateTypeParameter(linkage, parent, (ICPPTemplateTypeParameter) origParam);
 		} else if (origParam instanceof ICPPTemplateTemplateParameter) {
-			param= new PDOMCPPTemplateTemplateParameter(pdom, parent, (ICPPTemplateTemplateParameter) origParam);
+			param= new PDOMCPPTemplateTemplateParameter(linkage, parent, (ICPPTemplateTemplateParameter) origParam);
 		}
 		return param;
 	}

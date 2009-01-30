@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class PDOMCPPTemplateParameterMap {
 	 */
 	public static int putMap(PDOMNode parent, ICPPTemplateParameterMap map) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		Integer[] keys= map.getAllParameterPositions();
 		final short len= (short) Math.min(keys.length, (Database.MAX_MALLOC_SIZE-2)/12); 
 		final int block= db.malloc(2+12*len);
@@ -68,7 +68,7 @@ public class PDOMCPPTemplateParameterMap {
 	 */
 	public static void clearMap(PDOMNode parent, int rec) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/12);
@@ -92,7 +92,7 @@ public class PDOMCPPTemplateParameterMap {
 	 */
 	public static CPPTemplateParameterMap getMap(PDOMNode parent, int rec) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/12);

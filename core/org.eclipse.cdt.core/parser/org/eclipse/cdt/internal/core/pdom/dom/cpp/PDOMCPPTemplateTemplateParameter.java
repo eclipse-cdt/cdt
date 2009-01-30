@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -66,20 +65,20 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	private int fCachedParamID= -1;
 	private IPDOMCPPTemplateParameter[] params;
 	
-	public PDOMCPPTemplateTemplateParameter(PDOM pdom, PDOMNode parent, ICPPTemplateTemplateParameter param) 
+	public PDOMCPPTemplateTemplateParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTemplateParameter param) 
 			throws CoreException, DOMException {
-		super(pdom, parent, param.getNameCharArray());
+		super(linkage, parent, param.getNameCharArray());
 		
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		db.putInt(record + PARAMETERID, param.getParameterID());
 		final ICPPTemplateParameter[] origParams= param.getTemplateParameters();
-		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(pdom, this, origParams);
+		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		int rec= PDOMTemplateParameterArray.putArray(db, params);
-		pdom.getDB().putInt(record + PARAMETERS, rec);
+		getDB().putInt(record + PARAMETERS, rec);
 	}
 
-	public PDOMCPPTemplateTemplateParameter(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPTemplateTemplateParameter(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -110,7 +109,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	private void readParamID() {
 		if (fCachedParamID == -1) {
 			try {
-				final Database db = pdom.getDB();
+				final Database db = getDB();
 				fCachedParamID= db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -121,13 +120,13 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 	
@@ -144,7 +143,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	public IType getDefault() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + DEFAULT_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + DEFAULT_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -184,7 +183,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 				IType dflt= val.getTypeValue();
 				if (dflt != null) {
 					final Database db= getPDOM().getDB();
-					PDOMNode typeNode = getLinkageImpl().addType(this, dflt);
+					PDOMNode typeNode = getLinkage().addType(this, dflt);
 					if (typeNode != null) {
 						db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
 					}
@@ -198,7 +197,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPTemplateTemplateParameter) {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			ICPPTemplateTemplateParameter ttp= (ICPPTemplateTemplateParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
 			IType newDefault= null;
@@ -209,7 +208,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			}
 			if (newDefault != null) {
 				IType mytype= getDefault();
-				PDOMNode typeNode = getLinkageImpl().addType(this, newDefault);
+				PDOMNode typeNode = getLinkage().addType(this, newDefault);
 				if (typeNode != null) {
 					db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
 					if (mytype != null) 
@@ -219,7 +218,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			int oldRec= db.getInt(record + PARAMETERS);
 			IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 			try {
-				params= PDOMTemplateParameterArray.createPDOMTemplateParameters(pdom, this, ttp.getTemplateParameters());
+				params= PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this, ttp.getTemplateParameters());
 				int newRec= PDOMTemplateParameterArray.putArray(db, params);
 				db.putInt(record + PARAMETERS, newRec);
 				if (oldRec != 0)
@@ -238,7 +237,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		if (type instanceof PDOMNode) {
 			((PDOMNode) type).delete(linkage);
 		}
-		Database db= pdom.getDB();
+		Database db= getDB();
 		int valueRec= db.getInt(record + DEFAULT_TYPE);
 		if (valueRec != 0)
 			db.getString(valueRec).delete();
@@ -255,7 +254,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				int rec= pdom.getDB().getInt(record + PARAMETERS);
+				int rec= getDB().getInt(record + PARAMETERS);
 				if (rec == 0) {
 					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,9 +38,9 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
-	public PDOMCPPTypedefSpecialization(PDOM pdom, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
+	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) typedef, specialized);
+		super(linkage, parent, (ICPPSpecialization) typedef, specialized);
 
 		try {
 			if (typedef instanceof CPPTypedefSpecialization) {
@@ -52,9 +52,9 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 			IType type = typedef.getType();
 			// The following may try to add the same typedef specialization to the index again.
 			// We protect against infinite recursion using a counter inside typedef.
-			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
+			PDOMNode typeNode = parent.getLinkage().addType(this, type);
 			if (typeNode != null)
-				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+				getDB().putInt(record + TYPE, typeNode.getRecord());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		} finally {
@@ -64,8 +64,8 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 		}
 	}
 
-	public PDOMCPPTypedefSpecialization(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

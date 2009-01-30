@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0.2
  */
 public final class MacroContainerCollector implements IBTreeVisitor {
-	private final PDOM pdom;
+	private final PDOMLinkage linkage;
 	private final char[] name;
 	private final boolean prefixLookup;
 	private final boolean caseSensitive;
@@ -39,9 +38,9 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
-	public MacroContainerCollector(PDOM pdom, char[] name, boolean prefixLookup, boolean caseSensitive) {
+	public MacroContainerCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup, boolean caseSensitive) {
 		this.name= name;
-		this.pdom= pdom;
+		this.linkage= linkage;
 		this.prefixLookup= prefixLookup;
 		this.caseSensitive= caseSensitive;
 	}
@@ -57,7 +56,7 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString rhsName= PDOMNamedNode.getDBName(pdom, record);
+		IString rhsName= PDOMNamedNode.getDBName(linkage.getDB(), record);
 		return compare(rhsName);
 	}
 
@@ -87,7 +86,7 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 		if (record == 0)
 			return true;
 		
-		macros.add(new PDOMMacroContainer(pdom, record));
+		macros.add(new PDOMMacroContainer(linkage, record));
 		return true; // look for more
 	}
 	

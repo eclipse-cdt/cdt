@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -8,11 +18,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Stores a typelist
- * TODO could refactor to have common base shared by {@link PDOMCPPArgumentList} using generics
+ * Stores a list of types
  */
 class PDOMCPPTypeList {
-	
 	protected static final int NODE_SIZE = 4;
 
 	/**
@@ -24,7 +32,7 @@ class PDOMCPPTypeList {
 			return 0;
 		
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len = (short)Math.min(types.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
 		final int block = db.malloc(2+ NODE_SIZE*len);
 		int p = block;
@@ -47,7 +55,7 @@ class PDOMCPPTypeList {
 			return null;
 		
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len = db.getShort(rec);
 		
 		if (len == 0)
@@ -72,7 +80,7 @@ class PDOMCPPTypeList {
 			return;
 		
 		final PDOMLinkage linkage= parent.getLinkage();
-		final Database db= linkage.getPDOM().getDB();
+		final Database db= linkage.getDB();
 		final short len= db.getShort(record);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);

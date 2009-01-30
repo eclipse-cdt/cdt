@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
@@ -71,14 +71,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 17;
 	
-	public PDOMCPPFunctionSpecialization(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) function, specialized);
+	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, (ICPPSpecialization) function, specialized);
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 		try {
 			IFunctionType ft= function.getType();
 			if (ft != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, ft);
+				PDOMNode typeNode = getLinkage().addType(this, ft);
 				if (typeNode != null) {
 					db.putInt(record + FUNCTION_TYPE, typeNode.getRecord());
 				}
@@ -98,8 +98,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 				int typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
 				//TODO shouldn't need to make new parameter (find old one)
 				final IType type= i<sParamTypes.length ? sParamTypes[i] : null;
-				PDOMCPPParameter sParam = new PDOMCPPParameter(pdom, this, sParams[i], type);
-				setFirstParameter(new PDOMCPPParameterSpecialization(pdom, this, (ICPPParameter) params[i], sParam, typeRecord));
+				PDOMCPPParameter sParam = new PDOMCPPParameter(getLinkage(), this, sParams[i], type);
+				setFirstParameter(new PDOMCPPParameterSpecialization(getLinkage(), this, (ICPPParameter) params[i], sParam, typeRecord));
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));			
 		} catch (DOMException e) {
@@ -119,8 +119,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	}
 
-	public PDOMCPPFunctionSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -134,15 +134,15 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public PDOMCPPParameterSpecialization getFirstParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
-		return rec != 0 ? new PDOMCPPParameterSpecialization(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRST_PARAM);
+		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec) : null;
 	}
 
 	public void setFirstParameter(PDOMCPPParameterSpecialization param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
 		int rec = param != null ? param.getRecord() :  0;
-		pdom.getDB().putInt(record + FIRST_PARAM, rec);
+		getDB().putInt(record + FIRST_PARAM, rec);
 	}
 	
 	public boolean isInline() throws DOMException {
@@ -159,7 +159,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	public IParameter[] getParameters() throws DOMException {
 		try {
-			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			int n = getDB().getInt(record + NUM_PARAMS);
 			IParameter[] params = new IParameter[n];
 			PDOMCPPParameterSpecialization param = getFirstParameter();
 			while (param != null) {
@@ -175,8 +175,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	public ICPPFunctionType getType() throws DOMException {		
 		try {
-			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
-			return offset==0 ? null : new PDOMCPPFunctionType(pdom, offset); 
+			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			return offset==0 ? null : new PDOMCPPFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;

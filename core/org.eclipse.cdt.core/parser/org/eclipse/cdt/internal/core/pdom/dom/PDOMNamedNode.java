@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -43,30 +42,35 @@ public abstract class PDOMNamedNode extends PDOMNode {
 
 	private char[] fName;
 	
-	public PDOMNamedNode(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMNamedNode(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMNamedNode(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
-		super(pdom, parent);
+	public PDOMNamedNode(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
+		super(linkage, parent);
 		
 		fName= name;
-		Database db = pdom.getDB();
-		db.putInt(record + NAME,
-				name != null ? db.newString(name).getRecord() : 0);
+		final Database db = linkage.getDB();
+		db.putInt(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
 
+	/**
+	 * For linkages, only.
+	 */
+	protected PDOMNamedNode(Database db, char[] name) throws CoreException {
+		super(db);
+		fName= name;
+		db.putInt(record + NAME, name != null ? db.newString(name).getRecord() : 0);
+	}
+	
 	@Override
 	abstract protected int getRecordSize();
 
 	public IString getDBName() throws CoreException {
-		Database db = pdom.getDB();
-		int namerec = db.getInt(record + NAME);
-		return db.getString(namerec);
+		return getDBName(getDB(), record);
 	}
 	
-	public static IString getDBName(PDOM pdom, int record) throws CoreException {
-		Database db = pdom.getDB();
+	public static IString getDBName(Database db, int record) throws CoreException {
 		int namerec = db.getInt(record + NAME);
 		return db.getString(namerec);
 	}
@@ -96,7 +100,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		IString name= getDBName();
 		if (!name.equals(nameCharArray)) {
 			name.delete();
-			final Database db= pdom.getDB();
+			final Database db= getDB();
 			db.putInt(record + NAME, db.newString(nameCharArray).getRecord());
 		}
 		fName= nameCharArray;
@@ -105,7 +109,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		final int namerec= db.getInt(record + NAME);
 		if (namerec != 0) {
 			db.free(namerec);

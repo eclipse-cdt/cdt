@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.ArrayTypeClone;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, ITypeContainer {
@@ -31,19 +29,17 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= TYPE+4;
 
-	public PDOMArrayType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMArrayType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMArrayType(PDOM pdom, PDOMNode parent, IArrayType type) throws CoreException {
-		super(pdom, parent);
-		Database db = pdom.getDB();
-		
+	public PDOMArrayType(PDOMLinkage linkage, PDOMNode parent, IArrayType type) throws CoreException {
+		super(linkage, parent);
 		try {
-			PDOMNode targetTypeNode = getLinkageImpl().addType(this, type.getType());
+			PDOMNode targetTypeNode = getLinkage().addType(this, type.getType());
 			if (targetTypeNode != null) {
 				int typeRec = targetTypeNode.getRecord();
-				db.putInt(record + TYPE, typeRec);
+				getDB().putInt(record + TYPE, typeRec);
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
@@ -66,7 +62,7 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

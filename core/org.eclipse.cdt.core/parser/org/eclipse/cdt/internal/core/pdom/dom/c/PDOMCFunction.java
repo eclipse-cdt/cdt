@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -64,8 +63,12 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
 	
-	public PDOMCFunction(PDOM pdom, PDOMNode parent, IFunction function) throws CoreException {
-		super(pdom, parent, function.getNameCharArray());
+	public PDOMCFunction(PDOMLinkage linkage, int record) {
+		super(linkage, record);
+	}
+
+	public PDOMCFunction(PDOMLinkage linkage, PDOMNode parent, IFunction function) throws CoreException {
+		super(linkage, parent, function.getNameCharArray());
 		
 		IFunctionType type;
 		IParameter[] parameters;
@@ -77,9 +80,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
-		setType(getLinkageImpl(), type);
+		setType(getLinkage(), type);
 		setParameters(parameters);
-		pdom.getDB().putByte(record + ANNOTATIONS, annotations);
+		getDB().putByte(record + ANNOTATIONS, annotations);
 	}
 
 	@Override
@@ -107,7 +110,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			if (oldParams != null) {
 				oldParams.delete(linkage);
 			}
-			pdom.getDB().putByte(record + ANNOTATIONS, newAnnotation);
+			getDB().putByte(record + ANNOTATIONS, newAnnotation);
 		}
 	}
 
@@ -119,32 +122,29 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 				rec= typeNode.getRecord();
 			}
 		}
-		pdom.getDB().putInt(record + FUNCTION_TYPE, rec);
+		getDB().putInt(record + FUNCTION_TYPE, rec);
 	}
 
 	private void setParameters(IParameter[] params) throws CoreException {
-		pdom.getDB().putInt(record + NUM_PARAMS, params.length);
-		pdom.getDB().putInt(record + FIRST_PARAM, 0);
+		getDB().putInt(record + NUM_PARAMS, params.length);
+		getDB().putInt(record + FIRST_PARAM, 0);
 		for (int i = 0; i < params.length; ++i) {
-			setFirstParameter(new PDOMCParameter(pdom, this, params[i]));
+			setFirstParameter(new PDOMCParameter(getLinkage(), this, params[i]));
 		}
 	}
 	
 	public PDOMCParameter getFirstParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
-		return rec != 0 ? new PDOMCParameter(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRST_PARAM);
+		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
 	}
 	
 	public void setFirstParameter(PDOMCParameter param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
 		int rec = param != null ? param.getRecord() :  0;
-		pdom.getDB().putInt(record + FIRST_PARAM, rec);
+		getDB().putInt(record + FIRST_PARAM, rec);
 	}
 
-	public PDOMCFunction(PDOM pdom, int record) {
-		super(pdom, record);
-	}
 	
 	@Override
 	protected int getRecordSize() {
@@ -165,8 +165,8 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		 * both the IType and IBinding interfaces. 
 		 */
 		try {
-			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
-			return offset==0 ? null : new PDOMCFunctionType(pdom, offset); 
+			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			return offset==0 ? null : new PDOMCFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;
@@ -183,7 +183,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public IParameter[] getParameters() throws DOMException {
 		try {
-			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			int n = getDB().getInt(record + NUM_PARAMS);
 			IParameter[] params = new IParameter[n];
 			PDOMCParameter param = getFirstParameter();
 			while (param != null) {

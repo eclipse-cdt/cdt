@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -40,13 +40,13 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPEnumeration(PDOM pdom, PDOMNode parent, IEnumeration enumeration)
+	public PDOMCPPEnumeration(PDOMLinkage linkage, PDOMNode parent, IEnumeration enumeration)
 			throws CoreException {
-		super(pdom, parent, enumeration.getNameCharArray());
+		super(linkage, parent, enumeration.getNameCharArray());
 	}
 
-	public PDOMCPPEnumeration(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPEnumeration(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -86,14 +86,14 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 	}
 
 	private PDOMCPPEnumerator getFirstEnumerator() throws CoreException {
-		int value = pdom.getDB().getInt(record + FIRST_ENUMERATOR);
-		return value != 0 ? new PDOMCPPEnumerator(pdom, value) : null;
+		int value = getDB().getInt(record + FIRST_ENUMERATOR);
+		return value != 0 ? new PDOMCPPEnumerator(getLinkage(), value) : null;
 	}
 	
 	public void addEnumerator(PDOMCPPEnumerator enumerator) throws CoreException {
 		PDOMCPPEnumerator first = getFirstEnumerator();
 		enumerator.setNextEnumerator(first);
-		pdom.getDB().putInt(record + FIRST_ENUMERATOR, enumerator.getRecord());
+		getDB().putInt(record + FIRST_ENUMERATOR, enumerator.getRecord());
 	}
 	
 	public boolean isSameType(IType type) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,10 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -53,29 +53,29 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassTemplate.RECORD_SIZE + 16;
 	
-	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom, PDOMCPPLinkage linkage,
-			PDOMNode parent, ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
+	public PDOMCPPClassTemplatePartialSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
 			throws CoreException, DOMException {
-		super(pdom, linkage, parent, partial);
-		pdom.getDB().putInt(record + PRIMARY, primary.getRecord());
+		super(linkage, parent, partial);
+		getDB().putInt(record + PRIMARY, primary.getRecord());
 		primary.addPartial(this);
 		
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(partial);
-			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
+			getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 		linkage.new ConfigurePartialSpecialization(this, partial);
 	}
 	
-	public PDOMCPPClassTemplatePartialSpecialization(PDOM pdom,
+	public PDOMCPPClassTemplatePartialSpecialization(PDOMLinkage linkage,
 			int bindingRecord) {
-		super(pdom, bindingRecord);
+		super(linkage, bindingRecord);
 	}
 	
 	public int getSignatureHash() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_HASH);
+		return getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
 	@Override
@@ -89,18 +89,18 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	}
 
 	public PDOMCPPClassTemplatePartialSpecialization getNextPartial() throws CoreException {
-		int value = pdom.getDB().getInt(record + NEXT_PARTIAL);
-		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(pdom, value) : null;
+		int value = getDB().getInt(record + NEXT_PARTIAL);
+		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void setNextPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
 		int value = partial != null ? partial.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_PARTIAL, value);
+		getDB().putInt(record + NEXT_PARTIAL, value);
 	}
 	
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		try {
-			return new PDOMCPPClassTemplate(pdom, pdom.getDB().getInt(record + PRIMARY));
+			return new PDOMCPPClassTemplate(getLinkage(), getDB().getInt(record + PRIMARY));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

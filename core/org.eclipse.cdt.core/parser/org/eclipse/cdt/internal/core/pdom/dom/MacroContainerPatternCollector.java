@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0.2
  */
 public final class MacroContainerPatternCollector implements IBTreeVisitor {
-	private final PDOM fPDOM;
+	private final PDOMLinkage fLinkage;
 	
 	private final List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
 	private final Pattern fPattern;
@@ -33,8 +32,8 @@ public final class MacroContainerPatternCollector implements IBTreeVisitor {
 	private int fMonitorCheckCounter= 0;
 
 		
-	public MacroContainerPatternCollector(PDOM pdom, Pattern pattern, IProgressMonitor monitor) {
-		fPDOM= pdom;
+	public MacroContainerPatternCollector(PDOMLinkage linkage, Pattern pattern, IProgressMonitor monitor) {
+		fLinkage= linkage;
 		fPattern= pattern;
 		fMonitor= monitor;
 	}
@@ -50,9 +49,9 @@ public final class MacroContainerPatternCollector implements IBTreeVisitor {
 		if (record == 0)
 			return true;
 
-		String name= PDOMNamedNode.getDBName(fPDOM, record).getString();
+		String name= PDOMNamedNode.getDBName(fLinkage.getDB(), record).getString();
 		if (fPattern.matcher(name).matches()) {
-			macros.add(new PDOMMacroContainer(fPDOM, record));
+			macros.add(new PDOMMacroContainer(fLinkage, record));
 		}
 		return true; // look for more
 	}

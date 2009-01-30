@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Google, Inc and others.
+ * Copyright (c) 2008, 2009 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,15 +38,15 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	// Cached values.
 	ICPPTemplateArgument[] arguments;
 
-	public PDOMCPPUnknownClassInstance(PDOM pdom, PDOMNode parent, ICPPUnknownClassInstance classInstance)	throws CoreException {
-		super(pdom, parent, classInstance);
+	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassInstance classInstance)	throws CoreException {
+		super(linkage, parent, classInstance);
 		
 		int rec= PDOMCPPArgumentList.putArguments(this, classInstance.getArguments());
-		pdom.getDB().putInt(record + ARGUMENTS, rec);
+		getDB().putInt(record + ARGUMENTS, rec);
 	}
 
-	public PDOMCPPUnknownClassInstance(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -66,16 +65,16 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private ICPPClassScope fScope;
 
-	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType) throws CoreException {
-		super(pdom, parent, classType.getNameCharArray());
+	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType) throws CoreException {
+		super(linkage, parent, classType.getNameCharArray());
 
 		setKind(classType);
 		setAnonymous(classType);
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
-	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPClassType(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -100,7 +99,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private void setKind(ICPPClassType ct) throws CoreException {
 		try {
-			pdom.getDB().putByte(record + KEY, (byte) ct.getKey());
+			getDB().putByte(record + KEY, (byte) ct.getKey());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -108,7 +107,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private void setAnonymous(ICPPClassType ct) throws CoreException {
 		try {
-			pdom.getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
+			getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -121,8 +120,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		pdom.removeCachedResult(record + PDOMCPPLinkage.CACHE_MEMBERS);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_MEMBERS);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 	
@@ -136,29 +135,29 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	 */
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 
 	private PDOMCPPBase getFirstBase() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRSTBASE);
-		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRSTBASE);
+		return rec != 0 ? new PDOMCPPBase(getLinkage(), rec) : null;
 	}
 
 	private void setFirstBase(PDOMCPPBase base) throws CoreException {
 		int rec = base != null ? base.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRSTBASE, rec);
+		getDB().putInt(record + FIRSTBASE, rec);
 	}
 
 	public void addBase(PDOMCPPBase base) throws CoreException {
-		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase firstBase = getFirstBase();
 		base.setNextBase(firstBase);
 		setFirstBase(base);
 	}
 
 	public void removeBase(PDOMName pdomName) throws CoreException {
-		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
 
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
@@ -189,13 +188,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	private PDOMCPPFriend getFirstFriend() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRSTFRIEND);
-		return rec != 0 ? new PDOMCPPFriend(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRSTFRIEND);
+		return rec != 0 ? new PDOMCPPFriend(getLinkage(), rec) : null;
 	}
 
 	private void setFirstFriend(PDOMCPPFriend friend) throws CoreException {
 		int rec = friend != null ? friend.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRSTFRIEND, rec);
+		getDB().putInt(record + FIRSTFRIEND, rec);
 	}
 
 	public void removeFriend(PDOMName pdomName) throws CoreException {
@@ -230,7 +229,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	public int getKey() throws DOMException {
 		try {
-			return pdom.getDB().getByte(record + KEY);
+			return getDB().getByte(record + KEY);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICPPClassType.k_class; // or something
@@ -239,7 +238,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	public boolean isAnonymous() throws DOMException {
 		try {
-			return pdom.getDB().getByte(record + ANONYMOUS) != 0;
+			return getDB().getByte(record + ANONYMOUS) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false; 
@@ -280,7 +279,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	public ICPPBase[] getBases() throws DOMException {
 		Integer key= record + PDOMCPPLinkage.CACHE_BASES;
-		ICPPBase[] bases= (ICPPBase[]) pdom.getCachedResult(key);
+		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
 			return bases;
 		
@@ -290,7 +289,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 				list.add(base);
 			Collections.reverse(list);
 			bases = list.toArray(new ICPPBase[list.size()]);
-			pdom.putCachedResult(key, bases);
+			getPDOM().putCachedResult(key, bases);
 			return bases;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

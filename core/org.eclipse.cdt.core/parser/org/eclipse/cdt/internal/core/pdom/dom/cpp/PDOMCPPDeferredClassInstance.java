@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -59,16 +59,16 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 
 	private ICPPScope unknownScope;
 	
-	public PDOMCPPDeferredClassInstance(PDOM pdom, PDOMNode parent, ICPPDeferredClassInstance classType, PDOMBinding instantiated)
+	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPDeferredClassInstance classType, PDOMBinding instantiated)
 			throws CoreException {
-		super(pdom, parent, classType, instantiated);
+		super(linkage, parent, classType, instantiated);
 
 		final int argListRec= PDOMCPPArgumentList.putArguments(this, classType.getTemplateArguments());
-		pdom.getDB().putInt(record+ARGUMENTS, argListRec);
+		getDB().putInt(record+ARGUMENTS, argListRec);
 	}
 
-	public PDOMCPPDeferredClassInstance(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -114,14 +114,14 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 	
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 		

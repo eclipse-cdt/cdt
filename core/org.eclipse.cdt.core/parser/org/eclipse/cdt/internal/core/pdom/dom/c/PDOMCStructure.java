@@ -56,15 +56,15 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = MEMBERLIST + 6;
 	
-	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
-		super(pdom, parent, compType.getNameCharArray());		
+	public PDOMCStructure(PDOMLinkage linkage, PDOMNode parent, ICompositeType compType) throws CoreException {
+		super(linkage, parent, compType.getNameCharArray());		
 		setKind(compType);
 		setAnonymous(compType);
 		// linked list is initialized by malloc zeroing allocated storage
 	}
 
-	public PDOMCStructure(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCStructure(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
 	public EScopeKind getKind() {
@@ -83,7 +83,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 
 	private void setKind(ICompositeType ct) throws CoreException {
 		try {
-			pdom.getDB().putByte(record + KEY, (byte) ct.getKey());
+			getDB().putByte(record + KEY, (byte) ct.getKey());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -91,7 +91,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	private void setAnonymous(ICompositeType ct) throws CoreException {
 		try {
-			pdom.getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
+			getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -101,7 +101,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).accept(visitor);
+		new PDOMNodeLinkedList(getLinkage(), record+MEMBERLIST).accept(visitor);
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	public int getKey() throws DOMException {
 		try {
-			return pdom.getDB().getByte(record + KEY);
+			return getDB().getByte(record + KEY);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return ICompositeType.k_struct; // or something
@@ -125,7 +125,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	public boolean isAnonymous() throws DOMException {
 		try {
-			return pdom.getDB().getByte(record + ANONYMOUS) != 0;
+			return getDB().getByte(record + ANONYMOUS) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false; 
@@ -198,6 +198,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 	
 	public IField findField(String name) throws DOMException {
+		final PDOM pdom = getPDOM();
 		final String key= pdom.createKeyForCache(record, name.toCharArray());
 		IField result= (IField) pdom.getCachedResult(key);
 		if (result != null) {
@@ -259,7 +260,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).addMember(member);
+		new PDOMNodeLinkedList(getLinkage(), record+MEMBERLIST).addMember(member);
 	}
 	
 	@Override

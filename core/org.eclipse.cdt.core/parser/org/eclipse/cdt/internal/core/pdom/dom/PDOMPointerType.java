@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -43,14 +42,14 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	private static final int CONST = 0x1;
 	private static final int VOLATILE = 0x2;
 	
-	public PDOMPointerType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMPointerType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMPointerType(PDOM pdom, PDOMNode parent, IPointerType type) throws CoreException {
-		super(pdom, parent);
+	public PDOMPointerType(PDOMLinkage linkage, PDOMNode parent, IPointerType type) throws CoreException {
+		super(linkage, parent);
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 		
 		try {
 			// type
@@ -58,7 +57,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 			byte flags = 0;
 			if (type != null) {
 				IType targetType= type.getType();
-				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
+				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
 				if (targetTypeNode != null)
 					typeRec = targetTypeNode.getRecord();
 				if (type.isConst())
@@ -84,12 +83,12 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	}
 	
 	private byte getFlags() throws CoreException {
-		return pdom.getDB().getByte(record + FLAGS);
+		return getDB().getByte(record + FLAGS);
 	}
 	
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCFunctionType;
 import org.eclipse.core.runtime.CoreException;
@@ -66,27 +66,27 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	
 	IPointerType thisType;  // Cached value
 	
-	protected PDOMCPPFunctionType(PDOM pdom, int offset) {
-		super(pdom, offset);
+	protected PDOMCPPFunctionType(PDOMLinkage linkage, int offset) {
+		super(linkage, offset);
 	}
 	
-	protected PDOMCPPFunctionType(PDOM pdom, PDOMNode parent, ICPPFunctionType type)
+	protected PDOMCPPFunctionType(PDOMLinkage linkage, PDOMNode parent, ICPPFunctionType type)
 			throws CoreException {
-		super(pdom, parent, type);
+		super(linkage, parent, type);
 		setThisType(type.getThisType());
 	}
 
 	private void setThisType(IPointerType type) throws CoreException {
-		PDOMNode typeNode = getLinkageImpl().addType(this, type);
+		PDOMNode typeNode = getLinkage().addType(this, type);
 		if (typeNode != null) {
-			pdom.getDB().putInt(record + THIS_TYPE, typeNode.getRecord());
+			getDB().putInt(record + THIS_TYPE, typeNode.getRecord());
 		}
 	}
 
 	public IPointerType getThisType() {
 		if (thisType == null) {
 			try {
-				PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + THIS_TYPE));
+				PDOMNode node = getLinkage().getNode(getDB().getInt(record + THIS_TYPE));
 				if (node instanceof IPointerType) {
 					thisType = (IPointerType) node;
 				}

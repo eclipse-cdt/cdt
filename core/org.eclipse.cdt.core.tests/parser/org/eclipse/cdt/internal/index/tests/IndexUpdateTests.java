@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -795,7 +795,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("T", tpars[0].getName());
 			assertNull(tpars[0].getDefaultValue());
-			pdomid= ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getId();
+			pdomid= ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -895,7 +895,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("U", tpars[0].getName());
-			assertEquals(pdomid, ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getId());
+			assertEquals(pdomid, ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getBindingID());
 		} finally {
 			fIndex.releaseReadLock();
 		}

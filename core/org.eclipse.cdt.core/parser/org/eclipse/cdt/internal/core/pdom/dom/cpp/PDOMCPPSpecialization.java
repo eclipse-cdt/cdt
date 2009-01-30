@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 QNX Software Systems and others.
+ * Copyright (c) 2008, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -44,32 +44,32 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	private IBinding fSpecializedCache= null;
 	private ICPPTemplateParameterMap fArgMap;
 	
-	public PDOMCPPSpecialization(PDOM pdom, PDOMNode parent, ICPPSpecialization spec, IPDOMBinding specialized)
+	public PDOMCPPSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPSpecialization spec, IPDOMBinding specialized)
 	throws CoreException {
-		super(pdom, parent, spec.getNameCharArray());
-		pdom.getDB().putInt(record + SPECIALIZED, specialized.getRecord());
+		super(linkage, parent, spec.getNameCharArray());
+		getDB().putInt(record + SPECIALIZED, specialized.getRecord());
 
 		// specializations that are not instances have the same map as their owner.
 		if (this instanceof ICPPTemplateInstance) {
 			int rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
-			pdom.getDB().putInt(record + ARGMAP, rec);
+			getDB().putInt(record + ARGMAP, rec);
 		}
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(spec);
-			pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
+			getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		} catch (DOMException e) {
 		}
 	}
 
-	public PDOMCPPSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	public IBinding getSpecializedBinding() {
 		if (fSpecializedCache == null) {
 			try {
-				int specializedRec = pdom.getDB().getInt(record + SPECIALIZED);
-				fSpecializedCache= (IPDOMBinding) getLinkageImpl().getNode(specializedRec);
+				int specializedRec = getDB().getInt(record + SPECIALIZED);
+				fSpecializedCache= (IPDOMBinding) getLinkage().getNode(specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
@@ -86,7 +86,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		if (fArgMap == null) {
 			try {
 				if (this instanceof ICPPTemplateInstance) {
-					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getInt(record + ARGMAP));
+					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getInt(record + ARGMAP));
 				} else {
 					// specializations that are no instances have the same argmap as their owner.
 					IBinding owner= getOwner();
@@ -102,7 +102,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	}
 	
 	public int getSignatureHash() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_HASH);
+		return getDB().getInt(record + SIGNATURE_HASH);
 	}
 		
 	/*
@@ -116,7 +116,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		result.append(getArgumentMap().toString());
 		result.append(' '); 
 		try {
-			result.append(getConstantNameForValue(getLinkageImpl(), getNodeType()));
+			result.append(getConstantNameForValue(getLinkage(), getNodeType()));
 		} catch (CoreException ce) {
 			result.append(getNodeType());
 		}

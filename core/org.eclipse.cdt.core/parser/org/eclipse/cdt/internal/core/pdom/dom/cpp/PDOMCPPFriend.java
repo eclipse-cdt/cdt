@@ -1,10 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -17,16 +26,15 @@ class PDOMCPPFriend extends PDOMNode {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 8;
 
-	public PDOMCPPFriend(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPFriend(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
-	public PDOMCPPFriend(PDOM pdom, PDOMName friendSpec) throws CoreException {
-		super(pdom, null);
-		Database db = pdom.getDB();
+	public PDOMCPPFriend(PDOMLinkage linkage, PDOMName friendSpec) throws CoreException {
+		super(linkage, null);
 
 		int friendrec = friendSpec != null ? friendSpec.getRecord() : 0;
-		db.putInt(record + FRIEND_SPECIFIER, friendrec);
+		linkage.getDB().putInt(record + FRIEND_SPECIFIER, friendrec);
 	}
 
 	@Override
@@ -40,8 +48,8 @@ class PDOMCPPFriend extends PDOMNode {
 	}
 
 	public PDOMName getSpecifierName() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FRIEND_SPECIFIER);
-		if (rec != 0) return new PDOMName(pdom, rec);
+		int rec = getDB().getInt(record + FRIEND_SPECIFIER);
+		if (rec != 0) return new PDOMName(getLinkage(), rec);
 		return null;
 	}
 	
@@ -60,16 +68,16 @@ class PDOMCPPFriend extends PDOMNode {
 	
 	public void setNextFriend(PDOMCPPFriend nextFriend) throws CoreException {
 		int rec = nextFriend != null ? nextFriend.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_FRIEND, rec);
+		getDB().putInt(record + NEXT_FRIEND, rec);
 	}
 	
 	public PDOMCPPFriend getNextFriend() throws CoreException {
-		int rec = pdom.getDB().getInt(record + NEXT_FRIEND);
-		return rec != 0 ? new PDOMCPPFriend(pdom, rec) : null;
+		int rec = getDB().getInt(record + NEXT_FRIEND);
+		return rec != 0 ? new PDOMCPPFriend(getLinkage(), rec) : null;
 	}
 
 	public void delete() throws CoreException {
-		pdom.getDB().free(record);
+		getDB().free(record);
 	}
 	
 }

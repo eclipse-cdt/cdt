@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -30,19 +29,19 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= TYPE + 4;
 
-	public PDOMCPPPointerToMemberType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPPointerToMemberType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCPPPointerToMemberType(PDOM pdom, PDOMNode parent, ICPPPointerToMemberType type) throws CoreException {
-		super(pdom, parent, type);
-		Database db = pdom.getDB();
+	public PDOMCPPPointerToMemberType(PDOMLinkage linkage, PDOMNode parent, ICPPPointerToMemberType type) throws CoreException {
+		super(linkage, parent, type);
+		Database db = getDB();
 		
 		// type
 		IType ct = type.getMemberOfClass();
 		int typeRec = 0;
 		if (ct != null) {
-			PDOMNode targetTypeNode = getLinkageImpl().addType(this, ct);
+			PDOMNode targetTypeNode = getLinkage().addType(this, ct);
 			if (targetTypeNode != null)
 				typeRec = targetTypeNode.getRecord();
 		}
@@ -61,7 +60,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 
 	public IType getMemberOfClass() {
 		try {
-			int rec = pdom.getDB().getInt(record + TYPE);
+			int rec = getDB().getInt(record + TYPE);
 			return (IType) getLinkage().getNode(rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

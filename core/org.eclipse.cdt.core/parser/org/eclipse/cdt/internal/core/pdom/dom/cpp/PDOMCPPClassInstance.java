@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -41,16 +41,16 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE + 4;
 	
-	public PDOMCPPClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding orig)
+	public PDOMCPPClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding orig)
 			throws CoreException {
-		super(pdom, parent, classType, orig);
+		super(linkage, parent, classType, orig);
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) classType;
 		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		pdom.getDB().putInt(record + ARGUMENTS, argListRec);
+		getDB().putInt(record + ARGUMENTS, argListRec);
 	}
 	
-	public PDOMCPPClassInstance(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPClassInstance(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override

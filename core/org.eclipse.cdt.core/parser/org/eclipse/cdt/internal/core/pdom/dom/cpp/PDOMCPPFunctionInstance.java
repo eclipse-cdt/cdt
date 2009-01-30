@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -40,13 +40,13 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunctionSpecialization.RECORD_SIZE + 8;
 	
-	public PDOMCPPFunctionInstance(PDOM pdom, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
+	public PDOMCPPFunctionInstance(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, PDOMBinding orig)
 			throws CoreException {
-		super(pdom, parent, function, orig);
+		super(linkage, parent, function, orig);
 
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
 		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		db.putInt(record+ARGUMENTS, argListRec);
 		
 		try {
@@ -57,8 +57,8 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		}
 	}
 
-	public PDOMCPPFunctionInstance(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFunctionInstance(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		}
 		result.append("} "); 
 		try {
-			result.append(getConstantNameForValue(getLinkageImpl(), getNodeType()));
+			result.append(getConstantNameForValue(getLinkage(), getNodeType()));
 		} catch (CoreException ce) {
 			result.append(getNodeType());
 		}

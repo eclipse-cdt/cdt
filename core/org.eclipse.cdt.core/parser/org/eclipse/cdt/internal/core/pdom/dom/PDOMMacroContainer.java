@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,12 +35,12 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
 
-	public PDOMMacroContainer(PDOM pdom, PDOMLinkage linkage, char[] name) throws CoreException {
-		super(pdom, linkage, name);
+	public PDOMMacroContainer(PDOMLinkage linkage, char[] name) throws CoreException {
+		super(linkage, linkage, name);
 	}
 	
-	PDOMMacroContainer(PDOM pdom, int record) {
-		super(pdom, record);
+	PDOMMacroContainer(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 		
 	@Override
@@ -55,7 +54,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 	
 	public boolean isOrphaned() throws CoreException {
-		Database db = pdom.getDB();
+		Database db = getDB();
 		return db.getInt(record + FIRST_DEF_OFFSET) == 0
 			&& db.getInt(record + FIRST_REF_OFFSET) == 0;
 	}
@@ -79,23 +78,23 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 	
 	public PDOMMacro getFirstDefinition() throws CoreException {
-		int namerec = pdom.getDB().getInt(record + FIRST_DEF_OFFSET);
-		return namerec != 0 ? new PDOMMacro(pdom, namerec) : null;
+		int namerec = getDB().getInt(record + FIRST_DEF_OFFSET);
+		return namerec != 0 ? new PDOMMacro(getLinkage(), namerec) : null;
 	}
 	
 	void setFirstDefinition(PDOMMacro macro) throws CoreException {
 		int namerec = macro != null ? macro.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
+		getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
 	}
 	
 	public PDOMMacroReferenceName getFirstReference() throws CoreException {
-		int namerec = pdom.getDB().getInt(record + FIRST_REF_OFFSET);
-		return namerec != 0 ? new PDOMMacroReferenceName(pdom, namerec) : null;
+		int namerec = getDB().getInt(record + FIRST_REF_OFFSET);
+		return namerec != 0 ? new PDOMMacroReferenceName(getLinkage(), namerec) : null;
 	}
 	
 	void setFirstReference(PDOMMacroReferenceName nextName) throws CoreException {
 		int namerec = nextName != null ? nextName.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_REF_OFFSET, namerec);
+		getDB().putInt(record + FIRST_REF_OFFSET, namerec);
 	}
 
 	public IIndexMacro[] getDefinitions() throws CoreException {
@@ -123,7 +122,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	 * @see org.eclipse.cdt.internal.core.index.IIndexFragmentBinding#getFragment()
 	 */
 	public IIndexFragment getFragment() {
-		return pdom;
+		return getPDOM();
 	}
 
 	public IIndexScope getScope() {
@@ -135,7 +134,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 
 	public boolean hasDefinition() throws CoreException {
-		return pdom.getDB().getInt(record + FIRST_DEF_OFFSET) != 0;
+		return getDB().getInt(record + FIRST_DEF_OFFSET) != 0;
 	}
 
 	public IIndexFile getLocalToFile() throws CoreException {

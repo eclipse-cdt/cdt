@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -31,13 +31,13 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecialization 
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner {
 	
-	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
+	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunctionTemplate template, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, template, specialized);
+		super(linkage, parent, template, specialized);
 	}
 
-	public PDOMCPPFunctionTemplateSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override

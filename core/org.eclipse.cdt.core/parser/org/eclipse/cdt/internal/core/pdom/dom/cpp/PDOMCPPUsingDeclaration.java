@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Google, Inc and others.
+ * Copyright (c) 2008, 2009 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -41,31 +40,31 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	
 	private IBinding[] delegates;
 	
-	public PDOMCPPUsingDeclaration(PDOM pdom, PDOMNode parent, ICPPUsingDeclaration using)
+	public PDOMCPPUsingDeclaration(PDOMLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using)
 			throws CoreException {
-		super(pdom, parent, using.getNameCharArray());
+		super(linkage, parent, using.getNameCharArray());
 		IBinding[] delegates= using.getDelegates();
 		int nextRecord = 0;
 		for (int i = delegates.length; --i >= 0;) {
 			PDOMCPPUsingDeclaration simpleUsing = i > 0 ?
-					new PDOMCPPUsingDeclaration(pdom, parent, getNameCharArray()) : this;
-			simpleUsing.setTargetBinding(parent.getLinkageImpl(), delegates[i]);
-			pdom.getDB().putInt(record + NEXT_DELEGATE, nextRecord); 
+					new PDOMCPPUsingDeclaration(linkage, parent, getNameCharArray()) : this;
+			simpleUsing.setTargetBinding(parent.getLinkage(), delegates[i]);
+			getDB().putInt(record + NEXT_DELEGATE, nextRecord); 
 			nextRecord = simpleUsing.getRecord();
 		}
 	}
 
-	public PDOMCPPUsingDeclaration(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPUsingDeclaration(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	private PDOMCPPUsingDeclaration(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
-		super(pdom, parent, name);
+	private PDOMCPPUsingDeclaration(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
+		super(linkage, parent, name);
 	}
 
 	private void setTargetBinding(PDOMLinkage linkage, IBinding delegate) throws CoreException {
-		PDOMBinding target = getLinkageImpl().adaptBinding(delegate);
-		pdom.getDB().putInt(record + TARGET_BINDING, target != null ? target.getRecord() : 0);
+		PDOMBinding target = getLinkage().adaptBinding(delegate);
+		getDB().putInt(record + TARGET_BINDING, target != null ? target.getRecord() : 0);
 	}
 
 	@Override
@@ -99,13 +98,13 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	}
 
 	private PDOMCPPUsingDeclaration getNext() throws CoreException {
-		int nextRecord = pdom.getDB().getInt(record + NEXT_DELEGATE);
-		return nextRecord != 0 ? new PDOMCPPUsingDeclaration(pdom, nextRecord) : null;
+		int nextRecord = getDB().getInt(record + NEXT_DELEGATE);
+		return nextRecord != 0 ? new PDOMCPPUsingDeclaration(getLinkage(), nextRecord) : null;
 	}
 
 	private IBinding getBinding() {
 		try {
-			return (IBinding) getLinkageImpl().getNode(
+			return (IBinding) getLinkage().getNode(
 					getPDOM().getDB().getInt(record + TARGET_BINDING));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -40,19 +40,19 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 
 	protected short fFlags= -1;
 
-	public PDOMCPPBasicType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPBasicType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCPPBasicType(PDOM pdom, PDOMNode parent, ICPPBasicType type) throws CoreException {
-		this(pdom, parent, type, encodeFlags(type));
+	public PDOMCPPBasicType(PDOMLinkage linkage, PDOMNode parent, ICPPBasicType type) throws CoreException {
+		this(linkage, parent, type, encodeFlags(type));
 	}
 
-	protected PDOMCPPBasicType(PDOM pdom, PDOMNode parent, ICPPBasicType type, final short flags) throws CoreException {
-		super(pdom, parent);
+	protected PDOMCPPBasicType(PDOMLinkage linkage, PDOMNode parent, ICPPBasicType type, final short flags) throws CoreException {
+		super(linkage, parent);
 
 		fFlags= flags;
-		Database db = pdom.getDB();
+		Database db = getDB();
 		db.putShort(record + TYPE_ID, getTypeCode(type));
 		db.putShort(record + QUALIFIER_FLAGS, flags);
 	}
@@ -94,7 +94,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 
 	public int getType() {
 		try {
-			return pdom.getDB().getShort(record + TYPE_ID);
+			return getDB().getShort(record + TYPE_ID);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -109,7 +109,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	public int getQualifierBits() {
 		if (fFlags == -1) {
 			try {
-				fFlags= pdom.getDB().getShort(record + QUALIFIER_FLAGS);
+				fFlags= getDB().getShort(record + QUALIFIER_FLAGS);
 			}
 			catch (CoreException e) {
 				CCorePlugin.log(e);

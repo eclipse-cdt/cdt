@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -62,13 +61,13 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
 	
-	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, IVariable variable) throws CoreException {
-		super(pdom, parent, variable.getNameCharArray());
+	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
+		super(linkage, parent, variable.getNameCharArray());
 		
 		try {
 			// Find the type record
-			Database db = pdom.getDB();
-			setType(parent.getLinkageImpl(), variable.getType());
+			Database db = getDB();
+			setType(parent.getLinkage(), variable.getType());
 			db.putByte(record + ANNOTATIONS, encodeFlags(variable));
 			setValue(db, variable);
 		} catch (DOMException e) {
@@ -85,7 +84,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			IType mytype= getType();
 			int valueRec= db.getInt(record + VALUE_OFFSET);
@@ -107,15 +106,15 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		PDOMNode typeNode = linkage.addType(this, newType);
-		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	protected byte encodeFlags(IVariable variable) throws DOMException {
 		return PDOMCPPAnnotation.encodeAnnotation(variable);
 	}
 	
-	public PDOMCPPVariable(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPVariable(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
 	@Override
@@ -135,8 +134,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	public IType getType() {
 		try {
-			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
-			return (IType)getLinkageImpl().getNode(typeRec);
+			int typeRec = getDB().getInt(record + TYPE_OFFSET);
+			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -145,7 +144,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	
 	public IValue getInitialValue() {
 		try {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
 			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {

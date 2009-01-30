@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	final public int compare(int record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
-		IString rhsName= PDOMNamedNode.getDBName(linkage.getPDOM(), record);
+		IString rhsName= PDOMNamedNode.getDBName(linkage.getDB(), record);
 		return compare(rhsName);
 	}
 

@@ -329,9 +329,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	}
 	
 	public static Object createInstanceCacheKey(ICompositesFactory cf,IIndexFragmentBinding rbinding) {
-		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getId());
+		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getBindingID());
 	}
 	public static Object createSpecializationKey(ICompositesFactory cf,IIndexFragmentBinding rbinding) {
-		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getId()+1);
+		return new Key(Thread.currentThread().getId(), cf.hashCode(), rbinding.getBindingID()+1);
 	}
 }

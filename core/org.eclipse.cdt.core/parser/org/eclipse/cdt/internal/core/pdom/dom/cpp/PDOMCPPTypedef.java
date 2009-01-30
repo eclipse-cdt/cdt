@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -39,17 +38,17 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPTypedef(PDOM pdom, PDOMNode parent, ITypedef typedef)	throws CoreException {
-		super(pdom, parent, typedef.getNameCharArray());
+	public PDOMCPPTypedef(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef)	throws CoreException {
+		super(linkage, parent, typedef.getNameCharArray());
 		try {
-			setType(parent.getLinkageImpl(), typedef.getType());
+			setType(parent.getLinkage(), typedef.getType());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 
-	public PDOMCPPTypedef(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPTypedef(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
 	@Override
@@ -75,7 +74,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 			linkage.deleteType((IType) typeNode, record);
 			typeNode= null;
 		}
-		pdom.getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	private boolean introducesRecursion(IType type, int parentRec, char[] tdname) throws DOMException {
@@ -128,7 +127,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

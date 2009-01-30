@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -46,19 +46,19 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 
-	public PDOMCPPParameterSpecialization(PDOM pdom, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, int typeRecord)
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, int typeRecord)
 	throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) param, specialized);
-		Database db = pdom.getDB();
+		super(linkage, parent, (ICPPSpecialization) param, specialized);
+		Database db = getDB();
 		db.putInt(record + NEXT_PARAM, 0);
 		db.putInt(record + TYPE, typeRecord);
 	}
 
-	public PDOMCPPParameterSpecialization(PDOM pdom, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, IType type)
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, IType type)
 			throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) param, specialized);
+		super(linkage, parent, (ICPPSpecialization) param, specialized);
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
 		
@@ -66,7 +66,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 			if (type == null) 
 				type= param.getType();
 			if (type != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, type);
+				PDOMNode typeNode = getLinkage().addType(this, type);
 				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 			}
 		} catch (DOMException e) {
@@ -74,8 +74,8 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		}
 	}
 	
-	public PDOMCPPParameterSpecialization(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 	
 	@Override
@@ -90,17 +90,17 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 
 	public void setNextParameter(PDOMCPPParameterSpecialization nextParam) throws CoreException {
 		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_PARAM, rec);
+		getDB().putInt(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCPPParameterSpecialization getNextParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCPPParameterSpecialization(pdom, rec) : null;
+		int rec = getDB().getInt(record + NEXT_PARAM);
+		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec) : null;
 	}
 	
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

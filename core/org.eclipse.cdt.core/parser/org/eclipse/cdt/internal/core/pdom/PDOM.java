@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -221,7 +222,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
-	private Map<String, PDOMLinkage> fLinkageIDCache = new HashMap<String, PDOMLinkage>();
+	private Map<Integer, PDOMLinkage> fLinkageIDCache = new HashMap<Integer, PDOMLinkage>();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
 	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache;
@@ -269,8 +270,41 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return version >= MIN_SUPPORTED_VERSION && version <= MAX_SUPPORTED_VERSION;
 	}
 
+	private void readLinkages() throws CoreException {
+		int record= getFirstLinkageRecord();
+		while (record != 0) {
+			String linkageID= PDOMLinkage.getLinkageID(this, record).getString();
+			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);
+			if (factory != null) {
+				PDOMLinkage linkage= factory.getLinkage(this, record);
+				fLinkageIDCache.put(linkage.getLinkageID(), linkage);
+			}
+			record= PDOMLinkage.getNextLinkageRecord(this, record);
+		}
+	}
+
+	private PDOMLinkage createLinkage(int linkageID) throws CoreException {
+		PDOMLinkage pdomLinkage= fLinkageIDCache.get(linkageID);
+		if (pdomLinkage == null) {
+			final String linkageName= Linkage.getLinkageName(linkageID);
+			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageName);			
+			if (factory != null) {
+				return factory.createLinkage(this);
+			}
+		}
+		return pdomLinkage;
+	}
+	
+	public PDOMLinkage getLinkage(int linkageID) throws CoreException {
+		return fLinkageIDCache.get(linkageID);
+	}
+
+	private Collection<PDOMLinkage> getLinkageList() {
+		return fLinkageIDCache.values();
+	}
+
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		for (PDOMLinkage linkage : getLinkageList()) {
 			linkage.accept(visitor);
 		}
 	}
@@ -306,7 +340,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return PDOMFile.findFile(this, getFileIndex(), location, linkageID, locationConverter);
+		PDOMLinkage linkage= getLinkage(linkageID);
+		if (linkage == null)
+			return null;
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
+	}
+	
+	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location) throws CoreException {
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
 
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
@@ -320,7 +361,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				return 0;
 			}
 			public boolean visit(int record) throws CoreException {
-				PDOMFile file = new PDOMFile(PDOM.this, record);
+				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);
 				locations.add(file);
 				return true;
 			}
@@ -329,9 +370,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 	
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		IIndexFragmentFile file = getFile(linkageID, location);
+		PDOMLinkage linkage= createLinkage(linkageID);
+		IIndexFragmentFile file = getFile(linkage, location);
 		if (file == null) {
-			PDOMFile pdomFile = new PDOMFile(this, location, linkageID);
+			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
 		}
@@ -472,7 +514,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			monitor= new NullProgressMonitor();
 		}
 		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				try {
 					linkage.accept(finder);
@@ -491,11 +533,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		MacroContainerPatternCollector finder = new MacroContainerPatternCollector(this, pattern, monitor);
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		List<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
+		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				try {
+					MacroContainerPatternCollector finder = new MacroContainerPatternCollector(linkage, pattern, monitor);
 					linkage.getMacroIndex().accept(finder);
+					result.addAll(Arrays.asList(finder.getMacroContainers()));
 				} catch (CoreException e) {
 					if (e.getStatus() != Status.OK_STATUS)
 						throw e;
@@ -504,7 +548,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
-		return finder.getMacroContainers();
+		return  result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
 	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
@@ -513,7 +557,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		ArrayList<PDOMBinding> result= new ArrayList<PDOMBinding>();
 		ArrayList<PDOMNamedNode> nodes= new ArrayList<PDOMNamedNode>();
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				nodes.add(linkage);
 				for (int i=0; i < names.length-1; i++) {
@@ -539,80 +583,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
-	private void readLinkages() throws CoreException {
-		// populate the linkage cache
-		int record= getFirstLinkageRecord();
-		while (record != 0) {
-			String linkageID= PDOMLinkage.getId(this, record).getString();
-			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);
-			if (factory != null) {
-				PDOMLinkage linkage= factory.getLinkage(this, record);
-				fLinkageIDCache.put(linkageID, linkage);
-			}
-			record= PDOMLinkage.getNextLinkageRecord(this, record);
-		}
-	}
-
-	public PDOMLinkage getLinkage(String linkageID) {
-		return fLinkageIDCache.get(linkageID);
-	}
-
-	public PDOMLinkage createLinkage(String linkageID) throws CoreException {
-		PDOMLinkage pdomLinkage= fLinkageIDCache.get(linkageID);
-		if (pdomLinkage == null) {
-			// Need to create it
-			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);			
-			if (factory != null) {
-				return factory.createLinkage(this);
-			}
-		}
-		return pdomLinkage;
-	}
-
-	public PDOMLinkage getLinkage(int record) throws CoreException {
-		if (record == 0)
-			return null;
-
-		// First check the cache. We do a linear search since there will be very few linkages
-		// in a given database.
-		Iterator<PDOMLinkage> i = fLinkageIDCache.values().iterator();
-		while (i.hasNext()) {
-			PDOMLinkage linkage = i.next();
-			if (linkage.getRecord() == record)
-				return linkage;
-		}
-
-		String id = PDOMLinkage.getId(this, record).getString();
-		return createLinkage(id);
-	}
-
+	
 	private int getFirstLinkageRecord() throws CoreException {
 		return db.getInt(LINKAGES);
 	}
 
 	public IIndexLinkage[] getLinkages() {
-		Collection<PDOMLinkage> values = fLinkageIDCache.values();
+		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new IIndexLinkage[values.size()]);
 	}
 	
 	public PDOMLinkage[] getLinkageImpls() {
-		Collection<PDOMLinkage> values = fLinkageIDCache.values();
+		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new PDOMLinkage[values.size()]);
 	}
 
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
-		fLinkageIDCache.put(linkage.getLinkageName(), linkage);
-	}
-
-	public PDOMBinding getBinding(int record) throws CoreException {
-		if (record == 0)
-			return null;
-		else {
-			PDOMNode node = PDOMNode.getLinkage(this, record).getNode(record);
-			return node instanceof PDOMBinding ? (PDOMBinding)node : null;
-		}
+		fLinkageIDCache.put(linkage.getLinkageID(), linkage);
 	}
 
 	// Read-write lock rules. Readers don't conflict with other readers,
@@ -726,7 +715,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	protected PDOMLinkage adaptLinkage(ILinkage linkage) throws CoreException {
-		return fLinkageIDCache.get(linkage.getLinkageName());
+		return fLinkageIDCache.get(linkage.getLinkageID());
 	}
 
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
@@ -849,7 +838,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
 				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
@@ -874,7 +863,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
-		for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
 				BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
@@ -899,16 +888,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
-		MacroContainerCollector visitor = new MacroContainerCollector(this, prefix, isPrefix, isCaseSensitive);
-		visitor.setMonitor(monitor);
 		try {
-			for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+			for (PDOMLinkage linkage : getLinkageList()) {
 				if (filter.acceptLinkage(linkage)) {
+					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, isCaseSensitive);
+					visitor.setMonitor(monitor);
 					linkage.getMacroIndex().accept(visitor);
+					for (PDOMMacroContainer mcont : visitor.getMacroList()) {
+						result.addAll(Arrays.asList(mcont.getDefinitions()));
+					}
 				}
-			}
-			for (PDOMMacroContainer mcont : visitor.getMacroList()) {
-				result.addAll(Arrays.asList(mcont.getDefinitions()));
 			}
 		}
 		catch (OperationCanceledException e) {
@@ -1004,7 +993,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		final int inputLinkage= binding.getLinkage().getLinkageID();
 		if (inputLinkage == ILinkage.C_LINKAGE_ID || inputLinkage == ILinkage.CPP_LINKAGE_ID) {
 			final char[] name= binding.getNameCharArray();
-			for (PDOMLinkage linkage : fLinkageIDCache.values()) {
+			for (PDOMLinkage linkage : getLinkageList()) {
 				final int linkageID = linkage.getLinkageID();
 				if (linkageID != inputLinkage) {
 					if (linkageID == ILinkage.C_LINKAGE_ID || linkageID == ILinkage.CPP_LINKAGE_ID) {
@@ -1021,7 +1010,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	private PDOMBinding[] getCBindingForCPP(IBinding binding) throws CoreException {
 		PDOMBinding result= null;
-		PDOMLinkage c= getLinkage(ILinkage.C_LINKAGE_NAME);
+		PDOMLinkage c= getLinkage(ILinkage.C_LINKAGE_ID);
 		if (c == null) {
 			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 		}
@@ -1029,29 +1018,29 @@ public class PDOM extends PlatformObject implements IPDOM {
 			if (binding instanceof ICPPFunction) {
 				ICPPFunction func = (ICPPFunction) binding;
 				if (func.isExternC()) {
-					result = FindBinding.findBinding(c.getIndex(), this, func.getNameCharArray(),
-							new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
+					result = FindBinding.findBinding(c.getIndex(), c,
+							func.getNameCharArray(), new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
 				}
 			} else if (binding instanceof ICPPVariable) {
 				ICPPVariable var = (ICPPVariable) binding;
 				if (var.isExternC()) {
-					result = FindBinding.findBinding(c.getIndex(), this, var.getNameCharArray(),
-							new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
+					result = FindBinding.findBinding(c.getIndex(), c,
+							var.getNameCharArray(), new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
 				}
 			} else if (binding instanceof IEnumeration) {
-				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
-						new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
+				result= FindBinding.findBinding(c.getIndex(), c, 
+						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
 			} else if (binding instanceof IEnumerator) {
-				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
-						new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
+				result= FindBinding.findBinding(c.getIndex(), c, 
+						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
 			} else if (binding instanceof ITypedef) {
-				result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(), 
-						new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
+				result= FindBinding.findBinding(c.getIndex(), c, 
+						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
 			} else if (binding instanceof ICompositeType) {
 				final int key= ((ICompositeType) binding).getKey();
 				if (key == ICompositeType.k_struct || key == ICompositeType.k_union) {
-					result= FindBinding.findBinding(c.getIndex(), this, binding.getNameCharArray(),
-						new int[] {IIndexCBindingConstants.CSTRUCTURE }, 0);
+					result= FindBinding.findBinding(c.getIndex(), c,
+						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CSTRUCTURE }, 0);
 					if (result instanceof ICompositeType && ((ICompositeType) result).getKey() != key) {
 						result= null;
 					}
@@ -1063,7 +1052,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	private PDOMBinding[] getCPPBindingForC(IBinding binding) throws CoreException {
-		PDOMLinkage cpp= getLinkage(ILinkage.CPP_LINKAGE_NAME);
+		PDOMLinkage cpp= getLinkage(ILinkage.CPP_LINKAGE_ID);
 		if (cpp == null) {
 			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 		}

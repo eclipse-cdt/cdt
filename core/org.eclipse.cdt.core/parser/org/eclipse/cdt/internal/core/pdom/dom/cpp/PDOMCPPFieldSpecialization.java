@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -49,15 +48,14 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 	
-	public PDOMCPPFieldSpecialization(PDOM pdom, PDOMNode parent,
+	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, PDOMNode parent,
 			ICPPField field, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, (ICPPSpecialization) field, specialized);
+		super(linkage, parent, (ICPPSpecialization) field, specialized);
 		
 		try {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			IType type = field.getType();
-			final PDOMLinkage linkage = getLinkage();
 			PDOMNode typeNode = linkage.addType(this, type);
 			if (typeNode != null) {
 				db.putInt(record + TYPE, typeNode.getRecord());
@@ -70,8 +68,8 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 
-	public PDOMCPPFieldSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -94,7 +92,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -106,7 +104,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 
 	public IValue getInitialValue() {
 		try {
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			int valRec = db.getInt(record + VALUE_OFFSET);
 			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {

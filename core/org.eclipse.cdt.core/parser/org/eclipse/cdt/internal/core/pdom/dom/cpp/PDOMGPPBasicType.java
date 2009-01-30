@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,18 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 class PDOMGPPBasicType extends PDOMCPPBasicType implements IGPPBasicType {
 
-	public PDOMGPPBasicType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMGPPBasicType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMGPPBasicType(PDOM pdom, PDOMNode parent, IGPPBasicType type) throws CoreException {
-		super(pdom, parent, type, encodeGPPFlags(type));
+	public PDOMGPPBasicType(PDOMLinkage linkage, PDOMNode parent, IGPPBasicType type) throws CoreException {
+		super(linkage, parent, type, encodeGPPFlags(type));
 	}
 		
 	@Override

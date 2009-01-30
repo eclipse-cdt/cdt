@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -32,13 +32,13 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPMethodInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPConstructorInstance(PDOM pdom, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
+	public PDOMCPPConstructorInstance(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
 			throws CoreException {
-		super(pdom, parent, method, instantiated);
+		super(linkage, parent, method, instantiated);
 	}
 	
-	public PDOMCPPConstructorInstance(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPConstructorInstance(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override

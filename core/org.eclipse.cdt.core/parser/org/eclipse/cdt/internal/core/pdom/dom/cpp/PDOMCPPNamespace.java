@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -53,12 +54,12 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 
-	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
-		super(pdom, parent, namespace.getNameCharArray());
+	public PDOMCPPNamespace(PDOMLinkage linkage, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
+		super(linkage, parent, namespace.getNameCharArray());
 	}
 
-	public PDOMCPPNamespace(PDOM pdom, int record) throws CoreException {
-		super(pdom, record);
+	public PDOMCPPNamespace(PDOMLinkage linkage, int record) throws CoreException {
+		super(linkage, record);
 	}
 
 	public EScopeKind getKind() {
@@ -76,7 +77,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	public BTree getIndex() throws CoreException {
-		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getLinkageImpl().getIndexComparator());
+		return new BTree(getDB(), record + INDEX_OFFSET, getLinkage().getIndexComparator());
 	}
 
 	@Override
@@ -89,7 +90,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 					return 0;
 				}
 				public boolean visit(int record) throws CoreException {
-					PDOMBinding binding = pdom.getBinding(record);
+					PDOMBinding binding = getLinkage().getBinding(record);
 					if (binding != null) {
 						if (visitor.visit(binding))
 							binding.accept(visitor);
@@ -116,7 +117,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public IBinding[] find(String name) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(),  name.toCharArray(),
+			BindingCollector visitor = new BindingCollector(getLinkage(),  name.toCharArray(),
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
@@ -148,7 +149,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			if (!prefixLookup) {
 				return getBindingsViaCache(name.getLookupKey());
 			}
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.getLookupKey(),
+			BindingCollector visitor= new BindingCollector(getLinkage(), name.getLookupKey(),
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			IBinding[] bindings = visitor.getBindings();
@@ -163,12 +164,13 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	private IBinding[] getBindingsViaCache(final char[] name) throws CoreException {
+		final PDOM pdom = getPDOM();
 		final String key= pdom.createKeyForCache(record, name);
 		IBinding[] result= (IBinding[]) pdom.getCachedResult(key);
 		if (result != null) {
 			return result;
 		}
-		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name,
+		BindingCollector visitor = new BindingCollector(getLinkage(), name,
 				IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
 		getIndex().accept(visitor);
 		result = visitor.getBindings();
@@ -190,7 +192,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 					return 0;
 				}
 				public boolean visit(int record) throws CoreException {
-					preresult.add(getLinkageImpl().getNode(record));
+					preresult.add(getLinkage().getNode(record));
 					return true;
 				}
 			});

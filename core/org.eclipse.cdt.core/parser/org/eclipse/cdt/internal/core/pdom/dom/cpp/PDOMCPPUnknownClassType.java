@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Google, Inc and others.
+ * Copyright (c) 2008, 2009 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -59,15 +58,15 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	
 	private ICPPScope unknownScope;
 
-	public PDOMCPPUnknownClassType(PDOM pdom, PDOMNode parent, ICPPUnknownClassType classType) throws CoreException {
-		super(pdom, parent, classType.getNameCharArray());
+	public PDOMCPPUnknownClassType(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassType classType) throws CoreException {
+		super(linkage, parent, classType.getNameCharArray());
 
 		setKind(classType);
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
-	public PDOMCPPUnknownClassType(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPUnknownClassType(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	public EScopeKind getKind() {
@@ -85,7 +84,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 
 	private void setKind(ICPPClassType ct) throws CoreException {
 		try {
-			pdom.getDB().putByte(record + KEY, (byte) ct.getKey());
+			getDB().putByte(record + KEY, (byte) ct.getKey());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -93,7 +92,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
 	}
 
@@ -110,7 +109,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);
 	}
 

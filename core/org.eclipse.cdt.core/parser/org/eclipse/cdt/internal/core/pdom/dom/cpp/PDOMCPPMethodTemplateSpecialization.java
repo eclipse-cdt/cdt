@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPMethodTemplateSpecialization extends
 		PDOMCPPFunctionTemplateSpecialization implements ICPPMethod {
 	
-	public PDOMCPPMethodTemplateSpecialization(PDOM pdom, PDOMNode parent, ICPPMethod method, PDOMBinding specialized)
+	public PDOMCPPMethodTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding specialized)
 			throws CoreException {
-		super(pdom, parent, (ICPPFunctionTemplate) method, specialized);
+		super(linkage, parent, (ICPPFunctionTemplate) method, specialized);
 	}
 
-	public PDOMCPPMethodTemplateSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPMethodTemplateSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override

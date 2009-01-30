@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * Visitor to find a macro container in a BTree.
  */
 public final class MacroContainerFinder implements IBTreeVisitor {
-	private final PDOM fPdom;
+	private final PDOMLinkage fLinkage;
 	private final char[] fName;
 	private PDOMMacroContainer fMacroContainer;
 		
@@ -27,13 +26,13 @@ public final class MacroContainerFinder implements IBTreeVisitor {
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
-	public MacroContainerFinder(PDOM pdom, char[] name) {
+	public MacroContainerFinder(PDOMLinkage linkage, char[] name) {
 		fName= name;
-		fPdom= pdom;
+		fLinkage= linkage;
 	}
 		
 	final public int compare(int record) throws CoreException {
-		IString name= PDOMNamedNode.getDBName(fPdom, record);
+		IString name= PDOMNamedNode.getDBName(fLinkage.getDB(), record);
 		return compare(name);
 	}
 
@@ -44,7 +43,7 @@ public final class MacroContainerFinder implements IBTreeVisitor {
 	final public boolean visit(int record) throws CoreException {
 		if (record == 0)
 			return true;
-		fMacroContainer= new PDOMMacroContainer(fPdom, record);
+		fMacroContainer= new PDOMMacroContainer(fLinkage, record);
 		return false; // we are done.
 	}
 	

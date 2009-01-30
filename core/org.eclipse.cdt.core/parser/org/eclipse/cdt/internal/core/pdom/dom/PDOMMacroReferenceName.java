@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
  * Represents declarations, definitions and references to bindings, except for macros.
  */
 public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFileLocation {
-	private final PDOM pdom;
+	private final PDOMLinkage linkage;
 	private final int record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
@@ -43,10 +42,10 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	private static final int RECORD_SIZE = 26;	
 
-	public PDOMMacroReferenceName(PDOM pdom, IASTName name, PDOMFile file,
+	public PDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMFile file,
 			PDOMMacroContainer container) throws CoreException {
-		this.pdom = pdom;
-		Database db = pdom.getDB();
+		this.linkage = linkage;
+		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
 		
 		db.putInt(record + CONTAINER_REC_OFFSET, container.getRecord());
@@ -59,8 +58,8 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		container.addReference(this);
 	}
 
-	public PDOMMacroReferenceName(PDOM pdom, int nameRecord) {
-		this.pdom = pdom;
+	public PDOMMacroReferenceName(PDOMLinkage linkage, int nameRecord) {
+		this.linkage = linkage;
 		this.record = nameRecord;
 	}
 	
@@ -69,21 +68,21 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 	}
 
 	private int getRecField(int offset) throws CoreException {
-		return pdom.getDB().getInt(record + offset);
+		return linkage.getDB().getInt(record + offset);
 	}
 
 	private void setRecField(int offset, int fieldrec) throws CoreException {
-		pdom.getDB().putInt(record + offset, fieldrec);
+		linkage.getDB().putInt(record + offset, fieldrec);
 	}
 
 	public PDOMMacroContainer getContainer() throws CoreException {
 		int bindingrec = getRecField(CONTAINER_REC_OFFSET);
-		return new PDOMMacroContainer(pdom, bindingrec);
+		return new PDOMMacroContainer(linkage, bindingrec);
 	}
 
 	private PDOMMacroReferenceName getNameField(int offset) throws CoreException {
 		int namerec = getRecField(offset);
-		return namerec != 0 ? new PDOMMacroReferenceName(pdom, namerec) : null;
+		return namerec != 0 ? new PDOMMacroReferenceName(linkage, namerec) : null;
 	}
 
 	private void setNameField(int offset, PDOMMacroReferenceName name) throws CoreException {
@@ -108,8 +107,8 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 	}
 	
 	public PDOMFile getFile() throws CoreException {
-		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
-		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
+		int filerec = linkage.getDB().getInt(record + FILE_REC_OFFSET);
+		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
 	}
 	
 	PDOMMacroReferenceName getNextInFile() throws CoreException {
@@ -205,7 +204,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	public int getNodeLength() {
 		try {
-			return (pdom.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
+			return (linkage.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -214,7 +213,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	public int getNodeOffset() {
 		try {
-			return pdom.getDB().getInt(record + NODE_OFFSET_OFFSET);
+			return linkage.getDB().getInt(record + NODE_OFFSET_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -235,11 +234,11 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 			nextName.setPrevInContainer(prevName);
 
 		// Delete our record
-		pdom.getDB().free(record);
+		linkage.getDB().free(record);
 	}
 
 	public IIndexFragment getIndexFragment() {
-		return pdom;
+		return linkage.getPDOM();
 	}
 
 	public IIndexName[] getEnclosedNames() throws CoreException {

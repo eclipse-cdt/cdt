@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -49,22 +48,22 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
 	
-	public PDOMCParameter(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCParameter(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCParameter(PDOM pdom, PDOMNode parent, IParameter param)
+	public PDOMCParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param)
 			throws CoreException {
-		super(pdom, parent, param.getNameCharArray());
+		super(linkage, parent, param.getNameCharArray());
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
 		try {
 			if(!(param instanceof IProblemBinding)) {
 				IType type = param.getType();
 				if (type != null) {
-					PDOMNode typeNode = getLinkageImpl().addType(this, type);
+					PDOMNode typeNode = getLinkage().addType(this, type);
 					db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 				}
 				byte flags = encodeFlags(param);
@@ -87,12 +86,12 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	
 	public void setNextParameter(PDOMCParameter nextParam) throws CoreException {
 		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_PARAM, rec);
+		getDB().putInt(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCParameter getNextParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCParameter(pdom, rec) : null;
+		int rec = getDB().getInt(record + NEXT_PARAM);
+		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
 	}
 	
 	public IASTInitializer getDefaultValue() {
@@ -102,8 +101,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
 	public IType getType() {
 		try {
-			PDOMLinkage linkage = getLinkageImpl(); 
-			PDOMNode node = linkage.getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMLinkage linkage = getLinkage(); 
+			PDOMNode node = linkage.getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -153,7 +152,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	}
 
 	public IIndexFragment getFragment() {
-		return pdom;
+		return getPDOM();
 	}
 
 	public boolean hasDefinition() throws CoreException {
@@ -222,7 +221,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
 	protected boolean hasFlag(byte flag, boolean defValue) {
 		try {
-			byte myflags= pdom.getDB().getByte(record + FLAGS);
+			byte myflags= getDB().getByte(record + FLAGS);
 			return (myflags & flag) == flag;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Corporation and others.
+ * Copyright (c) 2006, 2009 Symbian Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,11 +36,11 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMBinding.RECORD_SIZE + 0;
 	
-	public PDOMCPPBinding(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPBinding(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
-	public PDOMCPPBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCPPBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
+		super(linkage, parent, name);
 	}
 			
 	protected boolean isSameOwner(IBinding owner1, IBinding owner2) {

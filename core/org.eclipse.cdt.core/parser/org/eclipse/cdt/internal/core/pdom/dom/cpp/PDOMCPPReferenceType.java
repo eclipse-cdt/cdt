@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPReferenceTypeClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -37,21 +36,21 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 	
-	public PDOMCPPReferenceType(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPReferenceType(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCPPReferenceType(PDOM pdom, PDOMNode parent, ICPPReferenceType type) throws CoreException {
-		super(pdom, parent);
+	public PDOMCPPReferenceType(PDOMLinkage linkage, PDOMNode parent, ICPPReferenceType type) throws CoreException {
+		super(linkage, parent);
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 		
 		try {
 			// type
 			int typeRec = 0;
 			if (type != null) {
 				IType targetType = type.getType();
-				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
+				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
 				if (targetTypeNode != null)
 					typeRec = targetTypeNode.getRecord();
 			}
@@ -73,7 +72,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

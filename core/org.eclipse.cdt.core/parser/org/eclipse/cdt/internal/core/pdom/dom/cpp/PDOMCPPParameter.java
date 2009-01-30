@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -74,15 +73,15 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
-	public PDOMCPPParameter(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMCPPParameter(PDOMLinkage linkage, int record) {
+		super(linkage, record);
 	}
 
-	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param, IType type)
+	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, IType type)
 	throws CoreException {
-		super(pdom, parent, param.getNameCharArray());
+		super(linkage, parent, param.getNameCharArray());
 
-		Database db = pdom.getDB();
+		Database db = getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
@@ -92,7 +91,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 			if (type == null) 
 				type= param.getType();
 			if (type != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, type);
+				PDOMNode typeNode = getLinkage().addType(this, type);
 				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 			}
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
@@ -102,11 +101,11 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		}
 	}
 	
-	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param, int typeRecord)
+	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, int typeRecord)
 			throws CoreException {
-		super(pdom, parent, param.getNameCharArray());
+		super(linkage, parent, param.getNameCharArray());
 		
-		Database db = pdom.getDB();
+		Database db = getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
@@ -144,12 +143,12 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	
 	public void setNextParameter(PDOMCPPParameter nextParam) throws CoreException {
 		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_PARAM, rec);
+		getDB().putInt(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCPPParameter getNextParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
+		int rec = getDB().getInt(record + NEXT_PARAM);
+		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec) : null;
 	}
 	
 	public String[] getQualifiedName() {
@@ -171,7 +170,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -234,7 +233,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	private boolean hasFlag(byte flag, boolean defValue, int offset) {
 		try {
-			byte myflags= pdom.getDB().getByte(record + offset);
+			byte myflags= getDB().getByte(record + offset);
 			return (myflags & flag) == flag;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -243,7 +242,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 	
 	public IIndexFragment getFragment() {
-		return pdom;
+		return getPDOM();
 	}	
 	
 	public boolean hasDefinition() throws CoreException {

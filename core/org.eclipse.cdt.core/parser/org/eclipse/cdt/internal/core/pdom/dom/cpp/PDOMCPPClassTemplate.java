@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -58,20 +57,20 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private ICPPTemplateParameter[] params;  // Cached template parameters.
 	
-	public PDOMCPPClassTemplate(PDOM pdom, PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template)	throws CoreException, DOMException {
-		super(pdom, parent, template);
+	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template)	throws CoreException, DOMException {
+		super(linkage, parent, template);
 		
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
-		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(pdom, this, origParams);
+		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		int rec= PDOMTemplateParameterArray.putArray(db, params);
 		db.putInt(record + PARAMETERS, rec);
 		db.putShort(record + RELEVANT_PARAMETERS, (short) params.length);
 		linkage.new ConfigureTemplateParameters(origParams, params);
 	}
 
-	public PDOMCPPClassTemplate(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPClassTemplate(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 
 	@Override
@@ -87,7 +86,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				final Database db = pdom.getDB();
+				final Database db = getDB();
 				int rec= db.getInt(record + PARAMETERS);
 				int count= Math.max(0, db.getShort(record + RELEVANT_PARAMETERS));
 				if (rec == 0 || count == 0) {
@@ -124,7 +123,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 
 	private void updateTemplateParameters(PDOMLinkage linkage, ICPPTemplateParameter[] newParams) throws CoreException, DOMException {
-		final Database db = pdom.getDB();
+		final Database db = getDB();
 		int rec= db.getInt(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] allParams;
 		if (rec == 0) {
@@ -170,7 +169,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 					newAllParams[j]= allParams[idx];
 					allParams[idx]= null;
 				} else {
-					newAllParams[j]= PDOMTemplateParameterArray.createPDOMTemplateParameter(pdom, this, newParams[j]);
+					newAllParams[j]= PDOMTemplateParameterArray.createPDOMTemplateParameter(getLinkage(), this, newParams[j]);
 				}
 			}
 			int pos= newParamLength;
@@ -197,14 +196,14 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 
 	private PDOMCPPClassTemplatePartialSpecialization getFirstPartial() throws CoreException {
-		int value = pdom.getDB().getInt(record + FIRST_PARTIAL);
-		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(pdom, value) : null;
+		int value = getDB().getInt(record + FIRST_PARTIAL);
+		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void addPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
 		PDOMCPPClassTemplatePartialSpecialization first = getFirstPartial();
 		partial.setNextPartial(first);
-		pdom.getDB().putInt(record + FIRST_PARTIAL, partial.getRecord());
+		getDB().putInt(record + FIRST_PARTIAL, partial.getRecord());
 	}
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {

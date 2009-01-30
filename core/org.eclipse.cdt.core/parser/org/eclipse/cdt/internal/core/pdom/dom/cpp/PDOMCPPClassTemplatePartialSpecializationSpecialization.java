@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -41,20 +41,20 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	
 	private ICPPClassTemplate fPrimaryTemplate;
 
-	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOM pdom,
-			PDOMCPPLinkage linkage, PDOMNode parent, PDOMBinding specialized, 
-			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplateSpecialization primary) throws CoreException {
-		super(pdom, parent, partial, specialized);		
+	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMCPPLinkage linkage,
+			PDOMNode parent, PDOMBinding specialized, ICPPClassTemplatePartialSpecialization partial, 
+			PDOMCPPClassTemplateSpecialization primary) throws CoreException {
+		super(linkage, parent, partial, specialized);		
 
-		pdom.getDB().putInt(record + PRIMARY_TEMPLATE, primary.getRecord());
+		getDB().putInt(record + PRIMARY_TEMPLATE, primary.getRecord());
 		primary.addPartial(this);
 		
 		linkage.new ConfigurePartialSpecialization(this, partial);
 	
 	}
 
-	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -73,13 +73,13 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	}
 	
 	public PDOMCPPClassTemplatePartialSpecializationSpecialization getNextPartial() throws CoreException {
-		int value = pdom.getDB().getInt(record + NEXT_PARTIAL);
-		return value != 0 ? new PDOMCPPClassTemplatePartialSpecializationSpecialization(pdom, value) : null;
+		int value = getDB().getInt(record + NEXT_PARTIAL);
+		return value != 0 ? new PDOMCPPClassTemplatePartialSpecializationSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void setNextPartial(PDOMCPPClassTemplatePartialSpecializationSpecialization partial) throws CoreException {
 		int value = partial != null ? partial.getRecord() : 0;
-		pdom.getDB().putInt(record + NEXT_PARTIAL, value);
+		getDB().putInt(record + NEXT_PARTIAL, value);
 	}
 
 	@Override
@@ -124,8 +124,8 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		if (fPrimaryTemplate == null) {
 			try {
-				int specializedRec = pdom.getDB().getInt(record + PRIMARY_TEMPLATE);
-				fPrimaryTemplate= (ICPPClassTemplate) getLinkageImpl().getNode(specializedRec);
+				int specializedRec = getDB().getInt(record + PRIMARY_TEMPLATE);
+				fPrimaryTemplate= (ICPPClassTemplate) getLinkage().getNode(specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

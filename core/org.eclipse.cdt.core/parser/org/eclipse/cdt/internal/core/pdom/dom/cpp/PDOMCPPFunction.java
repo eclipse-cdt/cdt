@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -81,11 +80,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 21;
 	
-	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException, DOMException {
-		super(pdom, parent, function.getNameCharArray());
-		Database db = pdom.getDB();		
+	public PDOMCPPFunction(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException, DOMException {
+		super(linkage, parent, function.getNameCharArray());
+		Database db = getDB();		
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
-		pdom.getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
+		getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 
 		if (setTypes) {
 			initData(function.getType(), function.getParameters());
@@ -129,7 +128,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			if (oldParams != null) {
 				oldParams.delete(linkage);
 			}
-			final Database db = pdom.getDB();
+			final Database db = getDB();
 			db.putByte(record + ANNOTATION, newAnnotation);
 			
 			int oldRec = db.getInt(record+EXCEPTION_SPEC);
@@ -155,32 +154,32 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	private void setParameters(PDOMCPPFunctionType pft, IParameter[] params) throws CoreException {
-		final Database db= pdom.getDB();
+		final Database db= getDB();
 		db.putInt(record + NUM_PARAMS, params.length);
 		db.putInt(record + FIRST_PARAM, 0);
 		IType[] paramTypes= pft.getParameterTypes();
 		for (int i= 0; i < params.length; ++i) {
 			int ptRecord= i < paramTypes.length && paramTypes[i] != null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
-			setFirstParameter(new PDOMCPPParameter(pdom, this, params[i], ptRecord));
+			setFirstParameter(new PDOMCPPParameter(getLinkage(), this, params[i], ptRecord));
 		}
 	}
 
 	private PDOMCPPFunctionType setType(ICPPFunctionType ft) throws CoreException {
-		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkageImpl().addType(this, ft);
-		pdom.getDB().putInt(record + FUNCTION_TYPE, pft.getRecord());
+		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkage().addType(this, ft);
+		getDB().putInt(record + FUNCTION_TYPE, pft.getRecord());
 		return pft;
 	}
 	
 	public int getSignatureHash() throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_HASH);
+		return getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
-	public static int getSignatureHash(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + SIGNATURE_HASH);
+	public static int getSignatureHash(PDOMLinkage linkage, int record) throws CoreException {
+		return linkage.getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
-	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
+	public PDOMCPPFunction(PDOMLinkage linkage, int bindingRecord) {
+		super(linkage, bindingRecord);
 	}
 	
 	@Override
@@ -194,15 +193,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 	
 	private PDOMCPPParameter getFirstParameter() throws CoreException {
-		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
-		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
+		int rec = getDB().getInt(record + FIRST_PARAM);
+		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec) : null;
 	}
 
 	private void setFirstParameter(PDOMCPPParameter param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
 		int rec = param != null ? param.getRecord() :  0;
-		pdom.getDB().putInt(record + FIRST_PARAM, rec);
+		getDB().putInt(record + FIRST_PARAM, rec);
 	}
 	
 	public boolean isInline() throws DOMException {
@@ -223,7 +222,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	public IParameter[] getParameters() throws DOMException {
 		try {
-			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			int n = getDB().getInt(record + NUM_PARAMS);
 			IParameter[] params = new IParameter[n];
 			PDOMCPPParameter param = getFirstParameter();
 			while (param != null) {
@@ -239,8 +238,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	public ICPPFunctionType getType() {		
 		try {
-			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
-			return offset==0 ? null : new PDOMCPPFunctionType(pdom, offset); 
+			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			return offset==0 ? null : new PDOMCPPFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;
@@ -287,7 +286,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		IFunctionType t = getType();
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		try {
-			result.append(" " + getConstantNameForValue(getLinkageImpl(), getNodeType())); //$NON-NLS-1$
+			result.append(" " + getConstantNameForValue(getLinkage(), getNodeType())); //$NON-NLS-1$
 		} catch (CoreException e) {
 			result.append(" " + getNodeType()); //$NON-NLS-1$
 		}

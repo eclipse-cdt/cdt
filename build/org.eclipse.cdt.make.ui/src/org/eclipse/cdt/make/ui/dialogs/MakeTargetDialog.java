@@ -58,20 +58,21 @@ public class MakeTargetDialog extends Dialog {
 	private static final String MAKE_SETTING_STOP_ERROR = SETTING_PREFIX + ".makeSetting.stopOnError"; //$NON-NLS-1$
 
 	private static final String MAKE_CMD_GROUP = SETTING_PREFIX + ".makeCmd.group_label"; //$NON-NLS-1$
-	private static final String MAKE_CMD_USE_DEFAULT = SETTING_PREFIX + ".makeCmd.use_default"; //$NON-NLS-1$
+	private static final String MAKE_CMD_USE_BUILDER_SETTINGS = SETTING_PREFIX + ".makeCmd.useBuilderSettings"; //$NON-NLS-1$
 	private static final String MAKE_CMD_LABEL = SETTING_PREFIX + ".makeCmd.label"; //$NON-NLS-1$
 
-	Text targetNameText;
-	Button stopOnErrorButton;
-	Button runAllBuildersButton;
-	Text commandText;
-	Button defButton;
-	Text targetText;
+	private Text targetNameText;
+	private Button stopOnErrorButton;
+	private Button runAllBuildersButton;
+	private Text commandText;
+	private Button defButton;
+	private Text targetText;
 
-	IMakeTargetManager fTargetManager;
-	IContainer fContainer;
+	private IMakeTargetManager fTargetManager;
+	private IContainer fContainer;
 
 	private IPath buildCommand;
+	private String defaultBuildCommand;
 	private boolean isDefaultCommand;
 	private boolean isStopOnError;
 	private boolean runAllBuilders = true;
@@ -79,7 +80,7 @@ public class MakeTargetDialog extends Dialog {
 	private String targetString;
 	private String targetName;
 	private String targetBuildID;
-	protected IMakeTarget fTarget;
+	private IMakeTarget fTarget;
 	private boolean initializing = true;
 	private Button sameAsNameCheck;
 
@@ -91,12 +92,23 @@ public class MakeTargetDialog extends Dialog {
 		private void setStatusLine() {
 			fStatusLine.setErrorMessage(null);
 
-			if (targetNameText.getText().trim().equals("")) { //$NON-NLS-1$
+			String newTargetName = targetNameText.getText().trim();
+			if (newTargetName.length()==0) {
 				fStatusLine.setErrorMessage(
 					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
-			} else if (commandText.isEnabled() && commandText.getText().trim().equals("")) { //$NON-NLS-1$
+			} else if (commandText.isEnabled() && commandText.getText().trim().length()==0) {
 				fStatusLine.setErrorMessage(
 					MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
+			} else {
+				try {
+					if (!newTargetName.equals(targetName) && fTargetManager.findTarget(fContainer, newTargetName) != null) {
+						fStatusLine.setErrorMessage(
+								MakeUIPlugin.getResourceString("MakeTargetDialog.message.targetWithNameExists")); //$NON-NLS-1$
+					}
+				} catch (CoreException e) {
+					// ignore exception since no update action was initiated by user yet
+				}
+				
 			}
 		}
 
@@ -108,7 +120,11 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	/**
-	 * @param parentShell
+	 * This constructor is called on "Edit Make Target" action.
+	 * 
+	 * @param parentShell - shell to display the dialog.
+	 * @param target - make target to edit.
+	 * @throws CoreException
 	 */
 	public MakeTargetDialog(Shell parentShell, IMakeTarget target) throws CoreException {
 		this(parentShell, target.getContainer());
@@ -124,7 +140,12 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	/**
-	 * @param parentShell
+	 * This constructor is called on "Add Make Target" action and from
+	 * the other constructor where some initialized values can be overwritten.
+	 * 
+	 * @param parentShell - shell to display the dialog.
+	 * @param container - container where to create the target.
+	 * @throws CoreException
 	 */
 	public MakeTargetDialog(Shell parentShell, IContainer container) throws CoreException {
 		super(parentShell);
@@ -139,8 +160,9 @@ public class MakeTargetDialog extends Dialog {
 		IMakeBuilderInfo buildInfo = MakeCorePlugin.createBuildInfo(container.getProject(),
 				fTargetManager.getBuilderID(targetBuildID));
 		isStopOnError = buildInfo.isStopOnError();
-		isDefaultCommand = buildInfo.isDefaultBuildCmd();
+		isDefaultCommand = true;
 		buildCommand = buildInfo.getBuildCommand();
+		defaultBuildCommand = buildCommand.toString();
 		buildArguments = buildInfo.getBuildArguments();
 		targetString = buildInfo.getIncrementalBuildTarget();
 
@@ -242,11 +264,12 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
-		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
+		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
 		defButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
+					commandText.setText(defaultBuildCommand);
 					commandText.setEnabled(false);
 					stopOnErrorButton.setEnabled(true);
 				} else {
@@ -439,7 +462,9 @@ public class MakeTargetDialog extends Dialog {
 			target.setStopOnError(isStopOnError());
 			target.setRunAllBuilders(runAllBuilders());
 			target.setUseDefaultBuildCmd(useDefaultBuildCmd());
-			if (!useDefaultBuildCmd()) {
+			if (useDefaultBuildCmd()) {
+				target.setBuildAttribute(IMakeTarget.BUILD_COMMAND, defaultBuildCommand);
+			} else {
 				String bldLine = getBuildLine();
 				int start = 0;
 				int end = -1;

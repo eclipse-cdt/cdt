@@ -145,7 +145,7 @@ public class CPPScopeMapper {
 				if (declspec instanceof IASTCompositeTypeSpecifier) {
 					IASTCompositeTypeSpecifier cts = (IASTCompositeTypeSpecifier) declspec;
 					final IASTName name = cts.getName();
-					final char[] nameChars = name.toCharArray();
+					final char[] nameChars = name.getLookupKey();
 					if (nameChars.length > 0) {
 						IASTName[] names= fClasses.get(nameChars);
 						names= (IASTName[]) ArrayUtil.append(IASTName.class, names, name);

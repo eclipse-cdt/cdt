@@ -146,8 +146,6 @@ class TerminalViewConnection implements ITerminalViewConnection {
 			return ViewMessages.STATE_CONNECTED;
 		} else if(state==TerminalState.CONNECTING) {
 			return ViewMessages.STATE_CONNECTING;
-		} else if(state==TerminalState.OPENED) {
-			return ViewMessages.STATE_OPENED;
 		} else if(state==TerminalState.CLOSED) {
 			return ViewMessages.STATE_CLOSED;
 		} else {

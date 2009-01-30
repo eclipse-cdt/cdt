@@ -307,8 +307,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	}
 
 	private boolean isConnecting() {
-		return fCtlTerminal.getState()==TerminalState.CONNECTING
-		    || fCtlTerminal.getState()==TerminalState.OPENED;
+		return fCtlTerminal.getState()==TerminalState.CONNECTING;
 	}
 
 	public void onTerminalDisconnect() {

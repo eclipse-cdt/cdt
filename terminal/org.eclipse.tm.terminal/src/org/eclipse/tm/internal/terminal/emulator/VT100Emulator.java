@@ -232,13 +232,6 @@ public class VT100Emulator implements ControlListener {
 //	 */
 	public void processText() {
 		try {
-			// If the status bar is showing "OPENED", change it to "CONNECTED".
-
-			if (terminal.getState()==TerminalState.OPENED) {
-				// TODO Why????
-				terminal.setState(TerminalState.CONNECTED);
-			}
-
 			// Find the width and height of the terminal, and resize it to display an
 			// integral number of lines and columns.
 

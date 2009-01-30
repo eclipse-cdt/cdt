@@ -30,11 +30,6 @@ public class TerminalState {
 	public final static TerminalState CLOSED=new TerminalState("CLOSED"); //$NON-NLS-1$
 
 	/**
-	 * FIXME Get rid of this state it is equivalent to CONNECTING.
-	 */
-	public final static TerminalState OPENED=new TerminalState("OPENED"); //$NON-NLS-1$
-
-	/**
 	 * The terminal is about to connect.
 	 */
 	public final static TerminalState CONNECTING=new TerminalState("CONNECTING..."); //$NON-NLS-1$

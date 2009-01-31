@@ -6606,4 +6606,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("m(a())", 1, ICPPMethod.class);
 	}
+
+	//	struct A {
+	//	  int a;
+	//	  static void m() {
+	//	    a = 0;
+	//	  }
+	//	};
+	public void _testInstanceMemberInStaticMethod_263154() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("a =", 1);
+	}
 }

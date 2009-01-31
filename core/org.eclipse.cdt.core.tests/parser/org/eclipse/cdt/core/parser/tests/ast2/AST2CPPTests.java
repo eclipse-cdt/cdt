@@ -6576,11 +6576,11 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
     }
-    
-    // enum E {e1};
-    // typedef int TInt;
-    // void select(int);
-    // void test() {
+
+    //	enum E {e1};
+    //	typedef int TInt;
+    //	void select(int);
+    //	void test() {
     //    int a= TInt(1); 
     //    E e= E(0);
     //    void* h;
@@ -6590,4 +6590,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code= getAboveComment();
     	parseAndCheckBindings(code);
     }
+
+	//	struct A {};
+	//	A a();
+	//
+	//	struct B {
+	//	  void m(const A& x);
+	//	  void m(const B& x);
+	//	};
+	//
+	//	void test(B p) {
+	//	  p.m(a());
+	//	}
+	public void _testBug263152() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("m(a())", 1, ICPPMethod.class);
+	}
 }

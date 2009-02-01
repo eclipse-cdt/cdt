@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
+ * Martin Oberhuber (Wind River) - [262996] get rid of TerminalState.OPENED
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -43,7 +44,6 @@ public class ViewMessages extends NLS {
 
 	public static String STATE_CONNECTED;
 	public static String STATE_CONNECTING;
-	public static String STATE_OPENED;
 	public static String STATE_CLOSED;
 
 	public static String CANNOT_INITIALIZE;

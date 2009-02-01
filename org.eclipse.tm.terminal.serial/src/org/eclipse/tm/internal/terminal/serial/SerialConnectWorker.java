@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
  * Martin Oberhuber (Wind River) - [206884] Update Terminal Ownership ID to "org.eclipse.tm.terminal.serial"
  * Martin Oberhuber (Wind River) - [221184] Redesign Serial Terminal Ownership Handling
+ * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 

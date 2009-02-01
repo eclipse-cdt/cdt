@@ -5927,7 +5927,6 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testTypeid_Bug209578() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
-	
 
 	//	typedef char* t1;
 	//	typedef char t2[8];
@@ -5943,8 +5942,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testArrayToPtrConversionForTypedefs_Bug239931() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
-	
-	
+
 	//	typedef char t[12];
 	//	void test1(char *);
 	//	void test2(char []);
@@ -5958,7 +5956,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
-	
+
 	//	class A {
 	//		public:
 	//			void m(int c);
@@ -6620,7 +6618,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
 	//	struct A {};
 	//
-	//	void foo() {
+	//	void test() {
 	//	  while (
 	//      A* a = 0
 	//	  );
@@ -6630,4 +6628,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("A*", 1, ICPPClassType.class);
 		ba.assertNonProblem("a", 1, ICPPVariable.class);
     }
+
+	//	const char x[] = "";
+	//
+	//	void f(const char* p);
+	//	void f(char p);
+	//
+	//	void test() {
+	//	  f(x); // problem on f
+	//	}
+	public void _testArrayParameter_263159() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f(x)", 1, ICPPFunction.class);
+	}
 }

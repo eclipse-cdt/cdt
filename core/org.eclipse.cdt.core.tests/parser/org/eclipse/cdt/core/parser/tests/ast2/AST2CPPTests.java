@@ -6629,16 +6629,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("a", 1, ICPPVariable.class);
     }
 
-	//	const char x[] = "";
+	//	void f(int x);
 	//
-	//	void f(const char* p);
-	//	void f(char p);
-	//
-	//	void test() {
-	//	  f(x); // problem on f
+	//	void test(int* p) {
+	//	  f(p);
 	//	}
-	public void _testArrayParameter_263159() throws Exception {
+	public void _testPointerToNonPointerConversion_263159() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
-		ba.assertNonProblem("f(x)", 1, ICPPFunction.class);
+		ba.assertProblem("f(p)", 1);
 	}
 }

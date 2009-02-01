@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [209746] There are cases where some colors not displayed correctly
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
+ * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 

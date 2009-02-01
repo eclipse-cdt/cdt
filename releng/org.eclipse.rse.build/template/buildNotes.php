@@ -71,8 +71,8 @@
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/TM_3.0_Known_Issues_and_Workarounds">
-  TM 3.0 Known Issues and Workarounds</a>.</li>
+  <a href="http://wiki.eclipse.org/DSDP/TM/3.1_Known_Issues_and_Workarounds">
+  TM 3.1 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 

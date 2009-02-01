@@ -37,10 +37,25 @@
     This allows for fine-tuning the environment on the remote machine, in which the program is supposed to run
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181517">181517</a>]</li>
   <li><b>Locating an item in the RSE Tree</b> is now possible from the scratchpad, monitor, and remote details
-    table views. This allows for easily finding related items in case one item is already known
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160105">160105</a>]</li>
+    table views, as well as the project explorer and resource navigator. This allows for easily finding related 
+    items in case one item is already known; and doing RSE operations such as browsing into an archive based
+    on the context in a normal project explorer workspace.
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160105">160105</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218227">218227</a>]</li>
+  <li><b>A new Preference has been added: Remote Systems &gt; Files &gt; Share cached files between different connections to the same host</b>.
+    By default, this setting is on, but it can be turned off to support different virtual
+    file systems being retrieved for different kinds of connections (such as different
+    users for FTP connections, or different ports for SSH-tunneled connections). For 
+    supporting such cases, the setting should be turned <b>off</b>
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">245260</a>].</li>
+  <li><b>API: DStore Products</b> can now register their own keystores 
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=259905">259905</a>].</li>
+  <li><b>API: A PropertyTester</b> is now available for the properties served
+    by ISystemViewElementAdapter, in order to support declaratively registering
+    menus with the org.eclipse.ui.menus extension point. 
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245039">245039</a>].</li>
   </ul></li>
-<li>At least 8 bugs were fixed: Use 
+<li>At least 21 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-12-24&chfieldto=2009-02-08&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23467%5D"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
@@ -115,7 +130,25 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ API Specification Updates
 <ul>
-<li>None</li> 
+<li>The <b>TerminalState.OPENED</b> state has been removed. This was provisional "internal" API,
+  so this change does not constitute an official API change. Still, in order to properly
+  support all update scenarios for consumers of the previous provisional API, the bundle
+  <b>version of org.eclipse.tm.terminal has been moved up to 3.0.0</b>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=262996">262996</a>].</li>
+<li>The <b>SshShellService, SshHostShell, TelnetShellService, TelnetHostShell</b> and related 
+  classes have been removed and replaced by a generic Terminal-to-HostShell adapter which can 
+  re-use the functionality across the Telnet and SSH plugins.
+  In order to ensure proper version computing on update, the following plugin versinos were changed:
+  <ul>
+    <li><b>org.eclipse.rse.services.ssh</b> changed from 2.1.0 to 3.0.0</li>
+    <li><b>org.eclipse.rse.services.telnet</b> changed from 1.1.0 to 2.0.0</li>
+  </ul>
+  These changes do not indicate breaking public API since the removed classes were
+  actually never API, but consumers should be aware of the probably unexpected
+  major version bump, which was required due to the internal version dependency
+  structure
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=261478">261478</a>].</li>
+  </li>
 </ul>
 </li>
 </ul>
@@ -144,10 +177,7 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=255390">bug 255390</a> - maj -  	[dstore] Remote search with a large number of results causes an OutOfMemoryError on the server side and crashes the server. </li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">bug 245260</a> - maj - Different user's connections on a single ftp host are mapped to the same temp files cache</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244070">bug 244070</a> - maj - [dstore] DStoreHostShell#exit() does not terminate child processes</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=236443">bug 236443</a> - maj - [releng] Using P2 to install "remotecdt" only from update site creates an unusable installation</li>

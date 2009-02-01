@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir,
@@ -25,7 +26,7 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Iterator;

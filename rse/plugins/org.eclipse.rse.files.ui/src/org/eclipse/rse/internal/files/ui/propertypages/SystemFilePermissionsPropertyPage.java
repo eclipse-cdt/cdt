@@ -37,8 +37,6 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -52,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
  * Property page for viewing and changing the user, group and permissions
  * for a particular file.
  * */
-public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage implements SelectionListener {
+public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 
 	private Button _userRead;
 	private Button _userWrite;
@@ -130,59 +128,50 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage im
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userRead.setLayoutData(data);
-			_userRead.addSelectionListener(this);
 
 			_userWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userWrite.setLayoutData(data);
-			_userWrite.addSelectionListener(this);
 
 			_userExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_userExecute.setLayoutData(data);
-			_userExecute.addSelectionListener(this);
-			
+
 			Label groupLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_GROUP_LABEL);
 
 			_groupRead = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupRead.setLayoutData(data);
-			_groupRead.addSelectionListener(this);
-				
+
 			_groupWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupWrite.setLayoutData(data);
-			_groupWrite.addSelectionListener(this);
 
 			_groupExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_groupExecute.setLayoutData(data);
-			_groupExecute.addSelectionListener(this);
 
 			Label otherLabel = SystemWidgetHelpers.createLabel(permissionsGroup, FileResources.RESID_PREF_PERMISSIONS_OTHERS_LABEL);
 			_otherRead = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherRead.setLayoutData(data);
-			_otherRead.addSelectionListener(this);
-			
+
 			_otherWrite = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherWrite.setLayoutData(data);
-			_otherWrite.addSelectionListener(this);
-			
+
 			_otherExecute = new Button(permissionsGroup, SWT.CHECK);
 			data = new GridData();
 			data.horizontalIndent = 20;
 			_otherExecute.setLayoutData(data);
-			_otherExecute.addSelectionListener(this);
-			
+
 			Group ownerGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, FileResources.RESID_PREF_PERMISSIONS_OWNERSHIP_LABEL);
 			data = new GridData();
 			data.horizontalSpan = 1;
@@ -199,12 +188,12 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage im
 			data.widthHint = 100;
 			_userEntry.setLayoutData(data);
 
-			
 			Label groupOwnerLabel = SystemWidgetHelpers.createLabel(ownerGroup, FileResources.RESID_PREF_PERMISSIONS_GROUP_LABEL);
 			_groupEntry = new Text(ownerGroup, SWT.BORDER);
 			data = new GridData();
 			data.widthHint = 100;
 			_groupEntry.setLayoutData(data);
+
 
 			initFields();
 		}
@@ -319,7 +308,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage im
 						}
 						catch (SystemMessageException e)
 						{
-							setErrorMessage(e.getSystemMessage());
+							setMessage(e.getSystemMessage());
 						}
 						return Status.OK_STATUS;
 					}
@@ -424,12 +413,11 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage im
 					}
 				}
 				catch (SystemMessageException e){
-					setErrorMessage(e.getSystemMessage());
-					performDefaults();
+					setMessage(e.getSystemMessage());
 				}
 				catch (CloneNotSupportedException e){
 					// unexpected, not showing but logging
-					SystemBasePlugin.logError(e.getMessage());					
+					SystemBasePlugin.logError(e.getMessage());
 				}
 			}
 		}
@@ -482,14 +470,5 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage im
 			}
 		}
 		super.setVisible(visible);
-	}
-
-	public void widgetDefaultSelected(SelectionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void widgetSelected(SelectionEvent e) {
-		clearErrorMessage();
 	}
 }

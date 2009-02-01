@@ -1,8 +1,9 @@
-/********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
@@ -51,7 +52,7 @@
  * David McKnight     (IBM)      - [236723] UniversalFileTransferUtility..uploadResourcesFromWorkspace should query remote folder encoding
  * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  * David McKnight     (IBM)      - [262092] Special characters are missing when pasting a file on a different connection
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
 

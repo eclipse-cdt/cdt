@@ -1,7 +1,7 @@
-plugin@org.apache.commons.net,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20080807152315/bundles/org.apache.commons.net_1.4.1.v200803071935.jar
-plugin@org.apache.commons.net.source,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20080807152315/bundles/org.apache.commons.net.source_1.4.1.v200803071935.jar
-plugin@org.apache.oro,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20080807152315/bundles/org.apache.oro_2.0.8.v200803061811.jar
-plugin@org.apache.oro.source,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20080807152315/bundles/org.apache.oro.source_2.0.8.v200803061811.jar
+plugin@org.apache.commons.net,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090124200431/bundles/org.apache.commons.net_1.4.1.v200803071935.jar
+plugin@org.apache.commons.net.source,1.4.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090124200431/bundles/org.apache.commons.net.source_1.4.1.v200803071935.jar
+plugin@org.apache.oro,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090124200431/bundles/org.apache.oro_2.0.8.v200803061811.jar
+plugin@org.apache.oro.source,2.0.8=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090124200431/bundles/org.apache.oro.source_2.0.8.v200803061811.jar
 
 ! plugin@org.apache.commons.net=v200803061811,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.commons.net
 ! plugin@org.apache.oro=v200803061811,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.orbit/org.apache.oro

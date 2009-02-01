@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.ssh"
       label="%featureName"
-      version="2.1.100.qualifier"
+      version="3.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.ssh">
 
@@ -28,11 +28,11 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.jsch.core" version="1.0.0" match="compatible"/>
       <import plugin="com.jcraft.jsch" version="0.1.31" match="compatible"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
    </requires>
 
    <plugin

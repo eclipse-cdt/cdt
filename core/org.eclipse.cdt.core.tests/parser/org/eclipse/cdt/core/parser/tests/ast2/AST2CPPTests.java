@@ -6433,7 +6433,7 @@ public class AST2CPPTests extends AST2BaseTest {
         ITypedef s2= (ITypedef) ((IPointerType) d.getType()).getType();
         assertInstance(((IFunctionType) s2.getType()).getParameterTypes()[0], IBasicType.class);
     }
-    
+
     //    namespace A {
     //    	class X {
     //    		friend void f(int);
@@ -6617,4 +6617,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("a =", 1);
 	}
+
+	//	struct A {};
+	//
+	//	void foo() {
+	//	  while (
+	//      A* a = 0
+	//	  );
+	//	}
+    public void _testAmbiguityResolutionInCondition_263158() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("A*", 1, ICPPClassType.class);
+		ba.assertNonProblem("a", 1, ICPPVariable.class);
+    }
 }

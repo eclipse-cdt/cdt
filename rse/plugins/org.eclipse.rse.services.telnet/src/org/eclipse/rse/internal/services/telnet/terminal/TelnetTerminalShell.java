@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,8 @@ import org.eclipse.rse.services.terminals.ITerminalService;
 
 /**
  * A remote shell connection supporting Streams for I/O.
- * 
- * @since 1.2
+ *
+ * @since 2.0
  */
 public class TelnetTerminalShell extends AbstractTerminalShell {
 
@@ -56,9 +56,9 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/**
 	 * Construct a new Terminal connection.
-	 * 
+	 *
 	 * The SSH channel is immediately connected in the Constructor.
-	 * 
+	 *
 	 * @param sessionProvider
 	 *            SSH session provider
 	 * @param ptyType
@@ -143,7 +143,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 	/**
 	 * Encode String with requested user encoding, in case it differs from
 	 * Platform default encoding.
-	 * 
+	 *
 	 * @param s
 	 *            String to encode
 	 * @param encoding
@@ -167,7 +167,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ITerminalHostShell#getInputStream(Object)
 	 */
 	public InputStream getInputStream() {
@@ -176,7 +176,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ITerminalHostShell#getOutputStream(Object)
 	 */
 	public OutputStream getOutputStream() {
@@ -187,7 +187,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 	 * Write a command to the shell, honoring specified Encoding. Can only be
 	 * done before an outputStream is obtained, since these commands would
 	 * interfere with the outputStream.
-	 * 
+	 *
 	 * @param command
 	 *            Command String to send, or "#break" to send a Ctrl+C command.
 	 */

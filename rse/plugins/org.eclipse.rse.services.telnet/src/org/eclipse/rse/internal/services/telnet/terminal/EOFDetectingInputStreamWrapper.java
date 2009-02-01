@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 MontaVista Software, Inc. and others.
+ * Copyright (c) 2008, 2009 MontaVista Software, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @since 1.2
+ * @since 2.0
  */
 public class EOFDetectingInputStreamWrapper extends FilterInputStream {
 
@@ -50,7 +50,7 @@ public class EOFDetectingInputStreamWrapper extends FilterInputStream {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.io.InputStream#close()
 	 */
 	public void close() throws IOException {
@@ -63,7 +63,7 @@ public class EOFDetectingInputStreamWrapper extends FilterInputStream {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.io.InputStream#read(byte[], int, int)
 	 */
 	public int read(byte[] b, int off, int len) throws IOException {

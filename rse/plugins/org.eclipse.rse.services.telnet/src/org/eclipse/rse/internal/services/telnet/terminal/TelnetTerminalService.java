@@ -23,7 +23,8 @@ import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * A Terminal Service for telnet.
- * @since 1.2
+ * 
+ * @since 2.0
  */
 public class TelnetTerminalService extends AbstractTerminalService implements ITelnetService {
 

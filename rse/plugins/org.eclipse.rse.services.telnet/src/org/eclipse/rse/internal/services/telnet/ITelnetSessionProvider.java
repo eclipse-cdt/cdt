@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public interface ITelnetSessionProvider {
 	 *             (such as timeout, communications error, or failure matching
 	 *             expected prompt). The passed-in TelnetClient remains
 	 *             connected in this case.
-	 * @since 1.2
+	 * @since 2.0
 	 */
 	public TelnetClient loginTelnetClient(TelnetClient client, IProgressMonitor monitor) throws SystemMessageException;
 

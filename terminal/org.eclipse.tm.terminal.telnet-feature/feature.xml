@@ -25,7 +25,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.0.0" match="equivalent"/>
    </requires>
 
    <plugin

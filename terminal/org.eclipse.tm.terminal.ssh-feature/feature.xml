@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.ssh"
       label="%featureName"
-      version="2.0.2.qualifier"
+      version="2.0.100.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -25,7 +25,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.0.0" match="equivalent"/>
       <import plugin="org.eclipse.jsch.core" version="1.0.0" match="compatible"/>
       <import plugin="com.jcraft.jsch" version="0.1.31" match="compatible"/>
    </requires>

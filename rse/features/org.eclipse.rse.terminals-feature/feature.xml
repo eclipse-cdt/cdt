@@ -30,15 +30,16 @@
          search-location="self"/>
 
    <requires>
+      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.rse.services.ssh" version="2.1.0" match="equivalent"/>
       <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.rse.connectorservice.ssh" version="2.1.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.0.0" match="equivalent"/>
    </requires>
 
    <plugin

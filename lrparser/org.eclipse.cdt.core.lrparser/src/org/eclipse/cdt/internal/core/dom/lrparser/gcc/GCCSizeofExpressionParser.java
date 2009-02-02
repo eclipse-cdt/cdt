@@ -1281,35 +1281,47 @@ private  GCCBuildASTParserAction  gnuAction;
             //
             case 349: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
- 
-            //
-            // Rule 354:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
-            //
-            case 354: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
- 
-            //
-            // Rule 370:  field_name_designator ::= identifier_token :
-            //
-            case 370: {  gnuAction.consumeDesignatorField();            break;
-            } 
- 
-            //
-            // Rule 371:  array_range_designator ::= [ constant_expression ... constant_expression ]
-            //
-            case 371: {  gnuAction.consumeDesignatorArray();            break;
-            } 
   
             //
-            // Rule 372:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 350:  relational_expression ::= relational_expression >? shift_expression
             //
-            case 372: { action.   consumeInitializerDesignated();             break;
+            case 350: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
             }  
   
             //
-            // Rule 374:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 351:  relational_expression ::= relational_expression <? shift_expression
             //
-            case 374: { action.   consumeExpressionProblem();             break;
+            case 351: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
+            }  
+ 
+            //
+            // Rule 356:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            //
+            case 356: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            } 
+ 
+            //
+            // Rule 372:  field_name_designator ::= identifier_token :
+            //
+            case 372: {  gnuAction.consumeDesignatorField();            break;
+            } 
+ 
+            //
+            // Rule 373:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            //
+            case 373: {  gnuAction.consumeDesignatorArray();            break;
+            } 
+  
+            //
+            // Rule 374:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            //
+            case 374: { action.   consumeInitializerDesignated();             break;
+            }  
+  
+            //
+            // Rule 376:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            //
+            case 376: { action.   consumeExpressionProblem();             break;
             }  
 
     

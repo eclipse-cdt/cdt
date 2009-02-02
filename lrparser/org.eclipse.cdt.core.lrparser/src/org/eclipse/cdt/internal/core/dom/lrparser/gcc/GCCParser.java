@@ -1299,29 +1299,41 @@ private  GCCBuildASTParserAction  gnuAction;
             //
             case 352: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
+  
+            //
+            // Rule 353:  relational_expression ::= relational_expression >? shift_expression
+            //
+            case 353: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
+            }  
+  
+            //
+            // Rule 354:  relational_expression ::= relational_expression <? shift_expression
+            //
+            case 354: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
+            }  
  
             //
-            // Rule 357:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 359:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 357: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            case 359: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
             } 
  
             //
-            // Rule 373:  field_name_designator ::= identifier_token :
+            // Rule 375:  field_name_designator ::= identifier_token :
             //
-            case 373: {  gnuAction.consumeDesignatorField();            break;
+            case 375: {  gnuAction.consumeDesignatorField();            break;
             } 
  
             //
-            // Rule 374:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            // Rule 376:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 374: {  gnuAction.consumeDesignatorArray();            break;
+            case 376: {  gnuAction.consumeDesignatorArray();            break;
             } 
   
             //
-            // Rule 375:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 377:  designated_initializer ::= <openscope-ast> field_name_designator initializer
             //
-            case 375: { action.   consumeInitializerDesignated();             break;
+            case 377: { action.   consumeInitializerDesignated();             break;
             }  
 
     

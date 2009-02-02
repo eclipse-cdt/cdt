@@ -2002,35 +2002,47 @@ private  GPPBuildASTParserAction  gnuAction;
             //
             case 573: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
+  
+            //
+            // Rule 574:  relational_expression ::= relational_expression >? shift_expression
+            //
+            case 574: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
+            }  
+  
+            //
+            // Rule 575:  relational_expression ::= relational_expression <? shift_expression
+            //
+            case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
+            }  
  
             //
-            // Rule 578:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 580:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 578: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            case 580: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
             } 
   
             //
-            // Rule 591:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 593:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
             //
-            case 591: { action.   consumeDeclaratorWithPointer(true);             break;
+            case 593: { action.   consumeDeclaratorWithPointer(true);             break;
             }  
   
             //
-            // Rule 593:  simple_type_specifier ::= _Complex
+            // Rule 595:  simple_type_specifier ::= _Complex
             //
-            case 593: { action.   consumeToken();            break;
+            case 595: { action.   consumeToken();            break;
             }  
   
             //
-            // Rule 594:  simple_type_specifier ::= _Imaginary
+            // Rule 596:  simple_type_specifier ::= _Imaginary
             //
-            case 594: { action.   consumeToken();            break;
+            case 596: { action.   consumeToken();            break;
             }  
  
             //
-            // Rule 595:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            // Rule 597:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
             //
-            case 595: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            case 597: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
             } 
 
     

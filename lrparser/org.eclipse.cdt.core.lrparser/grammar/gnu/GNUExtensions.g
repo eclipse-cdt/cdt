@@ -19,10 +19,13 @@ $Terminals
 
 	typeof
 	__alignof__
-	MAX
-	MIN
 	__attribute__
 	__declspec
+	MAX
+	MIN
+	
+	MAX ::= '>?'
+	MIN ::= '<?'
 	
 $End
 
@@ -146,6 +149,12 @@ unary_expression
       | 'typeof' '(' type_id ')'
           /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);  $EndBuild ./  
           
+          
+relational_expression
+    ::= relational_expression '>?' shift_expression
+          /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);  $EndBuild ./
+      | relational_expression '<?' shift_expression
+          /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);  $EndBuild ./
           
           
           

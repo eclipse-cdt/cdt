@@ -1978,41 +1978,53 @@ private  GPPBuildASTParserAction  gnuAction;
             //
             case 569: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
- 
-            //
-            // Rule 574:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
-            //
-            case 574: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
   
             //
-            // Rule 587:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 570:  relational_expression ::= relational_expression >? shift_expression
             //
-            case 587: { action.   consumeDeclaratorWithPointer(true);             break;
+            case 570: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
             }  
   
             //
-            // Rule 589:  simple_type_specifier ::= _Complex
+            // Rule 571:  relational_expression ::= relational_expression <? shift_expression
             //
-            case 589: { action.   consumeToken();            break;
-            }  
-  
-            //
-            // Rule 590:  simple_type_specifier ::= _Imaginary
-            //
-            case 590: { action.   consumeToken();            break;
+            case 571: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
  
             //
-            // Rule 591:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            // Rule 576:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 591: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            case 576: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
             } 
   
             //
-            // Rule 593:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            // Rule 589:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
             //
-            case 593: { action.   consumeExpressionProblem();             break;
+            case 589: { action.   consumeDeclaratorWithPointer(true);             break;
+            }  
+  
+            //
+            // Rule 591:  simple_type_specifier ::= _Complex
+            //
+            case 591: { action.   consumeToken();            break;
+            }  
+  
+            //
+            // Rule 592:  simple_type_specifier ::= _Imaginary
+            //
+            case 592: { action.   consumeToken();            break;
+            }  
+ 
+            //
+            // Rule 593:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            //
+            case 593: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            } 
+  
+            //
+            // Rule 595:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            //
+            case 595: { action.   consumeExpressionProblem();             break;
             }  
 
     

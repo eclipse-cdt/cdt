@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  */
 public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializationScope {
 	final private ICPPClassSpecialization specialClass;
+	private ICPPBase[] fBases;
 
 	public AbstractCPPClassSpecializationScope(ICPPClassSpecialization specialization) {
 		this.specialClass= specialization;
@@ -128,22 +129,31 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 	
 	public ICPPBase[] getBases() throws DOMException {
-		ICPPBase[] result = null;
-		ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
-		final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
-		for (ICPPBase base : bases) {
-			ICPPBase specBase = base.clone();
-			IBinding origClass = base.getBaseClass();
-			if (origClass instanceof IType) {
-				IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, specialClass);
-				specClass = SemanticUtil.getUltimateType(specClass, false);
-				if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
-					specBase.setBaseClass((IBinding) specClass);
+		if (fBases == null) {
+			ICPPBase[] result = null;
+			ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
+			if (bases.length == 0) {
+				fBases= bases;
+			} else {
+				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
+				for (ICPPBase base : bases) {
+					ICPPBase specBase = base.clone();
+					IBinding origClass = base.getBaseClass();
+					if (origClass instanceof IType) {
+						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, specialClass);
+						specClass = SemanticUtil.getUltimateType(specClass, false);
+						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
+							specBase.setBaseClass((IBinding) specClass);
+						}
+						result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
+					}
 				}
-				result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
+				result= (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
+				fBases= result;
+				return result;
 			}
 		}
-		return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
+		return fBases;
 	}
 	
 	@SuppressWarnings("unchecked")

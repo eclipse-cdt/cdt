@@ -50,6 +50,7 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	private String fPropertiesFileName;
 	//For testing the test: verify methods on Eclipse Local Filesystem
 	public static String fDefaultPropertiesFile = null;
+	//public static String fDefaultPropertiesFile = "sshConnection.properties"; //$NON-NLS-1$
 
 	private IRemoteFile fHomeDirectory;
 	private String fTestStorePath;
@@ -88,7 +89,7 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 
 		//// Add a test suite for each connection type
 		//String[] connTypes = { null, "local", "ssh", "ftp", "linux", "windows" };
-		String[] connTypes = { null, "local", "ssh" };
+		String[] connTypes = { null, "local" };
 		//String[] connTypes = { "ssh" };
 
 		for (int i = 0; i < connTypes.length; i++) {
@@ -617,6 +618,16 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		assertFalse("5.1", treeInfo.exists());
 		assertFalse("5.2", child1.fetchInfo().exists());
 		assertFalse("5.3", child2.fetchInfo().exists());
+	}
+
+	public static Test suite255files() {
+		String baseName = RSEFileStoreTest.class.getName();
+		TestSuite suite = new TestSuite(baseName);
+		suite.addTest(new RSEFileStoreTest("test255files", "sshConnection.properties"));
+		suite.addTest(new RSEFileStoreTest("test255files", "linuxConnection.properties"));
+		suite.addTest(new RSEFileStoreTest("test255files", "sshConnection.properties"));
+		suite.addTest(new RSEFileStoreTest("test255files", "linuxConnection.properties"));
+		return suite;
 	}
 
 	public void test255files() throws Exception {

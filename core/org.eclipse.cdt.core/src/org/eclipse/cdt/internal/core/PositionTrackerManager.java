@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
@@ -40,10 +42,16 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 
     private int fMemoryCounter= 0;
     private int fInstalled= 0;
-    private HashMap<IPath, PositionTrackerChain> fPositionTrackerMap;
+    /**
+     * as the key in the map we use:
+     * the full path for resources,
+     * the location as path for local non-workspace files,
+     * the location as URI for non-local non-workspace files.
+     */
+    private HashMap<Object, PositionTrackerChain> fPositionTrackerMap;
     
     private PositionTrackerManager() {
-        fPositionTrackerMap= new HashMap<IPath, PositionTrackerChain>();
+        fPositionTrackerMap= new HashMap<Object, PositionTrackerChain>();
     }
 
     public synchronized void install() {
@@ -93,13 +101,13 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     public void stateChanging(IFileBuffer buffer) {}
 
     private synchronized void createCheckpoint(ITextFileBuffer buffer) {
-        PositionTrackerChain chain= getChain(buffer);
+    	final Object bufferKey= getKey(buffer);
+        PositionTrackerChain chain= fPositionTrackerMap.get(bufferKey);
         if (chain == null) {
             chain = new PositionTrackerChain(buffer.getModificationStamp());
-            fPositionTrackerMap.put(buffer.getLocation(), chain);
+            fPositionTrackerMap.put(bufferKey, chain);
             fMemoryCounter+= PositionTrackerChain.MEMORY_SIZE + HASHMAP_ENTRY_SIZE;
-        }
-        else {
+        } else {
             chain.stopTracking();
             fMemoryCounter+= chain.createCheckpoint(buffer.getModificationStamp());
         }
@@ -110,18 +118,27 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         }
     }
     
-    private synchronized PositionTrackerChain getChain(ITextFileBuffer buffer) {
-        return fPositionTrackerMap.get(buffer.getLocation());
-    }
+	private Object getKey(ITextFileBuffer buffer) {
+		Object key= buffer.getLocation();
+		if (key == null) {
+			URI uri= buffer.getFileStore().toURI();
+			key= URIUtil.toPath(uri);
+			if (key == null) {
+				key= uri;
+			}
+		}
+		return key;
+	}
 
     private synchronized void resetToLastCheckpoint(ITextFileBuffer buffer) {
-        PositionTrackerChain chain= getChain(buffer);
+    	final Object bufferKey= getKey(buffer);
+        PositionTrackerChain chain= fPositionTrackerMap.get(bufferKey);
         if (chain != null) {
             chain.stopTracking();
             chain.getActiveTracker().clear();
 
             if (!chain.isModified()) {
-                fPositionTrackerMap.remove(buffer.getLocation());
+                fPositionTrackerMap.remove(bufferKey);
                 chain.dispose();
             }
         }
@@ -196,11 +213,34 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     	IFile file= (IFile) tu.getResource();
     	if (file != null) {
     		return findPositionConverter(file, timestamp);
-    	}
+    	}    	
     	IPath location= tu.getLocation();
     	if (location != null) {
     		return findPositionConverter(location, timestamp);
     	}
+    	
+    	URI locationURI = tu.getLocationURI();
+    	if (locationURI != null) {
+    		return findPositionConverter(locationURI, timestamp);
+    	}
+    	
     	return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized IPositionConverter findPositionConverter(URI locationURI, long timestamp) {
+    	PositionTrackerChain chain= fPositionTrackerMap.get(locationURI);
+    	if (chain == null) {
+            IPath path= URIUtil.toPath(locationURI);
+            if (path != null) {
+            	chain= fPositionTrackerMap.get(path);
+            }
+    	}
+        if (chain != null) {
+            return chain.findTrackerAt(timestamp);
+        }
+        return null;
     }
 }

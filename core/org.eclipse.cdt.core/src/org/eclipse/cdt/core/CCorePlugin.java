@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,6 +84,9 @@ import org.osgi.framework.BundleContext;
 
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CCorePlugin extends Plugin {
 
@@ -206,28 +209,13 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Answers the shared working copies currently registered for this buffer factory. 
-	 * Working copies can be shared by several clients using the same buffer factory,see 
-	 * <code>IWorkingCopy.getSharedWorkingCopy</code>.
-	 * 
-	 * @param factory the given buffer factory
-	 * @return the list of shared working copies for a given buffer factory
-	 * @see IWorkingCopy
+     * Returns the shared working copies currently registered for the default buffer factory. 
+	 * @since 5.1
 	 */
-	public static IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory){
-		
-		// if factory is null, default factory must be used
-		if (factory == null) factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
-		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
-		
-		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
-		if (perFactoryWorkingCopies == null) return CModelManager.NoWorkingCopy;
-		Collection<WorkingCopy> copies = perFactoryWorkingCopies.values();
-		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
-		copies.toArray(result);
-		return result;
+	public static IWorkingCopy[] getSharedWorkingCopies() {
+		return getSharedWorkingCopies(null);
 	}
-	
+
 	public static String getResourceString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -262,41 +250,6 @@ public class CCorePlugin extends Plugin {
 		return fgCPlugin;
 	}
 
-	public static void log(String e) {
-		log(createStatus(e));
-	}
-	
-	public static void log(Throwable e) {
-		log("Error", e); //$NON-NLS-1$
-	}
-	
-	public static void log(String message, Throwable e) {
-		Throwable nestedException;
-		if (e instanceof CModelException 
-				&& (nestedException = ((CModelException)e).getException()) != null) {
-			e = nestedException;
-		}
-		log(createStatus(message, e));
-	}
-
-	public static IStatus createStatus(String msg) {
-		return createStatus(msg, null);
-	}
-
-	public static IStatus createStatus(String msg, Throwable e) {
-		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, msg, e);
-	}
-	
-	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
-	}
-
-	// ------ CPlugin
-
-	public CCorePlugin() {
-		super();
-		fgCPlugin = this;
-	}
 
 	/**
 	 * @see Plugin#shutdown
@@ -644,14 +597,6 @@ public class CCorePlugin extends Plugin {
 
 	public CoreModel getCoreModel() {
 		return fCoreModel;
-	}
-
-	/**
-	 * @deprecated use getIndexManager().
-	 */
-	@Deprecated
-	public static IPDOMManager getPDOMManager() {
-		return getDefault().pdomManager;
 	}
 
 	public static IIndexManager getIndexManager() {
@@ -1200,5 +1145,100 @@ public class CCorePlugin extends Plugin {
 		return UserVarSupplier.getInstance();
 	}
 	
+	// NON-API
+
+	/**
+	 * @noreference This constructor is not intended to be referenced by clients.
+	 */
+	public CCorePlugin() {
+		super();
+		fgCPlugin = this;
+	}
+
+	/**
+	 * Answers the shared working copies currently registered for this buffer factory. 
+	 * Working copies can be shared by several clients using the same buffer factory,see 
+	 * <code>IWorkingCopy.getSharedWorkingCopy</code>.
+	 * 
+	 * @param factory the given buffer factory
+	 * @return the list of shared working copies for a given buffer factory
+	 * @see IWorkingCopy
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory) {
+		// if factory is null, default factory must be used
+		if (factory == null)
+			factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
+		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager
+				.getDefault().sharedWorkingCopies;
+
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null)
+			return CModelManager.NoWorkingCopy;
+		Collection<WorkingCopy> copies = perFactoryWorkingCopies.values();
+		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
+		copies.toArray(result);
+		return result;
+	}
 	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(String e) {
+		log(createStatus(e));
+	}
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(Throwable e) {
+		String msg= e.getMessage();
+		if (msg == null) {
+			log("Error", e); //$NON-NLS-1$
+		} else {
+			log("Error: " + msg, e); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(String message, Throwable e) {
+		Throwable nestedException;
+		if (e instanceof CModelException 
+				&& (nestedException = ((CModelException)e).getException()) != null) {
+			e = nestedException;
+		}
+		log(createStatus(message, e));
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static IStatus createStatus(String msg) {
+		return createStatus(msg, null);
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static IStatus createStatus(String msg, Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, msg, e);
+	}
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+	
+	/**
+	 * @deprecated use getIndexManager().
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public static IPDOMManager getPDOMManager() {
+		return getDefault().pdomManager;
+	}
 }

@@ -1081,7 +1081,11 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * @param token Allows subclasses to override this method and use any
 	 * object to determine how to set a specifier.
 	 */
-	protected void setSpecifier(ICPPASTDeclSpecifier node, IToken token) {
+	public void setSpecifier(ICPPASTDeclSpecifier node, Object specifier) {
+		if(!(specifier instanceof IToken))
+			return;
+		
+		IToken token = (IToken)specifier;
 		int kind = baseKind(token);
 		switch(kind){
 			case TK_typedef:  node.setStorageClass(IASTDeclSpecifier.sc_typedef);    return;
@@ -1123,7 +1127,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		ICPPASTDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
 		
 		for(Object token : astStack.closeScope())
-			setSpecifier(declSpec, (IToken)token);
+			setSpecifier(declSpec, token);
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
@@ -1141,7 +1145,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope)
-			setSpecifier(declSpec, (IToken)token);
+			setSpecifier(declSpec, token);
 		
 		setOffsetAndLength(declSpec);
 		astStack.push(declSpec);
@@ -1163,7 +1167,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope) {
-			setSpecifier(declSpec, (IToken)token);
+			setSpecifier(declSpec, token);
 		}
 		
 		// the only way there could be a typename token

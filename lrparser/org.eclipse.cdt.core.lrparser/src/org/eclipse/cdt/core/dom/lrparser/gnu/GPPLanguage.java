@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -51,7 +51,7 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
-		return GCCScannerExtensionConfiguration.getInstance();
+		return GPPScannerExtensionConfiguration.getInstance();
 	}
 	
 	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {

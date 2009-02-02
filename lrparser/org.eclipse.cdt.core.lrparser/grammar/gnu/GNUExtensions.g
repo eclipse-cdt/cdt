@@ -42,7 +42,7 @@ $Define
 	
 		gnuAction = new $gnu_action_class (this, tu, astStack, $node_factory_create_expression);
 		gnuAction.setParserOptions(options);
-		
+		gnuAction.setBaseAction(action);
 	./
 	
 $End
@@ -146,7 +146,22 @@ unary_expression
       | 'typeof' '(' type_id ')'
           /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);  $EndBuild ./  
           
-    
-
+          
+          
+          
+typeof_type_specifier
+      ::= 'typeof' unary_expression
+        
+        
+typeof_declaration_specifiers
+    ::= typeof_type_specifier
+      | no_type_declaration_specifiers  typeof_type_specifier
+      | typeof_declaration_specifiers no_type_declaration_specifier
+      
+      
+declaration_specifiers
+    ::= <openscope-ast> typeof_declaration_specifiers
+          /. $BeginAction  gnuAction.consumeDeclarationSpecifiersTypeof();  $EndAction ./
+        
 $End
 

@@ -12,7 +12,7 @@
 
 $Define
 	$build_action_class /. UPCParserAction ./
-	$node_factory_create_expression /. UPCASTNodeFactory.DEFAULT_INSTANCE ./
+	$node_factory_create_expression /. new UPCASTNodeFactory() ./
 	$parser_factory_create_expression /. UPCSecondaryParserFactory.getDefault() ./
 $End
 

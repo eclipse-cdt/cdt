@@ -2515,7 +2515,7 @@ public class CPPSizeofExpressionParserprs implements lpg.lpgjavaruntime.ParseTab
             "LeftBrace",
             "ERROR_TOKEN",
             "EOF_TOKEN",
-            "no_sizeof_type_name_start",
+            "no_sizeof_type_id_start",
             "]",
             ")",
             "}",

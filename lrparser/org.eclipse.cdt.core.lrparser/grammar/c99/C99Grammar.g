@@ -24,10 +24,8 @@ $Terminals
 	integer  floating  charconst  stringlit
 	
 	-- identifiers
-	-- Special token that represents identifiers that have been declared as typedefs (lexer feedback hack)
 	
 	identifier
-	--TypedefName
 
 	-- Special tokens used in content assist
 	
@@ -149,6 +147,10 @@ $Rules
 -- Expressions
 -------------------------------------------------------------------------------------------
 
+identifier_token
+    ::= 'identifier'
+      | 'Completion'
+      
 
 literal
     ::= 'integer'                    
@@ -169,9 +171,8 @@ primary_expression
           /. $Build  consumeExpressionBracketed();  $EndBuild ./
 
 
-primary_expression_id   -- Typedefname not allowed as a variable name.
-    ::= 'identifier'
-      | 'Completion'
+primary_expression_id
+    ::= identifier_token
 
           
 postfix_expression
@@ -197,9 +198,7 @@ comma_opt
 
 
 member_name
-    ::= 'identifier'
-    --  | 'TypedefName'
-      | 'Completion'
+    ::= identifier_token
 
 
 unary_expression
@@ -523,8 +522,8 @@ enum_declaration_specifiers
 
 
 typdef_name_declaration_specifiers
-    ::= typedef_name_in_declspec
-      | no_type_declaration_specifiers  typedef_name_in_declspec
+    ::= type_name_specifier
+      | no_type_declaration_specifiers  type_name_specifier
       | typdef_name_declaration_specifiers no_type_declaration_specifier
     
     
@@ -575,19 +574,11 @@ simple_type_specifier_token
       | '_Imaginary'
 		
 		
-typedef_name_in_declspec
-    ::= 'Completion'
+type_name_specifier
+    ::= identifier_token
           /. $Build  consumeToken();  $EndBuild ./
-      | 'identifier'
-          /. $Build  consumeToken();  $EndBuild ./
-        -- | 'TypedefName' -- remove identifier if this is uncommented
        
-          
 
-identifier_token
-    ::= 'identifier'
-      | 'Completion'
-      
       
 struct_or_union_specifier
     ::= struct_or_union struct_or_union_specifier_hook '{' <openscope-ast> struct_declaration_list_opt '}'

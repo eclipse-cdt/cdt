@@ -1958,7 +1958,7 @@ public CPPSizeofExpressionParser(IParserActionTokenProvider parser) {  // constr
             }  
   
             //
-            // Rule 534:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 534:  no_sizeof_type_id_start ::= ERROR_TOKEN
             //
             case 534: { action.   consumeExpressionProblem();             break;
             }  

@@ -14,6 +14,15 @@
 %options template=FixedBtParserTemplateD.g
 
 
+$Terminals
+
+   -- GCC allows these C99 keywords to be used in C++
+   
+   _Complex  _Imaginary
+   
+$End
+
+
 -- For this to work the environment variable LPG_INCLUDE must be set up
 -- to point at the directory where the CPPParser.g file is located.
 $Import
@@ -25,6 +34,10 @@ $DropRules
 asm_definition
     ::= 'asm' '(' 'stringlit' ')' ';'
 
+-- need to replace the action associated with this rule with one that supports _Complex and _Imaginary
+declaration_specifiers
+    ::= <openscope-ast> simple_declaration_specifiers
+
 
 $End
 
@@ -35,14 +48,14 @@ $End
 
 $Globals
 /.
-	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
+	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
 ./
 $End
 
 $Define
 
-    $gnu_action_class /. GNUBuildASTParserAction ./
+    $gnu_action_class /. GPPBuildASTParserAction ./
 	$parser_factory_create_expression /. GPPSecondaryParserFactory.getDefault() ./
 
 $End
@@ -85,5 +98,16 @@ declarator
 
 elaborated_specifier_hook
     ::= attribute_or_decl_specifier_seq
+    
+    
+simple_type_specifier
+    ::= '_Complex'
+          /. $Build  consumeToken(); $EndBuild ./
+      | '_Imaginary'
+          /. $Build  consumeToken(); $EndBuild ./
 
+declaration_specifiers
+    ::= <openscope-ast> simple_declaration_specifiers
+          /. $BeginAction  gnuAction.consumeDeclarationSpecifiersSimple();  $EndAction ./
+          
 $End

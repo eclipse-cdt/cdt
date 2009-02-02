@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
  */
 public class UPCParserAction extends C99BuildASTParserAction {
 	
-	private UPCASTNodeFactory nodeFactory;
+	private IUPCNodeFactory nodeFactory;
 	
 	
 	/**
@@ -46,7 +46,7 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * @param parser
 	 * @param tu
 	 */
-	public UPCParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, UPCASTNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+	public UPCParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, IUPCNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
 		super(parser, tu, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 		nodeFactory.setUseC99SizeofExpressions();
@@ -178,7 +178,7 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * Overrides setSpecifier to add support for temporary layout qualifier nodes.
 	 */
 	@Override
-	protected void setSpecifier(ICASTDeclSpecifier declSpec, Object specifier) {
+	public void setSpecifier(ICASTDeclSpecifier declSpec, Object specifier) {
 		if(specifier instanceof IToken)
 			setTokenSpecifier((IUPCASTDeclSpecifier)declSpec, (IToken)specifier);
 		else 

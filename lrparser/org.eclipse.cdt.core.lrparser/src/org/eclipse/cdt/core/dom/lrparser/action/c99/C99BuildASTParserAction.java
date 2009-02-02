@@ -191,7 +191,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * Object as the type of the specifier, so that it may be overridden in subclasses
 	 * and used with arbitrary objects as the specifier.
 	 */
-	protected void setSpecifier(ICASTDeclSpecifier node, Object specifier) {
+	public void setSpecifier(ICASTDeclSpecifier node, Object specifier) {
 		if(!(specifier instanceof IToken))
 			return;
 		IToken token = (IToken)specifier;
@@ -454,7 +454,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 				int kind = baseKind(token);
 				if(kind == TK_identifier || kind == TK_Completion) {
 					IASTName name = createName(token);
-					//name.setBinding(binding);
 					declSpec.setName(name);
 				}
 				else {

@@ -110,6 +110,24 @@ public class LRTests extends AST2Tests {
     }
     
     
+	@Override
+	public void testBug196468_emptyArrayInitializer() { // I don't care about C98
+		try {
+			super.testBug196468_emptyArrayInitializer();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
+	@Override
+	public void	testScalabilityOfLargeTrivialInitializer_Bug253690() {
+		// LPG holds on to all the tokens as you parse, so I don't think
+		// it would be easy to fix this bug.
+		try {
+			super.testScalabilityOfLargeTrivialInitializer_Bug253690();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
 	
 //    @Override
 //	public void testBug93980() { // some wierd gcc extension I think

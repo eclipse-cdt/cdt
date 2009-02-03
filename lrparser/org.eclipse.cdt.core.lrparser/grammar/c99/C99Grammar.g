@@ -111,7 +111,7 @@ $End
 $Rules
 
 -------------------------------------------------------------------------------------------
--- AST  and Symbol Table Scoping
+-- AST scopes
 -------------------------------------------------------------------------------------------
 
 
@@ -119,7 +119,11 @@ $Rules
     ::= $empty
           /. $Build  openASTScope();  $EndBuild ./ 
 
-
+<empty>
+    ::= $empty 
+          /. $Build  consumeEmpty();  $EndBuild ./ 
+          
+          
 -------------------------------------------------------------------------------------------
 -- Content assist
 -------------------------------------------------------------------------------------------
@@ -277,40 +281,40 @@ equality_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_notequals);  $EndBuild ./
 
 
-AND_expression
+and_expression
     ::= equality_expression
-      | AND_expression '&' equality_expression
+      | and_expression '&' equality_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAnd);  $EndBuild ./
 
 
-exclusive_OR_expression
-    ::= AND_expression
-      | exclusive_OR_expression '^' AND_expression
+exclusive_or_expression
+    ::= and_expression
+      | exclusive_or_expression '^' and_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXor);  $EndBuild ./
 
 
-inclusive_OR_expression
-    ::= exclusive_OR_expression
-      | inclusive_OR_expression '|' exclusive_OR_expression
+inclusive_or_expression
+    ::= exclusive_or_expression
+      | inclusive_or_expression '|' exclusive_or_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOr);  $EndBuild ./
 
 
-logical_AND_expression
-    ::= inclusive_OR_expression
-      | logical_AND_expression '&&' inclusive_OR_expression
+logical_and_expression
+    ::= inclusive_or_expression
+      | logical_and_expression '&&' inclusive_or_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalAnd);  $EndBuild ./
 
 
-logical_OR_expression
-    ::= logical_AND_expression
-      | logical_OR_expression '||' logical_AND_expression
+logical_or_expression
+    ::= logical_and_expression
+      | logical_or_expression '||' logical_and_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalOr);  $EndBuild ./
 
 
 conditional_expression
-    ::= logical_OR_expression
-      | logical_OR_expression '?' expression ':' conditional_expression
-          /. $Build  consumeExpressionConditional();  $EndBuild ./
+    ::= logical_or_expression
+      | logical_or_expression '?' expression ':' assignment_expression
+           /. $Build  consumeExpressionConditional();  $EndBuild ./
 
 
 assignment_expression

@@ -2011,35 +2011,59 @@ private  GPPBuildASTParserAction  gnuAction;
             //
             case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
+  
+            //
+            // Rule 576:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
+            //
+            case 576: { action.   consumeExpressionConditional();             break;
+            }  
  
             //
-            // Rule 580:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 577:  primary_expression ::= ( compound_statement )
             //
-            case 580: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            case 577: {  gnuAction.consumeCompoundStatementExpression();            break;
             } 
   
             //
-            // Rule 593:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 578:  labeled_statement ::= case case_range_expression : statement
             //
-            case 593: { action.   consumeDeclaratorWithPointer(true);             break;
+            case 578: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 595:  simple_type_specifier ::= _Complex
+            // Rule 579:  case_range_expression ::= constant_expression ... constant_expression
             //
-            case 595: { action.   consumeToken();            break;
-            }  
-  
-            //
-            // Rule 596:  simple_type_specifier ::= _Imaginary
-            //
-            case 596: { action.   consumeToken();            break;
+            case 579: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
  
             //
-            // Rule 597:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            // Rule 584:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 597: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            case 584: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            } 
+  
+            //
+            // Rule 597:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            //
+            case 597: { action.   consumeDeclaratorWithPointer(true);             break;
+            }  
+  
+            //
+            // Rule 599:  simple_type_specifier ::= _Complex
+            //
+            case 599: { action.   consumeToken();            break;
+            }  
+  
+            //
+            // Rule 600:  simple_type_specifier ::= _Imaginary
+            //
+            case 600: { action.   consumeToken();            break;
+            }  
+ 
+            //
+            // Rule 601:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            //
+            case 601: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
             } 
 
     

@@ -459,6 +459,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTCaseStatement caseStatement = nodeFactory.newCaseStatement(expr);		
 		setOffsetAndLength(caseStatement); // TODO this is wrong, need to adjust length to end of colon
 		
+		// this is a hackey fix because case statements are not modeled correctly in the AST
 		IASTCompoundStatement compound = nodeFactory.newCompoundStatement();
 		setOffsetAndLength(compound);
 		compound.addStatement(caseStatement);

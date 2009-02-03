@@ -157,7 +157,26 @@ relational_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);  $EndBuild ./
           
           
+conditional_expression
+    ::= logical_or_expression '?' <empty> ':' assignment_expression
+           /. $Build  consumeExpressionConditional();  $EndBuild ./
+
+
+primary_expression
+    ::= '(' compound_statement ')'
+           /. $BeginAction  gnuAction.consumeCompoundStatementExpression();  $EndAction ./
+           
+           
+labeled_statement
+    ::= 'case' case_range_expression ':' statement
+          /. $Build  consumeStatementCase();  $EndBuild ./
           
+          
+case_range_expression
+    ::= constant_expression '...' constant_expression
+          /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);  $EndBuild ./
+          
+
 typeof_type_specifier
       ::= 'typeof' unary_expression
         

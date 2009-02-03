@@ -1987,41 +1987,65 @@ private  GPPBuildASTParserAction  gnuAction;
             //
             case 571: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
- 
-            //
-            // Rule 576:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
-            //
-            case 576: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
   
             //
-            // Rule 589:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 572:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
             //
-            case 589: { action.   consumeDeclaratorWithPointer(true);             break;
-            }  
-  
-            //
-            // Rule 591:  simple_type_specifier ::= _Complex
-            //
-            case 591: { action.   consumeToken();            break;
-            }  
-  
-            //
-            // Rule 592:  simple_type_specifier ::= _Imaginary
-            //
-            case 592: { action.   consumeToken();            break;
+            case 572: { action.   consumeExpressionConditional();             break;
             }  
  
             //
-            // Rule 593:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            // Rule 573:  primary_expression ::= ( compound_statement )
             //
-            case 593: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            case 573: {  gnuAction.consumeCompoundStatementExpression();            break;
             } 
   
             //
-            // Rule 595:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            // Rule 574:  labeled_statement ::= case case_range_expression : statement
             //
-            case 595: { action.   consumeEmpty();             break;
+            case 574: { action.   consumeStatementCase();             break;
+            }  
+  
+            //
+            // Rule 575:  case_range_expression ::= constant_expression ... constant_expression
+            //
+            case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
+            }  
+ 
+            //
+            // Rule 580:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            //
+            case 580: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            } 
+  
+            //
+            // Rule 593:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            //
+            case 593: { action.   consumeDeclaratorWithPointer(true);             break;
+            }  
+  
+            //
+            // Rule 595:  simple_type_specifier ::= _Complex
+            //
+            case 595: { action.   consumeToken();            break;
+            }  
+  
+            //
+            // Rule 596:  simple_type_specifier ::= _Imaginary
+            //
+            case 596: { action.   consumeToken();            break;
+            }  
+ 
+            //
+            // Rule 597:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            //
+            case 597: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            } 
+  
+            //
+            // Rule 599:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            //
+            case 599: { action.   consumeEmpty();             break;
             }  
 
     

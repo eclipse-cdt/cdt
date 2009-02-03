@@ -15,8 +15,10 @@ import java.util.List;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.AbstractParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
@@ -83,4 +85,14 @@ public class GNUBuildASTParserAction extends AbstractParserAction {
 	}
 
 
+	/**
+	 * primary_expression
+     *     ::= '(' compound_statement ')'
+	 */
+	public void consumeCompoundStatementExpression() {
+		IASTCompoundStatement compoundStatement = (IASTCompoundStatement) astStack.pop();
+		IGNUASTCompoundStatementExpression expr = nodeFactory.newGNUCompoundStatementExpression(compoundStatement);
+		setOffsetAndLength(expr);
+		astStack.push(expr);
+	}
 }

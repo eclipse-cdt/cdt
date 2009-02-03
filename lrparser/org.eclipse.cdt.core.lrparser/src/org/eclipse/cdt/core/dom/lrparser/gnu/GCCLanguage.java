@@ -15,7 +15,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -69,4 +71,8 @@ public class GCCLanguage extends BaseExtensibleLanguage {
 		return ParserLanguage.C;
 	}
 
+	@Override
+	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
+		return new GCCParserExtensionConfiguration().getBuiltinBindingsProvider();
+	}
 }

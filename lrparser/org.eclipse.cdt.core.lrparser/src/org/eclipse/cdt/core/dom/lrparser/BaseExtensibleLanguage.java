@@ -15,13 +15,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
@@ -34,6 +38,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
@@ -41,6 +46,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -86,6 +92,11 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 */
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
 	
+	
+	/**
+	 * Returns a bindings provider that will provide additional bindings based on the language extension.
+	 */
+	protected abstract IBuiltinBindingsProvider getBuiltinBindingsProvider();
 	
 	
 	@SuppressWarnings("nls")
@@ -143,8 +154,23 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	
 	
 	
-	private static void setUpTranslationUnit(IASTTranslationUnit tu, IScanner preprocessor, IIndex index) {
+	private void setUpTranslationUnit(IASTTranslationUnit tu, IScanner preprocessor, IIndex index) throws CoreException {
 		tu.setIndex(index);
+		
+		// add built-in names to the scope
+		IBuiltinBindingsProvider builtinBindingsProvider = getBuiltinBindingsProvider();
+		if (builtinBindingsProvider != null) {
+			IScope tuScope = tu.getScope();
+			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
+			try {
+				for (IBinding binding : bindings) {
+					ASTInternal.addBinding(tuScope, binding);
+				}
+			} catch (DOMException e) {
+				throw new CoreException(LRParserPlugin.createStatus(e));
+			}
+		}
+		
 		if(tu instanceof ASTTranslationUnit) {
 			((ASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
 		}

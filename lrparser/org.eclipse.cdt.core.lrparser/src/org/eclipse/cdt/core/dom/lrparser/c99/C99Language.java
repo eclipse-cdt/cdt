@@ -16,7 +16,9 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -68,6 +70,11 @@ public class C99Language extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
+	}
+
+	@Override
+	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
+		return new ANSICParserExtensionConfiguration().getBuiltinBindingsProvider();
 	}
 
 }

@@ -16,14 +16,15 @@ import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCLanguageKeywords;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
 
@@ -32,7 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
  * 
  * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
 public class UPCLanguage extends BaseExtensibleLanguage {
 	
 	public static final String ID = "org.eclipse.cdt.core.parser.upc.upc"; //$NON-NLS-1$ 
@@ -90,4 +90,8 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return ScannerExtensionConfiguration.createC();
 	}
 
+	@Override
+	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
+		return new ANSICParserExtensionConfiguration().getBuiltinBindingsProvider();
+	}
 }

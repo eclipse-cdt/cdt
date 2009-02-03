@@ -15,7 +15,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -69,4 +71,8 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 		return ParserLanguage.CPP;
 	}
 
+	@Override
+	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
+		return new GPPParserExtensionConfiguration().getBuiltinBindingsProvider();
+	}
 }

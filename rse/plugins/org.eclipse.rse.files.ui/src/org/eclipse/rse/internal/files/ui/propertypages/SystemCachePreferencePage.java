@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [239459] Clear Cached Files action should not delete project metadata
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -246,11 +247,11 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	 * Set default preferences for the communications preference page.
 	 * 
 	 * @param store PreferenceStore used for this preference page.
+	 * @deprecated moved to Activator
 	 */
 	public static void initDefaults(IPreferenceStore store)
 	{
-		store.setDefault(ISystemFilePreferencesConstants.LIMIT_CACHE, ISystemFilePreferencesConstants.DEFAULT_LIMIT_CACHE);
-		store.setDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE);
+		// no longer needed here - moved to Activator
 	}
 
 	/**

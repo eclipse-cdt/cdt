@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 20089 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [205820] create the temp files project (if not there) when files.ui is loaded
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Martin Oberhuber (Wind River) - [228353] Asynchronously initialize the remote edit project
+ * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -27,14 +28,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
-import org.eclipse.rse.internal.files.ui.propertypages.SystemCachePreferencePage;
-import org.eclipse.rse.internal.files.ui.propertypages.UniversalPreferencePage;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 
@@ -116,9 +118,54 @@ public class Activator extends AbstractUIPlugin
 	{
 		//FIXME This should really be migrated into a Preferences Initializer Extension
 		//in order to avoid unnecessary plugin activation
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		SystemCachePreferencePage.initDefaults(store);
-		UniversalPreferencePage.initDefaults(store);
+		//IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		
+		
+		// as per bug 245260, using scoped store for preference initialization
+		IPreferenceStore store = new ScopedPreferenceStore(new DefaultScope(), RSEUIPlugin.getDefault().getBundle().getSymbolicName());
+
+		// system cache preferences
+		if (store.isDefault(ISystemFilePreferencesConstants.LIMIT_CACHE)){
+			store.setDefault(ISystemFilePreferencesConstants.LIMIT_CACHE, ISystemFilePreferencesConstants.DEFAULT_LIMIT_CACHE);
+		}
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE)){
+			store.setDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE);
+		}
+
+
+		// universal preferences
+		if (store.isDefault(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT)){
+			store.setDefault(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT, ISystemFilePreferencesConstants.DEFAULT_FILETRANSFERMODE);
+		}			
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.SHOWHIDDEN)){
+			store.setDefault(ISystemFilePreferencesConstants.SHOWHIDDEN, false);
+		}
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS)){
+			store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, ISystemFilePreferencesConstants.DEFAULT_PRESERVETIMESTAMPS);
+		}
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES)){
+			store.setDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES, ISystemFilePreferencesConstants.DEFAULT_SHARECACHEDFILES);
+		}
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER)){
+			store.setDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER, ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
+		}
+				
+		if (store.isDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE)){			
+			store.setDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE, ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
+		}
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE)){
+			store.setDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
+		}	
+		
+		if (store.isDefault(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE)){
+			store.setDefault(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
+		}
 	}
 
 	/**

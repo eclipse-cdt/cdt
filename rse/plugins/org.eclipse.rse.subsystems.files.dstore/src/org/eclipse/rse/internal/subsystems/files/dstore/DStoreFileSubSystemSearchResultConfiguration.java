@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [190010] performance improvement to use caching for dstore search
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [214378] [dstore] remote search doesn't display results sometimes
+ * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -26,14 +27,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.DomainEvent;
-import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
+import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchResultConfiguration;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
@@ -42,15 +42,17 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.OutputRefresh;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchResultConfiguration
 {
+
+	
 	private FileServiceSubSystem _fileSubSystem;
 	private IRemoteFile _searchObject;
-	private HashMap _parentCache;
 	private List    _convertedResults;
 
 	public DStoreFileSubSystemSearchResultConfiguration(IHostSearchResultSet set, Object searchObject, SystemSearchString searchString, ISearchService searchService, IHostFileToRemoteFileAdapter fileAdapter)
@@ -58,7 +60,6 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		super(set, searchObject, searchString, searchService);
 		_searchObject = (IRemoteFile)searchObject;
 		_fileSubSystem = (FileServiceSubSystem)_searchObject.getParentRemoteFileSubSystem();
-		_parentCache = new HashMap();
 		_convertedResults = new ArrayList();
 	}
 
@@ -85,38 +86,17 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		{
 			if (results.size() > _convertedResults.size())
 			{
-			IProgressMonitor monitor = new NullProgressMonitor();	
-			for (int i = 0; i < results.size(); i++)
-			{
+			for (int i = _convertedResults.size(); i < results.size(); i++)
+			{ 
 				DataElement fileNode = (DataElement)results.get(i);
 				if (fileNode != null && !fileNode.getType().equals("error")) //$NON-NLS-1$
 				{
-					IRemoteFile parentRemoteFile = null;
 					try
 					{
-						parentRemoteFile = (IRemoteFile)_parentCache.get(fileNode.getValue());
-						if (parentRemoteFile == null)
-						{
-							parentRemoteFile = _fileSubSystem.getRemoteFileObject(fileNode.getValue(),monitor);
-							_parentCache.put(fileNode.getValue(), parentRemoteFile);
-		
-						
-							if (parentRemoteFile != null && !parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
-							{
-								// query all files to save time (so we can retrieve cached files
-								IRemoteFile[] children = _fileSubSystem.list(parentRemoteFile, monitor);
-								for (int c = 0; c < children.length; c++)
-								{
-									if (!children[c].isFile())
-									{
-										_parentCache.put(children[c].getAbsolutePath(), children[c]);
-									}
-								}
-							}
-						}
-						String path = fileNode.getValue() + "/" + fileNode.getName(); //$NON-NLS-1$
-						IRemoteFile remoteFile = _fileSubSystem.getRemoteFileObject(path, monitor);
-	
+						IHostFile hostFile = new DStoreHostFile(fileNode);
+						IRemoteFileContext context = _fileSubSystem.getTheDefaultContext();
+						IRemoteFile remoteFile = _fileSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFile(_fileSubSystem, context, null, hostFile);
+
 						List contained = fileNode.getNestedData();
 						if (contained != null)
 						{
@@ -130,13 +110,8 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 						}
 						_convertedResults.add(remoteFile);
 					}
-					catch (SystemMessageException e)
-					{
-						SystemMessageDialog.displayMessage(e);
-					}
 					catch (Exception e)
-					{
-						
+					{						
 					}
 				}
 			}

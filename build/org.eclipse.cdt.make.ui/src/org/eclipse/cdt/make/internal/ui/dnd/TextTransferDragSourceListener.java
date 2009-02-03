@@ -109,9 +109,15 @@ public class TextTransferDragSourceListener extends AbstractSelectionDragAdapter
 					buildCommand =makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
 						MakeTargetDndUtil.DEFAULT_BUILD_COMMAND);
 				}
-				targetsText = targetsText
-					+ buildCommand + ' '
-					+ makeTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, "") //$NON-NLS-1$
+				String buildCommandArguments = makeTarget.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "").trim(); //$NON-NLS-1$
+				if (buildCommandArguments.length()>0) {
+					buildCommandArguments = ' ' + buildCommandArguments;
+				}
+				String buildTarget = makeTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, "").trim(); //$NON-NLS-1$
+				if (buildTarget.length()>0) {
+					buildTarget = ' ' + buildTarget;
+				}
+				targetsText = targetsText + buildCommand + buildCommandArguments + buildTarget
 					+ System.getProperty("line.separator"); //$NON-NLS-1$
 			}
 		}

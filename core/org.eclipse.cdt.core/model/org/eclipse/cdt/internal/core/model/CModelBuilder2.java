@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -465,7 +466,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
-		IASTDeclarator typeRelevant= CPPVisitor.findTypeRelevantDeclarator(declarator);
+		IASTDeclarator typeRelevant= ASTQueries.findTypeRelevantDeclarator(declarator);
 		if (typeRelevant instanceof IASTFunctionDeclarator) {
 			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)typeRelevant, isTemplate);
 		}

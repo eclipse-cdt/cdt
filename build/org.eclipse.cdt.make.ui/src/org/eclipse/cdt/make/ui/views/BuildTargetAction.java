@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,18 @@
 package org.eclipse.cdt.make.ui.views;
 
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.TargetBuild;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 public class BuildTargetAction extends SelectionListenerAction {
-
-	Shell shell;
-	IResource resource;
+	private final Shell shell;
 
 	public BuildTargetAction(Shell shell) {
 		super(MakeUIPlugin.getResourceString("BuildTargetAction.label")); //$NON-NLS-1$
@@ -36,32 +32,30 @@ public class BuildTargetAction extends SelectionListenerAction {
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_BUILD); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run() {
 		if (canBuild()) {
-			IMakeTarget[] targets = (IMakeTarget[]) getSelectedElements().toArray(new IMakeTarget[0]);
+			IMakeTarget[] targets = getSelectedElements().toArray(new IMakeTarget[0]);
 			TargetBuild.buildTargets(shell, targets);
 		}
 	}
 
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return super.updateSelection(selection) && canBuild();
 	}
 
 	private boolean canBuild() {
-		List elements = getSelectedElements();
-		if (elements.size() > 0) {
-			Iterator iterator = elements.iterator();
-			while (iterator.hasNext()) {
-				if (!(iterator.next() instanceof IMakeTarget)) {
-					return false;
-				}
+		List<?> elements = getSelectedElements();
+		for (Object element : elements) {
+			if (! (element instanceof IMakeTarget)) {
+				return false;
 			}
-			return true;
 		}
-		return false;
+		return elements.size()>0;
 	}
 
-	private List getSelectedElements() {
+	private List<?> getSelectedElements() {
 		return getStructuredSelection().toList();
 	}
 }

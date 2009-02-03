@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class BuildTargetDialog extends Dialog {
-	TargetListViewerPart targetPart;
-	IContainer fContainer;
+	private final TargetListViewerPart targetPart;
+	private final IContainer fContainer;
 
 	public BuildTargetDialog(Shell parent, IContainer container) {
 		super(parent);
@@ -49,11 +49,13 @@ public class BuildTargetDialog extends Dialog {
 		return targetPart.getSelectedTarget();
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(MakeUIPlugin.getResourceString("BuildTargetDialog.title.buildTarget")); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Build and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("BuildTargetDialog.button.build"), true); //$NON-NLS-1$
@@ -61,6 +63,7 @@ public class BuildTargetDialog extends Dialog {
 		getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 2;
@@ -88,6 +91,7 @@ public class BuildTargetDialog extends Dialog {
 		return composite;
 	}
 
+	@Override
 	protected void okPressed() {
 		IMakeTarget selected = targetPart.getSelectedTarget();
 		super.okPressed();

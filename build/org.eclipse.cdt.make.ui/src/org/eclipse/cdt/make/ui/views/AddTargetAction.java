@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,13 @@ import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 public class AddTargetAction extends SelectionListenerAction {
-
-	Shell shell;
-	IResource resource;
+	private final Shell shell;
 
 	public AddTargetAction(Shell shell) {
 		super(MakeUIPlugin.getResourceString("AddTargetAction.label")); //$NON-NLS-1$
@@ -36,6 +33,7 @@ public class AddTargetAction extends SelectionListenerAction {
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run() {
 		if (canAdd()) {
 			try {
@@ -48,16 +46,14 @@ public class AddTargetAction extends SelectionListenerAction {
 
 	}
 
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return super.updateSelection(selection) && canAdd();
 	}
 
 	private boolean canAdd() {
-		List elements = getStructuredSelection().toList();
-		if (elements.size() > 1 || elements.size() < 1) {
-			return false;
-		}
-		if (elements.get(0) instanceof IContainer) {
+		List<?> elements = getStructuredSelection().toList();
+		if (elements.size()==1 && (elements.get(0) instanceof IContainer)) {
 			return true;
 		}
 		return false;

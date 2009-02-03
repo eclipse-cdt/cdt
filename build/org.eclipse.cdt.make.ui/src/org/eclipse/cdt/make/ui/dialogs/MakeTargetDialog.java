@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class MakeTargetDialog extends Dialog {
 
-	protected MessageLine fStatusLine;
+	private MessageLine fStatusLine;
 	private static final String TARGET_PREFIX = "TargetBlock"; //$NON-NLS-1$
 	private static final String TARGET_NAME_LABEL = TARGET_PREFIX + ".target.label"; //$NON-NLS-1$
 
@@ -68,11 +68,11 @@ public class MakeTargetDialog extends Dialog {
 	private Button defButton;
 	private Text targetText;
 
-	private IMakeTargetManager fTargetManager;
-	private IContainer fContainer;
+	private final IMakeTargetManager fTargetManager;
+	private final IContainer fContainer;
 
 	private IPath buildCommand;
-	private String defaultBuildCommand;
+	private final String defaultBuildCommand;
 	private boolean isDefaultCommand;
 	private boolean isStopOnError;
 	private boolean runAllBuilders = true;
@@ -108,7 +108,7 @@ public class MakeTargetDialog extends Dialog {
 				} catch (CoreException e) {
 					// ignore exception since no update action was initiated by user yet
 				}
-				
+
 			}
 		}
 
@@ -116,12 +116,12 @@ public class MakeTargetDialog extends Dialog {
 			setStatusLine();
 			updateButtons();
 		}
-		
+
 	}
 
 	/**
 	 * This constructor is called on "Edit Make Target" action.
-	 * 
+	 *
 	 * @param parentShell - shell to display the dialog.
 	 * @param target - make target to edit.
 	 * @throws CoreException
@@ -142,7 +142,7 @@ public class MakeTargetDialog extends Dialog {
 	/**
 	 * This constructor is called on "Add Make Target" action and from
 	 * the other constructor where some initialized values can be overwritten.
-	 * 
+	 *
 	 * @param parentShell - shell to display the dialog.
 	 * @param container - container where to create the target.
 	 * @throws CoreException
@@ -169,6 +169,7 @@ public class MakeTargetDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(getTitle());
 		super.configureShell(newShell);
@@ -185,9 +186,10 @@ public class MakeTargetDialog extends Dialog {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		initializeDialogUnits(composite);
@@ -229,6 +231,7 @@ public class MakeTargetDialog extends Dialog {
 		stopOnErrorButton.setText(MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR));
 		stopOnErrorButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
@@ -246,6 +249,7 @@ public class MakeTargetDialog extends Dialog {
 		runAllBuildersButton.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.runAllBuilders")); //$NON-NLS-1$
 		runAllBuildersButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
@@ -267,6 +271,7 @@ public class MakeTargetDialog extends Dialog {
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
 		defButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					commandText.setText(defaultBuildCommand);
@@ -308,14 +313,14 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
-		
+
 		sameAsNameCheck = new Button(group, SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		sameAsNameCheck.setLayoutData(gd);
 		sameAsNameCheck.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.sameAsTarget")); //$NON-NLS-1$
 
-		/* Add a listener to the target name text to update the targetText */ 
+		/* Add a listener to the target name text to update the targetText */
 		targetNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (sameAsNameCheck.getSelection()) {
@@ -323,7 +328,7 @@ public class MakeTargetDialog extends Dialog {
 				}
 			}
 		});
-		
+
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(BUILD_ARGUMENT_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
@@ -336,8 +341,9 @@ public class MakeTargetDialog extends Dialog {
 				updateButtons();
 			}
 		});
-		
+
 		sameAsNameCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sameAsNameSelected();
 			}
@@ -354,6 +360,7 @@ public class MakeTargetDialog extends Dialog {
 		}
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.create"), true); //$NON-NLS-1$
@@ -390,18 +397,24 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	protected boolean targetHasChanged() {
-		if (initializing || fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget))
+		if (initializing || fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 			return true;
-		if (isStopOnError != isStopOnError())
+		}
+		if (isStopOnError != isStopOnError()) {
 			return true;
-		if (runAllBuilders != runAllBuilders())
+		}
+		if (runAllBuilders != runAllBuilders()) {
 			return true;
-		if (isDefaultCommand != useDefaultBuildCmd())
+		}
+		if (isDefaultCommand != useDefaultBuildCmd()) {
 			return true;
-		if (!targetName.equals(getTargetName()))
+		}
+		if (!targetName.equals(getTargetName())) {
 			return true;
-		if (!targetString.equals(getTarget()))
+		}
+		if (!targetString.equals(getTarget())) {
 			return true;
+		}
 		if (!isDefaultCommand) {
 			StringBuffer cmd = new StringBuffer(buildCommand.toOSString()).append(buildArguments);
 			if (!getBuildLine().equals(cmd.toString())) {
@@ -439,8 +452,9 @@ public class MakeTargetDialog extends Dialog {
 	private String getBuildLine() {
 		if (commandText != null) {
 			String cmd = commandText.getText();
-			if (cmd != null)
+			if (cmd != null) {
 				return cmd.trim();
+			}
 		}
 		return null;
 	}
@@ -453,6 +467,7 @@ public class MakeTargetDialog extends Dialog {
 		return targetNameText.getText().trim();
 	}
 
+	@Override
 	protected void okPressed() {
 		IMakeTarget target = fTarget;
 		try {

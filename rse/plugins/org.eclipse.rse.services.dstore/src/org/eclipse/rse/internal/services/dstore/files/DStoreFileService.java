@@ -52,6 +52,7 @@
  * David McKnight   (IBM)        - [250168] some backward compatibility issues with old IBM dstore server
  * David McKnight   (IBM)        - [251429] Pasting local folder to remote does not work in some case
  * David McKnight   (IBM)        - [261375] [dstore] problem comparing virtual path when getting cached element
+ * David McKnight   (IBM)        - [256609] [dstore] need to make sure element is resolved properly before finding it's command descriptors
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1433,6 +1434,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
 		DataElement de = getElementFor(remotePath);
+		// if we don't have a proper element, we won't have a command descriptor
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+			// need to fetch
+			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+		}
+		
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
 		if (status == null)
 			throw new SystemMessageException(new SimpleSystemMessage(Activator.PLUGIN_ID,
@@ -1462,6 +1469,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		throw new SystemMessageException(msg);
 	}
+	
 
 	public void deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
@@ -1475,7 +1483,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			String remotePath = remoteParents[i] + getSeparator(remoteParents[i]) + fileNames[i];
 			DataElement de = getElementFor(remotePath);
-			if (de != null) dataElements.add(de);
+			// if we don't have a proper element, we won't have a command descriptor
+			if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+				// need to fetch
+				dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+			}
+			
+			if (de != null) 
+				dataElements.add(de);
 		}
 
 		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
@@ -1528,7 +1543,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
  		}
 
  		DataElement de = getElementFor(oldPath);
-
+		// if we don't have a proper element, we won't have a command descriptor
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+			// need to fetch
+			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+		}
 
 		// new servers use the full path
  		de.setAttribute(DE.A_SOURCE, newPath);
@@ -1805,6 +1824,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			{
 				String srcRemotePath = srcParents[i] + getSeparator(srcParents[i]) + srcNames[i];
 				DataElement srcDE = getElementFor(srcRemotePath);
+				// if we don't have a proper element, we won't have a command descriptor
+				if (srcDE.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+					// need to fetch
+					dsQueryCommand(srcDE, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+				}
 				args.add(srcDE);
 			}
 			DataElement status = ds.command(cpCmd, args, tgtDE, true);
@@ -2125,6 +2149,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
+		// if we don't have a proper element, we won't have a command descriptor
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+			// need to fetch
+			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+		}
+		
 		DataStore ds = de.getDataStore();
 		if (ds != null)
 		{
@@ -2148,6 +2178,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
+		// if we don't have a proper element, we won't have a command descriptor
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
+			// need to fetch
+			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+		}
+		
 		DataStore ds = de.getDataStore();
 		if (ds != null)
 		{

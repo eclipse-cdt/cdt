@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * 2. It is experimental functionality. Work is in progress.  
  * 3. Tree depth is limited by 16. Deeper branches are truncated.
  *    But it seems to be very rare situation.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class StructureTreeTab  extends AbstractCPropertyTab {
 

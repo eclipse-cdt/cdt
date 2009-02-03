@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others
+ * Copyright (c) 2005, 2009 Intel Corporation and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.dialogs.DocCommentOwnerBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class Page_head_general extends PropertyPage implements ICOptionContainer {
 	private DocCommentOwnerBlock fDocBlock;
 	private boolean isProjectLevel;

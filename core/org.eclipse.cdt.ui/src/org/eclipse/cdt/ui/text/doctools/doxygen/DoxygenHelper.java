@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 /**
  * Makes available information for Doxygen support.
  * 
- * <em>This class is not intended to be sub-classed by clients</em>
  * @since 5.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DoxygenHelper extends AbstractPreferenceInitializer {
 	private static final IPath TAGS_CSV= new Path("doxygenTags.csv"); //$NON-NLS-1$

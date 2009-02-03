@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
 /**
  * Common base class for refactoring actions
  * @since 5.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class RefactoringAction extends Action {
     protected ITextEditor fEditor;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 BitMethods Inc and others.
+ * Copyright (c) 2004, 2009 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,8 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 /**
  * Instances of this class allow the user to add,remove, delete, moveup and movedown
  * the items in the list control.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class FileListControl {

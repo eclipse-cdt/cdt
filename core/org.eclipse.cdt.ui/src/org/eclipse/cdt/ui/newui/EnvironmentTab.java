@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,9 @@ import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 
-
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class EnvironmentTab extends AbstractCPropertyTab {
 	private static final String SEMI = ";"; //$NON-NLS-1$
 	private static final String LBR = " ["; //$NON-NLS-1$

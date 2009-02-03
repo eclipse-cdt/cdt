@@ -22,8 +22,8 @@ package org.eclipse.cdt.ui.text.doctools;
  * delimiting prefix/post-fixes
  * </ul>
  *  
- * <em>This interface is not intended to be implemented externally to CDT.</em>
  * @since 5.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDocCommentOwner {
 	/**

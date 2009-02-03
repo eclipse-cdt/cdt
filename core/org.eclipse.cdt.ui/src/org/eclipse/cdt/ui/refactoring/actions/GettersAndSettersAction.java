@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -25,6 +25,8 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGetters
 
 /**
  * Launches a getter and setter source code generation.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */          
 public class GettersAndSettersAction extends RefactoringAction {
     

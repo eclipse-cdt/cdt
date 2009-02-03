@@ -32,6 +32,8 @@ import org.eclipse.cdt.internal.ui.refactoring.UndoCTextFileChange;
 
 /**
  * A TextFileChange that uses a working copy in order to generate CModel events.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CTextFileChange extends TextFileChange {
     // "c2" is the extension which the CContentViewerCreator is registered

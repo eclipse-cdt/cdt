@@ -16,6 +16,7 @@ package org.eclipse.cdt.ui.dialogs;
  * Must implement getRealBinaryParserPage method. 
  * 
  * @author vhirsl
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class GNUSomBinaryParserPage extends AbstractGNUBinaryParserPage {
 

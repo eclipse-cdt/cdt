@@ -27,9 +27,9 @@ import org.eclipse.jface.text.ITextViewer;
  * specific context information such as an AST.
  * </p>
  * <p>
- * Clients may instantiate and subclass.
+ * Clients may instantiate.
  * </p>
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  * @since 4.0
  */
 public class ContentAssistInvocationContext {

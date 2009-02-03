@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2008 Intel Corporation and others.
+ * Copyright (c) 2004, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  * This class defines a project property page 
  * for C/C++ project help settings configuration
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		IWorkbenchPreferencePage {

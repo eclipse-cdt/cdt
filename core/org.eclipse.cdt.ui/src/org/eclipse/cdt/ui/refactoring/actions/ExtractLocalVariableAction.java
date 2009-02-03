@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Wind River Systems, Inc. 
+ * Copyright (c) 2005, 2009 Wind River Systems, Inc. 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocal
 /**
  * Launches a extract local variable refactoring.
  * @since 5.1
+ * @noextend This class is not intended to be subclassed by clients.
  */          
 public class ExtractLocalVariableAction extends RefactoringAction {
     

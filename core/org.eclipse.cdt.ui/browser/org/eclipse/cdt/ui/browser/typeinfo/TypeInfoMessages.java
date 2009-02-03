@@ -14,6 +14,10 @@ package org.eclipse.cdt.ui.browser.typeinfo;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public final class TypeInfoMessages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages";//$NON-NLS-1$

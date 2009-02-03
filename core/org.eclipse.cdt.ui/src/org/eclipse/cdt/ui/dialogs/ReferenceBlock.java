@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class ReferenceBlock extends AbstractCOptionPage {
 
 	private static final String PREFIX = "ReferenceBlock"; // $NON-NLS-1$ //$NON-NLS-1$

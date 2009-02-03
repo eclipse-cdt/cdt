@@ -16,6 +16,8 @@ import java.util.ResourceBundle;
 
 /**
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UIMessages {
 	// Bundle ID

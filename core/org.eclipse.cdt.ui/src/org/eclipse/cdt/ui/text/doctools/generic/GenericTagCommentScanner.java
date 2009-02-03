@@ -32,6 +32,7 @@ import org.eclipse.cdt.ui.text.TaskTagRule;
  * ICTokenScanner which recognizes a specified set of tags, starting with a specified name. It is assumed this will be
  * used within a single-line or multi-line comment context.
  * @since 5.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class GenericTagCommentScanner extends BufferedRuleBasedScanner implements ICTokenScanner {
 	protected TaskTagRule fTaskTagRule;

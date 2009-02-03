@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,10 @@ package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class DialogsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.dialogs.DialogsMessages"; //$NON-NLS-1$
 	/**

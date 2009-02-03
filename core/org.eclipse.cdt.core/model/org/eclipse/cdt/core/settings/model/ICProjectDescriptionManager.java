@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This interface represents the manager of CDT Project descriptions.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICProjectDescriptionManager {
 	/*
@@ -42,6 +44,7 @@ public interface ICProjectDescriptionManager {
 	/** 
 	 * Flag indicating that a new empty ICProjectDescription should be created and returned 
 	 * (irrespective of whether one already exists) 
+	 * @since 5.1
 	 */
 	public static final int GET_EMPTY_PROJECT_DESCRIPTION = 1 << 4;
 	/**
@@ -49,6 +52,7 @@ public interface ICProjectDescriptionManager {
 	 * i.e. a description should be returned irrespective of whether one already exists.
 	 * If the project already has a description and !{@link #GET_EMPTY_PROJECT_DESCRIPTION}
 	 * the existing description will be returned, otherwise a new description is returned
+	 * @since 5.1
 	 */
 	public static final int GET_CREATE_DESCRIPTION = 1 << 5;
 	/** 
@@ -58,6 +62,7 @@ public interface ICProjectDescriptionManager {
 	 * 
  	 * @see #GET_CREATE_DESCRIPTION
 	 * @see ICProjectDescription#isCdtProjectCreating() 
+	 * @since 5.1
 	 */
 	public static final int PROJECT_CREATING = 1 << 6;
 

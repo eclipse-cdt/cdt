@@ -138,7 +138,18 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 			return false;
 		}
 	}
+
+	/**
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void doHahdleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler) {
+		doHandleResourceMove(event, handler);
+	}
 	
+	/**
+	 * @since 5.1
+	 */
 	protected void doHandleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
 		switch (event.getType()) {
 			case IResourceChangeEvent.PRE_CLOSE:

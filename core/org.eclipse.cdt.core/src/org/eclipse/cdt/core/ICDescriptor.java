@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-
+import org.w3c.dom.Element;
 /**
  * Models meta-data stored with a CDT project
  *
@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.CoreException;
  *
  * @see ICDescriptorOperation
  * @see ICDescriptorManager
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICDescriptor {
 	public ICOwnerInfo getProjectOwner();
@@ -111,11 +114,25 @@ public interface ICDescriptor {
 	public ICStorageElement getProjectStorageElement(String id) throws CoreException;
 
 	/**
+	 * This method has been superceded by {@link ICDescriptor#getProjectStorageElement(String)}
+	 * @param id an identifier that uniquely identifies the client
+	 * @return a non-null {@link Element} to which client specific meta-data may be attached
+	 * @throws CoreException
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @use {@link ICDescriptor#getProjectStorageElement(String)}
+	 */
+	@Deprecated
+	public Element getProjectData(String id) throws CoreException;
+
+	/**
 	 * Remove the storage element with the given ID from the tree
 	 * @param id
+	 * @return the ICStorageElement removed or null if there was none for id
 	 * @throws CoreException
+	 * @since 5.1
 	 */
-	public void removeProjectStorageElement(String id) throws CoreException;
+	public ICStorageElement removeProjectStorageElement(String id) throws CoreException;
 
 	/**
 	 * Saves any changes made to {@link ICStorageElement} objects obtained from {@link #getProjectStorageElement(String)}
@@ -130,4 +147,5 @@ public interface ICDescriptor {
 	 * @return the current setting {@link ICConfigurationDescription}
 	 */
 	ICConfigurationDescription getConfigurationDescription();
+
 }

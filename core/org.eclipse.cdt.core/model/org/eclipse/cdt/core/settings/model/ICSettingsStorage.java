@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
@@ -44,6 +42,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see ICProjectDescription
  * @see ICConfigurationDescription
  * @see ICDescriptor
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICSettingsStorage {
 	/**
@@ -80,18 +81,21 @@ public interface ICSettingsStorage {
 	 * @param el ICStorageElement to be imported
 	 * @return ICStorageElement representing the imported storage
 	 * @throws UnsupportedOperationException
+	 * @since 5.1
 	 */
 	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException;
 
 	/**
 	 * Returns whether any non-persisted changes exist in this tree
 	 * @return boolean indicating whether any elements in this tree have been modified
+	 * @since 5.1
 	 */
 	public boolean isModified();
 
 	/**
 	 * Return whether this Settings Storage is currently read only
 	 * @return whether this storage is readonly
+	 * @since 5.1
 	 */
 	public boolean isReadOnly();
 
@@ -100,6 +104,7 @@ public interface ICSettingsStorage {
 	 * then modified flag will not be reset
 	 * @param readOnly
 	 * @param keepModify
+	 * @since 5.1
 	 */
 	void setReadOnly(boolean readOnly, boolean keepModify);
 

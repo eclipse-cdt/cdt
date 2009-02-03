@@ -65,6 +65,26 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		return new SynchronizedStorageElement(el);
 	}
 
+	/**
+	 * Create a synchronized storage element from an existing storage element
+	 * All access to this ICStorageElement tree will be synchronized on the
+	 * returned ICStorageElement object.
+	 * @param el
+	 * @param lock
+	 * @return SynchronizedStorageElement wrapping the original ICStorageElement
+	 */
+	public static SynchronizedStorageElement synchronizedElement(ICStorageElement el, Object lock) {
+		return new SynchronizedStorageElement(el, lock);
+	}
+	
+	/**
+	 * @return the lock used to synchronize this SynchronizedStorage and its children
+	 */
+	public Object lock() {
+		return fLock;
+	}
+
+
 	public void clear() {
 		synchronized (fLock) {
 			fEl.clear();

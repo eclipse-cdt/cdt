@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -36,6 +39,8 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.internal.core.settings.model.SynchronizedStorageElement;
+import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorage;
+import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -46,6 +51,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Concrete ICDescriptor for a Project.
@@ -440,10 +447,88 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	public void removeProjectStorageElement(String id) throws CoreException {
+	/**
+	 * Backwards compatibility method which provides an XML Element.
+	 * Currently relies on the fact that the only implementation if ICStorageElement
+	 * in the core is XmlStorageElement.
+	 */
+	public Element getProjectData(String id) throws CoreException {
 		try {
 			fLock.acquire();
-			fStorageDataElMap.put(id, null);
+			// Check if the storage element already exists in our local map
+			SynchronizedStorageElement storageEl = fStorageDataElMap.get(id);
+			ICStorageElement el;
+			if(storageEl == null) {
+				el = fCfgDes.getStorage(id, true);
+				try {
+					el = el.createCopy();
+				} catch (UnsupportedOperationException e) {
+					throw ExceptionFactory.createCoreException(e);
+				}
+
+				if (!(el instanceof XmlStorageElement))
+					throw ExceptionFactory.createCoreException(
+							"Internal Error: getProjectData(...) currently only supports XmlStorageElement types.", new Exception()); //$NON-NLS-1$
+
+				// Get the underlying Xml Element
+				final Element xmlEl = ((XmlStorageElement)el).fElement;
+				// This proxy synchronizes the storage element's root XML Element
+				el = new XmlStorageElement((Element)Proxy.newProxyInstance(Element.class.getClassLoader(), new Class[]{Element.class}, new InvocationHandler(){
+					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+						Method realMethod = xmlEl.getClass().getMethod(method.getName(), method.getParameterTypes());
+						// Now just execute the method
+						synchronized (xmlEl) {
+							// If requesting the parent node, then we need another proxy
+							// so that parent.removeChildNode(...) 'does the right thing'
+							if (method.getName().equals("getParentNode")) { //$NON-NLS-1$
+								final Node parent = (Node)realMethod.invoke(xmlEl, args);
+								Node parentProxy = (Node)Proxy.newProxyInstance(Node.class.getClassLoader(), new Class[]{Node.class}, new InvocationHandler(){
+									public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+										Method realMethod = parent.getClass().getMethod(method.getName(), method.getParameterTypes());
+										synchronized (xmlEl) {
+											// Handle the remove child case
+											if (method.getName().equals("removeChild")) { //$NON-NLS-1$
+												if (args[0] instanceof Element && ((Element)args[0]).getAttribute(
+														XmlStorage.MODULE_ID_ATTRIBUTE).length() > 0) {
+													ICStorageElement removed = removeProjectStorageElement(((Element)args[0]).getAttribute(
+															XmlStorage.MODULE_ID_ATTRIBUTE));
+													if (removed != null)
+														return ((XmlStorageElement)((SynchronizedStorageElement)removed).getOriginalElement()).fElement;
+													return null;
+												}
+											}
+											// else return the realMethod
+											return realMethod.invoke(parent, args);
+										}
+									}
+								});
+								return parentProxy;
+							}
+							// Otherwise just execute the method
+							return realMethod.invoke(xmlEl, args);
+						}
+					}
+				}));
+
+				storageEl = SynchronizedStorageElement.synchronizedElement(el, xmlEl);
+				fStorageDataElMap.put(id, storageEl);
+			} else {
+				el = storageEl.getOriginalElement();
+				if (!(el instanceof XmlStorageElement))
+					throw ExceptionFactory.createCoreException(
+							"Internal Error: getProjectData(...) currently only supports XmlStorageElement types.", new Exception()); //$NON-NLS-1$
+			}
+
+			return ((XmlStorageElement)el).fElement;
+		} finally {
+			fLock.release();
+		}
+	}
+
+	public ICStorageElement removeProjectStorageElement(String id) throws CoreException {
+		try {
+			fLock.acquire();
+			return fStorageDataElMap.put(id, null);
 		} finally {
 			fLock.release();
 		}
@@ -623,7 +708,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 
 					if (synchStor != null ) {
 						// Lock the synchronized storage element to prevent further changes
-						synchronized (synchStor) {
+						synchronized (synchStor.lock()) {
 							if(reconcile(id, synchStor.getOriginalElement(), des))
 								reconciled = true;
 						}

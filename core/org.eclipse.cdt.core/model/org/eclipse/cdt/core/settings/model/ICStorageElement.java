@@ -25,7 +25,8 @@ import org.eclipse.core.runtime.CoreException;
  * @see ICSettingsStorage
  * @see ICProjectDescription
  * @see ICConfigurationDescription
- *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICStorageElement {
 
@@ -98,6 +99,7 @@ public interface ICStorageElement {
 	/**
 	 * Returns true if this storage element has child ICStorageElements
 	 * @return boolean indicating whether this ICStorageElement has children
+	 * @since 5.1
 	 */
 	boolean hasChildren();
 
@@ -152,6 +154,7 @@ public interface ICStorageElement {
 	 * getParent() of the clone should be equal to the original element.getParent().
 	 * However the clone() doesn't appear in the parent's getChildren() array.
 	 * @return ICStorageElement deep copy of this ICStorageElement
+	 * @since 5.1
 	 */
 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException;
 	
@@ -175,6 +178,7 @@ public interface ICStorageElement {
 	 * equal between the two ICStorageElements
 	 * @param other
 	 * @return boolean indicating equality
+	 * @since 5.1
 	 */
 	boolean equals(ICStorageElement other);
 }

@@ -23,6 +23,9 @@ import org.w3c.dom.NodeList;
  * 
  * This allows importing of old style Xml trees into ICStorageElement
  * based project descriptions
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @since 5.1
  */
 public class XmlStorageUtil {
 

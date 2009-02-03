@@ -76,7 +76,9 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			}
 		} else if (node instanceof IASTDeclarationStatement) {
 			repopulateScope(((IASTDeclarationStatement) node).getDeclaration());
-		} 
+		} else if (node instanceof IASTDeclaration) {
+			repopulateScope((IASTDeclaration) node);
+		}
 		return PROCESS_SKIP;
 	}
 	

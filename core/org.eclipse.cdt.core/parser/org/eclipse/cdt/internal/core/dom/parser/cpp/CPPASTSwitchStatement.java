@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,15 +22,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * Switch statement in c++.
  */
 public class CPPASTSwitchStatement extends ASTNode implements
         ICPPASTSwitchStatement, IASTAmbiguityParent {
 
 	private IScope scope;
-    private IASTExpression controller;
+    private IASTExpression controllerExpression;
+    private IASTDeclaration controllerDeclaration;
     private IASTStatement body;
-    private IASTDeclaration decl;
 
     
     public CPPASTSwitchStatement() {
@@ -47,23 +48,24 @@ public class CPPASTSwitchStatement extends ASTNode implements
     
     public CPPASTSwitchStatement copy() {
 		CPPASTSwitchStatement copy = new CPPASTSwitchStatement();
-		copy.setControllerDeclaration(decl == null ? null : decl.copy());
-		copy.setControllerExpression(controller == null ? null : controller.copy());
+		copy.setControllerDeclaration(controllerDeclaration == null ? null : controllerDeclaration.copy());
+		copy.setControllerExpression(controllerExpression == null ? null : controllerExpression.copy());
 		copy.setBody(body == null ? null : body.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
 
 	public IASTExpression getControllerExpression() {
-        return controller;
+        return controllerExpression;
     }
 
     public void setControllerExpression(IASTExpression controller) {
         assertNotFrozen();
-        this.controller = controller;
+        this.controllerExpression = controller;
         if (controller != null) {
 			controller.setParent(this);
 			controller.setPropertyInParent(CONTROLLER_EXP);
+			controllerDeclaration= null;
 		}
     }
 
@@ -89,8 +91,8 @@ public class CPPASTSwitchStatement extends ASTNode implements
 	            default : break;
 	        }
 		}
-        if( controller != null ) if( !controller.accept( action ) ) return false;
-        if( decl != null ) if( !decl.accept( action ) ) return false;
+        if( controllerExpression != null ) if( !controllerExpression.accept( action ) ) return false;
+        if( controllerDeclaration != null ) if( !controllerDeclaration.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         
         if( action.shouldVisitStatements ){
@@ -104,37 +106,30 @@ public class CPPASTSwitchStatement extends ASTNode implements
     }
     
     public void replace(IASTNode child, IASTNode other) {
-        if( body == child )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            body = (IASTStatement) other;
-        }
-        if( child == controller )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            controller  = (IASTExpression) other;
-        }
-        if( child == decl )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            decl  = (IASTDeclaration) other;            
-        }
-            
-    }
+		if (body == child) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			body = (IASTStatement) other;
+		} else if (controllerDeclaration == child || controllerExpression == child) {
+			if (other instanceof IASTExpression) {
+				setControllerExpression((IASTExpression) other);
+			} else if (other instanceof IASTDeclaration) {
+				setControllerDeclaration((IASTDeclaration) other);
+			}
+		}
+	}
 
     public IASTDeclaration getControllerDeclaration() {
-        return decl;
+        return controllerDeclaration;
     }
 
     public void setControllerDeclaration(IASTDeclaration d) {
         assertNotFrozen();
-        decl = d;
+        controllerDeclaration = d;
         if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(CONTROLLER_DECLARATION);
+			controllerExpression= null;
 		}
     }
 

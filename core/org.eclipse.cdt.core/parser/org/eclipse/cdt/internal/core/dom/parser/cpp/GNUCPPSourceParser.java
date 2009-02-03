@@ -3669,25 +3669,56 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTNode cppStyleCondition(int expectToken) throws BacktrackException, EndOfFileException {
+        IASTExpression e= null;
+        IASTSimpleDeclaration decl= null;
+        IToken end= null;
+        
         IToken mark = mark();
         try {
-            IASTExpression e = expression();
-            final int lt1= LT(1);
-            if (lt1 == expectToken || lt1 == IToken.tEOC) {
-            	return e;
-            }
-        } catch (BacktrackException bt) {
+        	decl= simpleSingleDeclaration(DeclarationOptions.CONDITION);
+        	end= LA(1);
+        	final int la= end.getType();
+        	if (la != expectToken && la != IToken.tEOC) {
+        		end= null;
+        		decl= null;
+        	}        		
+        } catch (BacktrackException b) {
         }
+
         backup(mark);
         try {
-        	return simpleSingleDeclaration(DeclarationOptions.CONDITION);
-        } catch (BacktrackException b) {
-        	if (expectToken == IToken.tRPAREN) {
-        		backup(mark);
-        		return skipProblemConditionInParenthesis(mark.getOffset());
+            e= expression();
+
+            final IToken end2= LA(1);
+        	final int la= end2.getType();
+        	if (la != expectToken && la != IToken.tEOC) {
+        		throwBacktrack(end2);
         	}
-        	throw b;
+            if (end == null)
+            	return e;
+            
+
+            final int endOffset = end.getOffset();
+			final int endOffset2 = end2.getOffset();
+			if (endOffset == endOffset2) {
+                CPPASTAmbiguousCondition ambig= new CPPASTAmbiguousCondition(e, decl);
+                setRange(ambig, e);
+                return ambig;
+            }
+            
+            if (endOffset < endOffset2) 
+            	return e;
+        } catch (BacktrackException bt) {
+        	if (end == null) {
+        		if (expectToken == IToken.tRPAREN) {
+        			backup(mark);
+        			return skipProblemConditionInParenthesis(mark.getOffset());
+        		}
+        		throw bt;
+        	}
         }
+    	backup(end);
+        return decl;
     }
 
 

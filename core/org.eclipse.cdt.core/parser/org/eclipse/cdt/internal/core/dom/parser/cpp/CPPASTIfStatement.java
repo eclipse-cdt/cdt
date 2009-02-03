@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * If statement in c++
  */
 public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IASTAmbiguityParent {
 	
@@ -68,6 +68,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
         if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITION);
+			condDecl= null;
 		}
     }
 
@@ -122,7 +123,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+	public void replace(IASTNode child, IASTNode other) {
 		if (thenClause == child) {
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -131,14 +132,12 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 			elseClause = (IASTStatement) other;
-		} else if (condDecl == child) {
-			other.setParent(child.getParent());
-			other.setPropertyInParent(child.getPropertyInParent());
-			condDecl = (IASTDeclaration) other;
-		} else if (condition == child) {
-			other.setParent(child.getParent());
-			other.setPropertyInParent(child.getPropertyInParent());
-			condition = (IASTExpression) other;
+		} else if (condition == child || condDecl == child) {
+			if (other instanceof IASTExpression) {
+				setConditionExpression((IASTExpression) other);
+			} else if (other instanceof IASTDeclaration) {
+				setConditionDeclaration((IASTDeclaration) other);
+			}
 		}
 	}
 
@@ -152,6 +151,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
         if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(CONDITION);
+			condition= null;
 		}
     }
     

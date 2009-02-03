@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * While statement in c++.
  */
 public class CPPASTWhileStatement extends ASTNode implements
         ICPPASTWhileStatement, IASTAmbiguityParent {
@@ -63,6 +64,7 @@ public class CPPASTWhileStatement extends ASTNode implements
         if (condition != null) {
 			condition.setParent(this);
 			condition.setPropertyInParent(CONDITIONEXPRESSION);
+			condition2= null;
 		}
     }
 
@@ -89,6 +91,7 @@ public class CPPASTWhileStatement extends ASTNode implements
 		if (declaration != null) {
 			declaration.setParent(this);
 			declaration.setPropertyInParent(CONDITIONDECLARATION);
+			condition= null;
 		}
 	}
 
@@ -115,26 +118,20 @@ public class CPPASTWhileStatement extends ASTNode implements
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
-        if( body == child )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            body = (IASTStatement) other;
-        }
-        if( child == condition )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            condition  = (IASTExpression) other;
-        }
-        if( condition2 == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
-            condition2 = (IASTDeclaration) other;
-        }
-    }
+	public void replace(IASTNode child, IASTNode other) {
+		if (body == child) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			body = (IASTStatement) other;
+		}
+		if (child == condition || child == condition2) {
+			if (other instanceof IASTExpression) {
+				setCondition((IASTExpression) other);
+			} else if (other instanceof IASTDeclaration) {
+				setConditionDeclaration((IASTDeclaration) other);
+			}
+		}
+	}
 
 	public IScope getScope() {
 		if( scope == null )

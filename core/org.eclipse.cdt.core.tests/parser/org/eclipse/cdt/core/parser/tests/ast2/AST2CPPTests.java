@@ -6617,16 +6617,26 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	//	struct A {};
-	//
 	//	void test() {
-	//	  while (
-	//      A* a = 0
-	//	  );
+	//		int B, b;
+	//		while (A* a = 0);
+	//		while (A* a = 0) {a= 0;}
+	//		while (B* b) {b= 0;}
+	//		if (A* a = 0) {a= 0;}
+	//		if (B* b) {b= 0;}
+	//		switch (A* a = 0) {case 1: a=0;}
+	//		switch (B* b) {case1: b= 0;}
+	//		for (;A* a = 0;) {a= 0;}
+	//		for (;B* b;) {b= 0;}
 	//	}
-    public void _testAmbiguityResolutionInCondition_263158() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    public void testAmbiguityResolutionInCondition_263158() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
 		ba.assertNonProblem("A*", 1, ICPPClassType.class);
 		ba.assertNonProblem("a", 1, ICPPVariable.class);
+		ba.assertNonProblem("B*", 1, ICPPVariable.class);
+		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
     }
 
 	//	void f(int x);

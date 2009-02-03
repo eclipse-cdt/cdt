@@ -25,6 +25,9 @@ $DropRules
     
 $End
 
+$Define
+    $ast_class /. IASTExpression ./
+$End
 
 $Start
     no_sizeof_type_name_start
@@ -35,6 +38,6 @@ $Rules
 	no_sizeof_type_name_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

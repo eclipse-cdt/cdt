@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
@@ -22,8 +24,8 @@ import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
  */
 public interface ICPPSecondaryParserFactory extends ISecondaryParserFactory {
 
-	IParser getTemplateTypeParameterParser(IParserActionTokenProvider parser);
+	IParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(IParserActionTokenProvider parser);
 	
-	IParser getNoFunctionDeclaratorParser(IParserActionTokenProvider parser);
+	IParser<IASTDeclarator> getNoFunctionDeclaratorParser(IParserActionTokenProvider parser);
 	
 }

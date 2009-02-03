@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -108,8 +107,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public BuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
-		super(parser, tu, astStack);
+	public BuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, astStack);
 		
 		if(nodeFactory == null)
 			throw new NullPointerException("nodeFactory is null"); //$NON-NLS-1$
@@ -124,6 +123,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	public void consumeTranslationUnit() {
 		// can't close the outermost scope
 		// the outermost scope may be empty if there are no tokens in the file
+		IASTTranslationUnit tu = nodeFactory.newTranslationUnit();
+		
 		for(Object o : astStack.topScope()) {
 			tu.addDeclaration((IASTDeclaration)o);
 		}
@@ -135,8 +136,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
             ParserUtil.setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
         
-        resolveAmbiguityNodes();
+        resolveAmbiguityNodes(tu);
         tu.freeze();
+        
+        astStack.push(tu);
 	}
 
 	
@@ -145,7 +148,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * 
 	 * @see AbstractGNUSourceCodeParser#resolveAmbiguities()
 	 */
-	private void resolveAmbiguityNodes() {
+	private void resolveAmbiguityNodes(IASTTranslationUnit tu) {
 		if (tu instanceof ASTTranslationUnit) {
 			((ASTTranslationUnit)tu).resolveAmbiguities();
 		}
@@ -175,10 +178,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 			List<IToken> expressionTokens = parser.getRuleTokens();
 			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
 			
-			IParser expressionParser = parserFactory.getExpressionParser(parser);
-			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser, expressionTokens);
+			IParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(parser);
+			IASTExpression expr = runSecondaryParser(expressionParser, expressionTokens);
 			
-			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
+			if(expr != null) { // the parse may fail
 				expressionStatement = nodeFactory.newExpressionStatement(expr);
 				setOffsetAndLength(expressionStatement);
 			}
@@ -349,17 +352,17 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTCastExpression expr = nodeFactory.newCastExpression(operator, typeId, operand);
 		setOffsetAndLength(expr);
 		
-		IASTNode alternateExpr = null;
+		IASTExpression alternateExpr = null;
 		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
 			// try parsing as non-cast to resolve ambiguities
-			IParser secondaryParser = parserFactory.getNoCastExpressionParser(parser);
+			IParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(parser);
 			alternateExpr = runSecondaryParser(secondaryParser);
 		}
 		
-		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+		if(alternateExpr == null)
 			astStack.push(expr);
 		else {
-			IASTNode ambiguityNode = createAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
@@ -392,13 +395,13 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		IParser secondaryParser = parserFactory.getSizeofExpressionParser(parser); 
-		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
+		IParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(parser); 
+		IASTExpression alternateExpr = runSecondaryParser(secondaryParser);
 		
-		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+		if(alternateExpr == null)
 			astStack.push(expr);
 		else {
-			IASTNode ambiguityNode = createAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}

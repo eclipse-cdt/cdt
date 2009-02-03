@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -35,9 +36,6 @@ import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
@@ -65,7 +63,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 * Can be overridden in subclasses to provide a different parser
 	 * for a language extension.
 	 */
-	protected abstract IParser getParser();
+	protected abstract IParser<IASTTranslationUnit> getParser();
 	
 	
 	/**
@@ -73,19 +71,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 * to the tokens defined by an LPG parser.
 	 */
 	protected abstract IDOMTokenMap getTokenMap();
-	
-	
-	/**
-	 * Normally all the AST nodes are created by the parser, but we
-	 * need the root node ahead of time.
-	 * 
-	 * The preprocessor is responsible for creating preprocessor AST nodes,
-     * so the preprocessor needs access to the translation unit so that it can
-     * set the parent pointers on the AST nodes it creates.
-     * 
-	 * @return an IASTTranslationUnit object thats empty and will be filled in by the parser
-	 */
-	protected abstract IASTTranslationUnit createASTTranslationUnit();
 	
 	
 	/**
@@ -127,14 +112,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
-		preprocessor.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
 		// The translation unit has to be created here so that the preprocessor
 		// can fill in the preprocessor AST nodes.
-		IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
-		IParser parser = getParser();
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
+		//IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
+		IParser<IASTTranslationUnit> parser = getParser();
+		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
 		
 		Set<IParser.Options> parserOptions = new HashSet<IParser.Options>();
 		//if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
@@ -145,10 +129,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		if(!parserOptions.isEmpty())
 			parserOptions = EnumSet.copyOf(parserOptions);
 		
-		parser.parse(tu, parserOptions); // The parser will fill in the rest of the AST
-		
-		// the TU is marked as either a source file or a header file
-		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
+		IASTTranslationUnit tu = parser.parse(parserOptions);
+		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0); // the TU is marked as either a source file or a header file
+		setUpTranslationUnit(tu, preprocessor, index);
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
@@ -157,6 +140,28 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		return tu;
 	}
+	
+	
+	
+	private static void setUpTranslationUnit(IASTTranslationUnit tu, IScanner preprocessor, IIndex index) {
+		tu.setIndex(index);
+		if(tu instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
+		}
+		for(IASTNode node : tu.getAllPreprocessorStatements()) {
+			node.setParent(tu);
+		}
+		for(IASTNode node : tu.getComments()) {
+			node.setParent(tu);
+		}
+		for(IASTNode node : tu.getMacroDefinitions()) {
+			node.setParent(tu);
+		}
+		for(IASTNode node : tu.getMacroExpansions()) {
+			node.setParent(tu);
+		}
+	}
+	
 	
 	
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader,
@@ -190,14 +195,15 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 		
-		IParser parser = getParser();
-		IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
-		
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
+		IParser<IASTTranslationUnit> parser = getParser();
+		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
 		
 		// the parser will fill in the rest of the AST
 		Set<IParser.Options> parserOptions = EnumSet.of(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
-		IASTCompletionNode completionNode = parser.parse(tu, parserOptions);
+		IASTTranslationUnit tu = parser.parse(parserOptions);
+		setUpTranslationUnit(tu, preprocessor, index);
+		
+		IASTCompletionNode completionNode = parser.getCompletionNode();
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
@@ -207,15 +213,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return completionNode;
 	}
 	
-	
-	private IASTTranslationUnit getASTTranslationUnit(IIndex index, IScanner preprocessor) {
-		IASTTranslationUnit tu = createASTTranslationUnit();
-		tu.setIndex(index);
-		if(tu instanceof ASTTranslationUnit) {
-			((ASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
-		}
-		return tu;
-	}
 	
 	/*
 	 * For debugging.

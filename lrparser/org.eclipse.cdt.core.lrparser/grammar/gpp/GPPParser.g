@@ -21,6 +21,10 @@ $Import
 	GPPGrammar.g
 $End
 
+$Define
+    $ast_class /. IASTTranslationUnit ./
+$End
+
 $Start
     translation_unit
 $End

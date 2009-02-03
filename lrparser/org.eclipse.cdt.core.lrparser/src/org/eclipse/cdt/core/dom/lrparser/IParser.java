@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 
 
@@ -24,7 +23,7 @@ import org.eclipse.cdt.core.model.ILanguage;
  * 
  * @author Mike Kucera
  */
-public interface IParser extends ITokenCollector {
+public interface IParser<N extends IASTNode> extends ITokenCollector {
 	
 	/**
 	 * Options used by implementations of IParser. Some of the options
@@ -70,12 +69,15 @@ public interface IParser extends ITokenCollector {
 	 * @throws NullPointerException if either parameter is null
 	 * @see EnumSet
 	 */
-	public IASTCompletionNode parse(IASTTranslationUnit tu, Set<Options> options);
+	public N parse(Set<Options> options);
 	
 	
 	/**
-	 * Returns the result of a secondary parser.
+	 * Returns the completion node if a completion token was encountered
+	 * during the parse, null otherwise.
 	 */
-	public IASTNode getSecondaryParseResult();
+	public IASTCompletionNode getCompletionNode();
+	
+	
 	
 }

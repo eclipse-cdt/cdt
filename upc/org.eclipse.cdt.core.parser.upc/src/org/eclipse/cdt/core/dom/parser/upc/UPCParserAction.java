@@ -11,13 +11,15 @@
 package org.eclipse.cdt.core.dom.parser.upc;
 
 
-import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.*;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_relaxed;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_shared;
+import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_strict;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -46,8 +48,8 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * @param parser
 	 * @param tu
 	 */
-	public UPCParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, IUPCNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
-		super(parser, tu, astStack, nodeFactory, parserFactory);
+	public UPCParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, IUPCNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 		nodeFactory.setUseC99SizeofExpressions();
 	}

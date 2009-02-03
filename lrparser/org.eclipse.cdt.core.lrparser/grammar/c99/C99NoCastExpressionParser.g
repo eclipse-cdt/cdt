@@ -22,6 +22,10 @@ $DropRules
 
 $End
 
+$Define
+    $ast_class /. IASTExpression ./
+$End
+
 $Start
     no_cast_start
 $End
@@ -31,6 +35,6 @@ $Rules
 	no_cast_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
@@ -26,15 +27,15 @@ public class GCCSecondaryParserFactory implements ISecondaryParserFactory {
 	}
 	
 	
-	public IParser getExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getExpressionParser(IParserActionTokenProvider parser) {
 		return new C99ExpressionParser(parser); 
 	}
 
-	public IParser getNoCastExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getNoCastExpressionParser(IParserActionTokenProvider parser) {
 		return new C99NoCastExpressionParser(parser);
 	}
 	
-	public IParser getSizeofExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getSizeofExpressionParser(IParserActionTokenProvider parser) {
 		return new GCCSizeofExpressionParser(parser);
 	}
 }

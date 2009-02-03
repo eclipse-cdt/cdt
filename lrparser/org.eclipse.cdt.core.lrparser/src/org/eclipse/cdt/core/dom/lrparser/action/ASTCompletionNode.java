@@ -41,7 +41,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	private final List<IASTName> names = new LinkedList<IASTName>();
 	
 	private final String prefix;
-	private final IASTTranslationUnit tu;
+	private IASTTranslationUnit tu;
 	
 	
 	/**
@@ -52,11 +52,13 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	public ASTCompletionNode(String prefix, IASTTranslationUnit tu) {
 		if("".equals(prefix)) //$NON-NLS-1$
 			throw new IllegalArgumentException("prefix cannot be the empty string"); //$NON-NLS-1$
-		if(tu == null)
-			throw new NullPointerException("tu is null"); //$NON-NLS-1$
 		
 		this.prefix = prefix;
 		this.tu = tu;
+	}
+	
+	public ASTCompletionNode(String prefix) {
+		this(prefix, null);
 	}
 
 	
@@ -89,7 +91,14 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	}
 
 	public IASTTranslationUnit getTranslationUnit() {
+		if(names.isEmpty())
+			return null;
+		
+		if(tu == null)
+			tu = names.get(0).getTranslationUnit();
+		
 		return tu;
 	}
+	
 
 }

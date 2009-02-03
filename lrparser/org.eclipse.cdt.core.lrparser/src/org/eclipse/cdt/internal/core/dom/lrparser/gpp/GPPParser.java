@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPSecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
 
-public class GPPParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
+public class GPPParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< IASTTranslationUnit >   
 {
     private static ParseTable prs = new GPPParserprs();
     private FixedBacktrackingParser btParser;
@@ -124,22 +124,22 @@ public class GPPParser extends PrsStream implements RuleAction , IParserActionTo
         super.reportError((firsttok > lasttok ? ParseErrorCodes.INSERTION_CODE : ParseErrorCodes.SUBSTITUTION_CODE), location, msg);
     }
 
-    public Object parser()
+    public void parser()
     {
-        return parser(null, 0);
+        parser(null, 0);
     }
     
-    public Object parser(Monitor monitor)
+    public void parser(Monitor monitor)
     {
-        return parser(monitor, 0);
+        parser(monitor, 0);
     }
     
-    public Object parser(int error_repair_count)
+    public void parser(int error_repair_count)
     {
-        return parser(null, error_repair_count);
+        parser(null, error_repair_count);
     }
 
-    public Object parser(Monitor monitor, int error_repair_count)
+    public void parser(Monitor monitor, int error_repair_count)
     {
         try
         {
@@ -157,7 +157,7 @@ public class GPPParser extends PrsStream implements RuleAction , IParserActionTo
 
         try
         {
-            return (Object) btParser.parse(error_repair_count);
+            btParser.parse(error_repair_count);
         }
         catch (BadParseException e)
         {
@@ -165,24 +165,24 @@ public class GPPParser extends PrsStream implements RuleAction , IParserActionTo
             DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
             diagnoseParser.diagnose(e.error_token);
         }
-
-        return null;
     }
 
 
 private  CPPBuildASTParserAction  action;
-private ScopedStack<Object> astStack = new ScopedStack<Object>();
+private IASTCompletionNode compNode;
 
 public GPPParser() {  // constructor
 }
 
-private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  CPPBuildASTParserAction (this, tu, astStack,  CPPNodeFactory.getDefault() ,  GPPSecondaryParserFactory.getDefault() );
+private void initActions(Set<IParser.Options> options) {
+	ScopedStack<Object> astStack = new ScopedStack<Object>();
+	
+	action = new  CPPBuildASTParserAction (this, astStack,  CPPNodeFactory.getDefault() ,  GPPSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	
 
-	gnuAction = new  GPPBuildASTParserAction  (this, tu, astStack,  CPPNodeFactory.getDefault() );
+	gnuAction = new  GPPBuildASTParserAction  (this, astStack,  CPPNodeFactory.getDefault() );
 	gnuAction.setParserOptions(options);
 	gnuAction.setBaseAction(action);
 
@@ -195,30 +195,27 @@ public void addToken(IToken token) {
 }
 
 
-public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
+public  IASTTranslationUnit  parse(Set<IParser.Options> options) {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(tu, options);
+	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
 	super.resetTokenStream(); // allow tokens to be garbage collected
 
-	// the completion node may be null
-	IASTCompletionNode compNode = action.getASTCompletionNode();
+	compNode = action.getASTCompletionNode(); // the completion node may be null
+	return ( IASTTranslationUnit ) action.getParseResult();
+}
 
-	//action = null;
-	//parserAction = null;
+
+public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
-}
-
-public IASTNode getSecondaryParseResult() {
-	return  (IASTNode) astStack.pop();
 }
 
 public String[] getOrderedTerminalSymbols() {

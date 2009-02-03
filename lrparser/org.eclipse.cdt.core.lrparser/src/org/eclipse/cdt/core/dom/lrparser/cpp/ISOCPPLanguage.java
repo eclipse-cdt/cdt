@@ -21,14 +21,12 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 /**
  * ILanguage implementation for the C++ parser.
  * 
  * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
 public class ISOCPPLanguage extends BaseExtensibleLanguage {
 
 	public static final String ID = "org.eclipse.cdt.core.lrparser.isocpp"; //$NON-NLS-1$ 
@@ -40,7 +38,7 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IParser getParser() {
+	protected IParser<IASTTranslationUnit> getParser() {
 		return new CPPParser();
 	}
 
@@ -69,14 +67,6 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.CPP;
-	}
-
-	/**
-	 * Gets the translation unit object and sets the index and the location resolver. 
-	 */
-	@Override
-	protected IASTTranslationUnit createASTTranslationUnit() {
-		return CPPNodeFactory.getDefault().newTranslationUnit();
 	}
 	
 

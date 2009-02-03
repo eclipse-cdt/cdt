@@ -21,14 +21,12 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 /**
  * ILanguage implementation for the GPP parser.
  * 
  * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
 public class GPPLanguage extends BaseExtensibleLanguage {
 
 	public static final String ID = "org.eclipse.cdt.core.lrparser.gpp"; //$NON-NLS-1$ 
@@ -40,7 +38,7 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IParser getParser() {
+	protected IParser<IASTTranslationUnit> getParser() {
 		return new GPPParser();
 	}
 
@@ -69,11 +67,6 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.CPP;
-	}
-
-	@Override
-	protected IASTTranslationUnit createASTTranslationUnit() {
-		return CPPNodeFactory.getDefault().newTranslationUnit();
 	}
 
 }

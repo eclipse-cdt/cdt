@@ -49,7 +49,7 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	public IParser getParser() {
+	public IParser<IASTTranslationUnit> getParser() {
 		return new UPCParser();
 	}
 
@@ -83,14 +83,6 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
-	}
-
-	/**
-	 * Gets the translation unit object and sets the index and the location resolver. 
-	 */
-	@Override
-	protected IASTTranslationUnit createASTTranslationUnit() {
-		return CNodeFactory.getDefault().newTranslationUnit();
 	}
 
 	@Override

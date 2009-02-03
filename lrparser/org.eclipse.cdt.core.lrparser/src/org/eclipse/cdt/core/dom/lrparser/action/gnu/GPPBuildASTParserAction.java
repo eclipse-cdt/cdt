@@ -17,7 +17,6 @@ import java.util.List;
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
@@ -33,8 +32,8 @@ public class GPPBuildASTParserAction extends GNUBuildASTParserAction {
 	private CPPBuildASTParserAction baseAction;
 	
 	
-	public GPPBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory) {
-		super(parser, tu, astStack, nodeFactory);
+	public GPPBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory) {
+		super(parser, astStack, nodeFactory);
 		this.nodeFactory = nodeFactory;
 	}
 	

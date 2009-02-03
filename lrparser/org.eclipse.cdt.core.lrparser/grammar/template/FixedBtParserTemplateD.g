@@ -232,22 +232,22 @@ $Headers
             super.reportError((firsttok > lasttok ? ParseErrorCodes.INSERTION_CODE : ParseErrorCodes.SUBSTITUTION_CODE), location, msg);
         }
 
-        public $ast_class parser()
+        public void parser()
         {
-            return parser(null, 0);
+            parser(null, 0);
         }
         
-        public $ast_class parser(Monitor monitor)
+        public void parser(Monitor monitor)
         {
-            return parser(monitor, 0);
+            parser(monitor, 0);
         }
         
-        public $ast_class parser(int error_repair_count)
+        public void parser(int error_repair_count)
         {
-            return parser(null, error_repair_count);
+            parser(null, error_repair_count);
         }
 
-        public $ast_class parser(Monitor monitor, int error_repair_count)
+        public void parser(Monitor monitor, int error_repair_count)
         {
             try
             {
@@ -265,7 +265,7 @@ $Headers
 
             try
             {
-                return ($ast_class) btParser.parse(error_repair_count);
+                btParser.parse(error_repair_count);
             }
             catch (BadParseException e)
             {
@@ -273,8 +273,6 @@ $Headers
                 DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
                 diagnoseParser.diagnose(e.error_token);
             }
-
-            return null;
         }
 
     ./
@@ -314,10 +312,10 @@ $End
 $Define
 	-- These macros allow the template and header code to be customized by an extending parser.
 	
-	$ast_class /.Object./
+	$ast_class /. IASTNode  ./  -- override with more specific node type
 	
 	$extra_interfaces /. ./  -- can override this macro to provide additional interfaces
-	$additional_interfaces /. , IParserActionTokenProvider, IParser $extra_interfaces ./
+	$additional_interfaces /. , IParserActionTokenProvider, IParser<$ast_class> $extra_interfaces ./
 	
 	$build_action_class /.  ./  -- name of the class that has the AST building callbacks
 	$node_factory_create_expression /.  ./  -- expression that will create the INodeFactory
@@ -344,13 +342,15 @@ $End
 $Headers
 /.
 	private $build_action_class action;
-	private ScopedStack<Object> astStack = new ScopedStack<Object>();
+	private IASTCompletionNode compNode;
 	
 	public $action_type() {  // constructor
 	}
 	
-	private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-		action = new $build_action_class(this, tu, astStack, $node_factory_create_expression, $parser_factory_create_expression);
+	private void initActions(Set<IParser.Options> options) {
+		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		
+		action = new $build_action_class(this, astStack, $node_factory_create_expression, $parser_factory_create_expression);
 		action.setParserOptions(options);
 		
 		$action_initializations
@@ -363,30 +363,27 @@ $Headers
 	}
 	
 	
-	public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
+	public $ast_class parse(Set<IParser.Options> options) {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
-		initActions(tu, options);
+		initActions(options);
 		
 		final int errorRepairCount = -1;  // -1 means full error handling
 		parser(null, errorRepairCount); // do the actual parse
 		super.resetTokenStream(); // allow tokens to be garbage collected
 	
-		// the completion node may be null
-		IASTCompletionNode compNode = action.getASTCompletionNode();
+		compNode = action.getASTCompletionNode(); // the completion node may be null
+		return ($ast_class) action.getParseResult();
+	}
 	
-		//action = null;
-		//parserAction = null;
+	
+	public IASTCompletionNode getCompletionNode() {
 		return compNode;
 	}
 
 	// uncomment this method to use with backtracking parser
 	public List<IToken> getRuleTokens() {
 	    return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
-	}
-	
-	public IASTNode getSecondaryParseResult() {
-		return  (IASTNode) astStack.pop();
 	}
 	
 	public String[] getOrderedTerminalSymbols() {

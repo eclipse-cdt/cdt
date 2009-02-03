@@ -20,6 +20,10 @@ $Import
 	C99Grammar.g
 $End
 
+$Define
+    $ast_class /. IASTExpression ./
+$End
+
 $Start
     expression_parser_start
 $End
@@ -29,6 +33,6 @@ $Rules
 	expression_parser_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
 import java.util.EnumSet;
@@ -9,7 +19,6 @@ import lpg.lpgjavaruntime.IToken;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -40,9 +49,6 @@ public abstract class AbstractParserAction {
 	/** The completion node, only generated during a completion parse */
 	protected ASTCompletionNode completionNode;
 	
-	/** The root node is created outside the parser because it is also needed by the preprocessor */
-	protected final IASTTranslationUnit tu;
-	
 	/** Options that change the behavior of the parser actions */
 	protected Set<IParser.Options> options = EnumSet.noneOf(IParser.Options.class);
 	
@@ -64,16 +70,13 @@ public abstract class AbstractParserAction {
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public AbstractParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack) {
+	public AbstractParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack) {
 		if(parser == null)
 			throw new NullPointerException("parser is null"); //$NON-NLS-1$
-		if(tu == null)
-			throw new NullPointerException("tu is null"); //$NON-NLS-1$
 		if(astStack == null)
 			throw new NullPointerException("astStack is null"); //$NON-NLS-1$
 		
 		this.parser = parser;
-		this.tu = tu;
 		this.astStack = astStack;
 	}
 	
@@ -110,26 +113,14 @@ public abstract class AbstractParserAction {
 	protected void addNameToCompletionNode(IASTName name, String prefix) {
 		if(completionNode == null) {
 			prefix = (prefix == null || prefix.length() == 0) ? null : prefix;
-			completionNode = newCompletionNode(prefix, tu);
+			completionNode = newCompletionNode(prefix);
 		}
 		
 		completionNode.addName(name);
 	}
 	
-	public ASTCompletionNode newCompletionNode(String prefix, IASTTranslationUnit tu) {
-		return new ASTCompletionNode((prefix == null || prefix.length() == 0) ? null : prefix, tu);
-	}
-	
-	/**
-	 * Used to combine completion nodes from secondary parsers into
-	 * the main completion node.
-	 */
-	protected void addNameToCompletionNode(IASTCompletionNode node) {
-		if(node == null)
-			return;
-		
-		for(IASTName name : node.getNames())
-			addNameToCompletionNode(name, node.getPrefix());
+	public ASTCompletionNode newCompletionNode(String prefix) {
+		return new ASTCompletionNode((prefix == null || prefix.length() == 0) ? null : prefix);
 	}
 	
 	
@@ -140,12 +131,19 @@ public abstract class AbstractParserAction {
 		return completionNode;
 	}
 	
+	/**
+	 * Returns the parse result.
+	 * @return
+	 */
+	public IASTNode getParseResult() {
+		return (IASTNode) astStack.peek();
+	}
 	
 	/**
 	 * Runs the given parser on the given token list.
 	 * 
 	 */
-	protected IASTNode runSecondaryParser(IParser secondaryParser) {
+	protected <N extends IASTNode> N runSecondaryParser(IParser<N> secondaryParser) {
 		return runSecondaryParser(secondaryParser, parser.getRuleTokens());
 	}
 	
@@ -153,7 +151,7 @@ public abstract class AbstractParserAction {
 	/**
 	 * Runs the given parser on the tokens that make up the current rule.
 	 */
-	protected IASTNode runSecondaryParser(IParser secondaryParser, List<IToken> tokens) { 
+	protected <N extends IASTNode> N runSecondaryParser(IParser<N> secondaryParser, List<IToken> tokens) { 
 		// the secondary parser will alter the token kinds, which will need to be undone
 		int[] savedKinds = new int[tokens.size()];
 		
@@ -162,11 +160,13 @@ public abstract class AbstractParserAction {
 			savedKinds[i++] = token.getKind();
 		
 		secondaryParser.setTokens(tokens);
+		N result = secondaryParser.parse(options);
 		
-		// need to pass tu because any new completion nodes need to be linked directly to the root
-		IASTCompletionNode compNode = secondaryParser.parse(tu, options);
-		addNameToCompletionNode(compNode);
-		IASTNode result = secondaryParser.getSecondaryParseResult();
+		IASTCompletionNode compNode = secondaryParser.getCompletionNode();
+		if(compNode != null) {
+			for(IASTName name : compNode.getNames())
+				addNameToCompletionNode(name, compNode.getPrefix());
+		}
 		
 		// restore the token kinds
 		i = 0;

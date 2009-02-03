@@ -43,7 +43,7 @@ $Define
 
 	$action_initializations /.
 	
-		gnuAction = new $gnu_action_class (this, tu, astStack, $node_factory_create_expression);
+		gnuAction = new $gnu_action_class (this, astStack, $node_factory_create_expression);
 		gnuAction.setParserOptions(options);
 		gnuAction.setBaseAction(action);
 	./

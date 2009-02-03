@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.dom.parser.upc;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
@@ -26,15 +27,15 @@ public class UPCSecondaryParserFactory implements ISecondaryParserFactory{
 		return DEFAULT_INSTANCE;
 	}
 
-	public IParser getExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getExpressionParser(IParserActionTokenProvider parser) {
 		return new UPCExpressionParser(parser);
 	}
 
-	public IParser getNoCastExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getNoCastExpressionParser(IParserActionTokenProvider parser) {
 		return new UPCNoCastExpressionParser(parser);
 	}
 
-	public IParser getSizeofExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getSizeofExpressionParser(IParserActionTokenProvider parser) {
 		return new UPCSizeofExpressionParser(parser);
 	}
 	

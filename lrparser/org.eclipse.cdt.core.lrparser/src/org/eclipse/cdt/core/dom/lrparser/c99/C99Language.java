@@ -21,14 +21,12 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parser;
-import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 
 /**
  * ILanguage implementation for the C99 parser.
  * 
  * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
 public class C99Language extends BaseExtensibleLanguage {
 
 	public static final String ID = "org.eclipse.cdt.core.lrparser.c99"; //$NON-NLS-1$ 
@@ -41,7 +39,7 @@ public class C99Language extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IParser getParser() {
+	protected IParser<IASTTranslationUnit> getParser() {
 		return new C99Parser();
 	}
 
@@ -70,11 +68,6 @@ public class C99Language extends BaseExtensibleLanguage {
 	@Override
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
-	}
-
-	@Override
-	protected IASTTranslationUnit createASTTranslationUnit() {
-		return CNodeFactory.getDefault().newTranslationUnit();
 	}
 
 }

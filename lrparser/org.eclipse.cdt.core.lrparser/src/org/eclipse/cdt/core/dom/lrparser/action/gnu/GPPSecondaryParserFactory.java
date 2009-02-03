@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
@@ -29,23 +32,23 @@ public class GPPSecondaryParserFactory implements ICPPSecondaryParserFactory {
 	}
 	
 	
-	public IParser getTemplateTypeParameterParser(IParserActionTokenProvider parser) {
+	public IParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(IParserActionTokenProvider parser) {
 		return new CPPTemplateTypeParameterParser(parser);
 	}
 	
-	public IParser getNoFunctionDeclaratorParser(IParserActionTokenProvider parser) {
+	public IParser<IASTDeclarator> getNoFunctionDeclaratorParser(IParserActionTokenProvider parser) {
 		return new CPPNoFunctionDeclaratorParser(parser); 
 	}
 
-	public IParser getExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getExpressionParser(IParserActionTokenProvider parser) {
 		return new CPPExpressionParser(parser);
 	}
 
-	public IParser getNoCastExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getNoCastExpressionParser(IParserActionTokenProvider parser) {
 		return new CPPNoCastExpressionParser(parser);
 	}
 
-	public IParser getSizeofExpressionParser(IParserActionTokenProvider parser) {
+	public IParser<IASTExpression> getSizeofExpressionParser(IParserActionTokenProvider parser) {
 		return new GPPSizeofExpressionParser(parser);
 	}
 	

@@ -16,7 +16,6 @@ import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.AbstractParserAction;
@@ -30,8 +29,8 @@ public class GNUBuildASTParserAction extends AbstractParserAction {
 	
 	private final TokenMap tokenMap;
 	
-	public GNUBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, INodeFactory nodeFactory) {
-		super(parser, tu, astStack);
+	public GNUBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, INodeFactory nodeFactory) {
+		super(parser, astStack);
 		
 		this.nodeFactory = nodeFactory;
 		this.tokenMap = new TokenMap(GCCParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());

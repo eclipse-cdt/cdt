@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 
-public class UPCNoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
+public class UPCNoCastExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< IASTExpression >   
 {
     private static ParseTable prs = new UPCNoCastExpressionParserprs();
     private FixedBacktrackingParser btParser;
@@ -128,22 +128,22 @@ public class UPCNoCastExpressionParser extends PrsStream implements RuleAction ,
         super.reportError((firsttok > lasttok ? ParseErrorCodes.INSERTION_CODE : ParseErrorCodes.SUBSTITUTION_CODE), location, msg);
     }
 
-    public Object parser()
+    public void parser()
     {
-        return parser(null, 0);
+        parser(null, 0);
     }
     
-    public Object parser(Monitor monitor)
+    public void parser(Monitor monitor)
     {
-        return parser(monitor, 0);
+        parser(monitor, 0);
     }
     
-    public Object parser(int error_repair_count)
+    public void parser(int error_repair_count)
     {
-        return parser(null, error_repair_count);
+        parser(null, error_repair_count);
     }
 
-    public Object parser(Monitor monitor, int error_repair_count)
+    public void parser(Monitor monitor, int error_repair_count)
     {
         try
         {
@@ -161,7 +161,7 @@ public class UPCNoCastExpressionParser extends PrsStream implements RuleAction ,
 
         try
         {
-            return (Object) btParser.parse(error_repair_count);
+            btParser.parse(error_repair_count);
         }
         catch (BadParseException e)
         {
@@ -169,19 +169,19 @@ public class UPCNoCastExpressionParser extends PrsStream implements RuleAction ,
             DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
             diagnoseParser.diagnose(e.error_token);
         }
-
-        return null;
     }
 
 
 private  UPCParserAction  action;
-private ScopedStack<Object> astStack = new ScopedStack<Object>();
+private IASTCompletionNode compNode;
 
 public UPCNoCastExpressionParser() {  // constructor
 }
 
-private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  UPCParserAction (this, tu, astStack,  new UPCASTNodeFactory() ,  UPCSecondaryParserFactory.getDefault() );
+private void initActions(Set<IParser.Options> options) {
+	ScopedStack<Object> astStack = new ScopedStack<Object>();
+	
+	action = new  UPCParserAction (this, astStack,  new UPCASTNodeFactory() ,  UPCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -194,30 +194,27 @@ public void addToken(IToken token) {
 }
 
 
-public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
+public  IASTExpression  parse(Set<IParser.Options> options) {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(tu, options);
+	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
 	super.resetTokenStream(); // allow tokens to be garbage collected
 
-	// the completion node may be null
-	IASTCompletionNode compNode = action.getASTCompletionNode();
+	compNode = action.getASTCompletionNode(); // the completion node may be null
+	return ( IASTExpression ) action.getParseResult();
+}
 
-	//action = null;
-	//parserAction = null;
+
+public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
-}
-
-public IASTNode getSecondaryParseResult() {
-	return  (IASTNode) astStack.pop();
 }
 
 public String[] getOrderedTerminalSymbols() {
@@ -783,6 +780,12 @@ public UPCNoCastExpressionParser(IParserActionTokenProvider parser) {  // constr
             }  
   
             //
+            // Rule 177:  type_name_specifier ::= identifier_token
+            //
+            case 177: { action.   consumeToken();             break;
+            }  
+  
+            //
             // Rule 178:  struct_or_union_specifier ::= struct_or_union struct_or_union_specifier_hook { <openscope-ast> struct_declaration_list_opt }
             //
             case 178: { action.   consumeTypeSpecifierComposite(false);            break;
@@ -1253,7 +1256,7 @@ public UPCNoCastExpressionParser(IParserActionTokenProvider parser) {  // constr
             //
             // Rule 312:  no_cast_start ::= ERROR_TOKEN
             //
-            case 312: { action.   consumeExpressionProblem();             break;
+            case 312: { action.   consumeEmpty();             break;
             }  
   
             //

@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
@@ -31,8 +30,8 @@ public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
 
 	private C99BuildASTParserAction baseAction;
 	
-	public GCCBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, ICNodeFactory nodeFactory) {
-		super(parser, tu, astStack, nodeFactory);
+	public GCCBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory) {
+		super(parser, astStack, nodeFactory);
 		this.nodeFactory = nodeFactory;
 	}
 	

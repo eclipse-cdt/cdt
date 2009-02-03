@@ -10,57 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_ColonColon;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Completion;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_EndOfCompletion;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_GT;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LT;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftBracket;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftParen;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightBracket;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightParen;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Tilde;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_auto;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_bool;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_char;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_class;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_const;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_delete;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_double;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_enum;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_explicit;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_extern;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_float;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_for;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_friend;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_identifier;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_inline;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_int;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_long;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_mutable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_new;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_private;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_protected;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_public;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_register;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_short;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_signed;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_static;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_struct;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typedef;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typename;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_union;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_unsigned;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_virtual;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_void;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_volatile;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_wchar_t;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,12 +41,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
@@ -183,8 +134,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public CPPBuildASTParserAction(IParserActionTokenProvider parser, IASTTranslationUnit tu, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory, ICPPSecondaryParserFactory parserFactory) {
-		super(parser, tu, astStack, nodeFactory, parserFactory);
+	public CPPBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory, ICPPSecondaryParserFactory parserFactory) {
+		super(parser, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
 		this.parserFactory = parserFactory;
@@ -457,8 +408,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 */
 	public void consumeTemplateArgumentTypeId() {
 		// TODO is this necessary? It should be able to tell if it looks like an id expression
-		IParser secondaryParser = parserFactory.getExpressionParser(parser);
-		IASTNode result = runSecondaryParser(secondaryParser);
+		IParser<IASTExpression> secondaryParser = parserFactory.getExpressionParser(parser);
+		IASTExpression result = runSecondaryParser(secondaryParser);
 		
 		// The grammar rule allows assignment_expression, but the ambiguity
 		// only arises with id_expressions.
@@ -1363,15 +1314,15 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;
 		
-		IParser secondaryParser = parserFactory.getNoFunctionDeclaratorParser(parser); 
-		IASTNode notFunctionDeclarator = runSecondaryParser(secondaryParser);
+		IParser<IASTDeclarator> secondaryParser = parserFactory.getNoFunctionDeclaratorParser(parser); 
+		IASTDeclarator notFunctionDeclarator = runSecondaryParser(secondaryParser);
 	
-		if(notFunctionDeclarator == null || notFunctionDeclarator instanceof IASTProblemDeclaration)
+		if(notFunctionDeclarator == null)
 			return;
 		
 		astStack.pop();
 
-		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, (IASTDeclarator)notFunctionDeclarator);
+		IASTNode ambiguityNode = new CPPASTAmbiguousDeclarator(declarator, notFunctionDeclarator);
 
 		setOffsetAndLength(ambiguityNode);
 		astStack.push(ambiguityNode); 
@@ -1772,10 +1723,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      * Yes its a hack.
      */
     public void consumeTemplateParamterDeclaration() {
-    	IParser typeParameterParser = parserFactory.getTemplateTypeParameterParser(parser);
+    	IParser<ICPPASTTemplateParameter> typeParameterParser = parserFactory.getTemplateTypeParameterParser(parser);
     	IASTNode alternate = runSecondaryParser(typeParameterParser);
     	
-		if(alternate == null || alternate instanceof IASTProblemDeclaration)
+		if(alternate == null)
 			return;
 		
 		astStack.pop(); // throw away the incorrect AST

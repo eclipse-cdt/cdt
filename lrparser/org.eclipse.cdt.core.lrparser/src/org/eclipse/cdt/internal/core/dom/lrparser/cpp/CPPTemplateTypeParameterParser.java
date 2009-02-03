@@ -30,7 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPSecondaryParserFactory;
 
-public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser   
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+
+public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< ICPPASTTemplateParameter >   
 {
     private static ParseTable prs = new CPPTemplateTypeParameterParserprs();
     private FixedBacktrackingParser btParser;
@@ -121,22 +123,22 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
         super.reportError((firsttok > lasttok ? ParseErrorCodes.INSERTION_CODE : ParseErrorCodes.SUBSTITUTION_CODE), location, msg);
     }
 
-    public Object parser()
+    public void parser()
     {
-        return parser(null, 0);
+        parser(null, 0);
     }
     
-    public Object parser(Monitor monitor)
+    public void parser(Monitor monitor)
     {
-        return parser(monitor, 0);
+        parser(monitor, 0);
     }
     
-    public Object parser(int error_repair_count)
+    public void parser(int error_repair_count)
     {
-        return parser(null, error_repair_count);
+        parser(null, error_repair_count);
     }
 
-    public Object parser(Monitor monitor, int error_repair_count)
+    public void parser(Monitor monitor, int error_repair_count)
     {
         try
         {
@@ -154,7 +156,7 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
 
         try
         {
-            return (Object) btParser.parse(error_repair_count);
+            btParser.parse(error_repair_count);
         }
         catch (BadParseException e)
         {
@@ -162,19 +164,19 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
             DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
             diagnoseParser.diagnose(e.error_token);
         }
-
-        return null;
     }
 
 
 private  CPPBuildASTParserAction  action;
-private ScopedStack<Object> astStack = new ScopedStack<Object>();
+private IASTCompletionNode compNode;
 
 public CPPTemplateTypeParameterParser() {  // constructor
 }
 
-private void initActions(IASTTranslationUnit tu, Set<IParser.Options> options) {
-	action = new  CPPBuildASTParserAction (this, tu, astStack,  CPPNodeFactory.getDefault() ,  CPPSecondaryParserFactory.getDefault() );
+private void initActions(Set<IParser.Options> options) {
+	ScopedStack<Object> astStack = new ScopedStack<Object>();
+	
+	action = new  CPPBuildASTParserAction (this, astStack,  CPPNodeFactory.getDefault() ,  CPPSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	 
@@ -187,30 +189,27 @@ public void addToken(IToken token) {
 }
 
 
-public IASTCompletionNode parse(IASTTranslationUnit tu, Set<IParser.Options> options) {
+public  ICPPASTTemplateParameter  parse(Set<IParser.Options> options) {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(tu, options);
+	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
 	super.resetTokenStream(); // allow tokens to be garbage collected
 
-	// the completion node may be null
-	IASTCompletionNode compNode = action.getASTCompletionNode();
+	compNode = action.getASTCompletionNode(); // the completion node may be null
+	return ( ICPPASTTemplateParameter ) action.getParseResult();
+}
 
-	//action = null;
-	//parserAction = null;
+
+public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
-}
-
-public IASTNode getSecondaryParseResult() {
-	return  (IASTNode) astStack.pop();
 }
 
 public String[] getOrderedTerminalSymbols() {
@@ -1972,7 +1971,7 @@ public CPPTemplateTypeParameterParser(IParserActionTokenProvider parser) {  // c
             //
             // Rule 536:  type_parameter_start ::= ERROR_TOKEN
             //
-            case 536: { action.   consumeDeclarationProblem();             break;
+            case 536: { action.   consumeEmpty();             break;
             }  
 
     

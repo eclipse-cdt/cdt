@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)  [251619] [dstore] shell output readers not cleaned up on disconnect
+ * David McKnight   (IBM)  [244070] [dstore] DStoreHostShell#exit() does not terminate child processes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -72,8 +73,19 @@ public class DStoreHostShell extends AbstractHostShell implements IHostShell
 
 	public void exit()
 	{
-		writeToShell("exit"); //$NON-NLS-1$		
+		// send cancel command
+		DataElement command = _status.getParent();
+		DataStore dataStore = command.getDataStore();
+		DataElement cmdDescriptor = command.getDescriptor();
+		DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL"); //$NON-NLS-1$
+
+		if (cancelDescriptor != null)
+		{
+			dataStore.command(cancelDescriptor, command);
+		}
+		
 		_status.setAttribute(DE.A_VALUE, "done"); //$NON-NLS-1$
+		
 		_stdoutHandler.finish();
 		_stderrHandler.finish();
 		

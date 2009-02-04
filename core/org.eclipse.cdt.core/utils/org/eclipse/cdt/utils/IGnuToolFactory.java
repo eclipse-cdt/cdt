@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,8 @@ package org.eclipse.cdt.utils;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @author DInglis
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IGnuToolFactory {
 

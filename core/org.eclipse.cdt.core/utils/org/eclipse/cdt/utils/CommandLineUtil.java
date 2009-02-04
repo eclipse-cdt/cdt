@@ -3,7 +3,9 @@ package org.eclipse.cdt.utils;
 import java.util.ArrayList;
 
 /**
- * Utils to work with command line, parse arguments, etc.
+ * Utilities to work with command line, parse arguments, etc.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 5.1
  */
 public class CommandLineUtil {

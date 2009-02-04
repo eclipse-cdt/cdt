@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,8 @@ public abstract class StorableEnvironmentLoader {
 	/**
 	 * this interface represents the preference node and the preference name
 	 * that are used for holding the environment data 
-	 * 
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface ISerializeInfo{
 		Preferences getNode();

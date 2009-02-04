@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,9 @@ import java.io.InputStreamReader;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.osgi.framework.Bundle;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public final class Platform {
 
 	// This class duplicates all of the methods in org.eclipse.core.runtime.Platform

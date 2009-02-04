@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Mike Kucera (IBM Corporation) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -37,7 +37,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * A utility that prints an AST to the console or any print stream, useful for debugging purposes.
  * 
- * @author Mike Kucera
+ * @noextend This interface is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 @SuppressWarnings("nls")
 public class ASTPrinter {

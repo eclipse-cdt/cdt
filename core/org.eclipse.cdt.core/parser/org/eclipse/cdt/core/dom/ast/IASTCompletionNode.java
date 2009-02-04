@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation
+ * Copyright (c) 2005, 2009 IBM Corporation
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,9 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * The node points to the parent node where this node, if replaced by a proper
  * node, would reside in the tree.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompletionNode {
 

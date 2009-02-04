@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * template <class T> class A {};     //the primary class template
  * template <class T> class A<T*> {}; //a partial specialization of the primary class template
  *
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,11 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the CDT team.
- * </p>
+ * An image location explains how a name made it into the translation unit. 
  * @since 5.0
  * 
- * An image location explains how a name made it into the translation unit. 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImageLocation extends IASTFileLocation {
 	

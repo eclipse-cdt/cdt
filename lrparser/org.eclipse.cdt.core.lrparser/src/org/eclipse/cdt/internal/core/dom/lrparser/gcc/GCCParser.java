@@ -1028,25 +1028,25 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 249:  pointer_seq ::= pointer_hook *
+            // Rule 249:  pointer_seq ::= pointer_hook * pointer_hook
             //
             case 249: { action.   consumePointer();             break;
             }  
   
             //
-            // Rule 250:  pointer_seq ::= pointer_seq pointer_hook *
+            // Rule 250:  pointer_seq ::= pointer_seq pointer_hook * pointer_hook
             //
             case 250: { action.   consumePointer();             break;
             }  
   
             //
-            // Rule 251:  pointer_seq ::= pointer_hook * <openscope-ast> type_qualifier_list
+            // Rule 251:  pointer_seq ::= pointer_hook * pointer_hook <openscope-ast> type_qualifier_list
             //
             case 251: { action.   consumePointerTypeQualifierList();             break;
             }  
   
             //
-            // Rule 252:  pointer_seq ::= pointer_seq pointer_hook * <openscope-ast> type_qualifier_list
+            // Rule 252:  pointer_seq ::= pointer_seq pointer_hook * pointer_hook <openscope-ast> type_qualifier_list
             //
             case 252: { action.   consumePointerTypeQualifierList();             break;
             }  
@@ -1338,29 +1338,41 @@ private  GCCBuildASTParserAction  gnuAction;
             //
             case 359: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
+  
+            //
+            // Rule 360:  typeof_type_specifier ::= typeof unary_expression
+            //
+            case 360: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            }  
+  
+            //
+            // Rule 361:  typeof_type_specifier ::= typeof ( type_id )
+            //
+            case 361: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            }  
  
             //
-            // Rule 364:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 365:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 364: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            case 365: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
             } 
  
             //
-            // Rule 380:  field_name_designator ::= identifier_token :
+            // Rule 381:  field_name_designator ::= identifier_token :
             //
-            case 380: {  gnuAction.consumeDesignatorField();            break;
+            case 381: {  gnuAction.consumeDesignatorField();            break;
             } 
  
             //
-            // Rule 381:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            // Rule 382:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 381: {  gnuAction.consumeDesignatorArray();            break;
+            case 382: {  gnuAction.consumeDesignatorArray();            break;
             } 
   
             //
-            // Rule 382:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 383:  designated_initializer ::= <openscope-ast> field_name_designator initializer
             //
-            case 382: { action.   consumeInitializerDesignated();             break;
+            case 383: { action.   consumeInitializerDesignated();             break;
             }  
 
     

@@ -1419,19 +1419,19 @@ private  GPPBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 326:  ptr_operator ::= pointer_hook * <openscope-ast> cv_qualifier_seq_opt
+            // Rule 326:  ptr_operator ::= pointer_hook * pointer_hook <openscope-ast> cv_qualifier_seq_opt
             //
             case 326: { action.   consumePointer();             break;
             }  
   
             //
-            // Rule 327:  ptr_operator ::= pointer_hook &
+            // Rule 327:  ptr_operator ::= pointer_hook & pointer_hook
             //
             case 327: { action.   consumeReferenceOperator();             break;
             }  
   
             //
-            // Rule 328:  ptr_operator ::= dcolon_opt nested_name_specifier pointer_hook * <openscope-ast> cv_qualifier_seq_opt
+            // Rule 328:  ptr_operator ::= dcolon_opt nested_name_specifier pointer_hook * pointer_hook <openscope-ast> cv_qualifier_seq_opt
             //
             case 328: { action.   consumePointerToMember();             break;
             }  

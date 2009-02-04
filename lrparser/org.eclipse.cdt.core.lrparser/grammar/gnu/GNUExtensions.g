@@ -179,7 +179,9 @@ case_range_expression
 
 typeof_type_specifier
       ::= 'typeof' unary_expression
-        
+            /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);  $EndBuild ./
+        | 'typeof' '(' type_id ')'
+            /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);  $EndBuild ./  
         
 typeof_declaration_specifiers
     ::= typeof_type_specifier

@@ -796,13 +796,13 @@ array_modifier_type_qualifiers
 
 
 pointer_seq
-    ::= pointer_hook '*'
+    ::= pointer_hook '*' pointer_hook
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer_seq pointer_hook '*' 
+      | pointer_seq pointer_hook '*' pointer_hook
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer_hook '*' <openscope-ast> type_qualifier_list
+      | pointer_hook '*' pointer_hook <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
-      | pointer_seq pointer_hook '*' <openscope-ast> type_qualifier_list
+      | pointer_seq pointer_hook '*' pointer_hook <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
 
 pointer_hook

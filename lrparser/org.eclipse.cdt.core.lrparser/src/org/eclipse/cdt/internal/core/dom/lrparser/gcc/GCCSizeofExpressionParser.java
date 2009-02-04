@@ -1022,25 +1022,25 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 248:  pointer_seq ::= pointer_hook *
+            // Rule 248:  pointer_seq ::= pointer_hook * pointer_hook
             //
             case 248: { action.   consumePointer();             break;
             }  
   
             //
-            // Rule 249:  pointer_seq ::= pointer_seq pointer_hook *
+            // Rule 249:  pointer_seq ::= pointer_seq pointer_hook * pointer_hook
             //
             case 249: { action.   consumePointer();             break;
             }  
   
             //
-            // Rule 250:  pointer_seq ::= pointer_hook * <openscope-ast> type_qualifier_list
+            // Rule 250:  pointer_seq ::= pointer_hook * pointer_hook <openscope-ast> type_qualifier_list
             //
             case 250: { action.   consumePointerTypeQualifierList();             break;
             }  
   
             //
-            // Rule 251:  pointer_seq ::= pointer_seq pointer_hook * <openscope-ast> type_qualifier_list
+            // Rule 251:  pointer_seq ::= pointer_seq pointer_hook * pointer_hook <openscope-ast> type_qualifier_list
             //
             case 251: { action.   consumePointerTypeQualifierList();             break;
             }  
@@ -1320,35 +1320,47 @@ private  GCCBuildASTParserAction  gnuAction;
             //
             case 356: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
- 
-            //
-            // Rule 361:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
-            //
-            case 361: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
- 
-            //
-            // Rule 377:  field_name_designator ::= identifier_token :
-            //
-            case 377: {  gnuAction.consumeDesignatorField();            break;
-            } 
- 
-            //
-            // Rule 378:  array_range_designator ::= [ constant_expression ... constant_expression ]
-            //
-            case 378: {  gnuAction.consumeDesignatorArray();            break;
-            } 
   
             //
-            // Rule 379:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 357:  typeof_type_specifier ::= typeof unary_expression
             //
-            case 379: { action.   consumeInitializerDesignated();             break;
+            case 357: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 381:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 358:  typeof_type_specifier ::= typeof ( type_id )
             //
-            case 381: { action.   consumeEmpty();             break;
+            case 358: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            }  
+ 
+            //
+            // Rule 362:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            //
+            case 362: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            } 
+ 
+            //
+            // Rule 378:  field_name_designator ::= identifier_token :
+            //
+            case 378: {  gnuAction.consumeDesignatorField();            break;
+            } 
+ 
+            //
+            // Rule 379:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            //
+            case 379: {  gnuAction.consumeDesignatorArray();            break;
+            } 
+  
+            //
+            // Rule 380:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            //
+            case 380: { action.   consumeInitializerDesignated();             break;
+            }  
+  
+            //
+            // Rule 382:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            //
+            case 382: { action.   consumeEmpty();             break;
             }  
 
     

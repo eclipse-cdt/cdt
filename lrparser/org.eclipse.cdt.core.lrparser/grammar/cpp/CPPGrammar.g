@@ -1126,11 +1126,11 @@ array_modifier
       
 
 ptr_operator
-    ::= pointer_hook '*' <openscope-ast> cv_qualifier_seq_opt
+    ::= pointer_hook '*' pointer_hook <openscope-ast> cv_qualifier_seq_opt
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer_hook '&'
+      | pointer_hook '&' pointer_hook
           /. $Build  consumeReferenceOperator();  $EndBuild ./
-      | dcolon_opt nested_name_specifier pointer_hook '*' <openscope-ast> cv_qualifier_seq_opt
+      | dcolon_opt nested_name_specifier pointer_hook '*' pointer_hook <openscope-ast> cv_qualifier_seq_opt
           /. $Build  consumePointerToMember();  $EndBuild ./
 
 pointer_hook

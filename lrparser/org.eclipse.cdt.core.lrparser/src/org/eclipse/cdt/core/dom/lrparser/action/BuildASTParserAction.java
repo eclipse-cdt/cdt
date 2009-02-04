@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
 
 import java.util.List;
 

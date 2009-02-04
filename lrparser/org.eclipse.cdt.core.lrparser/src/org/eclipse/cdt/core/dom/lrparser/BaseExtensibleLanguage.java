@@ -46,7 +46,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 
 
 /**

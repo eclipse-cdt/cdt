@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,10 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 /**
  * Constants used to set up the options of the code formatter.
- * <p>
- * This class is not intended to be instantiated or subclassed by clients.
- * </p>
  * 
  * @since 4.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DefaultCodeFormatterConstants {
 

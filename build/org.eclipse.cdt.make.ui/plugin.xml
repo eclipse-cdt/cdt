@@ -37,7 +37,7 @@
       <!--wizard
             name="%WizardNewCCMakeProject.name"
             icon="icons/etool16/newcc_app.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
+            category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard"
             project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
@@ -45,20 +45,6 @@
          <description>
             %WizardNewCCMakeProject.description
          </description>
-      </wizard>
-      <wizard
-            name="%WizardConvertMakeProject.name"
-            icon="icons/etool16/convert-normal.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
-         <description>
-            %WizardConvertMakeProject.description
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IProject">
-         </selection>
       </wizard>
    </extension-->
    <extension

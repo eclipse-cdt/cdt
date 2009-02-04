@@ -283,13 +283,8 @@
             name="%typeHierarchy.name"/>
    </extension>
 <!-- The wizards -->
-<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
-      <!--category
-            name="%categoryCDT.name"
-            id="org.eclipse.cdt.ui.newCDTWizards">
-      </category-->
       <category
             name="%newCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCWizards">
@@ -359,15 +354,10 @@
             %NewWizards.folder.description
          </description>
       </wizard>
-<!-- For C++ Wizards -->
-      <category
-            name="%newCCWizardsCategory.name"
-            id="org.eclipse.cdt.ui.newCCWizards">
-      </category>
       <wizard
             name="%NewWizards.class"
             icon="icons/etool16/newclass_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
+            category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
          <class class="org.eclipse.cdt.internal.ui.wizards.NewClassCreationWizard">
@@ -379,88 +369,8 @@
          </description>
       </wizard>
       <wizard
-            name="%NewWizards.sourceFile"
-            icon="icons/etool16/newcfile_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
-            <parameter name="cfile" value="true"/>
-         </class>
-         <description>
-            %NewWizards.sourceFile.description
-         </description>
-      </wizard>
-      <wizard
-            name="%NewWizards.headerFile"
-            icon="icons/etool16/newhfile_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
-            <parameter name="cfile" value="true"/>
-         </class>
-         <description>
-            %NewWizards.headerFile.description
-         </description>
-      </wizard>
-      <wizard
-            name="%NewWizards.file"
-            icon="icons/etool16/newfile_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
-         <class class="org.eclipse.cdt.internal.ui.wizards.filewizard.NewFileFromTemplateWizard">
-            <parameter name="cfile" value="true"/>
-         </class>
-         <description>
-            %NewWizards.file.description
-         </description>
-      </wizard>
-      <wizard
-            name="%NewWizards.sourceFolder"
-            icon="icons/etool16/newsrcfldr_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
-            <parameter name="cfolder" value="true"/>
-         </class>
-         <description>
-            %NewWizards.sourceFolder.description
-         </description>
-      </wizard>
-      <wizard
-            name="%NewWizards.folder"
-            icon="icons/etool16/newfolder_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
-         <class class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard">
-            <parameter name="cfolder" value="true"/>
-         </class>
-         <description>
-            %NewWizards.folder.description
-         </description>
-      </wizard>
-      
-      <!--wizard
             canFinishEarly="false"
-            category="org.eclipse.cdt.ui.newCDTWizards"
-            class="org.eclipse.cdt.ui.wizards.CDTProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            hasPages="true"
-            icon="icons/elcl16/newmngcc_app.gif"
-            id="org.eclipse.cdt.ui.wizards.NewCWizard3"
-            name="%CDTproject"
-            project="true">
-          <description>
-             %CDTproject.desc
-          </description>
-       </wizard-->
-      <wizard
-            canFinishEarly="false"
-            category="org.eclipse.cdt.ui.newCCWizards"
+            category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.ui.wizards.CCProjectWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             hasPages="true"
@@ -486,9 +396,8 @@
              %Cproject.desc
          </description>
       </wizard>
-      
-      
    </extension>
+
 <!-- Define the document setup participant for the C/C++ and Assembly Editors -->
    <extension
          id="org.eclipse.cdt.ui.CDocumentSetupParticipant"

@@ -23,22 +23,6 @@
             class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
-      <wizard
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            hasPages="true"
-            icon="icons/obj16/convert-normal.gif"
-            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard"
-            name="%WizardConvertMakeProject.name"
-            >
-         <description>
-            %WizardConvertMakeProject.description
-         </description>
-         <selection
-            class="org.eclipse.core.resources.IProject">
-         </selection>
-      </wizard>
    </extension>
 
    <extension

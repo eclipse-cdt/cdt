@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Symbian Software Ltd. and others.
+ * Copyright (c) 2006, 2009 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,13 +33,10 @@ import org.eclipse.core.runtime.Path;
  * Factory for obtaining instances of IIndexFileLocation for workspace or external files, and
  * some utility methods for going in the opposite direction. 
  * 
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
- * 
  * @since 4.0
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class IndexLocationFactory {
 	/**

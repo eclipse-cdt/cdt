@@ -15,16 +15,9 @@ import java.net.URI;
 /**
  * Files in the index are (conceptually) partitioned into workspace and non-workspace (external) files.
  * Clients can obtain instances of IIndexFileLocation implementations from {@link IndexLocationFactory}
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0
  */
 public interface IIndexFileLocation {

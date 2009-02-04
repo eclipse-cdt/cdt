@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,9 @@ import org.eclipse.core.runtime.Platform;
  * <br><br>
  * If your requirements are very simple, then {@link ExternalExportProjectProvider} may
  * be sufficient for direct usage. 
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExportProjectProvider {
 	/**

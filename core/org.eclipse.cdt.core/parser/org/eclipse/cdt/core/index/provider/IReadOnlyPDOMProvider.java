@@ -15,7 +15,10 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 /**
  * This interface is intended for ISVs to implement when plugging a mechanism
  * for read-only/off-line indexes into the CIndex.ReadOnlyPDOMProvider extension point element.
- * @since 4.0.0
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @since 4.0
  */
 public interface IReadOnlyPDOMProvider extends IIndexProvider {
 	/**

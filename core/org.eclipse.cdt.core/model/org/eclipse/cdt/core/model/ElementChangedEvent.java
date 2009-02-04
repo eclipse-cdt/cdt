@@ -1,7 +1,5 @@
-package org.eclipse.cdt.core.model;
-
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +8,8 @@ package org.eclipse.cdt.core.model;
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.core.model;
+
 import java.util.EventObject;
 
 import org.eclipse.cdt.internal.core.model.CShiftData;
@@ -21,6 +21,9 @@ import org.eclipse.cdt.internal.core.model.CShiftData;
  *
  * @see IElementChangedListener
  * @see ICElementDelta
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ElementChangedEvent extends EventObject {
 	/**

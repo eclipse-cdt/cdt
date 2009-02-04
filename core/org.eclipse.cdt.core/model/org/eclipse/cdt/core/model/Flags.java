@@ -1,7 +1,5 @@
-package org.eclipse.cdt.core.model;
-
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +8,14 @@ package org.eclipse.cdt.core.model;
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
- 
+package org.eclipse.cdt.core.model;
+
 import org.eclipse.cdt.internal.core.model.IConstants;
 
 /**
  * Utility class for decoding modifier flags in C elements.
- * <p>
- * This class provides static methods only; it is not intended to be
- * instantiated or subclassed by clients.
- * </p>
- *
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Flags {
 	/**

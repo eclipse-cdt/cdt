@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,8 @@ import java.util.EventObject;
  * is 0, and <code>getText</code> is <code>null</code>.
  * </p>
  * <p>
- * This class is not intended to be instantiated or subclassed by clients.
+ * @noextend This class is not intended to be subclassed by clients.
+ * 
  * Instances of this class are automatically created by the C model.
  * </p>
  *

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
+ *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     		- Language managment feature (see Bugzilla 151850)
@@ -50,8 +50,8 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
- * @author Doug Schaefer
- *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class LanguageManager {
 	private static final String NAMESPACE_SEPARATOR = "."; //$NON-NLS-1$
@@ -288,6 +288,11 @@ public class LanguageManager {
 		return contentTypeId != null && getLanguageForContentTypeID(contentTypeId) != null;
 	}
 	
+	/**
+	 * @deprecated use {@link #getContributedModelBuilderFor(ITranslationUnit)}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public IContributedModelBuilder getContributedModelBuilderFor(TranslationUnit tu) {
 		try {
 			ILanguage lang = tu.getLanguage();
@@ -296,7 +301,19 @@ public class LanguageManager {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * @since 5.1
+	 */
+	public IContributedModelBuilder getContributedModelBuilderFor(ITranslationUnit tu) {
+		try {
+			ILanguage lang = tu.getLanguage();
+			return lang == null ? null : lang.createModelBuilder(tu);
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * Returns mappings between IDs and IPDOMLinkageFactory. The IDs are defined in {@link ILinkage}. 
 	 * @return a map.
@@ -407,7 +424,7 @@ public class LanguageManager {
 		
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
-		event.setType(LanguageMappingChangeEvent.TYPE_WORKSPACE);
+		event.setType(ILanguageMappingChangeEvent.TYPE_WORKSPACE);
 		event.setAffectedContentTypes(affectedContentTypes);
 		notifyLanguageChangeListeners(event);
 	}
@@ -451,7 +468,7 @@ public class LanguageManager {
 		
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
-		event.setType(LanguageMappingChangeEvent.TYPE_PROJECT);
+		event.setType(ILanguageMappingChangeEvent.TYPE_PROJECT);
 		event.setProject(project);
 		event.setAffectedContentTypes(affectedContentTypes);
 		notifyLanguageChangeListeners(event);
@@ -620,7 +637,7 @@ public class LanguageManager {
 		
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
-		event.setType(LanguageMappingChangeEvent.TYPE_FILE);
+		event.setType(ILanguageMappingChangeEvent.TYPE_FILE);
 		event.setProject(project);
 		event.setFile(file);
 		notifyLanguageChangeListeners(event);

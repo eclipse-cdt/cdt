@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
@@ -30,7 +30,7 @@ public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
 
 	private C99BuildASTParserAction baseAction;
 	
-	public GCCBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory) {
+	public GCCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory) {
 		super(parser, astStack, nodeFactory);
 		this.nodeFactory = nodeFactory;
 	}
@@ -45,7 +45,7 @@ public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
      *     ::= identifier_token ':'		
 	 */
 	public void consumeDesignatorField() {
-		IASTName name = createName(parser.getLeftIToken());
+		IASTName name = createName(stream.getLeftIToken());
 		ICASTFieldDesignator designator = nodeFactory.newFieldDesignator(name);
 		setOffsetAndLength(designator);
 		astStack.push(designator);

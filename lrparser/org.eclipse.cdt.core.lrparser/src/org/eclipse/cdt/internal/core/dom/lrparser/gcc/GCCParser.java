@@ -17,13 +17,16 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
-
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
-import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.index.IIndex;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
@@ -32,7 +35,9 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
 
-public class GCCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< IASTTranslationUnit >   
+public class GCCParser extends PrsStream implements RuleAction, ITokenStream, 
+                                                       ITokenCollector, IParser< IASTTranslationUnit  > 
+                                                           
 {
     private static ParseTable prs = new GCCParserprs();
     private FixedBacktrackingParser btParser;
@@ -170,7 +175,11 @@ public class GCCParser extends PrsStream implements RuleAction , IParserActionTo
 private  C99BuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
-public GCCParser() {  // constructor
+
+public GCCParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
+	initActions(options);
+	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
+	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
 private void initActions(Set<IParser.Options> options) {
@@ -194,17 +203,16 @@ public void addToken(IToken token) {
 }
 
 
-public  IASTTranslationUnit  parse(Set<IParser.Options> options) {
+public  IASTTranslationUnit   parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
 	super.resetTokenStream(); // allow tokens to be garbage collected
 
 	compNode = action.getASTCompletionNode(); // the completion node may be null
-	return ( IASTTranslationUnit ) action.getParseResult();
+	return ( IASTTranslationUnit  ) action.getParseResult();
 }
 
 
@@ -225,25 +233,6 @@ public String[] getOrderedTerminalSymbols() {
 public String getName() {
 	return "GCCParser";
 }
-
-
-
-private ITokenMap tokenMap = null;
-
-public void setTokens(List<IToken> tokens) {
-	resetTokenStream();
-	addToken(new Token(null, 0, 0, 0)); // dummy token
-	for(IToken token : tokens) {
-		token.setKind(tokenMap.mapKind(token.getKind()));
-		addToken(token);
-	}
-	addToken(new Token(null, 0, 0, GCCParsersym.TK_EOF_TOKEN));
-}
-
-public GCCParser(IParserActionTokenProvider parser) {  // constructor
-	tokenMap = new TokenMap(GCCParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
-}	
-
 
 
 private  GCCBuildASTParserAction  gnuAction;

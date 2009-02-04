@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 @SuppressWarnings("restriction")
@@ -41,7 +41,7 @@ public abstract class AbstractParserAction {
 	
 	
 	/** Provides an interface to the token stream */
-	protected final IParserActionTokenProvider parser;
+	protected final ITokenStream stream;
 	
 	/** Stack that holds the intermediate nodes as the AST is being built */
 	protected final ScopedStack<Object> astStack;
@@ -70,21 +70,21 @@ public abstract class AbstractParserAction {
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public AbstractParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack) {
+	public AbstractParserAction(ITokenStream parser, ScopedStack<Object> astStack) {
 		if(parser == null)
 			throw new NullPointerException("parser is null"); //$NON-NLS-1$
 		if(astStack == null)
 			throw new NullPointerException("astStack is null"); //$NON-NLS-1$
 		
-		this.parser = parser;
+		this.stream = parser;
 		this.astStack = astStack;
 	}
 	
 	
 
 	protected void setOffsetAndLength(IASTNode node) {
-		int ruleOffset = parser.getLeftIToken().getStartOffset();
-		int ruleLength = parser.getRightIToken().getEndOffset() - ruleOffset;
+		int ruleOffset = stream.getLeftIToken().getStartOffset();
+		int ruleLength = stream.getRightIToken().getEndOffset() - ruleOffset;
 		((ASTNode)node).setOffsetAndLength(ruleOffset, ruleLength < 0 ? 0 : ruleLength);
 	}
 	
@@ -143,15 +143,15 @@ public abstract class AbstractParserAction {
 	 * Runs the given parser on the given token list.
 	 * 
 	 */
-	protected <N extends IASTNode> N runSecondaryParser(IParser<N> secondaryParser) {
-		return runSecondaryParser(secondaryParser, parser.getRuleTokens());
+	protected <N extends IASTNode> N runSecondaryParser(ISecondaryParser<N> secondaryParser) {
+		return runSecondaryParser(secondaryParser, stream.getRuleTokens());
 	}
 	
 	
 	/**
 	 * Runs the given parser on the tokens that make up the current rule.
 	 */
-	protected <N extends IASTNode> N runSecondaryParser(IParser<N> secondaryParser, List<IToken> tokens) { 
+	protected <N extends IASTNode> N runSecondaryParser(ISecondaryParser<N> secondaryParser, List<IToken> tokens) { 
 		// the secondary parser will alter the token kinds, which will need to be undone
 		int[] savedKinds = new int[tokens.size()];
 		
@@ -160,7 +160,7 @@ public abstract class AbstractParserAction {
 			savedKinds[i++] = token.getKind();
 		
 		secondaryParser.setTokens(tokens);
-		N result = secondaryParser.parse(options);
+		N result = secondaryParser.parse();
 		
 		IASTCompletionNode compNode = secondaryParser.getCompletionNode();
 		if(compNode != null) {
@@ -227,6 +227,6 @@ public abstract class AbstractParserAction {
 	 * Gets the current token and places it on the stack for later consumption.
 	 */
 	public void consumeToken() {
-		astStack.push(parser.getRightIToken());
+		astStack.push(stream.getRightIToken());
 	}
 }

@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * Adapts the CPreprocessor from the CDT core for use with LPG based parsers.
  * 
  * @author Mike Kucera
+ * @noreference
+ * TODO move into an internal package
  */
-class CPreprocessorAdapter {
+public class CPreprocessorAdapter {
 	
 	/**
 	 * During content assist the preprocessor may return a completion token

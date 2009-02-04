@@ -14,7 +14,7 @@ import java.util.LinkedList;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.TypedefSymbolTable;
 /**
@@ -32,7 +32,7 @@ public class C99TypedefTrackerParserAction {
 	
 	  
 	// provides limited access to the token stream
-	private final IParserActionTokenProvider parser;
+	private final ITokenStream parser;
 	
 	// The symbolTable currently in use 
 	private TypedefSymbolTable symbolTable = TypedefSymbolTable.EMPTY_TABLE;
@@ -64,7 +64,7 @@ public class C99TypedefTrackerParserAction {
 	}
 	
 	
-	public C99TypedefTrackerParserAction(IParserActionTokenProvider parser) {
+	public C99TypedefTrackerParserAction(ITokenStream parser) {
 		this.parser = parser;
 	}
 	

@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.gpp
-%options template=FixedBtParserTemplateD.g
+%options template=LRParserTemplate.g
 
 
 -- This file is needed because LPG won't allow redefinition of the 
@@ -19,10 +19,6 @@
 
 $Import
 	GPPGrammar.g
-$End
-
-$Define
-    $ast_class /. IASTTranslationUnit ./
 $End
 
 $Start

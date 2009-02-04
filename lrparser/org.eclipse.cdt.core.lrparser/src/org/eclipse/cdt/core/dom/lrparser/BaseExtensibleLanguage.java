@@ -15,22 +15,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
-import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -38,9 +35,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
@@ -68,15 +63,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 * Can be overridden in subclasses to provide a different parser
 	 * for a language extension.
 	 */
-	protected abstract IParser<IASTTranslationUnit> getParser();
-	
-	
-	/**
-	 * A token map is used to map tokens from the DOM preprocessor
-	 * to the tokens defined by an LPG parser.
-	 */
-	protected abstract IDOMTokenMap getTokenMap();
-	
+	protected abstract IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<IParser.Options> options);
 	
 	/**
 	 * Returns the ParserLanguage value that is to be used when creating
@@ -91,11 +78,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 */
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
 	
-	
-	/**
-	 * Returns a bindings provider that will provide additional bindings based on the language extension.
-	 */
-	protected abstract IBuiltinBindingsProvider getBuiltinBindingsProvider();
 	
 	
 	@SuppressWarnings("nls")
@@ -124,24 +106,21 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
-		// The translation unit has to be created here so that the preprocessor
-		// can fill in the preprocessor AST nodes.
-		//IASTTranslationUnit tu = getASTTranslationUnit(index, preprocessor);
-		IParser<IASTTranslationUnit> parser = getParser();
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
+		
+		//parser.setScanner(preprocessor, getTokenMap());
+		//CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
 		
 		Set<IParser.Options> parserOptions = new HashSet<IParser.Options>();
 		//if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
 		//	parserOptions.add(IParser.Options.OPTION_SKIP_FUNCTION_BODIES);
 		if((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0)
 			parserOptions.add(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
-		
 		if(!parserOptions.isEmpty())
 			parserOptions = EnumSet.copyOf(parserOptions);
 		
-		IASTTranslationUnit tu = parser.parse(parserOptions);
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserOptions);
+		IASTTranslationUnit tu = parser.parse();
 		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0); // the TU is marked as either a source file or a header file
-		setUpTranslationUnit(tu, preprocessor, index);
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
@@ -150,43 +129,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		return tu;
 	}
-	
-	
-	
-	private void setUpTranslationUnit(IASTTranslationUnit tu, IScanner preprocessor, IIndex index) throws CoreException {
-		tu.setIndex(index);
-		
-		// add built-in names to the scope
-		IBuiltinBindingsProvider builtinBindingsProvider = getBuiltinBindingsProvider();
-		if (builtinBindingsProvider != null) {
-			IScope tuScope = tu.getScope();
-			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
-			try {
-				for (IBinding binding : bindings) {
-					ASTInternal.addBinding(tuScope, binding);
-				}
-			} catch (DOMException e) {
-				throw new CoreException(LRParserPlugin.createStatus(e));
-			}
-		}
-		
-		if(tu instanceof ASTTranslationUnit) {
-			((ASTTranslationUnit)tu).setLocationResolver(preprocessor.getLocationResolver());
-		}
-		for(IASTNode node : tu.getAllPreprocessorStatements()) {
-			node.setParent(tu);
-		}
-		for(IASTNode node : tu.getComments()) {
-			node.setParent(tu);
-		}
-		for(IASTNode node : tu.getMacroDefinitions()) {
-			node.setParent(tu);
-		}
-		for(IASTNode node : tu.getMacroExpansions()) {
-			node.setParent(tu);
-		}
-	}
-	
 	
 	
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader,
@@ -220,14 +162,9 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 		
-		IParser<IASTTranslationUnit> parser = getParser();
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
-		
-		// the parser will fill in the rest of the AST
 		Set<IParser.Options> parserOptions = EnumSet.of(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
-		IASTTranslationUnit tu = parser.parse(parserOptions);
-		setUpTranslationUnit(tu, preprocessor, index);
-		
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserOptions);
+		parser.parse();
 		IASTCompletionNode completionNode = parser.getCompletionNode();
 		
 		if(DEBUG_PRINT_AST) {
@@ -281,6 +218,10 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		}
 		
 		return super.getAdapter(adapter);
+	}
+	
+	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
+		return null;
 	}
 	
 }

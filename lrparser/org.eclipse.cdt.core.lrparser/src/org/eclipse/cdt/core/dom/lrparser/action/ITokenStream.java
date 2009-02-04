@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.lrparser;
+package org.eclipse.cdt.core.dom.lrparser.action;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import lpg.lpgjavaruntime.IToken;
  * 
  * @author Mike Kucera
  */
-public interface IParserActionTokenProvider {
+public interface ITokenStream {
 	
 	/**
 	 * Returns the tokens that were parsed to recognized

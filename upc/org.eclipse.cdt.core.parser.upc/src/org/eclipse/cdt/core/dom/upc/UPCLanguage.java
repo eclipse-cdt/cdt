@@ -10,20 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.upc;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
-import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.lrparser.IParser.Options;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCLanguageKeywords;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
@@ -44,13 +48,8 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IDOMTokenMap getTokenMap() {
-		return new DOMToUPCTokenMap();
-	}
-	
-	@Override
-	public IParser<IASTTranslationUnit> getParser() {
-		return new UPCParser();
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<Options> options) {
+		return new UPCParser(scanner, new DOMToUPCTokenMap(), getBuiltinBindingsProvider(), index, options);
 	}
 
 	/**
@@ -90,7 +89,6 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return ScannerExtensionConfiguration.createC();
 	}
 
-	@Override
 	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new ANSICParserExtensionConfiguration().getBuiltinBindingsProvider();
 	}

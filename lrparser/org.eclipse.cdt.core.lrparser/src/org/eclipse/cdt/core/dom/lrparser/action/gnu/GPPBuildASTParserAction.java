@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPBuildASTParserAction;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParsersym;
@@ -32,7 +32,7 @@ public class GPPBuildASTParserAction extends GNUBuildASTParserAction {
 	private CPPBuildASTParserAction baseAction;
 	
 	
-	public GPPBuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory) {
+	public GPPBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICPPNodeFactory nodeFactory) {
 		super(parser, astStack, nodeFactory);
 		this.nodeFactory = nodeFactory;
 	}

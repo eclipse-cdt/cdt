@@ -11,10 +11,13 @@
 
 package org.eclipse.cdt.core.dom.parser.upc;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCNoCastExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCSizeofExpressionParser;
@@ -27,16 +30,16 @@ public class UPCSecondaryParserFactory implements ISecondaryParserFactory{
 		return DEFAULT_INSTANCE;
 	}
 
-	public IParser<IASTExpression> getExpressionParser(IParserActionTokenProvider parser) {
-		return new UPCExpressionParser(parser);
+	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
+		return new UPCExpressionParser(stream, options);
 	}
 
-	public IParser<IASTExpression> getNoCastExpressionParser(IParserActionTokenProvider parser) {
-		return new UPCNoCastExpressionParser(parser);
+	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
+		return new UPCNoCastExpressionParser(stream, options);
 	}
 
-	public IParser<IASTExpression> getSizeofExpressionParser(IParserActionTokenProvider parser) {
-		return new UPCSizeofExpressionParser(parser);
+	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
+		return new UPCSizeofExpressionParser(stream, options);
 	}
 	
 }

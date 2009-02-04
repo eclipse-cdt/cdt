@@ -17,13 +17,20 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.index.IIndex;
 
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 
 import org.eclipse.cdt.core.dom.ast.cpp.*;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
@@ -33,7 +40,9 @@ import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPSecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
 
-public class GPPSizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< IASTExpression >   
+public class GPPSizeofExpressionParser extends PrsStream implements RuleAction, ITokenStream, 
+                                                       ITokenCollector, IParser< IASTExpression > 
+                                                        , ISecondaryParser< IASTExpression >   
 {
     private static ParseTable prs = new GPPSizeofExpressionParserprs();
     private FixedBacktrackingParser btParser;
@@ -171,7 +180,11 @@ public class GPPSizeofExpressionParser extends PrsStream implements RuleAction ,
 private  CPPBuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
-public GPPSizeofExpressionParser() {  // constructor
+
+public GPPSizeofExpressionParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
+	initActions(options);
+	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
+	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
 private void initActions(Set<IParser.Options> options) {
@@ -195,10 +208,9 @@ public void addToken(IToken token) {
 }
 
 
-public  IASTExpression  parse(Set<IParser.Options> options) {
+public  IASTExpression  parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
@@ -241,10 +253,10 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, GPPSizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public GPPSizeofExpressionParser(IParserActionTokenProvider parser) {  // constructor
+public GPPSizeofExpressionParser(ITokenStream parser, Set<IParser.Options> options) {  // constructor for creating secondary parser
+	initActions(options);
 	tokenMap = new TokenMap(GPPSizeofExpressionParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
-
 
 
 private  GPPBuildASTParserAction  gnuAction;
@@ -2011,41 +2023,53 @@ private  GPPBuildASTParserAction  gnuAction;
             //
             case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
+  
+            //
+            // Rule 576:  typeof_type_specifier ::= typeof unary_expression
+            //
+            case 576: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            }  
+  
+            //
+            // Rule 577:  typeof_type_specifier ::= typeof ( type_id )
+            //
+            case 577: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            }  
  
             //
-            // Rule 580:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 581:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 580: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
+            case 581: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
             } 
   
             //
-            // Rule 593:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 594:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
             //
-            case 593: { action.   consumeDeclaratorWithPointer(true);             break;
+            case 594: { action.   consumeDeclaratorWithPointer(true);             break;
             }  
   
             //
-            // Rule 595:  simple_type_specifier ::= _Complex
-            //
-            case 595: { action.   consumeToken();            break;
-            }  
-  
-            //
-            // Rule 596:  simple_type_specifier ::= _Imaginary
+            // Rule 596:  simple_type_specifier ::= _Complex
             //
             case 596: { action.   consumeToken();            break;
             }  
+  
+            //
+            // Rule 597:  simple_type_specifier ::= _Imaginary
+            //
+            case 597: { action.   consumeToken();            break;
+            }  
  
             //
-            // Rule 597:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+            // Rule 598:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
             //
-            case 597: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
+            case 598: {  gnuAction.consumeDeclarationSpecifiersSimple();            break;
             } 
   
             //
-            // Rule 599:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            // Rule 600:  no_sizeof_type_id_start ::= ERROR_TOKEN
             //
-            case 599: { action.   consumeEmpty();             break;
+            case 600: { action.   consumeEmpty();             break;
             }  
 
     

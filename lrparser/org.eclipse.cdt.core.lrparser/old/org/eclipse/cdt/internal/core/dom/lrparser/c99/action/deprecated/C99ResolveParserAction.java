@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
@@ -87,7 +87,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	
 	  
 	// provides limited access to the token stream
-	private final IParserActionTokenProvider parser;
+	private final ITokenStream parser;
 	
 	// The symbolTable currently in use 
 	private C99SymbolTable symbolTable = C99SymbolTable.EMPTY_TABLE;
@@ -138,7 +138,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	}
 	
 	
-	public C99ResolveParserAction(IParserActionTokenProvider parser) {
+	public C99ResolveParserAction(ITokenStream parser) {
 		this.parser = parser;
 		bindingScopeStack.add(new C99Scope(EScopeKind.eGlobal)); // the global scope
 		System.out.println();

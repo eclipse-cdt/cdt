@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.gnu;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
-import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.model.IContributedModelBuilder;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.lrparser.gpp.GPPParser;
 
@@ -40,22 +41,13 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IParser<IASTTranslationUnit> getParser() {
-		return new GPPParser();
-	}
-
-	@Override
-	protected IDOMTokenMap getTokenMap() {
-		return DOMToGPPTokenMap.DEFAULT_MAP;
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<IParser.Options> options) {
+		return new GPPParser(scanner, DOMToGPPTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, options);
 	}
 
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return GPPScannerExtensionConfiguration.getInstance();
-	}
-	
-	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
-		return null;
 	}
 
 	public String getId() {
@@ -71,7 +63,6 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 		return ParserLanguage.CPP;
 	}
 
-	@Override
 	protected IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GPPParserExtensionConfiguration().getBuiltinBindingsProvider();
 	}

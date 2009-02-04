@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 
 
 /**
@@ -28,20 +30,20 @@ public interface ISecondaryParserFactory {
 	/**
 	 * Get the parser that will recognize expressions.
 	 */
-	IParser<IASTExpression> getExpressionParser(IParserActionTokenProvider parser);
+	ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Set<IParser.Options> options);
 	
 	
 	/**
 	 * Expression parser that does not recognize cast expressions,
 	 * used to disambiguate casts. 
 	 */
-	IParser<IASTExpression> getNoCastExpressionParser(IParserActionTokenProvider parser);
+	ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Set<IParser.Options> options);
 	
 	
 	/**
 	 * Expression parser that treats all sizeof and typeid expressions
 	 * as unary expressions.
 	 */
-	IParser<IASTExpression> getSizeofExpressionParser(IParserActionTokenProvider parser);
+	ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options);
 	
 }

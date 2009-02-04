@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.dom.lrparser;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.model.ILanguage;
  * 
  * @author Mike Kucera
  */
-public interface IParser<N extends IASTNode> extends ITokenCollector {
+public interface IParser<N extends IASTNode> {
 	
 	/**
 	 * Options used by implementations of IParser. Some of the options
@@ -69,7 +68,7 @@ public interface IParser<N extends IASTNode> extends ITokenCollector {
 	 * @throws NullPointerException if either parameter is null
 	 * @see EnumSet
 	 */
-	public N parse(Set<Options> options);
+	public N parse();
 	
 	
 	/**

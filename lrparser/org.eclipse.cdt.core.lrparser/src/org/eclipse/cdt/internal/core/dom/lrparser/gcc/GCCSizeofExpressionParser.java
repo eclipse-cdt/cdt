@@ -17,13 +17,20 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.index.IIndex;
 
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
@@ -32,7 +39,9 @@ import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
 
-public class GCCSizeofExpressionParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser< IASTExpression >   
+public class GCCSizeofExpressionParser extends PrsStream implements RuleAction, ITokenStream, 
+                                                       ITokenCollector, IParser< IASTExpression > 
+                                                        , ISecondaryParser< IASTExpression >   
 {
     private static ParseTable prs = new GCCSizeofExpressionParserprs();
     private FixedBacktrackingParser btParser;
@@ -170,7 +179,11 @@ public class GCCSizeofExpressionParser extends PrsStream implements RuleAction ,
 private  C99BuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
-public GCCSizeofExpressionParser() {  // constructor
+
+public GCCSizeofExpressionParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
+	initActions(options);
+	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
+	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
 private void initActions(Set<IParser.Options> options) {
@@ -194,10 +207,9 @@ public void addToken(IToken token) {
 }
 
 
-public  IASTExpression  parse(Set<IParser.Options> options) {
+public  IASTExpression  parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	initActions(options);
 	
 	final int errorRepairCount = -1;  // -1 means full error handling
 	parser(null, errorRepairCount); // do the actual parse
@@ -240,10 +252,10 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, GCCSizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public GCCSizeofExpressionParser(IParserActionTokenProvider parser) {  // constructor
+public GCCSizeofExpressionParser(ITokenStream parser, Set<IParser.Options> options) {  // constructor for creating secondary parser
+	initActions(options);
 	tokenMap = new TokenMap(GCCSizeofExpressionParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 }	
-
 
 
 private  GCCBuildASTParserAction  gnuAction;

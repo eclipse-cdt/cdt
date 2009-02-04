@@ -10,7 +10,7 @@
 ----------------------------------------------------------------------------------
 
 
--- This template is a modified version of BtParserTemplateD.g.
+-- This template is a modified version of BtParserTemplateD.g. for use with the LR parsers.
 -- This template contains a fix for an LPG bug:
 -- http://sourceforge.net/tracker/index.php?func=detail&aid=1732851&group_id=155963&atid=797879
 
@@ -141,7 +141,9 @@ $End
 
 $Headers
     /.
-    public class $action_type extends PrsStream implements RuleAction$additional_interfaces
+    public class $action_type extends PrsStream implements RuleAction, ITokenStream, 
+                                                           ITokenCollector, IParser<$ast_class> 
+                                                           $additional_interfaces
     {
         private static ParseTable prs = new $prs_type();
         private FixedBacktrackingParser btParser;
@@ -312,10 +314,10 @@ $End
 $Define
 	-- These macros allow the template and header code to be customized by an extending parser.
 	
-	$ast_class /. IASTNode  ./  -- override with more specific node type
+	$ast_class /. IASTTranslationUnit  ./  -- override in secondary parsers
 	
 	$extra_interfaces /. ./  -- can override this macro to provide additional interfaces
-	$additional_interfaces /. , IParserActionTokenProvider, IParser<$ast_class> $extra_interfaces ./
+	$additional_interfaces /.  $extra_interfaces ./
 	
 	$build_action_class /.  ./  -- name of the class that has the AST building callbacks
 	$node_factory_create_expression /.  ./  -- expression that will create the INodeFactory
@@ -332,10 +334,16 @@ $Globals
 /.	
 	import java.util.*;
 	import org.eclipse.cdt.core.dom.ast.*;
+	import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 	import org.eclipse.cdt.core.dom.lrparser.IParser;
-	import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+	import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
+	import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
+	import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 	import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 	import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
+	import org.eclipse.cdt.core.parser.IScanner;
+	import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+	import org.eclipse.cdt.core.index.IIndex;
 ./
 $End
 
@@ -344,7 +352,11 @@ $Headers
 	private $build_action_class action;
 	private IASTCompletionNode compNode;
 	
-	public $action_type() {  // constructor
+
+	public $action_type(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
+		initActions(options);
+		action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
+		CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 	}
 	
 	private void initActions(Set<IParser.Options> options) {
@@ -363,10 +375,9 @@ $Headers
 	}
 	
 	
-	public $ast_class parse(Set<IParser.Options> options) {
+	public $ast_class parse() {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
-		initActions(options);
 		
 		final int errorRepairCount = -1;  // -1 means full error handling
 		parser(null, errorRepairCount); // do the actual parse
@@ -398,37 +409,4 @@ $Headers
 ./
 $End
 
-$Globals
-/.
-    import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
-    import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
-./
-$End
 
-$Headers
-/.
-
-	private ITokenMap tokenMap = null;
-	
-	public void setTokens(List<IToken> tokens) {
-		resetTokenStream();
-		addToken(new Token(null, 0, 0, 0)); // dummy token
-		for(IToken token : tokens) {
-			token.setKind(tokenMap.mapKind(token.getKind()));
-			addToken(token);
-		}
-		addToken(new Token(null, 0, 0, $sym_type.TK_EOF_TOKEN));
-	}
-	
-	public $action_type(IParserActionTokenProvider parser) {  // constructor
-		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
-	}	
-	
-
-./
-$End
-
-
---
--- E N D   O F   T E M P L A T E
---

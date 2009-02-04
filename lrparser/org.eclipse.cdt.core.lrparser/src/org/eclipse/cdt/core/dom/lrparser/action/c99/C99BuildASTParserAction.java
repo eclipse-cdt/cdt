@@ -61,8 +61,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
@@ -94,7 +94,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
 	 * that parsers token kinds will be mapped back to the base C99 parser's token kinds.
 	 */
-	public C99BuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+	public C99BuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
 		super(parser, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
@@ -135,7 +135,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 * postfix_expression ::= postfix_expression '->' ident
 	 */
 	public void consumeExpressionFieldReference(boolean isPointerDereference) {
-		IASTName name = createName(parser.getRightIToken());
+		IASTName name = createName(stream.getRightIToken());
 		IASTExpression owner = (IASTExpression) astStack.pop();
 		IASTFieldReference expr = nodeFactory.newFieldReference(name, owner);
 		expr.setIsPointerDereference(isPointerDereference);
@@ -289,7 +289,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		IASTName[] names = astStack.topScope().toArray(new IASTName[0]);
 		declarator.setParameterNames(names);
 		astStack.closeScope();
-		int endOffset = endOffset(parser.getRightIToken());
+		int endOffset = endOffset(stream.getRightIToken());
 		addFunctionModifier(declarator, endOffset);
 	}
 	
@@ -300,7 +300,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *       | identifier_list ',' 'identifier'
 	 */
 	public void consumeIdentifierKnR() {
-		IASTName name = createName(parser.getRightIToken());
+		IASTName name = createName(stream.getRightIToken());
 		astStack.push(name);
 	}
 	
@@ -313,7 +313,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      */ 
 	public void consumePointer() {
 		IASTPointer pointer = nodeFactory.newPointer();
-		IToken star = parser.getRightIToken();
+		IToken star = stream.getRightIToken();
 		ParserUtil.setOffsetAndLength(pointer, star);
 		astStack.push(pointer);
 	}
@@ -362,7 +362,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		}
 		
 		if(hasDeclarator) {
-			addFunctionModifier(declarator, endOffset(parser.getRightIToken()));
+			addFunctionModifier(declarator, endOffset(stream.getRightIToken()));
 		}
 		else {
 			setOffsetAndLength(declarator);
@@ -402,7 +402,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 *  designator ::= '.' 'identifier'
 	 */
 	public void consumeDesignatorField() {
-		IASTName name = createName(parser.getRightIToken());
+		IASTName name = createName(stream.getRightIToken());
 		ICASTFieldDesignator designator = nodeFactory.newFieldDesignator(name);
 		setOffsetAndLength(designator);
 		astStack.push(designator);
@@ -476,7 +476,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		List<Object> declarators = (hasDeclaratorList) ? astStack.closeScope() : Collections.emptyList();
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		
-		List<IToken> ruleTokens = parser.getRuleTokens();
+		List<IToken> ruleTokens = stream.getRuleTokens();
 		if(ruleTokens.size() == 1 && baseKind(ruleTokens.get(0)) == TK_EndOfCompletion) 
 			return; // do not generate nodes for extra EOC tokens
 		
@@ -498,7 +498,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	 */
 	public void consumeDeclarationEmpty() {
 		// Don't generate declaration nodes for extra EOC tokens
-		if(baseKind(parser.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
+		if(baseKind(stream.getLeftIToken()) == C99Parsersym.TK_EndOfCompletion)
 			return;
 		
 		IASTDeclSpecifier declSpecifier   = nodeFactory.newSimpleDeclSpecifier();
@@ -535,12 +535,12 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	public void consumeTypeSpecifierComposite(boolean hasName) {
 		
 		int key = 0;
-		switch(baseKind(parser.getLeftIToken())) {
+		switch(baseKind(stream.getLeftIToken())) {
 			case TK_struct: key = IASTCompositeTypeSpecifier.k_struct;
 			case TK_union:  key = IASTCompositeTypeSpecifier.k_union;
 		}
 		
-		IASTName name = (hasName) ? createName(parser.getRuleTokens().get(1)) : nodeFactory.newName();
+		IASTName name = (hasName) ? createName(stream.getRuleTokens().get(1)) : nodeFactory.newName();
 		
 		ICASTCompositeTypeSpecifier typeSpec = nodeFactory.newCompositeTypeSpecifier(key, name);
 		
@@ -560,7 +560,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      * enum_specifier ::= 'enum' enum_identifier     
 	 */
 	public void consumeTypeSpecifierElaborated(int kind) {
-		IASTName name = createName(parser.getRuleTokens().get(1));
+		IASTName name = createName(stream.getRuleTokens().get(1));
 		IASTElaboratedTypeSpecifier typeSpec = nodeFactory.newElaboratedTypeSpecifier(kind, name);
 		setOffsetAndLength(typeSpec);
 		astStack.push(typeSpec);
@@ -604,7 +604,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		// bug 234463, fix for content assist to work in this case
 		int TK_EOC = TK_EndOfCompletion; // TODO: change this in the grammar file
-		List<IToken> tokens = parser.getRuleTokens();
+		List<IToken> tokens = stream.getRuleTokens();
 		if(matchTokens(tokens, tokenMap, 
 				TK_for, TK_LeftParen, TK_Completion, TK_EOC, TK_EOC, TK_EOC, TK_EOC)) {
 			IASTName name = createName(tokens.get(2));

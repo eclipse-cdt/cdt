@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-import java.util.List;
-
 import lpg.lpgjavaruntime.IToken;
 
 /**
@@ -33,20 +31,5 @@ public interface ITokenCollector {
      * @throws NullPointerException if token is null
 	 */
 	public void addToken(IToken token);
-	
-	/**
-	 * Set the list of tokens that will be parsed.
-	 * 
-	 * The given list does not need to contain dummy and EOF tokens,
-	 * these will be added automatically.
-	 * 
-	 * This method causes any tokens already contained in the parser
-	 * to be removed.
-	 * 
-	 * This method is mainly used by secondary parsers that are called
-	 * from a main parser.
-	 * 
-	 * @throws NullPointerException if tokens is null
-	 */
-	public void setTokens(List<IToken> tokens);
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -62,13 +63,20 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
+import org.eclipse.cdt.core.dom.lrparser.LRParserPlugin;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -98,6 +106,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	protected abstract boolean isIdentifierToken(IToken token);
 	
 	
+	protected IASTTranslationUnit tu = null;
 
 	
 	/**
@@ -105,7 +114,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public BuildASTParserAction(IParserActionTokenProvider parser, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+	public BuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
 		super(parser, astStack);
 		
 		if(nodeFactory == null)
@@ -116,20 +125,46 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		this.nodeFactory = nodeFactory;
 		this.parserFactory = parserFactory;
 	}
+	
+	
+	public void initializeTranslationUnit(IScanner scanner, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index) {
+		tu = nodeFactory.newTranslationUnit();
+		tu.setIndex(index);
+		
+		// add built-in names to the scope
+		if (builtinBindingsProvider != null) {
+			IScope tuScope = tu.getScope();
+			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
+			try {
+				for (IBinding binding : bindings) {
+					ASTInternal.addBinding(tuScope, binding);
+				}
+			} catch (DOMException e) {
+				LRParserPlugin.logError(e);
+			}
+		}
+		
+		if(tu instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)tu).setLocationResolver(scanner.getLocationResolver());
+		}
+	}
 
 
 	public void consumeTranslationUnit() {
-		// can't close the outermost scope
-		// the outermost scope may be empty if there are no tokens in the file
-		IASTTranslationUnit tu = nodeFactory.newTranslationUnit();
+		if(tu == null)
+			tu = nodeFactory.newTranslationUnit();
 		
+		// can't close the outermost scope
 		for(Object o : astStack.topScope()) {
 			tu.addDeclaration((IASTDeclaration)o);
+		}
+		while(!astStack.isEmpty()) {
+			astStack.pop();
 		}
 
 		// this is the same way that the DOM parser computes the length
 		IASTDeclaration[] declarations = tu.getDeclarations();
-        if (declarations.length != 0) {
+        if(declarations.length != 0) {
         	IASTNode d = declarations[declarations.length-1];
             ParserUtil.setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
@@ -146,7 +181,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * 
 	 * @see AbstractGNUSourceCodeParser#resolveAmbiguities()
 	 */
-	private void resolveAmbiguityNodes(IASTTranslationUnit tu) {
+	private static void resolveAmbiguityNodes(IASTTranslationUnit tu) {
 		if (tu instanceof ASTTranslationUnit) {
 			((ASTTranslationUnit)tu).resolveAmbiguities();
 		}
@@ -156,7 +191,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
   	 * Consumes a single identifier token.
   	 */
   	public void consumeIdentifierName() {
-  		astStack.push(createName(parser.getRightIToken()));
+  		astStack.push(createName(stream.getRightIToken()));
   	}
   	
   	
@@ -173,10 +208,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		// attempt to also parse the tokens as an expression
 		IASTExpressionStatement expressionStatement = null;
 		if(decl instanceof IASTSimpleDeclaration) {
-			List<IToken> expressionTokens = parser.getRuleTokens();
+			List<IToken> expressionTokens = stream.getRuleTokens();
 			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
 			
-			IParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(parser);
+			ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, options);
 			IASTExpression expr = runSecondaryParser(expressionParser, expressionTokens);
 			
 			if(expr != null) { // the parse may fail
@@ -186,7 +221,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		}
 		
 		
-		List<IToken> tokens = parser.getRuleTokens();
+		List<IToken> tokens = stream.getRuleTokens();
 		
 		IASTNode result;
 		if(expressionStatement == null) 
@@ -253,7 +288,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * @see ICPPASTLiteralExpression
 	 */
 	public void consumeExpressionLiteral(int kind) {
-		IToken token = parser.getRightIToken();
+		IToken token = stream.getRightIToken();
 		String rep = token.toString();
 		
 		// Strip the quotes from string literals, this is just to be consistent
@@ -280,7 +315,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	
 
 	public void consumeExpressionID() {
-		IASTName name = createName(parser.getLeftIToken());
+		IASTName name = createName(stream.getLeftIToken());
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);
         setOffsetAndLength(expr);
         astStack.push(expr);
@@ -353,7 +388,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTExpression alternateExpr = null;
 		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
 			// try parsing as non-cast to resolve ambiguities
-			IParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(parser);
+			ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(stream, options);
 			alternateExpr = runSecondaryParser(secondaryParser);
 		}
 		
@@ -393,7 +428,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		IParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(parser); 
+		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(stream, options); 
 		IASTExpression alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null)
@@ -439,7 +474,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 */
 	public void consumeStatementLabeled() {
 		IASTStatement body = (IASTStatement) astStack.pop();
-		IASTName label = createName(parser.getLeftIToken());
+		IASTName label = createName(stream.getLeftIToken());
 
 		IASTLabelStatement stat = nodeFactory.newLabelStatement(label, body);
 		setOffsetAndLength(stat);
@@ -474,7 +509,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTStatement body = (IASTStatement) astStack.pop();
 		
 		IASTDefaultStatement stat = nodeFactory.newDefaultStatement();
-		List<IToken> tokens = parser.getRuleTokens();
+		List<IToken> tokens = stream.getRuleTokens();
 		IToken defaultToken = tokens.get(0);
 		IToken colonToken = tokens.get(1);
 		ParserUtil.setOffsetAndLength(stat, offset(defaultToken), offset(colonToken) - offset(defaultToken) + 1);
@@ -548,7 +583,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * jump_statement ::= goto goto_identifier ';'
 	 */
 	public void consumeStatementGoto() {
-		IASTName name = createName(parser.getRuleTokens().get(1));
+		IASTName name = createName(stream.getRuleTokens().get(1));
 		IASTGotoStatement gotoStat = nodeFactory.newGotoStatement(name);
 		setOffsetAndLength(gotoStat);
 		astStack.push(gotoStat);
@@ -599,7 +634,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 			declarator = (IASTDeclarator) astStack.pop();
 		else {
 			declarator = nodeFactory.newDeclarator(nodeFactory.newName());
-			ParserUtil.setOffsetAndLength(declarator, parser.getRightIToken().getEndOffset(), 0);
+			ParserUtil.setOffsetAndLength(declarator, stream.getRightIToken().getEndOffset(), 0);
 		}
 			
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
@@ -664,7 +699,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
      *     ::= 'asm' '(' 'stringlit' ')' ';'
 	 */
 	public void consumeDeclarationASM() {
-		String s = parser.getRuleTokens().get(2).toString();
+		String s = stream.getRuleTokens().get(2).toString();
 		IASTASMDeclaration asm = nodeFactory.newASMDeclaration(s);
 		
 		setOffsetAndLength(asm);
@@ -691,7 +726,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 */
 	public void consumeParameterDeclarationWithoutDeclarator() {
 		// offsets need to be calculated differently in this case		
-		final int endOffset = parser.getRightIToken().getEndOffset();
+		final int endOffset = stream.getRightIToken().getEndOffset();
 		
 		IASTName name = nodeFactory.newName();
 		ParserUtil.setOffsetAndLength(name, endOffset, 0);
@@ -911,7 +946,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
      *                  | 'enum' enum_identifier '{' <openscope> enumerator_list_opt '}'
 	 */
 	public void consumeTypeSpecifierEnumeration(boolean hasIdent) {
-		IASTName name = (hasIdent) ? createName(parser.getRuleTokens().get(1)) : nodeFactory.newName();
+		IASTName name = (hasIdent) ? createName(stream.getRuleTokens().get(1)) : nodeFactory.newName();
 		
 		IASTEnumerationSpecifier enumSpec = nodeFactory.newEnumerationSpecifier(name);
 
@@ -928,7 +963,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
      *              | enum_identifier '=' constant_expression
 	 */
 	public void consumeEnumerator(boolean hasInitializer) {
-		IASTName name = createName(parser.getLeftIToken());
+		IASTName name = createName(stream.getLeftIToken());
 		
 		IASTExpression value = null;
 		if(hasInitializer)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * Clients can subclass {@link AbstractCParserExtensionConfiguration} instead.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @see "http://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html"
  * @since 4.0

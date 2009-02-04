@@ -32,7 +32,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -63,7 +62,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 					reopenEditors(window, parts);
 				}
 			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+				CUIPlugin.log(ce);
 			}
 		}
 	}
@@ -80,7 +79,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 					reopenEditors(window, parts);
 				}
 			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+				CUIPlugin.log(ce);
 			}
 		}
 	}
@@ -165,9 +164,9 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 						if(oldPart == oldActive)
 							newActive= newPart;
 					} catch(PartInitException pie) {
-						CCorePlugin.log(pie);
+						CUIPlugin.log(pie);
 					} catch(CModelException cme) {
-						CCorePlugin.log(cme);
+						CUIPlugin.log(cme);
 					}
 				}
 

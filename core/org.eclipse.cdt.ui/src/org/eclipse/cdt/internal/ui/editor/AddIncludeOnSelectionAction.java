@@ -41,7 +41,6 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -61,6 +60,7 @@ import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
 
@@ -192,7 +192,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				}
 				return null;
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+				CUIPlugin.log(e);
 				return null;
 			}
 		}

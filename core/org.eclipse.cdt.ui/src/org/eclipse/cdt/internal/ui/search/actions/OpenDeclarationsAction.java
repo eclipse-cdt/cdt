@@ -241,7 +241,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 							}
 						}
 					} catch (RuntimeException e) {
-						CCorePlugin.log(e);
+						CUIPlugin.log(e);
 					}
 				}
 				
@@ -270,7 +270,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				}
 				return navigateCElements(elems);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		return false;
@@ -492,7 +492,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					try {
 						fSelectedText= document.get(reg.getOffset(), reg.getLength());
 					} catch (BadLocationException e) {
-						CCorePlugin.log(e);
+						CUIPlugin.log(e);
 					}
 				}
 			}

@@ -24,7 +24,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 
@@ -63,7 +62,7 @@ public class DoxygenHelper extends AbstractPreferenceInitializer {
 				fTags= temp.toArray(new GenericDocTag[temp.size()]);
 			} catch(IOException ioe) {
 				fTags= new GenericDocTag[0];
-				CCorePlugin.log(ioe);
+				CUIPlugin.log(ioe);
 			}
 		}
 		return fTags;

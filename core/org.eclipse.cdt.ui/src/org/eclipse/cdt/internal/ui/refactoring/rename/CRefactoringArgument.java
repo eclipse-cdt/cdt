@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
@@ -68,7 +68,7 @@ public class CRefactoringArgument {
 	        	fOffset= sr.getIdStartPos();
 	        	fLength= sr.getIdLength();
 			} catch (CModelException e) {
-				CCorePlugin.log(e);
+				CUIPlugin.log(e);
 			}
         }
     }

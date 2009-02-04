@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -37,6 +36,7 @@ import org.eclipse.cdt.core.model.ILanguageMappingChangeEvent;
 import org.eclipse.cdt.core.model.ILanguageMappingChangeListener;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -130,7 +130,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 			fMappingWidget.setMappings(fMappings.getContentTypeMappings());
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}
 	}
 	
@@ -151,7 +151,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 			fInheritedMappingWidget.setMappings(workspaceMappings.getWorkspaceMappings());
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 			fMappingWidget.setChanged(false);
 			return true;
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 			return false;
 		}
 	}

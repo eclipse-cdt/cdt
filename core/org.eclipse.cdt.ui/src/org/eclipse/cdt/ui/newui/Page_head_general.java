@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.DocCommentOwnerBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 
@@ -57,7 +57,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 			try {
 				fDocBlock.performApply(new NullProgressMonitor());
 			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+				CUIPlugin.log(ce);
 			}
 		}
 		return true;

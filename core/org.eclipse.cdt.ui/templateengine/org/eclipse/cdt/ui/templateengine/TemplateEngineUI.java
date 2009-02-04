@@ -13,10 +13,10 @@ package org.eclipse.cdt.ui.templateengine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
@@ -47,7 +47,7 @@ public class TemplateEngineUI {
 			try {
 				templatesList.add(new Template(info));
 			} catch (TemplateInitializationException tie) {
-				CCorePlugin.log(tie);
+				CUIPlugin.log(tie);
 			}
 		}
 		return templatesList.toArray(new Template[templatesList.size()]);
@@ -71,7 +71,7 @@ public class TemplateEngineUI {
 			try {
 				templatesList.add(new Template(templateInfoArray[i]));
 			} catch (TemplateInitializationException tie) {
-				CCorePlugin.log(tie);
+				CUIPlugin.log(tie);
 			}
 		}
 		return templatesList.toArray(new Template[templatesList.size()]);

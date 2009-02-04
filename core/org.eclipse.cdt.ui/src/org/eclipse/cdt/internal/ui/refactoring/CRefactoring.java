@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
@@ -79,7 +80,7 @@ public abstract class CRefactoring extends Refactoring {
 				final ISourceRange sourceRange = sourceRef.getSourceRange();
 				this.region = new Region(sourceRange.getIdStartPos(), sourceRange.getIdLength());
 			} catch (CModelException e) {
-				CCorePlugin.log(e);
+				CUIPlugin.log(e);
 			}
 		}
 		else {

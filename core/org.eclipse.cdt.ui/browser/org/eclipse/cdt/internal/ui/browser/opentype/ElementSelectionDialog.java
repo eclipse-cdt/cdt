@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 
 import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
@@ -326,9 +327,9 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 					index.releaseReadLock();
 				}
 			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+				CUIPlugin.log(ce);
 			} catch(InterruptedException ie) {
-				CCorePlugin.log(ie);
+				CUIPlugin.log(ie);
 			}
 		}
 		return types.toArray(new ITypeInfo[types.size()]);

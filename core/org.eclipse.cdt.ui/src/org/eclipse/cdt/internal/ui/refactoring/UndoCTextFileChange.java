@@ -24,12 +24,12 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * UndoCTextFileChange that uses a working copy in order to generate CModel events. 
@@ -76,9 +76,9 @@ public class UndoCTextFileChange
         		wc.commit(false, pm);
         		return new UndoCTextFileChange(getName(), file, redo, null, getSaveMode());
         	} catch (MalformedTreeException e) {
-        		CCorePlugin.log(e);
+        		CUIPlugin.log(e);
         	} catch (BadLocationException e) {
-        		CCorePlugin.log(e);
+        		CUIPlugin.log(e);
         	}
         	finally {
         		wc.destroy();

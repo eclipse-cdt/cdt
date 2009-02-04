@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -251,7 +250,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			findSelection(configuration, selectedLanguage, combo);
 			fContents.layout();
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}
 	}
 	
@@ -343,7 +342,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			fHasChanges = false;
 			return true;
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 			return false;
 		}
 	}

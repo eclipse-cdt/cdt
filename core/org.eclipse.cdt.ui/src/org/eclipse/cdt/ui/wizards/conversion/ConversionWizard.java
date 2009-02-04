@@ -11,13 +11,13 @@
 package org.eclipse.cdt.ui.wizards.conversion;
 
  
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 
 /**
  * ConversionWizard  This wizard provides a method by which the user can
@@ -120,7 +120,7 @@ public abstract class ConversionWizard
         try{
             mainPage.doRun(monitor, getProjectID(), getBuildSystemId());
         } catch (CoreException ce){
-            CCorePlugin.log(ce);
+            CUIPlugin.log(ce);
             throw ce;
         } finally{
             doRunEpilogue(monitor);

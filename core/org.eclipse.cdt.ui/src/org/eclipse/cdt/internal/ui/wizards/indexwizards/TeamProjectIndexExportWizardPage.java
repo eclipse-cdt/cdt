@@ -323,14 +323,14 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage {
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
-            CCorePlugin.log(CCorePlugin.createStatus(Messages.TeamProjectIndexExportWizardPage_errorExporting,
+            CUIPlugin.log(CCorePlugin.createStatus(Messages.TeamProjectIndexExportWizardPage_errorExporting,
             		e.getTargetException()));
             displayErrorDialog(e.getTargetException());
             return false;
         }
 
         if (!status.isOK()) {
-        	CCorePlugin.log(status);
+        	CUIPlugin.log(status);
             ErrorDialog.openError(getContainer().getShell(),
                     getErrorDialogTitle(),
                     null, // no special message

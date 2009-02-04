@@ -28,6 +28,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
@@ -91,7 +92,7 @@ public class CRefactory {
 				processor.unlockIndex();
 			}
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
@@ -122,7 +123,7 @@ public class CRefactory {
         } catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
         } catch (CoreException e) {
-        	CCorePlugin.log(e);
+        	CUIPlugin.log(e);
 		}
 	}
 

@@ -235,12 +235,12 @@ public class DocCommentOwnerManager {
 						String name= element.getAttribute(ATTRKEY_OWNER_NAME);
 						if(result.put(id, new DocCommentOwner(id, name, multi, single))!=null) {
 							String msg= MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0, id);
-							CCorePlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg));
+							CUIPlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg));
 						}
 					}
 				}
 			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+				CUIPlugin.log(ce);
 			}
 		}
 

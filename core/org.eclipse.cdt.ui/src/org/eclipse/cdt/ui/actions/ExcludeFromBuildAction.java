@@ -33,7 +33,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -128,7 +127,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			ICSourceEntry[] newEntries = CDataUtil.setExcluded(res.getFullPath(), (res instanceof IFolder), exclude, cfg.getSourceEntries());
 			cfg.setSourceEntries(newEntries);
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			CUIPlugin.log(e);
 		}					
 	}
 	

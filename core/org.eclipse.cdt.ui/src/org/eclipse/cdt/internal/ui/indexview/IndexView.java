@@ -39,7 +39,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.index.IIndex;
@@ -140,7 +139,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 						}
 					}
 				} catch (CoreException e) {
-					CCorePlugin.log(e);
+					CUIPlugin.log(e);
 				}
 			}
 			else if (element instanceof PDOMLinkage) {

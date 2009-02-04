@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -248,9 +247,9 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 				return ast;
 			}
 		} catch(CModelException ce) {
-			CCorePlugin.log(ce);
+			CUIPlugin.log(ce);
 		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+			CUIPlugin.log(ce);
 		}
 		return null;
 	}

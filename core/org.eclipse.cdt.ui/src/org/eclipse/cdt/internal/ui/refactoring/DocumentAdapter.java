@@ -39,7 +39,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -47,6 +46,7 @@ import org.eclipse.cdt.core.model.IBufferChangedListener;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
@@ -424,7 +424,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 						existingDelimiters.add(curr);
 					}
 				} catch (BadLocationException e) {
-					CCorePlugin.log(e);
+					CUIPlugin.log(e);
 				}
 			}
 			if (existingDelimiters.isEmpty()) {
@@ -449,10 +449,10 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 					for (int k= 0; k < curr.length(); k++) {
 						buf.append(String.valueOf((int) curr.charAt(k)));
 					}
-					CCorePlugin.log(new Exception(buf.toString()));
+					CUIPlugin.log(new Exception(buf.toString()));
 				}
 			} catch (BadLocationException e) {
-                CCorePlugin.log(e);
+                CUIPlugin.log(e);
 			}
 		}
 	}

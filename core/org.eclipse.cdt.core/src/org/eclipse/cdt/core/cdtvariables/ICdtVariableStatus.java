@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IStatus;
  * This interface represents the status of a build macro operation 
  * 
  * @since 3.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICdtVariableStatus extends IStatus {
 	/**

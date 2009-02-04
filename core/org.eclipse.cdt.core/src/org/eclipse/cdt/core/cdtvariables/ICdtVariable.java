@@ -14,6 +14,9 @@ package org.eclipse.cdt.core.cdtvariables;
 /**
  * this interface represents the given build macro
  * @since 3.0
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICdtVariable{
 	/**

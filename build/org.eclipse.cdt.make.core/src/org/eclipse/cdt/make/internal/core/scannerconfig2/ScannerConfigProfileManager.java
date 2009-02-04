@@ -150,21 +150,19 @@ public final class ScannerConfigProfileManager {
 	}
 
 	/**
-	 * @return
+	 * @return a list of available scanner config profile id's.
 	 */
 	public List<String> getProfileIds() {
-		if (profileIds == null) {
-			synchronized (fLock) {
-				if (profileIds == null) {
-					profileIds = new ArrayList<String>();
-					IExtensionPoint extension = Platform.getExtensionRegistry().
-							getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
-					if (extension != null) {
-						IExtension[] extensions = extension.getExtensions();
-						for (int i = 0; i < extensions.length; ++i) {
-							String rProfileId = extensions[i].getUniqueIdentifier();
-							profileIds.add(rProfileId);
-						}
+		synchronized (fLock) {
+			if (profileIds == null) {
+				profileIds = new ArrayList<String>();
+				IExtensionPoint extension = Platform.getExtensionRegistry().
+						getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
+				if (extension != null) {
+					IExtension[] extensions = extension.getExtensions();
+					for (int i = 0; i < extensions.length; ++i) {
+						String rProfileId = extensions[i].getUniqueIdentifier();
+						profileIds.add(rProfileId);
 					}
 				}
 			}

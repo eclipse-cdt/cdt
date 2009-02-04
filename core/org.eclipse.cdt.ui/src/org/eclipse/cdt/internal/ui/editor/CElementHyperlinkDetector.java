@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
+
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -38,12 +41,14 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+
 public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	public CElementHyperlinkDetector() {
 	}
 	
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
+	public IHyperlink[] detectHyperlinks(final ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor textEditor= (ITextEditor)getAdapter(ITextEditor.class);
 		if (region == null || !(textEditor instanceof CEditor))
 			return null;
@@ -95,6 +100,21 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 					if (linkLocation != null) {
 						result[0]= 	new CElementHyperlink(
 								new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength()), openAction);
+					} else {
+						// consider fallback navigation
+						final IDocument document= textViewer.getDocument();
+						IRegion wordRegion= CWordFinder.findWord(document, offset);
+						if (wordRegion != null) {
+							try {
+								String word= document.get(wordRegion.getOffset(), wordRegion.getLength());
+								if (!isLanguageKeyword(lang, word)) {
+									result[0]= 	new CElementHyperlink(
+											new Region(wordRegion.getOffset(), wordRegion.getLength()), openAction);
+								}
+							} catch (BadLocationException exc) {
+								// ingore
+							}
+						}
 					}
 				}
 				return Status.OK_STATUS;
@@ -105,5 +125,21 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		}
 		
 		return result[0] == null ? null : result;
+	}
+
+	private static boolean isLanguageKeyword(ILanguage lang, String word) {
+		ICLanguageKeywords keywords= (ICLanguageKeywords) lang.getAdapter(ICLanguageKeywords.class);
+		if (keywords != null) {
+			if (Arrays.asList(keywords.getKeywords()).contains(word)) {
+				return true;
+			}
+			if (Arrays.asList(keywords.getBuiltinTypes()).contains(word)) {
+				return true;
+			}
+			if (Arrays.asList(keywords.getPreprocessorKeywords()).contains('#'+word)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

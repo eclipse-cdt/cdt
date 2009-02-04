@@ -69,7 +69,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 		addField(fPathEditor);
 		
-		IProject project = ((IResource) getElement()).getProject();
+		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
 		
 		String currentPath = null;
 		
@@ -154,7 +154,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		// store the value in the owner text field
 		try {
-			IProject project = ((IResource) getElement()).getProject();
+			IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
 
 			project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
 					PreferenceConstants.P_XL_COMPILER_ROOT), fPathEditor

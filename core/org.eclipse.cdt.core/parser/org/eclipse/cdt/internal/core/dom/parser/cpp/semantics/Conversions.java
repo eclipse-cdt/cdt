@@ -565,6 +565,8 @@ public class Conversions {
 		IType t = cost.target;
 		boolean constInEveryCV2k = true;
 		boolean firstPointer= true;
+		boolean bothArePointers = false;
+		boolean pointerNonPointerMismatch = false;
 		while (true) {
 			s= getUltimateTypeViaTypedefs(s);
 			t= getUltimateTypeViaTypedefs(t);
@@ -572,8 +574,9 @@ public class Conversions {
 			final boolean targetIsPointer= t instanceof IPointerType;
 
 			if (!targetIsPointer) {
-				if (!sourceIsPointer) 
+				if (!sourceIsPointer && !(s instanceof IArrayType)) {
 					break;
+				}
 				if (t instanceof ICPPBasicType) {
 					if (((ICPPBasicType) t).getType() == ICPPBasicType.t_bool) {
 						canConvert= true;
@@ -581,17 +584,26 @@ public class Conversions {
 						break;
 					}
 				}
+				if (!bothArePointers) {
+					pointerNonPointerMismatch = true;
+				}
 				canConvert = false; 
 				break;
 			} else if (!sourceIsPointer) {
-				canConvert = false; 
-				break;
+			    if (s instanceof IArrayType) {
+			    	// 4.2 Array-To-Pointer conversion
+			    	s = new CPPPointerType(((IArrayType) s).getType());
+			    } else {
+					canConvert = false;
+					break;
+			    }
 			} else if (s instanceof ICPPPointerToMemberType ^ t instanceof ICPPPointerToMemberType) {
 				canConvert = false;
 				break;
 			} 
 			
 			// Both are pointers
+			bothArePointers = true;
 			IPointerType op1= (IPointerType) s;
 			IPointerType op2= (IPointerType) t;
 
@@ -656,23 +668,20 @@ public class Conversions {
 			} else {
 				requiredConversion = Cost.CONVERSION_RANK;
 			}
-		} else if (constInEveryCV2k && !canConvert) {
+		} else if (!pointerNonPointerMismatch && constInEveryCV2k && !canConvert) {
 			canConvert = true;
 			requiredConversion = Cost.CONVERSION_RANK;
-			int i = 1;
-			for (IType type = s; canConvert && i == 1; type = t, i++) {
-				while (type instanceof ITypeContainer) {
-					if (type instanceof IQualifierType) {
-						canConvert = false;
-				    } else if (type instanceof IPointerType) {
-						canConvert = !((IPointerType) type).isConst() && !((IPointerType) type).isVolatile();
-					}
-					if (!canConvert) {
-						requiredConversion = Cost.NO_MATCH_RANK;
-						break;
-					}
-					type = ((ITypeContainer) type).getType();
+			while (s instanceof ITypeContainer) {
+				if (s instanceof IQualifierType) {
+					canConvert = false;
+			    } else if (s instanceof IPointerType) {
+					canConvert = !((IPointerType) s).isConst() && !((IPointerType) s).isVolatile();
 				}
+				if (!canConvert) {
+					requiredConversion = Cost.NO_MATCH_RANK;
+					break;
+				}
+				s = ((ITypeContainer) s).getType();
 			}
 		}
 

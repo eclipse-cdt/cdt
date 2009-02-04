@@ -3047,7 +3047,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	class B {
 	//	public:
-	//		void foo(const A& b);
+	//		void foo(const A* b);
 	//	};
 	//
 	//	template<typename T>
@@ -3135,7 +3135,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		template <typename S> X(S s);
 	//	};
 	//
-	//	void test(X a);
+	//	void test(X* a);
 	//	void bla(int g) {
 	//		test(new X(g));
 	//	} 

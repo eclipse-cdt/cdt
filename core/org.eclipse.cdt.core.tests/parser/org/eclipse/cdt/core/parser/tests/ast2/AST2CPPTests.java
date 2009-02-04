@@ -4945,17 +4945,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( b, col.getName(10).resolveBinding() );
 	}
 	
-	// void free( void * );         
-	// void f( char **p ){          
-	//    free( p );                
+	// void free(void*);         
+	// void f(char** p) {          
+	//    free(p);
 	// }                            
 	public void testBug100415() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true );
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(  col );
+		tu.accept(col);
 		
 		IFunction free = (IFunction) col.getName(0).resolveBinding();
-		assertSame( free, col.getName(4).resolveBinding() );
+		assertSame(free, col.getName(4).resolveBinding());
 	}
 	
 	// class X;                 
@@ -6641,11 +6641,17 @@ public class AST2CPPTests extends AST2BaseTest {
 
 	//	void f(int x);
 	//
-	//	void test(int* p) {
+	//	void test(int* p, const int* q, int r[], const int s[]) {
 	//	  f(p);
+	//	  f(q);
+	//	  f(r);
+	//	  f(s);
 	//	}
-	public void _testPointerToNonPointerConversion_263159() throws Exception {
+	public void testPointerToNonPointerConversion_263159() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("f(p)", 1);
+		ba.assertProblem("f(q)", 1);
+		ba.assertProblem("f(r)", 1);
+		ba.assertProblem("f(s)", 1);
 	}
 }

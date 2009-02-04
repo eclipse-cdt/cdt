@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeUtil;
@@ -71,6 +70,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -592,10 +592,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     protected ICProject getCurrentProject() {
         IPath folderPath = getSourceFolderFullPath();
         if (folderPath != null) {
-            return PathUtil.getEnclosingProject(folderPath);
+            return toCProject(PathUtil.getEnclosingProject(folderPath));
         }
         return null;
     }
+
+	private ICProject toCProject(IProject enclosingProject) {
+		if (enclosingProject != null)
+			return CoreModel.getDefault().create(enclosingProject);
+		return null;
+	}
 
     /**
      * Returns the text entered into the namespace input field.
@@ -1033,9 +1039,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         if (folder != null) {
             return folder.getPath();
         }
-        ICProject proj = PathUtil.getEnclosingProject(filePath);
+        IProject proj = PathUtil.getEnclosingProject(filePath);
         if (proj != null)
-            return proj.getProject().getFullPath(); 
+            return proj.getFullPath(); 
         return null;
     }
     

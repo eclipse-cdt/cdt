@@ -18,7 +18,6 @@ import java.util.ListIterator;
 /**
  * Useful utility methods for dealing with Collections.
  * 
- * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class CollectionUtils {

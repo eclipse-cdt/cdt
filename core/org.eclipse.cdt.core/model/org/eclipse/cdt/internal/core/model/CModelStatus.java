@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +25,7 @@ import org.eclipse.core.runtime.Status;
  * @see ICModelStatus
  */
 
-public class CModelStatus extends Status implements ICModelStatus, ICModelStatusConstants, IResourceStatus {
+public class CModelStatus extends Status implements ICModelStatus, ICModelStatusConstants {
 
 	/**
 	 * The elements related to the failure, or <code>null</code> if no

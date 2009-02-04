@@ -36,7 +36,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.model.CModelException;
@@ -53,6 +52,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -607,7 +607,7 @@ public class NewClassCodeGenerator {
                 if (cProject.getPath().segment(0).equals(folderToAdd.segment(0)))
                 	continue;
                 
-                ICProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
+                ICProject includeProject = toCProject(PathUtil.getEnclosingProject(folderToAdd));
                 if (includeProject != null) {
                     // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
                     IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getProject().getLocation(), true);
@@ -624,7 +624,13 @@ public class NewClassCodeGenerator {
         monitor.done();
     }
 
-    private List<IPath> getMissingIncludePaths(IPath projectLocation, List<IPath> includePaths, List<IPath> baseClassPaths) {
+	private ICProject toCProject(IProject enclosingProject) {
+		if (enclosingProject != null)
+			return CoreModel.getDefault().create(enclosingProject);
+		return null;
+	}
+
+	private List<IPath> getMissingIncludePaths(IPath projectLocation, List<IPath> includePaths, List<IPath> baseClassPaths) {
         // check for missing include paths
         List<IPath> newIncludePaths = new ArrayList<IPath>();
         for (IPath baseClassLocation : baseClassPaths) {

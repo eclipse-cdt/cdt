@@ -16,12 +16,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.cdt.core.parser.IPersistableProblem;
+import org.eclipse.cdt.core.parser.AbstractPersistableProblem;
 
 /**
  * Spelling problem to be accepted by problem requesters.
  */
-public class CoreSpellingProblem implements IPersistableProblem {
+public class CoreSpellingProblem extends AbstractPersistableProblem {
 	// spelling 'marker type' name. Only virtual as spelling problems are never persisted in markers. 
 	// marker type is used in the quickFixProcessor extension point
 	public static final String MARKER_TYPE= "org.eclipse.cdt.internal.spelling"; //$NON-NLS-1$

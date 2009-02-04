@@ -24,6 +24,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @see ICConfigExtensionReference
  * @see ICExtension
  * @see ICDescriptor
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICExtensionReference {
 

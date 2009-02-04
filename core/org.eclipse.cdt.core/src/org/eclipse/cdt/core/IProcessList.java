@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+/**
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface IProcessList {
 	public IProcessInfo[] getProcessList();
 }

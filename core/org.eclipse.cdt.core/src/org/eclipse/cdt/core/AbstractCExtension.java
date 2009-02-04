@@ -10,23 +10,39 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
-import org.eclipse.cdt.internal.core.InternalCExtension;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.PlatformObject;
 
-public abstract class AbstractCExtension extends InternalCExtension implements ICExtension {
+public abstract class AbstractCExtension extends PlatformObject implements ICExtension {
+	private IProject fProject;
+	private ICExtensionReference extensionRef;
 
 	/**
 	 * Returns the project for which this extrension is defined.
 	 *	
 	 * @return the project
 	 */
-	@Override
 	public final IProject getProject() {
-		return super.getProject();
+		return fProject;
 	}
 	
-	@Override
 	public final ICExtensionReference getExtensionReference() {
-		return super.getExtensionReference();
+		return extensionRef;
+	}
+	
+
+    // internal stuff
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setProject(IProject project) {
+		fProject = project;
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setExtensionReference(ICExtensionReference extReference) {
+		extensionRef = extReference;
 	}
 }

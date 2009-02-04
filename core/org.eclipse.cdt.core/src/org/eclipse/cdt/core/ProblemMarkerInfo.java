@@ -14,6 +14,9 @@ package org.eclipse.cdt.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public  class ProblemMarkerInfo {
 		
 		public IResource file;

@@ -14,6 +14,8 @@ package org.eclipse.cdt.core;
  * A basic interface for console parsers
  * 
  * @author vhirsl
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IConsoleParser {
 	/**

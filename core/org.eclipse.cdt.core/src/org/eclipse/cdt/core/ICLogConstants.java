@@ -14,6 +14,8 @@ package org.eclipse.cdt.core;
 
 /**
  * @author bgheorgh
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICLogConstants {
     public class LogConst {

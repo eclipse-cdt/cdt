@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001. All Rights Reserved.
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +21,9 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class CommandLauncher {
 
 	public final static int COMMAND_CANCELED = 1;

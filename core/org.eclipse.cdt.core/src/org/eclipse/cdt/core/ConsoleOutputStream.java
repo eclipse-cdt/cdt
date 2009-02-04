@@ -17,6 +17,8 @@ import java.io.OutputStream;
 
 /**
  * Output stream which storing the console output
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConsoleOutputStream extends OutputStream {
 	

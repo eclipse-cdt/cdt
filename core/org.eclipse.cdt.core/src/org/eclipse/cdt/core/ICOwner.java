@@ -12,6 +12,10 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ICOwner {
 	public void configure(ICDescriptor cproject) throws CoreException;
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException;

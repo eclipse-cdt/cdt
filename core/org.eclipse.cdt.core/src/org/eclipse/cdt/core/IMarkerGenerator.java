@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * @author sam.robb
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IMarkerGenerator {
 	int SEVERITY_INFO = 0;

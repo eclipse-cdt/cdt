@@ -17,6 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CCProjectNature extends CProjectNature {
 
 	public static final String CC_NATURE_ID= CCorePlugin.PLUGIN_ID + ".ccnature"; //$NON-NLS-1$

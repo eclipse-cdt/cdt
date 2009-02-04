@@ -15,6 +15,8 @@ package org.eclipse.cdt.core;
  * 
  * This initial version only returns a list of source files.
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISymbolReader {
 

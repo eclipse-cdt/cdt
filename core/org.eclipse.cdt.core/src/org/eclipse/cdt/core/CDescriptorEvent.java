@@ -12,6 +12,10 @@ package org.eclipse.cdt.core;
 
 import java.util.EventObject;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CDescriptorEvent extends EventObject {
 
 	/**

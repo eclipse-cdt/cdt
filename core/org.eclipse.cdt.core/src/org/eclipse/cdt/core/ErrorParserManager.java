@@ -37,6 +37,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ */
 public class ErrorParserManager extends OutputStream {
 
 	private int nOpens;

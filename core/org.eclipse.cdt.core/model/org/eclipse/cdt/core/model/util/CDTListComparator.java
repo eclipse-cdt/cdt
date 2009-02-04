@@ -17,9 +17,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- */
 public class CDTListComparator implements Comparator<Object> {
 	private static Comparator<Object> comparator = null;
 

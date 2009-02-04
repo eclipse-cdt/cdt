@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -155,12 +156,12 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 
 		public ICExtension createExtension() throws CoreException {
-			InternalCExtension cExtension = null;
+			AbstractCExtension cExtension = null;
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(fCfgExtRef, CEXTENSION_NAME, false);
-			cExtension = (InternalCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
+			cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
 			cExtension.setExtensionReference(this);
 			cExtension.setProject(getProject());
-			return (ICExtension)cExtension;
+			return cExtension;
 		}
 
 		public ICDescriptor getCDescriptor() {

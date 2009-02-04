@@ -22,6 +22,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CProjectNature implements IProjectNature {
 
 	public static final String C_NATURE_ID = CCorePlugin.PLUGIN_ID + ".cnature"; //$NON-NLS-1$

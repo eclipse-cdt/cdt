@@ -26,7 +26,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * @author hamer
+ * @noextend This interface is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CConventions {
 	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$

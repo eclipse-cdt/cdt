@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for all nodes that can be visited by a {@link IPDOMVisitor}.
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPDOMNode {
 
@@ -28,6 +30,7 @@ public interface IPDOMNode {
 	/**
 	 * Frees memory allocated by this node, the node may no longer be used.
 	 * @param linkage the linkage the node belongs to.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void delete(PDOMLinkage linkage) throws CoreException;
 }

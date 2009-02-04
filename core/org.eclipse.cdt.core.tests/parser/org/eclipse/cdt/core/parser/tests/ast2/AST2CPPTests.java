@@ -5928,9 +5928,31 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
 
+	//	typedef int int5[5];
+	//
+	//	void f1(int* x);
+	//	void f2(int** x);
+	//	void f3(int5 x);
+	//	void f4(int5* x);
+	//
+	//	void test(int5 p, int5* q, int* r, int** s) {
+	//	  f1(p);
+	//	  f2(q);
+	//	  f3(r);
+	//	  f4(s);
+	//	}
+	public void _testArrayToPointerConversion() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f1(p)", 2, ICPPFunction.class);
+		ba.assertProblem("f2(q)", 2);
+		ba.assertNonProblem("f3(r)", 2, ICPPFunction.class);
+		ba.assertProblem("f4(s)", 2);
+	}
+
 	//	typedef char* t1;
 	//	typedef char t2[8];
-	//	void test(char * x) {}
+	//  typedef char* charp;
+	//	void test(charp x) {}
 	//	int main(void) {  
 	//		char x[12];
 	//		t1 y;
@@ -6653,5 +6675,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertProblem("f(q)", 1);
 		ba.assertProblem("f(r)", 1);
 		ba.assertProblem("f(s)", 1);
+	}
+
+	//	void fip(int* x);
+	//	void fia(int x[]);
+	//
+	//	void test() {
+	//	  fip(1);
+	//	  fia(1);
+	//	  fip(0);
+	//	  fia(0);
+	//	}
+	public void _testNonPointerToPointerConversion_263707() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("fip(1)", 3);
+		ba.assertProblem("fia(1)", 3);
+		ba.assertNonProblem("fip(0)", 3, ICPPFunction.class);
+		ba.assertNonProblem("fia(0)", 3, ICPPFunction.class);
 	}
 }
